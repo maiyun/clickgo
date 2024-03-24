@@ -49,10 +49,50 @@ class default_1 extends clickgo.form.AbstractForm {
         this.selectionArea = {};
         this.scroll = 'auto';
         this.sort = undefined;
-        this.nowSort = [];
         this.index = false;
         this.split = false;
         this.virtual = false;
+        this.slot = false;
+        this.checkinfo = {
+            'total': 0,
+            'selected': 0
+        };
+        this.sortinfo = {
+            'index': -1,
+            'sort': 'desc'
+        };
+    }
+    refreshCheckinfo() {
+        this.checkinfo.total = 0;
+        this.checkinfo.selected = 0;
+        for (const item of this.data) {
+            if (item.check === undefined) {
+                continue;
+            }
+            ++this.checkinfo.total;
+            if (item.check) {
+                ++this.checkinfo.selected;
+            }
+        }
+    }
+    onHeaderCheck(e) {
+        if (e.detail.value && !e.detail.indeterminate) {
+            for (const item of this.data) {
+                if (item.check === undefined) {
+                    continue;
+                }
+                item.check = false;
+            }
+            this.checkinfo.selected = 0;
+            return;
+        }
+        for (const item of this.data) {
+            if (item.check === undefined) {
+                continue;
+            }
+            item.check = true;
+        }
+        this.checkinfo.selected = this.checkinfo.total;
     }
     get sizes() {
         const rtn = {};
@@ -72,22 +112,21 @@ class default_1 extends clickgo.form.AbstractForm {
     onSelect(area) {
         this.selectionArea = area;
     }
-    onSort(label, sort) {
-        this.nowSort.length = 0;
-        if (!label) {
-            return;
-        }
-        this.nowSort.push(label);
-        this.nowSort.push(sort !== null && sort !== void 0 ? sort : 'asc');
+    onSort(e) {
+        this.sortinfo.index = e.detail.index;
+        this.sortinfo.sort = e.detail.sort;
         this.refreshSort();
     }
     refreshSort() {
-        if (this.nowSort[0] === 'name') {
+        if (this.sortinfo.index === -1) {
+            return;
+        }
+        if (this.sortinfo.index === (this.index ? 1 : 0)) {
             this.data.sort((a, b) => {
                 var _a, _b;
                 const aname = (_a = a.name) !== null && _a !== void 0 ? _a : 'name';
                 const bname = (_b = b.name) !== null && _b !== void 0 ? _b : 'name';
-                if (this.nowSort[1] === 'asc') {
+                if (this.sortinfo.sort === 'asc') {
                     return aname.localeCompare(bname);
                 }
                 else {
@@ -100,7 +139,7 @@ class default_1 extends clickgo.form.AbstractForm {
             var _a, _b;
             const atype = (_a = a.type) !== null && _a !== void 0 ? _a : 0;
             const btype = (_b = b.type) !== null && _b !== void 0 ? _b : 0;
-            if (this.nowSort[1] === 'asc') {
+            if (this.sortinfo.sort === 'asc') {
                 return atype - btype;
             }
             else {
@@ -146,14 +185,17 @@ class default_1 extends clickgo.form.AbstractForm {
     load() {
         this.data = [
             {
+                'check': false,
                 'type': 0,
                 'name': 'Appraise'
             },
             {
+                'check': false,
                 'type': 0,
                 'name': 'Card',
             },
             {
+                'check': false,
                 'type': 0,
                 'name': 'Appraise2',
                 'disabled': true
@@ -162,6 +204,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 'control': 'split'
             },
             {
+                'check': false,
                 'type': 1
             }
         ];

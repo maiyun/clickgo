@@ -10,7 +10,8 @@ export default class extends clickgo.control.AbstractControl {
     public isSpaceDown = false;
 
     public emits = {
-        'change': null
+        'change': null,
+        'changed': null
     };
 
     public props: {
@@ -25,7 +26,7 @@ export default class extends clickgo.control.AbstractControl {
             'indeterminate': false
         };
 
-    public click(): void {
+    public async click() {
         const event: types.ICheckChangeEvent = {
             'go': true,
             preventDefault: function() {
@@ -37,16 +38,25 @@ export default class extends clickgo.control.AbstractControl {
             }
         };
         this.emit('change', event);
-        if (event.go) {
-            if (this.indeterminateData) {
-                this.indeterminateData = false;
-                this.emit('update:indeterminate', this.indeterminateData);
-            }
-            else {
-                this.value = !this.value;
-                this.emit('update:modelValue', this.value);
-            }
+        if (!event.go) {
+            return;
         }
+        if (this.indeterminateData) {
+            this.indeterminateData = false;
+            this.emit('update:indeterminate', this.indeterminateData);
+        }
+        else {
+            this.value = !this.value;
+            this.emit('update:modelValue', this.value);
+        }
+        await this.nextTick();
+        const event2: types.ICheckChangedEvent = {
+            'detail': {
+                'value': this.value,
+                'indeterminate': this.indeterminateData
+            }
+        };
+        this.emit('changed', event);
     }
 
     public keydown(e: KeyboardEvent): void {

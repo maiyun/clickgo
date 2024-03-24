@@ -1,6 +1,12 @@
 <div class="wrap" :class="[propBoolean('split') && 'split']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined">
     <div class="header" ref="header" v-if="items.length">
-        <div v-for="item, i of items" class="item" :class="[(item.label === nowSort[0]) && nowSort[1]]" :style="{'width': widthMap[item.label] ? widthMap[item.label] + 'px' : '0', 'flex': widthMap[item.label] ? undefined : '1'}" @mousedown="headerClick($event, i)" @touchstart="headerClick($event, i)">{{item.label}}<div v-if="propBoolean('split')" class="split" @mousedown="bindResize($event, i)" @touchstart="bindResize($event, i)"></div></div>
+        <div v-for="item, i of items" class="item" :class="[(i === nowSort.index) && nowSort.sort]" :style="{'width': widthMap[i] ? widthMap[i] + 'px' : '0', 'flex': widthMap[i] ? undefined : '1'}" @mousedown="headerClick($event, i)" @touchstart="headerClick($event, i)">
+            <template v-if="slots['label'] && !item.label">
+                <slot name="label" :item="item" :index="i"></slot>
+            </template>
+            <div class="label" v-else>{{item.label}}</div>
+            <div v-if="propBoolean('split')" class="split" @mousedown="bindResize($event, i)" @touchstart="bindResize($event, i)"></div>
+        </div>
     </div>
     <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" :virtual="virtual" content-width="max" @update:scroll-left="updateScrollLeft">
         <template v-slot="data">

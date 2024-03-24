@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -30,13 +31,54 @@ export default class extends clickgo.form.AbstractForm {
 
     public sort?: boolean = undefined;
 
-    public nowSort: string[] = [];
-
     public index: boolean = false;
 
     public split: boolean = false;
 
     public virtual: boolean = false;
+
+    public slot = false;
+
+    /** --- 已选中的个数 --- */
+    public checkinfo = {
+        'total': 0,
+        'selected': 0
+    };
+
+    public refreshCheckinfo() {
+        this.checkinfo.total = 0;
+        this.checkinfo.selected = 0;
+        for (const item of this.data) {
+            if (item.check === undefined) {
+                continue;
+            }
+            ++this.checkinfo.total;
+            if (item.check) {
+                ++this.checkinfo.selected;
+            }
+        }
+    }
+
+    public onHeaderCheck(e: types.ICheckChangeEvent) {
+        if (e.detail.value && !e.detail.indeterminate) {
+            // --- 从选中变为不选 ---
+            for (const item of this.data) {
+                if (item.check === undefined) {
+                    continue;
+                }
+                item.check = false;
+            }
+            this.checkinfo.selected = 0;
+            return;
+        }
+        for (const item of this.data) {
+            if (item.check === undefined) {
+                continue;
+            }
+            item.check = true;
+        }
+        this.checkinfo.selected = this.checkinfo.total;
+    }
 
     // --- size 高度 ---
     public get sizes(): any {
@@ -58,22 +100,27 @@ export default class extends clickgo.form.AbstractForm {
         this.selectionArea = area;
     }
 
-    public onSort(label?: string, sort?: 'asc' | 'desc'): void {
-        this.nowSort.length = 0;
-        if (!label) {
-            return;
-        }
-        this.nowSort.push(label);
-        this.nowSort.push(sort ?? 'asc');
+    /** --- 当前 sort 情况 --- */
+    public sortinfo = {
+        'index': -1,
+        'sort': 'desc'
+    };
+
+    public onSort(e: types.ITableSortEvent): void {
+        this.sortinfo.index = e.detail.index;
+        this.sortinfo.sort = e.detail.sort;
         this.refreshSort();
     }
 
-    public refreshSort(): void {
-        if (this.nowSort[0] === 'name') {
+    public refreshSort() {
+        if (this.sortinfo.index === -1) {
+            return;
+        }
+        if (this.sortinfo.index === (this.index ? 1 : 0)) {
             this.data.sort((a: { 'name'?: string; }, b: { 'name'?: string; }): number => {
                 const aname = a.name ?? 'name';
                 const bname = b.name ?? 'name';
-                if (this.nowSort[1] === 'asc') {
+                if (this.sortinfo.sort === 'asc') {
                     return aname.localeCompare(bname);
                 }
                 else {
@@ -85,7 +132,7 @@ export default class extends clickgo.form.AbstractForm {
         this.data.sort((a: { 'type'?: number; }, b: { 'type'?: number; }): number => {
             const atype = a.type ?? 0;
             const btype = b.type ?? 0;
-            if (this.nowSort[1] === 'asc') {
+            if (this.sortinfo.sort === 'asc') {
                 return atype - btype;
             }
             else {
@@ -133,14 +180,17 @@ export default class extends clickgo.form.AbstractForm {
     public load(): void {
         this.data = [
             {
+                'check': false,
                 'type': 0,
                 'name': 'Appraise'
             },
             {
+                'check': false,
                 'type': 0,
                 'name': 'Card',
             },
             {
+                'check': false,
                 'type': 0,
                 'name': 'Appraise2',
                 'disabled': true
@@ -149,6 +199,7 @@ export default class extends clickgo.form.AbstractForm {
                 'control': 'split'
             },
             {
+                'check': false,
                 'type': 1
             }
         ];

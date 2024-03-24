@@ -2271,6 +2271,23 @@ export function findParentByTag(el: HTMLElement, name: string): HTMLElement | nu
 }
 
 /**
+ * --- 判断一个元素是当前同级的第几位 ---
+ * @param el 要判断的元素
+ */
+export function index(el: HTMLElement): number {
+    let index = 0;
+    let p = el.previousElementSibling;
+    while (true) {
+        if (!p) {
+            break;
+        }
+        ++index;
+        p = p.previousElementSibling;
+    }
+    return index;
+}
+
+/**
  * --- 查找指定 el 的同级所有元素 ---
  * @param el 基准
  * @returns HTMLElement[]
@@ -2281,6 +2298,7 @@ export function siblings(el: HTMLElement): HTMLElement[] {
     }
     const list: HTMLElement[] = [];
     for (let i = 0; i < el.parentNode.children.length; ++i) {
+        el.previousElementSibling
         const e = el.parentNode.children.item(i) as HTMLElement;
         if (e === el) {
             continue;

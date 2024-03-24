@@ -554,8 +554,11 @@ function run(url_1) {
                 findParentByClass: function (el, name) {
                     return dom.findParentByClass(el, name);
                 },
-                findParentByTag(el, name) {
+                findParentByTag: function (el, name) {
                     return dom.findParentByTag(el, name);
+                },
+                index: function (el) {
+                    return dom.index(el);
                 },
                 siblings: function (el) {
                     return dom.siblings(el);

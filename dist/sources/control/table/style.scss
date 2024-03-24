@@ -14,14 +14,14 @@
         }
 
         .item {
-            padding: var(--g-padding); text-align: center; position: relative; overflow: hidden;
+            padding: var(--g-padding); position: relative; overflow: hidden; display: flex;
             &:hover {
                 background: var(--g-plain-background-hover);
             }
 
             &.desc, &.asc {
                 &::after {
-                    content: ''; border: solid 1px var(--g-color); width: 6px; height: 6px; margin-left: 6px; display: inline-block;
+                    content: ''; border: solid 1px var(--g-color); width: 6px; height: 6px; display: block; position: absolute; right: var(--g-padding); top: calc(50% - 3px);
                 }
             }
             &.desc::after {
@@ -29,6 +29,10 @@
             }
             &.asc::after {
                 transform: translateY(1px) rotate(45deg); border-width: 1px 0 0 1px;
+            }
+
+            .label {
+                flex: 1; text-align: center;
             }
 
             .split {

@@ -654,6 +654,13 @@ export interface ICheckChangeEvent extends ICustomEvent {
     };
 }
 
+export interface ICheckChangedEvent {
+    'detail': {
+        'value': boolean;
+        'indeterminate': boolean;
+    };
+}
+
 // --- Form Control ---
 
 export interface IFormCloseEvent extends ICustomEvent {
@@ -906,6 +913,16 @@ export interface ITabCloseEvent extends ICustomEvent {
     'detail': {
         'index': number;
         'value': string;
+    };
+}
+
+// --- Table Control ---
+
+export interface ITableSortEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'label': string;
+        'sort': 'desc' | 'asc';
     };
 }
 

@@ -1,6 +1,11 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
+
+    public emits = {
+        'sort': null
+    };
 
     public props: {
         'disabled': boolean | string;
@@ -45,11 +50,22 @@ export default class extends clickgo.control.AbstractControl {
         'sort'?: boolean;
     }> = [];
 
-    /** --- item width 的映射 --- */
-    public widthMap: Record<string, number> = {};
+    /** --- 计算属性，获取 items 的长度 --- */
+    public get itemsLength() {
+        return this.items.length;
+    }
 
-    /** --- 当前是否排序中 --- */
-    public nowSort: string[] = [];
+    /** --- item width 的映射 --- */
+    public widthMap: number[] = [];
+
+    /** --- 当前是否排序中，-1 为没有排序中 --- */
+    public nowSort: {
+        'index': number;
+        'sort': 'desc' | 'asc';
+    } = {
+        'index': -1,
+        'sort': 'desc'
+    };
 
     // --- 外部 ---
 
@@ -64,35 +80,29 @@ export default class extends clickgo.control.AbstractControl {
     // --- 子组件 ---
 
     /** --- 修改 header 的 label --- */
-    public setHeaderLabel(n: string, old: string): void {
-        for (const item of this.items) {
-            if (item.label !== old) {
-                continue;
-            }
-            item.label = n;
-            this.widthMap[n] = this.widthMap[old];
-            delete this.widthMap[old];
-            break;
+    public setHeaderLabel(index: number, n: string): void {
+        const item = this.items[index];
+        if (!item) {
+            return;
         }
+        item.label = n;
     }
 
     /** --- 修改 header 的宽度 --- */
-    public setHeaderWidth(n: string, width: number): void {
-        if (this.widthMap[n] === undefined) {
+    public setHeaderWidth(index: number, width: number): void {
+        if (this.widthMap[index] === undefined) {
             return;
         }
-        this.widthMap[n] = width;
+        this.widthMap[index] = width;
     }
 
     /** --- 修改 header 的 sort --- */
-    public setHeaderSort(n: string, sort?: boolean): void {
-        for (const item of this.items) {
-            if (item.label !== n) {
-                continue;
-            }
-            item.sort = sort;
-            break;
+    public setHeaderSort(index: number, sort?: boolean): void {
+        const item = this.items[index];
+        if (!item) {
+            return;
         }
+        item.sort = sort;
     }
 
     // --- 内部 ---
@@ -103,37 +113,32 @@ export default class extends clickgo.control.AbstractControl {
 
     public refreshHeader(): void {
         const slots = this.slotsAll('default');
-        if (slots.length === this.items.length) {
-            return;
-        }
         this.items.length = 0;
-        this.widthMap = {};
+        this.widthMap.length = 0;
         for (const slot of slots) {
-            if (!slot.props.label) {
-                continue;
-            }
             // --- 用户的应该的 width ---
             const width = slot.props.width ? parseInt(slot.props.width) : 0;
             this.items.push({
-                'label': slot.props.label,
+                'label': slot.props.label ?? '',
                 'width': width,
                 'sort': slot.props.sort !== undefined ? clickgo.tool.getBoolean(slot.props.sort) : slot.props.sort
             });
             // --- 再根据 split 状态确定是否设置为默认 width  ---
-            this.widthMap[slot.props.label] = this.propBoolean('split') ? (width ? width : 150) : width;
+            this.widthMap.push(this.propBoolean('split') ? (width ? width : 150) : width);
         }
         this.checkNowSort();
     }
 
     /** --- 检测当前列已经不能 sort 了，但是目前还在 nowSort 当中 --- */
     public checkNowSort(): void {
-        if (!this.nowSort.length) {
+        if (this.nowSort.index === -1) {
             return;
         }
-        for (const item of this.items) {
-            if (item.label !== this.nowSort[0]) {
+        for (let i = 0; i < this.items.length; ++i) {
+            if (i !== this.nowSort.index) {
                 continue;
             }
+            const item = this.items[i];
             const sort = item.sort === undefined ? this.propBoolean('sort') : item.sort;
             if (sort) {
                 return;
@@ -141,8 +146,19 @@ export default class extends clickgo.control.AbstractControl {
             break;
         }
         // --- 找到了但不是 sort 和没找到，都要重置 ---
-        this.nowSort.length = 0;
-        this.emit('sort');
+        this.nowSort.index = -1;
+        const event: types.ITableSortEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'index': -1,
+                'label': '',
+                'sort': 'desc'
+            }
+        };
+        this.emit('sort', event);
     }
 
     // --- 头部项点击事件 ---
@@ -153,20 +169,43 @@ export default class extends clickgo.control.AbstractControl {
             if (!sort) {
                 return;
             }
-            if (this.nowSort[0] !== item.label) {
-                this.nowSort.length = 0;
-                this.nowSort.push(item.label);
-                this.nowSort.push('desc');
-                this.emit('sort', item.label, 'desc');
+            const event: types.ITableSortEvent = {
+                'go': true,
+                preventDefault: function() {
+                    this.go = false;
+                },
+                'detail': {
+                    'index': i,
+                    'label': item.label,
+                    'sort': 'desc'
+                }
+            };
+            if (this.nowSort.index !== i) {
+                this.emit('sort', event);
+                if (!event.go) {
+                    return;
+                }
+                this.nowSort.index = i;
+                this.nowSort.sort = 'desc';
                 return;
             }
-            if (this.nowSort[1] === 'desc') {
-                this.nowSort[1] = 'asc';
-                this.emit('sort', item.label, 'asc');
+            if (this.nowSort.sort === 'desc') {
+                event.detail.sort = 'asc';
+                this.emit('sort', event);
+                if (!event.go) {
+                    return;
+                }
+                this.nowSort.index = i;
+                this.nowSort.sort = 'asc';
                 return;
             }
-            this.nowSort.length = 0;
-            this.emit('sort');
+            event.detail.index = -1;
+            event.detail.label = '';
+            this.emit('sort', event);
+            if (!event.go) {
+                return;
+            }
+            this.nowSort.index = -1;
         });
     }
 
@@ -178,7 +217,7 @@ export default class extends clickgo.control.AbstractControl {
             'border': 'r',
             'minWidth': 50,
             'move': (left, top, width) => {
-                this.widthMap[this.items[i].label] = width;
+                this.widthMap[i] = width;
             }
         });
     }
@@ -194,16 +233,17 @@ export default class extends clickgo.control.AbstractControl {
                     if (this.items[i].width > 0) {
                         continue;
                     }
-                    this.widthMap[this.items[i].label] = (this.refs.header.children[i] as HTMLElement).offsetWidth;
+                    this.widthMap[i] = (this.refs.header.children[i] as HTMLElement).offsetWidth;
                 }
             }
             else {
                 // --- 可拖动变不可拖动 ---
-                for (const item of this.items) {
-                    if (item.width === this.widthMap[item.label]) {
+                for (let i = 0; i < this.items.length; ++i) {
+                    const item = this.items[i];
+                    if (item.width === this.widthMap[i]) {
                         continue;
                     }
-                    this.widthMap[item.label] = item.width;
+                    this.widthMap[i] = item.width;
                 }
             }
         }, {

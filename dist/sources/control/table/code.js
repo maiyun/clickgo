@@ -27,6 +27,9 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'sort': null
+        };
         this.props = {
             'disabled': false,
             'must': true,
@@ -43,8 +46,14 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': []
         };
         this.items = [];
-        this.widthMap = {};
-        this.nowSort = [];
+        this.widthMap = [];
+        this.nowSort = {
+            'index': -1,
+            'sort': 'desc'
+        };
+    }
+    get itemsLength() {
+        return this.items.length;
     }
     arrowUp() {
         this.refs.gl.arrowUp();
@@ -52,72 +61,73 @@ class default_1 extends clickgo.control.AbstractControl {
     arrowDown() {
         this.refs.gl.arrowDown();
     }
-    setHeaderLabel(n, old) {
-        for (const item of this.items) {
-            if (item.label !== old) {
-                continue;
-            }
-            item.label = n;
-            this.widthMap[n] = this.widthMap[old];
-            delete this.widthMap[old];
-            break;
-        }
-    }
-    setHeaderWidth(n, width) {
-        if (this.widthMap[n] === undefined) {
+    setHeaderLabel(index, n) {
+        const item = this.items[index];
+        if (!item) {
             return;
         }
-        this.widthMap[n] = width;
+        item.label = n;
     }
-    setHeaderSort(n, sort) {
-        for (const item of this.items) {
-            if (item.label !== n) {
-                continue;
-            }
-            item.sort = sort;
-            break;
+    setHeaderWidth(index, width) {
+        if (this.widthMap[index] === undefined) {
+            return;
         }
+        this.widthMap[index] = width;
+    }
+    setHeaderSort(index, sort) {
+        const item = this.items[index];
+        if (!item) {
+            return;
+        }
+        item.sort = sort;
     }
     updateScrollLeft(sl) {
         this.refs.header.scrollLeft = sl;
     }
     refreshHeader() {
+        var _a;
         const slots = this.slotsAll('default');
-        if (slots.length === this.items.length) {
-            return;
-        }
         this.items.length = 0;
-        this.widthMap = {};
+        this.widthMap.length = 0;
         for (const slot of slots) {
-            if (!slot.props.label) {
-                continue;
-            }
             const width = slot.props.width ? parseInt(slot.props.width) : 0;
             this.items.push({
-                'label': slot.props.label,
+                'label': (_a = slot.props.label) !== null && _a !== void 0 ? _a : '',
                 'width': width,
                 'sort': slot.props.sort !== undefined ? clickgo.tool.getBoolean(slot.props.sort) : slot.props.sort
             });
-            this.widthMap[slot.props.label] = this.propBoolean('split') ? (width ? width : 150) : width;
+            this.widthMap.push(this.propBoolean('split') ? (width ? width : 150) : width);
         }
         this.checkNowSort();
     }
     checkNowSort() {
-        if (!this.nowSort.length) {
+        if (this.nowSort.index === -1) {
             return;
         }
-        for (const item of this.items) {
-            if (item.label !== this.nowSort[0]) {
+        for (let i = 0; i < this.items.length; ++i) {
+            if (i !== this.nowSort.index) {
                 continue;
             }
+            const item = this.items[i];
             const sort = item.sort === undefined ? this.propBoolean('sort') : item.sort;
             if (sort) {
                 return;
             }
             break;
         }
-        this.nowSort.length = 0;
-        this.emit('sort');
+        this.nowSort.index = -1;
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'index': -1,
+                'label': '',
+                'sort': 'desc'
+            }
+        };
+        this.emit('sort', event);
     }
     headerClick(e, i) {
         clickgo.dom.bindClick(e, () => {
@@ -126,20 +136,43 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!sort) {
                 return;
             }
-            if (this.nowSort[0] !== item.label) {
-                this.nowSort.length = 0;
-                this.nowSort.push(item.label);
-                this.nowSort.push('desc');
-                this.emit('sort', item.label, 'desc');
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'index': i,
+                    'label': item.label,
+                    'sort': 'desc'
+                }
+            };
+            if (this.nowSort.index !== i) {
+                this.emit('sort', event);
+                if (!event.go) {
+                    return;
+                }
+                this.nowSort.index = i;
+                this.nowSort.sort = 'desc';
                 return;
             }
-            if (this.nowSort[1] === 'desc') {
-                this.nowSort[1] = 'asc';
-                this.emit('sort', item.label, 'asc');
+            if (this.nowSort.sort === 'desc') {
+                event.detail.sort = 'asc';
+                this.emit('sort', event);
+                if (!event.go) {
+                    return;
+                }
+                this.nowSort.index = i;
+                this.nowSort.sort = 'asc';
                 return;
             }
-            this.nowSort.length = 0;
-            this.emit('sort');
+            event.detail.index = -1;
+            event.detail.label = '';
+            this.emit('sort', event);
+            if (!event.go) {
+                return;
+            }
+            this.nowSort.index = -1;
         });
     }
     bindResize(e, i) {
@@ -149,7 +182,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'border': 'r',
             'minWidth': 50,
             'move': (left, top, width) => {
-                this.widthMap[this.items[i].label] = width;
+                this.widthMap[i] = width;
             }
         });
     }
@@ -163,15 +196,16 @@ class default_1 extends clickgo.control.AbstractControl {
                     if (this.items[i].width > 0) {
                         continue;
                     }
-                    this.widthMap[this.items[i].label] = this.refs.header.children[i].offsetWidth;
+                    this.widthMap[i] = this.refs.header.children[i].offsetWidth;
                 }
             }
             else {
-                for (const item of this.items) {
-                    if (item.width === this.widthMap[item.label]) {
+                for (let i = 0; i < this.items.length; ++i) {
+                    const item = this.items[i];
+                    if (item.width === this.widthMap[i]) {
                         continue;
                     }
-                    this.widthMap[item.label] = item.width;
+                    this.widthMap[i] = item.width;
                 }
             }
         }, {

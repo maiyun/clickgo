@@ -642,8 +642,11 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             findParentByClass: function(el: HTMLElement, name: string): HTMLElement | null {
                 return dom.findParentByClass(el, name);
             },
-            findParentByTag(el: HTMLElement, name: string): HTMLElement | null {
+            findParentByTag: function(el: HTMLElement, name: string): HTMLElement | null {
                 return dom.findParentByTag(el, name);
+            },
+            index: function(el: HTMLElement): number {
+                return dom.index(el);
             },
             siblings: function(el: HTMLElement): HTMLElement[] {
                 return dom.siblings(el);

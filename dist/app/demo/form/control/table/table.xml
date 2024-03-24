@@ -1,12 +1,14 @@
-<form width="450" height="500" title="Table" padding="10">
+<form width="500" height="500" title="Table" padding="10">
     <layout direction="v" gutter="10" style="flex: 1; width: 0;">
         <label>Value: {{val}}</label>
         <table :data="data" :style="{'flex': adaptation ? undefined : '1'}" v-model="val" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" :split="split" @gesture="onGesture" :scroll="scroll" :sizes="sizes" :sort="sort" :virtual="virtual" @select="onSelect" @sort="onSort">
             <template v-slot="d">
-                <table-item v-if="index" label="index" width="80" sort="false">{{d.index}}</table-item>
+                <table-item v-if="index" width="100" sort="false" align-h="center" align-v="center">
+                    <check v-model="d.row.check" @changed="refreshCheckinfo">{{d.index}}</check>
+                </table-item>
                 <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
-                <table-item label="size" width="50" align-v="center" align-h="center">{{d.row.type ?? '0'}}</table-item>
-                <table-item label="col" width="100" direction="v" gutter="5">
+                <table-item label="size" width="80" align-v="center" align-h="center">{{d.row.type ?? '0'}}</table-item>
+                <table-item label="col" width="100" direction="v" gutter="5" sort="false">
                     <label>line1</label>
                     <button>line2</button>
                 </table-item>
@@ -15,6 +17,11 @@
                 <menulist>
                     <menulist-item alt="S" @click="showIndex">Show select</menulist-item>
                 </menulist>
+            </template>
+            <template v-if="slot" v-slot:label="d">
+                <layout align-h="center" style="flex: 1;">
+                    <check :modelValue="checkinfo.selected > 0" @change="onHeaderCheck" :indeterminate="checkinfo.selected > 0 && checkinfo.selected < checkinfo.total">index</check>
+                </layout>
             </template>
         </table>
         <template v-if="loadFirst">
@@ -39,6 +46,7 @@
                 <button style="flex: 1;" @click="must = !must">{{must ? '' : '!'}}must</button>
                 <button style="flex: 1;" @click="index = !index">{{index ? '' : '!'}}index</button>
                 <button style="flex: 1;" @click="virtual = !virtual">{{virtual ? '' : '!'}}virtual</button>
+                <button style="flex: 1;" @click="slot = !slot">{{slot ? '' : '!'}}slot</button>
             </layout>
         </template>
         <button v-else @click="load">Load</button>

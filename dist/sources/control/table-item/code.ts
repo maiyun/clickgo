@@ -19,10 +19,14 @@ export default class extends clickgo.control.AbstractControl {
             'alignH': '',
             'alignV': ''
         };
+    
+    /** --- 当前是第几列，从 0 开始 --- */
+    public index: number = 0;
 
+    /** --- 所属的 table 控件 --- */
     public table: any = {
         'widthMap': {
-            [this.props.label]: 0
+            [this.index]: 0
         }
     };
 
@@ -31,15 +35,21 @@ export default class extends clickgo.control.AbstractControl {
         if (!table) {
             return;
         }
+        this.index = clickgo.dom.index(this.element);
         table.refreshHeader();
-        this.watch('label', (n, o) => {
-            table.setHeaderLabel(n, o);
+        this.watch('label', (n) => {
+            table.setHeaderLabel(this.index, n);
         });
         this.watch('width', () => {
-            table.setHeaderWidth(this.props.label, this.propNumber('width'));
+            table.setHeaderWidth(this.index, this.propNumber('width'));
         });
         this.watch('sort', () => {
-            table.setHeaderSort(this.props.label, this.props.sort === undefined ? undefined : this.propBoolean('sort'));
+            table.setHeaderSort(this.index, this.props.sort === undefined ? undefined : this.propBoolean('sort'));
+        });
+        this.watch(() => {
+            return table.itemsLength;
+        }, () => {
+            this.index = clickgo.dom.index(this.element);
         });
         this.table = table;
     }
