@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.11.15
+
+[+] Added title and footer slots to the group component.  
+[+] Added label slot to the table component for customizing header content.  
+[+] Added index method to the dom library.  
+[+] Added changed event to the check component.  
+[\*] Modified sort method of the table component to accept a single ITableSortEvent parameter.
+
 # 3.11.14
 
 [+] Added `cache` parameter to `fs.getContent` and `task.run` functions, enabling cached mode for faster loading of applications and files.  

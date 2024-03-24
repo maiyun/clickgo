@@ -1,5 +1,13 @@
 # 更新日志
 
+# 3.11.15
+
+[+] group 控件新增 title、footer 插槽。  
+[+] table 控件新增 label 插槽，可定制头部内容。  
+[+] dom 库新增 index 方法。  
+[+] check 控件新增 changed 事件。  
+[\*] 修改 table 控件的 sort 方法为单一 ITableSortEvent 参数。
+
 # 3.11.14
 
 [+] fs.getContent、task.run 新增 cache 参数，可以以有缓存模式加载应用和文件，加快加载速度。  
