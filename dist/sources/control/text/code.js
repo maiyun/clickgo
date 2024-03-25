@@ -38,20 +38,21 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'disabled': false,
-            'multi': false,
             'readonly': false,
-            'password': false,
             'wrap': true,
             'maxlength': 0,
             'scroll': true,
             'adaption': false,
             'gesture': [],
+            'type': 'text',
             'modelValue': '',
             'placeholder': '',
             'selectionStart': 0,
             'selectionEnd': 0,
             'scrollLeft': 0,
-            'scrollTop': 0
+            'scrollTop': 0,
+            'max': undefined,
+            'min': undefined
         };
         this.font = '';
         this.textAlign = '';
@@ -159,13 +160,39 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isFocus = false;
         this.emit('blur');
     }
-    input(e) {
+    input() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.value = e.target.value;
+            this.checkNumber();
+            if (this.propNumber('maxlength') && (this.refs.text.value > this.propNumber('maxlength'))) {
+                this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
+                return;
+            }
+            this.value = this.refs.text.value;
             yield this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);
         });
+    }
+    checkNumber() {
+        if (this.props.type !== 'number') {
+            return false;
+        }
+        let change = false;
+        if (!this.refs.text.value && this.value) {
+            change = true;
+        }
+        if (this.refs.text.value) {
+            const val = parseFloat(this.refs.text.value);
+            if (this.props.max !== undefined && this.props.max !== 'undefined' && val > this.propNumber('max')) {
+                this.refs.text.value = this.propNumber('max').toString();
+                change = true;
+            }
+            if (this.props.min !== undefined && this.props.min !== 'undefined' && val < this.propNumber('min')) {
+                this.refs.text.value = this.propNumber('min').toString();
+                change = true;
+            }
+        }
+        return change;
     }
     scrollEvent() {
         let sl = Math.round(this.refs.text.scrollLeft);
@@ -309,6 +336,13 @@ class default_1 extends clickgo.control.AbstractControl {
     select(e) {
         e.stopPropagation();
     }
+    numberClick(num) {
+        if (!this.value) {
+            this.value = '0';
+        }
+        const n = parseFloat(this.value) + num;
+        this.value = n.toString();
+    }
     execCmd(ac) {
         return __awaiter(this, void 0, void 0, function* () {
             this.refs.text.focus();
@@ -341,6 +375,9 @@ class default_1 extends clickgo.control.AbstractControl {
             'scrollWidth',
             'scrollHeight'
         ], (n, v) => {
+            if (v === null) {
+                v = 0;
+            }
             switch (n) {
                 case 'selectionStart':
                 case 'selectionEnd': {
@@ -376,7 +413,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('adaption')) {
             return;
         }
-        if (!this.propBoolean('multi')) {
+        if (this.props.type !== 'multi') {
             return;
         }
         if (!this.propBoolean('wrap')) {
@@ -395,6 +432,10 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.value = this.props.modelValue;
             yield this.nextTick();
+            this.checkNumber();
+            if (this.propNumber('maxlength') && this.refs.text.value.length > this.propNumber('maxlength')) {
+                this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
+            }
             if (this.refs.text.value === this.value) {
                 this.checkAdaption();
                 return;
@@ -406,10 +447,29 @@ class default_1 extends clickgo.control.AbstractControl {
         }), {
             'immediate': true
         });
-        this.watch('multi', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('type', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            if (this.checkNumber()) {
+                this.value = this.refs.text.value;
+                this.emit('update:modelValue', this.value);
+            }
             yield this.nextTick();
             this.checkWatch();
             this.checkAdaption();
+        }));
+        this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            if (this.checkNumber()) {
+                this.value = this.refs.text.value;
+                this.emit('update:modelValue', this.value);
+            }
+        }));
+        this.watch('min', () => __awaiter(this, void 0, void 0, function* () {
+            yield this.nextTick();
+            if (this.checkNumber()) {
+                this.value = this.refs.text.value;
+                this.emit('update:modelValue', this.value);
+            }
         }));
         this.watch('scroll', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
@@ -422,10 +482,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('wrap', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
             this.checkAdaption();
-        }));
-        this.watch('password', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
-            this.checkWatch();
         }));
         this.watch('maxlength', () => __awaiter(this, void 0, void 0, function* () {
             if (!this.propNumber('maxlength')) {
@@ -458,11 +514,17 @@ class default_1 extends clickgo.control.AbstractControl {
             if (prop === this.refs.text.selectionStart) {
                 return;
             }
+            if (this.props.type === 'number') {
+                return;
+            }
             this.refs.text.selectionStart = prop;
         });
         this.watch('selectionEnd', () => {
             const prop = this.propInt('selectionEnd');
             if (prop === this.refs.text.selectionEnd) {
+                return;
+            }
+            if (this.props.type === 'number') {
                 return;
             }
             this.refs.text.selectionEnd = prop;
@@ -504,8 +566,10 @@ class default_1 extends clickgo.control.AbstractControl {
         }), true);
         this.refs.text.scrollTop = this.propInt('scrollTop');
         this.refs.text.scrollLeft = this.propInt('scrollLeft');
-        this.refs.text.selectionStart = this.propInt('selectionStart');
-        this.refs.text.selectionEnd = this.propInt('selectionEnd');
+        if (this.props.type !== 'number') {
+            this.refs.text.selectionStart = this.propInt('selectionStart');
+            this.refs.text.selectionEnd = this.propInt('selectionEnd');
+        }
         this.checkWatch();
     }
 }

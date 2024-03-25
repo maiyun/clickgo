@@ -26,7 +26,7 @@ export default class extends clickgo.form.AbstractForm {
 
     // --- 操作 ---
 
-    public multi = false;
+    public type = ['text'];
 
     public disabled = false;
 
@@ -35,8 +35,6 @@ export default class extends clickgo.form.AbstractForm {
     public adaption = false;
 
     public scroll = true;
-
-    public password = false;
 
     public wrap = true;
 
@@ -67,6 +65,8 @@ export default class extends clickgo.form.AbstractForm {
     public background = undefined;
 
     public phcolor = undefined;
+
+    public maxmin = false;
 
     public get textBorder(): any {
         switch (this.border) {

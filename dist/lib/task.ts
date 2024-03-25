@@ -581,7 +581,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             watchProperty: function(
                 el: HTMLElement,
                 name: string | string[],
-                cb: (name: string, value: string) => void | Promise<void>,
+                cb: (name: string, value: any) => void | Promise<void>,
                 immediate: boolean = false
             ): void {
                 dom.watchProperty(el, name, cb, immediate);

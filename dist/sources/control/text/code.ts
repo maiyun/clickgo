@@ -4,14 +4,13 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
-        'multi': boolean | string;
         'readonly': boolean | string;
-        'password': boolean | string;
         'wrap': boolean | string;
         'maxlength': number | string;
         'scroll': boolean | string;
         'adaption': boolean | string;
         'gesture': string[] | string;
+        'type': 'text' | 'multi' | 'password' | 'number';
 
         'modelValue': string;
         'placeholder': string;
@@ -19,23 +18,28 @@ export default class extends clickgo.control.AbstractControl {
         'selectionEnd': number | string;
         'scrollLeft': number | string;
         'scrollTop': number | string;
+
+        'max': number | string | undefined;
+        'min': number | string | undefined;
     } = {
             'disabled': false,
-            'multi': false,
             'readonly': false,
-            'password': false,
             'wrap': true,
             'maxlength': 0,
             'scroll': true,
             'adaption': false,
             'gesture': [],
+            'type': 'text',
 
             'modelValue': '',
             'placeholder': '',
             'selectionStart': 0,
             'selectionEnd': 0,
             'scrollLeft': 0,
-            'scrollTop': 0
+            'scrollTop': 0,
+
+            'max': undefined,
+            'min': undefined
         };
 
     // --- 样式 ---
@@ -175,11 +179,39 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的 input 事件 --- */
-    public async input(e: InputEvent): Promise<void> {
-        this.value = (e.target as HTMLInputElement).value;
+    public async input(): Promise<void> {
+        this.checkNumber();
+        if (this.propNumber('maxlength') && (this.refs.text.value > this.propNumber('maxlength'))) {
+            this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
+            return;
+        }
+        this.value = this.refs.text.value;
         await this.nextTick();
         this.checkAdaption();
         this.emit('update:modelValue', this.value);
+    }
+
+    /** --- 检测 value 值是否符合 max 和 min --- */
+    public checkNumber() {
+        if (this.props.type !== 'number') {
+            return false;
+        }
+        let change = false;
+        if (!this.refs.text.value && this.value) {
+            change = true;
+        }
+        if (this.refs.text.value) {
+            const val = parseFloat(this.refs.text.value);
+            if (this.props.max !== undefined && this.props.max !== 'undefined' && val > this.propNumber('max')) {
+                this.refs.text.value = this.propNumber('max').toString();
+                change = true;
+            }
+            if (this.props.min !== undefined && this.props.min !== 'undefined' && val < this.propNumber('min')) {
+                this.refs.text.value = this.propNumber('min').toString();
+                change = true;
+            }
+        }
+        return change;
     }
 
     /** --- input 的 scroll 事件 --- */
@@ -337,6 +369,18 @@ export default class extends clickgo.control.AbstractControl {
         e.stopPropagation();
     }
 
+    /**
+     * --- number 模式下，点击右侧的控制按钮 ---
+     * @param num 增加或者是减少
+     */
+    public numberClick(num: number): void {
+        if (!this.value) {
+            this.value = '0';
+        }
+        const n = parseFloat(this.value) + num;
+        this.value = n.toString();
+    }
+
     /** --- 执行复制粘贴剪切等操作 --- */
     public async execCmd(ac: string): Promise<void> {
         this.refs.text.focus();
@@ -373,6 +417,9 @@ export default class extends clickgo.control.AbstractControl {
             'scrollWidth',
             'scrollHeight'
         ], (n, v): void => {
+            if (v === null) {
+                v = 0;
+            }
             switch (n) {
                 // --- 选择改变 ---
                 case 'selectionStart':
@@ -417,7 +464,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 不是自适应 ---
             return;
         }
-        if (!this.propBoolean('multi')) {
+        if (this.props.type !== 'multi') {
             // --- 不是多行 ---
             return;
         }
@@ -442,6 +489,10 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.value = this.props.modelValue;
             await this.nextTick();
+            this.checkNumber();
+            if (this.propNumber('maxlength') && this.refs.text.value.length > this.propNumber('maxlength')) {
+                this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
+            }
             // --- 有可能设置后控件实际值和设置的值不同，所以要重新判断一下 ---
             if (this.refs.text.value === this.value) {
                 this.checkAdaption();
@@ -455,10 +506,29 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
         // --- 监听 text 相关 ---
-        this.watch('multi', async (): Promise<void> => {
+        this.watch('type', async (): Promise<void> => {
+            await this.nextTick();
+            if (this.checkNumber()) {
+                this.value = this.refs.text.value;
+                this.emit('update:modelValue', this.value);
+            }
             await this.nextTick();
             this.checkWatch();
             this.checkAdaption();
+        });
+        this.watch('max', async () => {
+            await this.nextTick();
+            if (this.checkNumber()) {
+                this.value = this.refs.text.value;
+                this.emit('update:modelValue', this.value);
+            }
+        });
+        this.watch('min', async () => {
+            await this.nextTick();
+            if (this.checkNumber()) {
+                this.value = this.refs.text.value;
+                this.emit('update:modelValue', this.value);
+            }
         });
         this.watch('scroll', async (): Promise<void> => {
             await this.nextTick();
@@ -471,10 +541,6 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('wrap', async (): Promise<void> => {
             await this.nextTick();
             this.checkAdaption();
-        });
-        this.watch('password', async (): Promise<void> => {
-            await this.nextTick();
-            this.checkWatch();
         });
         this.watch('maxlength', async () => {
             if (!this.propNumber('maxlength')) {
@@ -507,11 +573,17 @@ export default class extends clickgo.control.AbstractControl {
             if (prop === this.refs.text.selectionStart) {
                 return;
             }
+            if (this.props.type === 'number') {
+                return;
+            }
             this.refs.text.selectionStart = prop;
         });
         this.watch('selectionEnd', (): void => {
             const prop = this.propInt('selectionEnd');
             if (prop === this.refs.text.selectionEnd) {
+                return;
+            }
+            if (this.props.type === 'number') {
                 return;
             }
             this.refs.text.selectionEnd = prop;
@@ -556,8 +628,10 @@ export default class extends clickgo.control.AbstractControl {
         // --- 对 scroll 位置进行归位 ---
         this.refs.text.scrollTop = this.propInt('scrollTop');
         this.refs.text.scrollLeft = this.propInt('scrollLeft');
-        this.refs.text.selectionStart = this.propInt('selectionStart');
-        this.refs.text.selectionEnd = this.propInt('selectionEnd');
+        if (this.props.type !== 'number') {
+            this.refs.text.selectionStart = this.propInt('selectionStart');
+            this.refs.text.selectionEnd = this.propInt('selectionEnd');
+        }
 
         this.checkWatch();
     }

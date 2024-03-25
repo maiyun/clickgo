@@ -715,7 +715,7 @@ let watchPropertyIndex: number = 0;
 export function watchProperty(
     el: HTMLElement,
     name: string | string[],
-    cb: (name: string, value: string) => void | Promise<void>,
+    cb: (name: string, value: any) => void | Promise<void>,
     immediate: boolean = false
 ): void {
     if (typeof name === 'string') {

@@ -46,12 +46,11 @@ class default_1 extends clickgo.form.AbstractForm {
         this.clientWidth = 0;
         this.scrollHeight = 0;
         this.scrollWidth = 0;
-        this.multi = false;
+        this.type = ['text'];
         this.disabled = false;
         this.readonly = false;
         this.adaption = false;
         this.scroll = true;
-        this.password = false;
         this.wrap = true;
         this.menu = false;
         this.gesture = false;
@@ -66,6 +65,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.border = 'solid';
         this.background = undefined;
         this.phcolor = undefined;
+        this.maxmin = false;
     }
     get textBorder() {
         switch (this.border) {

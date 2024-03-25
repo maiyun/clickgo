@@ -1,8 +1,8 @@
-<form width="350" height="550" title="Textbox">
+<form width="450" height="550" title="Textbox">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}, Focus: {{isFocus}}</label>
         <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Scroll Height: {{scrollHeight}}, Scroll Width: {{scrollWidth}}, Client Height: {{clientHeight}}, Client Width: {{clientWidth}}</label>
-        <text v-model="value" placeholder="placeholder" :multi="multi" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :adaption="adaption" :scroll="scroll" :password="password" :maxlength="maxlength" :wrap="wrap" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" :style="{'flex': multi && (!adaption || scroll || !wrap) ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': multi && (!adaption || scroll || !wrap) ? '0' : undefined, 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
+        <text v-model="value" placeholder="placeholder" :type="type[0]" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :adaption="adaption" :scroll="scroll" :maxlength="maxlength" :wrap="wrap" :max="maxmin ? 200 : undefined" :min="maxmin ? 10 : undefined" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" :style="{'flex': (type[0] === 'multi') && (!adaption || scroll || !wrap) ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': (type[0] === 'multi') && (!adaption || scroll || !wrap) ? '0' : undefined, 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
@@ -12,13 +12,12 @@
             <template v-if="after" v-slot:after><select :data="['D','E','F']" plain></select></template>
         </text>
         <layout gutter="10">
-            <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
+            <button @click="value = '300'" style="flex: 1;">v = '300'</button>
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="readonly = !readonly" style="flex: 1;">{{readonly ? '' : '!'}}readonly</button>
             <button @click="scroll = !scroll" style="flex: 1;">{{scroll ? '' : '!'}}scroll</button>
         </layout>
         <layout gutter="10">
-            <button @click="password = !password" style="flex: 1;">{{password ? '' : '!'}}password</button>
             <button @click="wrap = !wrap" style="flex: 1;">{{wrap ? '' : '!'}}wrap</button>
             <button @click="menu = !menu" style="flex: 1;">{{menu ? '' : '!'}}menu</button>
             <button @click="gesture = !gesture" style="flex: 1;">{{gesture ? '' : '!'}}gesture</button>
@@ -26,17 +25,19 @@
         <layout gutter="10">
             <button @click="prepend = !prepend" style="flex: 1;">{{prepend ? '' : '!'}}prepend</button>
             <button @click="append = !append" style="flex: 1;">{{append ? '' : '!'}}append</button>
-            <button @click="adaption = !adaption" style="flex: 1;">{{adaption ? '' : '!'}}adaption</button>
-            <button @click="longClick" style="flex: 1;">{{long ? '' : '!'}}long</button>
-        </layout>
-        <layout gutter="10">
-            <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1;">line to {{lineHeight === 1 ? 1.5 : 1}}</button>
-            <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1;">size to {{fontSize === 12 ? 16 : 12}}</button>
             <button @click="before = !before" style="flex: 1;">{{before ? '' : '!'}}before</button>
             <button @click="after = !after" style="flex: 1;">{{after ? '' : '!'}}after</button>
         </layout>
         <layout gutter="10">
+            <button @click="lineHeight = lineHeight === 1 ? 1.5 : 1" style="flex: 1;">line to {{lineHeight === 1 ? 1.5 : 1}}</button>
+            <button @click="fontSize = fontSize === 12 ? 16 : 12" style="flex: 1;">size to {{fontSize === 12 ? 16 : 12}}</button>
+            <button @click="adaption = !adaption" style="flex: 1;">{{adaption ? '' : '!'}}adaption</button>
+            <button @click="longClick" style="flex: 1;">{{long ? '' : '!'}}long</button>
+        </layout>
+        <layout gutter="10">
+            <select v-model="type" :data="['text', 'password', 'multi', 'number']" style="flex: 1;"></select>
             <button @click="maxlength = maxlength === 0 ? 10 : 0" style="flex: 1;">maxlength to {{maxlength === 0 ? 10 : 0}}</button>
+            <button @click="maxmin = !maxmin" style="flex: 1;">{{maxmin ? '' : '!'}}max 200 min 10</button>
         </layout>
         <layout gutter="10">
             <button @click="border = 'solid'" style="flex: 2;">Set border solid</button>

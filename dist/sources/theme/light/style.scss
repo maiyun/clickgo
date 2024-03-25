@@ -830,6 +830,16 @@ global {
             transition: all .3s var(--g-cubic);
         }
     }
+    .text_number {
+        .text_up, .text_down {
+            transition: all .3s var(--g-cubic);
+            &:not([data-cg-disabled]) {
+                &:hover:not(:active) {
+                    background: hsla(0,0%,97%);
+                }
+            }
+        }
+    }
     &:not([data-cg-disabled]) {
         &.text_focus {
             border-color: var(--g-plain-border-color-hover); position: relative;

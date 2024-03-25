@@ -54,11 +54,51 @@
         &::-webkit-scrollbar {
             display: none;
         }
+        &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
         &:not(.darkbg)::placeholder {
             color: rgba(0, 0, 0, .3);
         }
         &.darkbg::placeholder {
             color: rgba(255, 255, 255, .3);
+        }
+    }
+
+    // --- type 为 number 时的右侧控制按钮 ---
+    .number {
+        display: flex; flex-direction: column;
+        .up, .down {
+            flex: 1; width: 20px; display: flex; align-items: center; justify-content: center;
+            &::before {
+                content: ''; border-style: solid; border-color: var(--g-color); width: 24%; height: 24%; transform: rotate(45deg);
+            }
+            &[data-cg-disabled] {
+                &::before {
+                    border-color: var(--g-color-disabled);
+                }
+            }
+            &:not([data-cg-disabled]) {
+                &:hover:not(:active) {
+                    background: var(--g-plain-background-hover);
+                }
+                &:active {
+                    background-color: var(--g-color);
+                    &::before {
+                        border-color: var(--face);
+                    }
+                }
+            }
+        }
+        .up {
+            &::before {
+                border-width: 1px 0 0 1px; margin-bottom: -12%;
+            }
+        }
+        .down {
+            &::before {
+                border-width: 0 1px 1px 0; margin-top: -12%;
+            }
         }
     }
 
