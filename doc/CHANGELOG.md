@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.17
+
+[+] Added `prompt` method to the `form` library.  
+[+] Added `autoDialogResult` parameter to the `dialog` method in the `form` library.
+
 # 3.11.16
 
 [+] Destructive Update: Removed 'multi' and 'password' attributes from the 'text' control, added 'type' attribute with options 'text', 'password', 'multi', and 'number'. Default is 'text'.  

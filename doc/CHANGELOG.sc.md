@@ -1,5 +1,10 @@
 # 更新日志
 
+# 3.11.17
+
+[+] form 库新增 prompt 方法。  
+[+] form 库的 dialog 方法新增 autoDialogResult 参数。
+
 # 3.11.16
 
 [+] 破坏性更新：text 控件去除 multi、password 属性，新增 type 属性，type 内容为 text、password、multi 和 number，默认为 text。  
