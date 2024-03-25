@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden;
+    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden; background: var(--g-plain-background);
     
     .op {
         flex: 1; width: 0; display: flex; flex-direction: column;
@@ -50,7 +50,7 @@
     }
 
     .text {
-        flex: 1; width: 0; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit; min-height: 100%;
+        flex: 1; width: 0; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit; min-height: 100%; background: transparent;
         &::-webkit-scrollbar {
             display: none;
         }

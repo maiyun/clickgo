@@ -56,7 +56,6 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.font = '';
         this.textAlign = '';
-        this.background = '';
         this.padding = '';
         this.darkbg = false;
         this.showPassword = false;
@@ -542,7 +541,6 @@ class default_1 extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'background-color': {
-                    this.background = v;
                     let color = v;
                     let el = this.element;
                     let match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);

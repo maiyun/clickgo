@@ -52,8 +52,6 @@ export default class extends clickgo.control.AbstractControl {
 
     public textAlign = '';
 
-    public background = '';
-
     public padding = '';
 
     /** --- 如果 background 颜色比较深，则此值设定为 true --- */
@@ -602,7 +600,6 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'background-color': {
-                    this.background = v;
                     let color = v;
                     let el: HTMLElement | null = this.element;
                     let match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);
