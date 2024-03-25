@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.16
+
+[+] Destructive Update: Removed 'multi' and 'password' attributes from the 'text' control, added 'type' attribute with options 'text', 'password', 'multi', and 'number'. Default is 'text'.  
+[+] Added 'max' and 'min' attributes to the 'text' control. When 'type' is 'number', it can restrict the maximum and minimum values of the number.
+
 # 3.11.15
 
 [+] Added title and footer slots to the group component.  

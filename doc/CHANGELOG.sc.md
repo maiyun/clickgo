@@ -2,7 +2,8 @@
 
 # 3.11.16
 
-[+] 破坏性更新：
+[+] 破坏性更新：text 控件去除 multi、password 属性，新增 type 属性，type 内容为 text、password、multi 和 number，默认为 text。  
+[+] text 控件新增 max 和 min 属性，在 type 为 number 时可限制数字的最大值与最小值。
 
 # 3.11.15
 
