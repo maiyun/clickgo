@@ -32,8 +32,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.showLauncher = exports.flash = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.hashBack = exports.getHash = exports.hash = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
-exports.hideLauncher = void 0;
+exports.flash = exports.prompt = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.hashBack = exports.getHash = exports.hash = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
+exports.hideLauncher = exports.showLauncher = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const core = __importStar(require("./core"));
 const task = __importStar(require("./task"));
@@ -2635,10 +2635,11 @@ function dialog(opt) {
         }
         const cls = class extends AbstractForm {
             constructor() {
-                var _a;
+                var _a, _b;
                 super(...arguments);
                 this.buttons = nopt.buttons;
                 this.data = (_a = nopt.data) !== null && _a !== void 0 ? _a : {};
+                this.methods = (_b = nopt.methods) !== null && _b !== void 0 ? _b : {};
             }
             get filename() {
                 return filename;
@@ -2647,16 +2648,19 @@ function dialog(opt) {
                 return taskId;
             }
             select(button) {
-                var _a;
                 const event = {
                     'go': true,
                     preventDefault: function () {
                         this.go = false;
                     }
                 };
-                (_a = nopt.select) === null || _a === void 0 ? void 0 : _a.call(nopt, event, button);
+                if (nopt.select) {
+                    nopt.select.call(this, event, button);
+                }
                 if (event.go) {
-                    this.dialogResult = button;
+                    if (nopt.autoDialogResult !== false) {
+                        this.dialogResult = button;
+                    }
                     close(this.formId);
                 }
             }
@@ -2703,6 +2707,7 @@ function confirm(opt) {
         }
         const res = yield dialog({
             'taskId': taskId,
+            'title': opt.title,
             'content': opt.content,
             'buttons': buttons
         });
@@ -2716,6 +2721,42 @@ function confirm(opt) {
     });
 }
 exports.confirm = confirm;
+function prompt(opt) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b, _c;
+        if (typeof opt === 'string') {
+            opt = {
+                'content': opt
+            };
+        }
+        const taskId = opt.taskId;
+        if (!taskId) {
+            return '';
+        }
+        const t = task.list[taskId];
+        if (!t) {
+            return '';
+        }
+        const locale = t.locale.lang || core.config.locale;
+        const res = yield dialog({
+            'taskId': taskId,
+            'title': opt.title,
+            'direction': 'v',
+            'gutter': 10,
+            'content': '<block>' + opt.content + '</block><text v-model="data.text">',
+            'data': {
+                'text': (_a = opt.text) !== null && _a !== void 0 ? _a : ''
+            },
+            'select': function () {
+                this.dialogResult = this.data.text;
+            },
+            'buttons': [(_c = (_b = info.locale[locale]) === null || _b === void 0 ? void 0 : _b.ok) !== null && _c !== void 0 ? _c : info.locale['en'].ok],
+            'autoDialogResult': false
+        });
+        return res;
+    });
+}
+exports.prompt = prompt;
 function flash(formId, taskId) {
     if (!taskId) {
         return;

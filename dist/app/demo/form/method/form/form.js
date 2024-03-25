@@ -240,6 +240,11 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         });
     }
+    prompt() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.dr = yield clickgo.form.prompt('test');
+        });
+    }
     flash() {
         clickgo.form.flash(this.formId);
     }

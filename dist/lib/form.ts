@@ -3350,6 +3350,8 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
 
             public data = nopt.data ?? {};
 
+            public methods = nopt.methods ?? {};
+
             public get filename(): string {
                 return filename;
             }
@@ -3365,9 +3367,13 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                         this.go = false;
                     }
                 };
-                nopt.select?.(event as unknown as Event, button);
+                if (nopt.select) {
+                    nopt.select.call(this, event as unknown as Event, button)
+                }
                 if (event.go) {
-                    this.dialogResult = button;
+                    if (nopt.autoDialogResult !== false) {
+                        this.dialogResult = button;
+                    }
                     close(this.formId);
                 }
             }
@@ -3417,6 +3423,7 @@ export async function confirm(opt: string | types.IFormConfirmOptions): Promise<
     const res = await dialog({
         'taskId': taskId,
 
+        'title': opt.title,
         'content': opt.content,
         'buttons': buttons
     });
@@ -3427,6 +3434,44 @@ export async function confirm(opt: string | types.IFormConfirmOptions): Promise<
         return 0;
     }
     return false;
+}
+
+/**
+ * --- 显示一个输入框 dialog ---
+ * @param opt 选项或者提示文字
+ */
+export async function prompt(opt: string | types.IFormPromptOptions): Promise<string> {
+    if (typeof opt === 'string') {
+        opt = {
+            'content': opt
+        };
+    }
+    const taskId = opt.taskId;
+    if (!taskId) {
+        return '';
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return '';
+    }
+    const locale = t.locale.lang || core.config.locale;
+    const res = await dialog({
+        'taskId': taskId,
+
+        'title': opt.title,
+        'direction': 'v',
+        'gutter': 10,
+        'content': '<block>' + opt.content + '</block><text v-model="data.text">',
+        'data': {
+            'text': opt.text ?? ''
+        },
+        'select': function(this: any) {
+            this.dialogResult = this.data.text;
+        },
+        'buttons': [info.locale[locale]?.ok ?? info.locale['en'].ok],
+        'autoDialogResult': false
+    });
+    return res;
 }
 
 /**

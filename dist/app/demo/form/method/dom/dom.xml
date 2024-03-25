@@ -25,7 +25,7 @@
             <button @click="watchStyleChange = !watchStyleChange" ref="watchStyle"  :style="{'font-size': watchStyleChange ? 'inherit' : '16px'}">watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => { ... })</button>
             <button @click="isWatchStyle" >isWatchStyle(this.refs.watchStyle.$el)</button>
             <!-- getWatchInfo -->
-            <text :model-value="getWatchInfoText" readonly multi style="height: 300px;"></text>
+            <text :model-value="getWatchInfoText" readonly type="multi" style="height: 300px;"></text>
             <button @click="getWatchInfo" :disabled="getWatchInfoDisabled">getWatchInfo 20s</button>
             <block @mousedown="bindGesture" @touchstart="bindGesture" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureText ? bindGestureText : 'bindGesture(e: Touch | Mouse, { ... })'}}</block>
             <block @wheel="bindGestureWheel" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureWheelText ? bindGestureWheelText : 'bindGesture(e: Wheel, { ... })'}}</block>

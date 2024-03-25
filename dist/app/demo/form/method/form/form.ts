@@ -208,6 +208,10 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
+    public async prompt() {
+        this.dr = await clickgo.form.prompt('test');
+    }
+
     public flash(): void {
         clickgo.form.flash(this.formId);
     }

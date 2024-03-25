@@ -571,12 +571,15 @@ export interface IFormDialogOptions {
     'title'?: string;
     'content': string;
     'buttons'?: string[];
+    'autoDialogResult'?: boolean;
 
     'direction'?: 'h' | 'v';
     'gutter'?: number | string;
 
     /** --- 传值，需要用 data.x 读取 --- */
     'data'?: Record<string, any>;
+    /** --- 传值，需要用 methods.x 读取 --- */
+    'methods'?: Record<string, () => any>;
     /** --- 样式表 --- */
     'style'?: string;
     /** --- 路径基，以 / 结束或文件路径则以文件的基路径为准，可留空 --- */
@@ -593,8 +596,19 @@ export interface IFormConfirmOptions {
     /** --- 当前的 taskId，App 模式下无效 --- */
     'taskId'?: number;
 
+    'title'?: string;
     'content': string;
     'cancel'?: boolean;
+}
+
+/** --- Prompt 选项 --- */
+export interface IFormPromptOptions {
+    /** --- 当前的 taskId，App 模式下无效 --- */
+    'taskId'?: number;
+
+    'title'?: string;
+    'content': string;
+    'text'?: string;
 }
 
 export interface IFormSetTopMostOptions {

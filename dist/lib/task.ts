@@ -822,6 +822,15 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 opt.taskId = taskId;
                 return form.confirm(opt);
             },
+            prompt: function(opt: string | types.IFormPromptOptions): Promise<string> {
+                if (typeof opt === 'string') {
+                    opt = {
+                        'content': opt
+                    };
+                }
+                opt.taskId = taskId;
+                return form.prompt(opt);
+            },
             flash: function(fid: number): void {
                 form.flash(fid, taskId);
             },

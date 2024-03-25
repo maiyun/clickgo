@@ -707,6 +707,15 @@ function run(url_1) {
                     opt.taskId = taskId;
                     return form.confirm(opt);
                 },
+                prompt: function (opt) {
+                    if (typeof opt === 'string') {
+                        opt = {
+                            'content': opt
+                        };
+                    }
+                    opt.taskId = taskId;
+                    return form.prompt(opt);
+                },
                 flash: function (fid) {
                     form.flash(fid, taskId);
                 },

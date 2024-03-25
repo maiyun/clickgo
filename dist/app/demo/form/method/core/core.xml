@@ -1,9 +1,9 @@
 <form width="350" height="600" title="Library task" padding="10">
     <layout direction="v" gutter="10" style="flex: 1;">
         <label>config:</label>
-        <text v-model="config" readonly multi style="flex: 1;"></text>
+        <text v-model="config" readonly type="multi" style="flex: 1;"></text>
         <label>global:</label>
-        <text v-model="global" readonly multi style="flex: 1;"></text>
+        <text v-model="global" readonly type="multi" style="flex: 1;"></text>
         <button @click="getCdn">getCdn()</button>
         <button @click="getAvailArea">getAvailArea()</button>
         <layout gutter="10">

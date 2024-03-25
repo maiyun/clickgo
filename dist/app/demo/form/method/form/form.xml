@@ -56,6 +56,7 @@
             <button @click="dialogData">Dialog data</button>
             <button @click="confirm(false)">confirm('confirm')</button>
             <button @click="confirm(true)">confirm({'content':'confirm','cancel':true})</button>
+            <button @click="prompt">prompt('test')</button>
             <button @click="flash">flash({{formId}})</button>
             <button @click="showLauncher">showLauncher()</button>
         </layout>
