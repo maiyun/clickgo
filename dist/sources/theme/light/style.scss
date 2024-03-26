@@ -260,7 +260,7 @@ global {
 .greatlist_wrap {
     background: transparent;
     .greatlist_t {
-        .greatlist_tag-cg-vflow {
+        .greatlist_tag-cg-vflow, .greatlist_tag-cg-flow {
             .greatlist_item {
                 transition: all .3s var(--g-cubic);
                 &:not([data-cg-disabled]) {
