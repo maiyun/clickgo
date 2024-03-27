@@ -1,5 +1,9 @@
 # 更新日志
 
+# 3.11.18
+
+[+] 修复 group、greatlist、text 控件的一些问题。
+
 # 3.11.17
 
 [+] form 库新增 prompt 方法。  

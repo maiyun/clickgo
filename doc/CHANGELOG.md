@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.11.18
+
+[+] Fixed some issues with group, greatlist, and text controls.
+
 # 3.11.17
 
 [+] Added `prompt` method to the `form` library.  
