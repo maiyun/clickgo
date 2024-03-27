@@ -162,7 +162,7 @@ class default_1 extends clickgo.control.AbstractControl {
     input() {
         return __awaiter(this, void 0, void 0, function* () {
             this.checkNumber();
-            if (this.propNumber('maxlength') && (this.refs.text.value > this.propNumber('maxlength'))) {
+            if (this.propNumber('maxlength') && (this.refs.text.value.length > this.propNumber('maxlength'))) {
                 this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
                 return;
             }

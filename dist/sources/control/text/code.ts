@@ -179,7 +179,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 文本框的 input 事件 --- */
     public async input(): Promise<void> {
         this.checkNumber();
-        if (this.propNumber('maxlength') && (this.refs.text.value > this.propNumber('maxlength'))) {
+        if (this.propNumber('maxlength') && (this.refs.text.value.length > this.propNumber('maxlength'))) {
             this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
             return;
         }
