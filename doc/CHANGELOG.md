@@ -2,7 +2,7 @@
 
 # 3.11.18
 
-[+] Fixed some issues with group, greatlist, and text controls.
+[\*] Fixed some issues with group, greatlist, and text controls.
 
 # 3.11.17
 

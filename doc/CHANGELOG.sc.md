@@ -2,7 +2,7 @@
 
 # 3.11.18
 
-[+] 修复 group、greatlist、text 控件的一些问题。
+[\*] 修复 group、greatlist、text 控件的一些问题。
 
 # 3.11.17
 
