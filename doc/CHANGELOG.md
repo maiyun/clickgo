@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.11.19
+
+[\*] Some optimizations.
+
 # 3.11.18
 
 [\*] Fixed some issues with group, greatlist, and text controls.
