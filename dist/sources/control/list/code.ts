@@ -28,6 +28,8 @@ export default class extends clickgo.control.AbstractControl {
         'async': boolean | string;
         'icon': boolean | string;
         'iconDefault': string;
+        /** --- 开启后，左侧将显示 check 或 radio 控件，以控件勾选为准 --- */
+        'check': boolean | string;
 
         'data': any[] | Record<string, string>;
         'modelValue': string[];
@@ -46,6 +48,7 @@ export default class extends clickgo.control.AbstractControl {
             'async': false,
             'icon': false,
             'iconDefault': '',
+            'check': false,
 
             'data': [],
             'modelValue': []

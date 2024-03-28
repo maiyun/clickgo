@@ -4,6 +4,10 @@
             <div v-if="propBoolean('tree')" class="tree" :class="['tree' + data.row.tree]" @click="treeClick($event, data.row)" data-cg-glno>
                 <cg-loading v-if="data.row.tree === 2"></cg-loading>
             </div>
+            <!-- check 或 radio  -->
+            <template v-if="propBoolean('check')">
+                
+            </template>
             <cg-img v-if="propBoolean('icon')" class="icon" :src="((data.row.tree <= 0) || (data.row.tree === 2)) ? data.row.icon : (data.row.openicon || data.row.icon)"></cg-img>
             <div v-if="slots['row']" class="slot">
                 <slot name="row" :row="data.row" :index="data.index"></slot>
