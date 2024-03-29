@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.11.20
+
+[+] Added debug mode to AbstractBoot. When enabled, developers can debug using browser developer tools after installing the Vue.js devtools plugin.
+
 # 3.11.19
 
 [\*] Some optimizations.
