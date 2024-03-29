@@ -97,4 +97,6 @@ class Boot extends clickgo.AbstractBoot {
     }
 
 }
-clickgo.launcher(new Boot());
+clickgo.launcher(new Boot({
+    'debug': false
+}));

@@ -6,7 +6,14 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'max': null,
         'min': null,
-        'close': null
+        'close': null,
+
+        'update:width': null,
+        'update:height': null,
+        'update:left': null,
+        'update:top': null,
+        'update:stateMin': null,
+        'update:stateMax': null
     };
 
     public props: {

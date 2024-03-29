@@ -31,6 +31,15 @@ function hasFrame() {
 }
 exports.hasFrame = hasFrame;
 class AbstractBoot {
+    isDebug() {
+        return this._debug;
+    }
+    constructor(opt = {}) {
+        this._debug = false;
+        if (opt.debug) {
+            this._debug = true;
+        }
+    }
     onError() {
         return;
     }
@@ -101,7 +110,7 @@ function launcher(boot) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             const paths = [
-                loader.cdn + '/npm/vue@3.4.21/dist/vue.global.prod.min.js'
+                `${loader.cdn}/npm/vue@3.4.21/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`
             ];
             if (!(window.TouchEvent)) {
                 window.TouchEvent = CustomEvent;

@@ -124,4 +124,6 @@ class Boot extends clickgo.AbstractBoot {
         el.innerHTML = 'Task(' + taskId.toString() + ') ended.';
     }
 }
-clickgo.launcher(new Boot());
+clickgo.launcher(new Boot({
+    'debug': false
+}));

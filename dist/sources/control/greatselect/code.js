@@ -29,7 +29,8 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'remove': null,
-            'add': null
+            'add': null,
+            'update:modelValue': null
         };
         this.props = {
             'disabled': false,

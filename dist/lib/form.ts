@@ -2792,7 +2792,7 @@ export async function createPanel<T extends AbstractPanel>(
                 'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                 'type': 'danger'
             });
-            console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err);
+            console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
             core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
         };
         // --- 挂载控件对象到 vapp ---
@@ -3245,7 +3245,7 @@ export async function create<T extends AbstractForm>(
                 'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                 'type': 'danger'
             });
-            console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err);
+            console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
             core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
         };
         // --- 挂载控件对象到 vapp ---

@@ -39,6 +39,22 @@ export function hasFrame(): boolean {
 /** --- 全局类 --- */
 export abstract class AbstractBoot {
 
+    /** --- 当前是否是 debug 模式 --- */
+    private _debug: boolean = false;
+
+    /** --- 判断当前是否是 debug 模式 --- */
+    public isDebug(): boolean {
+        return this._debug;
+    }
+
+    public constructor(opt: {
+        'debug'?: boolean;
+    } = {}) {
+        if (opt.debug) {
+            this._debug = true;
+        }
+    }
+
     /** --- 入口方法 --- */
     public abstract main(): void | Promise<void>;
 
@@ -176,7 +192,7 @@ export function launcher(boot: AbstractBoot): void {
     (async function() {
         // --- 通过标签加载库 ---
         const paths: string[] = [
-            loader.cdn + '/npm/vue@3.4.21/dist/vue.global.prod.min.js'
+            `${loader.cdn}/npm/vue@3.4.21/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`
         ];
         // --- 判断 TouchEvent 是否存在（例如某些浏览器可能不存在这个对象） ---
         if (!((window as any).TouchEvent)) {

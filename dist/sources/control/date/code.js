@@ -27,6 +27,10 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'update:modelValue': null,
+            'update:tz': null
+        };
         this.props = {
             'disabled': false,
             'readonly': false,

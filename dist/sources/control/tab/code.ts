@@ -3,6 +3,13 @@ import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'close': null,
+
+        'update:tabs': null,
+        'update:modelValue': null
+    };
+
     public props = {
         'tabPosition': 'top',
         'drag': false,

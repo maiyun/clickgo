@@ -2165,7 +2165,7 @@ function createPanel(rootPanel_1, cls_1) {
                     'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                     'type': 'danger'
                 });
-                console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err);
+                console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
                 core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
             };
             for (const key in components) {
@@ -2544,7 +2544,7 @@ function create(cls_1, data_1) {
                     'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
                     'type': 'danger'
                 });
-                console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err);
+                console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
                 core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
             };
             for (const key in components) {

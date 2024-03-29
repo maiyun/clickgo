@@ -41,7 +41,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isSpaceDown = false;
         this.emits = {
             'change': null,
-            'changed': null
+            'changed': null,
+            'update:modelValue': null,
+            'update:indeterminate': null
         };
         this.props = {
             'disabled': false,

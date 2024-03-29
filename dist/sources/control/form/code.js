@@ -39,7 +39,13 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'max': null,
             'min': null,
-            'close': null
+            'close': null,
+            'update:width': null,
+            'update:height': null,
+            'update:left': null,
+            'update:top': null,
+            'update:stateMin': null,
+            'update:stateMax': null
         };
         this.props = {
             'icon': '',
