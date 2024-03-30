@@ -355,6 +355,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         const n = parseFloat(this.value) + num;
         this.value = n.toString();
+        this.emit('update:modelValue', this.value);
     }
     execCmd(ac) {
         return __awaiter(this, void 0, void 0, function* () {

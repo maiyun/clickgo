@@ -393,6 +393,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         const n = parseFloat(this.value) + num;
         this.value = n.toString();
+        this.emit('update:modelValue', this.value);
     }
 
     /** --- 执行复制粘贴剪切等操作 --- */
