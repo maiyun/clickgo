@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.22
+
+[\*] Enhanced slotsAll method of AbstractControl class.  
+[\*] Fixed issue where min and max parameters of text control were ineffective when set to 0.
+
 # 3.11.21
 
 [\*] Optimized certain warning issues in debug mode.  
