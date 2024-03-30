@@ -77,6 +77,13 @@ class default_1 extends clickgo.form.AbstractForm {
                 'icon': '/package/res/zip.svg'
             },
             {
+                'id': '7',
+                'type': 1,
+                'name': 'packlonglonglonglonglonglonglonglonglong.zip',
+                'time': 1676700099,
+                'icon': '/package/res/zip.svg'
+            },
+            {
                 'id': 7,
                 'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/img.jpg'
             }

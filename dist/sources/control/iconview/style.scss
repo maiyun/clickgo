@@ -25,7 +25,7 @@
                     }
                 }
                 .name {
-                    margin-top: 12px;
+                    margin-top: 12px; max-width: calc(100% - var(--g-padding)); overflow: hidden; text-overflow: ellipsis;
                 }
                 .time {
                     margin-top: 6px; color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
