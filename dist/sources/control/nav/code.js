@@ -38,7 +38,9 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'layer': null,
-            'qs': null
+            'qs': null,
+            'update:modelValue': null,
+            'update:show': null
         };
         this.props = {
             'modelValue': '',

@@ -2,6 +2,12 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'change': null,
+
+        'update:modelValue': null
+    };
+
     public props: {
         'modelValue': number | string;
         // --- 最大页数 ---

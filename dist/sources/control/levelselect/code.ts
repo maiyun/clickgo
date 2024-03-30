@@ -8,7 +8,9 @@ export default class extends clickgo.control.AbstractControl {
         'load': null,
         'loaded': null,
         /** --- modelValue 变更时同步提交所有层级的 level value/label 值 --- */
-        'level': null
+        'level': null,
+
+        'update:modelValue': null
     };
 
     public props: {

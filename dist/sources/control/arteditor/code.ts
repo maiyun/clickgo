@@ -5,7 +5,8 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'imgselect': null,
 
-        'update:modelValue': null
+        'update:modelValue': null,
+        'update:preview': null
     };
 
     public props: {

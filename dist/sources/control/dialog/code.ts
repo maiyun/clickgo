@@ -2,7 +2,9 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public padding: string = '';
+    public emits = {
+        'select': null
+    };
 
     public props = {
         'direction': 'h',
@@ -10,6 +12,8 @@ export default class extends clickgo.control.AbstractControl {
 
         'buttons': ['OK']
     };
+
+    public padding: string = '';
 
     public get paddingMargin(): string {
         return this.padding.replace(/(\w+)/g, '-$1');

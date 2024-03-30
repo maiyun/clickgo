@@ -27,6 +27,9 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'media': null
+        };
         this.props = {
             'direction': 'h',
             'media': [],

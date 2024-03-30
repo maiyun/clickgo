@@ -125,5 +125,5 @@ class Boot extends clickgo.AbstractBoot {
     }
 }
 clickgo.launcher(new Boot({
-    'debug': false
+    'debug': true
 }));

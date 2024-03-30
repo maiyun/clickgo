@@ -7,8 +7,14 @@ export default class extends clickgo.control.AbstractControl {
         'remove': null,
         'add': null,
         'itemclicked': null,
+        'beforeselect': null,
+        'select': null,
+        'afterselect': null,
+        'client':null,
 
-        'update:modelValue': null
+        'update:modelValue': null,
+        'update:scrollLeft': null,
+        'update:scrollTop': null
     };
 
     public props: {
@@ -739,10 +745,10 @@ export default class extends clickgo.control.AbstractControl {
 
         // --- 向上更新 scroll top 和 scroll left ---
         this.watch('sl', () => {
-            this.emit('update:scroll-left', this.sl);
+            this.emit('update:scrollLeft', this.sl);
         });
         this.watch('offset', () => {
-            this.emit('update:scroll-top', this.offset);
+            this.emit('update:scrollTop', this.offset);
         });
 
         // --- 监听用户设定的值的变更事件 ---

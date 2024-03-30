@@ -27,12 +27,15 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.padding = '';
+        this.emits = {
+            'select': null
+        };
         this.props = {
             'direction': 'h',
             'gutter': '',
             'buttons': ['OK']
         };
+        this.padding = '';
     }
     get paddingMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');

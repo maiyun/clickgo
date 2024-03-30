@@ -27,6 +27,10 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'show': null,
+            'update:offset': null
+        };
         this.props = {
             'disabled': false,
             'float': false,

@@ -44,7 +44,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'tagclick': null,
             'remote': null,
             'load': null,
-            'label': null
+            'label': null,
+            'update:modelValue': null
         };
         this.props = {
             'disabled': false,

@@ -40,7 +40,13 @@ class default_1 extends clickgo.control.AbstractControl {
             'remove': null,
             'add': null,
             'itemclicked': null,
-            'update:modelValue': null
+            'beforeselect': null,
+            'select': null,
+            'afterselect': null,
+            'client': null,
+            'update:modelValue': null,
+            'update:scrollLeft': null,
+            'update:scrollTop': null
         };
         this.props = {
             'disabled': false,
@@ -595,10 +601,10 @@ class default_1 extends clickgo.control.AbstractControl {
             'deep': true
         });
         this.watch('sl', () => {
-            this.emit('update:scroll-left', this.sl);
+            this.emit('update:scrollLeft', this.sl);
         });
         this.watch('offset', () => {
-            this.emit('update:scroll-top', this.offset);
+            this.emit('update:scrollTop', this.offset);
         });
         this.watch('modelValue', () => {
             if ((this.valueData.length === this.props.modelValue.length)

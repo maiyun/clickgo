@@ -20,7 +20,10 @@ export default class extends clickgo.control.AbstractControl {
         'afterselect': null,
         'itemclicked': null,
         'open': null,
-        'drop': null
+        'drop': null,
+        'client': null,
+
+        'update:modelValue': null
     };
 
     public props: {

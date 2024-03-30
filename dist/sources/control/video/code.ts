@@ -2,6 +2,14 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'durationchange': null,
+        'canplay': null,
+
+        'update:current': null,
+        'update:play': null
+    };
+
     public props: {
         'src': string;
 

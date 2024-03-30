@@ -3,9 +3,11 @@ import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public value = false;
+    public emits = {
+        'change': null,
 
-    public isSpaceDown = false;
+        'update:modelValue': null
+    };
 
     public props: {
         'disabled': boolean | string;
@@ -16,6 +18,10 @@ export default class extends clickgo.control.AbstractControl {
 
             'modelValue': false
         };
+
+    public value = false;
+
+    public isSpaceDown = false;
 
     public click(): void {
         const event: types.ISwitchChangeEvent = {

@@ -36,6 +36,20 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'focus': null,
+            'blur': null,
+            'gesture': null,
+            'clientwidth': null,
+            'clientheight': null,
+            'scrollwidth': null,
+            'scrollheight': null,
+            'update:modelValue': null,
+            'update:scrollLeft': null,
+            'update:scrollTop': null,
+            'update:selectionStart': null,
+            'update:selectionEnd': null,
+        };
         this.props = {
             'disabled': false,
             'readonly': false,
@@ -380,7 +394,7 @@ class default_1 extends clickgo.control.AbstractControl {
             switch (n) {
                 case 'selectionStart':
                 case 'selectionEnd': {
-                    this.emit('update:' + n.replace(/([A-Z])/, '-$1').toLowerCase(), v);
+                    this.emit('update:' + n, v);
                     break;
                 }
                 case 'scrollWidth':

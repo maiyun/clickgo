@@ -78,6 +78,36 @@ function isPointInPolygon(point: {
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emtis = {
+        'mapClick': null,
+        'init': null,
+        'markerClick': null,
+        'markerDrag': null,
+        'markerDragend': null,
+        'markerUpdate': null,
+        'overlayClick': null,
+        'lineClick': null,
+        'lineDrag': null,
+        'ineDragend': null,
+        'lineUpdate': null,
+        'lineInsert': null,
+        'lineRemove': null,
+        'polygonClick': null,
+        'polygonDrag': null,
+        'polygonDragend': null,
+        'polygonUpdate': null,
+        'polygonInsert': null,
+        'polygonRemove': null,
+        
+        'update:zoom': null,
+        'update:lat': null,
+        'update:lng': null,
+        'update:markers': null,
+        'update:lines': null,
+        'update:polygon': null,
+        'update:polygons': null
+    };
+
     public props: {
         'disabled': boolean | string;
 

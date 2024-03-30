@@ -2,6 +2,22 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'focus': null,
+        'blur': null,
+        'gesture': null,
+        'clientwidth': null,
+        'clientheight': null,
+        'scrollwidth': null,
+        'scrollheight': null,
+
+        'update:modelValue': null,
+        'update:scrollLeft': null,
+        'update:scrollTop': null,
+        'update:selectionStart': null,
+        'update:selectionEnd': null,
+    };
+
     public props: {
         'disabled': boolean | string;
         'readonly': boolean | string;
@@ -422,7 +438,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 选择改变 ---
                 case 'selectionStart':
                 case 'selectionEnd': {
-                    this.emit('update:' + n.replace(/([A-Z])/, '-$1').toLowerCase(), v);
+                    this.emit('update:' + n, v);
                     break;
                 }
                 // --- 内容改变 ---

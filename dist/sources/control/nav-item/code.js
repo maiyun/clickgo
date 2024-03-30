@@ -37,7 +37,8 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
-            'select': null
+            'select': null,
+            'update:show': null
         };
         this.props = {
             'label': '',

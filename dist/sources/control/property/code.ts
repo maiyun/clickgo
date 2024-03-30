@@ -2,6 +2,12 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'update:sort': null,
+        'update:type': null,
+        'update:modelValue': null
+    };
+
     public props: {
         'disabled': boolean | string;
 

@@ -37,7 +37,9 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
-            'imgselect': null
+            'imgselect': null,
+            'init': null,
+            'update:modelValue': null
         };
         this.props = {
             'disabled': false,

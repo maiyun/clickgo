@@ -2,6 +2,12 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'show': null,
+
+        'update:offset': null
+    };
+
     public props: {
         'disabled': boolean | string;
         'float': boolean | string;

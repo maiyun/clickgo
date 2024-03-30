@@ -2,6 +2,10 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'media': null
+    };
+
     public props: {
         'direction': 'h' | 'v';
         /** --- 如 [100, 300]，width 每次达到后则响应 media 事件，并传入响应的数字值，否则为 0 就是比最小值还小 --- */

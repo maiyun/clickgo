@@ -40,7 +40,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'label': null,
             'load': null,
             'loaded': null,
-            'level': null
+            'level': null,
+            'update:modelValue': null
         };
         this.props = {
             'disabled': false,

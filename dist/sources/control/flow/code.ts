@@ -10,7 +10,10 @@ export default class extends clickgo.control.AbstractControl {
         'clientwidth': null,
         'clientheight': null,
         'scrollwidth': null,
-        'scrollheight': null
+        'scrollheight': null,
+
+        'update:scrollLeft': null,
+        'update:scrollTop': null
     };
 
     public props: {

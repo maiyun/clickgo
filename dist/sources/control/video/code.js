@@ -36,6 +36,12 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'durationchange': null,
+            'canplay': null,
+            'update:current': null,
+            'update:play': null
+        };
         this.props = {
             'src': '',
             'controls': false,

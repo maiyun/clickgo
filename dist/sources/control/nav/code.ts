@@ -4,7 +4,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'layer': null,
-        'qs': null
+        'qs': null,
+
+        'update:modelValue': null,
+        'update:show': null
     };
 
     public props: {

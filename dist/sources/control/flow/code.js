@@ -35,7 +35,9 @@ class default_1 extends clickgo.control.AbstractControl {
             'clientwidth': null,
             'clientheight': null,
             'scrollwidth': null,
-            'scrollheight': null
+            'scrollheight': null,
+            'update:scrollLeft': null,
+            'update:scrollTop': null
         };
         this.props = {
             'direction': 'h',

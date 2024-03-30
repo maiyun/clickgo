@@ -8,7 +8,10 @@ export default class extends clickgo.control.AbstractControl {
         'add': null,
         'itemclicked': null,
         'label': null,
-        'item': null
+        'item': null,
+        'load': null,
+
+        'update:modelValue': null
     };
 
     public props: {

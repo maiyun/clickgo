@@ -12,7 +12,9 @@ export default class extends clickgo.control.AbstractControl {
 
         'remote': null,
         'load': null,
-        'label': null
+        'label': null,
+
+        'update:modelValue': null
     };
 
     public props: {

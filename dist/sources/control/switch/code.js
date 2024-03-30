@@ -27,12 +27,16 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.value = false;
-        this.isSpaceDown = false;
+        this.emits = {
+            'change': null,
+            'update:modelValue': null
+        };
         this.props = {
             'disabled': false,
             'modelValue': false
         };
+        this.value = false;
+        this.isSpaceDown = false;
     }
     click() {
         const event = {
