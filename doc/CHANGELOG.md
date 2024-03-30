@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.11.21
+
+[\*] Optimized certain warning issues in debug mode.  
+[\*] Improved the display of excessively wide tips.  
+[\*] Fixed the issue where clicking the control buttons in number mode of the text control did not increment the value upwards.  
+[\*] Optimized the handling of long names exceeding the boundaries in the iconview control.
+
 # 3.11.20
 
 [+] Added debug mode to AbstractBoot. When enabled, developers can debug using browser developer tools after installing the Vue.js devtools plugin.
