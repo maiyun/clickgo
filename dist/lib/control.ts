@@ -206,7 +206,7 @@ export abstract class AbstractControl {
             const rtn: any[] = [];
             for (const slot of ls) {
                 if (!slot.props) {
-                    if (slot.children.length) {
+                    if ((typeof slot.children !== 'string') && slot.children.length) {
                         for (const item of slot.children) {
                             rtn.push(item);
                         }

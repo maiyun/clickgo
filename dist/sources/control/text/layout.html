@@ -20,8 +20,8 @@
             <div v-if="slots['prepend']" class="prepend"><slot name="prepend"></slot></div>
             <input ref="text" class="text" :class="[darkbg && 'darkbg']" :type="type === 'password' ? (showPassword ? 'text' : 'password') : type" :value="value" :maxlength="propNumber('maxlength') || undefined" :placeholder="placeholder" :style="{'padding': padding, 'font': font, 'text-align': textAlign}" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scrollEvent" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select">
             <div v-if="type === 'number'" class="number">
-                <div class="up" @click="numberClick(1)" :data-cg-disabled="(max && (value >= max)) ? '' : undefined"></div>
-                <div class="down" @click="numberClick(-1)" :data-cg-disabled="(min && (value <= min)) ? '' : undefined"></div>
+                <div class="up" @click="numberClick(1)" :data-cg-disabled="(max !== undefined && (value >= max)) ? '' : undefined"></div>
+                <div class="down" @click="numberClick(-1)" :data-cg-disabled="(min !== undefined && (value <= min)) ? '' : undefined"></div>
             </div>
             <div v-if="type === 'password'" class="pwdicon" @click="showPassword=!showPassword">
                 <svg v-if="showPassword" viewBox="0 0 24 24" fill="none"><path d="M3 14C3 9.02944 7.02944 5 12 5C16.9706 5 21 9.02944 21 14M17 14C17 16.7614 14.7614 19 12 19C9.23858 19 7 16.7614 7 14C7 11.2386 9.23858 9 12 9C14.7614 9 17 11.2386 17 14Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>

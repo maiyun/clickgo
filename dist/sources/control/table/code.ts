@@ -4,7 +4,11 @@ import * as types from '~/types/index';
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
-        'sort': null
+        'sort': null,
+        'select': null,
+        'gesture': null,
+
+        'update:modelValue': null
     };
 
     public props: {
