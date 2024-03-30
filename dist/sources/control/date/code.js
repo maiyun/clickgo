@@ -266,7 +266,7 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.form.hidePop();
     }
     onMounted() {
-        const maxYear = this.dateObj.getUTCFullYear() + 20;
+        const maxYear = this.dateObj.getUTCFullYear() + 100;
         for (let i = 1900; i <= maxYear; ++i) {
             this.years.push(i.toString());
         }

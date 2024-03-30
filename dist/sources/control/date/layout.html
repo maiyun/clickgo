@@ -1,4 +1,4 @@
-<div class="wrap" :class="[isFocus && 'focus']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div v-if="propBoolean('date')" @click="click('date')" ref="date">{{dateObj.getUTCFullYear().toString()}}-{{pad(dateObj.getUTCMonth() + 1)}}-{{pad(dateObj.getUTCDate())}}</div>
     <div v-if="propBoolean('time')" @click="click('time')" ref="time">{{pad(this.dateObj.getUTCHours())}}:{{pad(dateObj.getUTCMinutes())}}:{{pad(dateObj.getUTCSeconds())}}</div>
     <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
@@ -7,15 +7,15 @@
             <div>
                 <div class="item">
                     <div class="title">{{l('year')}}</div>
-                    <cg-list :data="years" v-model="vyear"></cg-list>
+                    <cg-list :data="years" v-model="vyear" virtual></cg-list>
                 </div>
                 <div class="item">
                     <div class="title">{{l('month')}}</div>
-                    <cg-list :data="months" v-model="vmonth"></cg-list>
+                    <cg-list :data="months" v-model="vmonth" virtual></cg-list>
                 </div>
                 <div class="item">
                     <div class="title">{{l('date')}}</div>
-                    <cg-list :data="dates" v-model="vdate"></cg-list>
+                    <cg-list :data="dates" v-model="vdate" virtual></cg-list>
                 </div>
             </div>
             <div>
@@ -29,15 +29,15 @@
             <div>
                 <div class="item">
                     <div class="title">{{l('hour')}}</div>
-                    <cg-list :data="hours" v-model="vhour"></cg-list>
+                    <cg-list :data="hours" v-model="vhour" virtual></cg-list>
                 </div>
                 <div class="item">
                     <div class="title">{{l('minute')}}</div>
-                    <cg-list :data="minutes" v-model="vminute"></cg-list>
+                    <cg-list :data="minutes" v-model="vminute" virtual></cg-list>
                 </div>
                 <div class="item">
                     <div class="title">{{l('second')}}</div>
-                    <cg-list :data="seconds" v-model="vsecond"></cg-list>
+                    <cg-list :data="seconds" v-model="vsecond" virtual></cg-list>
                 </div>
             </div>
             <div>

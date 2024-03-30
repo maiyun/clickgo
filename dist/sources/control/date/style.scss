@@ -8,10 +8,7 @@
     &:not([data-cg-disabled]) {
         background: var(--g-plain-background);
         border-color: var(--g-plain-border-color);
-        
-        &.focus {
-            border-color: var(--g-plain-border-color-focus);
-        }
+
         &:hover {
             border-color: var(--g-plain-border-color-hover);
         }

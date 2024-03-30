@@ -182,8 +182,10 @@ global {
 // -- CONTROL -- date ---
 
 .date_wrap {
+    transition: all .3s var(--g-cubic);
     &:not([data-cg-disabled]) {
         > .date_tag-div {
+            transition: all .3s var(--g-cubic);
             &:hover:not(:active):not([data-cg-pop-open]) {
                 background: var(--g-background-hover);
             }
