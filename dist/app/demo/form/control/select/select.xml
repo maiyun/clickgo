@@ -9,7 +9,7 @@
                         <img :src="slist[select[0]] ? slist[select[0]].src : ''" style="width: 32px; height: 32px;"></img>
                         <block>
                             <block>{{slist[select[0]] ? slist[select[0]].name : 'None'}}{{select.length > 1 ? ' [multi]' : ''}}</block>
-                            <block style="opacity: .7;">{{slist[select[0]] ? slist[select[0]].path : none}}</block>
+                            <block style="opacity: .7;">{{slist[select[0]] ? slist[select[0]].path : 'none'}}</block>
                         </block>
                     </layout>
                     <template v-slot:pop="data">

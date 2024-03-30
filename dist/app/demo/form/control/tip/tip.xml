@@ -9,6 +9,9 @@
         <tip label="This is a select">
             <select :data="[1,2,3,4]"></select>
         </tip>
+        <tip label="This is so long long long long long long long long long long">
+            <label>So long</label>
+        </tip>
         <tip>
             <template v-slot:content>
                 <layout direction="v" gutter="5">
