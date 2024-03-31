@@ -193,35 +193,39 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的 input 事件 --- */
-    public async input(): Promise<void> {
-        this.checkNumber();
-        if (this.propNumber('maxlength') && (this.refs.text.value.length > this.propNumber('maxlength'))) {
-            this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
+    public async input(e: InputEvent): Promise<void> {
+        const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+        this.checkNumber(target);
+        if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
+            target.value = target.value.slice(0, this.propNumber('maxlength'));
             return;
         }
-        this.value = this.refs.text.value;
+        this.value = target.value;
         await this.nextTick();
         this.checkAdaption();
         this.emit('update:modelValue', this.value);
     }
 
     /** --- 检测 value 值是否符合 max 和 min --- */
-    public checkNumber() {
+    public checkNumber(target?: HTMLInputElement | HTMLTextAreaElement) {
+        if (!target) {
+            target = this.refs.text as unknown as HTMLInputElement | HTMLTextAreaElement;
+        }
         if (this.props.type !== 'number') {
             return false;
         }
         let change = false;
-        if (!this.refs.text.value && this.value) {
+        if (!target.value && this.value) {
             change = true;
         }
-        if (this.refs.text.value) {
-            const val = parseFloat(this.refs.text.value);
+        if (target.value) {
+            const val = parseFloat(target.value);
             if (this.props.max !== undefined && this.props.max !== 'undefined' && val > this.propNumber('max')) {
-                this.refs.text.value = this.propNumber('max').toString();
+                target.value = this.propNumber('max').toString();
                 change = true;
             }
             if (this.props.min !== undefined && this.props.min !== 'undefined' && val < this.propNumber('min')) {
-                this.refs.text.value = this.propNumber('min').toString();
+                target.value = this.propNumber('min').toString();
                 change = true;
             }
         }

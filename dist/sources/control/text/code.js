@@ -173,35 +173,39 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isFocus = false;
         this.emit('blur');
     }
-    input() {
+    input(e) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.checkNumber();
-            if (this.propNumber('maxlength') && (this.refs.text.value.length > this.propNumber('maxlength'))) {
-                this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
+            const target = e.target;
+            this.checkNumber(target);
+            if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
+                target.value = target.value.slice(0, this.propNumber('maxlength'));
                 return;
             }
-            this.value = this.refs.text.value;
+            this.value = target.value;
             yield this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);
         });
     }
-    checkNumber() {
+    checkNumber(target) {
+        if (!target) {
+            target = this.refs.text;
+        }
         if (this.props.type !== 'number') {
             return false;
         }
         let change = false;
-        if (!this.refs.text.value && this.value) {
+        if (!target.value && this.value) {
             change = true;
         }
-        if (this.refs.text.value) {
-            const val = parseFloat(this.refs.text.value);
+        if (target.value) {
+            const val = parseFloat(target.value);
             if (this.props.max !== undefined && this.props.max !== 'undefined' && val > this.propNumber('max')) {
-                this.refs.text.value = this.propNumber('max').toString();
+                target.value = this.propNumber('max').toString();
                 change = true;
             }
             if (this.props.min !== undefined && this.props.min !== 'undefined' && val < this.propNumber('min')) {
-                this.refs.text.value = this.propNumber('min').toString();
+                target.value = this.propNumber('min').toString();
                 change = true;
             }
         }
