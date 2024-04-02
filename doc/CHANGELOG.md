@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.11.23
+
+[+] Added new sgroup control.  
+[\*] Fixed some issues with the page control.  
+[\*] Optimized the text control.
+
 # 3.11.22
 
 [\*] Enhanced slotsAll method of AbstractControl class.  

@@ -1,5 +1,11 @@
 # 更新日志
 
+# 3.11.23
+
+[+] 新增 sgroup 控件。  
+[\*] 修复 page 控件的一些问题。  
+[\*] 优化 text 控件。
+
 # 3.11.22
 
 [\*] 优化 AbstractControl 类的 slotsAll 方法。  
