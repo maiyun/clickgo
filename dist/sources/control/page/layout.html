@@ -1,14 +1,22 @@
 <div class="wrap">
     <div class="list">
+        <!-- 向左翻页 -->
         <div v-if="page > 1" :tabindex="formFocus ? '0' : undefined" class="left" @click="--page;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
+        <!-- 首页码 -->
         <div v-if="page > 1" :tabindex="formFocus ? '0' : undefined" @click="page=1;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">1</div>
+        <!-- 左麻子点 -->
         <div v-if="page > propNumber('control') + 2" :tabindex="formFocus ? '0' : undefined" v-html="svg" @click="page-=10;if(page<1){page=1}$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
+        <!-- 左扩展页码 -->
         <div :tabindex="formFocus ? '0' : undefined" v-for="item of prevs" @click="page=item;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">{{item}}</div>
         <!-- 中间的页码 -->
         <div :tabindex="formFocus ? '0' : undefined" class="selected">{{page}}</div>
+        <!-- 右扩展页码 -->
         <div :tabindex="formFocus ? '0' : undefined" v-for="item of nexts" @click="page=item;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">{{item}}</div>
+        <!-- 右麻子点 -->
         <div v-if="page < maxPage - propNumber('control') - 1" :tabindex="formFocus ? '0' : undefined" v-html="svg" @click="page+=10;if(page>maxPage){page=maxPage}$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
+        <!-- 尾页码 -->
         <div v-if="page < maxPage" :tabindex="formFocus ? '0' : undefined" @click="page=maxPage;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown">{{maxPage}}</div>
+        <!-- 向右翻页 -->
         <div v-if="page < maxPage" :tabindex="formFocus ? '0' : undefined" class="right" @click="++page;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
     </div>
     <div v-if="propInt('total')" class="total">{{l('total-of').replace('?',propInt('total'))}}</div>

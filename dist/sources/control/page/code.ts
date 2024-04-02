@@ -82,26 +82,21 @@ export default class extends clickgo.control.AbstractControl {
     // --- 刷新重置界面 ---
     public refresh(): void {
         this.prevs.length = 0;
-        if (this.page > this.propNumber('control')) {
-            let prev = this.page - this.propNumber('control');
-            if (prev < this.propNumber('control')) {
-                prev = this.propNumber('control');
-            }
-            for (let i = prev; i < this.page; ++i) {
-                this.prevs.push(i);
-            }
+        let min = this.page - this.propNumber('control');
+        if (min < 2) {
+            min = 2;
+        }
+        for (let i = this.page - 1; i >= min; --i) {
+            this.prevs.unshift(i);
         }
 
         this.nexts.length = 0;
-        const last2 = this.maxPage - 1;
-        if (this.page < last2) {
-            let next = this.page + this.propNumber('control');
-            if (next > last2) {
-                next = last2;
-            }
-            for (let i = this.page + 1; i <= next; ++i) {
-                this.nexts.push(i);
-            }
+        let max = this.page + this.propNumber('control');
+        if (max > this.maxPage - 1) {
+            max = this.maxPage - 1;
+        }
+        for (let i = this.page + 1; i <= max; ++i) {
+            this.nexts.push(i);
         }
     }
 
