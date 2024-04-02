@@ -71,6 +71,7 @@
                 <layout gutter="10">
                     <button @click="openForm('ciconview')">Iconview</button>
                     <button @click="openForm('cvideo')">Video</button>
+                    <button @click="openForm('csgroup')">Sgroup</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cstep')">Step</button>

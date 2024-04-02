@@ -1,0 +1,3 @@
+<div class="wrap" :class="[direction, type]" :style="{'align-items': direction === 'v' ? (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH) : (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV), 'justify-content': direction === 'v' ? (alignV && (alignV !== 'center' ? 'flex-' : '') + alignV) : (alignH && (alignH !== 'center' ? 'flex-' : '') + alignH), 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
+    <slot></slot>
+</div>

@@ -1,0 +1,19 @@
+.wrap {
+    padding: var(--g-bpadding); display: flex; border: solid .5px var(--g-plain-border-color);
+    &.v {
+        flex-direction: column;
+    }
+
+    &.primary {
+        border-color: var(--success);
+    }
+    &.info {
+        border-color: var(--info);
+    }
+    &.warning {
+        border-color: var(--warning);
+    }
+    &.danger {
+        border-color: var(--danger);
+    }
+}

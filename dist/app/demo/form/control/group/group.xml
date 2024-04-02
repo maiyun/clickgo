@@ -33,7 +33,7 @@
         </layout>
         <layout gutter="10">
             <button style="flex: 1;" @click="slotTitle = !slotTitle">{{slotTitle ? '' : '!'}}slotTitle</button>
-            <button style="flex: 1;" @click="slotFooter = !slottFooter">{{slottFooter ? '' : '!'}}slotFooter</button>
+            <button style="flex: 1;" @click="slotFooter = !slotFooter">{{slotFooter ? '' : '!'}}slotFooter</button>
         </layout>
     </layout>
 </form>

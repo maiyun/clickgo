@@ -1,0 +1,28 @@
+<form width="450" height="350" title="Sgroup" padding="10">
+    <layout gutter="10" style="flex: 1;">
+        <layout direction="v" gutter="10" style="flex: 1;">
+            <label>Default:</label>
+            <sgroup gutter="10" align-v="center">
+                <label>Label:</label><button>Button</button>
+            </sgroup>
+            <label>Primary:</label>
+            <sgroup gutter="10" type="primary" align-v="center">
+                <label>Label:</label><button>Button</button>
+            </sgroup>
+            <label>Info:</label>
+            <sgroup gutter="10" type="info" align-v="center">
+                <label>Label:</label><button>Button</button>
+            </sgroup>
+        </layout>
+        <layout direction="v" gutter="10" style="flex: 1;">
+            <label>Warning:</label>
+            <sgroup gutter="10" type="warning" align-v="center">
+                <label>Label:</label><button>Button</button>
+            </sgroup>
+            <label>Danger:</label>
+            <sgroup gutter="10" type="danger" align-v="center">
+                <label>Label:</label><button>Button</button>
+            </sgroup>
+        </layout>
+    </layout>
+</form>

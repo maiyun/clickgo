@@ -1,0 +1,1 @@
+.wrap{padding:var(--g-bpadding);display:flex;border:solid .5px var(--g-plain-border-color)}.wrap.v{flex-direction:column}.wrap.primary{border-color:var(--success)}.wrap.info{border-color:var(--info)}.wrap.warning{border-color:var(--warning)}.wrap.danger{border-color:var(--danger)}
