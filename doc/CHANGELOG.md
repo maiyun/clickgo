@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.11.24
+
+[+] Added check attribute to list control.  
+[\*] Optimized paste event for tuieditor.  
+[\*] Improved select control.
+
 # 3.11.23
 
 [+] Added new sgroup control.  

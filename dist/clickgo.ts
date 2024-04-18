@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const version = '3.11.23';
+const version = '3.11.24';
 export function getVersion(): string {
     return version;
 }
