@@ -33,7 +33,7 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
                 await addFile(zipo, base + '/' + item, path + (path ? '/' : '') + item);
                 continue;
             }
-            if (item.endsWith('.ts') || item.endsWith('.scss')) {
+            if (item.endsWith('.ts') || item.endsWith('.tsx') || item.endsWith('.scss')) {
                 continue;
             }
             const buf = await fs.promises.readFile(base + '/' + item);

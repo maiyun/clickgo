@@ -813,6 +813,30 @@ export interface ILevelselectLevelEvent {
     };
 }
 
+// --- Checklist Control ---
+
+export interface IChecklistRemoveEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface IChecklistAddEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface IChecklistItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': string;
+        'arrow': boolean;
+    };
+}
+
 // --- List Control ---
 
 export interface IListRemoveEvent extends ICustomEvent {
@@ -937,6 +961,20 @@ export interface ITableSortEvent extends ICustomEvent {
         'index': number;
         'label': string;
         'sort': 'desc' | 'asc';
+    };
+}
+
+// --- Tuieditor Control ---
+
+export interface ITuieditorImguploadEvent {
+    'detail': {
+        'file': Blob;
+        'callback': (url: string, opt?: {
+            'alt'?: string;
+            'width'?: number;
+            'height'?: number;
+            'align'?: string;
+        }) => void | Promise<void>;
     };
 }
 

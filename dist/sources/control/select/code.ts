@@ -438,7 +438,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 私有搜索方法 --- */
     private async _search(success?: () => void | Promise<void>): Promise<void> {
         /** --- 当前要搜索的值 --- */
-        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim().toLowerCase();
+        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
         if (this.propBoolean('remote')) {
             // --- 远程搜索 ---
             const delay = this.propInt('remoteDelay');

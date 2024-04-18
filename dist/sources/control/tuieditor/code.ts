@@ -1,9 +1,11 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'imgselect': null,
+        'imgupload': null,
         'init': null,
 
         'update:modelValue': null
@@ -109,6 +111,55 @@ export default class extends clickgo.control.AbstractControl {
                 break;
             }
             case 'paste': {
+                try {
+                    const ls = await navigator.clipboard.read();
+                    for (const item of ls) {
+                        if (!item.types.length) {
+                            continue;
+                        }
+                        if (item.types.length === 1) {
+                            if (item.types[0].includes('text')) {
+                                const data = await item.getType(item.types[0]);
+                                this.access.tuieditor.insertText(await data.text());
+                                continue;
+                            }
+                            // --- 图片文件 ---
+                            const e: types.ITuieditorImguploadEvent = {
+                                'detail': {
+                                    'file': await item.getType(item.types[0]),
+                                    callback: (url: string, opt?: {
+                                        'alt'?: string;
+                                        'width'?: number;
+                                        'height'?: number;
+                                        'align'?: string;
+                                    }) => {
+                                        if (opt && (opt.width || opt.height)) {
+                                            if (this.access.tuieditor.isMarkdownMode()) {
+                                                this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                                                return;
+                                            }
+                                        }
+                                        this.access.tuieditor.exec('addImage', {
+                                            'imageUrl': url,
+                                            'altText': opt?.alt ?? ''
+                                        });
+                                    }
+                                }
+                            };
+                            this.emit('imgupload', e);
+                            continue;
+                        }
+                        // --- 可能是 HTML ---
+                        const blob = await item.getType(item.types[1]);
+                        let html = await blob.text();
+                        html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
+                        this.access.tuieditor.insertText(html);
+                    }
+                }
+                catch {
+                    break;
+                }
+                break;
                 const str = await navigator.clipboard.readText();
                 if (str) {
                     this.access.tuieditor.insertText(str);
@@ -149,6 +200,34 @@ export default class extends clickgo.control.AbstractControl {
             'initialValue': this.props.modelValue,
             'language': this.getLanguage(),
             'autofocus': false,
+            'usageStatistics': false,
+            'hooks': {
+                'addImageBlobHook': (file: File) => {
+                    const e: types.ITuieditorImguploadEvent = {
+                        'detail': {
+                            'file': file,
+                            callback: (url: string, opt?: {
+                                'alt'?: string;
+                                'width'?: number;
+                                'height'?: number;
+                                'align'?: string;
+                            }) => {
+                                if (opt && (opt.width || opt.height)) {
+                                    if (this.access.tuieditor.isMarkdownMode()) {
+                                        this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                                        return;
+                                    }
+                                }
+                                this.access.tuieditor.exec('addImage', {
+                                    'imageUrl': url,
+                                    'altText': opt?.alt ?? ''
+                                });
+                            }
+                        }
+                    };
+                    this.emit('imgupload', e);
+                }
+            },
             'events': {
                 // --- 用户输入事件 ---
                 change: () => {
@@ -207,6 +286,25 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
+        // --- 绑定 paste ---
+        this.element.addEventListener('paste', async (e: ClipboardEvent) => {
+            if (!e.clipboardData) {
+                return;
+            }
+            if (this.propBoolean('visual')) {
+                return;
+            }
+            for (const item of e.clipboardData.items) {
+                if (item.kind === 'file') {
+                    continue;
+                }
+                e.preventDefault();
+                item.getAsString((html) => {
+                    html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
+                    this.access.tuieditor.insertText(html);
+                });
+            }
         });
         // --- 绑定 down 事件 ---
         const down = (e: MouseEvent | TouchEvent): void => {

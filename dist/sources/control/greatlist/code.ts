@@ -268,7 +268,7 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 // --- 选择 ---
                 if (this.valueData.length > 1 || this.valueData.length === 0) {
-                    // --- 只选择一个，但现在有多个，则重置为一个 ---
+                    // --- 只选择一个，但现在有多个或一个都没有，则重置为一个 ---
                     if (canSelect(value)) {
                         change = true;
                         this.valueData = [value];

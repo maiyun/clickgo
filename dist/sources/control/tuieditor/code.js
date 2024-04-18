@@ -38,6 +38,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'imgselect': null,
+            'imgupload': null,
             'init': null,
             'update:modelValue': null
         };
@@ -128,6 +129,49 @@ class default_1 extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'paste': {
+                    try {
+                        const ls = yield navigator.clipboard.read();
+                        for (const item of ls) {
+                            if (!item.types.length) {
+                                continue;
+                            }
+                            if (item.types.length === 1) {
+                                if (item.types[0].includes('text')) {
+                                    const data = yield item.getType(item.types[0]);
+                                    this.access.tuieditor.insertText(yield data.text());
+                                    continue;
+                                }
+                                const e = {
+                                    'detail': {
+                                        'file': yield item.getType(item.types[0]),
+                                        callback: (url, opt) => {
+                                            var _a;
+                                            if (opt && (opt.width || opt.height)) {
+                                                if (this.access.tuieditor.isMarkdownMode()) {
+                                                    this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                                                    return;
+                                                }
+                                            }
+                                            this.access.tuieditor.exec('addImage', {
+                                                'imageUrl': url,
+                                                'altText': (_a = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _a !== void 0 ? _a : ''
+                                            });
+                                        }
+                                    }
+                                };
+                                this.emit('imgupload', e);
+                                continue;
+                            }
+                            const blob = yield item.getType(item.types[1]);
+                            let html = yield blob.text();
+                            html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
+                            this.access.tuieditor.insertText(html);
+                        }
+                    }
+                    catch (_a) {
+                        break;
+                    }
+                    break;
                     const str = yield navigator.clipboard.readText();
                     if (str) {
                         this.access.tuieditor.insertText(str);
@@ -166,6 +210,30 @@ class default_1 extends clickgo.control.AbstractControl {
                 'initialValue': this.props.modelValue,
                 'language': this.getLanguage(),
                 'autofocus': false,
+                'usageStatistics': false,
+                'hooks': {
+                    'addImageBlobHook': (file) => {
+                        const e = {
+                            'detail': {
+                                'file': file,
+                                callback: (url, opt) => {
+                                    var _a;
+                                    if (opt && (opt.width || opt.height)) {
+                                        if (this.access.tuieditor.isMarkdownMode()) {
+                                            this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                                            return;
+                                        }
+                                    }
+                                    this.access.tuieditor.exec('addImage', {
+                                        'imageUrl': url,
+                                        'altText': (_a = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _a !== void 0 ? _a : ''
+                                    });
+                                }
+                            }
+                        };
+                        this.emit('imgupload', e);
+                    }
+                },
                 'events': {
                     change: () => {
                         this.emit('update:modelValue', this.access.tuieditor.getMarkdown());
@@ -219,6 +287,24 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 clickgo.form.showPop(this.element, this.refs.pop, e);
             });
+            this.element.addEventListener('paste', (e) => __awaiter(this, void 0, void 0, function* () {
+                if (!e.clipboardData) {
+                    return;
+                }
+                if (this.propBoolean('visual')) {
+                    return;
+                }
+                for (const item of e.clipboardData.items) {
+                    if (item.kind === 'file') {
+                        continue;
+                    }
+                    e.preventDefault();
+                    item.getAsString((html) => {
+                        html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
+                        this.access.tuieditor.insertText(html);
+                    });
+                }
+            }));
             const down = (e) => {
                 if (clickgo.dom.hasTouchButMouse(e)) {
                     return;

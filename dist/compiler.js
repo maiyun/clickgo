@@ -56,7 +56,7 @@ function addFile(zipo_1) {
                     yield addFile(zipo, base + '/' + item, path + (path ? '/' : '') + item);
                     continue;
                 }
-                if (item.endsWith('.ts') || item.endsWith('.scss')) {
+                if (item.endsWith('.ts') || item.endsWith('.tsx') || item.endsWith('.scss')) {
                     continue;
                 }
                 const buf = yield fs.promises.readFile(base + '/' + item);

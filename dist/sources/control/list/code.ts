@@ -31,7 +31,7 @@ export default class extends clickgo.control.AbstractControl {
         'async': boolean | string;
         'icon': boolean | string;
         'iconDefault': string;
-        /** --- 开启后，左侧将显示 check 或 radio 控件，以控件勾选为准 --- */
+        /** --- check 选框模式，设置后选中项以控件勾选为准 --- */
         'check': boolean | string;
 
         'data': any[] | Record<string, string>;
@@ -61,7 +61,11 @@ export default class extends clickgo.control.AbstractControl {
     public dataFormat: any[] = [];
 
     /** --- 传输给 greatlist 的 value --- */
-    public get value(): number[] {
+    public get value(): number[] | undefined {
+        if (this.propBoolean('check')) {
+            return undefined;
+        }
+
         if (!this.dataGl.length) {
             return [];
         }
@@ -188,6 +192,9 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- greatlist 的更新 modelValue 的事件 --- */
     public updateModelValue(value: number[]): void {
+        if (this.propBoolean('check')) {
+            return;
+        }
         const modelValue = [];
         const label = [];
         const items: any[] = [];
@@ -442,13 +449,198 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('itemclicked', event);
     }
 
+    // --- 下面是 check 模式 ---
+
+    /** --- check 模式下选中的项 --- */
+    public checkValues: string[] = [];
+
+    public onCheckChange(e: types.ICheckChangeEvent, row: any) {
+        e.preventDefault();
+        if (row.format.children.length) {
+            // --- 有下级 ---
+            const r = this.childrenTotal(row, {
+                'check': e.detail.value ? (e.detail.indeterminate ? true : false) : true
+            });
+            if (r.change) {
+                this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+            }
+            return;
+        }
+        // --- 无下级 ---
+        const io = this.checkValues.indexOf(row.value);
+        if (io === -1) {
+            // --- 没找到 ---
+            this.checkValues.push(row.value);
+        }
+        else {
+            // --- 找到了 ---
+            this.checkValues.splice(io, 1);
+        }
+        this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+    }
+
+    /** --- 是否选中 --- */
+    public get isChecked() {
+        return (data: any): boolean => {
+            if (data.format.children.length) {
+                // --- 有下级 ---
+                const r = this.childrenTotal(data);
+                return r.check > 0 ? true : false;
+            }
+            // --- 无下级 ---
+            return this.checkValues.includes(data.value);
+        };
+    }
+
+    /** --- 是否是半选 --- */
+    public get isIndeterminate() {
+        return (data: any): boolean => {
+            if (data.format.children.length) {
+                // --- 有下级 ---
+                const r = this.childrenTotal(data);
+                if (r.check === 0) {
+                    return false;
+                }
+                return r.check < r.total ? true : false;
+            }
+            // --- 无下级 ---
+            return false;
+        };
+    }
+
+    /**
+     * --- 获取子集所有的数量和已选中的数量 ---
+     * @param data 对象
+     * @param opt check: 设置旗下的选项为选中模式, checkValues: 设置后将检测 checkValues 的值是否正常
+     */
+    public get childrenTotal() {
+        return (data: any, opt: {
+            'check'?: boolean;
+            'checkValues'?: {
+                'wait': string[];
+                'result': string[];
+            }
+        } = {}): {
+            'total': number;
+            'check': number;
+            'change': boolean;
+        } => {
+            const rtn = {
+                'total': 0,
+                'check': 0,
+                'change': false
+            };
+            if (Array.isArray(data)) {
+                // --- array 模式 ---
+                for (const item of data) {
+                    const r = this.childrenTotal(item, opt);
+                    if (r.change) {
+                        rtn.change = true;
+                    }
+                }
+                return rtn;
+            }
+            if (data.format) {
+                data = data.format;
+            }
+            if (!data.children || !data.children.length) {
+                // --- 没有下层，应该不会到这里，那么可能是 root 层 ---
+                if (opt.checkValues) {
+                    const io = opt.checkValues.wait.indexOf(data.value);
+                    if (io > -1) {
+                        opt.checkValues.result.push(opt.checkValues.wait[io]);
+                    }
+                }
+                return rtn;
+            }
+            for (const item of data.children) {
+                if (item.children?.length) {
+                    const r = this.childrenTotal(item, opt);
+                    rtn.total += r.total;
+                    rtn.check += r.check;
+                    if (r.change) {
+                        rtn.change = true;
+                    }
+                    continue;
+                }
+                // --- 没有下级 ---
+                if (opt.checkValues) {
+                    const io = opt.checkValues.wait.indexOf(item.value);
+                    if (io > -1) {
+                        opt.checkValues.result.push(opt.checkValues.wait[io]);
+                    }
+                }
+                ++rtn.total;
+                if (opt.check !== undefined) {
+                    if (opt.check) {
+                        // --- 选中 ---
+                        if (!this.checkValues.includes(item.value)) {
+                            this.checkValues.push(item.value);
+                            rtn.change = true;
+                        }
+                        ++rtn.check;
+                    }
+                    else {
+                        // --- 取消选中 ---
+                        const io = this.checkValues.indexOf(item.value);
+                        if (io > -1) {
+                            this.checkValues.splice(io, 1);
+                            rtn.change = true;
+                        }
+                    }
+                    continue;
+                }
+                if (!this.checkValues.includes(item.value)) {
+                    // --- 未勾选 ---
+                    continue;
+                }
+                // --- 已勾选 ---
+                ++rtn.check;
+            }
+            return rtn;
+        };
+    }
+
+    /** --- 在 check 模式下检测 values 是否正常 --- */
+    public refreshCheckValues() {
+        const waitingCheck = clickgo.tool.clone(this.checkValues);
+        const result: string[] = [];
+        this.childrenTotal(this.dataGl, {
+            'checkValues': {
+                'wait': waitingCheck,
+                'result': result
+            }
+        });
+        const r = clickgo.tool.compar(this.checkValues, result);
+        if (r.length.add || r.length.remove) {
+            this.checkValues = result;
+            this.emit('update:modelValue', this.checkValues);
+        }
+    }
+
     public onMounted(): void {
+        this.watch('check' , () => {
+            if (!this.propBoolean('check')) {
+                // --- check 变 普通 ---
+                return;
+            }
+            // --- 普通 变 check ---
+            this.checkValues = clickgo.tool.clone(this.props.modelValue);
+            this.refreshCheckValues();
+        });
         this.watch('data', (): void => {
             this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+            if (this.propBoolean('check')) {
+                this.refreshCheckValues();
+            }
         }, {
-            'immediate': true,
             'deep': true
         });
+        this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        if (this.propBoolean('check')) {
+            this.checkValues = this.props.modelValue;
+            this.refreshCheckValues();
+        }
     }
 
 }

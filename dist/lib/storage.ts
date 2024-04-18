@@ -144,8 +144,11 @@ export function remove(key: string, taskId?: number): boolean {
         return true;
     }
     delete sizeso[key];
-    if (!Object.keys(sizeso).length) {
+    if (Object.keys(sizeso).length) {
         localStorage.removeItem('clickgo-size-' + t.path);
+    }
+    else {
+        localStorage.setItem('clickgo-size-' + t.path, JSON.stringify(sizeso));
     }
     localStorage.removeItem('clickgo-item-' + t.path + '-' + key);
     return true;

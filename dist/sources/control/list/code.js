@@ -55,8 +55,12 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': []
         };
         this.dataFormat = [];
+        this.checkValues = [];
     }
     get value() {
+        if (this.propBoolean('check')) {
+            return undefined;
+        }
         if (!this.dataGl.length) {
             return [];
         }
@@ -145,6 +149,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refs.gl.arrowDown();
     }
     updateModelValue(value) {
+        if (this.propBoolean('check')) {
+            return;
+        }
         const modelValue = [];
         const label = [];
         const items = [];
@@ -357,13 +364,154 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.emit('itemclicked', event);
     }
+    onCheckChange(e, row) {
+        e.preventDefault();
+        if (row.format.children.length) {
+            const r = this.childrenTotal(row, {
+                'check': e.detail.value ? (e.detail.indeterminate ? true : false) : true
+            });
+            if (r.change) {
+                this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+            }
+            return;
+        }
+        const io = this.checkValues.indexOf(row.value);
+        if (io === -1) {
+            this.checkValues.push(row.value);
+        }
+        else {
+            this.checkValues.splice(io, 1);
+        }
+        this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+    }
+    get isChecked() {
+        return (data) => {
+            if (data.format.children.length) {
+                const r = this.childrenTotal(data);
+                return r.check > 0 ? true : false;
+            }
+            return this.checkValues.includes(data.value);
+        };
+    }
+    get isIndeterminate() {
+        return (data) => {
+            if (data.format.children.length) {
+                const r = this.childrenTotal(data);
+                if (r.check === 0) {
+                    return false;
+                }
+                return r.check < r.total ? true : false;
+            }
+            return false;
+        };
+    }
+    get childrenTotal() {
+        return (data, opt = {}) => {
+            var _a;
+            const rtn = {
+                'total': 0,
+                'check': 0,
+                'change': false
+            };
+            if (Array.isArray(data)) {
+                for (const item of data) {
+                    const r = this.childrenTotal(item, opt);
+                    if (r.change) {
+                        rtn.change = true;
+                    }
+                }
+                return rtn;
+            }
+            if (data.format) {
+                data = data.format;
+            }
+            if (!data.children || !data.children.length) {
+                if (opt.checkValues) {
+                    const io = opt.checkValues.wait.indexOf(data.value);
+                    if (io > -1) {
+                        opt.checkValues.result.push(opt.checkValues.wait[io]);
+                    }
+                }
+                return rtn;
+            }
+            for (const item of data.children) {
+                if ((_a = item.children) === null || _a === void 0 ? void 0 : _a.length) {
+                    const r = this.childrenTotal(item, opt);
+                    rtn.total += r.total;
+                    rtn.check += r.check;
+                    if (r.change) {
+                        rtn.change = true;
+                    }
+                    continue;
+                }
+                if (opt.checkValues) {
+                    const io = opt.checkValues.wait.indexOf(item.value);
+                    if (io > -1) {
+                        opt.checkValues.result.push(opt.checkValues.wait[io]);
+                    }
+                }
+                ++rtn.total;
+                if (opt.check !== undefined) {
+                    if (opt.check) {
+                        if (!this.checkValues.includes(item.value)) {
+                            this.checkValues.push(item.value);
+                            rtn.change = true;
+                        }
+                        ++rtn.check;
+                    }
+                    else {
+                        const io = this.checkValues.indexOf(item.value);
+                        if (io > -1) {
+                            this.checkValues.splice(io, 1);
+                            rtn.change = true;
+                        }
+                    }
+                    continue;
+                }
+                if (!this.checkValues.includes(item.value)) {
+                    continue;
+                }
+                ++rtn.check;
+            }
+            return rtn;
+        };
+    }
+    refreshCheckValues() {
+        const waitingCheck = clickgo.tool.clone(this.checkValues);
+        const result = [];
+        this.childrenTotal(this.dataGl, {
+            'checkValues': {
+                'wait': waitingCheck,
+                'result': result
+            }
+        });
+        const r = clickgo.tool.compar(this.checkValues, result);
+        if (r.length.add || r.length.remove) {
+            this.checkValues = result;
+            this.emit('update:modelValue', this.checkValues);
+        }
+    }
     onMounted() {
+        this.watch('check', () => {
+            if (!this.propBoolean('check')) {
+                return;
+            }
+            this.checkValues = clickgo.tool.clone(this.props.modelValue);
+            this.refreshCheckValues();
+        });
         this.watch('data', () => {
             this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+            if (this.propBoolean('check')) {
+                this.refreshCheckValues();
+            }
         }, {
-            'immediate': true,
             'deep': true
         });
+        this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        if (this.propBoolean('check')) {
+            this.checkValues = this.props.modelValue;
+            this.refreshCheckValues();
+        }
     }
 }
 exports.default = default_1;

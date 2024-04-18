@@ -92,6 +92,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.icon = false;
         this.scroll = 'auto';
         this.virtual = false;
+        this.check = false;
     }
     get sizes() {
         const rtn = {};

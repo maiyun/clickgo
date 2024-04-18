@@ -1,4 +1,4 @@
-<form title="List" width="450" height="450" min-width="300" min-height="400" padding="10" direction="v">
+<form title="List" width="500" height="650" min-width="300" min-height="400" padding="10" direction="v">
     <label>Greatlist: {{select}}, list: {{select2}}, label: {{label2}}</label>
     <tab v-model="ntab" :tabs="['greatlist', 'adaptation', 'beyond', 'list', 'object', 'async']" style="flex: 1; height: 0;">
         <!-- 默认 -->
@@ -51,12 +51,12 @@
             <label>Raw data:</label>
             <flow direction="v" style="border: solid 1px #b3b3b3; line-height: 1.5; height: 50px; padding: 5px;">{{listData}}</flow>
             <layout gutter="10" style="flex: 1; height: 0;">
-                <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData" @label="label2 = $event" style="flex: 2; width: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" :virtual="virtual" @load="onSelectLoad" @add="onLAdd" @Remove="onLRemove">
+                <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData" :check="check" @label="label2 = $event" style="flex: 2; width: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" :virtual="virtual" @load="onSelectLoad" @add="onLAdd" @Remove="onLRemove">
                     <menulist>
                         <menulist-item alt="I" @click="showIndex2">Show select</menulist-item>
                     </menulist>
                 </list>
-                <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual" :data="listData2" style="flex: 1; width: 0;">
+                <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual" :data="listData2" :check="check" style="flex: 1; width: 0;">
                     <template v-slot:row="data">
                         <layout gutter="10" align-v="center">
                             <label style="flex: 1;">{{data.row.label}}</label>
@@ -106,6 +106,7 @@
         <button @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
         <button @click="multi = !multi">{{multi ? '' : '!'}}multi</button>
         <button @click="ctrl = !ctrl">{{ctrl ? '' : '!'}}ctrl</button>
+        <button v-show="ntab === 'list'" @click="check = !check">{{check ? '' : '!'}}check</button>
     </layout>
     <layout class="ctr" gutter="10">
         <button @click="must = !must">{{must ? '' : '!'}}must</button>
