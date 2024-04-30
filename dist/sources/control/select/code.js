@@ -771,16 +771,17 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.inputValue = (this.props.modelValue[0]).toString();
                     this.value = [this.inputValue];
                     const result = this.refs.list.findFormat(this.inputValue, false);
-                    this.label = [result[this.inputValue] ? result[this.inputValue].label : this.inputValue];
-                    this.updateValue();
+                    this.label = [(result === null || result === void 0 ? void 0 : result[this.inputValue]) ? result[this.inputValue].label : this.inputValue];
                     this.listValue = [this.inputValue];
+                    this.updateValue();
                     return;
                 }
-                this.inputValue = '';
-                this.searchValue = '';
                 this.value.length = 0;
                 this.label.length = 0;
-                this.updateValue();
+                this.updateValue({
+                    'clearInput': true,
+                    'clearList': true
+                });
                 return;
             }
             if (this.props.modelValue.length) {
@@ -870,7 +871,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.inputValue = '';
             }
         });
-        this.watch('data', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch(() => JSON.stringify(this.props.data), (n, o) => __awaiter(this, void 0, void 0, function* () {
+            if (n === o) {
+                return;
+            }
             yield this.nextTick();
             yield clickgo.tool.sleep(0);
             if (JSON.stringify(this.value) !== JSON.stringify(this.listValue)) {

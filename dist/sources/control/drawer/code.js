@@ -47,7 +47,6 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.props.width;
     }
     closeClick() {
-        this.props.modelValue = false;
         this.emit('update:modelValue', false);
     }
 }

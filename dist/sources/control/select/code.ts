@@ -887,17 +887,18 @@ export default class extends clickgo.control.AbstractControl {
                     this.inputValue = (this.props.modelValue[0]).toString();
                     this.value = [this.inputValue];
                     const result = this.refs.list.findFormat(this.inputValue, false);
-                    this.label = [result[this.inputValue] ? result[this.inputValue].label : this.inputValue];
-                    this.updateValue();
+                    this.label = [result?.[this.inputValue] ? result[this.inputValue].label : this.inputValue];
                     this.listValue = [this.inputValue];
+                    this.updateValue();
                     return;
                 }
                 // --- 没传值 ---
-                this.inputValue = '';
-                this.searchValue = '';
                 this.value.length = 0;
                 this.label.length = 0;
-                this.updateValue();
+                this.updateValue({
+                    'clearInput': true,
+                    'clearList': true
+                });
                 return;
             }
             // --- 不可输入模式 ---
@@ -996,7 +997,10 @@ export default class extends clickgo.control.AbstractControl {
                 this.inputValue = '';
             }
         });
-        this.watch('data', async (): Promise<void> => {
+        this.watch(() => JSON.stringify(this.props.data), async (n, o): Promise<void> => {
+            if (n === o) {
+                return;
+            }
             await this.nextTick();
             await clickgo.tool.sleep(0);
             if (JSON.stringify(this.value) !== JSON.stringify(this.listValue)) {

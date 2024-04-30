@@ -35,7 +35,6 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 关闭按钮 --- */
     public closeClick() {
-        this.props.modelValue = false;
         this.emit('update:modelValue', false);
     }
 

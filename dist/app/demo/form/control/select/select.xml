@@ -54,6 +54,7 @@
                         <select v-model="aemodel" :data="['1','2','3','4','5']" :disabled="disabled" editable :multi="multi" :plain="plain" :tree="tree" :async="async" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" placeholder="Please enter" @load="onLoad" @remote="onRemote" style="flex: 1;" :style="{'font-size': fontSize ? '16px' : undefined, 'padding': padding ? '15px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                         <button @click="aemodel.length=0">clear</button>
                         <button @click="aemodel[0] = '4'">4</button>
+                        <button @click="aemodel[0] = '22'">22</button>
                     </layout>
                     <layout gutter="10">
                         <button @click="icon = !icon" style="flex: 1;">{{icon ? '' : '!'}}icon</button>
