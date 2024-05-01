@@ -136,6 +136,12 @@ class default_1 extends clickgo.control.AbstractControl {
         const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
         return searchValue ? this.searchData : this.props.data;
     }
+    get isEmpty() {
+        if (Array.isArray(this.dataComp)) {
+            return this.dataComp.length ? false : true;
+        }
+        return Object.keys(this.dataComp).length ? false : true;
+    }
     updateValue(opt = {}) {
         this.emit('update:modelValue', clickgo.tool.clone(this.value));
         this.emit('label', clickgo.tool.clone(this.label));
