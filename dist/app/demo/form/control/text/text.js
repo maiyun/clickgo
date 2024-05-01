@@ -65,7 +65,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.border = 'solid';
         this.background = undefined;
         this.phcolor = undefined;
-        this.maxmin = false;
+        this.max = undefined;
+        this.min = undefined;
     }
     get textBorder() {
         switch (this.border) {

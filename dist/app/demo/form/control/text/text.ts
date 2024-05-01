@@ -66,7 +66,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public phcolor = undefined;
 
-    public maxmin = false;
+    public max = undefined;
+
+    public min = undefined;
 
     public get textBorder(): any {
         switch (this.border) {
