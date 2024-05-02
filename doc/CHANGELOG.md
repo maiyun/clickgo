@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.11.25
+
+[\*] Optimized select control.  
+[\*] Optimized greatlist control.  
+[\*] Optimized list control.  
+[\*] Optimized number mode for text control.
+
 # 3.11.24
 
 [+] Added check attribute to list control.  
