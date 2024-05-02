@@ -507,6 +507,13 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'deep': true
         });
+        this.watch('modelValue', () => {
+            if (!this.propBoolean('check')) {
+                return;
+            }
+            this.checkValues = clickgo.tool.clone(this.props.modelValue);
+            this.refreshCheckValues();
+        });
         this.dataFormat = this.formatData(this.props.data, this.dataFormat);
         if (this.propBoolean('check')) {
             this.checkValues = this.props.modelValue;
