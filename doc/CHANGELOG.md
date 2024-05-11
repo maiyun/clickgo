@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.11.26
+
+[+] Add Markdownit control.
+
 # 3.11.25
 
 [\*] Optimized select control.  
