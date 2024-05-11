@@ -1,0 +1,6 @@
+.wrap {
+    display: flex; position: relative;
+    .notInit {
+        border: dotted 1px var(--g-color); flex: 1; display: flex; align-items: center; justify-content: center;
+    }
+}

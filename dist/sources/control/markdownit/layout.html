@@ -1,0 +1,7 @@
+<div class="wrap">
+    <div v-if="notInit" class="notInit">Markdown module not found.</div>
+    <cg-html v-else :html="value" :css="css" style="flex: 1; width: 0;"></cg-html>
+    <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
+        <cg-loading></cg-loading>
+    </div>
+</div>

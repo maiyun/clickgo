@@ -344,6 +344,20 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'markdownit': {
+        func: async function() {
+            await loader.loadScripts([
+                loader.cdn + '/npm/markdown-it@14.1.0/dist/markdown-it.min.js'
+            ]);
+            if (!(window as any).markdownit) {
+                throw Error('Markdownit load failed.');
+            }
+            return (window as any).markdownit;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 

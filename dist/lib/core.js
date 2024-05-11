@@ -277,6 +277,22 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'markdownit': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    loader.cdn + '/npm/markdown-it@14.1.0/dist/markdown-it.min.js'
+                ]);
+                if (!window.markdownit) {
+                    throw Error('Markdownit load failed.');
+                }
+                return window.markdownit;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 function regModule(name, func) {
