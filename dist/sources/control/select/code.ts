@@ -8,6 +8,8 @@ export default class extends clickgo.control.AbstractControl {
         'added': null,
         'remove': null,
         'removed': null,
+        'change': null,
+        'changed': null,
         'tagclick': null,
 
         'remote': null,
@@ -779,6 +781,43 @@ export default class extends clickgo.control.AbstractControl {
                 'mode': 'list'
             }
         });
+    }
+
+    public onChange(e: types.IListChangeEvent) {
+        if (this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const event: types.ISelectChangeEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+
+    public onChanged(e: types.IListChangedEvent) {
+        if (this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const event: types.ISelectChangedEvent = {
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('changed', event);
     }
 
     // --- tag 的 label 的点击事件 ---

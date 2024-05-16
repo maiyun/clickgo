@@ -254,6 +254,12 @@ class default_1 extends clickgo.form.AbstractForm {
             'content': 'value: ' + e.detail.value.toString()
         });
     }
+    onGChange(e) {
+        console.log('onGChange', e);
+    }
+    onGChanged(e) {
+        console.log('onGChanged', e);
+    }
     onLAdd(e) {
         clickgo.form.notify({
             'type': 'info',

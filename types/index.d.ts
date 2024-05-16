@@ -717,6 +717,18 @@ export interface IFormMinEvent {
 
 // --- Greatlist Control ---
 
+export interface IGreatlistChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IGreatlistChangedEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
 export interface IGreatlistRemoveEvent extends ICustomEvent {
     'detail': {
         'index': number;
@@ -740,6 +752,18 @@ export interface IGreatlistItemclickedEvent {
 }
 
 // --- Greatselect Control ---
+
+export interface IGreatselectChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IGreatselectChangedEvent {
+    'detail': {
+        'value': number[];
+    };
+}
 
 export interface IGreatselectRemoveEvent extends ICustomEvent {
     'detail': {
@@ -839,6 +863,18 @@ export interface IChecklistItemclickedEvent {
 
 // --- List Control ---
 
+export interface IListChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+export interface IListChangedEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
 export interface IListRemoveEvent extends ICustomEvent {
     'detail': {
         'index': number;
@@ -927,6 +963,18 @@ export interface ISelectRemovedEvent {
         'index': number;
         'value': string;
         'mode': 'backspace' | 'tag' | 'list';
+    };
+}
+
+export interface ISelectChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+export interface ISelectChangedEvent {
+    'detail': {
+        'value': string[];
     };
 }
 

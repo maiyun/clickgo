@@ -41,6 +41,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'added': null,
             'remove': null,
             'removed': null,
+            'change': null,
+            'changed': null,
             'tagclick': null,
             'remote': null,
             'load': null,
@@ -677,6 +679,41 @@ class default_1 extends clickgo.control.AbstractControl {
                 'mode': 'list'
             }
         });
+    }
+    onChange(e) {
+        if (this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+    onChanged(e) {
+        if (this.propBoolean('multi')) {
+            return;
+        }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        const event = {
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('changed', event);
     }
     tagClick(index) {
         const value = this.value[index];

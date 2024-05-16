@@ -194,6 +194,12 @@ class default_1 extends clickgo.form.AbstractForm {
             'content': 'value: ' + e.detail.value.toString()
         });
     }
+    onGChange(e) {
+        console.log('onGChange', e);
+    }
+    onGChanged(e) {
+        console.log('onGChanged', e);
+    }
     onAdd(e) {
         this.addRemoveList.unshift('@add, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
     }
@@ -205,6 +211,15 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     onRemoved(e) {
         this.addRemoveList.unshift('@removed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
+    }
+    onChange(e) {
+        console.log('onChange', e);
+        if (e.detail.value[0] === 'title') {
+            e.preventDefault();
+        }
+    }
+    onChanged(e) {
+        console.log('onChanged', e);
     }
     onTagclick(e) {
         this.addRemoveList.unshift('@tagclick, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);

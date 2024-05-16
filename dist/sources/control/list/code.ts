@@ -6,6 +6,8 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'remove': null,
         'add': null,
+        'change': null,
+        'changed': null,
         'itemclicked': null,
         'label': null,
         'item': null,
@@ -436,6 +438,31 @@ export default class extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
+    }
+
+    public onChange(e: types.IGreatlistChangeEvent): void {
+        const event: types.IListChangeEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': [this.dataGl[e.detail.value[0]].value]
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+
+    public onChanged(e: types.IGreatlistChangedEvent): void {
+        const event: types.IListChangedEvent = {
+            'detail': {
+                'value': [this.dataGl[e.detail.value[0]].value]
+            }
+        };
+        this.emit('changed', event);
     }
 
     public onItemclicked(e: types.IGreatlistItemclickedEvent): void {

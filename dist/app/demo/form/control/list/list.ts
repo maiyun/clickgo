@@ -270,6 +270,14 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
+    public onGChange(e: types.IGreatlistChangeEvent): void {
+        console.log('onGChange', e);
+    }
+
+    public onGChanged(e: types.IGreatlistChangedEvent): void {
+        console.log('onGChanged', e);
+    }
+
     public onLAdd(e: types.IListAddEvent): void {
         clickgo.form.notify({
             'type': 'info',

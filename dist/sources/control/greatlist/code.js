@@ -39,6 +39,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'remove': null,
             'add': null,
+            'change': null,
+            'changed': null,
             'itemclicked': null,
             'beforeselect': null,
             'select': null,
@@ -196,27 +198,81 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             return true;
         };
-        if (!shift && !ctrl) {
+        if (!this.propBoolean('multi') || (!shift && !ctrl)) {
             if (value === -1) {
                 if (this.valueData.length > 0) {
-                    change = true;
-                    this.valueData = [];
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'value': []
+                        }
+                    };
+                    this.emit('change', event);
+                    if (event.go) {
+                        change = true;
+                        this.valueData = [];
+                        const event = {
+                            'detail': {
+                                'value': []
+                            }
+                        };
+                        this.emit('changed', event);
+                    }
                 }
             }
             else {
                 if (this.valueData.length > 1 || this.valueData.length === 0) {
                     if (canSelect(value)) {
-                        change = true;
-                        this.valueData = [value];
-                        this.shiftStart = value;
+                        const event = {
+                            'go': true,
+                            preventDefault: function () {
+                                this.go = false;
+                            },
+                            'detail': {
+                                'value': [value]
+                            }
+                        };
+                        this.emit('change', event);
+                        if (event.go) {
+                            change = true;
+                            this.valueData = [value];
+                            this.shiftStart = value;
+                            const event = {
+                                'detail': {
+                                    'value': [value]
+                                }
+                            };
+                            this.emit('changed', event);
+                        }
                     }
                 }
                 else {
                     if (this.valueData[0] !== value) {
                         if (canSelect(value)) {
-                            change = true;
-                            this.valueData[0] = value;
-                            this.shiftStart = value;
+                            const event = {
+                                'go': true,
+                                preventDefault: function () {
+                                    this.go = false;
+                                },
+                                'detail': {
+                                    'value': [value]
+                                }
+                            };
+                            this.emit('change', event);
+                            if (event.go) {
+                                change = true;
+                                this.valueData[0] = value;
+                                this.shiftStart = value;
+                                const event = {
+                                    'detail': {
+                                        'value': [value]
+                                    }
+                                };
+                                this.emit('changed', event);
+                            }
                         }
                     }
                 }
@@ -558,6 +614,12 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.valueData = [notDisabledIndex];
                     this.shiftStart = this.valueData[0];
                 }
+                const event = {
+                    'detail': {
+                        'value': [this.valueData[0]]
+                    }
+                };
+                this.emit('changed', event);
                 this.emit('update:modelValue', this.valueData);
             }
         });

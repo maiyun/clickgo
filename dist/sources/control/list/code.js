@@ -30,6 +30,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'remove': null,
             'add': null,
+            'change': null,
+            'changed': null,
             'itemclicked': null,
             'label': null,
             'item': null,
@@ -353,6 +355,29 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
+    }
+    onChange(e) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': [this.dataGl[e.detail.value[0]].value]
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+    onChanged(e) {
+        const event = {
+            'detail': {
+                'value': [this.dataGl[e.detail.value[0]].value]
+            }
+        };
+        this.emit('changed', event);
     }
     onItemclicked(e) {
         const event = {

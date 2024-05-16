@@ -30,6 +30,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'remove': null,
             'add': null,
+            'change': null,
+            'changed': null,
             'update:modelValue': null
         };
         this.props = {
@@ -130,6 +132,29 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
+    }
+    onChange(e) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+    onChanged(e) {
+        const event = {
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('changed', event);
     }
     onMounted() {
         clickgo.dom.watchStyle(this.element, ['font', 'padding'], (n, v) => {

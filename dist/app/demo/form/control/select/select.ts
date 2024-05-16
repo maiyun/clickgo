@@ -196,6 +196,14 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
+    public onGChange(e: types.IGreatselectChangeEvent): void {
+        console.log('onGChange', e);
+    }
+
+    public onGChanged(e: types.IGreatselectChangeEvent): void {
+        console.log('onGChanged', e);
+    }
+
     public onAdd(e: types.ISelectAddEvent): void {
         this.addRemoveList.unshift('@add, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
     }
@@ -210,6 +218,17 @@ export default class extends clickgo.form.AbstractForm {
 
     public onRemoved(e: types.ISelectRemovedEvent): void {
         this.addRemoveList.unshift('@removed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
+    }
+
+    public onChange(e: types.ISelectChangeEvent): void {
+        console.log('onChange', e);
+        if (e.detail.value[0] === 'title') {
+            e.preventDefault();
+        }
+    }
+
+    public onChanged(e: types.ISelectChangedEvent): void {
+        console.log('onChanged', e);
     }
 
     public onTagclick(e: types.ISelectTagclickEvent): void {

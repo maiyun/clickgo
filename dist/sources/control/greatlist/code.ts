@@ -6,11 +6,13 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'remove': null,
         'add': null,
+        'change': null,
+        'changed': null,
         'itemclicked': null,
         'beforeselect': null,
         'select': null,
         'afterselect': null,
-        'client':null,
+        'client': null,
 
         'update:modelValue': null,
         'update:scrollLeft': null,
@@ -256,13 +258,31 @@ export default class extends clickgo.control.AbstractControl {
             return true;
         };
 
-        if (!shift && !ctrl) {
+        if (!this.propBoolean('multi') || (!shift && !ctrl)) {
             // --- 单选 ---
             if (value === -1) {
                 // --- 清除 ---
                 if (this.valueData.length > 0) {
-                    change = true;
-                    this.valueData = [];
+                    const event: types.IGreatlistChangeEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'value': []
+                        }
+                    };
+                    this.emit('change', event);
+                    if (event.go) {
+                        change = true;
+                        this.valueData = [];
+                        const event: types.IGreatlistChangedEvent = {
+                            'detail': {
+                                'value': []
+                            }
+                        };
+                        this.emit('changed', event);
+                    }
                 }
             }
             else {
@@ -270,18 +290,54 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.valueData.length > 1 || this.valueData.length === 0) {
                     // --- 只选择一个，但现在有多个或一个都没有，则重置为一个 ---
                     if (canSelect(value)) {
-                        change = true;
-                        this.valueData = [value];
-                        this.shiftStart = value;
+                        const event: types.IGreatlistChangeEvent = {
+                            'go': true,
+                            preventDefault: function() {
+                                this.go = false;
+                            },
+                            'detail': {
+                                'value': [value]
+                            }
+                        };
+                        this.emit('change', event);
+                        if (event.go) {
+                            change = true;
+                            this.valueData = [value];
+                            this.shiftStart = value;
+                            const event: types.IGreatlistChangedEvent = {
+                                'detail': {
+                                    'value': [value]
+                                }
+                            };
+                            this.emit('changed', event);
+                        }
                     }
                 }
                 else {
                     // --- 只有一个，看看是不是选择的 ---
                     if (this.valueData[0] !== value) {
                         if (canSelect(value)) {
-                            change = true;
-                            this.valueData[0] = value;
-                            this.shiftStart = value;
+                            const event: types.IGreatlistChangeEvent = {
+                                'go': true,
+                                preventDefault: function() {
+                                    this.go = false;
+                                },
+                                'detail': {
+                                    'value': [value]
+                                }
+                            };
+                            this.emit('change', event);
+                            if (event.go) {
+                                change = true;
+                                this.valueData[0] = value;
+                                this.shiftStart = value;
+                                const event: types.IGreatlistChangedEvent = {
+                                    'detail': {
+                                        'value': [value]
+                                    }
+                                };
+                                this.emit('changed', event);
+                            }
                         }
                     }
                 }
@@ -327,7 +383,9 @@ export default class extends clickgo.control.AbstractControl {
                                         this.go = false;
                                     },
                                     'detail': {
+                                        // --- 当前数组的 index ---
                                         'index': rtn.add[name],
+                                        // --- 原始 data 的 index ---
                                         'value': parseInt(name)
                                     }
                                 };
@@ -692,6 +750,12 @@ export default class extends clickgo.control.AbstractControl {
                     this.valueData = [notDisabledIndex];
                     this.shiftStart = this.valueData[0];
                 }
+                const event: types.IGreatlistChangedEvent = {
+                    'detail': {
+                        'value': [this.valueData[0]]
+                    }
+                };
+                this.emit('changed', event);
                 this.emit('update:modelValue', this.valueData);
             }
         });

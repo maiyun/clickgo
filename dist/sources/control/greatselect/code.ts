@@ -6,6 +6,8 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'remove': null,
         'add': null,
+        'change': null,
+        'changed': null,
 
         'update:modelValue': null
     };
@@ -142,6 +144,31 @@ export default class extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
+    }
+
+    public onChange(e: types.IGreatlistChangeEvent): void {
+        const event: types.IGreatselectChangeEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            e.preventDefault();
+        }
+    }
+
+    public onChanged(e: types.IGreatlistChangedEvent): void {
+        const event: types.IGreatselectChangedEvent = {
+            'detail': {
+                'value': e.detail.value
+            }
+        };
+        this.emit('changed', event);
     }
 
     public onMounted(): void {
