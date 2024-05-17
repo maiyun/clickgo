@@ -684,9 +684,6 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propBoolean('multi')) {
             return;
         }
-        if (this.propBoolean('search')) {
-            return;
-        }
         const event = {
             'go': true,
             preventDefault: function () {
@@ -915,6 +912,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
         this.watch(() => JSON.stringify(this.props.data), (n, o) => __awaiter(this, void 0, void 0, function* () {
+            if (this.propBoolean('editable')) {
+                return;
+            }
             if (n === o) {
                 return;
             }
