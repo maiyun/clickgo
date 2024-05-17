@@ -26,6 +26,20 @@ export default class extends clickgo.control.AbstractControl {
         return layout;
     }
 
+    /** --- html 内部的 style 标签的 style --- */
+    public get innerStyle(): string {
+        let layout = this.props.html;
+        if (!layout) {
+            return '';
+        }
+        const styles: string[] = [];
+        layout.replace(/<style>([\s\S]*?)<\/style>/gi, function(t: string, t1: string) {
+            styles.push(t1);
+            return '';
+        });
+        return styles.join('');
+    }
+
     // --- 编译后的样式表 ---
     public get style(): string {
         /** --- 加入尾随 --- */
@@ -56,7 +70,7 @@ export default class extends clickgo.control.AbstractControl {
         pre.push(after(texts, ':focus:not(:active):not(:hover)') + '{border:solid .5px var(--g-plain-border-color-focus)}');
         pre.push(after(texts, ':disabled') + '{border:solid .5px var(--g-plain-border-color-disabled);background:var(--g-plain-background-disabled);color:var(--g-plain-color-disabled)}');
 
-        return clickgo.tool.stylePrepend(pre.join('') + (this.props.css ? this.props.css : ''), this.htmlPrep + '_').style;
+        return clickgo.tool.stylePrepend(pre.join('') + (this.props.css ? this.props.css : '') + this.innerStyle, this.htmlPrep + '_').style;
     }
 
     public onMounted(): void | Promise<void> {

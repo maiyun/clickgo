@@ -45,6 +45,18 @@ class default_1 extends clickgo.control.AbstractControl {
         layout = clickgo.tool.layoutClassPrepend(layout, [this.htmlPrep + '_']);
         return layout;
     }
+    get innerStyle() {
+        let layout = this.props.html;
+        if (!layout) {
+            return '';
+        }
+        const styles = [];
+        layout.replace(/<style>([\s\S]*?)<\/style>/gi, function (t, t1) {
+            styles.push(t1);
+            return '';
+        });
+        return styles.join('');
+    }
     get style() {
         const after = (list, after) => {
             const rtn = [];
@@ -67,7 +79,7 @@ class default_1 extends clickgo.control.AbstractControl {
         pre.push(after(texts, ':active') + '{border:solid .5px var(--g-plain-border-color-active)}');
         pre.push(after(texts, ':focus:not(:active):not(:hover)') + '{border:solid .5px var(--g-plain-border-color-focus)}');
         pre.push(after(texts, ':disabled') + '{border:solid .5px var(--g-plain-border-color-disabled);background:var(--g-plain-background-disabled);color:var(--g-plain-color-disabled)}');
-        return clickgo.tool.stylePrepend(pre.join('') + (this.props.css ? this.props.css : ''), this.htmlPrep + '_').style;
+        return clickgo.tool.stylePrepend(pre.join('') + (this.props.css ? this.props.css : '') + this.innerStyle, this.htmlPrep + '_').style;
     }
     onMounted() {
         this.htmlPrep = 'cg-hscope' + Math.round(Math.random() * 1000000000000000).toString();

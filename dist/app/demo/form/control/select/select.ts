@@ -93,6 +93,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public slist3r: any[] = ['a', 'b', 'c', 'haha3'];
 
+    public editableData = true;
+
     // --- 操作 ---
 
     public padding = false;

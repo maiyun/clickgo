@@ -47,7 +47,7 @@ class default_1 extends clickgo.form.AbstractForm {
     <li id="li">li</li>
 </ol>
 <script>alert('b');</script>
-<style>li{background:red;}div{background:blue;}#li{background:yellow;}</style>`,
+<style>ul{background:hsl(0,100%,98%)}</style>`,
             `<h2>123</h2>
 <button>Test</button>`
         ];
