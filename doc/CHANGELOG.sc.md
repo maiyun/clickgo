@@ -1,5 +1,14 @@
 # 更新日志
 
+# 3.11.27
+
+[+] greatlist 控件新增 change、changed 事件。  
+[+] greatselect 控件新增 change、changed 事件。  
+[+] list 控件新增 change、changed 事件。  
+[+] select 控件新增 change、changed 事件。  
+[\*] html 控件现在支持 html 参数中的 style 标签样式。  
+[\*] 修复 select 控件在 editable 模式下修改了 data 导致值被更新的问题。
+
 # 3.11.26
 
 [+] 新增 markdownit 控件。

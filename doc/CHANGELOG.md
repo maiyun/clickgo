@@ -1,5 +1,14 @@
 # Changelog
 
+# 3.11.27
+
+[+] Added change and changed events to greatlist control.  
+[+] Added change and changed events to greatselect control.  
+[+] Added change and changed events to list control.  
+[+] Added change and changed events to select control.  
+[\*] HTML control now supports style tags in HTML parameters.  
+[\*] Fixed an issue where modifying data in editable mode for the select control caused the value to update.
+
 # 3.11.26
 
 [+] Add markdownit control.
