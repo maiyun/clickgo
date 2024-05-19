@@ -52,7 +52,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 监听 modelValue 变动 ---
         this.watch('text', () => {
-            const text = this.props.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/<br[ /]*>\n/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/(^|\n)(.+?)($|\n)/g, (t: string, t1: string) => {
+            const text = this.props.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/<br[ /]*>\n/ig, '\n').replace(/\n{3,}/g, '\n\n').replace(/(^|\n)(.+?)($|\n)/g, (t: string, t1: string) => {
                 if (t.includes('<') && t.includes('>')) {
                     return t + '\n\n';
                 }

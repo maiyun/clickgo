@@ -2,6 +2,8 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
+    public adaptation = false;
+
     public htmlIndex = 0;
 
     public html = [

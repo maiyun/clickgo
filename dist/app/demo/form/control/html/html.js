@@ -27,6 +27,7 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
+        this.adaptation = false;
         this.htmlIndex = 0;
         this.html = [
             `<h1>Hello world!</h1>

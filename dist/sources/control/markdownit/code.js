@@ -68,7 +68,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'breaks': true
             });
             this.watch('text', () => {
-                const text = this.props.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/<br[ /]*>\n/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/(^|\n)(.+?)($|\n)/g, (t, t1) => {
+                const text = this.props.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/<br[ /]*>\n/ig, '\n').replace(/\n{3,}/g, '\n\n').replace(/(^|\n)(.+?)($|\n)/g, (t, t1) => {
                     if (t.includes('<') && t.includes('>')) {
                         return t + '\n\n';
                     }
