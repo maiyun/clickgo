@@ -47,11 +47,18 @@ export default class extends clickgo.control.AbstractControl {
         this.access.md = markdownit({
             'html': true,
             'linkify': true,
-            'typographer': true
+            'typographer': true,
+            'breaks': true
         });
         // --- 监听 modelValue 变动 ---
         this.watch('text', () => {
-            this.value = this.access.md.render(this.props.text);
+            const text = this.props.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/<br[ /]*>\n/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/(^|\n)(.+?)($|\n)/g, (t: string, t1: string) => {
+                if (t.includes('<') && t.includes('>')) {
+                    return t + '\n\n';
+                }
+                return t;
+            });
+            this.value = this.access.md.render(text);
             this.emit('update:modelValue', this.value);
         }, {
             'immediate': true
