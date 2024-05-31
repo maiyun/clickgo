@@ -1050,6 +1050,9 @@ function run(url_1) {
                 post: function (url, data, opt) {
                     return tool.post(url, data, opt);
                 },
+                postResponseJson: function (url, data, opt) {
+                    return tool.postResponseJson(url, data, opt);
+                },
                 parseUrl: function (url) {
                     return tool.parseUrl(url);
                 },

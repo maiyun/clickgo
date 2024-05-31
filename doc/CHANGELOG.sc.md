@@ -1,6 +1,6 @@
 # 更新日志
 
-# 3.11.29
+# 3.11.30
 
 [+]  tool 库新增 postResponseJson 方法。  
 [\*] 优化 markdownit 控件。

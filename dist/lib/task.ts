@@ -1178,6 +1178,12 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             }): Promise<Response | null> {
                 return tool.post(url, data, opt);
             },
+            postResponseJson: function(url: string, data: Record<string, any> | FormData, opt?: {
+                'credentials'?: 'include' | 'same-origin' | 'omit';
+                'headers'?: HeadersInit;
+            }): Promise<any | null> {
+                return tool.postResponseJson(url, data, opt);
+            },
             parseUrl: function(url: string): ILoaderUrl {
                 return tool.parseUrl(url);
             },
