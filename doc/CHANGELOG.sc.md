@@ -1,5 +1,10 @@
 # 更新日志
 
+# 3.11.28
+
+[+]  tool 库新增 postResponseJson 方法。  
+[\*] 优化 markdownit 控件。
+
 # 3.11.27
 
 [+] greatlist 控件新增 change、changed 事件。  

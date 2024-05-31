@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.28
+
+[+] Added the postResponseJson method to the tool library.  
+[\*] Improved the markdownit control.
+
 # 3.11.27
 
 [+] Added change and changed events to greatlist control.  
