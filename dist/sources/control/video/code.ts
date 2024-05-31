@@ -16,6 +16,7 @@ export default class extends clickgo.control.AbstractControl {
         'controls': boolean | string;
         'loop': boolean | string;
         'muted': boolean | string;
+        'mode': 'default' | 'mse';
 
         'volume': number | string;
         'play': boolean | string;
@@ -26,6 +27,7 @@ export default class extends clickgo.control.AbstractControl {
             'controls': false,
             'loop': false,
             'muted': false,
+            'mode': 'default',
 
             'volume': 50,
             'play': false,

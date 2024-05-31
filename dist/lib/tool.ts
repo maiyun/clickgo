@@ -802,6 +802,23 @@ export function post(url: string, data: Record<string, any> | FormData, opt?: {
     return loader.post(url, data, opt);
 }
 
+/** --- 发送响应为 json 的网络数据，无需 try，失败返回 null --- */
+export async function postResponseJson(url: string, data: Record<string, any> | FormData, opt?: {
+    'credentials'?: 'include' | 'same-origin' | 'omit';
+    'headers'?: HeadersInit;
+}): Promise<any | null> {
+    const res = await loader.post(url, data, opt);
+    if (!res) {
+        return null;
+    }
+    try {
+        return await res.json();
+    }
+    catch {
+        return null;
+    }
+}
+
 export function parseUrl(url: string): ILoaderUrl {
     return loader.parseUrl(url);
 }
