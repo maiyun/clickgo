@@ -448,10 +448,6 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             }
         };
     }
-    invoke.navigator = {};
-    if (navigator.clipboard) {
-        invoke.navigator.clipboard = navigator.clipboard;
-    }
     // --- ClickGo 相关 ---
     invoke.invokeClickgo = {
         getVersion: function(): string {

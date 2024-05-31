@@ -391,10 +391,6 @@ function run(url_1) {
                 }
             };
         }
-        invoke.navigator = {};
-        if (navigator.clipboard) {
-            invoke.navigator.clipboard = navigator.clipboard;
-        }
         invoke.invokeClickgo = {
             getVersion: function () {
                 return clickgo.getVersion();
