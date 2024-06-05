@@ -628,8 +628,8 @@ export interface IMoveDragOptions {
 }
 
 export interface INotifyOptions {
-    'title': string;
-    'content': string;
+    'title'?: string;
+    'content'?: string;
     'icon'?: string | null;
     'timeout'?: number;
     'type'?: 'primary' | 'info' | 'warning' | 'danger' | 'progress';

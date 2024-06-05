@@ -1479,12 +1479,13 @@ function notify(opt) {
     el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
     el.style.opacity = '1';
-    el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>
-<div style="flex: 1;">
-    <div class="cg-notify-title">${tool.escapeHTML(opt.title)}</div>
-    <div class="cg-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>
-    ${opt.progress ? '<div class="cg-notify-progress"></div>' : ''}
-</div>`;
+    el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
+    el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>` +
+        '<div style="flex: 1;">' +
+        (opt.title ? `<div class="cg-notify-title">${tool.escapeHTML(opt.title)}</div>` : '') +
+        (opt.content ? `<div class="cg-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>` +
+            `${opt.progress ? '<div class="cg-notify-progress"></div>' : ''}` : '') +
+        '</div>';
     if (opt.icon) {
         el.childNodes.item(0).style.background = 'url(' + opt.icon + ')';
         el.childNodes.item(0).style.backgroundSize = '16px';

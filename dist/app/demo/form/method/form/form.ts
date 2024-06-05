@@ -117,8 +117,8 @@ export default class extends clickgo.form.AbstractForm {
             icon = await clickgo.tool.blob2DataUrl(icon);
         }
         const nid = clickgo.form.notify({
-            'title': 'Notify',
-            'content': 'Content',
+            'title': this.progress[0] === 'only content' ? undefined : 'Notify',
+            'content': this.progress[0] === 'only title' ? undefined : 'Content',
             'type': this.type[0] as any,
             'progress': (this.progress[0] === 'progress + icon') ? true : false,
             'icon': icon
