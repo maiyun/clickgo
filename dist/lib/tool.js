@@ -378,7 +378,11 @@ function stylePrepend(style, prep = '') {
         return t1 + prep + t2 + t3;
     });
     for (const keyframe of keyframeList) {
-        const reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+        let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+        style = style.replace(reg, function (t, t1, t2, t3) {
+            return t1 + prep + t2 + t3;
+        });
+        reg = new RegExp(`(animation-name[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
         style = style.replace(reg, function (t, t1, t2, t3) {
             return t1 + prep + t2 + t3;
         });

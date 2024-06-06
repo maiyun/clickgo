@@ -519,10 +519,15 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
     );
     // --- 对自定义 keyframe 进行更名 ---
     for (const keyframe of keyframeList) {
-        const reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+        let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
         style = style.replace(reg, function(t, t1: string, t2: string, t3: string) {
             return t1 + prep + t2 + t3;
         });
+        reg = new RegExp(`(animation-name[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
+        style = style.replace(reg, function(t, t1: string, t2: string, t3: string) {
+            return t1 + prep + t2 + t3;
+        });
+        // --- 为什么分两个呢？一个加 (-name)? 也行，但是后面的 tx 不好合并 ---
     }
     return {
         'prep': prep,
