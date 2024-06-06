@@ -1,5 +1,12 @@
 # Changelog
 
+# 3.11.31
+
+[+] Added beforechange event to the text control.  
+[\*] Updated loading style.  
+[\*] Improved markdownit control.  
+[\*] Enhanced form library's notify style.
+
 # 3.11.30
 
 [+] Added the postResponseJson method to the tool library.  

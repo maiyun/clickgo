@@ -1,5 +1,12 @@
 # 更新日志
 
+# 3.11.31
+
+[+] text 控件新增 beforechange 事件。  
+[\*] 修改 loading 样式。  
+[\*] 优化 markdownit 控件。  
+[\*] 优化 form 库的 notify 的样式。
+
 # 3.11.30
 
 [+]  tool 库新增 postResponseJson 方法。  
