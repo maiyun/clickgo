@@ -675,6 +675,15 @@ export interface ICheckChangedEvent {
     };
 }
 
+// --- Text Control ---
+
+export interface ITextBeforechangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+        'change'?: string;
+    }
+}
+
 // --- Form Control ---
 
 export interface IFormCloseEvent extends ICustomEvent {

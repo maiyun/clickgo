@@ -2,7 +2,7 @@
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}, Focus: {{isFocus}}</label>
         <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Scroll Height: {{scrollHeight}}, Scroll Width: {{scrollWidth}}, Client Height: {{clientHeight}}, Client Width: {{clientWidth}}</label>
-        <text v-model="value" placeholder="placeholder" :type="type[0]" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :adaption="adaption" :scroll="scroll" :maxlength="maxlength" :wrap="wrap" :max="max" :min="min" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" :style="{'flex': (type[0] === 'multi') && (!adaption || scroll || !wrap) ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': (type[0] === 'multi') && (!adaption || scroll || !wrap) ? '0' : undefined, 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
+        <text v-model="value" placeholder="placeholder" :type="type[0]" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :adaption="adaption" :scroll="scroll" :maxlength="maxlength" :wrap="wrap" :max="max" :min="min" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" @beforechange="onBeforechange" :style="{'flex': (type[0] === 'multi') && (!adaption || scroll || !wrap) ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': (type[0] === 'multi') && (!adaption || scroll || !wrap) ? '0' : undefined, 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
@@ -21,6 +21,7 @@
             <button @click="wrap = !wrap" style="flex: 1;">{{wrap ? '' : '!'}}wrap</button>
             <button @click="menu = !menu" style="flex: 1;">{{menu ? '' : '!'}}menu</button>
             <button @click="gesture = !gesture" style="flex: 1;">{{gesture ? '' : '!'}}gesture</button>
+            <button @click="beforechange = !beforechange" style="flex: 1;">{{beforechange ? '' : '!'}}beforechange</button>
         </layout>
         <layout gutter="10">
             <button @click="prepend = !prepend" style="flex: 1;">{{prepend ? '' : '!'}}prepend</button>

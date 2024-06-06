@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -93,6 +94,22 @@ long`;
 
     public async onGesture(dir: string): Promise<void> {
         await clickgo.form.dialog('onGesture: ' + dir);
+    }
+
+    /** --- 是否开启修改拦截 --- */
+    public beforechange = false;
+
+    public onBeforechange(e: types.ITextBeforechangeEvent) {
+        if (!this.beforechange) {
+            return;
+        }
+        if (e.detail.value === '1345') {
+            e.preventDefault();
+            return;
+        }
+        if (e.detail.value === '1346') {
+            e.detail.change = '0000'
+        }
     }
 
 }

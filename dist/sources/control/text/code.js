@@ -44,6 +44,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'clientheight': null,
             'scrollwidth': null,
             'scrollheight': null,
+            'beforechange': null,
             'update:modelValue': null,
             'update:scrollLeft': null,
             'update:scrollTop': null,
@@ -180,6 +181,24 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
                 target.value = target.value.slice(0, this.propNumber('maxlength'));
                 return;
+            }
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': target.value,
+                    'change': undefined
+                }
+            };
+            this.emit('beforechange', event);
+            if (!event.go) {
+                target.value = this.value;
+                return;
+            }
+            if (event.detail.change !== undefined) {
+                target.value = event.detail.change;
             }
             this.value = target.value;
             yield this.nextTick();
@@ -357,8 +376,22 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.value) {
             this.value = '0';
         }
-        const n = parseFloat(this.value) + num;
-        this.value = n.toString();
+        const n = (parseFloat(this.value) + num).toString();
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': n,
+                'change': undefined
+            }
+        };
+        this.emit('beforechange', event);
+        if (!event.go) {
+            return;
+        }
+        this.value = event.detail.change !== undefined ? event.detail.change : n;
         this.emit('update:modelValue', this.value);
     }
     execCmd(ac) {
@@ -369,7 +402,24 @@ class default_1 extends clickgo.control.AbstractControl {
                     return;
                 }
                 const str = yield navigator.clipboard.readText();
-                this.value = this.value.slice(0, this.refs.text.selectionStart)
+                const value = this.value.slice(0, this.refs.text.selectionStart)
+                    + str
+                    + this.value.slice(this.refs.text.selectionEnd);
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': value,
+                        'change': undefined
+                    }
+                };
+                this.emit('beforechange', event);
+                if (!event.go) {
+                    return;
+                }
+                this.value = event.detail.change !== undefined ? event.detail.change : this.value.slice(0, this.refs.text.selectionStart)
                     + str
                     + this.value.slice(this.refs.text.selectionEnd);
                 yield this.nextTick();
@@ -458,7 +508,22 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.checkAdaption();
                 return;
             }
-            this.value = this.refs.text.value;
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': this.refs.text.value,
+                    'change': undefined
+                }
+            };
+            this.emit('beforechange', event);
+            if (!event.go) {
+                this.refs.text.value = this.value;
+                return;
+            }
+            this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
             yield this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);
@@ -468,7 +533,22 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('type', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
             if (this.checkNumber()) {
-                this.value = this.refs.text.value;
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': this.value,
+                        'change': undefined
+                    }
+                };
+                this.emit('beforechange', event);
+                if (!event.go) {
+                    this.refs.text.value = this.value;
+                    return;
+                }
+                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
             yield this.nextTick();
@@ -478,14 +558,44 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
             if (this.checkNumber()) {
-                this.value = this.refs.text.value;
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': this.value,
+                        'change': undefined
+                    }
+                };
+                this.emit('beforechange', event);
+                if (!event.go) {
+                    this.refs.text.value = this.value;
+                    return;
+                }
+                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         }));
         this.watch('min', () => __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
             if (this.checkNumber()) {
-                this.value = this.refs.text.value;
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': this.value,
+                        'change': undefined
+                    }
+                };
+                this.emit('beforechange', event);
+                if (!event.go) {
+                    this.refs.text.value = this.value;
+                    return;
+                }
+                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         }));
@@ -508,7 +618,22 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.value.length <= this.propNumber('maxlength')) {
                 return;
             }
-            this.value = this.value.slice(0, this.propNumber('maxlength'));
+            const value = this.value.slice(0, this.propNumber('maxlength'));
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': value,
+                    'change': undefined
+                }
+            };
+            this.emit('beforechange', event);
+            if (!event.go) {
+                return;
+            }
+            this.value = event.detail.change !== undefined ? event.detail.change : value;
             yield this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);

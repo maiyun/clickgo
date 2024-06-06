@@ -67,6 +67,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.phcolor = undefined;
         this.max = undefined;
         this.min = undefined;
+        this.beforechange = false;
     }
     get textBorder() {
         switch (this.border) {
@@ -91,6 +92,18 @@ long`;
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog('onGesture: ' + dir);
         });
+    }
+    onBeforechange(e) {
+        if (!this.beforechange) {
+            return;
+        }
+        if (e.detail.value === '1345') {
+            e.preventDefault();
+            return;
+        }
+        if (e.detail.value === '1346') {
+            e.detail.change = '0000';
+        }
     }
 }
 exports.default = default_1;
