@@ -92,16 +92,19 @@ class AbstractControl {
     }
     get l() {
         return (key, data) => {
-            var _a, _b, _c, _d, _e, _f;
-            if (data) {
-                return (_c = (_b = (_a = data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : data['en'][key]) !== null && _c !== void 0 ? _c : '[LocaleError]' + key;
+            var _a, _b;
+            const loc = (_b = (_a = this.localeData) === null || _a === void 0 ? void 0 : _a[this.locale][key]) !== null && _b !== void 0 ? _b : '[LocaleError]' + key;
+            if (!data) {
+                return loc;
             }
-            else if (this.localeData) {
-                return (_f = (_e = (_d = this.localeData[this.locale]) === null || _d === void 0 ? void 0 : _d[key]) !== null && _e !== void 0 ? _e : this.localeData['en'][key]) !== null && _f !== void 0 ? _f : '[LocaleError]' + key;
-            }
-            else {
-                return '[LocaleError]' + key;
-            }
+            let i = -1;
+            return loc.replace(/\?/g, function () {
+                ++i;
+                if (!data[i]) {
+                    return '';
+                }
+                return data[i];
+            });
         };
     }
     get classPrepend() {

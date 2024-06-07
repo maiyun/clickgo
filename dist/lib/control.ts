@@ -102,20 +102,20 @@ export abstract class AbstractControl {
     /**
      * --- 获取语言内容 ---
      */
-    public get l(): (
-        key: string,
-        data?: Record<string, Record<string, string>>
-    ) => string {
-        return (key: string, data?: Record<string, Record<string, string>>): string => {
-            if (data) {
-                return data[this.locale]?.[key] ?? data['en'][key] ?? '[LocaleError]' + key;
+    public get l(): (key: string, data?: string[]) => string {
+        return (key: string, data?: string[]): string => {
+            const loc = (this as any).localeData?.[this.locale][key] ?? '[LocaleError]' + key;
+            if (!data) {
+                return loc;
             }
-            else if ((this as any).localeData) {
-                return (this as any).localeData[this.locale]?.[key] ?? (this as any).localeData['en'][key] ?? '[LocaleError]' + key;
-            }
-            else {
-                return '[LocaleError]' + key;
-            }
+            let i: number = -1;
+            return loc.replace(/\?/g, function() {
+                ++i;
+                if (!data[i]) {
+                    return '';
+                }
+                return data[i];
+            });
         };
     }
 
