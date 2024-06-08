@@ -35,6 +35,12 @@ export default class extends clickgo.control.AbstractControl {
         'iconDefault': string;
         /** --- check 选框模式，设置后选中项以控件勾选为准 --- */
         'check': boolean | string;
+        /** --- 映射 label、value、children 的 key --- */
+        'map': {
+            'label'?: string;
+            'value'?: string;
+            'children'?: string;
+        };
 
         'data': any[] | Record<string, string>;
         'modelValue': string[];
@@ -54,6 +60,7 @@ export default class extends clickgo.control.AbstractControl {
             'icon': false,
             'iconDefault': '',
             'check': false,
+            'map': {},
 
             'data': [],
             'modelValue': []
@@ -123,6 +130,19 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 传输给 greatlist 的 data --- */
     public get dataGl(): any[] {
         return this.unpack(this.dataFormat);
+    }
+
+    /** --- 初始化后的 map 对象 --- */
+    public get mapComp(): {
+        'label': string;
+        'value': string;
+        'children': string;
+    } {
+        return {
+            'children': this.props.map.children ?? 'children',
+            'label': this.props.map.label ?? 'label',
+            'value': this.props.map.value ?? 'value',
+        };
     }
 
     // --- method ---
@@ -260,14 +280,14 @@ export default class extends clickgo.control.AbstractControl {
             /** --- 用户单对象 --- */
             const item = nowData[k];
             /** --- 单对象的值 --- */
-            let value = typeof item === 'object' ? (item.value ?? item.label ?? k) : item;
+            let value = typeof item === 'object' ? (item[this.mapComp.value] ?? item[this.mapComp.label] ?? k) : item;
             if (typeof value === 'number') {
                 value = value.toString();
             }
             /** --- 值是否在原来的 oldData 里能找到 --- */
             const oldIo = oldValues.indexOf(value);
             if (typeof item === 'object') {
-                over.label = item.label ?? item.value ?? k;
+                over.label = item[this.mapComp.label] ?? item[this.mapComp.value] ?? k;
                 over.value = value;
                 over.title = item.title !== undefined ? item.title : false;
                 over.disabled = item.disabled !== undefined ? item.disabled : (over.title ? true : false);
@@ -282,8 +302,8 @@ export default class extends clickgo.control.AbstractControl {
                 if (item.tree !== undefined) {
                     over.tree = item.tree;
                 }
-                if (item.children?.length > 0) {
-                    over.children = this.formatData(item.children, oldIo !== -1 ? oldData[oldIo].children : []);
+                if (item[this.mapComp.children]?.length > 0) {
+                    over.children = this.formatData(item[this.mapComp.children], oldIo !== -1 ? oldData[oldIo].children : []);
                 }
             }
             else {
@@ -656,6 +676,14 @@ export default class extends clickgo.control.AbstractControl {
             this.refreshCheckValues();
         });
         this.watch('data', (): void => {
+            this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+            if (this.propBoolean('check')) {
+                this.refreshCheckValues();
+            }
+        }, {
+            'deep': true
+        });
+        this.watch('map', (): void => {
             this.dataFormat = this.formatData(this.props.data, this.dataFormat);
             if (this.propBoolean('check')) {
                 this.refreshCheckValues();

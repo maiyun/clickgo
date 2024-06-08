@@ -53,6 +53,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'icon': false,
             'iconDefault': '',
             'check': false,
+            'map': {},
             'data': [],
             'modelValue': []
         };
@@ -103,6 +104,14 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get dataGl() {
         return this.unpack(this.dataFormat);
+    }
+    get mapComp() {
+        var _a, _b, _c;
+        return {
+            'children': (_a = this.props.map.children) !== null && _a !== void 0 ? _a : 'children',
+            'label': (_b = this.props.map.label) !== null && _b !== void 0 ? _b : 'label',
+            'value': (_c = this.props.map.value) !== null && _c !== void 0 ? _c : 'value',
+        };
     }
     select(index) {
         this.refs.gl.select(index);
@@ -203,13 +212,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 'children': []
             };
             const item = nowData[k];
-            let value = typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : k) : item;
+            let value = typeof item === 'object' ? ((_b = (_a = item[this.mapComp.value]) !== null && _a !== void 0 ? _a : item[this.mapComp.label]) !== null && _b !== void 0 ? _b : k) : item;
             if (typeof value === 'number') {
                 value = value.toString();
             }
             const oldIo = oldValues.indexOf(value);
             if (typeof item === 'object') {
-                over.label = (_d = (_c = item.label) !== null && _c !== void 0 ? _c : item.value) !== null && _d !== void 0 ? _d : k;
+                over.label = (_d = (_c = item[this.mapComp.label]) !== null && _c !== void 0 ? _c : item[this.mapComp.value]) !== null && _d !== void 0 ? _d : k;
                 over.value = value;
                 over.title = item.title !== undefined ? item.title : false;
                 over.disabled = item.disabled !== undefined ? item.disabled : (over.title ? true : false);
@@ -224,8 +233,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (item.tree !== undefined) {
                     over.tree = item.tree;
                 }
-                if (((_f = item.children) === null || _f === void 0 ? void 0 : _f.length) > 0) {
-                    over.children = this.formatData(item.children, oldIo !== -1 ? oldData[oldIo].children : []);
+                if (((_f = item[this.mapComp.children]) === null || _f === void 0 ? void 0 : _f.length) > 0) {
+                    over.children = this.formatData(item[this.mapComp.children], oldIo !== -1 ? oldData[oldIo].children : []);
                 }
             }
             else {
@@ -525,6 +534,14 @@ class default_1 extends clickgo.control.AbstractControl {
             this.refreshCheckValues();
         });
         this.watch('data', () => {
+            this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+            if (this.propBoolean('check')) {
+                this.refreshCheckValues();
+            }
+        }, {
+            'deep': true
+        });
+        this.watch('map', () => {
             this.dataFormat = this.formatData(this.props.data, this.dataFormat);
             if (this.propBoolean('check')) {
                 this.refreshCheckValues();

@@ -470,9 +470,15 @@ function getArray(param) {
     if (typeof param !== 'string') {
         return param;
     }
+    param = param.trim();
     let rtn = [];
     if (param.startsWith('[')) {
-        rtn = JSON.parse(param);
+        try {
+            rtn = JSON.parse(param);
+        }
+        catch (_a) {
+            return [];
+        }
     }
     else {
         param = param.replace(/ /g, '');

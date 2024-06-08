@@ -627,16 +627,22 @@ export function getNumber(param: string | number): number {
 }
 
 /**
- * --- 根据参数获取最终的数组型 ---
+ * --- 根据参数获取最终的数组型，可传入类似 [1,2,3] 或 1,2,3 ---
  * @param param 参数
  */
 export function getArray(param: string | any[]): any[] {
     if (typeof param !== 'string') {
         return param;
     }
+    param = param.trim();
     let rtn: any[] = [];
     if (param.startsWith('[')) {
-        rtn = JSON.parse(param);
+        try {
+            rtn = JSON.parse(param);
+        }
+        catch {
+            return [];
+        }
     }
     else {
         param = param.replace(/ /g, '');

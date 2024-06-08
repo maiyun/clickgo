@@ -219,36 +219,28 @@ export abstract class AbstractControl {
         };
     }
 
-    /**
-     * --- 获取 props 中的 boolean 类型的值 ----
-     */
+    /** --- 获取 props 中的 boolean 类型的值 --- */
     public get propBoolean() {
         return (name: keyof this['props']): boolean => {
             return tool.getBoolean((this.props as any)[name]);
         };
     }
 
-    /**
-     * --- 获取 props 中的 number 类型的值 ----
-     */
+    /** --- 获取 props 中的 number 类型的值 --- */
     public get propNumber() {
         return (name: keyof this['props']): number => {
             return tool.getNumber((this.props as any)[name]);
         };
     }
 
-    /**
-     * --- 获取 props 中的 int 类型的值 ----
-     */
+    /** --- 获取 props 中的 int 类型的值 --- */
     public get propInt() {
         return (name: keyof this['props']): number => {
             return Math.round(this.propNumber(name));
         };
     }
 
-    /**
-     * --- 获取 props 中的 array 类型的值 ----
-     */
+    /** --- 获取 props 中的 array 类型的值 --- */
     public get propArray() {
         return (name: keyof this['props']): any[] => {
             return tool.getArray((this.props as any)[name]);

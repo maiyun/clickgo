@@ -64,6 +64,10 @@
                         </layout>
                     </template>
                 </list>
+                <layout direction="v" gutter="10" style="flex: 1; width: 0;">
+                    <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual":data="listData5" :check="check" :map="listMap5" style="flex: 1;"></list>
+                    <button v-if="listMap5===undefined" @click="listMap5={'label':'name','value':'id','children':'sub'}">Set map</button>
+                </layout>
             </layout>
             <label class="tip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>
         </layout>

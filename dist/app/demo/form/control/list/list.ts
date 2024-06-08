@@ -44,6 +44,25 @@ export default class extends clickgo.form.AbstractForm {
 
     public label2 = [''];
 
+    public listData5 = [
+        {
+            'name': 'hi',
+            'id': '1'
+        },
+        {
+            'name': 'hi2',
+            'id': '2',
+            'sub': [
+                {
+                    'name': 'hi3',
+                    'id': '3'
+                }
+            ]
+        }
+    ];
+
+    public listMap5 = undefined;
+
     // --- obejct ---
 
     public selectObject = ['test'];

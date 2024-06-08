@@ -68,6 +68,23 @@ class default_1 extends clickgo.form.AbstractForm {
         this.select = [];
         this.select2 = ['Appraise'];
         this.label2 = [''];
+        this.listData5 = [
+            {
+                'name': 'hi',
+                'id': '1'
+            },
+            {
+                'name': 'hi2',
+                'id': '2',
+                'sub': [
+                    {
+                        'name': 'hi3',
+                        'id': '3'
+                    }
+                ]
+            }
+        ];
+        this.listMap5 = undefined;
         this.selectObject = ['test'];
         this.listDataObject = {
             'test': 'This is test',
