@@ -7,12 +7,9 @@
     </a>
     <a href="https://www.npmjs.com/package/clickgo">
         <img alt="NPM stable version" src="https://img.shields.io/npm/v/clickgo?color=brightgreen&logo=npm" />
-        <img alt="NPM beta version" src="https://img.shields.io/npm/v/clickgo/beta?color=yellowgreen&logo=npm" />
-        <img alt="NPM development version" src="https://img.shields.io/npm/v/clickgo/dev?color=yellow&logo=npm" />
-    </a><br>
+    </a>
     <a href="https://github.com/maiyun/clickgo/releases">
         <img alt="GitHub releases" src="https://img.shields.io/github/v/release/maiyun/clickgo?color=brightgreen&logo=github" />
-        <img alt="GitHub pre-releases" src="https://img.shields.io/github/v/release/maiyun/clickgo?color=yellow&logo=github&include_prereleases" />
     </a>
     <a href="https://github.com/maiyun/clickgo/issues">
         <img alt="GitHub issues" src="https://img.shields.io/github/issues/maiyun/clickgo?color=blue&logo=github" />
