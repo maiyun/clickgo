@@ -9,6 +9,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public checked3 = false;
 
+    public checked4 = 0;
+
     public disabled = false;
 
     public async onChange(e: types.ISwitchChangeEvent): Promise<void> {

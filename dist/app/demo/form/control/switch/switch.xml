@@ -13,6 +13,10 @@
             <switch :disabled="disabled" @change="onChange" />
             <label style="flex: 1;">not</label>
         </layout>
+        <layout gutter="10" align-v="center">
+            <switch v-model="checked4" :disabled="disabled" :map="{'true':0,'false':1}"></switch>
+            <label style="flex: 1;">{{checked4}}</label>
+        </layout>
         <button @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
     </layout>
 </form>

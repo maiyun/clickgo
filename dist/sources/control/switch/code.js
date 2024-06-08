@@ -33,10 +33,18 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'disabled': false,
+            'map': {},
             'modelValue': false
         };
         this.value = false;
         this.isSpaceDown = false;
+    }
+    get mapComp() {
+        var _a, _b;
+        return {
+            'true': (_a = this.props.map.true) !== null && _a !== void 0 ? _a : true,
+            'false': (_b = this.props.map.false) !== null && _b !== void 0 ? _b : false
+        };
     }
     click() {
         const event = {
@@ -50,7 +58,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.emit('change', event);
         if (event.go) {
-            this.value = !this.value;
+            this.value = this.value === this.mapComp.true ? this.mapComp.false : this.mapComp.true;
             this.emit('update:modelValue', this.value);
         }
     }
@@ -74,7 +82,7 @@ class default_1 extends clickgo.control.AbstractControl {
     onMounted() {
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
-                this.value = this.propBoolean('modelValue');
+                this.value = this.props.modelValue;
             }
         }, {
             'immediate': true

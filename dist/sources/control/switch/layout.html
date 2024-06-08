@@ -1,3 +1,3 @@
-<div class="wrap" :class="[isSpaceDown && 'active', value && 'checked']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @click="click" @keydown="keydown" @keyup="keyup">
+<div class="wrap" :class="[isSpaceDown && 'active', value === mapComp.true && 'checked']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @click="click" @keydown="keydown" @keyup="keyup">
     <div class="block"></div>
 </div>

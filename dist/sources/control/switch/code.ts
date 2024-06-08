@@ -11,17 +11,34 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
+        'map': {
+            'true'?: any;
+            'false'?: any;
+        },
 
-        'modelValue': boolean | string;
+        'modelValue': any;
     } = {
             'disabled': false,
+            'map': {},
 
             'modelValue': false
         };
 
-    public value = false;
+    /** --- 初始化后的 map 对象 --- */
+    public get mapComp(): {
+        'true': any;
+        'false': any;
+    } {
+        return {
+            'true': this.props.map.true ?? true,
+            'false': this.props.map.false ?? false
+        };
+    }
+
+    public value: any = false;
 
     public isSpaceDown = false;
+    
 
     public click(): void {
         const event: types.ISwitchChangeEvent = {
@@ -35,7 +52,7 @@ export default class extends clickgo.control.AbstractControl {
         };
         this.emit('change', event);
         if (event.go) {
-            this.value = !this.value;
+            this.value = this.value === this.mapComp.true ? this.mapComp.false : this.mapComp.true;
             this.emit('update:modelValue', this.value);
         }
     }
@@ -62,7 +79,7 @@ export default class extends clickgo.control.AbstractControl {
     public onMounted(): void | Promise<void> {
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
-                this.value = this.propBoolean('modelValue');
+                this.value = this.props.modelValue;
             }
         }, {
             'immediate': true
