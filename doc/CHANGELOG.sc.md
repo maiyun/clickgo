@@ -1,5 +1,10 @@
 # 更新日志
 
+# 3.11.32
+
+[+] switch 控件新增 map 参数，可分别自定义选中 / 非选中状态的值。  
+[+] list 控件新增 map 参数，可分别映射控件所需的 label、value、children 字段为 data 中的其他 key。
+
 # 3.11.31
 
 [+] text 控件新增 beforechange 事件。  

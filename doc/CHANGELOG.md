@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.11.32
+
+[+] Added map parameter to the switch control for customizing values for selected and unselected states.  
+[+] Added map parameter to the list control for mapping label, value, and children fields to different keys in the data.
+
 # 3.11.31
 
 [+] Added beforechange event to the text control.  
