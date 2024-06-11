@@ -552,6 +552,9 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.value = [v];
                         this.label = [this.listLabel[0]];
                         this.updateValue();
+                        if (this.propBoolean('search')) {
+                            yield this._search();
+                        }
                     }
                     clickgo.form.hidePop();
                 }

@@ -626,6 +626,9 @@ export default class extends clickgo.control.AbstractControl {
                     this.value = [v];
                     this.label = [this.listLabel[0]];
                     this.updateValue();
+                    if (this.propBoolean('search')) {
+                        await this._search();
+                    }
                 }
                 clickgo.form.hidePop();
             }
