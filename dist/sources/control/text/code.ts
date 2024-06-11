@@ -189,10 +189,35 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的 blur 事件 --- */
-    public tblur(e: FocusEvent): void {
+    public async tblur(e: FocusEvent): Promise<void> {
         // --- 如果是 number 则要判断数字是否符合 min max，不能在 input 判断，因为会导致用户无法正常输入数字，比如最小值是 10，他在输入 1 的时候就自动重置成 10 了 ---
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-        this.checkNumber(target);
+        if (this.checkNumber(target)) {
+            const event: types.ITextBeforechangeEvent = {
+                'go': true,
+                preventDefault: function() {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': target.value,
+                    'change': undefined
+                }
+            };
+            this.emit('beforechange', event);
+            if (event.go) {
+                // --- 允许 ---
+                if (event.detail.change !== undefined) {
+                    target.value = event.detail.change;
+                }
+                this.value = target.value;
+                await this.nextTick();
+                this.checkAdaption();
+            }
+            else {
+                // --- 禁止 ---
+                target.value = this.value;
+            }
+        }
         this.isFocus = false;
         this.emit('blur');
     }
@@ -200,7 +225,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 文本框的 input 事件 --- */
     public async input(e: InputEvent): Promise<void> {
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-        this.checkNumber(target);
         if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
             target.value = target.value.slice(0, this.propNumber('maxlength'));
             return;

@@ -171,15 +171,39 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('focus');
     }
     tblur(e) {
-        const target = e.target;
-        this.checkNumber(target);
-        this.isFocus = false;
-        this.emit('blur');
+        return __awaiter(this, void 0, void 0, function* () {
+            const target = e.target;
+            if (this.checkNumber(target)) {
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': target.value,
+                        'change': undefined
+                    }
+                };
+                this.emit('beforechange', event);
+                if (event.go) {
+                    if (event.detail.change !== undefined) {
+                        target.value = event.detail.change;
+                    }
+                    this.value = target.value;
+                    yield this.nextTick();
+                    this.checkAdaption();
+                }
+                else {
+                    target.value = this.value;
+                }
+            }
+            this.isFocus = false;
+            this.emit('blur');
+        });
     }
     input(e) {
         return __awaiter(this, void 0, void 0, function* () {
             const target = e.target;
-            this.checkNumber(target);
             if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
                 target.value = target.value.slice(0, this.propNumber('maxlength'));
                 return;
