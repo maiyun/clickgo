@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.11.33
+
+[\*] Optimized select control.
+
 # 3.11.32
 
 [+] Added map parameter to the switch control for customizing values for selected and unselected states.  
