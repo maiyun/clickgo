@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.11.34
+
+[+] Added HTML event to tuieditor control.  
+[\*] Removed markdownit control.  
+[\*] Optimized text control.
+
 # 3.11.33
 
 [\*] Optimized select control.
