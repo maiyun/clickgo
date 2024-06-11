@@ -40,6 +40,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'imgselect': null,
             'imgupload': null,
             'init': null,
+            'html': null,
             'update:modelValue': null
         };
         this.props = {
@@ -237,6 +238,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'events': {
                     change: () => {
                         this.emit('update:modelValue', this.access.tuieditor.getMarkdown());
+                        this.emit('html', this.access.tuieditor.getHTML());
                     }
                 },
                 'toolbarItems': [
@@ -422,6 +424,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }, true);
             this.isLoading = false;
             this.emit('init', this.access.tuieditor);
+            if (this.props.modelValue) {
+                this.emit('html', this.access.tuieditor.getHTML());
+            }
         });
     }
 }

@@ -17,6 +17,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public text = 'a**b**c';
 
+    public html = '';
+
     public async imgselect(cb: (url: string, opt?: {
         'alt'?: string;
         'width'?: number;

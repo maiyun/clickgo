@@ -17,7 +17,6 @@ import clinkFrm from './control/link/link';
 import clabelFrm from './control/label/label';
 import clayoutFrm from './control/layout/layout';
 import clistFrm from './control/list/list';
-import cmarkdownitFrm from './control/markdownit/markdownit';
 import cmapFrm from './control/map/map';
 import cmarqueeFrm from './control/marquee/marquee';
 import cmenuFrm from './control/menu/menu';
@@ -191,10 +190,6 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create('control/loading/loading', undefined, {
                     'path': this.filename
                 });
-                break;
-            }
-            case 'cmarkdownit': {
-                frm = await clickgo.form.create(cmarkdownitFrm);
                 break;
             }
             case 'cmap': {

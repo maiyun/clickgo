@@ -47,6 +47,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.family = false;
         this.visual = false;
         this.text = 'a**b**c';
+        this.html = '';
     }
     imgselect(cb) {
         return __awaiter(this, void 0, void 0, function* () {

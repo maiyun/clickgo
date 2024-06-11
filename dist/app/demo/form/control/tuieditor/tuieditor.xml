@@ -1,7 +1,13 @@
-<form title="Tuieditor" width="500" height="450" padding="10">
+<form title="Tuieditor" width="600" height="450" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <label>Length: {{text.length}}</label>
-        <tuieditor v-model="text" :disabled="disabled" :theme="theme[0]" :visual="visual" @imgselect="imgselect" style="flex: 1; height: 0;" :style="{'font-size': size[0], 'font-family': family ? 'Consolas, \'Courier New\', monospace' : undefined}"></tuieditor>
+        <layout gutter="10" style="flex: 1;">
+            <tuieditor v-model="text" @html="html = $event" :disabled="disabled" :theme="theme[0]" :visual="visual" @imgselect="imgselect" style="flex: 1;" :style="{'font-size': size[0], 'font-family': family ? 'Consolas, \'Courier New\', monospace' : undefined}"></tuieditor>
+            <layout gutter="10" direction="v" style="flex: 1;">
+                <text style="flex: 1;" v-model="text" readonly type="multi"></text>
+                <text style="flex: 1;" v-model="html" readonly type="multi"></text>
+            </layout>
+        </layout>
         <layout gutter="10">
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="family = !family" style="flex: 1;">{{family ? '' : '!'}}Family CCM</button>

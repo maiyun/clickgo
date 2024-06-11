@@ -7,6 +7,7 @@ export default class extends clickgo.control.AbstractControl {
         'imgselect': null,
         'imgupload': null,
         'init': null,
+        'html': null,
 
         'update:modelValue': null
     };
@@ -232,6 +233,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 用户输入事件 ---
                 change: () => {
                     this.emit('update:modelValue', this.access.tuieditor.getMarkdown());
+                    this.emit('html', this.access.tuieditor.getHTML());
                 }
             },
             'toolbarItems': [
@@ -433,6 +435,9 @@ export default class extends clickgo.control.AbstractControl {
         // --- 初始化成功 ---
         this.isLoading = false;
         this.emit('init', this.access.tuieditor);
+        if (this.props.modelValue) {
+            this.emit('html', this.access.tuieditor.getHTML());
+        }
     }
 
 }

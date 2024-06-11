@@ -20,10 +20,8 @@
         "/clickgo/control/xterm",
         "/clickgo/control/echarts",
         "/clickgo/control/map",
-        "/clickgo/control/markdownit",
         "/clickgo/control/tuieditor",
-        "/clickgo/control/arteditor",
-        "/clickgo/control/markdownit"
+        "/clickgo/control/arteditor"
     ],
     "style": "/package/global",
 
@@ -81,8 +79,6 @@
         "/form/control/loading/loading.xml",
         "/form/control/map/map.js",
         "/form/control/map/map.xml",
-        "/form/control/markdownit/markdownit.js",
-        "/form/control/markdownit/markdownit.xml",
         "/form/control/marquee/marquee.js",
         "/form/control/marquee/marquee.xml",
         "/form/control/menu/menu.js",
