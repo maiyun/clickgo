@@ -189,7 +189,10 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的 blur 事件 --- */
-    public tblur(): void {
+    public tblur(e: FocusEvent): void {
+        // --- 如果是 number 则要判断数字是否符合 min max，不能在 input 判断，因为会导致用户无法正常输入数字，比如最小值是 10，他在输入 1 的时候就自动重置成 10 了 ---
+        const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+        this.checkNumber(target);
         this.isFocus = false;
         this.emit('blur');
     }

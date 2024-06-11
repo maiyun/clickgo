@@ -170,7 +170,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isFocus = true;
         this.emit('focus');
     }
-    tblur() {
+    tblur(e) {
+        const target = e.target;
+        this.checkNumber(target);
         this.isFocus = false;
         this.emit('blur');
     }
