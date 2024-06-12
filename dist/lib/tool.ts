@@ -806,6 +806,13 @@ export function fetch(url: string, init?: RequestInit): Promise<string | Blob | 
     return loader.fetch(url, init);
 }
 
+export function get(url: string, opt?: {
+    'credentials'?: 'include' | 'same-origin' | 'omit';
+    'headers'?: HeadersInit;
+}) {
+    return loader.get(url, opt);
+}
+
 export function post(url: string, data: Record<string, any> | FormData, opt?: {
     'credentials'?: 'include' | 'same-origin' | 'omit';
     'headers'?: HeadersInit;
@@ -818,16 +825,7 @@ export async function postResponseJson(url: string, data: Record<string, any> | 
     'credentials'?: 'include' | 'same-origin' | 'omit';
     'headers'?: HeadersInit;
 }): Promise<any | null> {
-    const res = await loader.post(url, data, opt);
-    if (!res) {
-        return null;
-    }
-    try {
-        return await res.json();
-    }
-    catch {
-        return null;
-    }
+    return loader.postResponseJson(url, data, opt);
 }
 
 export function parseUrl(url: string): ILoaderUrl {
