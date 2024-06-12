@@ -93,6 +93,7 @@
                 <layout gutter="10">
                     <button @click="openForm('carteditor')">Arteditor</button>
                     <button @click="openForm('ctuieditor')">Tuieditor</button>
+                    <button @click="openForm('ctuiviewer')">Tuiviewer</button>
                 </layout>
             </layout>
         </flow>

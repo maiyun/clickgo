@@ -21,6 +21,7 @@
         "/clickgo/control/echarts",
         "/clickgo/control/map",
         "/clickgo/control/tuieditor",
+        "/clickgo/control/tuiviewer",
         "/clickgo/control/arteditor"
     ],
     "style": "/package/global",
@@ -119,6 +120,8 @@
         "/form/control/tip/tip.xml",
         "/form/control/tuieditor/tuieditor.js",
         "/form/control/tuieditor/tuieditor.xml",
+        "/form/control/tuiviewer/tuiviewer.js",
+        "/form/control/tuiviewer/tuiviewer.xml",
         "/form/control/vflow/vflow.css",
         "/form/control/vflow/vflow.js",
         "/form/control/vflow/vflow.xml",

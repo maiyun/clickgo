@@ -41,6 +41,7 @@ import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
 import cechartsFrm from './control/echarts/echarts';
 import ctuieditorFrm from './control/tuieditor/tuieditor';
+import ctuiviewerFrm from './control/tuiviewer/tuiviewer';
 import carteditorFrm from './control/arteditor/arteditor';
 
 import eformFrm from './event/form/form';
@@ -262,6 +263,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ctuieditor': {
                 frm = await clickgo.form.create(ctuieditorFrm);
+                break;
+            }
+            case 'ctuiviewer': {
+                frm = await clickgo.form.create(ctuiviewerFrm);
                 break;
             }
             case 'carteditor': {

@@ -401,6 +401,8 @@ export default class extends clickgo.control.AbstractControl {
                     el.classList.remove('toastui-editor-dark');
                 }
             }
+        }, {
+            'immediate': true
         });
         // --- 监听上面的值的变动 ---
         this.watch('modelValue', (v: string) => {

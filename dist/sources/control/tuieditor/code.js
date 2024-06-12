@@ -393,6 +393,8 @@ class default_1 extends clickgo.control.AbstractControl {
                         el.classList.remove('toastui-editor-dark');
                     }
                 }
+            }, {
+                'immediate': true
             });
             this.watch('modelValue', (v) => {
                 if (!this.access.tuieditor) {
