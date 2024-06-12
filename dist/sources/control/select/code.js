@@ -390,7 +390,7 @@ class default_1 extends clickgo.control.AbstractControl {
     _search(success) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
+            const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim().toLowerCase();
             if (this.propBoolean('remote')) {
                 const delay = this.propInt('remoteDelay');
                 ++this._needSearch;
@@ -471,7 +471,24 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     updateInputValue(value) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.inputValue = value.trim();
+            value = value.trim();
+            ;
+            if (this.propBoolean('editable') && !this.propBoolean('multi')) {
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': [value]
+                    }
+                };
+                this.emit('change', event);
+                if (!event.go) {
+                    return;
+                }
+            }
+            this.inputValue = value;
             if (this.propBoolean('search')) {
                 if (this.element.dataset.cgPopOpen === undefined) {
                     this.refs.gs.showPop();
@@ -501,6 +518,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             this.updateValue();
+            if (this.propBoolean('editable') && !this.propBoolean('multi')) {
+                const event = {
+                    'detail': {
+                        'value': [value]
+                    }
+                };
+                this.emit('changed', event);
+            }
         });
     }
     listItemClicked() {
@@ -687,6 +712,12 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propBoolean('multi')) {
             return;
         }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        if (this.propBoolean('editable')) {
+            return;
+        }
         const event = {
             'go': true,
             preventDefault: function () {
@@ -706,6 +737,9 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         if (this.propBoolean('search')) {
+            return;
+        }
+        if (this.propBoolean('editable')) {
             return;
         }
         const event = {

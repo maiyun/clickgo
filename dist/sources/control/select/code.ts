@@ -448,7 +448,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 私有搜索方法 --- */
     private async _search(success?: () => void | Promise<void>): Promise<void> {
         /** --- 当前要搜索的值 --- */
-        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
+        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim().toLowerCase();
         if (this.propBoolean('remote')) {
             // --- 远程搜索 ---
             const delay = this.propInt('remoteDelay');
@@ -534,8 +534,23 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- text 的值变更事件（只有 editable 时会触发） ----
     public async updateInputValue(value: string): Promise<void> {
-        this.inputValue = value.trim();
-
+        value = value.trim();;
+        if (this.propBoolean('editable') && !this.propBoolean('multi')) {
+            const event: types.ISelectChangeEvent = {
+                'go': true,
+                preventDefault: function() {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': [value]
+                }
+            };
+            this.emit('change', event);
+            if (!event.go) {
+                return;
+            }
+        }
+        this.inputValue = value;
         // --- 判断当前是否是搜索模式 ---
         if (this.propBoolean('search')) {
             if (this.element.dataset.cgPopOpen === undefined) {
@@ -571,6 +586,14 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         this.updateValue();
+        if (this.propBoolean('editable') && !this.propBoolean('multi')) {
+            const event: types.ISelectChangedEvent = {
+                'detail': {
+                    'value': [value]
+                }
+            };
+            this.emit('changed', event);
+        }
     }
 
     /** --- list 上的点击事件 --- */
@@ -790,6 +813,12 @@ export default class extends clickgo.control.AbstractControl {
         if (this.propBoolean('multi')) {
             return;
         }
+        if (this.propBoolean('search')) {
+            return;
+        }
+        if (this.propBoolean('editable')) {
+            return;
+        }
         const event: types.ISelectChangeEvent = {
             'go': true,
             preventDefault: function() {
@@ -810,6 +839,9 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         if (this.propBoolean('search')) {
+            return;
+        }
+        if (this.propBoolean('editable')) {
             return;
         }
         const event: types.ISelectChangedEvent = {
