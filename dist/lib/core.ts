@@ -353,6 +353,7 @@ const modules: Record<string, {
             await loader.loadLinks([
                 loader.cdn + '/npm/@wangeditor/editor@5.1.23/dist/css/style.min.css'
             ]);
+            loader.loadStyle('.w-e-modal,.w-e-hover-bar,.w-e-drop-panel,.w-e-select-list,.w-e-bar-item-menus-container{z-index:2 !important;}');
             return (window as any).wangEditor;
         },
         'obj': null,

@@ -21,7 +21,7 @@
             border-radius: var(--g-radius) var(--g-radius) 0 0;
         }
         .editor {
-            flex: 1; cursor: text; border-radius: 0 0 var(--g-radius) var(--g-radius);
+            flex: 1; height: 0; cursor: text; border-radius: 0 0 var(--g-radius) var(--g-radius);
         }
     }
     &.dark {

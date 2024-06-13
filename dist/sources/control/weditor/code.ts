@@ -6,6 +6,7 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'imgselect': null,
         'imgupload': null,
+        'videoselect': null,
         'init': null,
         'text': null,
         'update:modelValue': null
@@ -28,6 +29,8 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     public notInit = false;
+
+    public isFocus = false;
 
     public isLoading = true;
 
@@ -188,14 +191,36 @@ export default class extends clickgo.control.AbstractControl {
             'html': this.props.modelValue,
             'config': {
                 'placeholder': this.props.placeholder,
+                'autoFocus': false,
+                'MENU_CONF': {
+                    'uploadImage': {
+                        customBrowseAndUpload: (insertFn: (url: string, alt?: string, href?: string) => void) => {
+                            this.emit('imgselect', (url: string, alt?: string) => {
+                                insertFn(url, alt);
+                            });
+                        }
+                    },
+                    'uploadVideo': {
+                        customBrowseAndUpload: (insertFn: (url: string, poster?: string) => void) => {
+                            this.emit('videoselect', (url: string, poster?: string) => {
+                                insertFn(url, poster);
+                            });
+                        }
+                    }
+                },
                 onChange: (editor: any) => {
                     const html = editor.getHtml();
                     this.emit('update:modelValue', html);
                     this.emit('text', editor.getText())
+                },
+                onFocus: () => {
+                    this.isFocus = true;
+                },
+                onBlur: () => {
+                    this.isFocus = false;
                 }
             },
-            'mode': 'default',
-            'aotoFocus': false
+            'mode': 'default'
         });
 
         const tb = createToolbar({
@@ -268,7 +293,9 @@ export default class extends clickgo.control.AbstractControl {
             if (v === this.access.editor.getHtml()) {
                 return;
             }
-            this.access.editor.setHtml(v);
+            this.access.editor.clear();
+            this.access.editor.select([]);
+            this.access.editor.dangerouslyInsertHtml(v);
         });
         // --- 初始化成功 ---
         this.isLoading = false;
