@@ -326,46 +326,6 @@ export default class extends clickgo.control.AbstractControl {
         this.element.addEventListener('touchstart', down, {
             'passive': true
         });
-        // --- 绑定 wheel 事件 ---
-        const wheel = (e: WheelEvent | TouchEvent, el: HTMLElement): void => {
-            clickgo.dom.bindGesture(e, (e, dir) => {
-                switch (dir) {
-                    case 'top': {
-                        if (el.scrollTop > 0) {
-                            return -1;
-                        }
-                        break;
-                    }
-                    case 'bottom': {
-                        if (Math.round(el.scrollTop) < el.scrollHeight - el.clientHeight) {
-                            return -1;
-                        }
-                        break;
-                    }
-                    case 'left': {
-                        if (el.scrollLeft > 0) {
-                            return -1;
-                        }
-                        break;
-                    }
-                    default: {
-                        if (Math.round(el.scrollLeft) < el.scrollWidth - el.clientWidth) {
-                            return -1;
-                        }
-                    }
-                }
-                return 0;
-            });
-        };
-        const list: NodeListOf<HTMLElement> = this.refs.content.querySelectorAll('.ProseMirror, .toastui-editor-md-preview');
-        for (const el of list) {
-            el.addEventListener('wheel', (e) => {
-                wheel(e, el);
-            });
-            el.addEventListener('touchstart', (e) => {
-                wheel(e, el);
-            });
-        }
         // --- 监听语言变动 ---
         this.watch('locale', () => {
             if (!this.access.tuieditor) {

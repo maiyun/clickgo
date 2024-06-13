@@ -586,6 +586,9 @@ exports.elements = {
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
         this.wrap.addEventListener('touchmove', function (e) {
+            if (e.target && dom.findParentByData(e.target, 'cg-scroll')) {
+                return;
+            }
             if (e.cancelable) {
                 e.preventDefault();
             }
@@ -593,6 +596,9 @@ exports.elements = {
             'passive': false
         });
         this.wrap.addEventListener('wheel', function (e) {
+            if (e.target && (e.target.dataset.cgScroll !== undefined) && dom.findParentByData(e.target, 'cg-scroll')) {
+                return;
+            }
             e.preventDefault();
         }, {
             'passive': false

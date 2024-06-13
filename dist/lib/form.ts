@@ -883,6 +883,9 @@ export const elements: {
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
         this.wrap.addEventListener('touchmove', function(e): void {
             // --- 防止拖动时整个网页跟着动 ---
+            if (e.target && dom.findParentByData(e.target as HTMLElement, 'cg-scroll')) {
+                return;
+            }
             if (e.cancelable) {
                 e.preventDefault();
             }
@@ -892,6 +895,9 @@ export const elements: {
         });
         this.wrap.addEventListener('wheel', function(e): void {
             // --- 防止不小心前进后退，或上下缓动滚动（Mac、触摸板） ---
+            if (e.target && ((e.target as HTMLElement).dataset.cgScroll !== undefined) && dom.findParentByData(e.target as HTMLElement, 'cg-scroll')) {
+                return;
+            }
             e.preventDefault();
         }, {
             'passive': false

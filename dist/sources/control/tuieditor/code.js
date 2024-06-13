@@ -323,45 +323,6 @@ class default_1 extends clickgo.control.AbstractControl {
             this.element.addEventListener('touchstart', down, {
                 'passive': true
             });
-            const wheel = (e, el) => {
-                clickgo.dom.bindGesture(e, (e, dir) => {
-                    switch (dir) {
-                        case 'top': {
-                            if (el.scrollTop > 0) {
-                                return -1;
-                            }
-                            break;
-                        }
-                        case 'bottom': {
-                            if (Math.round(el.scrollTop) < el.scrollHeight - el.clientHeight) {
-                                return -1;
-                            }
-                            break;
-                        }
-                        case 'left': {
-                            if (el.scrollLeft > 0) {
-                                return -1;
-                            }
-                            break;
-                        }
-                        default: {
-                            if (Math.round(el.scrollLeft) < el.scrollWidth - el.clientWidth) {
-                                return -1;
-                            }
-                        }
-                    }
-                    return 0;
-                });
-            };
-            const list = this.refs.content.querySelectorAll('.ProseMirror, .toastui-editor-md-preview');
-            for (const el of list) {
-                el.addEventListener('wheel', (e) => {
-                    wheel(e, el);
-                });
-                el.addEventListener('touchstart', (e) => {
-                    wheel(e, el);
-                });
-            }
             this.watch('locale', () => {
                 if (!this.access.tuieditor) {
                     return;

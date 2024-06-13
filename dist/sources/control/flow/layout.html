@@ -1,4 +1,4 @@
-<div class="wrap" :class="[direction]" @scroll="onScroll" @wheel="wheel" @mousedown="down" @touchstart="down">
+<div class="wrap" :class="[direction]" @scroll="onScroll" @wheel="wheel" @mousedown="down" @touchstart="down" data-cg-scroll>
     <slot></slot>
     <div class="selection" ref="selection"></div>
 </div>

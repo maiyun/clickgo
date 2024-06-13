@@ -102,38 +102,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.refs.tabs[0].scrollLeft += e.deltaY;
     }
-    touch(e) {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
-            switch (dir) {
-                case 'top': {
-                    if (this.refs.tabs[0].scrollTop > 0) {
-                        return -1;
-                    }
-                    break;
-                }
-                case 'bottom': {
-                    if (Math.round(this.refs.tabs[0].scrollTop) <
-                        (this.refs.tabs[0].scrollHeight - this.refs.tabs[0].clientHeight)) {
-                        return -1;
-                    }
-                    break;
-                }
-                case 'left': {
-                    if (this.refs.tabs[0].scrollLeft > 0) {
-                        return -1;
-                    }
-                    break;
-                }
-                default: {
-                    if (Math.round(this.refs.tabs[0].scrollLeft) <
-                        (this.refs.tabs[0].scrollWidth - this.refs.tabs[0].clientWidth)) {
-                        return -1;
-                    }
-                }
-            }
-            return 0;
-        });
-    }
     down(e, index) {
         const nval = this.tabsComp[index].value;
         if (this.value !== nval) {
