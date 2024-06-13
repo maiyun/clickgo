@@ -255,6 +255,11 @@ function read(blob) {
             }
             const configContent = yield z.getContent('/' + sub.name + '/config.json');
             if (!configContent) {
+                form.notify({
+                    'title': 'Error',
+                    'content': `Control file not found.\nFile: "${'/' + sub.name + '/config.json'}".`,
+                    'type': 'danger'
+                });
                 continue;
             }
             const config = JSON.parse(configContent);

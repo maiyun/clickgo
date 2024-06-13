@@ -344,6 +344,20 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'weditor': {
+        func: async function() {
+            await loader.loadScripts([
+                loader.cdn + '/npm/@wangeditor/editor@5.1.23/dist/index.min.js'
+            ]);
+            await loader.loadLinks([
+                loader.cdn + '/npm/@wangeditor/editor@5.1.23/dist/css/style.min.css'
+            ]);
+            return (window as any).wangEditor;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 

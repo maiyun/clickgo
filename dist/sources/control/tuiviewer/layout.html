@@ -1,4 +1,4 @@
-<div class="wrap" :class="[theme]">
+<div class="wrap">
     <div v-if="notInit" class="notInit">Tuieditor module not found.</div>
     <div v-else class="content" ref="content"></div>
     <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">

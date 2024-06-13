@@ -75,6 +75,7 @@ const video_1 = __importDefault(require("./control/video/video"));
 const step_1 = __importDefault(require("./control/step/step"));
 const xterm_1 = __importDefault(require("./control/xterm/xterm"));
 const echarts_1 = __importDefault(require("./control/echarts/echarts"));
+const weditor_1 = __importDefault(require("./control/weditor/weditor"));
 const tuieditor_1 = __importDefault(require("./control/tuieditor/tuieditor"));
 const tuiviewer_1 = __importDefault(require("./control/tuiviewer/tuiviewer"));
 const arteditor_1 = __importDefault(require("./control/arteditor/arteditor"));
@@ -291,6 +292,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'ctext': {
                     frm = yield clickgo.form.create(text_1.default);
+                    break;
+                }
+                case 'cweditor': {
+                    frm = yield clickgo.form.create(weditor_1.default);
                     break;
                 }
                 case 'ctuieditor': {

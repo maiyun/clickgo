@@ -364,6 +364,11 @@ export async function read(blob: Blob): Promise<false | types.TControlPackage> {
         }
         const configContent = await z.getContent('/' + sub.name + '/config.json');
         if (!configContent) {
+            form.notify({
+                'title': 'Error',
+                'content': `Control file not found.\nFile: "${'/' + sub.name + '/config.json'}".`,
+                'type': 'danger'
+            });
             continue;
         }
         // --- 读取本条控件内容 ---

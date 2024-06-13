@@ -173,11 +173,6 @@ class default_1 extends clickgo.control.AbstractControl {
                         break;
                     }
                     break;
-                    const str = yield navigator.clipboard.readText();
-                    if (str) {
-                        this.access.tuieditor.insertText(str);
-                    }
-                    break;
                 }
             }
         });

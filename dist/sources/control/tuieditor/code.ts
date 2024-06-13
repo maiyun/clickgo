@@ -161,11 +161,6 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 break;
-                const str = await navigator.clipboard.readText();
-                if (str) {
-                    this.access.tuieditor.insertText(str);
-                }
-                break;
             }
         }
     }

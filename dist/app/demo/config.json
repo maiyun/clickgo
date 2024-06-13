@@ -22,7 +22,8 @@
         "/clickgo/control/map",
         "/clickgo/control/tuieditor",
         "/clickgo/control/tuiviewer",
-        "/clickgo/control/arteditor"
+        "/clickgo/control/arteditor",
+        "/clickgo/control/weditor"
     ],
     "style": "/package/global",
 
@@ -127,6 +128,8 @@
         "/form/control/vflow/vflow.xml",
         "/form/control/video/video.js",
         "/form/control/video/video.xml",
+        "/form/control/weditor/weditor.js",
+        "/form/control/weditor/weditor.xml",
         "/form/control/xterm/xterm.js",
         "/form/control/xterm/xterm.xml",
         "/form/event/form/form.css",

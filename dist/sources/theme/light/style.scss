@@ -911,6 +911,26 @@ global {
     background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
 }
 
+// --- CONTROL -- weditor ---
+
+.weditor_wrap {
+    transition: all .3s var(--g-cubic); transition-property: color, background-color, border;
+    &:not([data-cg-disabled]) {
+        &.weditor_focus {
+            border-color: var(--g-plain-border-color-hover);
+        }
+        &:hover {
+            border-color: var(--g-plain-border-color);
+        }
+        &:active {
+            border-color: var(--g-plain-border-color-hover);
+        }
+    }
+}
+.weditor_pop {
+    background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
+}
+
 // --- CONTROL -- video ---
 
 .video_wrap {

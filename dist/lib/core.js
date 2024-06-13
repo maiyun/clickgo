@@ -277,6 +277,22 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'weditor': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    loader.cdn + '/npm/@wangeditor/editor@5.1.23/dist/index.min.js'
+                ]);
+                yield loader.loadLinks([
+                    loader.cdn + '/npm/@wangeditor/editor@5.1.23/dist/css/style.min.css'
+                ]);
+                return window.wangEditor;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 function regModule(name, func) {

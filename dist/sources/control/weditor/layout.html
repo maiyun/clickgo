@@ -1,0 +1,21 @@
+<div class="wrap" :class="[theme]" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div v-if="notInit" class="notInit">Weditor module not found.</div>
+    <div v-else class="content" ref="content">
+        <div ref="toolbar" class="toolbar"></div>
+		<div ref="editor" class="editor"></div>
+    </div>
+    <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
+        <cg-loading></cg-loading>
+    </div>
+    <teleport to="system">
+        <div ref="pop" class="pop">
+            <slot>
+                <cg-menulist>
+                    <cg-menulist-item alt="T" @click="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
+                    <cg-menulist-item alt="P" @click="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
+                </cg-menulist>
+            </slot>
+        </div>
+    </teleport>
+</div>
