@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.12.1
+
+[+] Added counts parameter to the page control for user-selectable items per page.  
+[*] Improved the select control.
+
 # 3.12.0
 
 [+] Added get request method to the tool library.  
