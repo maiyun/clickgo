@@ -598,7 +598,7 @@ exports.elements = {
             'passive': false
         });
         this.wrap.addEventListener('wheel', function (e) {
-            if (e.target && (e.target.dataset.cgScroll !== undefined) && dom.findParentByData(e.target, 'cg-scroll')) {
+            if (e.target && (e.target.dataset.cgScroll !== undefined) || dom.findParentByData(e.target, 'cg-scroll')) {
                 return;
             }
             e.preventDefault();

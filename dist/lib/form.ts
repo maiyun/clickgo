@@ -901,7 +901,7 @@ export const elements: {
         });
         this.wrap.addEventListener('wheel', function(e): void {
             // --- 防止不小心前进后退，或上下缓动滚动（Mac、触摸板） ---
-            if (e.target && ((e.target as HTMLElement).dataset.cgScroll !== undefined) && dom.findParentByData(e.target as HTMLElement, 'cg-scroll')) {
+            if (e.target && ((e.target as HTMLElement).dataset.cgScroll !== undefined) || dom.findParentByData(e.target as HTMLElement, 'cg-scroll')) {
                 return;
             }
             e.preventDefault();
