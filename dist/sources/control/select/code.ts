@@ -803,6 +803,12 @@ export default class extends clickgo.control.AbstractControl {
                     this.updateValue();
                     this.refs.gs.hidePop();
                 }
+                const event: types.ISelectChangedEvent = {
+                    'detail': {
+                        'value': this.value
+                    }
+                };
+                this.emit('changed', event);
             }
         }
     }
@@ -900,24 +906,6 @@ export default class extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
-    }
-
-    public onChanged(e: types.IListChangedEvent) {
-        if (this.propBoolean('multi')) {
-            return;
-        }
-        if (this.propBoolean('search')) {
-            return;
-        }
-        if (this.propBoolean('editable')) {
-            return;
-        }
-        const event: types.ISelectChangedEvent = {
-            'detail': {
-                'value': e.detail.value
-            }
-        };
-        this.emit('changed', event);
     }
 
     // --- tag 的 label 的点击事件 ---

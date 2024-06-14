@@ -700,6 +700,12 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.updateValue();
                         this.refs.gs.hidePop();
                     }
+                    const event = {
+                        'detail': {
+                            'value': this.value
+                        }
+                    };
+                    this.emit('changed', event);
                 }
             }
         });
@@ -792,23 +798,6 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             e.preventDefault();
         }
-    }
-    onChanged(e) {
-        if (this.propBoolean('multi')) {
-            return;
-        }
-        if (this.propBoolean('search')) {
-            return;
-        }
-        if (this.propBoolean('editable')) {
-            return;
-        }
-        const event = {
-            'detail': {
-                'value': e.detail.value
-            }
-        };
-        this.emit('changed', event);
     }
     tagClick(index) {
         const value = this.value[index];

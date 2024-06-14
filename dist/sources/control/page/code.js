@@ -29,15 +29,18 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'change': null,
-            'update:modelValue': null
+            'update:modelValue': null,
+            'update:count': null
         };
         this.props = {
             'modelValue': 1,
             'max': 0,
             'total': 0,
             'count': 10,
+            'counts': [],
             'control': 2
         };
+        this.countSelect = [0];
         this.svg = '<svg width="14" height="14" viewBox="0 0 24 24" stroke="none"><path d="m6 10.25c-.9665 0-1.75.7835-1.75 1.75s.7835 1.75 1.75 1.75h.01c.9665 0 1.75-.7835 1.75-1.75s-.7835-1.75-1.75-1.75zm4.25 1.75c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75zm6 0c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75z" /></svg>';
         this.prevs = [];
         this.nexts = [];
@@ -45,42 +48,65 @@ class default_1 extends clickgo.control.AbstractControl {
         this.maxPage = 0;
         this.localeData = {
             'en': {
-                'total-of': 'Total of ? items'
+                'total-of': 'Total of ? items',
+                'page': 'Page'
             },
             'sc': {
-                'total-of': '共 ? 条'
+                'total-of': '共 ? 条',
+                'page': '页'
             },
             'tc': {
-                'total-of': '共 ? 條'
+                'total-of': '共 ? 條',
+                'page': '頁'
             },
             'ja': {
-                'total-of': '? 件の合計'
+                'total-of': '? 件の合計',
+                'page': 'ページ'
             },
             'ko': {
-                'total-of': '? 개 항목 총계'
+                'total-of': '? 개 항목 총계',
+                'page': '페이지'
             },
             'th': {
-                'total-of': 'ทั้งหมด ? รายการ'
+                'total-of': 'ทั้งหมด ? รายการ',
+                'page': 'หน้า'
             },
             'es': {
-                'total-of': 'Total de ? elementos'
+                'total-of': 'Total de ? elementos',
+                'page': 'Página'
             },
             'de': {
-                'total-of': 'Insgesamt ?'
+                'total-of': 'Insgesamt ?',
+                'page': 'Seite'
             },
             'fr': {
-                'total-of': 'Total de ?'
+                'total-of': 'Total de ?',
+                'page': 'Page'
             },
             'pt': {
-                'total-of': 'Total de ?'
+                'total-of': 'Total de ?',
+                'page': 'Página'
             },
             'ru': {
-                'total-of': 'Всего ?'
+                'total-of': 'Всего ?',
+                'page': 'Страница'
             },
             'vi': {
-                'total-of': 'Tổng cộng ?'
+                'total-of': 'Tổng cộng ?',
+                'page': 'Trang'
             }
         };
+    }
+    get countsComp() {
+        const counts = this.propArray('counts');
+        const list = [];
+        for (const item of counts) {
+            list.push({
+                'label': item.toString() + ' / ' + this.l('page'),
+                'value': item
+            });
+        }
+        return list;
     }
     refresh() {
         this.prevs.length = 0;
@@ -110,7 +136,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.maxPage = 1;
             return;
         }
-        this.maxPage = Math.ceil(this.propInt('total') / this.propInt('count'));
+        this.maxPage = Math.ceil(this.propInt('total') / this.countSelect[0]);
     }
     keydown(e) {
         if (e.key !== 'Enter') {
@@ -119,7 +145,18 @@ class default_1 extends clickgo.control.AbstractControl {
         e.preventDefault();
         e.target.click();
     }
+    changed(e) {
+        this.emit('update:count', this.countSelect[0]);
+        this.refreshMaxPage();
+        this.refresh();
+    }
     onMounted() {
+        this.countSelect[0] = this.propInt('count');
+        this.watch('count', () => {
+            this.countSelect[0] = this.propInt('count');
+            this.refreshMaxPage();
+            this.refresh();
+        });
         this.watch('modelValue', () => {
             this.page = this.propInt('modelValue');
             this.refresh();

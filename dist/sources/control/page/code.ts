@@ -1,11 +1,13 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'change': null,
 
-        'update:modelValue': null
+        'update:modelValue': null,
+        'update:count': null
     };
 
     public props: {
@@ -14,7 +16,10 @@ export default class extends clickgo.control.AbstractControl {
         'max': number | string;
         /** --- 总条数，可留空 --- */
         'total': number | string;
+        /** --- 每页条数 --- */
         'count': number | string;
+        /** --- 设置后出现选项可选择每页多少条 --- */
+        'counts': Array<number> | string;
         /** --- 控制页按钮显示几个 --- */
         'control': number | string;
     } = {
@@ -22,8 +27,31 @@ export default class extends clickgo.control.AbstractControl {
             'max': 0,
             'total': 0,
             'count': 10,
+            'counts': [],
             'control': 2
         };
+    
+    /** --- 每页多少条 --- */
+    public countSelect = [0];
+    
+    /** --- 格式化每页多少条 counts --- */
+    public get countsComp(): Array<{
+        'label': string;
+        'value': number;
+    }> {
+        const counts = this.propArray('counts');
+        const list: Array<{
+            'label': string;
+            'value': number;
+        }> = [];
+        for (const item of counts) {
+            list.push({
+                'label': item.toString() + ' / ' + this.l('page'),
+                'value': item
+            });
+        }
+        return list;
+    }
 
     public svg: string = '<svg width="14" height="14" viewBox="0 0 24 24" stroke="none"><path d="m6 10.25c-.9665 0-1.75.7835-1.75 1.75s.7835 1.75 1.75 1.75h.01c.9665 0 1.75-.7835 1.75-1.75s-.7835-1.75-1.75-1.75zm4.25 1.75c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75zm6 0c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75z" /></svg>';
 
@@ -42,40 +70,52 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 语言包 --- */
     public localeData = {
         'en': {
-            'total-of': 'Total of ? items'
+            'total-of': 'Total of ? items',
+            'page': 'Page'
         },
         'sc': {
-            'total-of': '共 ? 条'
+            'total-of': '共 ? 条',
+            'page': '页'
         },
         'tc': {
-            'total-of': '共 ? 條'
+            'total-of': '共 ? 條',
+            'page': '頁'
         },
         'ja': {
-            'total-of': '? 件の合計'
+            'total-of': '? 件の合計',
+            'page': 'ページ'
         },
         'ko': {
-            'total-of': '? 개 항목 총계'
+            'total-of': '? 개 항목 총계',
+            'page': '페이지'
         },
         'th': {
-            'total-of': 'ทั้งหมด ? รายการ'
+            'total-of': 'ทั้งหมด ? รายการ',
+            'page': 'หน้า'
         },
         'es': {
-            'total-of': 'Total de ? elementos'
+            'total-of': 'Total de ? elementos',
+            'page': 'Página'
         },
         'de': {
-            'total-of': 'Insgesamt ?'
+            'total-of': 'Insgesamt ?',
+            'page': 'Seite'
         },
         'fr': {
-            'total-of': 'Total de ?'
+            'total-of': 'Total de ?',
+            'page': 'Page'
         },
         'pt': {
-            'total-of': 'Total de ?'
+            'total-of': 'Total de ?',
+            'page': 'Página'
         },
         'ru': {
-            'total-of': 'Всего ?'
+            'total-of': 'Всего ?',
+            'page': 'Страница'
         },
         'vi': {
-            'total-of': 'Tổng cộng ?'
+            'total-of': 'Tổng cộng ?',
+            'page': 'Trang'
         }
     };
 
@@ -111,7 +151,7 @@ export default class extends clickgo.control.AbstractControl {
             this.maxPage = 1;
             return;
         }
-        this.maxPage = Math.ceil(this.propInt('total') / this.propInt('count'));
+        this.maxPage = Math.ceil(this.propInt('total') / this.countSelect[0]);
     }
 
     public keydown(e: KeyboardEvent): void {
@@ -122,7 +162,20 @@ export default class extends clickgo.control.AbstractControl {
         (e.target as HTMLElement).click();
     }
 
+    /** --- select changed --- */
+    public changed(e: types.ISelectChangedEvent) {
+        this.emit('update:count', this.countSelect[0]);
+        this.refreshMaxPage();
+        this.refresh();
+    }
+
     public onMounted(): void | Promise<void> {
+        this.countSelect[0] = this.propInt('count');
+        this.watch('count', () => {
+            this.countSelect[0] = this.propInt('count');
+            this.refreshMaxPage();
+            this.refresh();
+        });
         this.watch('modelValue', () => {
             this.page = this.propInt('modelValue');
             this.refresh();

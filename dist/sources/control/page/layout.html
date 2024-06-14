@@ -1,5 +1,6 @@
 <div class="wrap">
     <div class="list">
+        <cg-select v-if="countsComp.length" :data="countsComp" v-model="countSelect" @changed="changed"></cg-select>
         <!-- 向左翻页 -->
         <div v-if="page > 1" :tabindex="formFocus ? '0' : undefined" class="left" @click="--page;$emit('update:modelValue',page);$emit('change',page);refresh()" @keydown="keydown"></div>
         <!-- 首页码 -->

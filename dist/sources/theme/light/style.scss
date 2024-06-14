@@ -531,7 +531,7 @@ global {
 
 .page_wrap {
     .page_list {
-        > .page_tag-div {
+        > .page_tag-div:not(.page_tag-cg-select) {
             transition: all .3s var(--g-cubic); width: 32px; height: 32px;
             &::after {
                 border-radius: 3px;

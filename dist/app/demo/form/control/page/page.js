@@ -32,7 +32,9 @@ class default_1 extends clickgo.form.AbstractForm {
         this.p3 = 30;
         this.p4 = 50;
         this.p5 = 1;
+        this.p6 = 2;
         this.total5 = 0;
+        this.count6 = 20;
         this.control = 2;
     }
 }
