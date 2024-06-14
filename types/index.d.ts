@@ -252,6 +252,16 @@ export interface IBindResizeOptions {
     'end'?: () => void;
 }
 
+/** --- 监视位置中的元素 --- */
+export interface IWatchPositionItem {
+    'el': HTMLElement;
+    'rect': DOMRect;
+    'handler': (state: {
+        'position': boolean;
+        'size': boolean;
+    }) => void | Promise<void>;
+}
+
 /** --- 监视大小中的元素 --- */
 export interface IWatchSizeItem {
     'el': HTMLElement;
@@ -266,7 +276,7 @@ export interface IWatchItem {
     'taskId'?: number;
 }
 
-/** --- 获取当前正在监视中的 property 和 style 的元素信息 --- */
+/** --- 获取当前正在监视中的 property、style 和 position 的元素信息 --- */
 export interface IGetWatchInfoResult {
     'formId': number;
     'default': Record<string, {
@@ -278,6 +288,9 @@ export interface IGetWatchInfoResult {
             'list': string[];
             'count': number;
         };
+        'position': {
+            'count': number;
+        };
     }>;
     'panels': Record<string,
         Record<string, {
@@ -287,6 +300,9 @@ export interface IGetWatchInfoResult {
             };
             'property': {
                 'list': string[];
+                'count': number;
+            };
+            'position': {
                 'count': number;
             };
         }>

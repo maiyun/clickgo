@@ -205,7 +205,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 if (this.value.includes(this.inputValue)) {
                     this.inputValue = '';
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     return;
                 }
                 const addIndex = this.value.length;
@@ -274,12 +274,12 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.propBoolean('editable')) {
                 if (this.propBoolean('multi')) {
                     if (!value) {
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         return;
                     }
                     if (this.value.includes(value)) {
                         this.inputValue = '';
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         return;
                     }
                     const addIndex = this.value.length;
@@ -307,7 +307,7 @@ class default_1 extends clickgo.control.AbstractControl {
                                 'value': value
                             }
                         });
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         if (this.propBoolean('search')) {
                             yield this._search();
                         }
@@ -315,7 +315,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 else {
                     if (!value) {
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         return;
                     }
                     this.value = [value];
@@ -323,7 +323,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     yield this.nextTick();
                     this.label = [this.listLabel[0] || value];
                     this.updateValue();
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                 }
             }
             else {
@@ -333,13 +333,13 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     if (this.value.includes(value)) {
                         this.searchValue = '';
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         yield this._search();
                         return;
                     }
                     if (!this.listValue[0]) {
                         this.searchValue = '';
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         yield this._search();
                         return;
                     }
@@ -366,14 +366,14 @@ class default_1 extends clickgo.control.AbstractControl {
                                 'value': value
                             }
                         });
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         yield this._search();
                     }
                 }
                 else {
                     if (!this.listValue[0]) {
                         this.searchValue = '';
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         yield this._search();
                         return;
                     }
@@ -381,7 +381,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.label = [this.listLabel[0]];
                     this.searchValue = '';
                     this.updateValue();
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     yield this._search();
                 }
             }
@@ -534,7 +534,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 const v = this.listValue[0];
                 if (this.propBoolean('multi')) {
                     if (this.value.includes(v)) {
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         return;
                     }
                     const addIndex = this.value.length;
@@ -563,11 +563,11 @@ class default_1 extends clickgo.control.AbstractControl {
                             }
                         });
                         if (this.propBoolean('search')) {
-                            clickgo.form.hidePop();
+                            this.refs.gs.hidePop();
                             yield this._search();
                         }
                         else {
-                            clickgo.form.hidePop();
+                            this.refs.gs.hidePop();
                         }
                     }
                 }
@@ -581,14 +581,14 @@ class default_1 extends clickgo.control.AbstractControl {
                             yield this._search();
                         }
                     }
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                 }
             }
             else {
                 if (this.propBoolean('multi')) {
                     if (this.propBoolean('search')) {
                         if (this.value.includes(this.listValue[0])) {
-                            clickgo.form.hidePop();
+                            this.refs.gs.hidePop();
                             this.searchValue = '';
                             yield this._search();
                             return;
@@ -618,7 +618,7 @@ class default_1 extends clickgo.control.AbstractControl {
                                     'value': this.inputValue
                                 }
                             });
-                            clickgo.form.hidePop();
+                            this.refs.gs.hidePop();
                             yield this._search();
                         }
                     }
@@ -632,12 +632,12 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.updateValue({
                             'clearInput': true
                         });
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         yield this._search();
                     }
                     else {
                         this.updateValue();
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                     }
                 }
             }

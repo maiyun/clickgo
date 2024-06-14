@@ -244,7 +244,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             if (this.value.includes(this.inputValue)) {
                 this.inputValue = '';
-                clickgo.form.hidePop();
+                this.refs.gs.hidePop();
                 return;
             }
             // --- 判断是否允许新增项 ---
@@ -320,12 +320,12 @@ export default class extends clickgo.control.AbstractControl {
             if (this.propBoolean('multi')) {
                 // --- 多选 ---
                 if (!value) {
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     return;
                 }
                 if (this.value.includes(value)) {
                     this.inputValue = '';
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     return;
                 }
                 // --- 判断是否允许新增项 ---
@@ -354,7 +354,7 @@ export default class extends clickgo.control.AbstractControl {
                             'value': value
                         }
                     });
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     if (this.propBoolean('search')) {
                         await this._search();
                     }
@@ -363,7 +363,7 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 // --- 单选 ---
                 if (!value) {
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     return;
                 }
                 this.value = [value];
@@ -371,7 +371,7 @@ export default class extends clickgo.control.AbstractControl {
                 await this.nextTick();
                 this.label = [this.listLabel[0] || value];
                 this.updateValue();
-                clickgo.form.hidePop();
+                this.refs.gs.hidePop();
             }
         }
         else {
@@ -383,13 +383,13 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 if (this.value.includes(value)) {
                     this.searchValue = '';
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     await this._search();
                     return;
                 }
                 if (!this.listValue[0]) {
                     this.searchValue = '';
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     await this._search();
                     return;
                 }
@@ -417,7 +417,7 @@ export default class extends clickgo.control.AbstractControl {
                             'value': value
                         }
                     });
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     await this._search();
                 }
             }
@@ -425,7 +425,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 单选 ---
                 if (!this.listValue[0]) {
                     this.searchValue = '';
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     await this._search();
                     return;
                 }
@@ -433,7 +433,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.label = [this.listLabel[0]];
                 this.searchValue = '';
                 this.updateValue();
-                clickgo.form.hidePop();
+                this.refs.gs.hidePop();
                 await this._search();
             }
         }
@@ -604,7 +604,7 @@ export default class extends clickgo.control.AbstractControl {
             if (this.propBoolean('multi')) {
                 // --- 多选 ---
                 if (this.value.includes(v)) {
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     return;
                 }
                 // --- 判断是否允许新增项 ---
@@ -634,11 +634,11 @@ export default class extends clickgo.control.AbstractControl {
                         }
                     });
                     if (this.propBoolean('search')) {
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         await this._search();
                     }
                     else {
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                     }
                 }
             }
@@ -653,7 +653,7 @@ export default class extends clickgo.control.AbstractControl {
                         await this._search();
                     }
                 }
-                clickgo.form.hidePop();
+                this.refs.gs.hidePop();
             }
         }
         else {
@@ -662,7 +662,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 多选 ---
                 if (this.propBoolean('search')) {
                     if (this.value.includes(this.listValue[0])) {
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         this.searchValue = '';
                         await this._search();
                         return;
@@ -693,7 +693,7 @@ export default class extends clickgo.control.AbstractControl {
                                 'value': this.inputValue
                             }
                         });
-                        clickgo.form.hidePop();
+                        this.refs.gs.hidePop();
                         await this._search();
                     }
                 }
@@ -728,12 +728,12 @@ export default class extends clickgo.control.AbstractControl {
                     this.updateValue({
                         'clearInput': true
                     });
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                     await this._search();
                 }
                 else {
                     this.updateValue();
-                    clickgo.form.hidePop();
+                    this.refs.gs.hidePop();
                 }
             }
         }

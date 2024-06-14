@@ -193,6 +193,153 @@ export function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'
     return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
 }
 
+// ---------------------
+// --- watchPosition ---
+// ---------------------
+
+/**
+ * --- 监听中的标签对象，对应 formId -> 数组列表 ---
+ */
+const watchPositionObjects: Record<
+    /** --- formId --- */
+    string,
+    Record<
+        /** --- panelId 或 default --- */
+        string,
+        Record<
+            /** --- index 值 --- */
+            string,
+            types.IWatchPositionItem
+        >
+    >
+> = {};
+
+/** --- 监视元素的 data-cg-poindex --- */
+let watchPositionIndex: number = 0;
+
+/**
+ * --- 添加监视 Element 对象位置，元素移除后自动停止监视，已经监视中的不会再次监视，请短时间使用（虽然本方法也可以监听 element 的大小改变，但这是监听位置改变的副产品，如果仅仅监听大小改变请使用效率更高的 watch size） ---
+ * @param el 要监视的大小
+ * @param cb 回调函数
+ * @param immediate 立刻先执行一次回调
+ */
+export function watchPosition(
+    el: HTMLElement,
+    cb: (state: {
+        'position': boolean;
+        'size': boolean;
+    }) => void | Promise<void>,
+    immediate: boolean = false
+): boolean {
+    if (isWatchPosition(el)) {
+        return false;
+    }
+    if (immediate) {
+        try {
+            const r = cb({
+                'position': false,
+                'size': false
+            });
+            if (r instanceof Promise) {
+                r.catch(function(e) {
+                    console.log('dom.watchPosition', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watchPosition', e);
+        }
+    }
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return false;
+    }
+    const formId = formWrap.dataset.formId!;
+    // --- 获取监视标签的所属 panel ---
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId! : 'default';
+    // --- 创建 object ---
+    if (!watchPositionObjects[formId]) {
+        watchPositionObjects[formId] = {};
+    }
+    if (!watchPositionObjects[formId][panelId]) {
+        watchPositionObjects[formId][panelId] = {};
+    }
+    watchPositionObjects[formId][panelId][watchPositionIndex] = {
+        'el': el,
+        'rect': el.getBoundingClientRect(),
+        'handler': cb
+    };
+    el.dataset.cgPoindex = watchPositionIndex.toString();
+    ++watchPositionIndex;
+    return true;
+}
+
+/**
+ * --- 移除监视 Element 对象位置 ---
+ * @param el 要移除监视
+ */
+export function unwatchPosition(el: HTMLElement): void {
+    const index = el.dataset.cgPoindex;
+    if (index === undefined) {
+        return;
+    }
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId!;
+    // --- 获取监视标签的所属 panel ---
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId! : 'default';
+    const item = watchPositionObjects[formId][panelId][index];
+    el.removeAttribute('data-cg-poindex');
+    delete watchPositionObjects[formId][panelId][index];
+    if (Object.keys(watchPositionObjects[formId][panelId]).length) {
+        return;
+    }
+    delete watchPositionObjects[formId][panelId];
+    if (Object.keys(watchPositionObjects[formId]).length) {
+        return;
+    }
+    delete watchPositionObjects[formId];
+}
+
+/**
+ * --- 检测一个标签是否正在被 watchSize ---
+ * @param el 要检测的标签
+ */
+export function isWatchPosition(el: HTMLElement): boolean {
+    return el.dataset.cgPoindex ? true : false;
+}
+
+/**
+ * --- 清除某个窗体的所有 watch position 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
+ * @param formId 窗体 id
+ * @param panelId 若指定则只清除当前窗体的某个 panel 的 watch
+ */
+export function clearWatchPosition(formId: number | string, panelId?: number): void {
+    if (!watchPositionObjects[formId]) {
+        return;
+    }
+    for (const panel in watchPositionObjects[formId]) {
+        if (panelId) {
+            if (panel !== panelId.toString()) {
+                continue;
+            }
+        }
+        for (const index in watchPositionObjects[formId][panel]) {
+            const item = watchPositionObjects[formId][panel][index];
+            item.el.removeAttribute('data-cg-poindex');
+        }
+        delete watchPositionObjects[formId][panel];
+    }
+    if (Object.keys(watchPositionObjects[formId]).length) {
+        return;
+    }
+    delete watchPositionObjects[formId];
+}
+
 // -----------------
 // --- watchSize ---
 // -----------------
@@ -830,8 +977,8 @@ export function getWatchInfo(): types.IGetWatchInfoResult {
     const panelIds = form.getActivePanel(formId);
     const handler = (item: {
         'el': HTMLElement;
-        'names': Record<string, any>;
-    }, type: 'style' | 'property', panelId?: string): void => {
+        'names'?: Record<string, any>;
+    }, type: 'style' | 'property' | 'position', panelId?: string): void => {
         if (panelId) {
             if (!rtn.panels[panelId]) {
                 rtn.panels[panelId] = {};
@@ -849,15 +996,20 @@ export function getWatchInfo(): types.IGetWatchInfoResult {
                 'property': {
                     'count': 0,
                     'list': []
+                },
+                'position': {
+                    'count': 0
                 }
             };
         }
         ++ritem[cname][type].count;
-        for (const name in item.names) {
-            if (ritem[cname][type].list.includes(name)) {
-                continue;
+        if (item.names && type !== 'position') {
+            for (const name in item.names) {
+                if (ritem[cname][type].list.includes(name)) {
+                    continue;
+                }
+                ritem[cname][type].list.push(name);
             }
-            ritem[cname][type].list.push(name);
         }
     };
     // --- 先执行窗体默认的 ---
@@ -888,6 +1040,22 @@ export function getWatchInfo(): types.IGetWatchInfoResult {
             if (watchPropertyObjects[formId]?.[id]) {
                 for (const index in watchPropertyObjects[formId][id]) {
                     handler(watchPropertyObjects[formId][id][index], 'property', id.toString());
+                }
+            }
+        }
+    }
+    // --- 先执行窗体默认的 ---
+    if (watchPositionObjects[formId]) {
+        if (watchPositionObjects[formId].default) {
+            for (const index in watchPositionObjects[formId].default) {
+                handler(watchPositionObjects[formId].default[index], 'position');
+            }
+        }
+        // --- 再执行活跃的 panel 的 ---
+        for (const id of panelIds) {
+            if (watchPositionObjects[formId]?.[id]) {
+                for (const index in watchPositionObjects[formId][id]) {
+                    handler(watchPositionObjects[formId][id][index], 'position', id.toString());
                 }
             }
         }
@@ -945,6 +1113,7 @@ const watchTimerHandler = function(): void {
                     }
                 }
             }
+            // --- property ---
             if (watchPropertyObjects[formId]) {
                 // --- property ---
                 const handler = (item: IWatchPropertyItem, panelId: string, index: string): void => {
@@ -980,6 +1149,53 @@ const watchTimerHandler = function(): void {
                     if (watchPropertyObjects[formId][id]) {
                         for (const index in watchPropertyObjects[formId][id]) {
                             handler(watchPropertyObjects[formId][id][index], id.toString(), index);
+                        }
+                    }
+                }
+            }
+            // --- position ---
+            if (watchPositionObjects[formId]) {
+                // --- position ---
+                const handler = (item: types.IWatchPositionItem, panelId: string, index: string): void => {
+                    if (!document.body.contains(item.el)) {
+                        delete watchPositionObjects[formId][panelId][index];
+                        if (!Object.keys(watchPositionObjects[formId][panelId]).length) {
+                            delete watchPositionObjects[formId][panelId];
+                        }
+                        if (!Object.keys(watchPositionObjects[formId]).length) {
+                            delete watchPositionObjects[formId];
+                        }
+                        return;
+                    }
+                    // --- 执行 cb ---
+                    const rect = item.el.getBoundingClientRect();
+                    let position = false;
+                    let size = false;
+                    if (item.rect.left !== rect.left || item.rect.top !== rect.top) {
+                        position = true;
+                    }
+                    if (item.rect.width !== rect.width || item.rect.height !== rect.height) {
+                        size = true;
+                    }
+                    if (position || size) {
+                        item.handler({
+                            'position': position,
+                            'size': size
+                        });
+                    }
+                    watchPositionObjects[formId][panelId][index].rect = rect;
+                };
+                // --- 先执行窗体默认的 ---
+                if (watchPositionObjects[formId].default) {
+                    for (const index in watchPositionObjects[formId].default) {
+                        handler(watchPositionObjects[formId].default[index], 'default', index);
+                    }
+                }
+                // --- 再执行活跃的 panel 的 ---
+                for (const id of panelIds) {
+                    if (watchPositionObjects[formId][id]) {
+                        for (const index in watchPositionObjects[formId][id]) {
+                            handler(watchPositionObjects[formId][id][index], id.toString(), index);
                         }
                     }
                 }

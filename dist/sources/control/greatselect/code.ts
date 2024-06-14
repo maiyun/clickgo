@@ -59,8 +59,17 @@ export default class extends clickgo.control.AbstractControl {
             'size': {
                 'width': this.element.offsetWidth
             },
-            'autoPosition': true
+            'autoPosition': true,
+            'autoScroll': true,
+            'way': 'click'
         });
+    }
+
+    /**
+     * --- 隐藏 pop，可供别人调用 ---
+     */
+    public hidePop(): void {
+        clickgo.form.hidePop(this.element);
     }
 
     // --- 内部方法 ---
@@ -89,7 +98,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         if (this.element.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop(this.element);
+            // this.hidePop();
             return;
         }
         if (this.props.area === 'arrow' && area === 'left') {
@@ -111,7 +120,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 多选不隐藏 ---
             return;
         }
-        clickgo.form.hidePop();
+        this.hidePop();
     }
 
     public onAdd(e: types.IGreatlistAddEvent): void {

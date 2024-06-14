@@ -133,7 +133,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- mark 才响应 ---
         clickgo.dom.bindLong(e, () => {
-            clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h');
+            clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h', {
+                'autoScroll': true,
+                'way': 'click'
+            });
         });
     }
 
@@ -147,10 +150,13 @@ export default class extends clickgo.control.AbstractControl {
         e.stopPropagation();
         // --- 检测是否显示 pop ---
         if (this.element.dataset.cgPopOpen === undefined) {
-            clickgo.form.showPop(this.element, this.refs.pop, 'v');
+            clickgo.form.showPop(this.element, this.refs.pop, 'v', {
+                'autoScroll': true,
+                'way': 'click'
+            });
         }
         else {
-            clickgo.form.hidePop(this.element);
+            // clickgo.form.hidePop(this.element);
         }
     }
 
@@ -159,19 +165,25 @@ export default class extends clickgo.control.AbstractControl {
         e.stopPropagation();
         if (this.props.area === 'all') {
             if (this.element.dataset.cgPopOpen === undefined) {
-                clickgo.form.showPop(this.element, this.refs.pop, 'v');
+                clickgo.form.showPop(this.element, this.refs.pop, 'v', {
+                    'autoScroll': true,
+                    'way': 'click'
+                });
             }
             else {
-                clickgo.form.hidePop(this.element);
+                // clickgo.form.hidePop(this.element);
             }
         }
         else {
             // --- mark / split ---
             if (this.refs.arrow?.dataset.cgPopOpen === undefined) {
-                clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'split' ? 'v' : 'h');
+                clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'split' ? 'v' : 'h', {
+                    'autoScroll': true,
+                    'way': 'click'
+                });
             }
             else {
-                clickgo.form.hidePop(this.refs.arrow);
+                // clickgo.form.hidePop(this.refs.arrow);
             }
         }
     }

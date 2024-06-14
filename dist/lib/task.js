@@ -477,6 +477,15 @@ function run(url_1) {
                 getStyleCount: function (taskId, type) {
                     return dom.getStyleCount(taskId, type);
                 },
+                watchPosition: function (el, cb, immediate = false) {
+                    return dom.watchPosition(el, cb, immediate);
+                },
+                unwatchPosition: function (el) {
+                    dom.unwatchPosition(el);
+                },
+                isWatchPosition: function (el) {
+                    return dom.isWatchPosition(el);
+                },
                 getWatchSizeCount: function (taskId) {
                     return dom.getWatchSizeCount(taskId);
                 },
@@ -672,6 +681,9 @@ function run(url_1) {
                 },
                 hidePop: function (pop) {
                     form.hidePop(pop);
+                },
+                isJustPop: function (el) {
+                    return form.isJustPop(el);
                 },
                 doFocusAndPopEvent: function (e) {
                     form.doFocusAndPopEvent(e);
@@ -1477,6 +1489,7 @@ function end(taskId) {
         (_a = form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
         dom.clearWatchStyle(fid);
         dom.clearWatchProperty(fid);
+        dom.clearWatchPosition(fid);
         delete form.activePanels[fid];
     }
     const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');

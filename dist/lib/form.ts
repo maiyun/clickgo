@@ -838,11 +838,17 @@ const popInfo: {
     'list': HTMLElement[];
     /** --- 当前显示的 pop 的母标签 --- */
     'elList': HTMLElement[];
+    /** --- 当前展示的 pop 托管方式（normal、click、hover） --- */
+    'wayList': Array<'normal' | 'click' | 'hover'>;
+    /** --- 每个层弹出时的时间戳 --- */
+    'time': number[];
     /** --- pop 最后一个层级 --- */
     'lastZIndex': number;
 } = {
     'list': [],
     'elList': [],
+    'wayList': [],
+    'time': [],
     'lastZIndex': 0
 };
 
@@ -2168,19 +2174,35 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
 
 /** --- 最后一次 touchstart 的时间戳 */
 let lastShowPopTime: number = 0;
+
 /**
  * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
  * @param el 响应的元素
  * @param pop 要显示 pop 元素
  * @param direction 要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
- * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 自动更新 pop 位置，默认 false，true 为原元素位置变更，pop 位置也会变更，pop 大小变更，位置也会变更, flow: 是否加入 pop 流，默认加入，不加入的话将不会自动隐藏
+ * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 因 pop 内部内容变动导致的自动更新 pop 位置，默认 false，autoScroll，因原元素位置变更导致 pop 位置变更，默认 false，flow: 是否加入 pop 流，默认加入，不加入的话将不会自动隐藏
  */
-export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: {
+export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.IVue | undefined, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: {
     'size'?: { width?: number; height?: number; };
     'null'?: boolean;
     'autoPosition'?: boolean;
+    'autoScroll'?: boolean;
     'flow'?: boolean;
+    /** --- 展示托管方式 --- */
+    'way'?: 'normal' | 'click' | 'hover';
 } = {}): void {
+    if (!(el instanceof HTMLElement)) {
+        if (!el.$el) {
+            return;
+        }
+        el = el.$el;
+    }
+    if (pop && !(pop instanceof HTMLElement)) {
+        if (!pop.$el) {
+            return;
+        }
+        pop = pop.$el;
+    }
     // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
     if (opt.null === undefined) {
         opt.null = false;
@@ -2220,15 +2242,10 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
     }
     /** --- 要不要隐藏别的 pop --- */
     const parentPop = dom.findParentByData(el, 'cg-pop');
-    if (parentPop) {
-        for (let i = 0; i < popInfo.list.length; ++i) {
-            if (popInfo.list[i] !== parentPop) {
-                continue;
-            }
-            if (!popInfo.elList[i + 1]) {
-                continue;
-            }
-            hidePop(popInfo.elList[i + 1]);
+    if (parentPop && parentPop.dataset.cgLevel !== undefined) {
+        const nextlevel = parseInt(parentPop.dataset.cgLevel) + 1;
+        if (popInfo.elList[nextlevel]) {
+            hidePop(popInfo.elList[nextlevel]);
         }
     }
     else {
@@ -2250,8 +2267,16 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
             refreshPopPosition(el, pop, direction, opt.size);
         });
     }
+    if (opt.autoScroll && typeof direction === 'string') {
+        // --- 可能根据原元素重置 pop 位置 ---
+        clickgo.dom.watchPosition(el, () => {
+            refreshPopPosition(el, pop, direction, opt.size);
+        });
+    }
     popInfo.list.push(pop);
     popInfo.elList.push(el);
+    popInfo.wayList.push(opt.way ?? 'normal');
+    popInfo.time.push(Date.now());
     pop.dataset.cgOpen = '';
     pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
     el.dataset.cgPopOpen = '';
@@ -2261,7 +2286,13 @@ export function showPop(el: HTMLElement, pop: HTMLElement | undefined, direction
 /**
  * --- 隐藏正在显示中的所有 pop，或指定 pop/el ---
  */
-export function hidePop(pop?: HTMLElement): void {
+export function hidePop(pop?: HTMLElement | types.IVue): void {
+    if (pop && !(pop instanceof HTMLElement)) {
+        if (!pop.$el) {
+            return;
+        }
+        pop = pop.$el;
+    }
     if (!pop) {
         if (popInfo.elList.length === 0) {
             return;
@@ -2297,6 +2328,7 @@ export function hidePop(pop?: HTMLElement): void {
         pop.removeAttribute('data-cg-open');
         pop.removeAttribute('data-cg-level');
         clickgo.dom.unwatchSize(pop);
+        clickgo.dom.unwatchPosition(popInfo.elList[level]);
         popInfo.elList[level].removeAttribute('data-cg-pop-open');
         popInfo.elList[level].removeAttribute('data-cg-level');
     }
@@ -2305,12 +2337,31 @@ export function hidePop(pop?: HTMLElement): void {
             popInfo.list[level].removeAttribute('data-cg-open');
             popInfo.list[level].removeAttribute('data-cg-level');
             clickgo.dom.unwatchSize(popInfo.list[level]);
+            clickgo.dom.unwatchPosition(pop);
         }
         pop.removeAttribute('data-cg-pop-open');
         pop.removeAttribute('data-cg-level');
     }
     popInfo.list.splice(level);
     popInfo.elList.splice(level);
+    popInfo.wayList.splice(level);
+    popInfo.time.splice(level);
+}
+
+/** --- 检测 pop 是不是刚刚显示的 --- */
+export function isJustPop(el: HTMLElement | number): boolean {
+    if (el instanceof HTMLElement) {
+        const level = el.dataset.cgLevel;
+        if (!level) {
+            return false;
+        }
+        el = parseInt(level);
+    }
+    const time = popInfo.time[el];
+    if (Date.now() - time >= 100) {
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -2327,20 +2378,26 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
     }
     const paths: HTMLElement[] = (e as any).path ?? (e.composedPath ? e.composedPath() : []);
     // --- 检测是不是窗体内部点击 ---
-    let isCgPopOpen = false;
+    /** --- 当前点在了触发弹出层的原元素上 --- */
+    let isCgPopOpen: HTMLElement | null = null;
     for (const item of paths) {
         if (!item.tagName) {
             continue;
         }
         if (item.dataset.cgPopOpen !== undefined) {
-            isCgPopOpen = true;
+            isCgPopOpen = item;
             continue;
         }
         if (item.classList.contains('cg-form-wrap')) {
             // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
             const formId = parseInt(item.getAttribute('data-form-id') ?? '0');
             changeFocus(formId);
-            if (!isCgPopOpen) {
+            if (isCgPopOpen) {
+                if (!isJustPop(isCgPopOpen)) {
+                    hidePop();
+                }
+            }
+            else {
                 hidePop();
             }
             return;
@@ -2357,8 +2414,17 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
         if (item.tagName.toLowerCase() === 'body') {
             break;
         }
-        if (item.id === 'cg-pop-list') {
-            // --- 弹出层点击，不触发丢失焦点，也不触发隐藏 pop，是否隐藏请自行处理 ---
+        if (item.dataset.cgPop !== undefined) {
+            // --- 弹出层内点击，不触发丢失焦点
+            // --- normal: 不触发隐藏 pop，是否隐藏请自行处理 ---
+            // --- click: 自动隐藏下一层 pop，若有 ---
+            if (item.dataset.cgLevel) {
+                const nextlevel = parseInt(item.dataset.cgLevel) + 1;
+                if (popInfo.wayList[nextlevel] === 'click' && !isJustPop(nextlevel)) {
+                    // --- 隐藏 ---
+                    clickgo.form.hidePop(popInfo.list[nextlevel]);
+                }
+            }
             return;
         }
     }
@@ -2422,6 +2488,7 @@ export function remove(formId: number): boolean {
         core.trigger('formRemoved', taskId, formId, title, icon);
         dom.clearWatchStyle(formId);
         dom.clearWatchProperty(formId);
+        dom.clearWatchPosition(formId);
         native.clear(formId, taskId);
         delete activePanels[formId];
         // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
@@ -2459,6 +2526,7 @@ export function removePanel(id: number, vapp: types.IVApp, el: HTMLElement): boo
     dom.removeStyle(tid, 'form', formId, id);
     dom.clearWatchStyle(formId, id);
     dom.clearWatchProperty(formId, id);
+    dom.clearWatchPosition(formId, id);
     if (activePanels[formId]) {
         const io = activePanels[formId].indexOf(id);
         if (io >= 0) {
@@ -2842,6 +2910,7 @@ export async function createPanel<T extends AbstractPanel>(
         rtn.vapp._container.remove();
         dom.clearWatchStyle(rtn.vroot.formId, panelId);
         dom.clearWatchProperty(rtn.vroot.formId, panelId);
+        dom.clearWatchPosition(rtn.vroot.formId, panelId);
         // --- 移除 style ---
         dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
         throw err;
@@ -3306,6 +3375,7 @@ export async function create<T extends AbstractForm>(
         elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
         dom.clearWatchStyle(rtn.vroot.formId);
         dom.clearWatchProperty(rtn.vroot.formId);
+        dom.clearWatchPosition(rtn.vroot.formId);
         native.clear(formId, t.id);
         // --- 移除 style ---
         dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);

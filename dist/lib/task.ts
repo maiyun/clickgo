@@ -535,6 +535,19 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             getStyleCount: function(taskId: number, type: 'theme' | 'control' | 'form'): number {
                 return dom.getStyleCount(taskId, type);
             },
+            watchPosition: function(el: HTMLElement, cb: (tate: {
+                'position': boolean;
+                'size': boolean;
+            }) => void | Promise<void>, immediate: boolean = false
+            ): boolean {
+                return dom.watchPosition(el, cb, immediate);
+            },
+            unwatchPosition: function(el: HTMLElement): void {
+                dom.unwatchPosition(el);
+            },
+            isWatchPosition: function(el: HTMLElement): boolean {
+                return dom.isWatchPosition(el);
+            },
             getWatchSizeCount: function(taskId?: number): number {
                 return dom.getWatchSizeCount(taskId);
             },
@@ -762,12 +775,17 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 'size'?: { width?: number; height?: number; };
                 'null'?: boolean;
                 'autoPosition'?: boolean;
+                'autoScroll'?: boolean;
                 'flow'?: boolean;
+                'way'?: 'normal' | 'click' | 'hover';
             } = {}): void {
                 form.showPop(el, pop, direction, opt);
             },
             hidePop: function(pop?: HTMLElement): void {
                 form.hidePop(pop);
+            },
+            isJustPop: function(el: HTMLElement): boolean {
+                return form.isJustPop(el);
             },
             doFocusAndPopEvent: function(e: MouseEvent | TouchEvent): void {
                 form.doFocusAndPopEvent(e);
@@ -1676,6 +1694,7 @@ export function end(taskId: number | string): boolean {
         form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
         dom.clearWatchStyle(fid);
         dom.clearWatchProperty(fid);
+        dom.clearWatchPosition(fid);
         delete form.activePanels[fid];
     }
     // --- 移除可能残留的 form wrap ---

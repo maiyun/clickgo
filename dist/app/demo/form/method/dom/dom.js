@@ -48,6 +48,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.moveTop = 0;
         this.moveWidth = 25;
         this.moveHeight = 25;
+        this.watchPositionText = false;
         this.getWatchInfoDisabled = false;
         this.getWatchInfoText = '{}';
     }
@@ -92,6 +93,17 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         else {
             clickgo.dom.unwatchSize(this.refs.watchSize.$el);
+        }
+    }
+    watchPosition() {
+        this.watchPositionText = !this.watchPositionText;
+        if (this.watchPositionText) {
+            clickgo.dom.watchPosition(this.refs.watchPosition.$el, (state) => {
+                console.log('watchPosition', state);
+            });
+        }
+        else {
+            clickgo.dom.unwatchPosition(this.refs.watchPosition.$el);
         }
     }
     wwatch() {

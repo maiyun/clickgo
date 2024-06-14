@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createElement = exports.exitFullscreen = exports.fullscreen = exports.siblingsData = exports.siblings = exports.index = exports.findParentByTag = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
+exports.createElement = exports.exitFullscreen = exports.fullscreen = exports.siblingsData = exports.siblings = exports.index = exports.findParentByTag = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.clearWatchPosition = exports.isWatchPosition = exports.unwatchPosition = exports.watchPosition = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -162,6 +162,102 @@ function getStyleCount(taskId, type) {
     return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
 }
 exports.getStyleCount = getStyleCount;
+const watchPositionObjects = {};
+let watchPositionIndex = 0;
+function watchPosition(el, cb, immediate = false) {
+    if (isWatchPosition(el)) {
+        return false;
+    }
+    if (immediate) {
+        try {
+            const r = cb({
+                'position': false,
+                'size': false
+            });
+            if (r instanceof Promise) {
+                r.catch(function (e) {
+                    console.log('dom.watchPosition', e);
+                });
+            }
+        }
+        catch (e) {
+            console.log('dom.watchPosition', e);
+        }
+    }
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return false;
+    }
+    const formId = formWrap.dataset.formId;
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId : 'default';
+    if (!watchPositionObjects[formId]) {
+        watchPositionObjects[formId] = {};
+    }
+    if (!watchPositionObjects[formId][panelId]) {
+        watchPositionObjects[formId][panelId] = {};
+    }
+    watchPositionObjects[formId][panelId][watchPositionIndex] = {
+        'el': el,
+        'rect': el.getBoundingClientRect(),
+        'handler': cb
+    };
+    el.dataset.cgPoindex = watchPositionIndex.toString();
+    ++watchPositionIndex;
+    return true;
+}
+exports.watchPosition = watchPosition;
+function unwatchPosition(el) {
+    const index = el.dataset.cgPoindex;
+    if (index === undefined) {
+        return;
+    }
+    const formWrap = findParentByData(el, 'form-id');
+    if (!formWrap) {
+        return;
+    }
+    const formId = formWrap.dataset.formId;
+    const panelWrap = findParentByData(el, 'panel-id');
+    const panelId = panelWrap ? panelWrap.dataset.panelId : 'default';
+    const item = watchPositionObjects[formId][panelId][index];
+    el.removeAttribute('data-cg-poindex');
+    delete watchPositionObjects[formId][panelId][index];
+    if (Object.keys(watchPositionObjects[formId][panelId]).length) {
+        return;
+    }
+    delete watchPositionObjects[formId][panelId];
+    if (Object.keys(watchPositionObjects[formId]).length) {
+        return;
+    }
+    delete watchPositionObjects[formId];
+}
+exports.unwatchPosition = unwatchPosition;
+function isWatchPosition(el) {
+    return el.dataset.cgPoindex ? true : false;
+}
+exports.isWatchPosition = isWatchPosition;
+function clearWatchPosition(formId, panelId) {
+    if (!watchPositionObjects[formId]) {
+        return;
+    }
+    for (const panel in watchPositionObjects[formId]) {
+        if (panelId) {
+            if (panel !== panelId.toString()) {
+                continue;
+            }
+        }
+        for (const index in watchPositionObjects[formId][panel]) {
+            const item = watchPositionObjects[formId][panel][index];
+            item.el.removeAttribute('data-cg-poindex');
+        }
+        delete watchPositionObjects[formId][panel];
+    }
+    if (Object.keys(watchPositionObjects[formId]).length) {
+        return;
+    }
+    delete watchPositionObjects[formId];
+}
+exports.clearWatchPosition = clearWatchPosition;
 const watchSizeList = {};
 function getWatchSizeCount(taskId) {
     if (!taskId) {
@@ -582,7 +678,7 @@ function clearWatchProperty(formId, panelId) {
 }
 exports.clearWatchProperty = clearWatchProperty;
 function getWatchInfo() {
-    var _a;
+    var _a, _b;
     const rtn = {
         'formId': 0,
         'default': {},
@@ -612,15 +708,20 @@ function getWatchInfo() {
                 'property': {
                     'count': 0,
                     'list': []
+                },
+                'position': {
+                    'count': 0
                 }
             };
         }
         ++ritem[cname][type].count;
-        for (const name in item.names) {
-            if (ritem[cname][type].list.includes(name)) {
-                continue;
+        if (item.names && type !== 'position') {
+            for (const name in item.names) {
+                if (ritem[cname][type].list.includes(name)) {
+                    continue;
+                }
+                ritem[cname][type].list.push(name);
             }
-            ritem[cname][type].list.push(name);
         }
     };
     if (watchStyleList[formId]) {
@@ -647,6 +748,20 @@ function getWatchInfo() {
             if ((_a = watchPropertyObjects[formId]) === null || _a === void 0 ? void 0 : _a[id]) {
                 for (const index in watchPropertyObjects[formId][id]) {
                     handler(watchPropertyObjects[formId][id][index], 'property', id.toString());
+                }
+            }
+        }
+    }
+    if (watchPositionObjects[formId]) {
+        if (watchPositionObjects[formId].default) {
+            for (const index in watchPositionObjects[formId].default) {
+                handler(watchPositionObjects[formId].default[index], 'position');
+            }
+        }
+        for (const id of panelIds) {
+            if ((_b = watchPositionObjects[formId]) === null || _b === void 0 ? void 0 : _b[id]) {
+                for (const index in watchPositionObjects[formId][id]) {
+                    handler(watchPositionObjects[formId][id][index], 'position', id.toString());
                 }
             }
         }
@@ -727,6 +842,48 @@ const watchTimerHandler = function () {
                     if (watchPropertyObjects[formId][id]) {
                         for (const index in watchPropertyObjects[formId][id]) {
                             handler(watchPropertyObjects[formId][id][index], id.toString(), index);
+                        }
+                    }
+                }
+            }
+            if (watchPositionObjects[formId]) {
+                const handler = (item, panelId, index) => {
+                    if (!document.body.contains(item.el)) {
+                        delete watchPositionObjects[formId][panelId][index];
+                        if (!Object.keys(watchPositionObjects[formId][panelId]).length) {
+                            delete watchPositionObjects[formId][panelId];
+                        }
+                        if (!Object.keys(watchPositionObjects[formId]).length) {
+                            delete watchPositionObjects[formId];
+                        }
+                        return;
+                    }
+                    const rect = item.el.getBoundingClientRect();
+                    let position = false;
+                    let size = false;
+                    if (item.rect.left !== rect.left || item.rect.top !== rect.top) {
+                        position = true;
+                    }
+                    if (item.rect.width !== rect.width || item.rect.height !== rect.height) {
+                        size = true;
+                    }
+                    if (position || size) {
+                        item.handler({
+                            'position': position,
+                            'size': size
+                        });
+                    }
+                    watchPositionObjects[formId][panelId][index].rect = rect;
+                };
+                if (watchPositionObjects[formId].default) {
+                    for (const index in watchPositionObjects[formId].default) {
+                        handler(watchPositionObjects[formId].default[index], 'default', index);
+                    }
+                }
+                for (const id of panelIds) {
+                    if (watchPositionObjects[formId][id]) {
+                        for (const index in watchPositionObjects[formId][id]) {
+                            handler(watchPositionObjects[formId][id][index], id.toString(), index);
                         }
                     }
                 }

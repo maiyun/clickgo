@@ -58,8 +58,13 @@ class default_1 extends clickgo.control.AbstractControl {
             'size': {
                 'width': this.element.offsetWidth
             },
-            'autoPosition': true
+            'autoPosition': true,
+            'autoScroll': true,
+            'way': 'click'
         });
+    }
+    hidePop() {
+        clickgo.form.hidePop(this.element);
     }
     keydown(e) {
         if (e.key === 'Enter') {
@@ -83,7 +88,6 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         if (this.element.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop(this.element);
             return;
         }
         if (this.props.area === 'arrow' && area === 'left') {
@@ -101,7 +105,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propBoolean('multi')) {
             return;
         }
-        clickgo.form.hidePop();
+        this.hidePop();
     }
     onAdd(e) {
         const event = {

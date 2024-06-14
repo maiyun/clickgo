@@ -77,6 +77,20 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
+    public watchPositionText = false;
+
+    public watchPosition(): void {
+        this.watchPositionText = !this.watchPositionText;
+        if (this.watchPositionText) {
+            clickgo.dom.watchPosition(this.refs.watchPosition.$el, (state) => {
+                console.log('watchPosition', state);
+            });
+        }
+        else {
+            clickgo.dom.unwatchPosition(this.refs.watchPosition.$el);
+        }
+    }
+
     public wwatch(): void {
         this.watchText = !this.watchText;
         if (this.watchText) {

@@ -44,7 +44,13 @@
             </layout>
             <button @click="showPop">showPop(e.currentTarget, this.refs.pop)</button>
             <teleport to="system">
-                <block ref="pop" style="border: solid 1px #000; background: #FFF; width: 200px; height: 100px; display: flex; justify-content: center; align-items: center;">refs.pop</block>
+                <layout ref="pop" gutter="10" direction="v" align-v="center" align-h="center" style="border: solid 1px #000; background: #FFF; width: 200px; height: 100px;">
+                    <label>refs.pop</label>
+                    <layout gutter="10">
+                        <select :data="[1,2,3]"></select>
+                        <select :data="[4,5,6]"></select>
+                    </layout>
+                </layout>
             </teleport>
             <button @click="create">create('test', undefined, { 'path': this.filename })</button>
             <label>Dialog result: {{dr}}.</label>

@@ -32,8 +32,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.flash = exports.prompt = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.hashBack = exports.getHash = exports.hash = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
-exports.hideLauncher = exports.showLauncher = void 0;
+exports.prompt = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.isJustPop = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.hashBack = exports.getHash = exports.hash = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
+exports.hideLauncher = exports.showLauncher = exports.flash = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const core = __importStar(require("./core"));
 const task = __importStar(require("./task"));
@@ -567,6 +567,8 @@ exports.AbstractForm = AbstractForm;
 const popInfo = {
     'list': [],
     'elList': [],
+    'wayList': [],
+    'time': [],
     'lastZIndex': 0
 };
 let superConfirmHandler = undefined;
@@ -1654,6 +1656,19 @@ function refreshPopPosition(el, pop, direction, size = {}) {
 }
 let lastShowPopTime = 0;
 function showPop(el, pop, direction, opt = {}) {
+    var _a;
+    if (!(el instanceof HTMLElement)) {
+        if (!el.$el) {
+            return;
+        }
+        el = el.$el;
+    }
+    if (pop && !(pop instanceof HTMLElement)) {
+        if (!pop.$el) {
+            return;
+        }
+        pop = pop.$el;
+    }
     if (opt.null === undefined) {
         opt.null = false;
     }
@@ -1687,15 +1702,10 @@ function showPop(el, pop, direction, opt = {}) {
         return;
     }
     const parentPop = dom.findParentByData(el, 'cg-pop');
-    if (parentPop) {
-        for (let i = 0; i < popInfo.list.length; ++i) {
-            if (popInfo.list[i] !== parentPop) {
-                continue;
-            }
-            if (!popInfo.elList[i + 1]) {
-                continue;
-            }
-            hidePop(popInfo.elList[i + 1]);
+    if (parentPop && parentPop.dataset.cgLevel !== undefined) {
+        const nextlevel = parseInt(parentPop.dataset.cgLevel) + 1;
+        if (popInfo.elList[nextlevel]) {
+            hidePop(popInfo.elList[nextlevel]);
         }
     }
     else {
@@ -1713,8 +1723,15 @@ function showPop(el, pop, direction, opt = {}) {
             refreshPopPosition(el, pop, direction, opt.size);
         });
     }
+    if (opt.autoScroll && typeof direction === 'string') {
+        clickgo.dom.watchPosition(el, () => {
+            refreshPopPosition(el, pop, direction, opt.size);
+        });
+    }
     popInfo.list.push(pop);
     popInfo.elList.push(el);
+    popInfo.wayList.push((_a = opt.way) !== null && _a !== void 0 ? _a : 'normal');
+    popInfo.time.push(Date.now());
     pop.dataset.cgOpen = '';
     pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
     el.dataset.cgPopOpen = '';
@@ -1722,6 +1739,12 @@ function showPop(el, pop, direction, opt = {}) {
 }
 exports.showPop = showPop;
 function hidePop(pop) {
+    if (pop && !(pop instanceof HTMLElement)) {
+        if (!pop.$el) {
+            return;
+        }
+        pop = pop.$el;
+    }
     if (!pop) {
         if (popInfo.elList.length === 0) {
             return;
@@ -1755,6 +1778,7 @@ function hidePop(pop) {
         pop.removeAttribute('data-cg-open');
         pop.removeAttribute('data-cg-level');
         clickgo.dom.unwatchSize(pop);
+        clickgo.dom.unwatchPosition(popInfo.elList[level]);
         popInfo.elList[level].removeAttribute('data-cg-pop-open');
         popInfo.elList[level].removeAttribute('data-cg-level');
     }
@@ -1763,14 +1787,32 @@ function hidePop(pop) {
             popInfo.list[level].removeAttribute('data-cg-open');
             popInfo.list[level].removeAttribute('data-cg-level');
             clickgo.dom.unwatchSize(popInfo.list[level]);
+            clickgo.dom.unwatchPosition(pop);
         }
         pop.removeAttribute('data-cg-pop-open');
         pop.removeAttribute('data-cg-level');
     }
     popInfo.list.splice(level);
     popInfo.elList.splice(level);
+    popInfo.wayList.splice(level);
+    popInfo.time.splice(level);
 }
 exports.hidePop = hidePop;
+function isJustPop(el) {
+    if (el instanceof HTMLElement) {
+        const level = el.dataset.cgLevel;
+        if (!level) {
+            return false;
+        }
+        el = parseInt(level);
+    }
+    const time = popInfo.time[el];
+    if (Date.now() - time >= 100) {
+        return false;
+    }
+    return true;
+}
+exports.isJustPop = isJustPop;
 function doFocusAndPopEvent(e) {
     var _a, _b;
     if (dom.hasTouchButMouse(e)) {
@@ -1781,19 +1823,24 @@ function doFocusAndPopEvent(e) {
         return;
     }
     const paths = (_a = e.path) !== null && _a !== void 0 ? _a : (e.composedPath ? e.composedPath() : []);
-    let isCgPopOpen = false;
+    let isCgPopOpen = null;
     for (const item of paths) {
         if (!item.tagName) {
             continue;
         }
         if (item.dataset.cgPopOpen !== undefined) {
-            isCgPopOpen = true;
+            isCgPopOpen = item;
             continue;
         }
         if (item.classList.contains('cg-form-wrap')) {
             const formId = parseInt((_b = item.getAttribute('data-form-id')) !== null && _b !== void 0 ? _b : '0');
             changeFocus(formId);
-            if (!isCgPopOpen) {
+            if (isCgPopOpen) {
+                if (!isJustPop(isCgPopOpen)) {
+                    hidePop();
+                }
+            }
+            else {
                 hidePop();
             }
             return;
@@ -1809,7 +1856,13 @@ function doFocusAndPopEvent(e) {
         if (item.tagName.toLowerCase() === 'body') {
             break;
         }
-        if (item.id === 'cg-pop-list') {
+        if (item.dataset.cgPop !== undefined) {
+            if (item.dataset.cgLevel) {
+                const nextlevel = parseInt(item.dataset.cgLevel) + 1;
+                if (popInfo.wayList[nextlevel] === 'click' && !isJustPop(nextlevel)) {
+                    clickgo.form.hidePop(popInfo.list[nextlevel]);
+                }
+            }
             return;
         }
     }
@@ -1862,6 +1915,7 @@ function remove(formId) {
         core.trigger('formRemoved', taskId, formId, title, icon);
         dom.clearWatchStyle(formId);
         dom.clearWatchProperty(formId);
+        dom.clearWatchPosition(formId);
         native.clear(formId, taskId);
         delete exports.activePanels[formId];
         if (Object.keys(task.list[taskId].forms).length === 0) {
@@ -1892,6 +1946,7 @@ function removePanel(id, vapp, el) {
     dom.removeStyle(tid, 'form', formId, id);
     dom.clearWatchStyle(formId, id);
     dom.clearWatchProperty(formId, id);
+    dom.clearWatchPosition(formId, id);
     if (exports.activePanels[formId]) {
         const io = exports.activePanels[formId].indexOf(id);
         if (io >= 0) {
@@ -2212,6 +2267,7 @@ function createPanel(rootPanel_1, cls_1) {
             rtn.vapp._container.remove();
             dom.clearWatchStyle(rtn.vroot.formId, panelId);
             dom.clearWatchProperty(rtn.vroot.formId, panelId);
+            dom.clearWatchPosition(rtn.vroot.formId, panelId);
             dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
             throw err;
         }
@@ -2600,6 +2656,7 @@ function create(cls_1, data_1) {
             (_b = exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')) === null || _b === void 0 ? void 0 : _b.remove();
             dom.clearWatchStyle(rtn.vroot.formId);
             dom.clearWatchProperty(rtn.vroot.formId);
+            dom.clearWatchPosition(rtn.vroot.formId);
             native.clear(formId, t.id);
             dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
             throw err;
