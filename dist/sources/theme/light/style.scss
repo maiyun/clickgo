@@ -253,6 +253,12 @@ global {
             .form_step {
                 min-width: 400px; background: var(--pop-background); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2); border-radius: 30px; padding: 15px 35px; box-shadow: 0 1px 10px rgba(0, 0, 0, .15);
             }
+            .form_loading {
+                background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+                &:not(.form_show) {
+                    transform: scale(1.3);
+                }
+            }
         }
     }
 }
@@ -362,12 +368,22 @@ global {
 
 // --- CONTROL -- levelselect ---
 
+.levelselect_tag-cg-greatselect {
+    .levelselect_op {
+        .levelselect_oploading {
+            background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+        }
+    }
+}
 .levelselect_pop {
     .levelselect_back {
         background: var(--pop-background); transition: all .3s var(--g-cubic);
         &:hover {
             background: var(--g-background-hover);
         }
+    }
+    .levelselect_loading {
+        background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
     }
 }
 

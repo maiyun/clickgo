@@ -17,7 +17,7 @@
         <div class="pop">
             <cg-text v-if="propBoolean('search') && !propBoolean('editable')" :modelValue="searchValue" @update:modelValue="updateSearchValue" :placeholder="l('search')" @keydown="textKeyDown"></cg-text>
             <cg-list ref="list" :style="{'min-height':isEmpty?'80px':undefined}" @label="listLabel=$event" @item="listItem=$event" v-model="listValue" :data="dataComp" :must="isMust" :multi="isMust ? multi : false" :ctrl="false" :tree="tree" :treeDefault="treeDefault" :async="async" :icon="icon" :iconDefault="iconDefault" @itemclicked="listItemClicked" @load="onLoad" @add="onAdd" @remove="onRemove" @change="onChange" @changed="onChanged"></cg-list>
-            <div class="loading" v-show="searching > 0">
+            <div class="loading" :class="[searching>0&&'show']">
                 <cg-loading></cg-loading>
             </div>
         </div>

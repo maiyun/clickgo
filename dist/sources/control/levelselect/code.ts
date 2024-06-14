@@ -164,6 +164,14 @@ export default class extends clickgo.control.AbstractControl {
         return searchData;
     }
 
+    // --- 当前的 data 数据是否是空的 ---
+    public get isEmpty(): boolean {
+        if (Array.isArray(this.nowlistComp)) {
+            return this.nowlistComp.length ? false : true;
+        }
+        return Object.keys(this.nowlistComp).length ? false : true;
+    }
+
     /** --- 向上更新值 --- */
     public updateValue(): void {
         const event: types.ILevelselectLevelEvent = {

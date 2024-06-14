@@ -31,7 +31,7 @@
             <div class="step" :class="[stepShowData && 'show']" ref="step" @mousedown="stepDown" @touchstart="stepDown">
                 <cg-step :data="stepData" :modelValue="stepValue" plain></cg-step>
             </div>
-            <div v-if="isLoading" class="loading">
+            <div class="loading" :class="[isLoading&&'show']">
                 <cg-loading></cg-loading>
             </div>
             <slot></slot>
