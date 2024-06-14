@@ -1,5 +1,16 @@
 # 更新日志
 
+# 3.12.0
+
+[+] tool 库新增 get 请求方法。  
+[+] 新增 tuiviewer 控件，用来展示 Markdown。  
+[+] 新增 weditor 控件，用来实现富文本编辑。  
+[+] dom 库新增 watchPosition 方法组。  
+[+] form 库的 showPop 方法参数新增 autoScroll、way 选项。  
+[\*] 优化 select 控件有些时候无法本地搜索的 bug。  
+[\*] 优化底层托管滚动方法。  
+[\*] 其他样式和细节优化。
+
 # 3.11.34
 
 [+] tuieditor 控件新增 html 事件。  

@@ -1,5 +1,16 @@
 # Changelog
 
+# 3.12.0
+
+[+] Added get request method to the tool library.  
+[+] Added tuiviewer widget for displaying Markdown.  
+[+] Added weditor widget for rich text editing.  
+[+] Added watchPosition method group to the dom library.  
+[+] Added autoScroll and way options to the showPop method parameters in the form library.  
+[\*] Fixed a bug where the select widget sometimes couldn't perform local searches.  
+[\*] Optimized the underlying scroll management methods.  
+[\*] Other style and detail optimizations.
+
 # 3.11.34
 
 [+] Added HTML event to tuieditor control.  
