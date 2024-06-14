@@ -597,7 +597,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- list 上的点击事件 --- */
-    public async listItemClicked(): Promise<void> {
+    public async listItemClicked(e: types.IListItemclickedEvent): Promise<void> {
         if (this.propBoolean('editable')) {
             const v = this.listValue[0];
             // -- 可编辑 ---
@@ -645,12 +645,30 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 // --- 单选，可能已经实时添加了 ---
                 if (this.inputValue !== v) {
-                    this.inputValue = v;
-                    this.value = [v];
-                    this.label = [this.listLabel[0]];
-                    this.updateValue();
-                    if (this.propBoolean('search')) {
-                        await this._search();
+                    const event: types.ISelectChangeEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'value': [v]
+                        }
+                    };
+                    this.emit('change', event);
+                    if (event.go) {
+                        this.inputValue = v;
+                        this.value = [v];
+                        this.label = [this.listLabel[0]];
+                        this.updateValue();
+                        if (this.propBoolean('search')) {
+                            await this._search();
+                        }
+                        const event: types.ISelectChangedEvent = {
+                            'detail': {
+                                'value': [v]
+                            }
+                        };
+                        this.emit('changed', event);
                     }
                 }
                 this.refs.gs.hidePop();

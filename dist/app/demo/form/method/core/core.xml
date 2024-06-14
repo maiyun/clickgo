@@ -1,4 +1,4 @@
-<form width="350" height="600" title="Library task" padding="10">
+<form width="350" height="600" title="Library core" padding="10">
     <layout direction="v" gutter="10" style="flex: 1;">
         <label>config:</label>
         <text v-model="config" readonly type="multi" style="flex: 1;"></text>

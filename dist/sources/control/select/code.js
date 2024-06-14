@@ -528,7 +528,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
-    listItemClicked() {
+    listItemClicked(e) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.propBoolean('editable')) {
                 const v = this.listValue[0];
@@ -573,12 +573,30 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 else {
                     if (this.inputValue !== v) {
-                        this.inputValue = v;
-                        this.value = [v];
-                        this.label = [this.listLabel[0]];
-                        this.updateValue();
-                        if (this.propBoolean('search')) {
-                            yield this._search();
+                        const event = {
+                            'go': true,
+                            preventDefault: function () {
+                                this.go = false;
+                            },
+                            'detail': {
+                                'value': [v]
+                            }
+                        };
+                        this.emit('change', event);
+                        if (event.go) {
+                            this.inputValue = v;
+                            this.value = [v];
+                            this.label = [this.listLabel[0]];
+                            this.updateValue();
+                            if (this.propBoolean('search')) {
+                                yield this._search();
+                            }
+                            const event = {
+                                'detail': {
+                                    'value': [v]
+                                }
+                            };
+                            this.emit('changed', event);
                         }
                     }
                     this.refs.gs.hidePop();
