@@ -157,7 +157,50 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     blur() {
+        var _a, _b, _c, _d, _e, _f;
         if (!this.propBoolean('multi')) {
+            if (this.inputValue === this.listValue[0]) {
+                return;
+            }
+            if (Array.isArray(this.dataComp)) {
+                for (const item of this.dataComp) {
+                    let label = '';
+                    let value = '';
+                    if (typeof item === 'string') {
+                        label = item;
+                        value = item;
+                    }
+                    else {
+                        label = (_b = (_a = item.label) !== null && _a !== void 0 ? _a : item.value) !== null && _b !== void 0 ? _b : '';
+                        value = (_d = (_c = item.value) !== null && _c !== void 0 ? _c : item.label) !== null && _d !== void 0 ? _d : '';
+                    }
+                    if ((value.toLowerCase() === this.inputValue.toLowerCase()) ||
+                        (label.toLowerCase() === this.inputValue.toLowerCase())) {
+                        this.inputValue = value;
+                        this.value = [value];
+                        this.label = [label];
+                        this.listValue = [this.inputValue];
+                        this.updateValue();
+                        return;
+                    }
+                }
+            }
+            else {
+                for (const key in this.dataComp) {
+                    const label = typeof this.dataComp[key] === 'string' ? this.dataComp[key] :
+                        ((_f = (_e = this.dataComp[key].label) !== null && _e !== void 0 ? _e : key) !== null && _f !== void 0 ? _f : '');
+                    const value = key;
+                    if ((value.toLowerCase() === this.inputValue.toLowerCase()) ||
+                        (label.toLowerCase() === this.inputValue.toLowerCase())) {
+                        this.inputValue = value;
+                        this.value = [value];
+                        this.label = [label];
+                        this.listValue = [this.inputValue];
+                        this.updateValue();
+                        return;
+                    }
+                }
+            }
             return;
         }
         this.inputValue = '';

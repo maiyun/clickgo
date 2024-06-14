@@ -194,8 +194,58 @@ export default class extends clickgo.control.AbstractControl {
     /** --- text 的失去焦点事件 --- */
     public blur(): void {
         if (!this.propBoolean('multi')) {
+            // --- 单选状态 ---
+            // --- 如果 value 大小写无视相等、或 label 相等，也可以 ---
+            if (this.inputValue === this.listValue[0]) {
+                return;
+            }
+            if (Array.isArray(this.dataComp)) {
+                for (const item of this.dataComp) {
+                    let label = '';
+                    let value = '';
+                    if (typeof item === 'string') {
+                        label = item;
+                        value = item;
+                    }
+                    else {
+                        label = item.label ?? item.value ?? '';
+                        value = item.value ?? item.label ?? '';
+                    }
+                    // --- 判断是否在忽略大小写的情况下 value 相等 ---
+                    if (
+                        (value.toLowerCase() === this.inputValue.toLowerCase()) ||
+                        (label.toLowerCase() === this.inputValue.toLowerCase())
+                    ) {
+                        this.inputValue = value;
+                        this.value = [value];
+                        this.label = [label];
+                        this.listValue = [this.inputValue];
+                        this.updateValue();
+                        return;
+                    }
+                }
+            }
+            else {
+                for (const key in this.dataComp) {
+                    const label = typeof this.dataComp[key] === 'string' ? this.dataComp[key] :
+                        (this.dataComp[key].label ?? key ?? '');
+                    const value = key;
+                    if (
+                        (value.toLowerCase() === this.inputValue.toLowerCase()) ||
+                        (label.toLowerCase() === this.inputValue.toLowerCase())
+                    ) {
+                        this.inputValue = value;
+                        this.value = [value];
+                        this.label = [label];
+                        this.listValue = [this.inputValue];
+                        this.updateValue();
+                        return;
+                    }
+                }
+            }
             return;
         }
+        // --- 多选状态 ---
         this.inputValue = '';
     }
 
