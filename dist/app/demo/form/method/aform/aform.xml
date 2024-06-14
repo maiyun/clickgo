@@ -1,4 +1,4 @@
-<form width="550" height="400" title="Abstract Form">
+<form width="550" height="600" title="Abstract Form">
     <flow direction="v" style="flex: 1; padding: 10px;">
         <layout gutter="10" direction="v" style="flex: 1;">
             <label>filename: {{filename}}</label>
