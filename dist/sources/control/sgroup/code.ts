@@ -6,14 +6,14 @@ export default class extends clickgo.control.AbstractControl {
         'direction': 'h' | 'v';
         'type': 'default' | 'primary' | 'info' | 'warning' | 'danger';
         'gutter': number | string;
-        'alignH': string;
-        'alignV': string;
+        'alignH': string | undefined;
+        'alignV': string | undefined;
     } = {
             'direction': 'h',
             'type': 'default',
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
 
 }

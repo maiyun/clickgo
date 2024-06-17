@@ -36,8 +36,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'width': '35%',
             'direction': 'h',
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
     }
     get widthComp() {

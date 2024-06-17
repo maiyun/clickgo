@@ -34,8 +34,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'direction': 'h',
             'media': [],
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
         this.mediaOld = -1;
     }

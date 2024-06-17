@@ -41,8 +41,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'mode': 'default',
             'direction': 'h',
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
         this.imgData = '';
         this.width = 0;

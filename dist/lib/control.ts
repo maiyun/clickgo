@@ -130,6 +130,40 @@ export abstract class AbstractControl {
         };
     }
 
+    /** --- 获取 alignH 的 css 属性模式，请确保 props.alignH 存在 --- */
+    public get alignHComp(): string | undefined {
+        if (!(this.props as any).alignH) {
+            return undefined;
+        }
+        switch ((this.props as any).alignH) {
+            case 'center': {
+                return 'center';
+            }
+            case 'left':
+            case 'start': {
+                return 'flex-start'
+            }
+        }
+        return 'flex-end';
+    }
+
+    /** --- 获取 alignH 的 css 属性模式，请确保 props.alignH 存在 --- */
+    public get alignVComp(): string | undefined {
+        if (!(this.props as any).alignV) {
+            return undefined;
+        }
+        switch ((this.props as any).alignV) {
+            case 'center': {
+                return 'center';
+            }
+            case 'top':
+            case 'start': {
+                return 'flex-start'
+            }
+        }
+        return 'flex-end';
+    }
+
     /**
      * --- 监视变动 ---
      * @param name 监视的属性或 prop 值

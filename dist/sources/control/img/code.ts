@@ -8,16 +8,16 @@ export default class extends clickgo.control.AbstractControl {
 
         'direction': 'h' | 'v';
         'gutter': number | string;
-        'alignH': string;
-        'alignV': string;
+        'alignH': string | undefined;
+        'alignV': string | undefined;
     } = {
         'src': '',
         'mode': 'default',
 
         'direction': 'h',
         'gutter': '',
-        'alignH': '',
-        'alignV': ''
+        'alignH': undefined,
+        'alignV': undefined
     };
 
     public imgData = '';

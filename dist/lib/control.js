@@ -115,6 +115,36 @@ class AbstractControl {
             return `cg-theme-task${this.taskId}-${this.controlName}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
         };
     }
+    get alignHComp() {
+        if (!this.props.alignH) {
+            return undefined;
+        }
+        switch (this.props.alignH) {
+            case 'center': {
+                return 'center';
+            }
+            case 'left':
+            case 'start': {
+                return 'flex-start';
+            }
+        }
+        return 'flex-end';
+    }
+    get alignVComp() {
+        if (!this.props.alignV) {
+            return undefined;
+        }
+        switch (this.props.alignV) {
+            case 'center': {
+                return 'center';
+            }
+            case 'top':
+            case 'start': {
+                return 'flex-start';
+            }
+        }
+        return 'flex-end';
+    }
     watch(name, cb, opt = {}) {
         return this.$watch(name, cb, opt);
     }

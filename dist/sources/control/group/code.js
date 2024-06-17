@@ -31,8 +31,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'title': '',
             'direction': 'h',
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
     }
 }

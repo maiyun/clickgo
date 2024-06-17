@@ -33,8 +33,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'sort': undefined,
             'direction': 'h',
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
         this.index = 0;
         this.table = {

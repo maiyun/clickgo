@@ -6,12 +6,12 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'span': number | string;
-        'alignH': string;
-        'alignV': string;
+        'alignH'?: string;
+        'alignV'?: string;
     } = {
             'span': 1,
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
 
     public get colWidth(): string {

@@ -11,14 +11,14 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 如 [100, 300]，width 每次达到后则响应 media 事件，并传入响应的数字值，否则为 0 就是比最小值还小 --- */
         'media': number[] | string;
         'gutter': number | string;
-        'alignH': string;
-        'alignV': string;
+        'alignH': string | undefined;
+        'alignV': string | undefined;
     } = {
             'direction': 'h',
             'media': [],
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
 
     public mediaOld: number = -1;

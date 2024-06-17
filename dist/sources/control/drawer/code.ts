@@ -13,8 +13,8 @@ export default class extends clickgo.control.AbstractControl {
 
         'direction': 'h' | 'v';
         'gutter': number | string;
-        'alignH': string;
-        'alignV': string;
+        'alignH': string | undefined;
+        'alignV': string | undefined;
     } = {
             'modelValue': false,
             'title': '',
@@ -22,8 +22,8 @@ export default class extends clickgo.control.AbstractControl {
 
             'direction': 'h',
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
 
     public get widthComp() {

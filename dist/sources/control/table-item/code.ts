@@ -8,16 +8,16 @@ export default class extends clickgo.control.AbstractControl {
         'sort'?: boolean | string;
         'direction': 'h' | 'v';
         'gutter': number | string;
-        'alignH': string;
-        'alignV': string;
+        'alignH': string | undefined;
+        'alignV': string | undefined;
     } = {
             'width': 0,
             'label': 'label',
             'sort': undefined,
             'direction': 'h',
             'gutter': '',
-            'alignH': '',
-            'alignV': ''
+            'alignH': undefined,
+            'alignV': undefined
         };
     
     /** --- 当前是第几列，从 0 开始 --- */
