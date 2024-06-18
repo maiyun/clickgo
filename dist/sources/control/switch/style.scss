@@ -10,7 +10,7 @@
     .block {
         left: 3px; top: 3px; width: 10px; height: calc(100% - 6px); background: #FFF; position: absolute; transition: all .3s var(--g-cubic);
     }
-    // --- 选中模式（含全、半） ---
+    // --- 选中模式 ---
     &.checked {
         .block {
             left: 19px;
