@@ -108,7 +108,7 @@ long`;
             return;
         }
         if (e.detail.value === '1346') {
-            e.detail.change = '0000'
+            e.detail.change = '000000'
         }
     }
 

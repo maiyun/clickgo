@@ -212,6 +212,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.value = target.value;
                 await this.nextTick();
                 this.checkAdaption();
+                this.emit('update:modelValue', this.value);
             }
             else {
                 // --- 禁止 ---

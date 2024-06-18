@@ -40,6 +40,12 @@
             <button @click="maxlength = maxlength === 0 ? 10 : 0" style="flex: 1;">maxlength to {{maxlength === 0 ? 10 : 0}}</button>
         </layout>
         <layout gutter="10">
+            <label>max:</label>
+            <label style="flex: 1;">{{max}}</label>
+            <label>min:</label>
+            <label style="flex: 1;">{{min}}</label>
+        </layout>
+        <layout gutter="10">
             <button @click="max = '200'; min = '10'" style="flex: 1;">max 200 min 10</button>
             <button @click="max = '20'" style="flex: 1;">max 20</button>
             <button @click="max = undefined;min = undefined" style="flex: 1;">clear</button>

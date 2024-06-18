@@ -11,7 +11,12 @@
     <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" :virtual="virtual" content-width="max" @update:scroll-left="updateScrollLeft">
         <template v-slot="data">
             <div class="item">
-                <slot :row="data.row" :index="data.index"></slot>
+                <div class="top">
+                    <slot :row="data.row" :index="data.index"></slot>
+                </div>
+                <div class="bottom">
+                    <slot name="bottom" row="data.row" :index="data.index"></slot>
+                </div>
             </div>
         </template>
         <template v-if="slots['pop']" v-slot:pop>

@@ -192,6 +192,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.value = target.value;
                     yield this.nextTick();
                     this.checkAdaption();
+                    this.emit('update:modelValue', this.value);
                 }
                 else {
                     target.value = this.value;
