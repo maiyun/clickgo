@@ -44,6 +44,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'sort': false,
             'split': false,
             'virtual': false,
+            'stickyleft': 0,
+            'stickyright': 0,
             'data': [],
             'sizes': {},
             'modelValue': []
@@ -57,6 +59,18 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get itemsLength() {
         return this.items.length;
+    }
+    get stickyleftindex() {
+        if (this.propInt('stickyleft') <= 0) {
+            return 0;
+        }
+        return this.itemsLength - this.propInt('stickyright');
+    }
+    get stickyrightindex() {
+        if (this.propInt('stickyright') <= 0) {
+            return 0;
+        }
+        return this.itemsLength - this.propInt('stickyright');
     }
     arrowUp() {
         this.refs.gl.arrowUp();
@@ -83,6 +97,10 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         item.sort = sort;
+    }
+    get isSticky() {
+        return (index) => {
+        };
     }
     updateScrollLeft(sl) {
         this.refs.header.scrollLeft = sl;

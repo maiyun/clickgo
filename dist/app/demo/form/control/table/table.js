@@ -44,6 +44,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.must = true;
         this.multi = false;
         this.ctrl = true;
+        this.bottom = false;
         this.selection = false;
         this.gesture = false;
         this.selectionArea = {};
@@ -187,12 +188,14 @@ class default_1 extends clickgo.form.AbstractForm {
             {
                 'check': false,
                 'type': 0,
-                'name': 'Appraise'
+                'name': 'Appraise',
+                'bottom': false
             },
             {
                 'check': false,
                 'type': 0,
                 'name': 'Card',
+                'bottom': false
             },
             {
                 'check': false,
@@ -205,7 +208,8 @@ class default_1 extends clickgo.form.AbstractForm {
             },
             {
                 'check': false,
-                'type': 1
+                'type': 1,
+                'bottom': true
             }
         ];
         this.loadFirst = true;

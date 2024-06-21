@@ -20,6 +20,8 @@ export default class extends clickgo.form.AbstractForm {
     public multi = false;
 
     public ctrl = true;
+    
+    public bottom = false;
 
     public selection = false;
 
@@ -182,12 +184,14 @@ export default class extends clickgo.form.AbstractForm {
             {
                 'check': false,
                 'type': 0,
-                'name': 'Appraise'
+                'name': 'Appraise',
+                'bottom': false
             },
             {
                 'check': false,
                 'type': 0,
                 'name': 'Card',
+                'bottom': false
             },
             {
                 'check': false,
@@ -200,7 +204,8 @@ export default class extends clickgo.form.AbstractForm {
             },
             {
                 'check': false,
-                'type': 1
+                'type': 1,
+                'bottom': true
             }
         ];
         this.loadFirst = true;

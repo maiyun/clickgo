@@ -14,7 +14,7 @@
         }
 
         .item {
-            padding: var(--g-padding); position: relative; overflow: hidden; display: flex;
+            padding: var(--g-padding); background: var(--g-plain-background); position: relative; display: flex;
             &:hover {
                 background: var(--g-plain-background-hover);
             }
@@ -45,7 +45,14 @@
         border: none; flex: 1;
 
         .item {
-            margin: calc(-1 * var(--g-padding)); display: flex;
+            margin: calc(-1 * var(--g-padding));
+
+            .top {
+                display: flex;
+            }
+            .bottom {
+                display: flex;
+            }
         }
     }
 }

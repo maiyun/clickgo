@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1186,11 +1186,23 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             fetch: function(url: string, init?: RequestInit): Promise<string | Blob | null> {
                 return tool.fetch(url, init);
             },
+            get: function(url: string, opt?: {
+                'credentials'?: 'include' | 'same-origin' | 'omit';
+                'headers'?: HeadersInit;
+            }) {
+                return tool.get(url, opt);
+            },
             post: function(url: string, data: Record<string, any> | FormData, opt?: {
                 'credentials'?: 'include' | 'same-origin' | 'omit';
                 'headers'?: HeadersInit;
             }): Promise<Response | null> {
                 return tool.post(url, data, opt);
+            },
+            getResponseJson: function(url: string, opt?: {
+                'credentials'?: 'include' | 'same-origin' | 'omit';
+                'headers'?: HeadersInit;
+            }): Promise<any | null> {
+                return tool.getResponseJson(url, opt);
             },
             postResponseJson: function(url: string, data: Record<string, any> | FormData, opt?: {
                 'credentials'?: 'include' | 'same-origin' | 'omit';

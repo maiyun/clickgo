@@ -1055,8 +1055,14 @@ function run(url_1) {
                 fetch: function (url, init) {
                     return tool.fetch(url, init);
                 },
+                get: function (url, opt) {
+                    return tool.get(url, opt);
+                },
                 post: function (url, data, opt) {
                     return tool.post(url, data, opt);
+                },
+                getResponseJson: function (url, opt) {
+                    return tool.getResponseJson(url, opt);
                 },
                 postResponseJson: function (url, data, opt) {
                     return tool.postResponseJson(url, data, opt);

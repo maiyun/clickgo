@@ -25,6 +25,10 @@ export default class extends clickgo.control.AbstractControl {
         'split': boolean | string;
         /** --- 是否开启虚拟 DOM 模式，默认不开启 --- */
         'virtual': boolean | string;
+        /** --- 左侧列吸附数量 --- */
+        'stickyleft': number | string;
+        /** --- 右侧列吸附数量 --- */
+        'stickyright': number | string;
 
         'data': any[];
         'sizes': Record<string, number | undefined>;
@@ -40,6 +44,8 @@ export default class extends clickgo.control.AbstractControl {
             'sort': false,
             'split': false,
             'virtual': false,
+            'stickyleft': 0,
+            'stickyright': 0,
 
             'data': [],
             'sizes': {},
@@ -54,9 +60,23 @@ export default class extends clickgo.control.AbstractControl {
         'sort'?: boolean;
     }> = [];
 
-    /** --- 计算属性，获取 items 的长度 --- */
+    /** --- 计算属性，获取 items 的总数 --- */
     public get itemsLength() {
         return this.items.length;
+    }
+    
+    public get stickyleftindex(): number {
+        if (this.propInt('stickyleft') <= 0) {
+            return 0;
+        }
+        return this.itemsLength - this.propInt('stickyright');
+    }
+
+    public get stickyrightindex(): number {
+        if (this.propInt('stickyright') <= 0) {
+            return 0;
+        }
+        return this.itemsLength - this.propInt('stickyright');
     }
 
     /** --- item width 的映射 --- */
@@ -107,6 +127,13 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         item.sort = sort;
+    }
+
+    /** --- 根据 index 判断当前项是否是吸附项 --- */
+    public get isSticky() {
+        return (index: number) => {
+
+        };
     }
 
     // --- 内部 ---

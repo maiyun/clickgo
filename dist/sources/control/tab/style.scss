@@ -217,6 +217,6 @@
     }
 
     .panel {
-        background: var(--g-plain-background); display: flex; flex: 1; overflow: hidden; border: solid .5px var(--g-plain-border-color);
+        background: var(--g-plain-background); display: flex; flex: 1; border: solid .5px var(--g-plain-border-color); height: 0;
     }    
 }

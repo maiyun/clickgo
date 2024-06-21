@@ -8,9 +8,12 @@
                 </table-item>
                 <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
                 <table-item label="size" width="80" align-v="center" align-h="center">{{d.row.type ?? '0'}}</table-item>
-                <table-item label="col" width="100" direction="v" gutter="5" sort="false">
+                <table-item label="col" width="120" direction="v" gutter="5" sort="false">
                     <label>line1</label>
-                    <button>line2</button>
+                    <layout gutter="5">
+                        <button>line2</button>
+                        <button v-if="bottom" @click="d.row.bottom = d.row.bottom ? false : true">{{d.row.bottom ? 'close' : 'open'}}</button>
+                    </layout>
                 </table-item>
             </template>
             <template v-slot:pop>
@@ -22,6 +25,27 @@
                 <layout align-h="center" style="flex: 1;">
                     <check :modelValue="checkinfo.selected > 0" @change="onHeaderCheck" :indeterminate="checkinfo.selected > 0 && checkinfo.selected < checkinfo.total">index</check>
                 </layout>
+            </template>
+            <!-- bottom -->
+            <template v-if="bottom" v-slot:bottom="d">
+                <desc v-if="d.row.bottom" style="flex: 1; margin: var(--g-padding); margin-top: 0;">
+                    <desc-row>
+                        <desc-head>HEAD1</desc-head>
+                        <desc-head>HEAD2</desc-head>
+                        <desc-head>HEAD3</desc-head>
+                        <desc-head>HEAD4</desc-head>
+                    </desc-row>
+                    <desc-row>
+                        <desc-head>HEAD5</desc-head>
+                        <desc-cell>CELL1</desc-cell>
+                        <desc-head>HEAD6</desc-head>
+                        <desc-cell>CELL2</desc-cell>
+                    </desc-row>
+                    <desc-row>
+                        <desc-head>HEAD7</desc-head>
+                        <desc-cell colspan="3">CELL1</desc-cell>
+                    </desc-row>
+                </desc>
             </template>
         </table>
         <template v-if="loadFirst">
@@ -41,6 +65,7 @@
                 <button style="flex: 1;" @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
                 <button style="flex: 1;" @click="multi = !multi">{{multi ? '' : '!'}}multi</button>
                 <button style="flex: 1;" @click="ctrl = !ctrl">{{ctrl ? '' : '!'}}ctrl</button>
+                <button style="flex: 1;" @click="bottom = !bottom">{{bottom ? '' : '!'}}bottom</button>
             </layout>
             <layout gutter="10">
                 <button style="flex: 1;" @click="must = !must">{{must ? '' : '!'}}must</button>

@@ -14,8 +14,8 @@
                 <div class="top">
                     <slot :row="data.row" :index="data.index"></slot>
                 </div>
-                <div class="bottom">
-                    <slot name="bottom" row="data.row" :index="data.index"></slot>
+                <div class="bottom" v-if="slots['bottom']">
+                    <slot name="bottom" :row="data.row" :index="data.index"></slot>
                 </div>
             </div>
         </template>

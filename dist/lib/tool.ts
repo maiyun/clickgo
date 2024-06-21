@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -818,6 +818,14 @@ export function post(url: string, data: Record<string, any> | FormData, opt?: {
     'headers'?: HeadersInit;
 }): Promise<Response | null> {
     return loader.post(url, data, opt);
+}
+
+/** --- 发送 get 响应为 json 的网络数据，无需 try，失败返回 null */
+export async function getResponseJson(url: string, opt?: {
+    'credentials'?: 'include' | 'same-origin' | 'omit';
+    'headers'?: HeadersInit;
+}): Promise<any | null> {
+    return loader.getResponseJson(url, opt);
 }
 
 /** --- 发送响应为 json 的网络数据，无需 try，失败返回 null --- */
