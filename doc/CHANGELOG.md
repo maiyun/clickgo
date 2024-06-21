@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.12.2
+
+[+] Added bottom slot to the table control.  
+[+] Added getResponseJson method to the tool library.
+
 # 3.12.1
 
 [+] Added counts parameter to the page control for user-selectable items per page.  

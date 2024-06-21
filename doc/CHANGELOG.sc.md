@@ -1,5 +1,10 @@
 # 更新日志
 
+# 3.12.2
+
+[+] table 控件新增 bottom 插槽。  
+[+] tool 库新增 getResponseJson 方法。
+
 # 3.12.1
 
 [+] page 控件新增 counts 参数，用来实现用户可选每页条数。  
