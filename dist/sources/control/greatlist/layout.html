@@ -12,7 +12,7 @@
             </div>
         </cg-vflow>
         <!-- 非 -->
-        <cg-flow v-else ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" direction="v" :scroll-left="sl" @update:scroll-left="sl=$event" :scroll-top="offset" @update:scroll-top="offset=$event" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientwidth="cw=$event" @clientheight="client=$event;$emit('client',client)" @scrollwidth="sw=$event" @scrollheight="length=$event" @contextmenu="context" @touchstart="down" @mousedown="down">
+        <cg-flow v-else ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" direction="v" :scroll-left="sl" @update:scroll-left="sl=$event" :scroll-top="offset" @update:scroll-top="offset=$event" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientwidth="cw=$event;$emit('clientwidth',cw)" @clientheight="client=$event;$emit('client',client)" @scrollwidth="onScrollWidth" @scrollheight="onScrollHeight" @contextmenu="context" @touchstart="down" @mousedown="down">
             <template v-for="row, index of data">
                 <div v-if="row.control === 'split'" class="split" :style="{'min-width': tableContentWidth ? tableContentWidth + 'px' : undefined}"></div>
                 <div v-else class="item" :class="[isSelected(index) && 'selected', (shiftStart === index) && 'shift']" :data-cg-disabled="row.disabled ? '' : undefined" @touchstart="itemTouch($event, index)" @contextmenu="itemContext($event, index)" data-cg-size="auto" style="min-width: max-content;">

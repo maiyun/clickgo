@@ -1,6 +1,37 @@
 .wrap {
-    padding: var(--g-padding); display: flex; overflow: hidden;
+    padding: var(--g-padding); display: flex;
+    &::before {
+        content: ''; position: absolute; top: 0px; width: 10px; bottom: -1px;
+    }
     &.v {
         flex-direction: column;
+    }
+    &.fixed-left, &.fixed-right {
+        position: sticky; z-index: 1;
+        &::before {
+            content: ''; position: absolute; top: 0px; width: 10px; bottom: -1px; opacity: 0; transition: all .3s var(--g-cubic);
+        }
+    }
+    &.fixed-left {
+        left: 0;
+        &::before {
+            box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, .15); right: -10px;
+        }
+    }
+    &.fixed-right {
+        right: 0;
+        &:before {
+            box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -10px;
+        }
+    }
+    &.base-left {
+        &::before {
+            opacity: 1;
+        }
+    }
+    &.base-right {
+        &:before {
+            opacity: 1;
+        }
     }
 }

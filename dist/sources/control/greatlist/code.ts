@@ -12,7 +12,11 @@ export default class extends clickgo.control.AbstractControl {
         'beforeselect': null,
         'select': null,
         'afterselect': null,
+        'clientwidth': null,
         'client': null,
+        'gesture': null,
+        'scrollheight': null,
+        'scrollwidth': null,
 
         'update:modelValue': null,
         'update:scrollLeft': null,
@@ -40,6 +44,9 @@ export default class extends clickgo.control.AbstractControl {
         }>;
         'sizes': Record<string, number | undefined>;
         'modelValue': number[];
+
+        'scrollLeft': number | string;
+        'scrollTop': number | string;
     } = {
             'disabled': false,
             'must': true,
@@ -53,7 +60,10 @@ export default class extends clickgo.control.AbstractControl {
 
             'data': [],
             'sizes': {},
-            'modelValue': []
+            'modelValue': [],
+
+            'scrollLeft': 0,
+            'scrollTop': 0
         };
 
     /** --- 最近的 table 控件，如果是 table 内部的本控件，才会有此控件 --- */
@@ -226,6 +236,16 @@ export default class extends clickgo.control.AbstractControl {
         if (change) {
             this.emit('update:modelValue', this.valueData);
         }
+    }
+
+    public onScrollHeight(sh: number) {
+        this.length = sh;
+        this.emit('scrollheight', sh);
+    }
+
+    public onScrollWidth(sw: number) {
+        this.sw = sw;
+        this.emit('scrollwidth', sw);
     }
 
     /**
@@ -813,6 +833,21 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.watch('offset', () => {
             this.emit('update:scrollTop', this.offset);
+        });
+        // --- 监听上级 scroll top 和 scroll left 变化 ---
+        this.watch('scrollLeft', () => {
+            const sl = this.propNumber('scrollLeft');
+            if (sl === this.sl) {
+                return;
+            }
+            this.sl = sl;
+        });
+        this.watch('scrollTop', () => {
+            const offset = this.propNumber('scrollTop');
+            if (offset === this.offset) {
+                return;
+            }
+            this.client = offset;
         });
 
         // --- 监听用户设定的值的变更事件 ---

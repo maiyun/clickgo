@@ -41,6 +41,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public slot = false;
 
+    public fixed: string[] = ['undefined'];
+
     /** --- 已选中的个数 --- */
     public checkinfo = {
         'total': 0,

@@ -31,12 +31,42 @@
                 transform: translateY(1px) rotate(45deg); border-width: 1px 0 0 1px;
             }
 
+            // --- 固定列，和 table-item 的相关保持同步 ---
+            &.fixed-left, &.fixed-right {
+                position: sticky; z-index: 1;
+                &::before {
+                    content: ''; position: absolute; top: 0px; width: 10px; bottom: -1px; opacity: 0; transition: all .3s var(--g-cubic);
+                }
+            }
+            &.fixed-left {
+                left: 0;
+                &::before {
+                    box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, .15); right: -10px;
+                }
+            }
+            &.fixed-right {
+                right: 0;
+                &:before {
+                    box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -10px;
+                }
+            }
+            &.base-left {
+                &::before {
+                    opacity: 1;
+                }
+            }
+            &.base-right {
+                &:before {
+                    opacity: 1;
+                }
+            }
+
             .label {
                 flex: 1; text-align: center;
             }
 
             .split {
-                position: absolute; right: -5px; top: 0; height: 100%; width: 10px; z-index: 1; cursor: ew-resize;
+                position: absolute; right: -5px; top: 0; height: 100%; width: 10px; z-index: 2; cursor: ew-resize;
             }
         }
     }

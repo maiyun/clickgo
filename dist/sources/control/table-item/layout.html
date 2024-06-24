@@ -1,3 +1,3 @@
-<div class="wrap" :class="[direction]"  :style="{'width': table.widthMap[index] ? table.widthMap[index] + 'px' : 0, 'flex': table.widthMap[index] ? undefined : '1', 'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0' }">
+<div class="wrap" :class="[direction, isFixed && 'fixed-' + isFixed, (isFixed === 'left') && (scrollLeft > 0) && 'base-left', (isFixed === 'right') && (scrollLeft < maxScrollLeft) && 'base-right']" :style="{'width': table.widthMap[index] ? table.widthMap[index] + 'px' : 0, 'flex': table.widthMap[index] ? undefined : '1', 'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
     <slot></slot>
 </div>

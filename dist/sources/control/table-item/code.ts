@@ -30,6 +30,27 @@ export default class extends clickgo.control.AbstractControl {
         }
     };
 
+    /** --- 当前列是否是固定模式，是的话当前列是固定在左侧还是右侧 --- */
+    public get isFixed(): 'left' | 'right' | undefined {
+        if (this.index === 0) {
+            return this.table.isFixed?.left;
+        }
+        if (this.index === this.table.itemsLength - 1) {
+            return this.table.isFixed?.right;
+        }
+        return undefined;
+    }
+
+    /** --- 父 table 的左侧滚动位置 --- */
+    public get scrollLeft(): number {
+        return this.table.scrollLeft ?? 0;
+    }
+
+    /** --- 父 table 的最大横向可滚动位置 --- */
+    public get maxScrollLeft(): number {
+        return this.table.maxScrollLeft ?? 0;
+    }
+
     public onMounted(): void | Promise<void> {
         const table = this.parentByName('table');
         if (!table) {

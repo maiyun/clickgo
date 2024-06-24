@@ -25,10 +25,8 @@ export default class extends clickgo.control.AbstractControl {
         'split': boolean | string;
         /** --- 是否开启虚拟 DOM 模式，默认不开启 --- */
         'virtual': boolean | string;
-        /** --- 左侧列吸附数量 --- */
-        'stickyleft': number | string;
-        /** --- 右侧列吸附数量 --- */
-        'stickyright': number | string;
+        /** --- 是否左右侧或同时固定列 --- */
+        'fixed': 'left' | 'right' | 'both' | undefined;
 
         'data': any[];
         'sizes': Record<string, number | undefined>;
@@ -44,8 +42,7 @@ export default class extends clickgo.control.AbstractControl {
             'sort': false,
             'split': false,
             'virtual': false,
-            'stickyleft': 0,
-            'stickyright': 0,
+            'fixed': undefined,
 
             'data': [],
             'sizes': {},
@@ -64,23 +61,18 @@ export default class extends clickgo.control.AbstractControl {
     public get itemsLength() {
         return this.items.length;
     }
-    
-    public get stickyleftindex(): number {
-        if (this.propInt('stickyleft') <= 0) {
-            return 0;
-        }
-        return this.itemsLength - this.propInt('stickyright');
-    }
-
-    public get stickyrightindex(): number {
-        if (this.propInt('stickyright') <= 0) {
-            return 0;
-        }
-        return this.itemsLength - this.propInt('stickyright');
-    }
 
     /** --- item width 的映射 --- */
     public widthMap: number[] = [];
+
+    /** --- 当前的滚动位置 --- */
+    public scrollLeft: number = 0;
+
+    /** --- 当前总宽度 --- */
+    public scrollWidth: number = 0;
+
+    /** --- 当前可视宽度 --- */
+    public clientWidth: number = 0;
 
     /** --- 当前是否排序中，-1 为没有排序中 --- */
     public nowSort: {
@@ -90,6 +82,13 @@ export default class extends clickgo.control.AbstractControl {
         'index': -1,
         'sort': 'desc'
     };
+
+    /**
+     * --- 最大可拖动的 scroll 左侧位置 ---
+     */
+    public get maxScrollLeft(): number {
+        return this.scrollWidth - this.clientWidth;
+    }
 
     // --- 外部 ---
 
@@ -129,17 +128,11 @@ export default class extends clickgo.control.AbstractControl {
         item.sort = sort;
     }
 
-    /** --- 根据 index 判断当前项是否是吸附项 --- */
-    public get isSticky() {
-        return (index: number) => {
-
-        };
-    }
-
     // --- 内部 ---
 
     public updateScrollLeft(sl: number): any {
         this.refs.header.scrollLeft = sl;
+        this.scrollLeft = sl;
     }
 
     public refreshHeader(): void {
@@ -253,9 +246,42 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
+    /** --- 当前列是否是固定模式，是的话当前列是固定在左侧还是右侧 --- */
+    public isFixed: {
+        'left'?: 'left' | 'right',
+        'right'?: 'left' | 'right',
+    } = {
+        'left': undefined,
+        'right': undefined,
+    };
+
     public onMounted(): void {
         this.watch('sort', () => {
             this.checkNowSort();
+        });
+        // --- 重置 isFixed 数据 ---
+        this.watch(() => {
+            return (this.props.fixed ?? '') + '|' + this.itemsLength;
+        }, () => {
+            if (this.props.fixed === undefined) {
+                this.isFixed.left = undefined;
+                this.isFixed.right = undefined;
+                return;
+            }
+            if (this.props.fixed === 'both') {
+                this.isFixed.left = 'left';
+                this.isFixed.right = 'right';
+                return;
+            }
+            if (this.props.fixed === 'left') {
+                this.isFixed.left = 'left';
+                this.isFixed.right = undefined;
+                return;
+            }
+            this.isFixed.left = undefined;
+            this.isFixed.right = 'right';
+        }, {
+            'immediate': true
         });
         this.watch('split', () => {
             if (this.props.split) {

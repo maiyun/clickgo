@@ -45,7 +45,11 @@ class default_1 extends clickgo.control.AbstractControl {
             'beforeselect': null,
             'select': null,
             'afterselect': null,
+            'clientwidth': null,
             'client': null,
+            'gesture': null,
+            'scrollheight': null,
+            'scrollwidth': null,
             'update:modelValue': null,
             'update:scrollLeft': null,
             'update:scrollTop': null
@@ -62,7 +66,9 @@ class default_1 extends clickgo.control.AbstractControl {
             'virtual': false,
             'data': [],
             'sizes': {},
-            'modelValue': []
+            'modelValue': [],
+            'scrollLeft': 0,
+            'scrollTop': 0
         };
         this.table = null;
         this.cw = 0;
@@ -183,6 +189,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:modelValue', this.valueData);
             }
         });
+    }
+    onScrollHeight(sh) {
+        this.length = sh;
+        this.emit('scrollheight', sh);
+    }
+    onScrollWidth(sw) {
+        this.sw = sw;
+        this.emit('scrollwidth', sw);
     }
     select(value, shift = false, ctrl = false) {
         let change = false;
@@ -667,6 +681,20 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.watch('offset', () => {
             this.emit('update:scrollTop', this.offset);
+        });
+        this.watch('scrollLeft', () => {
+            const sl = this.propNumber('scrollLeft');
+            if (sl === this.sl) {
+                return;
+            }
+            this.sl = sl;
+        });
+        this.watch('scrollTop', () => {
+            const offset = this.propNumber('scrollTop');
+            if (offset === this.offset) {
+                return;
+            }
+            this.client = offset;
         });
         this.watch('modelValue', () => {
             if ((this.valueData.length === this.props.modelValue.length)

@@ -44,33 +44,30 @@ class default_1 extends clickgo.control.AbstractControl {
             'sort': false,
             'split': false,
             'virtual': false,
-            'stickyleft': 0,
-            'stickyright': 0,
+            'fixed': undefined,
             'data': [],
             'sizes': {},
             'modelValue': []
         };
         this.items = [];
         this.widthMap = [];
+        this.scrollLeft = 0;
+        this.scrollWidth = 0;
+        this.clientWidth = 0;
         this.nowSort = {
             'index': -1,
             'sort': 'desc'
+        };
+        this.isFixed = {
+            'left': undefined,
+            'right': undefined,
         };
     }
     get itemsLength() {
         return this.items.length;
     }
-    get stickyleftindex() {
-        if (this.propInt('stickyleft') <= 0) {
-            return 0;
-        }
-        return this.itemsLength - this.propInt('stickyright');
-    }
-    get stickyrightindex() {
-        if (this.propInt('stickyright') <= 0) {
-            return 0;
-        }
-        return this.itemsLength - this.propInt('stickyright');
+    get maxScrollLeft() {
+        return this.scrollWidth - this.clientWidth;
     }
     arrowUp() {
         this.refs.gl.arrowUp();
@@ -98,12 +95,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         item.sort = sort;
     }
-    get isSticky() {
-        return (index) => {
-        };
-    }
     updateScrollLeft(sl) {
         this.refs.header.scrollLeft = sl;
+        this.scrollLeft = sl;
     }
     refreshHeader() {
         var _a;
@@ -210,6 +204,30 @@ class default_1 extends clickgo.control.AbstractControl {
     onMounted() {
         this.watch('sort', () => {
             this.checkNowSort();
+        });
+        this.watch(() => {
+            var _a;
+            return ((_a = this.props.fixed) !== null && _a !== void 0 ? _a : '') + '|' + this.itemsLength;
+        }, () => {
+            if (this.props.fixed === undefined) {
+                this.isFixed.left = undefined;
+                this.isFixed.right = undefined;
+                return;
+            }
+            if (this.props.fixed === 'both') {
+                this.isFixed.left = 'left';
+                this.isFixed.right = 'right';
+                return;
+            }
+            if (this.props.fixed === 'left') {
+                this.isFixed.left = 'left';
+                this.isFixed.right = undefined;
+                return;
+            }
+            this.isFixed.left = undefined;
+            this.isFixed.right = 'right';
+        }, {
+            'immediate': true
         });
         this.watch('split', () => {
             if (this.props.split) {
