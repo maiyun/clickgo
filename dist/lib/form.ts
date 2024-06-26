@@ -3497,9 +3497,9 @@ export async function confirm(opt: string | types.IFormConfirmOptions): Promise<
         return false;
     }
     const locale = t.locale.lang || core.config.locale;
-    const buttons = [info.locale[locale]?.yes ?? info.locale['en'].yes, info.locale[locale]?.no ?? info.locale['en'].no];
+    const buttons = [info.locale[locale]?.no ?? info.locale['en'].no, info.locale[locale]?.yes ?? info.locale['en'].yes];
     if (opt.cancel) {
-        buttons.push(info.locale[locale]?.cancel ?? info.locale['en'].cancel);
+        buttons.unshift(info.locale[locale]?.cancel ?? info.locale['en'].cancel);
     }
     const res = await dialog({
         'taskId': taskId,
@@ -3542,7 +3542,7 @@ export async function prompt(opt: string | types.IFormPromptOptions): Promise<st
         'title': opt.title,
         'direction': 'v',
         'gutter': 10,
-        'content': '<block>' + opt.content + '</block><text v-model="data.text">',
+        'content': '<block>' + opt.content + '</block><text v-model="data.text" />',
         'data': {
             'text': opt.text ?? ''
         },

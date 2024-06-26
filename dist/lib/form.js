@@ -2769,9 +2769,9 @@ function confirm(opt) {
             return false;
         }
         const locale = t.locale.lang || core.config.locale;
-        const buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.yes) !== null && _b !== void 0 ? _b : info.locale['en'].yes, (_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.no) !== null && _d !== void 0 ? _d : info.locale['en'].no];
+        const buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.no) !== null && _b !== void 0 ? _b : info.locale['en'].no, (_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.yes) !== null && _d !== void 0 ? _d : info.locale['en'].yes];
         if (opt.cancel) {
-            buttons.push((_f = (_e = info.locale[locale]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : info.locale['en'].cancel);
+            buttons.unshift((_f = (_e = info.locale[locale]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : info.locale['en'].cancel);
         }
         const res = yield dialog({
             'taskId': taskId,
@@ -2811,7 +2811,7 @@ function prompt(opt) {
             'title': opt.title,
             'direction': 'v',
             'gutter': 10,
-            'content': '<block>' + opt.content + '</block><text v-model="data.text">',
+            'content': '<block>' + opt.content + '</block><text v-model="data.text" />',
             'data': {
                 'text': (_a = opt.text) !== null && _a !== void 0 ? _a : ''
             },

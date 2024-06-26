@@ -188,7 +188,7 @@ export default class extends clickgo.form.AbstractForm {
         this.dr = await clickgo.form.dialog({
             'direction': 'v',
             'gutter': 10,
-            'content': '<block>Hello text!</block><text :modelValue="data.txt">',
+            'content': '<block>Hello text!</block><text :modelValue="data.txt" />',
             'data': {
                 'txt': 'Text\nLine 2.'
             }
