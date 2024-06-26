@@ -1,5 +1,21 @@
 # Changelog
 
+# 3.13.0
+
+[+] Added clientwidth, gesture, scrollheight, scrollwidth, and itemdblclicked events to the greatlist control.  
+[+] Added scrollLeft and scrollTop two-way binding parameters to the greatlist control.  
+[+] Added plain and map parameters to the greatlist control.  
+[+] Added map parameter to the greatselect control.  
+[+] Added map parameter to the levelselect control.  
+[+] Added itemdblclicked event to the list control.  
+[+] Added plain parameter to the text control.  
+[+] Added map parameter to the select control.  
+[+] Added fixed parameter to the table control to fix left, right, or both columns.  
+[+] Added close parameter to the drawer control to automatically close the drawer when clicking on the left side blank area.  
+[+] Added gutter parameter to the flow control.  
+[\*] Significant optimizations to the light theme.  
+[\*] Optimized framework stability.
+
 # 3.12.2
 
 [+] Added bottom slot to the table control.  

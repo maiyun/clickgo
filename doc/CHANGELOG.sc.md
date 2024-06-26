@@ -1,5 +1,21 @@
 # 更新日志
 
+# 3.13.0
+
+[+] greatlist 控件新增 clientwidth、gesture、scrollheight、scrollwidth、itemdblclicked 事件。  
+[+] greatlist 控件新增 scrollLeft、scrollTop 双向绑定参数。  
+[+] greatlist 控件新增 plain、map 参数。  
+[+] greatselect 控件新增 map 参数。  
+[+] levelselect 控件新增 map 参数。  
+[+] list 控件新增 itemdblclicked 事件。  
+[+] text 控件新增 plain 参数。  
+[+] select 控件新增 map 参数。  
+[+] table 控件新增 fixed 参数，可以固定左列、右列或同时固定。  
+[+] drawer 控件新增 close 参数，点击左侧空白处时会自动关闭 drawer。  
+[+] flow 控件新增 gutter 参数。  
+[\*] light 主题大量优化。  
+[\*] 优化框架稳定性。
+
 # 3.12.2
 
 [+] table 控件新增 bottom 插槽。  
