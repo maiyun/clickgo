@@ -1,5 +1,11 @@
 # Changelog
 
+# 3.13.1
+
+[\*] Updated monaco-editor to 0.50.0.  
+[\*] Updated vue to 3.4.30.  
+[\*] Other optimizations.
+
 # 3.13.0
 
 [+] Added clientwidth, gesture, scrollheight, scrollwidth, and itemdblclicked events to the greatlist control.  

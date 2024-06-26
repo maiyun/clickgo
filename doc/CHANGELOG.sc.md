@@ -1,5 +1,11 @@
 # 更新日志
 
+# 3.13.1
+
+[\*] 更新 monaco-editor 到 0.50.0。  
+[\*] 更新 vue 到 3.4.30。  
+[\*] 其他一些优化。
+
 # 3.13.0
 
 [+] greatlist 控件新增 clientwidth、gesture、scrollheight、scrollwidth、itemdblclicked 事件。  
