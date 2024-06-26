@@ -581,8 +581,23 @@ export abstract class AbstractForm extends AbstractCommon {
         panel.send(data);
     }
 
+    /** --- 覆盖整个窗体的 loading（实际值） --- */
+    private _loading: boolean = false;
+
     /** --- 覆盖整个窗体的 loading --- */
-    public loading: boolean = false;
+    public get loading(): boolean {
+        return this._loading;
+    }
+
+    public set loading(val: boolean) {
+        if (this.lockLoading) {
+            return;
+        }
+        this._loading = val;
+    }
+
+    /** --- 是否阻止任何人修改 loading --- */
+    public lockLoading: boolean = false;
 
     // --- step 相关 ---
 

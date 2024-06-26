@@ -331,7 +331,8 @@ class AbstractForm extends AbstractCommon {
         super(...arguments);
         this.isNativeSync = false;
         this.isReady = false;
-        this.loading = false;
+        this._loading = false;
+        this.lockLoading = false;
         this._inStep = false;
         this._stepValues = [];
         this._firstShow = true;
@@ -420,6 +421,15 @@ class AbstractForm extends AbstractCommon {
     }
     sendToPanel(panel, data) {
         panel.send(data);
+    }
+    get loading() {
+        return this._loading;
+    }
+    set loading(val) {
+        if (this.lockLoading) {
+            return;
+        }
+        this._loading = val;
     }
     get inStep() {
         return this._inStep;

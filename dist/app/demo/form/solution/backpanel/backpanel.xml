@@ -24,7 +24,7 @@
                 <label style="flex: 1; text-align: right; padding-right: var(--g-padding);">Panel</label>
             </template>
             <template v-slot:content>
-                <panel :map="map" style="flex: 1;" @go="loading = true" @went="loading = false"></panel>
+                <panel :map="map" style="flex: 1;" @go="loading = true; lockLoading = true" @went="lockLoading = false; loading = false"></panel>
             </template>
         </nav>
     </layout>
