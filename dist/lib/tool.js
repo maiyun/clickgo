@@ -429,7 +429,7 @@ exports.RANDOM_LN = exports.RANDOM_L + exports.RANDOM_N;
 exports.RANDOM_LU = exports.RANDOM_L + exports.RANDOM_U;
 exports.RANDOM_LUN = exports.RANDOM_L + exports.RANDOM_U + exports.RANDOM_N;
 exports.RANDOM_V = 'ACEFGHJKLMNPRSTWXY34567';
-exports.RANDOM_LUNS = exports.RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]';
+exports.RANDOM_LUNS = exports.RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]"';
 function random(length = 8, source = exports.RANDOM_LN, block = '') {
     let len = block.length;
     if (len > 0) {

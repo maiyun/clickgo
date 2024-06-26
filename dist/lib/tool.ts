@@ -580,7 +580,7 @@ export const RANDOM_LN = RANDOM_L + RANDOM_N;
 export const RANDOM_LU = RANDOM_L + RANDOM_U;
 export const RANDOM_LUN = RANDOM_L + RANDOM_U + RANDOM_N;
 export const RANDOM_V = 'ACEFGHJKLMNPRSTWXY34567';
-export const RANDOM_LUNS = RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]';
+export const RANDOM_LUNS = RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]"';
 export function random(length: number = 8, source: string = RANDOM_LN, block: string = ''): string {
     // --- 剔除 block 字符 ---
     let len = block.length;

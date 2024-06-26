@@ -379,7 +379,7 @@ function init(taskId, invoke, cache) {
                         if (t.controls[name].layout.includes('<teleport')) {
                             t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
                         }
-                        t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS);
+                        t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS, '"<>$');
                         t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${t.controls[name].access['cgPCMap']}"`);
                         let cls;
                         if (item.files[item.config.code + '.js']) {
