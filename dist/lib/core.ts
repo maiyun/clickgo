@@ -268,7 +268,7 @@ const modules: Record<string, {
     'monaco': {
         func: async function() {
             return new Promise(function(resolve, reject) {
-                fetch(loader.cdn + '/npm/monaco-editor@0.46.0/min/vs/loader.js').then(function(r) {
+                fetch(loader.cdn + '/npm/monaco-editor@0.50.0/min/vs/loader.js').then(function(r) {
                     return r.blob();
                 }).then(function(b) {
                     return tool.blob2DataUrl(b);

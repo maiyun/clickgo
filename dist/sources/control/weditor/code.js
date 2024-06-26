@@ -285,6 +285,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (v === this.access.editor.getHtml()) {
                     return;
                 }
+                this.access.editor.select([]);
                 this.access.editor.setHtml(v);
             });
             this.isLoading = false;
