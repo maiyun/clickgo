@@ -13,6 +13,7 @@
             border-right: solid .5px var(--g-plain-border-color);
         }
 
+        // --- 头部的项 ---
         .item {
             padding: var(--g-padding); background: var(--face); position: relative; display: flex; transition: var(--g-transition); transition-property: background-color;
             &:hover {

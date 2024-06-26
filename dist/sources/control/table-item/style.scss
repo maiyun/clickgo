@@ -1,8 +1,5 @@
 .wrap {
     padding: var(--g-padding); display: flex; transition: var(--g-transition); transition-property: background-color;
-    &::before {
-        content: ''; position: absolute; top: 0px; width: 10px; bottom: -1px;
-    }
     &.v {
         flex-direction: column;
     }
