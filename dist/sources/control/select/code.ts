@@ -1141,6 +1141,19 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.watch(() => JSON.stringify(this.props.data), async (n, o): Promise<void> => {
             if (this.propBoolean('editable')) {
+                await this._search();
+                if (this.propBoolean('multi')) {
+                    return;
+                }
+                // --- 单选模式 ---
+                if (this.value[0] !== this.listValue[0]) {
+                    return;
+                }
+                if (this.label[0] === this.listLabel[0]) {
+                    return;
+                }
+                this.label = clickgo.tool.clone(this.listLabel);
+                this.emit('label', clickgo.tool.clone(this.label));
                 return;
             }
             if (n === o) {
@@ -1156,8 +1169,6 @@ export default class extends clickgo.control.AbstractControl {
                 this.label = clickgo.tool.clone(this.listLabel);
                 this.emit('label', clickgo.tool.clone(this.label));
             }
-        }, {
-            'deep': true
         });
 
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {

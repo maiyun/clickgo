@@ -1001,6 +1001,18 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.watch(() => JSON.stringify(this.props.data), (n, o) => __awaiter(this, void 0, void 0, function* () {
             if (this.propBoolean('editable')) {
+                yield this._search();
+                if (this.propBoolean('multi')) {
+                    return;
+                }
+                if (this.value[0] !== this.listValue[0]) {
+                    return;
+                }
+                if (this.label[0] === this.listLabel[0]) {
+                    return;
+                }
+                this.label = clickgo.tool.clone(this.listLabel);
+                this.emit('label', clickgo.tool.clone(this.label));
                 return;
             }
             if (n === o) {
@@ -1016,9 +1028,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.label = clickgo.tool.clone(this.listLabel);
                 this.emit('label', clickgo.tool.clone(this.label));
             }
-        }), {
-            'deep': true
-        });
+        }));
         clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
             switch (n) {
                 case 'background': {
