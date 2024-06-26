@@ -63,6 +63,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'async': false,
             'icon': false,
             'iconDefault': '',
+            'map': {},
             'modelValue': [],
             'placeholder': '',
             'data': []

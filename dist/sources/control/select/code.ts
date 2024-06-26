@@ -40,6 +40,12 @@ export default class extends clickgo.control.AbstractControl {
         'async': boolean | string;
         'icon': boolean | string;
         'iconDefault': string;
+        /** --- 映射 label、value、children 的 key --- */
+        'map': {
+            'label'?: string;
+            'value'?: string;
+            'children'?: string;
+        };
 
         'modelValue': Array<string | number>;
         'placeholder': string;
@@ -59,6 +65,7 @@ export default class extends clickgo.control.AbstractControl {
             'async': false,
             'icon': false,
             'iconDefault': '',
+            'map': {},
 
             'modelValue': [],
             'placeholder': '',
