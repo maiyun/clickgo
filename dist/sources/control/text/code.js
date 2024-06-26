@@ -60,6 +60,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'adaption': false,
             'gesture': [],
             'type': 'text',
+            'plain': false,
             'modelValue': '',
             'placeholder': '',
             'selectionStart': 0,

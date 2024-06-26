@@ -2,8 +2,9 @@
     <layout direction="v" gutter="10">
         <label>drawer: {{drawer ? 'true' : 'false'}}</label>
         <button @click="drawer = true">Open</button>
+        <button @click="tclose = !tclose">{{tclose ? '' : '!'}}close</button>
     </layout>
-    <drawer title="Drawer" gutter="10" v-model="drawer" direction="v" width="50%">
+    <drawer title="Drawer" gutter="10" v-model="drawer" direction="v" width="50%" :close="tclose">
         <label>123</label>
         <button @click="drawer2 = true">456</button>
         <tuieditor style="height: 200px;"></tuieditor>

@@ -9,6 +9,7 @@ export default class extends clickgo.control.AbstractControl {
         'change': null,
         'changed': null,
         'itemclicked': null,
+        'itemdblclicked': null,
         'beforeselect': null,
         'select': null,
         'afterselect': null,
@@ -36,7 +37,13 @@ export default class extends clickgo.control.AbstractControl {
         'contentWidth': 'fill' | 'max';
         /** --- 是否开启虚拟 dom 模式，默认不开启，如果数据量超大的话才需要开启 --- */
         'virtual': boolean | string;
+        'plain': boolean | string;
 
+        /** --- 映射 disabled、control 的 key --- */
+        'map': {
+            'disabled'?: string;
+            'control'?: string;
+        };
         'data': Array<{
             'disabled': boolean;
             'control'?: 'split';
@@ -57,7 +64,9 @@ export default class extends clickgo.control.AbstractControl {
             'scroll': 'auto',
             'contentWidth': 'fill',
             'virtual': false,
+            'plain': false,
 
+            'map': {},
             'data': [],
             'sizes': {},
             'modelValue': [],
@@ -82,6 +91,17 @@ export default class extends clickgo.control.AbstractControl {
             w += this.table.widthMap[key];
         }
         return w;
+    }
+
+    /** --- 初始化后的 map 对象 --- */
+    public get mapComp(): {
+        'disabled': string;
+        'control': string;
+    } {
+        return {
+            'disabled': this.props.map.disabled ?? 'disabled',
+            'control': this.props.map.control ?? 'control'
+        };
     }
 
     /** --- clientWidth --- */
@@ -142,10 +162,10 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i].disabled) {
+            if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
             }
-            if (this.props.data[i].control === 'split') {
+            if (this.props.data[i][this.mapComp.control] === 'split') {
                 continue;
             }
             this.select(i);
@@ -166,10 +186,10 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i].disabled) {
+            if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
             }
-            if (this.props.data[i].control === 'split') {
+            if (this.props.data[i][this.mapComp.control] === 'split') {
                 continue;
             }
             this.select(i);
@@ -214,7 +234,7 @@ export default class extends clickgo.control.AbstractControl {
         for (let i = 0; i < this.valueData.length; ++i) {
             if (
                 (this.valueData[i] > dataMaxIndex) ||
-                (this.props.data[this.valueData[i]]?.disabled || (this.props.data[this.valueData[i]]?.control === 'split'))
+                (this.props.data[this.valueData[i]]?.[this.mapComp.disabled] || (this.props.data[this.valueData[i]]?.[this.mapComp.control] === 'split'))
             ) {
                 // --- 超出/不可选 ---
                 change = true;
@@ -272,7 +292,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         */
         const canSelect = (i: number): boolean => {
-            if (!this.props.data[i] || this.props.data[i].disabled || (this.props.data[i].control === 'split')) {
+            if (!this.props.data[i] || this.props.data[i][this.mapComp.disabled] || (this.props.data[i][this.mapComp.control] === 'split')) {
                 return false;
             }
             return true;
@@ -520,13 +540,23 @@ export default class extends clickgo.control.AbstractControl {
                 clickgo.form.hidePop(current);
             }
             // --- 上报点击事件，true: arrow click ---
-            this.emit('itemclicked', {
+            const clickevent: types.IGreatlistItemclickedEvent = {
                 'detail': {
                     'event': e,
                     'value': value,
                     'arrow': true
                 }
-            });
+            };
+            this.emit('itemclicked', clickevent);
+            // --- 上报双击时间，true: arrow click ---
+            const dblevent: types.IGreatlistItemdblclickedEvent = {
+                'detail': {
+                    'event': e,
+                    'value': value,
+                    'arrow': true
+                }
+            };
+            this.emit('itemdblclicked', dblevent);
         });
     }
 
@@ -547,13 +577,23 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.bindClick(e, () => {
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 上报点击事件，false: arrow click ---
-            this.emit('itemclicked', {
+            const clickevent: types.IGreatlistItemclickedEvent = {
                 'detail': {
                     'event': e,
                     'value': value,
                     'arrow': false
                 }
-            });
+            };
+            this.emit('itemclicked', clickevent);
+            // --- 上报双击时间，false: arrow click ---
+            const dblevent: types.IGreatlistItemdblclickedEvent = {
+                'detail': {
+                    'event': e,
+                    'value': value,
+                    'arrow': false
+                }
+            };
+            this.emit('itemdblclicked', dblevent);
         });
     }
 
@@ -635,10 +675,10 @@ export default class extends clickgo.control.AbstractControl {
     public getFirstNotDisabledIndex(): number {
         let notDisabledIndex = 0;
         for (let i = 0; i < this.props.data.length; ++i) {
-            if (this.props.data[i].disabled) {
+            if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
             }
-            if (this.props.data[i].control === 'split') {
+            if (this.props.data[i][this.mapComp.control] === 'split') {
                 continue;
             }
             notDisabledIndex = i;
@@ -761,8 +801,8 @@ export default class extends clickgo.control.AbstractControl {
             if (this.propBoolean('must') && (this.valueData.length === 0)) {
                 // --- 要默认选择一下，先判断 shiftStart 能不能被选择，若能的话，优先选择 ---
                 if (this.props.data[this.shiftStart] &&
-                    !this.props.data[this.shiftStart].disabled &&
-                    (this.props.data[this.shiftStart].control !== 'split')) {
+                    !this.props.data[this.shiftStart][this.mapComp.disabled] &&
+                    (this.props.data[this.shiftStart][this.mapComp.control] !== 'split')) {
                     this.valueData = [this.shiftStart];
                 }
                 else {

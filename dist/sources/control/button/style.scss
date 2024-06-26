@@ -1,12 +1,12 @@
 .wrap {
-    display: flex; outline: none; position: relative; border-radius: var(--g-radius); padding: var(--g-padding); overflow: hidden;
+    display: flex; outline: none; position: relative; border-radius: var(--g-radius); padding: var(--g-padding); overflow: hidden; transition: var(--g-transition); transition-property: color, background-color, box-shadow;
     // --- 外边框 ---
     &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; border-radius: var(--g-radius);
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; border-radius: var(--g-radius); transition: var(--g-transition);
     }
     // --- 焦点框 ---
     &::after, .inner::after, .arrow::after {
-        content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; z-index: 1;
+        content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; z-index: 1; border-radius: var(--g-radius); transition: var(--g-transition);
     }
     // --- 获取焦点时自动显示焦点框 ---
     &:focus::after, .inner:focus::after, .arrow:focus::after {
@@ -50,10 +50,11 @@
             --border:solid .5px var(--g-border-color);
             --border-hover:solid .5px var(--g-border-color-hover);
             --border-active:solid .5px var(--g-border-color-active);
-            --border-focus:solid 2px var(--g-border-color-focus);
+            --border-focus:solid .5px var(--g-border-color-focus);
             --border-disabled:solid .5px var(--g-border-color-disabled);
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:var(--g-shadow);
         }
         &.plain {
             --color-hover:var(--g-plain-color-hover);
@@ -74,6 +75,7 @@
             --border-disabled:solid .5px var(--g-plain-border-color-disabled);
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:var(--g-shadow);
         }
     }
     &.tool {
@@ -88,12 +90,14 @@
             --background-focus:var(--g-background-focus);
             --background-disabled:transparent;
 
+            --border:solid .5px transparent;
             --border-hover:solid .5px var(--g-border-color-hover);
             --border-active:solid .5px var(--g-border-color-active);
             --border-focus:solid .5px var(--g-border-color-focus);
             --border-disabled:solid .5px transparent;
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:none;
         }
         &.plain {
             --color-hover:var(--g-plain-color-hover);
@@ -106,12 +110,14 @@
             --background-focus:var(--g-plain-background-focus);
             --background-disabled:transparent;
 
+            --border:solid .5px transparent;
             --border-hover:solid .5px var(--g-plain-border-color-hover);
             --border-active:solid .5px var(--g-plain-border-color-active);
             --border-focus:solid .5px var(--g-plain-border-color-focus);
             --border-disabled:solid .5px transparent;
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:none;
         }
     }
     &.primary {
@@ -129,6 +135,7 @@
             --background-disabled:var(--success-disabled);
 
             --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --shadow:var(--g-shadow);
         }
         &.plain {
             --color:var(--success);
@@ -150,6 +157,7 @@
             --border-disabled:solid .5px var(--success-disabled);
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:var(--g-shadow);
         }
     }
     &.info {
@@ -167,6 +175,7 @@
             --background-disabled:var(--info-disabled);
 
             --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --shadow:var(--g-shadow);
         }
         &.plain {
             --color:var(--info);
@@ -188,6 +197,7 @@
             --border-disabled:solid .5px var(--info-disabled);
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:var(--g-shadow);
         }
     }
     &.warning {
@@ -205,6 +215,7 @@
             --background-disabled:var(--warning-disabled);
 
             --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --shadow:var(--g-shadow);
         }
         &.plain {
             --color:var(--warning);
@@ -226,6 +237,7 @@
             --border-disabled:solid .5px var(--warning-disabled);
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:var(--g-shadow);
         }
     }
     &.danger {
@@ -243,6 +255,7 @@
             --background-disabled:var(--danger-disabled);
 
             --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --shadow:var(--g-shadow);
         }
         &.plain {
             --color:var(--danger);
@@ -264,6 +277,7 @@
             --border-disabled:solid .5px var(--danger-disabled);
 
             --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:var(--g-shadow);
         }
     }
 
@@ -277,13 +291,15 @@
     fill: var(--color);
     stroke: var(--color);
     background: var(--background);              // --- 背景色 ---
+    box-shadow: var(--shadow);
     &.area-split {
         .inner::before {
-            border-right: var(--border);
+            border-right: var(--border); transition: var(--g-transition);
         }
     }
     &:not([data-cg-disabled]) {
         &:focus, &.childfocus {                 // --- 焦点状态 ---
+            box-shadow: var(--g-outline-shadow);
             &::before {                         // --- 外边框 ---
                 border: var(--border-focus);
             }
@@ -317,6 +333,7 @@
             }
         }
         &:active, &.active, &[data-cg-pop-open] {     // --- 鼠标按下 ---
+            box-shadow: var(--g-outline-shadow);
             &::before {
                 border: var(--border-active);
             }
@@ -332,9 +349,18 @@
                 }
             }
         }
+        &.checked {
+            &::before {
+                border: solid .5px var(--g-border-color-active);
+            }
+            &.area-all, &.area-mark {
+                background: var(--g-plain-background);
+            }
+        }
 
         &.area-split {
             .inner, .arrow {
+                transition: var(--g-transition);
                 &:focus {                       // --- 焦点 ---
                     color: var(--color-focus);
                     fill: var(--color-focus);
@@ -378,5 +404,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

@@ -776,6 +776,14 @@ export interface IGreatlistItemclickedEvent {
     };
 }
 
+export interface IGreatlistItemdblclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': number;
+        'arrow': boolean;
+    };
+}
+
 // --- Greatselect Control ---
 
 export interface IGreatselectChangeEvent extends ICustomEvent {
@@ -915,6 +923,14 @@ export interface IListAddEvent extends ICustomEvent {
 }
 
 export interface IListItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': string;
+        'arrow': boolean;
+    };
+}
+
+export interface IListItemdblclickedEvent {
     'detail': {
         'event': MouseEvent | TouchEvent;
         'value': string;

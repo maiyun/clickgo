@@ -293,9 +293,12 @@ export default class extends clickgo.control.AbstractControl {
             if (v === this.access.editor.getHtml()) {
                 return;
             }
+            this.access.editor.setHtml(v);
+            /*
             this.access.editor.clear();
             this.access.editor.select([]);
             this.access.editor.dangerouslyInsertHtml(v);
+            */
         });
         // --- 初始化成功 ---
         this.isLoading = false;

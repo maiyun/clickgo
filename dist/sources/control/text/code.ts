@@ -29,6 +29,7 @@ export default class extends clickgo.control.AbstractControl {
         'adaption': boolean | string;
         'gesture': string[] | string;
         'type': 'text' | 'multi' | 'password' | 'number';
+        'plain': boolean | string;
 
         'modelValue': string;
         'placeholder': string;
@@ -48,6 +49,7 @@ export default class extends clickgo.control.AbstractControl {
             'adaption': false,
             'gesture': [],
             'type': 'text',
+            'plain': false,
 
             'modelValue': '',
             'placeholder': '',

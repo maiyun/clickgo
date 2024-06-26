@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; position: relative; border-radius: var(--g-radius); border-style: solid; border-width: .5px; background: var(--g-plain-background);
+    display: flex; position: relative; border-radius: var(--g-radius); border-style: solid; border-width: .5px; background: var(--g-plain-background); transition: var(--g-transition); transition-property: color, background-color, border;
 
     .notInit {
         border: dotted 1px var(--g-color); flex: 1; display: flex; align-items: center; justify-content: center;
@@ -27,9 +27,9 @@
     &.dark {
         .content {
             ::-webkit-scrollbar-thumb {
-                background: rgba(255,255,255,.05);
+                background: var(--g-block-background); border-radius: var(--g-radius);
                 &:hover {
-                    background: rgba(255,255,255,.15);
+                    background: var(--g-block-background-hover);
                 }
             }
         }
@@ -67,5 +67,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

@@ -1,7 +1,7 @@
 .wrap {
     // --- 默认样式 ---
     > .text {
-        padding: 10px; display: flex; align-items: center; position: relative; border-radius: var(--g-radius);
+        padding: 10px; display: flex; align-items: center; position: relative; border-radius: var(--g-radius); transition: var(--g-transition);
         &.hasChild::after {
             content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; display: block; position: absolute; right: 10px; top: 50%; transform: translateY(-5px) rotate(45deg); transition: all .3s var(--g-cubic); transition-property: transform;
         }
@@ -23,19 +23,19 @@
     &:not(.child) {
         &.show {
             > .text {
-                background: var(--g-background-active); border-radius: var(--g-radius) var(--g-radius) 0 0;
+                background: var(--face-child); border-radius: var(--g-radius) var(--g-radius) 0 0;
             }
         }
     }
 
     &:not(.selected) {
         > .text:hover {
-            background: var(--g-background-kp);
+            background: var(--face-hover);
         }
     }
     &.selected {
         > .text {
-            background: var(--g-background-kp);
+            background: var(--face-selected);
         }
     }
 
@@ -44,7 +44,7 @@
     }
     &:not(.child) {
         > .menu {
-            background: var(--g-background-active);
+            background: var(--face-child);
         }
     }
 }

@@ -10,18 +10,18 @@
             width: 6px; cursor: default;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,.1); border-radius:3px;
+            background: var(--g-block-background); border-radius: var(--g-radius);
             &:hover {
-                background: rgba(0,0,0,.2);
+                background: var(--g-block-background-hover);
             }
         }
     }
     &.dark {
         .content {
             ::-webkit-scrollbar-thumb {
-                background: rgba(255,255,255,.05);
+                background: var(--g-block-dark-background);
                 &:hover {
-                    background: rgba(255,255,255,.15);
+                    background: var(--g-block-dark-background-hover);
                 }
             }
         }
@@ -43,5 +43,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

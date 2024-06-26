@@ -63,7 +63,7 @@
                 }
             }
             &.selected .title {
-                background: var(--g-background-active);
+                background: var(--g-plain-background-selected);
             }
 
             .value {
@@ -113,7 +113,7 @@
 // --- POP ---
 
 .dock-pop {
-    background: var(--face); border: solid .5px var(--g-border-color); display: flex; flex-direction: column; width: 200px; padding: 1px; border-radius: var(--g-radius);
+    background: var(--face); border: solid .5px var(--g-border-color); display: flex; flex-direction: column; width: 200px; padding: 1px; border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 
     > :not(:last-child) {
         margin-bottom: 1px;
@@ -138,5 +138,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

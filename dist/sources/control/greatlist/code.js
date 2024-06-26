@@ -42,6 +42,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'change': null,
             'changed': null,
             'itemclicked': null,
+            'itemdblclicked': null,
             'beforeselect': null,
             'select': null,
             'afterselect': null,
@@ -64,6 +65,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'scroll': 'auto',
             'contentWidth': 'fill',
             'virtual': false,
+            'plain': false,
+            'map': {},
             'data': [],
             'sizes': {},
             'modelValue': [],
@@ -99,6 +102,13 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return w;
     }
+    get mapComp() {
+        var _a, _b;
+        return {
+            'disabled': (_a = this.props.map.disabled) !== null && _a !== void 0 ? _a : 'disabled',
+            'control': (_b = this.props.map.control) !== null && _b !== void 0 ? _b : 'control'
+        };
+    }
     get isSelected() {
         return (value) => {
             return this.valueData.includes(value);
@@ -116,10 +126,10 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i].disabled) {
+            if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
             }
-            if (this.props.data[i].control === 'split') {
+            if (this.props.data[i][this.mapComp.control] === 'split') {
                 continue;
             }
             this.select(i);
@@ -138,10 +148,10 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i].disabled) {
+            if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
             }
-            if (this.props.data[i].control === 'split') {
+            if (this.props.data[i][this.mapComp.control] === 'split') {
                 continue;
             }
             this.select(i);
@@ -171,7 +181,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             for (let i = 0; i < this.valueData.length; ++i) {
                 if ((this.valueData[i] > dataMaxIndex) ||
-                    (((_a = this.props.data[this.valueData[i]]) === null || _a === void 0 ? void 0 : _a.disabled) || (((_b = this.props.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b.control) === 'split'))) {
+                    (((_a = this.props.data[this.valueData[i]]) === null || _a === void 0 ? void 0 : _a[this.mapComp.disabled]) || (((_b = this.props.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b[this.mapComp.control]) === 'split'))) {
                     change = true;
                     if (this.shiftStart === this.valueData[i]) {
                         this.shiftStart = i > 0 ? ((_c = this.valueData[0]) !== null && _c !== void 0 ? _c : notDisabledIndex) : notDisabledIndex;
@@ -207,7 +217,7 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         const canSelect = (i) => {
-            if (!this.props.data[i] || this.props.data[i].disabled || (this.props.data[i].control === 'split')) {
+            if (!this.props.data[i] || this.props.data[i][this.mapComp.disabled] || (this.props.data[i][this.mapComp.control] === 'split')) {
                 return false;
             }
             return true;
@@ -432,13 +442,22 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
                 clickgo.form.hidePop(current);
             }
-            this.emit('itemclicked', {
+            const clickevent = {
                 'detail': {
                     'event': e,
                     'value': value,
                     'arrow': true
                 }
-            });
+            };
+            this.emit('itemclicked', clickevent);
+            const dblevent = {
+                'detail': {
+                    'event': e,
+                    'value': value,
+                    'arrow': true
+                }
+            };
+            this.emit('itemdblclicked', dblevent);
         });
     }
     innerDown(e, value) {
@@ -453,13 +472,22 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         clickgo.dom.bindClick(e, () => {
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
-            this.emit('itemclicked', {
+            const clickevent = {
                 'detail': {
                     'event': e,
                     'value': value,
                     'arrow': false
                 }
-            });
+            };
+            this.emit('itemclicked', clickevent);
+            const dblevent = {
+                'detail': {
+                    'event': e,
+                    'value': value,
+                    'arrow': false
+                }
+            };
+            this.emit('itemdblclicked', dblevent);
         });
     }
     down(e) {
@@ -521,10 +549,10 @@ class default_1 extends clickgo.control.AbstractControl {
     getFirstNotDisabledIndex() {
         let notDisabledIndex = 0;
         for (let i = 0; i < this.props.data.length; ++i) {
-            if (this.props.data[i].disabled) {
+            if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
             }
-            if (this.props.data[i].control === 'split') {
+            if (this.props.data[i][this.mapComp.control] === 'split') {
                 continue;
             }
             notDisabledIndex = i;
@@ -619,8 +647,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('must', () => {
             if (this.propBoolean('must') && (this.valueData.length === 0)) {
                 if (this.props.data[this.shiftStart] &&
-                    !this.props.data[this.shiftStart].disabled &&
-                    (this.props.data[this.shiftStart].control !== 'split')) {
+                    !this.props.data[this.shiftStart][this.mapComp.disabled] &&
+                    (this.props.data[this.shiftStart][this.mapComp.control] !== 'split')) {
                     this.valueData = [this.shiftStart];
                 }
                 else {

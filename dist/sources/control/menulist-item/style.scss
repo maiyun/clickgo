@@ -1,10 +1,10 @@
 .wrap {
-    padding: var(--g-padding) 35px var(--g-padding) 10px; border-radius: var(--g-radius);
+    padding: var(--g-padding) 35px var(--g-padding) 10px; border-radius: var(--g-radius); transition: var(--g-transition);
     &:not([data-cg-disabled]) {
         &:hover {
-            background: var(--g-background-active);
+            background: var(--face-hover);
             .check, .radio {
-                background-color: var(--g-background-kp);
+                background-color: var(--face-selected);
             }
         }
     }
@@ -15,7 +15,7 @@
         }
     }
     &[data-cg-pop-open] {
-        background: var(--g-background-active);
+        background: var(--face-hover);
     }
 
     .op {
@@ -23,10 +23,10 @@
     }
 
     .check {
-        background-color: var(--g-background-active); width: 24px; height: 24px; visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color); stroke: var(--g-color);
+        background-color: var(--face-hover); width: 24px; height: 24px; visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color); stroke: var(--g-color); transition: var(--g-transition);
     }
     .radio {
-        background-color: var(--g-background-active); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden;
+        background-color: var(--face-hover); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden; transition: var(--g-transition);
         &::before {
             content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: var(--g-color);
         }
@@ -45,5 +45,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

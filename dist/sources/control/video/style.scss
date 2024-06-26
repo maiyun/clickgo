@@ -23,7 +23,7 @@
 
             .left, .right {
                 .button {
-                    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+                    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: var(--g-transition);
                     &:hover {
                         fill: rgba(255, 255, 255, 1);
                     }

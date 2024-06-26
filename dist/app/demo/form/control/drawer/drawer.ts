@@ -6,4 +6,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public drawer2 = false;
 
+    public tclose = false;
+
 }

@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden; justify-content: center;
+    display: flex; outline: none; border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden; justify-content: center; transition: var(--g-transition);
 
     > div {
         padding: var(--g-padding);
@@ -17,11 +17,12 @@
         }
 
         > div {
+            transition: var(--g-transition);
             &:hover:not(:active):not([data-cg-pop-open]) {
                 background: var(--g-plain-background-hover);
             }
             &:active, &[data-cg-pop-open] {
-                background: var(--g-background-active);
+                background: var(--g-plain-background-active);
             }
         }
     }
@@ -34,7 +35,7 @@
 }
 
 .pop {
-    background: var(--face); color: var(--g-color); border-radius: var(--g-radius); height: 250px; padding: var(--g-padding); display: flex; flex-direction: column; border: solid .5px var(--g-color);
+    color: var(--g-color); border-radius: var(--g-radius); height: 250px; padding: var(--g-padding); display: flex; flex-direction: column; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
     > :first-child {
         // --- 列表项 ---
         display: flex; flex: 1; height: 0;

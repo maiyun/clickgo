@@ -20,6 +20,7 @@ export default class extends clickgo.control.AbstractControl {
         'direction': 'h' | 'v';
         'selection': boolean | string;
         'gesture': string[] | string;
+        'gutter': number | string;
 
         'scrollLeft': number | string;
         'scrollTop': number | string;
@@ -27,6 +28,7 @@ export default class extends clickgo.control.AbstractControl {
             'direction': 'h',
             'selection': false,
             'gesture': [],
+            'gutter': '',
 
             'scrollLeft': 0,
             'scrollTop': 0

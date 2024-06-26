@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden;
+    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden; box-shadow: var(--g-shadow); transition: var(--g-transition);
 
     .op {
         display: flex; flex: 1;
@@ -16,7 +16,7 @@
     }
 
     .arrow {
-        position: relative; display: flex; justify-content: center; align-items: center; width: 20px; border: solid .5px transparent;
+        position: relative; display: flex; justify-content: center; align-items: center; width: 20px; border: solid .5px transparent; transition: var(--g-transition);
         &::after {
             content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
         }
@@ -67,6 +67,7 @@
             }
             &[data-cg-pop-open], &.active {
                 // --- 展开状态 ---
+                box-shadow: var(--g-outline-shadow);
                 &.area-all {
                     background: var(--g-plain-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
                     .arrow::after {
@@ -134,6 +135,7 @@
             }
             &[data-cg-pop-open], &.active {
                 // --- 展开状态 ---
+                box-shadow: var(--g-outline-shadow);
                 &.area-all {
                     background: var(--g-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
                     .arrow::after {
@@ -155,7 +157,7 @@
 }
 
 .pop {
-    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
+    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
     > * {
         flex: 1;
     }

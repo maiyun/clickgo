@@ -1,10 +1,10 @@
 .wrap {
-    display: flex; align-items: center; outline: none;
+    display: flex; align-items: center; outline: none; transition: var(--g-transition);
 
     .check {
-        width: 14px; height: 14px; display: flex; justify-content: center; align-items: center; position: relative; border-radius: var(--g-radius);
+        width: 14px; height: 14px; border-radius: var(--g-radius); border: solid .5px transparent; position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow); display: flex; justify-content: center; align-items: center;
         &::after {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: none;
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; transition: var(--g-transition); background: transparent;
         }
 
         svg {
@@ -15,7 +15,7 @@
     .label {
         margin-left: 5px; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); display: none;
+            content: ''; pointer-events: none; position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); display: none; transition: var(--g-transition);
         }
     }
 
@@ -28,9 +28,6 @@
 
     // --- 选中模式（含全、半） ---
     &.checked {
-        .check::after {
-            display: flex;
-        }
         &:not(.indeterminate) {
             .check {
                 svg {
@@ -64,6 +61,7 @@
             .check {
                 background: var(--g-plain-background-focus);
                 border: solid .5px var(--g-plain-border-color-focus);
+                box-shadow: var(--g-outline-shadow);
             }
 
             .label {
@@ -84,7 +82,7 @@
             color: var(--g-plain-color-hover); fill: var(--g-plain-color-hover); stroke: var(--g-plain-color-hover);
 
             .check {
-                border: solid .5px var(--g-plain-border-color-hover);
+                border: solid .5px var(--g-plain-border-color-hover); background: var(--g-plain-background-hover);
             }
 
             &.indeterminate {
@@ -101,6 +99,7 @@
             .check {
                 background: var(--g-plain-background-active);
                 border: solid .5px var(--g-plain-border-color-active);
+                box-shadow: var(--g-outline-shadow);
             }
 
             &.indeterminate {

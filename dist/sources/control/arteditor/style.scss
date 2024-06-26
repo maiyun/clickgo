@@ -19,7 +19,7 @@
             flex: 1; display: flex;
 
             .button {
-                padding: var(--g-padding); border: solid .5px transparent; margin-right: 5px; border-radius: var(--g-radius);
+                padding: var(--g-padding); border: solid .5px transparent; margin-right: 5px; border-radius: var(--g-radius); transition: var(--g-transition);
                 &:hover, &.selected {
                     background: #FFF; border-color: #e4e7ee;
                 }
@@ -37,7 +37,7 @@
             border: solid .5px #e4e7ee; border-bottom: none; display: flex; transform: translateY(calc(var(--g-padding) + 1px)); border-radius: var(--g-radius) var(--g-radius) 0 0; overflow: hidden;
 
             .write, .preview {
-                padding: 0 25px; display: flex; align-items: center; border-bottom: solid .5px transparent;
+                padding: 0 25px; display: flex; align-items: center; border-bottom: solid .5px transparent; transition: var(--g-transition);
             }
             .write {
                 border-right: solid .5px #e4e7ee;
@@ -83,7 +83,7 @@
             }
     
             .remove {
-                display: flex; align-items: center; justify-content: center; padding: var(--g-padding); background: rgba(0, 0, 0, .01); border-radius: var(--g-radius);
+                display: flex; align-items: center; justify-content: center; padding: var(--g-padding); background: rgba(0, 0, 0, .01); border-radius: var(--g-radius); transition: var(--g-transition);
                 &:hover {
                     background: rgba(0, 0, 0, .03);
                 }
@@ -126,7 +126,7 @@
         }
     
         .add {
-            margin-top: 10px; margin-bottom: 10px; padding: var(--g-padding); text-align: center; background: rgba(0, 0, 0, .01); border-radius: var(--g-radius);
+            margin-top: 10px; margin-bottom: 10px; padding: var(--g-padding); text-align: center; background: rgba(0, 0, 0, .01); border-radius: var(--g-radius); transition: var(--g-transition);
             &:hover {
                 background: rgba(0, 0, 0, .03);
             }
@@ -145,5 +145,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

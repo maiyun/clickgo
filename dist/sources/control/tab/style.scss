@@ -26,12 +26,12 @@
         }
         &:hover {
             &::before {
-                border-color: var(--g-color-hover);
+                border-color: var(--g-border-color-hover);
             }
         }
         &:active {
             &::before {
-                border-color: var(--g-color-active);
+                border-color: var(--g-border);
             }
         }
     }
@@ -88,9 +88,9 @@
     }
 
     .tab {
-        background: var(--face); display: inline-flex; align-items: center; border: solid .5px var(--g-plain-border-color); position: relative;
+        background: var(--face); transition: var(--g-transition); display: inline-flex; align-items: center; border: solid .5px var(--g-plain-border-color); position: relative;
         &::after {
-            content: ' '; pointer-events: none; position: absolute; background: var(--g-plain-background); opacity: 0;
+            content: ' '; pointer-events: none; position: absolute; background: var(--g-plain-background); transition: var(--g-transition); opacity: 0;
         }
         &:not(.selected):not([data-cg-hover]):hover {
             background: var(--g-background-hover);
@@ -109,12 +109,12 @@
             padding: var(--g-padding);
         }
         .close {
-            margin-right: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px;
+            margin-right: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px; transition: var(--g-transition); border: solid .5px transparent;
             &:hover {
-                background: rgba(0,0,0,.05);
+                background: var(--g-background-hover); border: solid .5px var(--g-border-color-hover);
             }
             &:active {
-                background: rgba(0,0,0,.1);
+                background: var(--g-background-active); border: solid .5px var(--g-border-color-active); box-shadow: var(--g-outline-shadow);
             }
         }
         &:hover {

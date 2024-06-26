@@ -14,7 +14,7 @@ cg-greatselect {
             .tag {
                 border-radius: 3px; overflow: hidden; line-height: 1; display: flex;
                 .label, .close {
-                    background: rgba(0, 0, 0, .07);
+                    background: rgba(0, 0, 0, .07); transition: var(--g-transition);
                 }
                 .label {
                     padding: 0 6px; display: flex; align-items: center;
@@ -43,7 +43,7 @@ cg-greatselect {
         }
 
         .leftlabel {
-            background: var(--g-background); align-items: center; display: flex;
+            background: var(--face); align-items: center; display: flex;
         }
 
         cg-text {
@@ -55,7 +55,7 @@ cg-greatselect {
 .pop {
     display: flex; flex-direction: column;
     cg-list {
-        flex: 1; border-top: none;
+        flex: 1; border-top: var(--g-pop-border);
     }
 }
 

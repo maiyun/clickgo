@@ -37,7 +37,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'direction': 'h',
             'gutter': '',
             'alignH': undefined,
-            'alignV': undefined
+            'alignV': undefined,
+            'close': false
         };
     }
     get widthComp() {
@@ -47,6 +48,15 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.props.width;
     }
     closeClick() {
+        this.emit('update:modelValue', false);
+    }
+    click(e) {
+        if (e.target !== this.element) {
+            return;
+        }
+        if (!this.propBoolean('close')) {
+            return;
+        }
         this.emit('update:modelValue', false);
     }
 }

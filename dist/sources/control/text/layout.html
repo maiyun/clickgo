@@ -1,4 +1,4 @@
-<div class="wrap" :class="[isFocus&&'focus']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @mousedown="down" @touchstart="down">
+<div class="wrap" :class="[isFocus&&'focus',propBoolean('plain')&&'plain']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @mousedown="down" @touchstart="down">
     <div class="op" :style="{'margin': opMargin}">
         <template v-if="type === 'multi'">
             <div class="multi-t">

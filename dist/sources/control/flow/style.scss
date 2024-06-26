@@ -12,7 +12,7 @@
     }
 
     .selection {
-        position: absolute; background: var(--g-background-opacity); border: solid .5px var(--g-border-color-focus); left: 0; top: 0; width: 1px; height: 1px; pointer-events: none; opacity: 0;
+        position: absolute; background: var(--g-background-opacity); border: solid .5px var(--g-border-color); left: 0; top: 0; width: 1px; height: 1px; pointer-events: none; opacity: 0;
     }
 
     .inner {

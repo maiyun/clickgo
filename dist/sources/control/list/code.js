@@ -33,6 +33,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'change': null,
             'changed': null,
             'itemclicked': null,
+            'itemdblclicked': null,
             'label': null,
             'item': null,
             'load': null,
@@ -47,6 +48,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'gesture': [],
             'scroll': 'auto',
             'virtual': false,
+            'plain': false,
             'tree': false,
             'treeDefault': 0,
             'async': false,
@@ -397,6 +399,16 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
         this.emit('itemclicked', event);
+    }
+    onItemdblclicked(e) {
+        const event = {
+            'detail': {
+                'event': e.detail.event,
+                'value': this.dataGl[e.detail.value].value,
+                'arrow': e.detail.arrow
+            }
+        };
+        this.emit('itemdblclicked', event);
     }
     onCheckChange(e, row) {
         e.preventDefault();

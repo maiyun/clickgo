@@ -54,7 +54,7 @@
     .selection {
         fill: transparent; pointer-events: none;
         &.do {
-            fill: var(--g-background-opacity); stroke: var(--g-border-color-focus); stroke-width: .5;
+            fill: var(--g-background-opacity); stroke: var(--g-border-color); stroke-width: .5;
         }
     }
 }

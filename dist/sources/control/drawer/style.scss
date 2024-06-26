@@ -5,19 +5,19 @@
     }
 
     .body {
-        background: var(--face); border-left: solid .5px hsl(0, 0%, 70%); box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); display: flex; flex-direction: column; transform: translateX(1500px); transition: all .3s var(--g-cubic); transition-property: transform;
+        background: var(--face); border-left: solid .5px var(--g-border-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); display: flex; flex-direction: column; transform: translateX(1500px); transition: all .3s var(--g-cubic); transition-property: transform;
         .header {
             display: flex; align-items: center;
             .title {
                 flex: 1; padding: var(--g-bpadding); font-size: 20px;
             }
             .close {
-                padding: var(--g-padding); margin-right: var(--g-bpadding); display: flex; align-items: center;
+                padding: var(--g-padding); margin-right: var(--g-bpadding); display: flex; align-items: center; transition: var(--g-transition); border-radius: var(--g-radius); border: solid .5px transparent;
                 &:hover {
-                    background: var(--danger); fill: #FFF; stroke: #FFF;
+                    background: var(--g-background-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover); border: solid .5px var(--g-border-color-hover);
                 }
                 &:active {
-                    background: var(--danger-hover); fill: #FFF; stroke: #FFF;
+                    background: var(--g-background-active); fill: var(--g-color-active); stroke: var(--g-color-active); box-shadow: var(--g-outline-shadow); border: solid .5px var(--g-border-color-active);
                 }
             }
         }
@@ -33,7 +33,7 @@
     }
 
     &.show {
-        background-color: rgba(0, 0, 0, .3);
+        background-color: var(--g-background-opacity);
         .body {
             transform: translateX(0);
         }

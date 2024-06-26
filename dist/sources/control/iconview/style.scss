@@ -32,18 +32,18 @@
                 }
             }
             .item {
-                white-space: nowrap; border-radius: var(--g-radius);
+                white-space: nowrap; border-radius: var(--g-radius); transition: var(--g-transition);
                 &:hover {
                     background: var(--g-plain-background-hover);
                 }
                 &.selected {
-                    background: var(--g-background-active);
+                    background: var(--g-plain-background-selected);
                 }
                 &.shift {
-                    border-color: var(--g-border-color-focus);
+                    border-color: var(--g-plain-border-color);
                 }
                 &[data-cg-hover] {
-                    background: var(--g-background-active); color: var(--g-color); fill: var(--g-color); stroke: var(--g-color)
+                    background: var(--g-plain-background-selected); color: var(--g-color); fill: var(--g-color); stroke: var(--g-color)
                 }
             };
         }
@@ -54,5 +54,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius);
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

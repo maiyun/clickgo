@@ -15,6 +15,8 @@ export default class extends clickgo.control.AbstractControl {
         'gutter': number | string;
         'alignH': string | undefined;
         'alignV': string | undefined;
+        /** --- 点击左侧空白处是否自动关闭，默认 false，true 为关闭 --- */
+        'close': boolean | string;
     } = {
             'modelValue': false,
             'title': '',
@@ -23,7 +25,8 @@ export default class extends clickgo.control.AbstractControl {
             'direction': 'h',
             'gutter': '',
             'alignH': undefined,
-            'alignV': undefined
+            'alignV': undefined,
+            'close': false
         };
 
     public get widthComp() {
@@ -35,6 +38,17 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 关闭按钮 --- */
     public closeClick() {
+        this.emit('update:modelValue', false);
+    }
+
+    /** --- wrap 点击事件 --- */
+    public click(e: MouseEvent) {
+        if (e.target !== this.element) {
+            return;
+        }
+        if (!this.propBoolean('close')) {
+            return;
+        }
         this.emit('update:modelValue', false);
     }
 

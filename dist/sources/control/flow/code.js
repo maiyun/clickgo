@@ -43,6 +43,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'direction': 'h',
             'selection': false,
             'gesture': [],
+            'gutter': '',
             'scrollLeft': 0,
             'scrollTop': 0
         };

@@ -9,6 +9,7 @@ export default class extends clickgo.control.AbstractControl {
         'change': null,
         'changed': null,
         'itemclicked': null,
+        'itemdblclicked': null,
         'label': null,
         'item': null,
         'load': null,
@@ -26,6 +27,7 @@ export default class extends clickgo.control.AbstractControl {
         'scroll': 'auto' | 'hidden' | 'visible';
         /** --- 是否开启虚拟 dom 模式，默认不开启，如果数据量超大的话才需要开启 --- */
         'virtual': boolean | string;
+        'plain': boolean | string;
 
         'tree': boolean | string;
         /** --- -1: 不存在子项, 0: 关闭状态, 1: 存在子项打开状态, 2: 加载状态 --- */
@@ -53,6 +55,7 @@ export default class extends clickgo.control.AbstractControl {
             'gesture': [],
             'scroll': 'auto',
             'virtual': false,
+            'plain': false,
 
             'tree': false,
             'treeDefault': 0,
@@ -494,6 +497,17 @@ export default class extends clickgo.control.AbstractControl {
             }
         };
         this.emit('itemclicked', event);
+    }
+
+    public onItemdblclicked(e: types.IGreatlistItemdblclickedEvent): void {
+        const event: types.IListItemdblclickedEvent = {
+            'detail': {
+                'event': e.detail.event,
+                'value': this.dataGl[e.detail.value].value,
+                'arrow': e.detail.arrow
+            }
+        };
+        this.emit('itemdblclicked', event);
     }
 
     // --- 下面是 check 模式 ---

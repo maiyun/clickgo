@@ -2,13 +2,13 @@
     .list {
         display: flex; justify-content: center;
         > :not(.tag-cg-select) {
-            border: solid .5px var(--g-border-color); background: var(--g-background); line-height: 1; position: relative; outline: none; display: flex; justify-content: center; align-items: center; width: 28px; height: 28px; border-radius: var(--g-radius);
+            border: solid .5px var(--g-border-color); background: var(--g-background); line-height: 1; position: relative; outline: none; display: flex; justify-content: center; align-items: center; border-radius: var(--g-radius); transition: var(--g-transition); box-shadow: var(--g-shadow); width: 29px; height: 29px;
             &::after {
-                content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; z-index: 1; border: dotted .5px var(--g-border-color);
+                content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; z-index: 1; border: dotted .5px var(--g-border-color); border-radius: var(--g-radius);
             }
     
             &:focus {
-                border-color: var(--g-border-color-focus); background: var(--g-background-focus); color: var(--g-color-focus); fill: var(--g-color-focus); stroke: var(--g-color-focus);
+                border-color: var(--g-border-color-focus); background: var(--g-background-focus); color: var(--g-color-focus); fill: var(--g-color-focus); stroke: var(--g-color-focus); box-shadow: var(--g-outline-shadow);
                 &::after {
                     display: block;
                 }
@@ -17,7 +17,7 @@
                 border-color: var(--g-border-color-hover); background: var(--g-background-hover); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
             }
             &:active, &.selected {
-                border-color: var(--g-border-color-active); background: var(--g-background-active); color: var(--g-color-active); fill: var(--g-color-active); stroke: var(--g-color-active);
+                border-color: var(--g-border-color-active); background: var(--face-hover); color: var(--g-color-active); fill: var(--g-color-active); stroke: var(--g-color-active);
             }
         }
         > :not(:first-child) {

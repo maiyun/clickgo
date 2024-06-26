@@ -1,4 +1,4 @@
-<div class="wrap" :class="[propBoolean('modelValue') && 'show']">
+<div class="wrap" :class="[propBoolean('modelValue') && 'show']" @click="click">
     <div class="body" :style="{'width':widthComp}">
         <div class="header" v-if="title">
             <div class="title">{{title}}</div>

@@ -1,26 +1,26 @@
 .wrap {
-    display: flex; align-items: center; outline: none;
+    display: flex; align-items: center; outline: none; transition: var(--g-transition);
     &[data-cg-disabled] {
         color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled); stroke: var(--g-plain-color-disabled);
     }
 
     .radio {
-        width: 14px; height: 14px; border-radius: 50%; border: solid .5px transparent; position: relative;
+        width: 14px; height: 14px; border-radius: 50%; border: solid .5px transparent; position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow);
         &::after {
-            content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; border-radius: 50%;
+            content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border-radius: 50%; transition: var(--g-transition); background: transparent;
         }
     }
 
     .label {
         margin-left: 5px; position: relative;
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); display: none;
+            content: ''; pointer-events: none; position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); display: none; transition: var(--g-transition);
         }
     }
 
     &.selected {
         .radio::after {
-            display: block;
+            background: var(--g-plain-color);
         }
     }
 
@@ -28,9 +28,6 @@
         .radio {
             background: var(--g-plain-background);
             border-color: var(--g-plain-border-color);
-            &::after {
-                background: var(--g-plain-color);
-            }
         }
 
         .label {
@@ -45,10 +42,14 @@
             .radio {
                 background: var(--g-plain-background-focus);
                 border-color: var(--g-plain-border-color-focus);
-                &::after {
+                box-shadow: var(--g-outline-shadow);
+            }
+            &.selected {
+                .radio::after {
                     background: var(--g-plain-color-focus);
                 }
             }
+
 
             .label {
                 &::before {
@@ -61,8 +62,10 @@
             color: var(--g-plain-color-hover); fill: var(--g-plain-color-hover); stroke: var(--g-plain-color-hover);
 
             .radio {
-                border-color: var(--g-plain-border-color-hover);
-                &::after {
+                border-color: var(--g-plain-border-color-hover); background: var(--g-plain-background-hover);
+            }
+            &.selected {
+                .radio::after {
                     background: var(--g-plain-color-hover);
                 }
             }
@@ -74,7 +77,10 @@
             .radio {
                 background: var(--g-plain-background-active); color: var(--g-plain-color-active); fill: var(--g-plain-color-active); stroke: var(--g-plain-color-active);
                 border-color: var(--g-plain-border-color-active);
-                &::after {
+                box-shadow: var(--g-outline-shadow);
+            }
+            &.selected {
+                .radio::after {
                     background: var(--g-plain-color-active);
                 }
             }
@@ -87,7 +93,9 @@
         .radio {
             background: var(--g-plain-background-disabled);
             border-color: var(--g-plain-border-color-disabled);
-            &::after {
+        }
+        &.selected {
+            .radio::after {
                 background: var(--g-plain-color-disabled);
             }
         }

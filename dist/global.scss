@@ -5,9 +5,10 @@
     --g-margin:2px;
     --g-radius:0;
     --g-size:12px;
-    --g-family:"Lucida Sans Unicode", "Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei",sans-serif;
+    --g-family:"Lucida Sans Unicode","Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei","sans-serif";
     --g-line:1;
     --g-cubic:cubic-bezier(0.39, 0.575, 0.565, 1);
+    --g-transition:none;
 
     // --- 基础颜色 ---
     --cg:hsl(20, 100%, 65%);
@@ -48,7 +49,16 @@
     --system-border-color:hsla(0, 0%, 100%, .03);
     --system-border-color-hover:hsla(0, 0%, 100%, .06);
     --system-placeholder-color: hsla(0, 0%, 100%, .2);
+
     --face:hsl(0, 0%, 95%);
+    --face-child:hsl(0, 0%, 90%);
+    --face-hover:hsl(0, 0%, 88%);
+    --face-selected:hsl(0, 0%, 85%);
+    --g-pop-background:#FFF;
+    --g-pop-backdrop:none;
+    --g-pop-border:solid .5px var(--g-border-color);
+    --g-shadow:none;
+    --g-outline-shadow:none; 
 
     // --- 组件默认颜色（如按钮） ---
 
@@ -61,7 +71,6 @@
     --g-background:hsl(0, 0%, 95%);
     --g-background-hover:hsl(0, 0%, 100%);
     --g-background-active:hsl(0, 0%, 85%);
-    --g-background-kp:hsl(0, 0%, 80%);
     --g-background-opacity:hsl(0, 0%, 50%, .2);
     --g-background-focus:hsl(0, 0%, 97.5%);
     --g-background-disabled:hsl(0, 0%, 75%);
@@ -87,6 +96,7 @@
     --g-plain-background-active:hsl(0, 0%, 95%);
     --g-plain-background-focus:var(--g-plain-background);
     --g-plain-background-disabled:hsl(0, 0%, 95%);
+    --g-plain-background-selected:hsl(0, 0%, 95%);
 
     --g-plain-border-color:hsl(0, 0%, 70%);
     --g-plain-border-color-hover:hsl(0, 0%, 80%);
@@ -98,6 +108,8 @@
 
     --g-block-background:hsl(0, 0%, 85%);
     --g-block-background-hover:hsl(0, 0%, 75%);
+    --g-block-dark-background:hsl(0, 0%, 15%);
+    --g-block-dark-background-hover:hsl(0, 0%, 25%);
 }
 [data-cg-disabled] {
     cursor: not-allowed;
@@ -119,7 +131,7 @@
     z-index: 20020003; box-sizing: border-box; position: absolute; border: solid 3px var(--cg); border-radius: 50%; filter: drop-shadow(0 0 3px var(--cg)); pointer-events: none; opacity: 0;
 }
 #cg-gesture {
-    z-index: 20020003; box-sizing: border-box; position: absolute; border-radius: 50%; pointer-events: none; opacity: 0; background: var(--system-background); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); transform: scale(0); width: 20px; height: 20px;
+    z-index: 20020003; box-sizing: border-box; position: absolute; border-radius: 50%; pointer-events: none; opacity: 0; background: var(--system-background); box-shadow: 0px 15px 30px rgba(0,0,0,.07); transform: scale(0); width: 20px; height: 20px;
     &.done {
         background: rgba(255, 255, 255, .3); border: solid 3px rgba(0, 0, 0, .3);
     }
@@ -240,7 +252,7 @@
 }
 
 [data-cg-pop] {
-    position: absolute; box-shadow: 0px 5px 20px rgba(0, 0, 0, .25); transition: .3s var(--g-cubic); transition-property: transform, opacity; transform: translateY(-10px); opacity: 0;
+    position: absolute; box-shadow: 0px 15px 30px rgba(0,0,0,.07); transition: .3s var(--g-cubic); transition-property: transform, opacity; transform: translateY(-10px); opacity: 0; overflow: hidden;
     &:not([data-cg-open]) {
         pointer-events: none;
     }
@@ -254,7 +266,7 @@
 }
 
 .cg-notify-wrap {
-    background: var(--system-background); position: fixed; padding: 15px; border-radius: 5px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .3s var(--g-cubic); transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0 5px 20px rgba(0, 0, 0, .25); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); pointer-events: none;
+    background: var(--system-background); position: fixed; padding: 15px; border-radius: 5px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .3s var(--g-cubic); transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); pointer-events: none;
     &.cg-notify-only {
         align-items: center;
     }
@@ -315,7 +327,7 @@
     z-index: 20020006; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: var(--system-background); -webkit-backdrop-filter: blur(150px) saturate(1.5); backdrop-filter: blur(150px) saturate(1.5); justify-content: center; align-items: center;
 
     .cg-confirm-box {
-        background: var(--system-background); width: 60%; box-shadow: 0 5px 20px rgba(0, 0, 0, .25); font-size: 14px; border-radius: 3px; overflow: hidden; color: var(--system-color);
+        background: var(--system-background); width: 60%; box-shadow: 0px 15px 30px rgba(0,0,0,.07); font-size: 14px; border-radius: 3px; overflow: hidden; color: var(--system-color);
 
         #cg-confirm-content {
             padding: 25px; line-height: 1.5;

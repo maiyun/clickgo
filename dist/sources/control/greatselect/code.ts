@@ -21,6 +21,11 @@ export default class extends clickgo.control.AbstractControl {
         'plain': boolean | string;
         'virtual': boolean | string;
 
+        /** --- 映射 disabled、control 的 key --- */
+        'map': {
+            'disabled'?: string;
+            'control'?: string;
+        };
         'data': Array<{
             'disabled': boolean;
             'control'?: 'split';
@@ -36,6 +41,8 @@ export default class extends clickgo.control.AbstractControl {
             'pop': 'greatlist',
             'plain': false,
             'virtual': false,
+
+            'map': {},
             'data': [],
             'sizes': {},
             'modelValue': []

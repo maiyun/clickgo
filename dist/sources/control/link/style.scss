@@ -1,5 +1,5 @@
 .wrap {
-    color: var(--info); fill: var(--info); stroke: var(--info); text-decoration: underline; position: relative; display: block; cursor: pointer; outline: none;
+    color: var(--info); fill: var(--info); stroke: var(--info); text-decoration: underline; position: relative; display: block; cursor: pointer; outline: none; transition: var(--g-transition);
     &:hover {
         color: var(--info-hover); fill: var(--info-hover); stroke: var(--info-hover);
     }
