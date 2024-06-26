@@ -11,9 +11,15 @@ export default class extends clickgo.control.AbstractControl {
         };
     
     public onMounted(): void | Promise<void> {
-        const el = this.refs.span.previousElementSibling as HTMLElement | null;
+        let el = this.refs.span.previousElementSibling as HTMLElement | null;
         if (!el) {
             return;
+        }
+        while (el.dataset.cgControl === undefined) {
+            el = el.previousElementSibling as HTMLElement | null;
+            if (!el) {
+                return;
+            }
         }
         this.refs.span.remove();
         const enter = (e: MouseEvent | TouchEvent) => {

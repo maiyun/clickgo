@@ -33,9 +33,15 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     onMounted() {
-        const el = this.refs.span.previousElementSibling;
+        let el = this.refs.span.previousElementSibling;
         if (!el) {
             return;
+        }
+        while (el.dataset.cgControl === undefined) {
+            el = el.previousElementSibling;
+            if (!el) {
+                return;
+            }
         }
         this.refs.span.remove();
         const enter = (e) => {
