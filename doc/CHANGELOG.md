@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.13.2
+
+[+] Added lockLoading property to the AbstractForm class.
+
 # 3.13.1
 
 [\*] Updated monaco-editor to 0.50.0.  

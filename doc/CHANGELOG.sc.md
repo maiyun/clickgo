@@ -1,5 +1,9 @@
 # 更新日志
 
+# 3.13.2
+
+[+] AbstractForm 类新增 lockLoading 属性。
+
 # 3.13.1
 
 [\*] 更新 monaco-editor 到 0.50.0。  
