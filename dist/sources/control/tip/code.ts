@@ -4,8 +4,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'label': string;
+        'class': string;
     } = {
-            'label': ''
+            'label': '',
+            'class': ''
         };
     
     public onMounted(): void | Promise<void> {
@@ -13,6 +15,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!el) {
             return;
         }
+        this.refs.span.remove();
         const enter = (e: MouseEvent | TouchEvent) => {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;

@@ -28,7 +28,8 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
-            'label': ''
+            'label': '',
+            'class': ''
         };
     }
     onMounted() {
@@ -36,6 +37,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!el) {
             return;
         }
+        this.refs.span.remove();
         const enter = (e) => {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
