@@ -67,6 +67,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cdesc')">Desc</button>
                     <button @click="openForm('chtml')">Html</button>
+                    <button @click="openForm('cprogress')">Progress</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ciconview')">Iconview</button>

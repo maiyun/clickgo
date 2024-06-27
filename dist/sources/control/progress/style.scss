@@ -1,0 +1,7 @@
+.wrap {
+    border-radius: var(--g-radius); background: var(--g-plain-background); box-shadow: var(--g-shadow) inset; border: solid .5px var(--g-plain-border-color); min-height: 4px; display: flex;
+
+    .block {
+        border-radius: var(--g-radius); background: var(--cg); transition: all .3s var(--g-cubic); 
+    }
+}

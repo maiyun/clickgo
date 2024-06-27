@@ -12,6 +12,7 @@ import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
 import cgroupFrm from './control/group/group';
 import chtmlFrm from './control/html/html';
+import cprogressFrm from './control/progress/progress';
 import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
 import clabelFrm from './control/label/label';
@@ -132,6 +133,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'chtml': {
                 frm = await clickgo.form.create(chtmlFrm);
+                break;
+            }
+            case 'cprogress': {
+                frm = await clickgo.form.create(cprogressFrm);
                 break;
             }
             case 'ciconview': {

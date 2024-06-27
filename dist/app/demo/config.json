@@ -96,6 +96,8 @@
         "/form/control/panel/test1.js",
         "/form/control/panel/test1.xml",
         "/form/control/panel/test2.xml",
+        "/form/control/progress/progress.js",
+        "/form/control/progress/progress.xml",
         "/form/control/property/property.js",
         "/form/control/property/property.xml",
         "/form/control/radio/radio.js",
