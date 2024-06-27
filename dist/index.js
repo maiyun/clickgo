@@ -110,7 +110,7 @@ function launcher(boot) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             const paths = [
-                `${loader.cdn}/npm/vue@3.4.30/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`
+                `${loader.cdn}/npm/vue@3.4.28/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`
             ];
             if (!(window.TouchEvent)) {
                 window.TouchEvent = CustomEvent;

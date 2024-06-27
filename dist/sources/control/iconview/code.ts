@@ -22,6 +22,7 @@ export default class extends clickgo.control.AbstractControl {
         'open': null,
         'drop': null,
         'client': null,
+        'gesture': null,
 
         'update:modelValue': null
     };

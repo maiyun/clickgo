@@ -192,7 +192,7 @@ export function launcher(boot: AbstractBoot): void {
     (async function() {
         // --- 通过标签加载库 ---
         const paths: string[] = [
-            `${loader.cdn}/npm/vue@3.4.30/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`
+            `${loader.cdn}/npm/vue@3.4.28/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`
         ];
         // --- 判断 TouchEvent 是否存在（例如某些浏览器可能不存在这个对象） ---
         if (!((window as any).TouchEvent)) {

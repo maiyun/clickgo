@@ -44,6 +44,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'open': null,
             'drop': null,
             'client': null,
+            'gesture': null,
             'update:modelValue': null
         };
         this.props = {

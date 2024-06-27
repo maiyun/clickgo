@@ -71,6 +71,16 @@ class default_1 extends clickgo.form.AbstractForm {
             this.loading = false;
         });
     }
+    showLoadingFast() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.loading = true;
+            yield clickgo.tool.sleep(1000);
+            this.loading = false;
+            this.loading = true;
+            yield clickgo.tool.sleep(1000);
+            this.loading = false;
+        });
+    }
     toEnterStep() {
         return __awaiter(this, void 0, void 0, function* () {
             const rtn = yield this.enterStep([

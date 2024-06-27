@@ -36,6 +36,16 @@ export default class extends clickgo.form.AbstractForm {
         this.loading = false;
     }
 
+    public async showLoadingFast() {
+        this.loading = true;
+        await clickgo.tool.sleep(1000);
+        this.loading = false;
+        // --- do something ---
+        this.loading = true;
+        await clickgo.tool.sleep(1000);
+        this.loading = false;
+    }
+
     public async toEnterStep(): Promise<void> {
         const rtn = await this.enterStep([
             {
