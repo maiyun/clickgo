@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.13.3
+
+[+] Added progress control.  
+[\*] Temporarily fallback Vue version to 3.4.28 due to a Vue bug.
+
 # 3.13.2
 
 [+] Added lockLoading property to the AbstractForm class.

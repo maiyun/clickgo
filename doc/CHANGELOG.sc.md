@@ -1,5 +1,10 @@
 # 更新日志
 
+# 3.13.3
+
+[+] 新增 progress 控件。  
+[\*] 因为 vue 的 bug，暂时回退 vue 版本到 3.4.28。
+
 # 3.13.2
 
 [+] AbstractForm 类新增 lockLoading 属性。
