@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.13.4
+
+[+] Added datepanel control.  
+[\*] Some optimizations for other controls.
+
 # 3.13.3
 
 [+] Added progress control.  
