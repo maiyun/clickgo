@@ -40,6 +40,7 @@ const alayout_1 = __importDefault(require("./control/alayout/alayout"));
 const box_1 = __importDefault(require("./control/box/box"));
 const button_1 = __importDefault(require("~c/button/button"));
 const check_1 = __importDefault(require("./control/check/check"));
+const datepanel_1 = __importDefault(require("./control/datepanel/datepanel"));
 const date_1 = __importDefault(require("./control/date/date"));
 const dialog_1 = __importDefault(require("./control/dialog/dialog"));
 const drawer_1 = __importDefault(require("./control/drawer/drawer"));
@@ -129,6 +130,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'ccheck': {
                     frm = yield clickgo.form.create(check_1.default);
+                    break;
+                }
+                case 'cdatepanel': {
+                    frm = yield clickgo.form.create(datepanel_1.default);
                     break;
                 }
                 case 'cdate': {

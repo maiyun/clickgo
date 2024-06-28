@@ -254,6 +254,24 @@ export default class extends clickgo.control.AbstractControl {
         }
 
         if (change) {
+            if (!this.propBoolean('multi')) {
+                const event: types.IGreatlistChangeEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': this.valueData
+                    }
+                };
+                this.emit('change', event);
+                const event2: types.IGreatlistChangedEvent = {
+                    'detail': {
+                        'value': this.valueData
+                    }
+                };
+                this.emit('changed', event2);
+            }
             this.emit('update:modelValue', this.valueData);
         }
     }

@@ -39,6 +39,22 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'durationchange': null,
             'canplay': null,
+            'canplaythrough': null,
+            'emptied': null,
+            'ended': null,
+            'error': null,
+            'loadeddata': null,
+            'loadedmetadata': null,
+            'loadstart': null,
+            'playing': null,
+            'progress': null,
+            'ratechange': null,
+            'readystatechange': null,
+            'seeked': null,
+            'seeking': null,
+            'stalled': null,
+            'suspend': null,
+            'waiting': null,
             'update:current': null,
             'update:play': null
         };

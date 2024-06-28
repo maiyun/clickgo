@@ -5,6 +5,7 @@ import calayoutFrm from './control/alayout/alayout';
 import cboxFrm from './control/box/box';
 import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
+import cdatepanelFrm from './control/datepanel/datepanel';
 import cdateFrm from './control/date/date';
 import cdialogFrm from './control/dialog/dialog';
 import cdrawerFrm from './control/drawer/drawer';
@@ -97,6 +98,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ccheck': {
                 frm = await clickgo.form.create(ccheckFrm);
+                break;
+            }
+            case 'cdatepanel': {
+                frm = await clickgo.form.create(cdatepanelFrm);
                 break;
             }
             case 'cdate': {

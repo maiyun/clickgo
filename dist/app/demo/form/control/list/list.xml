@@ -28,6 +28,7 @@
             </greatlist>
             <label class="tip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>
             <label class="tip">Area: {{selectionArea}}</label>
+            <button @click="select = [2]" style="margin-top: 10px;">Select [2]</button>
         </layout>
         <!-- 自适应 -->
         <layout v-else-if="ntab === 'adaptation'" direction="v" style="flex: 1; width: 0; padding: 10px;">

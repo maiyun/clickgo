@@ -196,6 +196,24 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.shiftStart = this.valueData[0];
             }
             if (change) {
+                if (!this.propBoolean('multi')) {
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'value': this.valueData
+                        }
+                    };
+                    this.emit('change', event);
+                    const event2 = {
+                        'detail': {
+                            'value': this.valueData
+                        }
+                    };
+                    this.emit('changed', event2);
+                }
                 this.emit('update:modelValue', this.valueData);
             }
         });

@@ -1,0 +1,23 @@
+<form width="500" height="650" title="Datepanel">
+    <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
+        <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
+        <datepanel v-model="ts" v-model:tz="tz" :time="time" :zone="zone" :disabled="disabled" :plain="plain" style="flex: 1;">
+            <template v-if="bottom" v-slot="d">
+                <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
+            </template>
+        </datepanel>
+        <layout gutter="10">
+            <button @click="time = !time" style="flex: 1;">{{time ? '' : '!'}}time</button>
+            <button @click="zone = !zone" style="flex: 1;">{{zone ? '' : '!'}}zone</button>
+            <button @click="bottom = !bottom" style="flex: 1;">{{bottom ? '' : '!'}}bottom</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
+            <button @click="plain = !plain" style="flex: 1;">{{plain ? '' : '!'}}plain</button>
+            <button @click="settime" style="flex: 1;">Set time</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="ts = 1577808000_000" style="flex: 1;">Set 1577808000</button>
+        </layout>
+    </layout>
+</form>

@@ -46,6 +46,8 @@
         "/form/control/check/check.xml",
         "/form/control/date/date.js",
         "/form/control/date/date.xml",
+        "/form/control/datepanel/datepanel.js",
+        "/form/control/datepanel/datepanel.xml",
         "/form/control/desc/desc.js",
         "/form/control/desc/desc.xml",
         "/form/control/dialog/dialog.js",

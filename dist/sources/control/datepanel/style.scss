@@ -1,0 +1,60 @@
+.wrap {
+    border-radius: var(--g-radius); display: flex; flex-direction: column; gap: var(--g-padding); padding: var(--g-padding);
+    &:not(.plain) {
+        border: solid .5px var(--g-plain-border-color);
+    }
+    &[data-cg-disabled] {
+        background: var(--g-plain-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+        > * {
+            pointer-events: none;
+        }
+    }
+    
+    .header {
+        background: var(--face); display: flex;
+
+        .left {
+            flex: 1; display: flex; gap: var(--g-padding);
+        }
+        .right {
+            justify-content: right; display: flex; gap: var(--g-padding);
+        }
+    }
+
+    .week {
+        display: flex;
+
+        > * {
+            flex: 1; display: flex; justify-content: center; padding: var(--g-padding);
+        }
+    }
+
+    .row {
+        display: flex; gap: var(--g-padding); flex: 1;
+
+        .col {
+            flex: 1; display: flex; flex-direction: column; gap: var(--g-padding); padding: var(--g-padding); border-radius: var(--g-radius); transition: var(--g-transition); border: solid .5px transparent;
+            &:hover {
+                background: var(--g-plain-background-hover); border: solid .5px var(--g-plain-border-color-hover);
+            }
+            &:active {
+                box-shadow: var(--g-outline-shadow); background: var(--g-plain-background-active); border: solid .5px var(--g-plain-border-color-active);
+            }
+            &.selected {
+                background: var(--g-plain-background-selected); border: solid .5px var(--g-plain-border-color);
+            }
+
+            .colh {
+                display: flex; justify-content: center; align-items: center; flex: 1; font-size: 18px;
+            }
+
+            .colb {
+                display: flex;
+            }
+        }
+    }
+
+    .footer {
+        display: flex; gap: var(--g-padding); align-items: center; justify-content: center;
+    }
+}

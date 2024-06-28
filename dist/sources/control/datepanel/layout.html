@@ -1,0 +1,39 @@
+<div class="wrap" :class="[propBoolean('plain')&&'plain']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div class="header">
+        <div class="left">
+            <cg-select :data="years" v-model="vyear" virtual></cg-select>
+            <cg-select :data="months" v-model="vmonth" virtual></cg-select>
+        </div>
+        <div class="right">
+            <cg-button v-if="(dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1)" @click="back">{{l('back')}}</cg-button>
+            <cg-button @click="today">{{l('today')}}</cg-button>
+        </div>
+    </div>
+    <div class="week">
+        <div v-for="col of 7">{{l('w' + (col - 1))}}</div>
+    </div>
+    <div class="row" v-for="row of maps">
+        <div class="col" v-for="col of row" :style="{'color': col.month !== (vmonth[0] - 1) ? 'var(--g-color-disabled)' : undefined}" :class="{'selected': (dateValue.year === col.year) && (dateValue.month === col.month) && (dateValue.date === col.date)}" @click="colClick(col)">
+            <div class="colh">
+                {{col.date}}
+            </div>
+            <div class="colb" v-if="slots['default']">
+                <slot :year="col.year" :month="col.month" :date="col.date"></slot>
+            </div>
+        </div>
+    </div>
+    <div class="footer" v-if="propBoolean('time') || propBoolean('zone')">
+        <template v-if="propBoolean('time')">
+            <cg-select :data="hours" v-model="vhour" virtual></cg-select>
+            <label>:</label>
+            <cg-select :data="minutes" v-model="vminute" virtual></cg-select>
+            <label>:</label>
+            <cg-select :data="seconds" v-model="vsecond" virtual></cg-select>
+        </template>
+        <template v-if="propBoolean('zone')">
+            <label>UTC</label>
+            <cg-select :data="zones" v-model="vzone" virtual></cg-select>
+            <cg-select :data="zdecs" v-model="vzdec" virtual></cg-select>
+        </template>
+    </div>
+</div>

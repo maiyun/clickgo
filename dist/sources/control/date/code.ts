@@ -9,7 +9,6 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
-        'readonly': boolean | string;
 
         /** --- 当前日期时间戳，毫秒 --- */
         'modelValue': number | string;
@@ -21,7 +20,6 @@ export default class extends clickgo.control.AbstractControl {
         'zone': boolean | string;
     } = {
             'disabled': false,
-            'readonly': false,
 
             'modelValue': 0,
             'tz': undefined,

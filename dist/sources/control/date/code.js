@@ -33,7 +33,6 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'disabled': false,
-            'readonly': false,
             'modelValue': 0,
             'tz': undefined,
             'time': true,
