@@ -11,7 +11,7 @@
     }
     
     .header {
-        background: var(--face); display: flex;
+        display: flex;
 
         .left {
             flex: 1; display: flex; gap: var(--g-padding);
@@ -33,24 +33,59 @@
         display: flex; gap: var(--g-padding); flex: 1;
 
         .col {
-            flex: 1; display: flex; flex-direction: column; gap: var(--g-padding); padding: var(--g-padding); border-radius: var(--g-radius); transition: var(--g-transition); border: solid .5px transparent;
-            &:hover {
-                background: var(--g-plain-background-hover); border: solid .5px var(--g-plain-border-color-hover);
+            flex: 1; display: flex; flex-direction: column; gap: var(--g-padding); padding: var(--g-padding); border-radius: var(--g-radius); transition: var(--g-transition); outline: solid .5px transparent; position: relative;
+            &:not([data-cg-disabled]) {
+                &:hover {
+                    background: var(--g-plain-background-hover); outline: solid .5px var(--g-plain-border-color-hover);
+                }
+                &:active {
+                    box-shadow: var(--g-outline-shadow); background: var(--g-plain-background-active); outline: solid .5px var(--g-plain-border-color-active);
+                }
             }
-            &:active {
-                box-shadow: var(--g-outline-shadow); background: var(--g-plain-background-active); border: solid .5px var(--g-plain-border-color-active);
+            &[data-cg-disabled] {
+                color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+                > * {
+                    pointer-events: none;
+                }
             }
-            &.selected {
-                background: var(--g-plain-background-selected); border: solid .5px var(--g-plain-border-color);
+            &.selected, &.range-left, &.range-right {
+                background: var(--g-plain-background-selected); outline: solid .5px var(--g-plain-border-color);
+            }
+            &::before, &::after {
+                content: ''; position: absolute; top: 0; bottom: 0; width: var(--g-padding); background: var(--g-plain-border-color); opacity: 0; transition: var(--g-transition);
+            }
+            &::before {
+                left: calc(0px - var(--g-padding));
+            }
+            &::after {
+                right: calc(0px - var(--g-padding));
+            }
+
+            &.range {
+                background: var(--g-plain-border-color); border-radius: 0;
+                &::before, &::after {
+                    opacity: 1;
+                }
+            }
+            &.range-right {
+                &::after {
+                    opacity: 1;
+                }
+            }
+            &.range-left {
+                &::before {
+                    opacity: 1;
+                }
             }
 
             .colh {
-                display: flex; justify-content: center; align-items: center; flex: 1; font-size: 18px;
+                display: flex; justify-content: center; align-items: center; flex: 1; font-size: 16px;
             }
 
             .colb {
                 display: flex;
             }
+
         }
     }
 

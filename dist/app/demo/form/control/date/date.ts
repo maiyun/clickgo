@@ -1,8 +1,7 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
-
-    public date: boolean = true;
 
     public time: boolean = true;
 
@@ -14,9 +13,15 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled: boolean = false;
 
+    public range = undefined;
+
     // --- 指定时间戳 ---
     public settime(): void {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
+    }
+
+    public async onRange(e: types.IDateRangeEvent) {
+        await clickgo.form.dialog(JSON.stringify(e));
     }
 
 }

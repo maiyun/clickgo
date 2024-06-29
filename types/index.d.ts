@@ -700,6 +700,30 @@ export interface ITextBeforechangeEvent extends ICustomEvent {
     }
 }
 
+// --- Datepanel Control ---
+
+export interface IDatepanelRangeEvent extends ICustomEvent {
+    'detail': {
+        'start': number;
+        'end': number;
+    };
+}
+
+export interface IDatepanelChangedEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
+// --- Date Control ---
+
+export interface IDateRangeEvent {
+    'detail': {
+        'start': number;
+        'end': number;
+    };
+}
+
 // --- Form Control ---
 
 export interface IFormCloseEvent extends ICustomEvent {

@@ -1,7 +1,7 @@
-<form width="500" height="650" title="Datepanel">
+<form width="500" height="700" title="Datepanel">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
-        <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
-        <datepanel v-model="ts" v-model:tz="tz" :time="time" :zone="zone" :disabled="disabled" :plain="plain" style="flex: 1;">
+        <label>Timestamp: {{ts}}, Time zone: {{tz}}, yearmonth: {{yearmonth}}</label>
+        <datepanel v-model="ts" v-model:tz="tz" v-model:yearmonth="yearmonth" :time="time" :zone="zone" :disabled="disabled" :plain="plain" :to="to[0]" :start="start ? 1704067200_000 : undefined" style="flex: 1;">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>
@@ -16,8 +16,15 @@
             <button @click="plain = !plain" style="flex: 1;">{{plain ? '' : '!'}}plain</button>
             <button @click="settime" style="flex: 1;">Set time</button>
         </layout>
-        <layout gutter="10">
+        <layout gutter="10" align-v="center">
             <button @click="ts = 1577808000_000" style="flex: 1;">Set 1577808000</button>
+            <label>to</label>
+            <select v-model="to" :data="['', 'start', 'end']" style="flex: 1;"></select>
+            <button @click="start = !start" style="flex: 1;">{{start ? '' : '!'}}start</button>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <button @click="yearmonth = '200708'" style="flex: 1;">Set yearmonth</button>
+            <button @click="tz = 7.5" style="flex: 1;">Set tz</button>
         </layout>
     </layout>
 </form>

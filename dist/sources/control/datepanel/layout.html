@@ -1,8 +1,8 @@
 <div class="wrap" :class="[propBoolean('plain')&&'plain']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div class="header">
         <div class="left">
-            <cg-select :data="years" v-model="vyear" virtual></cg-select>
-            <cg-select :data="months" v-model="vmonth" virtual></cg-select>
+            <cg-select :data="years" v-model="vyear" virtual @changed="emit('update:yearmonth',$event.detail.value[0]+vmonth[0].padStart(2,'0'))"></cg-select>
+            <cg-select :data="months" v-model="vmonth" virtual @changed="emit('update:yearmonth',vyear[0]+$event.detail.value[0].padStart(2,'0'))"></cg-select>
         </div>
         <div class="right">
             <cg-button v-if="(dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1)" @click="back">{{l('back')}}</cg-button>
@@ -13,7 +13,7 @@
         <div v-for="col of 7">{{l('w' + (col - 1))}}</div>
     </div>
     <div class="row" v-for="row of maps">
-        <div class="col" v-for="col of row" :style="{'color': col.month !== (vmonth[0] - 1) ? 'var(--g-color-disabled)' : undefined}" :class="{'selected': (dateValue.year === col.year) && (dateValue.month === col.month) && (dateValue.date === col.date)}" @click="colClick(col)">
+        <div class="col" v-for="col of row" :style="{'color': col.month !== (vmonth[0] - 1) ? 'var(--g-color-disabled)' : undefined}" :class="[{'selected': nowSelected && (dateValue.year === col.year) && (dateValue.month === col.month) && (dateValue.date === col.date)}, toclass(col)]" @click="colClick(col)" @mouseenter="colenter($event, col)" @touchstart="colenter($event, col)" :data-cg-disabled="isDisabled(col)">
             <div class="colh">
                 {{col.date}}
             </div>

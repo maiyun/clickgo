@@ -1,10 +1,16 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
+        'changed': null,
+        'range': null,
+
         'update:modelValue': null,
-        'update:tz': null
+        'update:tz': null,
+        'update:yearmonth': null,
+        'update:cursor': null
     };
 
     public props: {
@@ -12,24 +18,92 @@ export default class extends clickgo.control.AbstractControl {
         'readonly': boolean | string;
         'plain': boolean | string;
 
-        /** --- 当前日期时间戳，毫秒 --- */
-        'modelValue': number | string;
+        /** --- 当前日期时间戳，毫秒，可不选中 --- */
+        'modelValue'?: number | string;
+        /** --- 限定可选的最小时间 --- */
+        'start'?: number | string;
+        /** --- 限定可选的最大时间 --- */
+        'end'?: number | string;
         /** --- 小时，如 8 --- */
         'tz'?: number | string;
+        /** --- 年份月份的组合，如 200708，自动跳转到此页面但不选中 --- */
+        'yearmonth': string;
+        /** --- to 开启模式下，当前鼠标放置的位置年月字符串 --- */
+        'cursor': string;
 
         'time': boolean | string;
         'zone': boolean | string;
+
+        /** --- 鼠标悬放会显示 range 效果，并且会触发 range 事件 --- */
+        'to': 'start' | 'end' | '';
     } = {
             'disabled': false,
             'readonly': false,
             'plain': false,
 
-            'modelValue': 0,
+            'modelValue': undefined,
+            'start': undefined,
+            'end': undefined,
             'tz': undefined,
+            'yearmonth': '',
+            'cursor': '',
 
             'time': true,
-            'zone': false
+            'zone': false,
+
+            'to': ''
         };
+    
+    /** --- 当前用户是否选择了初始项 --- */
+    public nowSelected = false;
+    
+    public startDate = new Date();
+
+    public startTs = 0;
+
+    public startValue = {
+        'year': 0,
+        'month': 0,
+        'date': 0
+    };
+
+    public refreshStartValue() {
+        this.startValue.date = this.startDate.getUTCDate();
+        this.startValue.month = this.startDate.getUTCMonth();
+        this.startValue.year = this.startDate.getUTCFullYear();
+    }
+
+    public get startYm() {
+        return this.startValue.year.toString() + (this.startValue.month + 1).toString().padStart(2, '0');
+    }
+
+    public get startYmd() {
+        return this.startYm + this.startValue.date.toString().padStart(2, '0');
+    }
+
+    public endDate = new Date();
+
+    public endTs = 0;
+
+    public endValue = {
+        'year': 0,
+        'month': 0,
+        'date': 0
+    };
+
+    public refreshEndValue() {
+        this.endValue.date = this.endDate.getUTCDate();
+        this.endValue.month = this.endDate.getUTCMonth();
+        this.endValue.year = this.endDate.getUTCFullYear();
+    }
+
+    public get endYm() {
+        return this.endValue.year.toString() + (this.endValue.month + 1).toString().padStart(2, '0');
+    }
+
+    public get endYmd() {
+        return this.endYm + this.endValue.date.toString().padStart(2, '0');
+    }
 
     /** --- 当前时区信息（小时） --- */
     public tzData: number = 0;
@@ -43,6 +117,11 @@ export default class extends clickgo.control.AbstractControl {
         'month': 0,
         'date': 0
     };
+
+    /** --- 当前选中的日期的无符号字符串 --- */
+    public get dateValueStr() {
+        return this.dateValue.year.toString() + (this.dateValue.month + 1).toString().padStart(2, '0') + this.dateValue.date.toString().padStart(2, '0');
+    }
 
     /** --- 时间戳基数 --- */
     public timestamp = 0;
@@ -350,14 +429,45 @@ export default class extends clickgo.control.AbstractControl {
     
     public vyear: string[] = [''];
 
-    public years: string[] = [];
+    public get years(): Array<{
+        'label': string;
+        'value': string;
+    }> {
+        const arr: Array<{
+            'label': string;
+            'value': string;
+        }> = [];
+        for (let i = this.startValue.year; i <= this.endValue.year; ++i) {
+            arr.push({
+                'label': i.toString(),
+                'value': i.toString(),
+            });
+        }
+        return arr;
+    }
 
     public vmonth: string[] = [''];
 
-    public months: Array<{
+    public get months(): Array<{
         'label': string;
         'value': string;
-    }> = [];
+        'disabled': boolean;
+    }> {
+        const arr: Array<{
+            'label': string;
+            'value': string;
+            'disabled': boolean;
+        }> = [];
+        for (let i = 1; i <= 12; ++i) {
+            const ym = this.vyear[0] + i.toString().padStart(2, '0');
+            arr.push({
+                'label': this.l('m' + i.toString()),
+                'value': i.toString(),
+                'disabled': ym > this.endYm || ym < this.startYm ? true : false,
+            });
+        }
+        return arr;
+    }
     
     public vhour: string[] = [];
 
@@ -420,6 +530,9 @@ export default class extends clickgo.control.AbstractControl {
      * --- 更新 time stamp，会自动根据 dateObj 设置时间戳基 ---
      */
     public updateTimestamp() {
+        if (!this.nowSelected) {
+            return;
+        }
         this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
         if (this.propNumber('modelValue') !== this.timestamp) {
             this.emit('update:modelValue', this.timestamp);
@@ -430,21 +543,18 @@ export default class extends clickgo.control.AbstractControl {
      * --- 跳转到当前选中的年份和月份 ---
      */
     public goSelected() {
+        let change = false;
         if (parseInt(this.vyear[0]) !== this.dateValue.year) {
             this.vyear[0] = this.dateValue.year.toString();
+            change = true;
         }
         if (parseInt(this.vmonth[0]) - 1 !== this.dateValue.month) {
             this.vmonth[0] = (this.dateValue.month + 1).toString();
+            change = true;
         }
-    }
-
-    /** --- 补全两位 --- */
-    public pad(n: number): string {
-        const ns = n.toString();
-        if (ns.length >= 2) {
-            return ns;
+        if (change) {
+            this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
         }
-        return '0' + ns;
     }
 
     /** --- col 点击 --- */
@@ -453,12 +563,72 @@ export default class extends clickgo.control.AbstractControl {
         'month': number;
         'year': number;
     }) {
-        if (col.year < 1900) {
-            return;
+        if (this.rangeDate === undefined && this.nowSelected && this.props.to) {
+            const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
+            if (cols === this.dateValueStr) {
+                return;
+            }
+            if (this.props.to === 'start') {
+                if (cols < this.dateValueStr) {
+                    const date = new Date();
+                    date.setUTCFullYear(col.year, col.month, col.date);
+                    date.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
+                    const event: types.IDatepanelRangeEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'start': date.getTime() - this.tzData * 60 * 60 * 1000,
+                            'end': this.timestamp
+                        }
+                    };
+                    this.emit('range', event);
+                    if (event.go) {
+                        this.rangeDate = date;
+                    }
+                    return;
+                }
+            }
+            else {
+                // --- end ---
+                if (cols > this.dateValueStr) {
+                    const date = new Date();
+                    date.setUTCFullYear(col.year, col.month, col.date);
+                    date.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
+                    const event: types.IDatepanelRangeEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'start': this.timestamp,
+                            'end': date.getTime() - this.tzData * 60 * 60 * 1000
+                        }
+                    };
+                    this.emit('range', event);
+                    if (event.go) {
+                        this.rangeDate = date;
+                    }
+                    return;
+                }
+            }
+        }
+        this.rangeDate = undefined;
+        if (this.cursorDate !== '') {
+            this.cursorDate = '';
+            this.emit('update:cursor', this.cursorDate);
         }
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
+        this.nowSelected = true;
         this.refreshDateValue();
         this.goSelected();
+        const event: types.IDatepanelChangedEvent = {
+            'detail': {
+                'value': this.timestamp
+            }
+        };
+        this.emit('changed', event);
     }
 
     /** --- 跳转到今天 --- */
@@ -473,28 +643,55 @@ export default class extends clickgo.control.AbstractControl {
     public back() {
         this.vyear[0] = this.dateValue.year.toString();
         this.vmonth[0] = (this.dateValue.month + 1).toString();
+        this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
     }
 
     public onMounted(): void | Promise<void> {
+        // --- 监听最大最小值限定 ---
+        this.watch('start', () => {
+            if (this.props.start === undefined) {
+                this.startDate.setUTCFullYear(1900, 0, 1);
+                this.startDate.setUTCHours(0, 0, 0, 0);
+                this.startTs = this.startDate.getTime();
+                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+                this.startDate.setMilliseconds(0);
+            }
+            else {
+                this.startTs = this.propNumber('start');
+                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+                this.startDate.setMilliseconds(0);
+            }
+            this.refreshStartValue();
+        }, {
+            'immediate': true
+        });
+        this.watch('end', () => {
+            if (this.props.end === undefined) {
+                this.endDate.setTime(Date.now());
+                this.endDate.setUTCFullYear(this.endDate.getUTCFullYear() + 100);
+                this.endDate.setUTCHours(23, 59, 59, 0);
+                this.endTs = this.endDate.getTime();
+                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+                this.endDate.setMilliseconds(0);
+            }
+            else {
+                this.endTs = this.propNumber('end');
+                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+                this.endDate.setMilliseconds(0);
+            }
+            this.refreshEndValue();
+        }, {
+            'immediate': true
+        });
         // --- 填充年月日时分秒时区 ---
-        const maxYear = this.dateObj.getUTCFullYear() + 100;
-        for (let i = 1900; i <= maxYear; ++i) {
-            this.years.push(i.toString());
-        }
-        for (let i = 1; i <= 12; ++i) {
-            this.months.push({
-                'label': this.l('m' + i.toString()),
-                'value': i.toString()
-            });
-        }
         for (let i = 0; i <= 23; ++i) {
-            this.hours.push(this.pad(i));
+            this.hours.push(i.toString().padStart(2, '0'));
         }
         for (let i = 0; i <= 59; ++i) {
-            this.minutes.push(this.pad(i));
+            this.minutes.push(i.toString().padStart(2, '0'));
         }
         for (let i = 0; i <= 59; ++i) {
-            this.seconds.push(this.pad(i));
+            this.seconds.push(i.toString().padStart(2, '0'));
         }
         for (let i = -12; i <= 14; ++i) {
             this.zones.push((i >= 0 ? '+' : '') + i.toString());
@@ -533,6 +730,13 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.emit('update:tz', this.tzData);
             this.updateTimestamp();
+            // --- 更新 start 和 end ---
+            this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+            this.startDate.setMilliseconds(0);
+            this.refreshStartValue();
+            this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+            this.endDate.setMilliseconds(0);
+            this.refreshEndValue();
         });
         // --- 监测 prop 时区信息变动 ---
         this.watch('tz', () => {
@@ -547,23 +751,161 @@ export default class extends clickgo.control.AbstractControl {
             this.vzone[0] = (parseInt(z[0]) >= 0 ? '+' : '') + z[0];
             this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
             this.updateTimestamp();
+            // --- 更新 start 和 end ---
+            this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+            this.startDate.setMilliseconds(0);
+            this.refreshStartValue();
+            this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+            this.endDate.setMilliseconds(0);
+            this.refreshEndValue();
+        }, {
+            'immediate': true
+        });
+        this.watch('cursor', () => {
+            this.cursorDate = this.props.cursor;
         }, {
             'immediate': true
         });
         // --- 初始化 ---
         // --- 监听 modelValue 变动 ---
+        let mvfirst = true;
         this.watch('modelValue', () => {
-            this.timestamp = this.propNumber('modelValue');
-            this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
-            this.vyear[0] = this.dateObj.getUTCFullYear().toString();
-            this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
-            this.vhour[0] = this.pad(this.dateObj.getUTCHours());
-            this.vminute[0] = this.pad(this.dateObj.getUTCMinutes());
-            this.vsecond[0] = this.pad(this.dateObj.getUTCSeconds());
-            this.refreshDateValue();
+            if (this.props.modelValue !== undefined) {
+                this.nowSelected = true;
+                this.timestamp = this.propNumber('modelValue');
+                this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
+                this.dateObj.setMilliseconds(0);
+                this.vyear[0] = this.dateObj.getUTCFullYear().toString();
+                this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
+                this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
+                this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
+                this.vsecond[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+                this.refreshDateValue();
+                if (!mvfirst) {
+                    this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
+                }
+            }
+            else {
+                this.nowSelected = false;
+                if (mvfirst) {
+                    const date = new Date();
+                    this.vyear[0] = date.getUTCFullYear().toString();
+                    this.vmonth[0] = (date.getUTCMonth() + 10).toString();
+                }
+            }
+            mvfirst = false;
         }, {
             'immediate': true
         });
+
+        // --- 翻页 ---
+        this.watch('yearmonth', () => {
+            if (!this.props.yearmonth) {
+                this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
+                return;
+            }
+            this.vyear[0] = this.props.yearmonth.slice(0, 4);
+            this.vmonth[0] = this.props.yearmonth.slice(4).replace('0', '');
+        }, {
+            'immediate': true
+        });
+    }
+
+    // --- range ---
+
+    /** --- 当前鼠标放置的日期无符号 --- */
+    public cursorDate = '';
+
+    /** --- 另一个参数值 --- */
+    public rangeDate?: Date = undefined;
+
+    /** --- 鼠标移动到 col 上的事件 --- */
+    public colenter(e: MouseEvent | TouchEvent, col: {
+        'date': number;
+        'month': number;
+        'year': number;
+    }) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (this.props.to === '') {
+            return;
+        }
+        if (this.rangeDate) {
+            return;
+        }
+        this.cursorDate = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
+        this.emit('update:cursor', this.cursorDate);
+    }
+
+    /** --- 当前日期是否可选 --- */
+    public get isDisabled() {
+        return (col: {
+            'date': number;
+            'month': number;
+            'year': number;
+        }): string | undefined => {
+            const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
+            return cols > this.endYmd || cols < this.startYmd ? '' : undefined;
+        }
+    }
+
+    /** --- col 显示的 class 效果，有四种，1: undefined, 2: range, 3: range-left, 4: range-right --- */
+    public get toclass() {
+        return (col: {
+            'date': number;
+            'month': number;
+            'year': number;
+        }): string | undefined => {
+            if (this.props.to === '' || this.cursorDate === '' || !this.nowSelected) {
+                return undefined;
+            }
+            /** --- cols 是要判断的盒子 --- */
+            const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
+            if (this.cursorDate > this.dateValueStr) {
+                // --- 如果鼠标比选中的大，那么证明时间在后面 ---
+                if (this.props.to === 'start') {
+                    return undefined;
+                }
+                if (cols > this.cursorDate || cols < this.dateValueStr) {
+                    return undefined;
+                }
+                if (cols === this.cursorDate) {
+                    return 'range-left';
+                }
+                if (cols === this.dateValueStr) {
+                    return 'range-right';
+                }
+                return 'range';
+            }
+            else if (this.cursorDate < this.dateValueStr) {
+                if (this.props.to === 'end') {
+                    return undefined;
+                }
+                if (cols < this.cursorDate || cols > this.dateValueStr) {
+                    return undefined;
+                }
+                if (cols === this.cursorDate) {
+                    return 'range-right';
+                }
+                if (cols === this.dateValueStr) {
+                    return 'range-left';
+                }
+                return 'range';
+            }
+            // --- 等于 ---
+            return undefined;
+        };
+    }
+
+    // --- 供用户调用的方法 ---
+
+    public clearRange() {
+        this.nowSelected = false;
+        this.emit('update:modelValue', undefined);
+        this.rangeDate = undefined;
+        this.cursorDate = '';
+        this.emit('update:cursor', '');
     }
 
 }

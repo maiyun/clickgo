@@ -9,7 +9,7 @@ export default class extends clickgo.form.AbstractForm {
     public zone: boolean = true;
 
     /** --- 当前选中的时间戳 --- */
-    public ts: number = 0;
+    public ts?: number = undefined;
 
     /** --- 当前设置的日历组件的时区 --- */
     public tz?: number = undefined;
@@ -17,6 +17,12 @@ export default class extends clickgo.form.AbstractForm {
     public disabled: boolean = false;
 
     public plain: boolean = false;
+
+    public to: string[] = [''];
+
+    public start: boolean = false;
+
+    public yearmonth: string = '';
 
     // --- 指定时间戳 ---
     public settime(): void {
