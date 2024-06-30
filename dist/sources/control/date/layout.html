@@ -1,8 +1,8 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
-    <div @click="click('first')" ref="first" class="first">
+    <div @click="click('first')" ref="first" class="first" v-if="propBoolean('date') || propBoolean('time')">
         <div v-if="propBoolean('date')">{{dateStrs[0]}}</div>
         <div v-if="propBoolean('time')">{{timeStrs[0]}}</div>
-        <template v-if="(propBoolean('date') || propBoolean('time')) && range !== undefined">
+        <template v-if="range !== undefined">
             <div>-</div>
             <div v-if="propBoolean('date')">{{dateStrs[1]}}</div>
             <div v-if="propBoolean('time')">{{timeStrs[1]}}</div>
