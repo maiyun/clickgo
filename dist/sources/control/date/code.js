@@ -37,6 +37,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': 0,
             'tz': undefined,
             'range': undefined,
+            'date': true,
             'time': true,
             'zone': false
         };
@@ -195,8 +196,8 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.emit('range', event);
         clickgo.form.hidePop(this.refs.firstpop);
-        this.refs.firstpanel.clearRange();
-        this.refs.endpanel.clearRange();
+        this.refs.firstpanel.clear();
+        this.refs.endpanel.clear();
     }
     onMounted() {
         for (let i = -12; i <= 14; ++i) {

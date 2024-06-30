@@ -1,8 +1,9 @@
 <form width="400" height="350" title="Date">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
-        <date v-model="ts" v-model:tz="tz" :time="time" :zone="zone" :disabled="disabled" :range="range" @range="onRange" />
+        <date v-model="ts" v-model:tz="tz" :date="date" :time="time" :zone="zone" :disabled="disabled" :range="range" @range="onRange" />
         <layout gutter="10">
+            <button @click="date = !date" style="flex: 1;">{{date ? '' : '!'}}date</button>
             <button @click="time = !time" style="flex: 1;">{{time ? '' : '!'}}time</button>
             <button @click="zone = !zone" style="flex: 1;">{{zone ? '' : '!'}}zone</button>
         </layout>

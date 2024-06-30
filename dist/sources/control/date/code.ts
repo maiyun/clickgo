@@ -19,6 +19,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 开启 range 模式 --- */
         'range'?: number | string;
 
+        'date': boolean | string;
         'time': boolean | string;
         'zone': boolean | string;
     } = {
@@ -28,6 +29,7 @@ export default class extends clickgo.control.AbstractControl {
             'tz': undefined,
             'range': undefined,
 
+            'date': true,
             'time': true,
             'zone': false
         };
@@ -217,8 +219,8 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('range', event);
 
         clickgo.form.hidePop(this.refs.firstpop);
-        this.refs.firstpanel.clearRange();
-        this.refs.endpanel.clearRange();
+        this.refs.firstpanel.clear();
+        this.refs.endpanel.clear();
     }
 
     public onMounted(): void {

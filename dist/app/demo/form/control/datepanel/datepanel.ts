@@ -18,7 +18,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public plain: boolean = false;
 
-    public to: string[] = [''];
+    public range: boolean = false;
 
     public start: boolean = false;
 

@@ -34,7 +34,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.tz = undefined;
         this.disabled = false;
         this.plain = false;
-        this.to = [''];
+        this.range = false;
         this.start = false;
         this.yearmonth = '';
     }

@@ -3,6 +3,8 @@ import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
+    public date: boolean = true;
+
     public time: boolean = true;
 
     public zone: boolean = true;

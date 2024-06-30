@@ -36,6 +36,7 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
+        this.date = true;
         this.time = true;
         this.zone = true;
         this.ts = 0;

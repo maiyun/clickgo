@@ -1,18 +1,18 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div @click="click('first')" ref="first" class="first">
-        <div>{{dateStrs[0]}}</div>
+        <div v-if="propBoolean('date')">{{dateStrs[0]}}</div>
         <div v-if="propBoolean('time')">{{timeStrs[0]}}</div>
-        <template v-if="range !== undefined">
+        <template v-if="(propBoolean('date') || propBoolean('time')) && range !== undefined">
             <div>-</div>
-            <div>{{dateStrs[1]}}</div>
+            <div v-if="propBoolean('date')">{{dateStrs[1]}}</div>
             <div v-if="propBoolean('time')">{{timeStrs[1]}}</div>
         </template>
     </div>
     <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
     <teleport to="system">
         <div ref="firstpop" class="pop group" :class="[range !== undefined ? 'double' : undefined]">
-            <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="popts" :to="range !== undefined ? 'end' : undefined" @changed="firstChanged" @range="onRange" ref="firstpanel" v-model:cursor="cursor"></cg-datepanel>
-            <cg-datepanel v-if="range !== undefined" plain :tz="tzData" :time="propBoolean('time')" v-model="popts" to="end" :start="startComp" @range="onRange" ref="endpanel" v-model:cursor="cursor"></cg-datepanel>
+            <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="popts" range @changed="firstChanged" @range="onRange" ref="firstpanel" v-model:cursor="cursor"></cg-datepanel>
+            <cg-datepanel v-if="range !== undefined" plain :tz="tzData" :time="propBoolean('time')" v-model="popts" range :start="startComp" @range="onRange" ref="endpanel" v-model:cursor="cursor"></cg-datepanel>
         </div>
     </teleport>
     <teleport to="system">
