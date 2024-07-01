@@ -12,7 +12,6 @@
     <div class="week">
         <div v-for="col of 7">{{l('w' + (col - 1))}}</div>
     </div>
-    {{JSON.stringify(timestamp)}}
     <div class="row" v-for="row of maps">
         <div class="col" v-for="col of row" :style="{'color': col.month !== (vmonth[0] - 1) ? 'var(--g-color-disabled)' : undefined}" :class="[{'selected': timestamp !== undefined && (dateValue.year === col.year) && (dateValue.month === col.month) && (dateValue.date === col.date)}, toclass(col)]" @click="colClick(col)" @mouseenter="colenter($event, col)" @touchstart="colenter($event, col)" :data-cg-disabled="isDisabled(col)">
             <div class="colh">
