@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -27,6 +28,10 @@ export default class extends clickgo.form.AbstractForm {
     // --- 指定时间戳 ---
     public settime(): void {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
+    }
+
+    public onChanged(e: types.IDatepanelChangedEvent) {
+        console.log('onChanged', e, JSON.stringify(e));
     }
 
 }

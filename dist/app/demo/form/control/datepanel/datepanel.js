@@ -41,5 +41,8 @@ class default_1 extends clickgo.form.AbstractForm {
     settime() {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
     }
+    onChanged(e) {
+        console.log('onChanged', e, JSON.stringify(e));
+    }
 }
 exports.default = default_1;

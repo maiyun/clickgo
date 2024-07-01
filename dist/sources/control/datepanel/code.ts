@@ -569,7 +569,7 @@ export default class extends clickgo.control.AbstractControl {
             if (cols > this.dateValueStr) {
                 const date = new Date();
                 date.setUTCFullYear(col.year, col.month, col.date);
-                date.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
+                date.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vsecond[0] ?? '00'), 0);
                 const event: types.IDatepanelRangeEvent = {
                     'go': true,
                     preventDefault: function() {
@@ -595,13 +595,13 @@ export default class extends clickgo.control.AbstractControl {
         // --- 解除 undefined 限制，使选中的时间戳可以 emit 上去 ---
         this.timestamp = 0;
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
-        this.dateObj.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
+        this.dateObj.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
         const event: types.IDatepanelChangedEvent = {
             'detail': {
-                'value': this.timestamp!
+                'value': this.timestamp
             }
         };
         this.emit('changed', event);
@@ -616,7 +616,7 @@ export default class extends clickgo.control.AbstractControl {
         this.goSelected();
         const event: types.IDatepanelChangedEvent = {
             'detail': {
-                'value': this.timestamp!
+                'value': this.timestamp
             }
         };
         this.emit('changed', event);
@@ -690,7 +690,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 检测时分秒变动 ---
         this.watch(() => {
-            return this.vhour[0] + ':' + this.vminute[0] + ':' + this.vsecond[0];
+            return (this.vhour[0] ?? '') + ':' + (this.vminute[0] ?? '') + ':' + (this.vsecond[0] ?? '');
         }, () => {
             if (!this.vhour[0] || !this.vminute[0] || !this.vsecond[0]) {
                 return;

@@ -711,7 +711,7 @@ export interface IDatepanelRangeEvent extends ICustomEvent {
 
 export interface IDatepanelChangedEvent {
     'detail': {
-        'value': number;
+        'value'?: number;
     };
 }
 
