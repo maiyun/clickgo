@@ -438,7 +438,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.maps[i].push({
                     'date': now.getUTCDate(),
                     'month': now.getUTCMonth(),
-                    'year': now.getUTCFullYear()
+                    'year': now.getUTCFullYear(),
+                    'day': now.getUTCDay()
                 });
                 now.setUTCDate(now.getUTCDate() + 1);
             }

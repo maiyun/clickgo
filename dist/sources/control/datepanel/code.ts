@@ -422,6 +422,7 @@ export default class extends clickgo.control.AbstractControl {
         'date': number;
         'month': number;
         'year': number;
+        'day': number;
     }>> = [];
 
     // --- 上面的选项 ---
@@ -508,7 +509,8 @@ export default class extends clickgo.control.AbstractControl {
                 this.maps[i].push({
                     'date': now.getUTCDate(),
                     'month': now.getUTCMonth(),
-                    'year': now.getUTCFullYear()
+                    'year': now.getUTCFullYear(),
+                    'day': now.getUTCDay()
                 });
                 now.setUTCDate(now.getUTCDate() + 1);
             }
