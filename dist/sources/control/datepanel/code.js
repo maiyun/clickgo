@@ -473,7 +473,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     colClick(col) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f;
         if (this.rangeDate === undefined && (this.timestamp !== undefined) && this.propBoolean('range')) {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (cols === this.dateValueStr) {
@@ -507,7 +507,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.timestamp = 0;
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
-        this.dateObj.setUTCHours(parseInt((_d = this.vhour[0]) !== null && _d !== void 0 ? _d : '00'), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
+        this.dateObj.setUTCHours(parseInt((_d = this.vhour[0]) !== null && _d !== void 0 ? _d : '00'), parseInt((_e = this.vminute[0]) !== null && _e !== void 0 ? _e : '00'), parseInt((_f = this.vsecond[0]) !== null && _f !== void 0 ? _f : '00'), 0);
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();

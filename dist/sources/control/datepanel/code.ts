@@ -595,7 +595,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- 解除 undefined 限制，使选中的时间戳可以 emit 上去 ---
         this.timestamp = 0;
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
-        this.dateObj.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
+        this.dateObj.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vsecond[0] ?? '00'), 0);
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
