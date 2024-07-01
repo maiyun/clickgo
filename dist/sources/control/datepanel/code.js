@@ -439,7 +439,8 @@ class default_1 extends clickgo.control.AbstractControl {
                     'date': now.getUTCDate(),
                     'month': now.getUTCMonth(),
                     'year': now.getUTCFullYear(),
-                    'day': now.getUTCDay()
+                    'day': now.getUTCDay(),
+                    'str': now.getUTCFullYear().toString() + (now.getUTCMonth() + 1).toString().padStart(2, '0') + now.getUTCDate().toString().padStart(2, '0')
                 });
                 now.setUTCDate(now.getUTCDate() + 1);
             }
