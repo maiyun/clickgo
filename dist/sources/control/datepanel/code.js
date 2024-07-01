@@ -506,6 +506,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.timestamp = 0;
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
+        this.dateObj.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vsecond[0]), 0);
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
