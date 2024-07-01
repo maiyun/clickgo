@@ -5,7 +5,7 @@
             <cg-select :data="months" v-model="vmonth" virtual @changed="emit('update:yearmonth',vyear[0]+$event.detail.value[0].padStart(2,'0'))"></cg-select>
         </div>
         <div class="right">
-            <cg-button v-if="(dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1)" @click="back">{{l('back')}}</cg-button>
+            <cg-button v-if="(timestamp !== undefined) && ((dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1))" @click="back">{{l('back')}}</cg-button>
             <cg-button @click="today">{{l('today')}}</cg-button>
         </div>
     </div>

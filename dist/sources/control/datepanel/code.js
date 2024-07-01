@@ -522,6 +522,12 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
+        const event = {
+            'detail': {
+                'value': this.timestamp
+            }
+        };
+        this.emit('changed', event);
     }
     back() {
         this.vyear[0] = this.dateValue.year.toString();
@@ -665,7 +671,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (mvfirst) {
                     const date = new Date();
                     this.vyear[0] = date.getUTCFullYear().toString();
-                    this.vmonth[0] = (date.getUTCMonth() + 10).toString();
+                    this.vmonth[0] = (date.getUTCMonth() + 1).toString();
                 }
             }
             mvfirst = false;
