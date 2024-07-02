@@ -294,10 +294,17 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             try {
-                this.access.editor.select([]);
+                this.access.editor.clear();
                 this.access.editor.setHtml(v);
             }
             catch {
+                try {
+                    this.access.editor.clear();
+                    this.access.editor.setHtml(v);
+                }
+                catch (e) {
+                    console.log('wangEditor error', e);
+                }
                 return;
             }
             /*
