@@ -180,7 +180,7 @@ export default class extends clickgo.control.AbstractControl {
             this.notInit = true;
             return;
         }
-        const { createEditor, createToolbar, i18nChangeLanguage } = weditor;
+        const { createEditor, createToolbar, i18nChangeLanguage, SlateTransforms } = weditor;
 
         // --- 仅支持中英文 ---
         i18nChangeLanguage(this.getLanguage());
@@ -286,27 +286,31 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
         // --- 监听上面的值的变动 ---
-        this.watch('modelValue', (v: string) => {
+        this.watch('modelValue', async (v: string) => {
             if (!this.access.editor) {
                 return;
             }
             if (v === this.access.editor.getHtml()) {
                 return;
             }
-            try {
-                this.access.editor.clear();
-                this.access.editor.setHtml(v);
-            }
-            catch {
-                try {
-                    this.access.editor.clear();
-                    this.access.editor.setHtml(v);
-                }
-                catch (e) {
-                    console.log('wangEditor error', e);
-                }
-                return;
-            }
+            // --- thx ---
+            // --- 删除内容 ---
+            this.access.editor.children.forEach(() => {
+                SlateTransforms.delete(this.access.editor, { 'at': [0] })
+            });
+            // --- 初始化内容 ---
+            SlateTransforms.insertNodes(this.access.editor, {
+                'type': 'p',
+                'children': [{ text: '' }]
+            }, { at: [0] });
+            // --- 初始化选取 ---
+            SlateTransforms.select(this.access.editor, {
+                'anchor': { 'path': [0, 0], 'offset': 0 },
+                'focus': { 'path': [0, 0], 'offset': 0 },
+            });
+            await clickgo.tool.sleep(0);
+            this.access.editor.setHtml(v);
+            // --- thx for: https://github.com/wangeditor-team/wangEditor/issues/4878 ---
             /*
             this.access.editor.clear();
             this.access.editor.select([]);

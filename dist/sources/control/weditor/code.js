@@ -188,7 +188,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.notInit = true;
                 return;
             }
-            const { createEditor, createToolbar, i18nChangeLanguage } = weditor;
+            const { createEditor, createToolbar, i18nChangeLanguage, SlateTransforms } = weditor;
             i18nChangeLanguage(this.getLanguage());
             this.access.editor = createEditor({
                 'selector': this.refs.editor,
@@ -278,28 +278,27 @@ class default_1 extends clickgo.control.AbstractControl {
             }, {
                 'immediate': true
             });
-            this.watch('modelValue', (v) => {
+            this.watch('modelValue', (v) => __awaiter(this, void 0, void 0, function* () {
                 if (!this.access.editor) {
                     return;
                 }
                 if (v === this.access.editor.getHtml()) {
                     return;
                 }
-                try {
-                    this.access.editor.clear();
-                    this.access.editor.setHtml(v);
-                }
-                catch (_a) {
-                    try {
-                        this.access.editor.clear();
-                        this.access.editor.setHtml(v);
-                    }
-                    catch (e) {
-                        console.log('wangEditor error', e);
-                    }
-                    return;
-                }
-            });
+                this.access.editor.children.forEach(() => {
+                    SlateTransforms.delete(this.access.editor, { 'at': [0] });
+                });
+                SlateTransforms.insertNodes(this.access.editor, {
+                    'type': 'p',
+                    'children': [{ text: '' }]
+                }, { at: [0] });
+                SlateTransforms.select(this.access.editor, {
+                    'anchor': { 'path': [0, 0], 'offset': 0 },
+                    'focus': { 'path': [0, 0], 'offset': 0 },
+                });
+                yield clickgo.tool.sleep(0);
+                this.access.editor.setHtml(v);
+            }));
             this.isLoading = false;
             this.emit('init', this.access.editor);
             if (this.props.modelValue) {
