@@ -21,9 +21,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public html = '<p align="center">123</p>';
 
-    public async videoselect() {
-        await clickgo.form.dialog('Sorry, video can not be upload.');
-    }
+    public htmlc = '';
 
     public async imgselect(cb: (url: string, opt?: {
         'alt'?: string;

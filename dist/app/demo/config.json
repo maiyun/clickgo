@@ -23,7 +23,7 @@
         "/clickgo/control/tuieditor",
         "/clickgo/control/tuiviewer",
         "/clickgo/control/arteditor",
-        "/clickgo/control/weditor"
+        "/clickgo/control/jodit"
     ],
     "style": "/package/global",
 
@@ -71,6 +71,8 @@
         "/form/control/iconview/iconview.js",
         "/form/control/iconview/iconview.xml",
         "/form/control/img/img.xml",
+        "/form/control/jodit/jodit.js",
+        "/form/control/jodit/jodit.xml",
         "/form/control/label/label.js",
         "/form/control/label/label.xml",
         "/form/control/layout/layout.xml",
@@ -132,8 +134,6 @@
         "/form/control/vflow/vflow.xml",
         "/form/control/video/video.js",
         "/form/control/video/video.xml",
-        "/form/control/weditor/weditor.js",
-        "/form/control/weditor/weditor.xml",
         "/form/control/xterm/xterm.js",
         "/form/control/xterm/xterm.xml",
         "/form/event/form/form.css",

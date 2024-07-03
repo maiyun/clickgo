@@ -167,7 +167,9 @@ export abstract class AbstractApp {
     }
 
     /** --- 窗体的 formHash 改变事件 --- */
-    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void | Promise<void>;
+    public onFormHashChange(
+        taskId: number, formId: number, value: string, data: Record<string, any>
+    ): void | Promise<void>;
     public onFormHashChange(): void {
         return;
     }
@@ -345,16 +347,16 @@ const modules: Record<string, {
         'loading': false,
         'resolve': []
     },
-    'weditor': {
+    'jodit': {
         func: async function() {
             await loader.loadScripts([
-                loader.cdn + '/npm/@wangeditor/editor@5.1.23/dist/index.min.js'
+                loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.js'
             ]);
             await loader.loadLinks([
-                loader.cdn + '/npm/@wangeditor/editor@5.1.23/dist/css/style.min.css'
+                loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.css'
             ]);
-            loader.loadStyle('.w-e-modal,.w-e-hover-bar,.w-e-drop-panel,.w-e-select-list,.w-e-bar-item-menus-container{z-index:2 !important;}');
-            return (window as any).wangEditor;
+            loader.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}');
+            return (window as any).Jodit;
         },
         'obj': null,
         'loading': false,

@@ -42,7 +42,7 @@ import cvideoFrm from './control/video/video';
 import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
 import cechartsFrm from './control/echarts/echarts';
-import cweditorFrm from './control/weditor/weditor';
+import cjoditFrm from './control/jodit/jodit';
 import ctuieditorFrm from './control/tuieditor/tuieditor';
 import ctuiviewerFrm from './control/tuiviewer/tuiviewer';
 import carteditorFrm from './control/arteditor/arteditor';
@@ -272,8 +272,8 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create(ctextFrm);
                 break;
             }
-            case 'cweditor': {
-                frm = await clickgo.form.create(cweditorFrm);
+            case 'cjodit': {
+                frm = await clickgo.form.create(cjoditFrm);
                 break;
             }
             case 'ctuieditor': {

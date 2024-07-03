@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryParse = exports.queryStringify = exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.postResponseJson = exports.getResponseJson = exports.post = exports.get = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
 function getClassPrototype(obj, over = [], level = 0) {
+    var _a;
     if (level === 0) {
         return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
     }
@@ -37,7 +38,7 @@ function getClassPrototype(obj, over = [], level = 0) {
         if (des.value) {
             rtn.method[item] = des.value;
         }
-        else if (des.get || des.set) {
+        else if ((_a = des.get) !== null && _a !== void 0 ? _a : des.set) {
             if (!rtn.access[item]) {
                 rtn.access[item] = {};
             }
@@ -264,7 +265,7 @@ function layoutInsertAttr(layout, insert, opt = {}) {
 exports.layoutInsertAttr = layoutInsertAttr;
 function layoutClassPrependObject(object) {
     object = object.slice(1, -1).trim();
-    return '{' + object.replace(/([ a-zA-Z0-9'"`\[\]\-_]+)(\s*:)/g, function (t, t1, t2) {
+    return '{' + object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, function (t, t1, t2) {
         t1 = t1.trim();
         if (t1.startsWith('[')) {
             t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';

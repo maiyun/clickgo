@@ -591,7 +591,7 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- text 的值变更事件（只有 editable 时会触发） ----
     public async updateInputValue(value: string): Promise<void> {
-        value = value.trim();;
+        value = value.trim();
         if (this.propBoolean('editable') && !this.propBoolean('multi')) {
             const event: types.ISelectChangeEvent = {
                 'go': true,
@@ -654,7 +654,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- list 上的点击事件 --- */
-    public async listItemClicked(e: types.IListItemclickedEvent): Promise<void> {
+    public async listItemClicked(): Promise<void> {
         if (this.propBoolean('editable')) {
             const v = this.listValue[0];
             // -- 可编辑 ---
@@ -890,7 +890,7 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    public onChange(e: types.IListChangeEvent) {
+    public onChange(e: types.IListChangeEvent): void {
         if (this.propBoolean('multi')) {
             return;
         }

@@ -49,11 +49,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.visual = false;
         this.text = '';
         this.html = '<p align="center">123</p>';
-    }
-    videoselect() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Sorry, video can not be upload.');
-        });
+        this.htmlc = '';
     }
     imgselect(cb) {
         return __awaiter(this, void 0, void 0, function* () {

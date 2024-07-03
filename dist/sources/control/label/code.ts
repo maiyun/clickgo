@@ -20,7 +20,7 @@ export default class extends clickgo.control.AbstractControl {
             'zone': false,
             'tz': undefined
         };
-    
+
     /** --- 替换 slot 数据 --- */
     public get contentComp(): string {
         if (this.props.mode !== 'date') {

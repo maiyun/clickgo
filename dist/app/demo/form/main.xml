@@ -91,7 +91,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cecharts')">Echarts</button>
                     <button @click="openForm('cmap')">Map</button>
-                    <button @click="openForm('cweditor')">Weditor</button>
+                    <button @click="openForm('cjodit')">Jodit</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('carteditor')">Arteditor</button>

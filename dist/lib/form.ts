@@ -368,7 +368,6 @@ export abstract class AbstractPanel extends AbstractCommon {
         this.rootForm.formHash = fh;
     }
 
-    
     /** --- 获取 form 的 formhash with data 值 --- */
     public get formHashData(): Record<string, any> {
         return this.rootForm.formHashData;
@@ -408,7 +407,7 @@ export abstract class AbstractPanel extends AbstractCommon {
     public qs: Record<string, string> = {};
 
     /** --- 确定不再使用 qs 时可调用此方法清空，这样再次通过相同 qs 进入本 panel 依然会响应 qschange 事件 --- */
-    public clearQs() {
+    public clearQs(): void {
         this.qs = {};
     }
 
@@ -424,7 +423,7 @@ export abstract class AbstractPanel extends AbstractCommon {
 
     public onShowed(): void | Promise<void>;
     /** --- panel 已经完全显示后所要执行的 --- */
-    public onShowed() {
+    public onShowed(): void {
         return;
     }
 
@@ -816,7 +815,9 @@ export abstract class AbstractForm extends AbstractCommon {
     }
 
     /** --- 窗体的 formHash 改变事件 --- */
-    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void | Promise<void>;
+    public onFormHashChange(
+        taskId: number, formId: number, value: string, data: Record<string, any>
+    ): void | Promise<void>;
     public onFormHashChange(): void {
         return;
     }
@@ -916,7 +917,7 @@ export const elements: {
         });
         this.wrap.addEventListener('wheel', function(e): void {
             // --- 防止不小心前进后退，或上下缓动滚动（Mac、触摸板） ---
-            if (e.target && ((e.target as HTMLElement).dataset.cgScroll !== undefined) || dom.findParentByData(e.target as HTMLElement, 'cg-scroll')) {
+            if (e.target && (((e.target as HTMLElement).dataset.cgScroll !== undefined) || dom.findParentByData(e.target as HTMLElement, 'cg-scroll'))) {
                 return;
             }
             e.preventDefault();
@@ -1932,7 +1933,7 @@ export function moveDrag(opt: types.IMoveDragOptions): void {
         }
     }
     if (perspective) {
-        elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)'
+        elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)';
     }
     if (opt.icon) {
         (elements.drag.childNodes[0] as HTMLElement).style.display = 'block';
@@ -2257,7 +2258,7 @@ export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.I
     }
     /** --- 要不要隐藏别的 pop --- */
     const parentPop = dom.findParentByData(el, 'cg-pop');
-    if (parentPop && parentPop.dataset.cgLevel !== undefined) {
+    if (parentPop?.dataset.cgLevel !== undefined) {
         const nextlevel = parseInt(parentPop.dataset.cgLevel) + 1;
         if (popInfo.elList[nextlevel]) {
             hidePop(popInfo.elList[nextlevel]);
@@ -3464,7 +3465,7 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
                     }
                 };
                 if (nopt.select) {
-                    nopt.select.call(this, event as unknown as Event, button)
+                    nopt.select.call(this, event as unknown as Event, button);
                 }
                 if (event.go) {
                     if (nopt.autoDialogResult !== false) {

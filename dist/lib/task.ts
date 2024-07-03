@@ -669,7 +669,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             exitFullscreen: function() {
                 return dom.exitFullscreen();
             },
-            createElement: function<K extends keyof HTMLElementTagNameMap>(tagName: K): HTMLElementTagNameMap[K] {
+            createElement: function<T extends keyof HTMLElementTagNameMap>(tagName: T): HTMLElementTagNameMap[T] {
                 return dom.createElement(tagName);
             }
         },

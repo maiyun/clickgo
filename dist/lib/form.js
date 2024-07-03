@@ -608,7 +608,7 @@ exports.elements = {
             'passive': false
         });
         this.wrap.addEventListener('wheel', function (e) {
-            if (e.target && (e.target.dataset.cgScroll !== undefined) || dom.findParentByData(e.target, 'cg-scroll')) {
+            if (e.target && ((e.target.dataset.cgScroll !== undefined) || dom.findParentByData(e.target, 'cg-scroll'))) {
                 return;
             }
             e.preventDefault();
@@ -1712,7 +1712,7 @@ function showPop(el, pop, direction, opt = {}) {
         return;
     }
     const parentPop = dom.findParentByData(el, 'cg-pop');
-    if (parentPop && parentPop.dataset.cgLevel !== undefined) {
+    if ((parentPop === null || parentPop === void 0 ? void 0 : parentPop.dataset.cgLevel) !== undefined) {
         const nextlevel = parseInt(parentPop.dataset.cgLevel) + 1;
         if (popInfo.elList[nextlevel]) {
             hidePop(popInfo.elList[nextlevel]);

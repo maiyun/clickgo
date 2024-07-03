@@ -1,8 +1,7 @@
 <div class="wrap" :class="[theme,isFocus&&'focus']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
-    <div v-if="notInit" class="notInit">Weditor module not found.</div>
-    <div v-else class="content" ref="content">
-        <div ref="toolbar" class="toolbar"></div>
-		<div ref="editor" class="editor" data-cg-scroll></div>
+    <div v-if="notInit" class="notInit">Jodit module not found.</div>
+    <div v-else class="content" ref="content" data-cg-scroll>
+        <textarea ref="editor"></textarea>
     </div>
     <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
         <cg-loading></cg-loading>

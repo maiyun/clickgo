@@ -57,7 +57,7 @@ export function getClassPrototype(obj: object, over: string[] = [], level: numbe
             // --- method ---
             rtn.method[item] = des.value;
         }
-        else if (des.get || des.set) {
+        else if (des.get ?? des.set) {
             if (!rtn.access[item]) {
                 rtn.access[item] = {};
             }
@@ -361,7 +361,7 @@ function layoutClassPrependObject(object: string): string {
         return t1 + ':' + t2 + t3;
     }) + '}';
     //*/
-    return '{' + object.replace(/([ a-zA-Z0-9'"`\[\]\-_]+)(\s*:)/g, function(t, t1: string, t2:string) {
+    return '{' + object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, function(t, t1: string, t2: string) {
         // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
         if (t1.startsWith('[')) {
@@ -809,7 +809,7 @@ export function fetch(url: string, init?: RequestInit): Promise<string | Blob | 
 export function get(url: string, opt?: {
     'credentials'?: 'include' | 'same-origin' | 'omit';
     'headers'?: HeadersInit;
-}) {
+}): Promise<Response | null> {
     return loader.get(url, opt);
 }
 

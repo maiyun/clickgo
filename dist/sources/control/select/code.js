@@ -516,7 +516,6 @@ class default_1 extends clickgo.control.AbstractControl {
     updateInputValue(value) {
         return __awaiter(this, void 0, void 0, function* () {
             value = value.trim();
-            ;
             if (this.propBoolean('editable') && !this.propBoolean('multi')) {
                 const event = {
                     'go': true,
@@ -572,7 +571,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
-    listItemClicked(e) {
+    listItemClicked() {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.propBoolean('editable')) {
                 const v = this.listValue[0];
