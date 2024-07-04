@@ -1,30 +1,51 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div @click="click('first')" ref="first" class="first" v-if="propBoolean('date') || propBoolean('time')">
-        <div v-if="propBoolean('date')">{{dateStrs[0]}}</div>
-        <div v-if="propBoolean('time')">{{timeStrs[0]}}</div>
-        <template v-if="range !== undefined">
-            <div>-</div>
-            <div v-if="propBoolean('date')">{{dateStrs[1]}}</div>
-            <div v-if="propBoolean('time')">{{timeStrs[1]}}</div>
+        <template v-if="timestamp === undefined">
+            <div>{{l('please click select')}}</div>
+        </template>
+        <template v-else>
+            <div v-if="propBoolean('date')">{{dateStr}}</div>
+            <div v-if="propBoolean('time')">{{timeStr}}</div>
         </template>
     </div>
     <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
     <teleport to="system">
-        <div ref="firstpop" class="pop group" :class="[range !== undefined ? 'double' : undefined]">
-            <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="popts" range @changed="firstChanged" @range="onRange" ref="firstpanel" v-model:cursor="cursor"></cg-datepanel>
-            <cg-datepanel v-if="range !== undefined" plain :tz="tzData" :time="propBoolean('time')" v-model="popts" range :start="startComp" @range="onRange" ref="endpanel" v-model:cursor="cursor"></cg-datepanel>
+        <div ref="firstpop" class="pop first">
+            <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="timestamp" @changed="changed" @selected="selected" ref="firstpanel"></cg-datepanel>
         </div>
     </teleport>
     <teleport to="system">
-        <div ref="zonepop" class="pop zone">
+        <div ref="timepop" class="pop list">
             <div>
                 <div class="item">
-                    <div class="title">{{l('zone')}}</div>
-                    <cg-list :data="zones" v-model="vzone"></cg-list>
+                    <div class="title">{{l('hour')}}</div>
+                    <cg-list :data="hours" v-model="vhour" virtual @changed=""></cg-list>
                 </div>
                 <div class="item">
                     <div class="title">{{l('minute')}}</div>
-                    <cg-list :data="zdecs" v-model="vzdec"></cg-list>
+                    <cg-list :data="minutes" v-model="vminute" virtual></cg-list>
+                </div>
+                <div class="item">
+                    <div class="title">{{l('second')}}</div>
+                    <cg-list :data="seconds" v-model="vseconds" virtual></cg-list>
+                </div>
+            </div>
+            <div>
+                <cg-button @click="cancel">{{l('cancel')}}</cg-button>
+                <cg-button @click="timeOk">{{l('ok')}}</cg-button>
+            </div>
+        </div>
+    </teleport>
+    <teleport to="system">
+        <div ref="zonepop" class="pop list">
+            <div>
+                <div class="item">
+                    <div class="title">{{l('zone')}}</div>
+                    <cg-list :data="zones" v-model="vzone" virtual></cg-list>
+                </div>
+                <div class="item">
+                    <div class="title">{{l('minute')}}</div>
+                    <cg-list :data="zdecs" v-model="vzdec" virtual></cg-list>
                 </div>
             </div>
             <div>

@@ -18,7 +18,7 @@
         <layout gutter="10">
             <button @click="family = !family" style="flex: 1;">{{family ? '' : '!'}}Family CCM</button>
             <select v-model="size" :data="['12px', '13px', '14px', '15px', '16px']" style="flex: 1;"></select>
-            <!--<select v-model="theme" :data="themes" style="flex: 1;"></select>-->
+            <select v-model="theme" :data="themes" style="flex: 1;"></select>
         </layout>
     </layout>
 </form>

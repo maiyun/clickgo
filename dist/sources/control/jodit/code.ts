@@ -155,7 +155,9 @@ export default class extends clickgo.control.AbstractControl {
             }],
             'statusbar': false,
             'allowResizeY': false,
-            'addNewLine': false
+            'addNewLine': false,
+            'language': this.getLanguage(),
+            'theme': this.props.theme === 'dark' ? 'dark' : undefined
         });
         this.access.editor.value = this.props.modelValue;
         this.access.editor.events.on('change', () => {

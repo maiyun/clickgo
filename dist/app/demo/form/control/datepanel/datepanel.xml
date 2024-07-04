@@ -1,7 +1,7 @@
 <form width="500" height="700" title="Datepanel">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}, yearmonth: {{yearmonth}}</label>
-        <datepanel v-model="ts" v-model:tz="tz" v-model:yearmonth="yearmonth" time="false" :zone="zone" :disabled="disabled" :plain="plain" :range="range" :start="start ? 1704067200_000 : undefined" @changed="onChanged" style="flex: 1;">
+        <datepanel v-model="ts" v-model:tz="tz" v-model:yearmonth="yearmonth" :time="time" :zone="zone" :disabled="disabled" :plain="plain" :range="range" :start="start ? 1704067200_000 : undefined" @changed="onChanged" style="flex: 1;">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>

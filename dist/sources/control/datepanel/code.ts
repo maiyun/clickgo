@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'changed': null,
+        'selected': null,
         'range': null,
 
         'update:modelValue': null,
@@ -65,13 +66,13 @@ export default class extends clickgo.control.AbstractControl {
     };
 
     /** --- 当前选中的日期的无符号字符串 --- */
-    public get dateValueStr() {
+    public get dateValueStr(): string {
         return this.dateValue.year.toString() + (this.dateValue.month + 1).toString().padStart(2, '0') + this.dateValue.date.toString().padStart(2, '0');
     }
 
     /** --- 当前选中的真正用户的时间戳 --- */
     public timestamp?: number = undefined;
-    
+
     /** --- 最小时间限制 --- */
     public startDate = new Date();
 
@@ -83,17 +84,17 @@ export default class extends clickgo.control.AbstractControl {
         'date': 0
     };
 
-    public refreshStartValue() {
+    public refreshStartValue(): void {
         this.startValue.date = this.startDate.getUTCDate();
         this.startValue.month = this.startDate.getUTCMonth();
         this.startValue.year = this.startDate.getUTCFullYear();
     }
 
-    public get startYm() {
+    public get startYm(): string {
         return this.startValue.year.toString() + (this.startValue.month + 1).toString().padStart(2, '0');
     }
 
-    public get startYmd() {
+    public get startYmd(): string {
         return this.startYm + this.startValue.date.toString().padStart(2, '0');
     }
 
@@ -108,17 +109,17 @@ export default class extends clickgo.control.AbstractControl {
         'date': 0
     };
 
-    public refreshEndValue() {
+    public refreshEndValue(): void {
         this.endValue.date = this.endDate.getUTCDate();
         this.endValue.month = this.endDate.getUTCMonth();
         this.endValue.year = this.endDate.getUTCFullYear();
     }
 
-    public get endYm() {
+    public get endYm(): string {
         return this.endValue.year.toString() + (this.endValue.month + 1).toString().padStart(2, '0');
     }
 
-    public get endYmd() {
+    public get endYmd(): string {
         return this.endYm + this.endValue.date.toString().padStart(2, '0');
     }
 
@@ -419,6 +420,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 日历视图表 --- */
     public maps: Array<Array<{
+        'time': number;
         'date': number;
         'month': number;
         'year': number;
@@ -427,7 +429,7 @@ export default class extends clickgo.control.AbstractControl {
     }>> = [];
 
     // --- 上面的选项 ---
-    
+
     public vyear: string[] = [''];
 
     public get years(): Array<{
@@ -469,7 +471,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         return arr;
     }
-    
+
     public vhour: string[] = [];
 
     public hours: string[] = [];
@@ -493,21 +495,24 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- 刷新视图（当时间戳或时区变动时执行） ---
      */
-    public refreshView() {
+    public refreshView(): void {
         const now = new Date();
         now.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 1, 1);
+        now.setUTCHours(0, 0, 0, 0);
         /** --- 当月 1 号在周几，0 代表周日 --- */
         const day1 = now.getUTCDay();
         if (day1 > 0) {
             now.setUTCDate(1 - day1);
         }
         this.maps.length = 0;
+        const zone = this.tzData * 60 * 60 * 1000;
         for (let i = 0; i < 6; ++i) {
             // --- 先生成行 ---
             this.maps[i] = [];
             for (let j = 0; j < 7; ++j) {
                 // --- 再生成列 ---
                 this.maps[i].push({
+                    'time': now.getTime() - zone,
                     'date': now.getUTCDate(),
                     'month': now.getUTCMonth(),
                     'year': now.getUTCFullYear(),
@@ -522,7 +527,7 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- 刷新 date value 的数据为最新的 ---
      */
-    public refreshDateValue() {
+    public refreshDateValue(): void {
         this.dateValue.date = this.dateObj.getUTCDate();
         this.dateValue.month = this.dateObj.getUTCMonth();
         this.dateValue.year = this.dateObj.getUTCFullYear();
@@ -531,20 +536,34 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- 更新 time stamp，会自动根据 dateObj 设置时间戳基 ---
      */
-    public updateTimestamp() {
+    public updateTimestamp(): void {
         if (this.timestamp === undefined) {
+            if (this.props.modelValue !== undefined) {
+                const event: types.IDatepanelChangedEvent = {
+                    'detail': {
+                        'value': undefined
+                    }
+                };
+                this.emit('changed', event);
+            }
             return;
         }
         this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
         if (this.propNumber('modelValue') !== this.timestamp) {
             this.emit('update:modelValue', this.timestamp);
+            const event: types.IDatepanelChangedEvent = {
+                'detail': {
+                    'value': this.timestamp
+                }
+            };
+            this.emit('changed', event);
         }
     }
 
     /**
      * --- 跳转到当前选中的年份和月份 ---
      */
-    public goSelected() {
+    public goSelected(): void {
         let change = false;
         if (parseInt(this.vyear[0]) !== this.dateValue.year) {
             this.vyear[0] = this.dateValue.year.toString();
@@ -561,10 +580,13 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- col 点击 --- */
     public colClick(col: {
+        'time': number;
         'date': number;
         'month': number;
         'year': number;
-    }) {
+        'day': number;
+        'str': string;
+    }): void {
         if (this.rangeDate === undefined && (this.timestamp !== undefined) && this.propBoolean('range')) {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (cols === this.dateValueStr) {
@@ -603,31 +625,30 @@ export default class extends clickgo.control.AbstractControl {
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
-        const event: types.IDatepanelChangedEvent = {
+        const event: types.IDatepanelSelectedEvent = {
             'detail': {
-                'value': this.timestamp
+                'time': col.time,
+                'date': col.date,
+                'month': col.month,
+                'year': col.year,
+                'day': col.day,
+                'str': col.str
             }
         };
-        this.emit('changed', event);
+        this.emit('selected', event);
     }
 
     /** --- 跳转到今天 --- */
-    public today() {
+    public today(): void {
         const now = new Date();
         this.dateObj.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
-        const event: types.IDatepanelChangedEvent = {
-            'detail': {
-                'value': this.timestamp
-            }
-        };
-        this.emit('changed', event);
     }
 
     /** --- 返回选中年月 --- */
-    public back() {
+    public back(): void {
         this.vyear[0] = this.dateValue.year.toString();
         this.vmonth[0] = (this.dateValue.month + 1).toString();
         this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
@@ -816,7 +837,7 @@ export default class extends clickgo.control.AbstractControl {
         'date': number;
         'month': number;
         'year': number;
-    }) {
+    }): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -839,7 +860,7 @@ export default class extends clickgo.control.AbstractControl {
         }): string | undefined => {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             return cols > this.endYmd || cols < this.startYmd ? '' : undefined;
-        }
+        };
     }
 
     /** --- col 显示的 class 效果，有四种，1: undefined, 2: range, 3: range-left, 4: range-right --- */
@@ -874,7 +895,7 @@ export default class extends clickgo.control.AbstractControl {
     // --- 供用户调用的方法 ---
 
     /** --- 清除所有状态 --- */
-    public clear() {
+    public clear(): void {
         this.timestamp = undefined;
         this.emit('update:modelValue', undefined);
         this.rangeDate = undefined;

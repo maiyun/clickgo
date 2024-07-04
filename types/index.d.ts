@@ -672,7 +672,7 @@ export interface IAbstractPanelShowEvent {
         'previous': string;
         /** --- 仅 nav 联动时有效，代表本次 show 的时候 qs 是否发生了变化 --- */
         'qsChange': boolean;
-    }
+    };
 }
 
 // --- Check Control ---
@@ -697,7 +697,15 @@ export interface ITextBeforechangeEvent extends ICustomEvent {
     'detail': {
         'value': string;
         'change'?: string;
-    }
+    };
+}
+
+// --- Date Control ---
+
+export interface IDateChangedEvent {
+    'detail': {
+        'value'?: number;
+    };
 }
 
 // --- Datepanel Control ---
@@ -715,6 +723,17 @@ export interface IDatepanelChangedEvent {
     };
 }
 
+export interface IDatepanelSelectedEvent {
+    'detail': {
+        'time': number;
+        'date': number;
+        'month': number;
+        'year': number;
+        'day': number;
+        'str': string;
+    };
+}
+
 // --- Date Control ---
 
 export interface IDateRangeEvent {
@@ -729,7 +748,7 @@ export interface IDateRangeEvent {
 export interface IFormCloseEvent extends ICustomEvent {
     'detail': {
         'event': MouseEvent;
-    }
+    };
 }
 
 export interface IFormMaxEvent {
@@ -744,8 +763,8 @@ export interface IFormMaxEvent {
             'height': number;
             'left': number;
             'top': number;
-        } | null
-    }
+        } | null;
+    };
 }
 
 export interface IFormMinEvent {
@@ -760,8 +779,8 @@ export interface IFormMinEvent {
             'height': number;
             'left': number;
             'top': number;
-        } | null
-    }
+        } | null;
+    };
 }
 
 // --- Greatlist Control ---

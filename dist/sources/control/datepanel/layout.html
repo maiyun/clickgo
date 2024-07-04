@@ -24,7 +24,7 @@
     </div>
     <div class="footer" v-if="propBoolean('time') || propBoolean('zone')">
         <template v-if="propBoolean('time')">
-            <cg-select :data="hours" v-model="vhour" virtual></cg-select>
+            <cg-select :data="hours" v-model="vhour" virtual changed=""></cg-select>
             <label>:</label>
             <cg-select :data="minutes" v-model="vminute" virtual></cg-select>
             <label>:</label>

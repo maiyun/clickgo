@@ -29,6 +29,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'changed': null,
+            'selected': null,
             'range': null,
             'update:modelValue': null,
             'update:tz': null,
@@ -427,15 +428,18 @@ class default_1 extends clickgo.control.AbstractControl {
     refreshView() {
         const now = new Date();
         now.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 1, 1);
+        now.setUTCHours(0, 0, 0, 0);
         const day1 = now.getUTCDay();
         if (day1 > 0) {
             now.setUTCDate(1 - day1);
         }
         this.maps.length = 0;
+        const zone = this.tzData * 60 * 60 * 1000;
         for (let i = 0; i < 6; ++i) {
             this.maps[i] = [];
             for (let j = 0; j < 7; ++j) {
                 this.maps[i].push({
+                    'time': now.getTime() - zone,
                     'date': now.getUTCDate(),
                     'month': now.getUTCMonth(),
                     'year': now.getUTCFullYear(),
@@ -453,11 +457,25 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     updateTimestamp() {
         if (this.timestamp === undefined) {
+            if (this.props.modelValue !== undefined) {
+                const event = {
+                    'detail': {
+                        'value': undefined
+                    }
+                };
+                this.emit('changed', event);
+            }
             return;
         }
         this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
         if (this.propNumber('modelValue') !== this.timestamp) {
             this.emit('update:modelValue', this.timestamp);
+            const event = {
+                'detail': {
+                    'value': this.timestamp
+                }
+            };
+            this.emit('changed', event);
         }
     }
     goSelected() {
@@ -515,10 +533,15 @@ class default_1 extends clickgo.control.AbstractControl {
         this.goSelected();
         const event = {
             'detail': {
-                'value': this.timestamp
+                'time': col.time,
+                'date': col.date,
+                'month': col.month,
+                'year': col.year,
+                'day': col.day,
+                'str': col.str
             }
         };
-        this.emit('changed', event);
+        this.emit('selected', event);
     }
     today() {
         const now = new Date();
@@ -526,12 +549,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
-        const event = {
-            'detail': {
-                'value': this.timestamp
-            }
-        };
-        this.emit('changed', event);
     }
     back() {
         this.vyear[0] = this.dateValue.year.toString();

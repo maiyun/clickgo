@@ -30,7 +30,7 @@ export default class extends clickgo.form.AbstractForm {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
     }
 
-    public onChanged(e: types.IDatepanelChangedEvent) {
+    public onChanged(e: types.IDatepanelChangedEvent): void {
         console.log('onChanged', e, JSON.stringify(e));
     }
 
