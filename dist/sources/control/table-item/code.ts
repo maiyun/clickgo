@@ -19,7 +19,7 @@ export default class extends clickgo.control.AbstractControl {
             'alignH': undefined,
             'alignV': undefined
         };
-    
+
     /** --- 当前是第几列，从 0 开始 --- */
     public index: number = 0;
 
@@ -37,6 +37,23 @@ export default class extends clickgo.control.AbstractControl {
         }
         if (this.index === this.table.itemsLength - 1) {
             return this.table.isFixed?.right;
+        }
+        return undefined;
+    }
+
+    /** --- 当前是固定模式下，是否正在浮动中 --- */
+    public get isBase(): 'left' | 'right' | undefined {
+        if (this.isFixed === 'left') {
+            if (this.scrollLeft > 0) {
+                return 'left';
+            }
+            return undefined;
+        }
+        if (this.isFixed === 'right') {
+            if (this.scrollLeft < this.maxScrollLeft) {
+                return 'right';
+            }
+            return undefined;
         }
         return undefined;
     }

@@ -53,6 +53,21 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return undefined;
     }
+    get isBase() {
+        if (this.isFixed === 'left') {
+            if (this.scrollLeft > 0) {
+                return 'left';
+            }
+            return undefined;
+        }
+        if (this.isFixed === 'right') {
+            if (this.scrollLeft < this.maxScrollLeft) {
+                return 'right';
+            }
+            return undefined;
+        }
+        return undefined;
+    }
     get scrollLeft() {
         var _a;
         return (_a = this.table.scrollLeft) !== null && _a !== void 0 ? _a : 0;

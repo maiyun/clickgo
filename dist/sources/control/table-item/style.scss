@@ -21,12 +21,12 @@
             box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -10px;
         }
     }
-    &.base-left {
+    &[data-cg-base='left'] {
         &::before {
             opacity: 1;
         }
     }
-    &.base-right {
+    &[data-cg-base='right'] {
         &:before {
             opacity: 1;
         }

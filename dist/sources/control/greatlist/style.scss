@@ -19,6 +19,9 @@
             // --- item ---
             .item {
                 display: flex; border: solid .5px transparent; border-radius: var(--g-radius); transition: var(--g-transition);
+                [data-cg-base] {
+                    background: var(--g-plain-background);
+                }
                 &:not([data-cg-disabled]) {
                     &:hover {
                         background: var(--g-plain-background-hover);
