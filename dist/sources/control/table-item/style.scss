@@ -21,14 +21,12 @@
             box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -10px;
         }
     }
-    &[data-cg-base='left'] {
+    &[data-cg-base] {
         &::before {
             opacity: 1;
         }
     }
-    &[data-cg-base='right'] {
-        &:before {
-            opacity: 1;
-        }
+    &:not([data-cg-base]) {
+        overflow: hidden;
     }
 }

@@ -17,6 +17,7 @@
             flex: 1; padding: 1px;
     
             // --- item ---
+            // --- 下面的 [data-cg-base] 是用来解决 base 模式下背景透明的问题 ---
             .item {
                 display: flex; border: solid .5px transparent; border-radius: var(--g-radius); transition: var(--g-transition);
                 [data-cg-base] {
@@ -25,13 +26,13 @@
                 &:not([data-cg-disabled]) {
                     &:hover {
                         background: var(--g-plain-background-hover);
-                        [data-cg-control='table-item'] {
+                        [data-cg-base] {
                             background: var(--g-plain-background-hover);
                         }
                     }
                     &.selected {
                         background: var(--g-plain-background-selected);
-                        [data-cg-control='table-item'] {
+                        [data-cg-base] {
                             background: var(--g-plain-background-selected);
                         }
                     }
