@@ -14,7 +14,7 @@ export default class extends clickgo.control.AbstractControl {
         'map': {
             'true'?: any;
             'false'?: any;
-        },
+        };
 
         'modelValue': any;
     } = {
@@ -38,7 +38,6 @@ export default class extends clickgo.control.AbstractControl {
     public value: any = false;
 
     public isSpaceDown = false;
-    
 
     public click(): void {
         const event: types.ISwitchChangeEvent = {

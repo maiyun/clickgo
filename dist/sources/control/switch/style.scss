@@ -1,5 +1,5 @@
 .wrap {
-    outline: none; width: 32px; height: 16px; border-radius: var(--g-radius); position: relative; transition: all .3s var(--g-cubic); transition-property: background-color, filter;
+    outline: none; width: 32px; height: 16px; border-radius: var(--g-radius); position: relative; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow) inset; border: solid .5px var(--g-plain-border-color);
     &::after {
         content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; border: dotted .5px hsl(0, 0%, 100%)
     }
@@ -8,7 +8,10 @@
         display: block;
     }
     .block {
-        left: 3px; top: 3px; width: 10px; height: calc(100% - 6px); background: #FFF; position: absolute; transition: all .3s var(--g-cubic);
+        left: 3px; top: 3px; width: 10px; height: calc(100% - 6px); background: var(--g-plain-background); position: absolute; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow); border: solid .5px var(--g-plain-border-color);
+        &:hover {
+            background: var(--g-plain-background-hover);
+        }
     }
     // --- 选中模式 ---
     &.checked {
@@ -21,17 +24,12 @@
             background: var(--success);
         }
         &:not(.checked) {
-            background: var(--danger);
-        }
-
-        // --- hover ---
-        &:hover {
-            filter: brightness(1.1);
+            background: var(--g-plain-background);
         }
 
         // --- active ---
         &:active, &.active {
-            filter: brightness(0.9);
+            box-shadow: var(--g-shadow) inset, var(--g-outline-shadow);
         }
     }
 

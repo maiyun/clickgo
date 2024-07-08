@@ -81,6 +81,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.bcurrent = 0;
     }
     onDurationchange() {
+        if (!this.refs.video) {
+            return;
+        }
         this.duration = this.refs.video.duration;
         this.emit('durationchange', this.duration);
     }

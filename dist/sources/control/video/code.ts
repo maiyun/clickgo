@@ -72,6 +72,9 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 媒介长度改变时 video 会触发 --- */
     public onDurationchange(): void {
+        if (!this.refs.video) {
+            return;
+        }
         this.duration = this.refs.video.duration;
         this.emit('durationchange', this.duration);
     }
@@ -264,7 +267,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 当视频可以播放之时要处理的事件 ---
-    public onCanplay() {
+    public onCanplay(): void {
         this.playData = this.propBoolean('play');
         if (this.playData && !this._currentTimer) {
             this.refs.video.play();
