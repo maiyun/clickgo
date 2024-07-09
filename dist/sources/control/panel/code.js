@@ -61,8 +61,7 @@ class default_1 extends clickgo.control.AbstractControl {
             clickgo.form.removeActivePanel(this.activeId, this.formId);
             yield this.loaded[this.activeId].vroot.onHide();
             const old = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]');
-            old.style.opacity = '0';
-            old.style.pointerEvents = 'none';
+            old.style.display = 'none';
         });
     }
     go(cls_1) {
@@ -101,8 +100,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.activeId = parseInt(id);
                 clickgo.form.setActivePanel(this.activeId, this.formId);
                 const n = this.element.querySelector('[data-panel-id="' + id + '"]');
-                n.style.opacity = '1';
-                n.style.pointerEvents = '';
+                n.style.display = 'flex';
                 if (this.access.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.access.nav.qs))) {
                     item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     yield item.vroot.onQsChange();
@@ -123,8 +121,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     'vroot': rtn.vroot
                 };
                 const n = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]');
-                n.style.opacity = '1';
-                n.style.pointerEvents = '';
+                n.style.display = 'flex';
                 if (this.access.nav) {
                     rtn.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     yield rtn.vroot.onQsChange();
@@ -190,7 +187,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.mapSelected = name;
-            this.loaded[this.activeId].vroot.onShowed();
+            yield this.loaded[this.activeId].vroot.onShowed();
         });
     }
     onMounted() {

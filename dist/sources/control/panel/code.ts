@@ -31,13 +31,12 @@ export default class extends clickgo.control.AbstractControl {
         'vroot': clickgo.form.AbstractPanel;
     }> = {};
 
-
     public access: {
-        'nav': (clickgo.control.AbstractControl & Record<string, any>) | null
+        'nav': (clickgo.control.AbstractControl & Record<string, any>) | null;
     } = {
-        /** --- nav 控件 --- */
-        'nav': null
-    };
+            /** --- nav 控件 --- */
+            'nav': null
+        };
 
     /** --- 当前 active 的 panel id --- */
     public activeId: number = 0;
@@ -50,8 +49,11 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.form.removeActivePanel(this.activeId, this.formId);
         await this.loaded[this.activeId].vroot.onHide();
         const old: HTMLElement = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]')!;
+        old.style.display = 'none';
+        /*
         old.style.opacity = '0';
         old.style.pointerEvents = 'none';
+        */
     }
 
     /**
@@ -105,8 +107,11 @@ export default class extends clickgo.control.AbstractControl {
             this.activeId = parseInt(id);
             clickgo.form.setActivePanel(this.activeId, this.formId);
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + id + '"]')!;
+            n.style.display = 'flex';
+            /*
             n.style.opacity = '1';
             n.style.pointerEvents = '';
+            */
             if (this.access.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.access.nav.qs))) {
                 item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                 await item.vroot.onQsChange();
@@ -130,8 +135,11 @@ export default class extends clickgo.control.AbstractControl {
                 'vroot': rtn.vroot
             };
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]')!;
+            n.style.display = 'flex';
+            /*
             n.style.opacity = '1';
             n.style.pointerEvents = '';
+            */
             if (this.access.nav) {
                 rtn.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                 await rtn.vroot.onQsChange();
@@ -208,13 +216,13 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.mapSelected = name;
         // --- 真正跳转成功，执行 panel 的 onShowed ---
-        this.loaded[this.activeId].vroot.onShowed();
+        await this.loaded[this.activeId].vroot.onShowed();
     }
 
     public onMounted(): void {
         this.access.nav = this.parentByName('nav');
         // --- 等待 rootForm 的 mounted 真正的挂载完成，在执行下面的内容 ---
-        this.rootForm.ready(async() => {
+        this.rootForm.ready(async () => {
             this.watch('modelValue', async () => {
                 await this.mapNameChange();
             });

@@ -2181,9 +2181,7 @@ function createPanel(rootPanel_1, cls_1) {
         }
         const mel = rootPanel.element.children.item(rootPanel.element.children.length - 1);
         mel.style.position = 'absolute';
-        mel.style.pointerEvents = 'none';
-        mel.style.opacity = '0';
-        mel.style.display = 'flex';
+        mel.style.display = 'none';
         const rtn = yield new Promise(function (resolve) {
             const vapp = clickgo.vue.createApp({
                 'template': layout.replace(/^<cg-panel([\s\S]+)-panel>$/, '<cg-layout$1-layout>'),
