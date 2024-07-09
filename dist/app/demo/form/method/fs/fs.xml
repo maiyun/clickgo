@@ -5,8 +5,8 @@
         <label>{{val[0]}}</label>
         <list v-model="val" :data="list" @mousedown="dblclick" @touchstart="dblclick" style="flex: 1; height: 0;"></list>
         <layout gutter="10">
-            <button style="padding: 0 10px;" @click="open(ppath)">Refresh</button>
-            <button style="padding: 0 10px;" @click="stats">Stats</button>
+            <button @click="open(ppath)">Refresh</button>
+            <button @click="stats">Stats</button>
             <button style="flex: 1;" @click="up">Up</button>
         </layout>
         <layout gutter="10">

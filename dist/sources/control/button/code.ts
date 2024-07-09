@@ -10,6 +10,7 @@ export default class extends clickgo.control.AbstractControl {
         'type': 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger';
 
         'area': 'all' | 'mark' | 'split';
+        'size': 'm' | 'l' | 'xl';
     } = {
             'disabled': false,
             'plain': false,
@@ -17,11 +18,9 @@ export default class extends clickgo.control.AbstractControl {
 
             'type': 'default',
 
-            'area': 'all'
+            'area': 'all',
+            'size': 'm'
         };
-
-    /** --- watch 的外围 el 的 padding --- */
-    public padding = '';
 
     /** --- 当前是否有键盘空格正在按下中 --- */
     public isSpaceDown = false;
@@ -40,11 +39,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 左侧或者右侧正在有焦点 --- */
     public get isChildFocus(): boolean {
         return this.innerFocus || this.arrowFocus;
-    }
-
-    /** --- 外围 padding 的相反值 --- */
-    public get opMargin(): string {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
 
     // --- methods ---
@@ -92,7 +86,9 @@ export default class extends clickgo.control.AbstractControl {
                         return;
                     }
                     this.arrowClick(e);
-                }).catch((e) => { console.log(e); });
+                }).catch(() => {
+                    //
+                });
             }
         }
     }
@@ -186,12 +182,6 @@ export default class extends clickgo.control.AbstractControl {
                 // clickgo.form.hidePop(this.refs.arrow);
             }
         }
-    }
-
-    public onMounted(): void {
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
-        }, true);
     }
 
 }

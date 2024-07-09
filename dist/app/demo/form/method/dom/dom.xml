@@ -6,8 +6,8 @@
             <button @click="hasTouchButMouse" >hasTouchButMouse()</button>
             <button @click="getStyleCount" >getStyleCount({{taskId}}, 'form')</button>
             <layout gutter="10">
-                <button @click="watchSize" ref="watchSize" :style="{'height': (watchSizeHeight ? 30 : 50) + 'px'}" style="padding: 0 5px; flex: 1;">{{watchSizeText ? '' : '!'}}watchSize</button>
-                <button @click="watchSizeHeight = !watchSizeHeight" style="padding: 0 5px; flex: 1;">Change</button>
+                <button @click="watchSize" ref="watchSize" :style="{'height': (watchSizeHeight ? 30 : 50) + 'px'}" style="flex: 1;">{{watchSizeText ? '' : '!'}}watchSize</button>
+                <button @click="watchSizeHeight = !watchSizeHeight" style="flex: 1;">Change</button>
             </layout>
             <layout gutter="10" align-v="center">
                 <button @click="watchPosition" ref="watchPosition" style="flex: 1;">{{watchPositionText ? '' : '!'}}watchPosition</button>

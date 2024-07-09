@@ -1,7 +1,7 @@
 <form width="200" height="200" title="dialog">
     <layout align-v="center" align-h="center" direction="v" gutter="10" style="flex: 1; width: 0;">
         <label>Haha! Result: {{dr}}</label>
-        <button @click="dialogResult = dialogResult ? '' : 'Done'" style="padding: 10px;">{{dialogResult ? 'Remove' : 'Set'}} dialogResult</button>
-        <button @click="newDialog"style="padding: 10px;">showDialog()</button>
+        <button @click="dialogResult = dialogResult ? '' : 'Done'">{{dialogResult ? 'Remove' : 'Set'}} dialogResult</button>
+        <button @click="newDialog">showDialog()</button>
     </layout>
 </form>

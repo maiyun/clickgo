@@ -32,9 +32,9 @@ class default_1 extends clickgo.control.AbstractControl {
             'plain': false,
             'checked': false,
             'type': 'default',
-            'area': 'all'
+            'area': 'all',
+            'size': 'm'
         };
-        this.padding = '';
         this.isSpaceDown = false;
         this.innerFocus = false;
         this.arrowFocus = false;
@@ -44,9 +44,6 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get isChildFocus() {
         return this.innerFocus || this.arrowFocus;
-    }
-    get opMargin() {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
     keydown(e) {
         var _a, _b;
@@ -86,7 +83,8 @@ class default_1 extends clickgo.control.AbstractControl {
                         return;
                     }
                     this.arrowClick(e);
-                }).catch((e) => { console.log(e); });
+                }).catch(() => {
+                });
             }
         }
     }
@@ -163,11 +161,6 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
             }
         }
-    }
-    onMounted() {
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
-        }, true);
     }
 }
 exports.default = default_1;

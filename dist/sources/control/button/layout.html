@@ -1,10 +1,8 @@
-<div class="wrap" :class="[type, propBoolean('plain') && 'plain', isSpaceDown ? 'active' : undefined, propBoolean('checked') && 'checked', isChildFocus && 'childfocus', 'area-' + (slots['pop'] ? area : 'all')]" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus && canDoMain) ? '0' : undefined" @keydown="keydown" @keyup="keyup" @mousedown="down" @touchstart="down" role="button">
-    <div class="op" :style="{'margin': opMargin}">
-        <div class="inner" :class="[innerFocus && isSpaceDown && 'active', propBoolean('checked') && 'checked']" :tabindex="(!propBoolean('disabled') && formFocus && !canDoMain) ? '0' : undefined" @focus="innerFocus = true" @blur="innerFocus = false" @click="innerClick" :style="{'padding': padding}">
-            <slot></slot>
-        </div>
-        <div v-if="slots['pop']" ref="arrow" class="arrow" :class="[arrowFocus && isSpaceDown && 'active']" :tabindex="(!propBoolean('disabled') && formFocus && !canDoMain) ? '0' : undefined" @focus="arrowFocus = true" @blur="arrowFocus = false" @click="arrowClick"></div>
+<div class="wrap" :class="[type, propBoolean('plain') && 'plain', isSpaceDown ? 'active' : undefined, propBoolean('checked') && 'checked', isChildFocus && 'childfocus', 'area-' + (slots['pop'] ? area : 'all'), 'size-' + size]" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus && canDoMain) ? '0' : undefined" @keydown="keydown" @keyup="keyup" @mousedown="down" @touchstart="down" role="button">
+    <div class="inner" :class="[innerFocus && isSpaceDown && 'active', propBoolean('checked') && 'checked']" :tabindex="(!propBoolean('disabled') && formFocus && !canDoMain) ? '0' : undefined" @focus="innerFocus = true" @blur="innerFocus = false" @click="innerClick">
+        <slot></slot>
     </div>
+    <div v-if="slots['pop']" ref="arrow" class="arrow" :class="[arrowFocus && isSpaceDown && 'active']" :tabindex="(!propBoolean('disabled') && formFocus && !canDoMain) ? '0' : undefined" @focus="arrowFocus = true" @blur="arrowFocus = false" @click="arrowClick"></div>
     <teleport v-if="slots['pop']" to="system">
         <div ref="pop" class="pop">
             <slot name="pop"></slot>

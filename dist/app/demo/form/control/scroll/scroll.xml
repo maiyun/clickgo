@@ -31,8 +31,8 @@
                 <label>On the left is the flow control.</label>
                 <label>isShow: {{isShow}}</label>
             </layout>
-            <button @click="float = !float" style="padding: 0 10px; height: 30px;">{{float ? 'Remove' : 'Set'}} float</button>
-            <button @click="count += 10" style="padding: 0 10px; height: 30px;">Add 10 lines</button>
+            <button @click="float = !float" style="height: 30px;">{{float ? 'Remove' : 'Set'}} float</button>
+            <button @click="count += 10" style="height: 30px;">Add 10 lines</button>
         </layout>
     </layout>
 </form>

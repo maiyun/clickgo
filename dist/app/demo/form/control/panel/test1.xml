@@ -9,8 +9,8 @@
     <button @click="sendToRootPanel({'a':1})" style="height: 30px;">sendToRootPanel({'a':1})</button>
     <button @click="clearQss">clearQs()</button>
     <layout>
-        <button style="padding: 15px 30px;" area="split">
-            Padding 10px 20px with pop
+        <button size="xl" area="split">
+            Size xl
             <template v-slot:pop>
                 <menulist>
                     <menulist-item alt="T">Test 1</menulist-item>
