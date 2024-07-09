@@ -20,7 +20,7 @@ export default class extends clickgo.form.AbstractForm {
     public multi = false;
 
     public ctrl = true;
-    
+
     public bottom = false;
 
     public selection = false;
@@ -49,7 +49,7 @@ export default class extends clickgo.form.AbstractForm {
         'selected': 0
     };
 
-    public refreshCheckinfo() {
+    public refreshCheckinfo(): void {
         this.checkinfo.total = 0;
         this.checkinfo.selected = 0;
         for (const item of this.data) {
@@ -63,7 +63,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
-    public onHeaderCheck(e: types.ICheckChangeEvent) {
+    public onHeaderCheck(e: types.ICheckChangeEvent): void {
         if (e.detail.value && !e.detail.indeterminate) {
             // --- 从选中变为不选 ---
             for (const item of this.data) {
@@ -116,7 +116,7 @@ export default class extends clickgo.form.AbstractForm {
         this.refreshSort();
     }
 
-    public refreshSort() {
+    public refreshSort(): void {
         if (this.sortinfo.index === -1) {
             return;
         }

@@ -3,6 +3,10 @@
         <label>drawer: {{drawer ? 'true' : 'false'}}</label>
         <button @click="drawer = true">Open</button>
         <button @click="tclose = !tclose">{{tclose ? '' : '!'}}close</button>
+        <table :data="data" v-slot="d">
+            <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
+            <table-item label="size" width="80">{{d.row.size ?? '0'}}</table-item>
+        </table>
     </layout>
     <drawer title="Drawer" gutter="10" v-model="drawer" direction="v" width="50%" :close="tclose">
         <label>123</label>

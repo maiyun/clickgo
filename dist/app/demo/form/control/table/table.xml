@@ -28,24 +28,30 @@
             </template>
             <!-- bottom -->
             <template v-if="bottom" v-slot:bottom="d">
-                <desc v-if="d.row.bottom" style="flex: 1; margin: var(--g-padding); margin-top: 0;">
-                    <desc-row>
-                        <desc-head>HEAD1</desc-head>
-                        <desc-head>HEAD2</desc-head>
-                        <desc-head>HEAD3</desc-head>
-                        <desc-head>HEAD4</desc-head>
-                    </desc-row>
-                    <desc-row>
-                        <desc-head>HEAD5</desc-head>
-                        <desc-cell>CELL1</desc-cell>
-                        <desc-head>HEAD6</desc-head>
-                        <desc-cell>CELL2</desc-cell>
-                    </desc-row>
-                    <desc-row>
-                        <desc-head>HEAD7</desc-head>
-                        <desc-cell colspan="3">CELL1</desc-cell>
-                    </desc-row>
-                </desc>
+                <template v-if="d.row.bottom">
+                    <desc v-if="d.index !== 1" style="flex: 1; margin: var(--g-padding); margin-top: 0;">
+                        <desc-row>
+                            <desc-head>HEAD1</desc-head>
+                            <desc-head>HEAD2</desc-head>
+                            <desc-head>HEAD3</desc-head>
+                            <desc-head>HEAD4</desc-head>
+                        </desc-row>
+                        <desc-row>
+                            <desc-head>HEAD5</desc-head>
+                            <desc-cell>CELL1</desc-cell>
+                            <desc-head>HEAD6</desc-head>
+                            <desc-cell>CELL2</desc-cell>
+                        </desc-row>
+                        <desc-row>
+                            <desc-head>HEAD7</desc-head>
+                            <desc-cell colspan="3">CELL1</desc-cell>
+                        </desc-row>
+                    </desc>
+                    <table v-else :data="[{'name':'a','size':'12'},{'name':'b','size':'14'}]" style="flex: 1; margin: var(--g-padding); margin-top: 0;">
+                        <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
+                        <table-item label="size">{{d.row.size ?? 'size'}}</table-item>
+                    </table>
+                </template>
             </template>
         </table>
         <template v-if="loadFirst">
