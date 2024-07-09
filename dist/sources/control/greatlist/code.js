@@ -743,12 +743,13 @@ class default_1 extends clickgo.control.AbstractControl {
             this.client = offset;
         });
         this.watch('modelValue', () => {
+            var _a;
             if ((this.valueData.length === this.props.modelValue.length)
                 && this.valueData.every((item) => this.props.modelValue.includes(item))) {
                 return;
             }
             this.valueData = this.props.modelValue;
-            this.shiftStart = this.valueData[0] !== undefined ? this.valueData[0] : 0;
+            this.shiftStart = (_a = this.valueData[0]) !== null && _a !== void 0 ? _a : 0;
             this.checkValue().catch(() => {
             });
         });

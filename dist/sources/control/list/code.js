@@ -453,7 +453,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get childrenTotal() {
         return (data, opt = {}) => {
-            var _a;
+            var _a, _b;
             const rtn = {
                 'total': 0,
                 'check': 0,
@@ -471,7 +471,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (data.format) {
                 data = data.format;
             }
-            if (!data.children || !data.children.length) {
+            if (!((_a = data.children) === null || _a === void 0 ? void 0 : _a.length)) {
                 if (opt.checkValues) {
                     const io = opt.checkValues.wait.indexOf(data.value);
                     if (io > -1) {
@@ -481,7 +481,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return rtn;
             }
             for (const item of data.children) {
-                if ((_a = item.children) === null || _a === void 0 ? void 0 : _a.length) {
+                if ((_b = item.children) === null || _b === void 0 ? void 0 : _b.length) {
                     const r = this.childrenTotal(item, opt);
                     rtn.total += r.total;
                     rtn.check += r.check;

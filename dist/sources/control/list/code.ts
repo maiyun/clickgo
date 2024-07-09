@@ -306,7 +306,9 @@ export default class extends clickgo.control.AbstractControl {
                     over.tree = item.tree;
                 }
                 if (item[this.mapComp.children]?.length > 0) {
-                    over.children = this.formatData(item[this.mapComp.children], oldIo !== -1 ? oldData[oldIo].children : []);
+                    over.children = this.formatData(
+                        item[this.mapComp.children], oldIo !== -1 ? oldData[oldIo].children : []
+                    );
                 }
             }
             else {
@@ -515,7 +517,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- check 模式下选中的项 --- */
     public checkValues: string[] = [];
 
-    public onCheckChange(e: types.ICheckChangeEvent, row: any) {
+    public onCheckChange(e: types.ICheckChangeEvent, row: any): void {
         e.preventDefault();
         if (row.format.children.length) {
             // --- 有下级 ---
@@ -580,7 +582,7 @@ export default class extends clickgo.control.AbstractControl {
             'checkValues'?: {
                 'wait': string[];
                 'result': string[];
-            }
+            };
         } = {}): {
             'total': number;
             'check': number;
@@ -604,7 +606,7 @@ export default class extends clickgo.control.AbstractControl {
             if (data.format) {
                 data = data.format;
             }
-            if (!data.children || !data.children.length) {
+            if (!data.children?.length) {
                 // --- 没有下层，应该不会到这里，那么可能是 root 层 ---
                 if (opt.checkValues) {
                     const io = opt.checkValues.wait.indexOf(data.value);
@@ -663,7 +665,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 在 check 模式下检测 values 是否正常 --- */
-    public refreshCheckValues() {
+    public refreshCheckValues(): void {
         const waitingCheck = clickgo.tool.clone(this.checkValues);
         const result: string[] = [];
         this.childrenTotal(this.dataGl, {
@@ -680,7 +682,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void {
-        this.watch('check' , () => {
+        this.watch('check', () => {
             if (!this.propBoolean('check')) {
                 // --- check 变 普通 ---
                 return;

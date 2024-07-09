@@ -276,12 +276,12 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onScrollHeight(sh: number) {
+    public onScrollHeight(sh: number): void {
         this.length = sh;
         this.emit('scrollheight', sh);
     }
 
-    public onScrollWidth(sw: number) {
+    public onScrollWidth(sw: number): void {
         this.sw = sw;
         this.emit('scrollwidth', sw);
     }
@@ -917,7 +917,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.valueData = this.props.modelValue;
-            this.shiftStart = this.valueData[0] !== undefined ? this.valueData[0] : 0;
+            this.shiftStart = this.valueData[0] ?? 0;
             this.checkValue().catch(() => {
                 //
             });
