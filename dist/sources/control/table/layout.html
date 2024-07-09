@@ -14,7 +14,7 @@
                 <div class="top">
                     <slot :row="data.row" :index="data.index"></slot>
                 </div>
-                <div class="bottom" v-if="slots['bottom']" :style="{'width': clientWidth + 'px'}">
+                <div class="bottom" v-if="slots['bottom'] && data.row.bottom" :style="{'--bottom-width': clientWidth + 'px'}">
                     <slot name="bottom" :row="data.row" :index="data.index"></slot>
                 </div>
             </div>

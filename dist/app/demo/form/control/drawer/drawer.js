@@ -30,24 +30,6 @@ class default_1 extends clickgo.form.AbstractForm {
         this.drawer = false;
         this.drawer2 = false;
         this.tclose = false;
-        this.data = [
-            {
-                'size': '0',
-                'name': 'Appraise',
-            },
-            {
-                'size': '3',
-                'name': 'Card',
-            },
-            {
-                'size': '2',
-                'name': 'Appraise2',
-            },
-            {
-                'size': '4',
-                'name': 'Appraise3',
-            }
-        ];
     }
 }
 exports.default = default_1;

@@ -90,6 +90,10 @@
                     <button @click="hash = !hash" style="flex: 1;">{{hash ? '' : '!'}}hash</button>
                     <button v-if="hash" @click="formHashBack" style="flex: 1;">hashBack</button>
                 </layout>
+                <table :data="[{'size':'0','name':'Appraise'},{'size':'3','name':'Card'},{'size':'2','name':'Appraise2'}]" v-slot="d">
+                    <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
+                    <table-item label="size" width="80">{{d.row.size ?? '0'}}</table-item>
+                </table>
             </layout>
         </template>
     </nav>

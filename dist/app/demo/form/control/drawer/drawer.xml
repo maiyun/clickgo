@@ -3,7 +3,7 @@
         <label>drawer: {{drawer ? 'true' : 'false'}}</label>
         <button @click="drawer = true">Open</button>
         <button @click="tclose = !tclose">{{tclose ? '' : '!'}}close</button>
-        <table :data="data" v-slot="d">
+        <table :data="[{'size':'0','name':'Appraise'},{'size':'3','name':'Card'},{'size':'2','name':'Appraise2'}]" v-slot="d">
             <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
             <table-item label="size" width="80">{{d.row.size ?? '0'}}</table-item>
         </table>

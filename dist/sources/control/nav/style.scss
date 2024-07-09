@@ -1,7 +1,7 @@
 .wrap {
     display: flex; position: relative;
     .menuwrap {
-        display: flex; overflow: hidden; z-index: 2;
+        display: flex; overflow: hidden; z-index: 7; // --- 原 2，目前与 drawer 相同 ---
         .menu {
             background: var(--face); border-right: solid .5px var(--g-border-color); padding: 1px; width: 250px; transition: all .3s var(--g-cubic); transition-property: transform;
             .logo {

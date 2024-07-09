@@ -12,13 +12,13 @@
     &.fixed-left {
         left: 0;
         &::before {
-            box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, .15); right: -10px;
+            box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, .15); right: -11px;
         }
     }
     &.fixed-right {
         right: 0;
         &:before {
-            box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -10px;
+            box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -11px;
         }
     }
     &[data-cg-base] {
