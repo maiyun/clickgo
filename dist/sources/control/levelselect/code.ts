@@ -122,18 +122,6 @@ export default class extends clickgo.control.AbstractControl {
             }
         ];
 
-    // --- 样式 ---
-
-    public background = '';
-
-    public padding = '';
-
-    // --- 计算变量 ---
-
-    public get opMargin(): string {
-        return this.padding.replace(/(\w+)/g, '-$1');
-    }
-
     // --- 传递给 list 的 data ---
     public get nowlistComp(): any[] | Record<string, any> {
         if (this.inputValue === '') {
@@ -215,7 +203,9 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 两个函数共用的处理函数，返回 false 代表确实没有下级 --- */
-    private async _findValueInDataAndSelectValueCheckChildren(nextChildren: any[] | Record<string, any> | null, autoUpdate: boolean = true, hidePop: boolean = false): Promise<boolean> {
+    private async _findValueInDataAndSelectValueCheckChildren(
+        nextChildren: any[] | Record<string, any> | null, autoUpdate: boolean = true, hidePop: boolean = false
+    ): Promise<boolean> {
         if (!nextChildren) {
             // --- 选中但无下级 ---
             if (!this.propBoolean('async')) {
@@ -288,7 +278,7 @@ export default class extends clickgo.control.AbstractControl {
         return true;
     }
 
-    private _fvid: {
+    private readonly _fvid: {
         'level': number;
         'value': string[];
         'label': string[];
@@ -296,14 +286,14 @@ export default class extends clickgo.control.AbstractControl {
         'levelData': Array<{
             'label': string;
             'value': string;
-        }>
+        }>;
     } = {
-        'level': 0,
-        'value': [],
-        'label': [],
-        'lists': [],
-        'levelData': []
-    };
+            'level': 0,
+            'value': [],
+            'label': [],
+            'lists': [],
+            'levelData': []
+        };
 
     /** --- 搜索所有层级中，value 在哪里 --- */
     public async findValueInData(value: string, data?: any[] | Record<string, any>): Promise<boolean> {
@@ -343,8 +333,8 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 this._fvid.value.splice(-1);
                 this._fvid.label.splice(-1);
-                this._fvid.lists.splice(-1)
-                this._fvid.levelData.splice(-1)
+                this._fvid.lists.splice(-1);
+                this._fvid.levelData.splice(-1);
                 --this._fvid.level;
                 continue;
             }
@@ -469,7 +459,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- 有选择 ---
-        this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
+        await this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
     }
 
     // --- 返回上级 ---
@@ -545,7 +535,7 @@ export default class extends clickgo.control.AbstractControl {
             return false;
         }
         // --- 选中 ---
-        return await this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
+        return this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
     }
 
     public onMounted(): void | Promise<void> {
@@ -579,7 +569,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.levelData = [{
                     'label': '',
                     'value': ''
-                }]
+                }];
                 this.updateValue();
                 return;
             }
@@ -605,22 +595,9 @@ export default class extends clickgo.control.AbstractControl {
             this.levelData = [{
                 'label': '',
                 'value': ''
-            }]
+            }];
             this.updateValue();
         });
-
-        clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
-            switch (n) {
-                case 'background': {
-                    this.background = v;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
-                    break;
-                }
-            }
-        }, true);
 
         this.setNowList(this.props.data);
         this.lists[0] = this.props.data;

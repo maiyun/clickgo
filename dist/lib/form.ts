@@ -2381,15 +2381,17 @@ export function hidePop(pop?: HTMLElement | types.IVue): void {
     }
     else {
         if (popInfo.list[level]) {
-            popInfo.list[level].removeAttribute('data-cg-open');
-            popInfo.list[level].removeAttribute('data-cg-level');
+            /** --- el 对应的 pop --- */
+            const opop = popInfo.list[level];
+            opop.removeAttribute('data-cg-open');
+            opop.removeAttribute('data-cg-level');
             clickgo.dom.unwatchSize(popInfo.list[level]);
             clickgo.dom.unwatchPosition(pop);
             clickgo.tool.sleep(334).then(() => {
-                if (popInfo.list[level].dataset.cgLevel !== undefined) {
+                if (opop.dataset.cgLevel !== undefined) {
                     return;
                 }
-                popInfo.list[level].dataset.cgPopNone = '';
+                opop.dataset.cgPopNone = '';
             }).catch(() => {
                 //
             });

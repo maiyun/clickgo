@@ -1,9 +1,7 @@
 <cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :plain="propBoolean('plain')" area="text" pop="custom" :virtual="virtual" padding="0">
-    <div class="op" :style="{'margin': opMargin, 'padding-left': label.length > 1 ? 'var(--g-padding)' : undefined}">
-        <div v-if="label.length > 1">{{label.length > 1 ? label.slice(0, -1).join(' / ') : '　'}}</div>
-        <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" :style="{'padding': padding, 'background': background}" @keydown="keydown" @blur="blur"></cg-text>
-        <div class="oploading" :class="[loading&&'show']"></div>
-    </div>
+    <div v-if="label.length > 1" class="label" :style="{'padding-left': label.length > 1 ? 'var(--g-padding)' : undefined}">{{label.length > 1 ? label.slice(0, -1).join(' / ') : '　'}}</div>
+    <cg-text :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" @keydown="keydown" @blur="blur" plain></cg-text>
+    <div class="oploading" :class="[loading&&'show']"></div>
     <template v-slot:pop>
         <div class="pop">
             <div v-if="level > 0" class="back" @click="back">

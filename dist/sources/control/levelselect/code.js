@@ -109,8 +109,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 'value': ''
             }
         ];
-        this.background = '';
-        this.padding = '';
         this._fvid = {
             'level': 0,
             'value': [],
@@ -118,9 +116,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'lists': [],
             'levelData': []
         };
-    }
-    get opMargin() {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
     get nowlistComp() {
         var _a, _b;
@@ -412,7 +407,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!isSelected) {
                 return;
             }
-            this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
+            yield this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
         });
     }
     back() {
@@ -483,7 +478,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!isSelected) {
                 return false;
             }
-            return yield this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
+            return this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
         });
     }
     onMounted() {
@@ -544,18 +539,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 }];
             this.updateValue();
         }));
-        clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
-            switch (n) {
-                case 'background': {
-                    this.background = v;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
-                    break;
-                }
-            }
-        }, true);
         this.setNowList(this.props.data);
         this.lists[0] = this.props.data;
     }
