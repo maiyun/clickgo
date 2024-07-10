@@ -136,7 +136,7 @@ export default class extends clickgo.form.AbstractForm {
         for (let i = 0; i < this.slist.length; ++i) {
             const item = this.slist[i];
             data.push({
-                'type': item.type === undefined ? 'split' : item.type,
+                'type': item.type ?? 'split',
                 'menu': i === 20 ? true : false
             });
         }
@@ -176,7 +176,7 @@ export default class extends clickgo.form.AbstractForm {
         for (let k = 0; k < this.slist.length; ++k) {
             if (this.slist[k].name) {
                 data.push({
-                    'label': `index: ${k}, value: ${this.slist[k].name}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
+                    'label': `index: ${k}, value: ${this.slist[k].name ?? ''}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
                     'value': this.slist[k].name,
                     'disabled': this.slist[k].disabled
                 });
@@ -213,11 +213,14 @@ export default class extends clickgo.form.AbstractForm {
             clickgo.form.dialog('There are currently no selected items.').catch((e: Error) => { throw e; });
         }
         else {
-            const types = [];
+            const types: number[] = [];
             for (const item of this.select) {
+                if (this.slist[item].type === undefined) {
+                    continue;
+                }
                 types.push(this.slist[item].type);
             }
-            clickgo.form.dialog(`Type is ${types}.`).catch((e: Error) => { throw e; });
+            clickgo.form.dialog(`Type is ${types.join(', ')}.`).catch((e: Error) => { throw e; });
         }
     }
 

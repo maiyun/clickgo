@@ -243,57 +243,38 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('multi') || (!shift && !ctrl)) {
             if (value === -1) {
                 if (this.valueData.length > 0) {
-                    const event = {
-                        'go': true,
-                        preventDefault: function () {
-                            this.go = false;
-                        },
-                        'detail': {
-                            'value': []
-                        }
-                    };
-                    this.emit('change', event);
-                    if (event.go) {
-                        change = true;
-                        this.valueData = [];
-                        const event = {
-                            'detail': {
-                                'value': []
-                            }
-                        };
-                        this.emit('changed', event);
-                    }
-                }
-            }
-            else {
-                if (this.valueData.length > 1 || this.valueData.length === 0) {
-                    if (canSelect(value)) {
+                    if (!this.propBoolean('multi')) {
                         const event = {
                             'go': true,
                             preventDefault: function () {
                                 this.go = false;
                             },
                             'detail': {
-                                'value': [value]
+                                'value': []
                             }
                         };
                         this.emit('change', event);
                         if (event.go) {
                             change = true;
-                            this.valueData = [value];
-                            this.shiftStart = value;
+                            this.valueData = [];
                             const event = {
                                 'detail': {
-                                    'value': [value]
+                                    'value': []
                                 }
                             };
                             this.emit('changed', event);
                         }
                     }
+                    else {
+                        change = true;
+                        this.valueData = [];
+                    }
                 }
-                else {
-                    if (this.valueData[0] !== value) {
-                        if (canSelect(value)) {
+            }
+            else {
+                if (this.valueData.length > 1 || this.valueData.length === 0) {
+                    if (canSelect(value)) {
+                        if (!this.propBoolean('multi')) {
                             const event = {
                                 'go': true,
                                 preventDefault: function () {
@@ -306,7 +287,7 @@ class default_1 extends clickgo.control.AbstractControl {
                             this.emit('change', event);
                             if (event.go) {
                                 change = true;
-                                this.valueData[0] = value;
+                                this.valueData = [value];
                                 this.shiftStart = value;
                                 const event = {
                                     'detail': {
@@ -314,6 +295,45 @@ class default_1 extends clickgo.control.AbstractControl {
                                     }
                                 };
                                 this.emit('changed', event);
+                            }
+                        }
+                        else {
+                            change = true;
+                            this.valueData = [value];
+                            this.shiftStart = value;
+                        }
+                    }
+                }
+                else {
+                    if (this.valueData[0] !== value) {
+                        if (canSelect(value)) {
+                            if (!this.propBoolean('multi')) {
+                                const event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'value': [value]
+                                    }
+                                };
+                                this.emit('change', event);
+                                if (event.go) {
+                                    change = true;
+                                    this.valueData[0] = value;
+                                    this.shiftStart = value;
+                                    const event = {
+                                        'detail': {
+                                            'value': [value]
+                                        }
+                                    };
+                                    this.emit('changed', event);
+                                }
+                            }
+                            else {
+                                change = true;
+                                this.valueData[0] = value;
+                                this.shiftStart = value;
                             }
                         }
                     }
@@ -515,7 +535,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.refs.flow.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
-        if (!this.propBoolean('must')) {
+        if (!this.propBoolean('must') && this.propBoolean('ctrl') && !(e instanceof TouchEvent)) {
             const gi = clickgo.dom.findParentByData(e.target, 'cg-size');
             if ((e.target.dataset.cgSize === undefined) && !gi) {
                 clickgo.dom.bindClick(e, () => {

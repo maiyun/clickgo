@@ -126,17 +126,19 @@ class default_1 extends clickgo.form.AbstractForm {
         return rtn;
     }
     get adData() {
+        var _a;
         const data = [];
         for (let i = 0; i < this.slist.length; ++i) {
             const item = this.slist[i];
             data.push({
-                'type': item.type === undefined ? 'split' : item.type,
+                'type': (_a = item.type) !== null && _a !== void 0 ? _a : 'split',
                 'menu': i === 20 ? true : false
             });
         }
         return data;
     }
     get listData() {
+        var _a;
         const data = ['Item1', {
                 'label': 'Tip',
                 'color': 'tip'
@@ -167,7 +169,7 @@ class default_1 extends clickgo.form.AbstractForm {
         for (let k = 0; k < this.slist.length; ++k) {
             if (this.slist[k].name) {
                 data.push({
-                    'label': `index: ${k}, value: ${this.slist[k].name}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
+                    'label': `index: ${k}, value: ${(_a = this.slist[k].name) !== null && _a !== void 0 ? _a : ''}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
                     'value': this.slist[k].name,
                     'disabled': this.slist[k].disabled
                 });
@@ -202,9 +204,12 @@ class default_1 extends clickgo.form.AbstractForm {
         else {
             const types = [];
             for (const item of this.select) {
+                if (this.slist[item].type === undefined) {
+                    continue;
+                }
                 types.push(this.slist[item].type);
             }
-            clickgo.form.dialog(`Type is ${types}.`).catch((e) => { throw e; });
+            clickgo.form.dialog(`Type is ${types.join(', ')}.`).catch((e) => { throw e; });
         }
     }
     selectButton() {

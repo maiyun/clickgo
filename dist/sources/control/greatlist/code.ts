@@ -321,25 +321,32 @@ export default class extends clickgo.control.AbstractControl {
             if (value === -1) {
                 // --- 清除 ---
                 if (this.valueData.length > 0) {
-                    const event: types.IGreatlistChangeEvent = {
-                        'go': true,
-                        preventDefault: function() {
-                            this.go = false;
-                        },
-                        'detail': {
-                            'value': []
-                        }
-                    };
-                    this.emit('change', event);
-                    if (event.go) {
-                        change = true;
-                        this.valueData = [];
-                        const event: types.IGreatlistChangedEvent = {
+                    if (!this.propBoolean('multi')) {
+                        const event: types.IGreatlistChangeEvent = {
+                            'go': true,
+                            preventDefault: function() {
+                                this.go = false;
+                            },
                             'detail': {
                                 'value': []
                             }
                         };
-                        this.emit('changed', event);
+                        this.emit('change', event);
+                        if (event.go) {
+                            change = true;
+                            this.valueData = [];
+                            const event: types.IGreatlistChangedEvent = {
+                                'detail': {
+                                    'value': []
+                                }
+                            };
+                            this.emit('changed', event);
+                        }
+                    }
+                    else {
+                        // --- 多选模式 ---
+                        change = true;
+                        this.valueData = [];
                     }
                 }
             }
@@ -348,33 +355,7 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.valueData.length > 1 || this.valueData.length === 0) {
                     // --- 只选择一个，但现在有多个或一个都没有，则重置为一个 ---
                     if (canSelect(value)) {
-                        const event: types.IGreatlistChangeEvent = {
-                            'go': true,
-                            preventDefault: function() {
-                                this.go = false;
-                            },
-                            'detail': {
-                                'value': [value]
-                            }
-                        };
-                        this.emit('change', event);
-                        if (event.go) {
-                            change = true;
-                            this.valueData = [value];
-                            this.shiftStart = value;
-                            const event: types.IGreatlistChangedEvent = {
-                                'detail': {
-                                    'value': [value]
-                                }
-                            };
-                            this.emit('changed', event);
-                        }
-                    }
-                }
-                else {
-                    // --- 只有一个，看看是不是选择的 ---
-                    if (this.valueData[0] !== value) {
-                        if (canSelect(value)) {
+                        if (!this.propBoolean('multi')) {
                             const event: types.IGreatlistChangeEvent = {
                                 'go': true,
                                 preventDefault: function() {
@@ -387,7 +368,7 @@ export default class extends clickgo.control.AbstractControl {
                             this.emit('change', event);
                             if (event.go) {
                                 change = true;
-                                this.valueData[0] = value;
+                                this.valueData = [value];
                                 this.shiftStart = value;
                                 const event: types.IGreatlistChangedEvent = {
                                     'detail': {
@@ -395,6 +376,48 @@ export default class extends clickgo.control.AbstractControl {
                                     }
                                 };
                                 this.emit('changed', event);
+                            }
+                        }
+                        else {
+                            // --- 多选模式 ---
+                            change = true;
+                            this.valueData = [value];
+                            this.shiftStart = value;
+                        }
+                    }
+                }
+                else {
+                    // --- 只有一个，看看是不是选择的 ---
+                    if (this.valueData[0] !== value) {
+                        if (canSelect(value)) {
+                            if (!this.propBoolean('multi')) {
+                                const event: types.IGreatlistChangeEvent = {
+                                    'go': true,
+                                    preventDefault: function() {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'value': [value]
+                                    }
+                                };
+                                this.emit('change', event);
+                                if (event.go) {
+                                    change = true;
+                                    this.valueData[0] = value;
+                                    this.shiftStart = value;
+                                    const event: types.IGreatlistChangedEvent = {
+                                        'detail': {
+                                            'value': [value]
+                                        }
+                                    };
+                                    this.emit('changed', event);
+                                }
+                            }
+                            else {
+                                // --- 多选模式 ---
+                                change = true;
+                                this.valueData[0] = value;
+                                this.shiftStart = value;
                             }
                         }
                     }
@@ -625,7 +648,7 @@ export default class extends clickgo.control.AbstractControl {
             clickgo.form.hidePop();
         }
         // --- click 空白处取消选择 ---
-        if (!this.propBoolean('must')) {
+        if (!this.propBoolean('must') && this.propBoolean('ctrl') && !(e instanceof TouchEvent)) {
             const gi = clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-size');
             if (((e.target as HTMLElement).dataset.cgSize === undefined) && !gi) {
                 // --- 空白处 ---
