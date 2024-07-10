@@ -2285,7 +2285,7 @@ export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.I
         el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
         return;
     }
-    // --- 准备显示 pop  ---
+    // --- 准备显示 pop ---
     pop.removeAttribute('data-cg-pop-none');
     popInfo.list.push(pop);
     popInfo.elList.push(el);
@@ -2439,7 +2439,7 @@ export function doFocusAndPopEvent(e: MouseEvent | TouchEvent): void {
         if (!item.tagName) {
             continue;
         }
-        if (item.dataset.cgPopOpen !== undefined) {
+        if (item.dataset.cgLevel !== undefined && item.dataset.cgPop === undefined) {
             isCgPopOpen = item;
             continue;
         }

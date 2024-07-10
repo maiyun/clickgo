@@ -1868,7 +1868,7 @@ function doFocusAndPopEvent(e) {
         if (!item.tagName) {
             continue;
         }
-        if (item.dataset.cgPopOpen !== undefined) {
+        if (item.dataset.cgLevel !== undefined && item.dataset.cgPop === undefined) {
             isCgPopOpen = item;
             continue;
         }
