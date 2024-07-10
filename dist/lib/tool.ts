@@ -453,7 +453,8 @@ export function teleportGlue(layout: string, formId: number | string): string {
         if (v2 !== 'system') {
             return v;
         }
-        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop';
+        // --- 给 teleport 的第一个子元素增加 cg-pop、cg-pop-none 的 data ---
+        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
     });
 }
 

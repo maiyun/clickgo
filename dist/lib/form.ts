@@ -2235,14 +2235,23 @@ export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.I
     }
     // --- 是否不进入 pop 流 ---
     if (pop && !opt.flow) {
-        refreshPopPosition(el, pop, direction, opt.size);
-        if (opt.autoPosition) {
-            clickgo.dom.watchSize(pop, () => {
-                refreshPopPosition(el, pop, direction, opt.size);
-            });
-        }
-        pop.dataset.cgOpen = '';
+        pop.removeAttribute('data-cg-pop-none');
         pop.dataset.cgFlow = '';
+        clickgo.tool.sleep(34).then(() => {
+            if (pop.dataset.cgFlow === undefined) {
+                // --- 已经隐藏掉了 ---
+                return;
+            }
+            refreshPopPosition(el, pop, direction, opt.size);
+            if (opt.autoPosition) {
+                clickgo.dom.watchSize(pop, () => {
+                    refreshPopPosition(el, pop, direction, opt.size);
+                });
+            }
+            pop.dataset.cgOpen = '';
+        }).catch(() => {
+            //
+        });
         return;
     }
     // --- 如果短时间内已经有了 pop 被展示，则可能是冒泡序列，本次则不展示 ---
@@ -2261,6 +2270,7 @@ export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.I
     if (parentPop?.dataset.cgLevel !== undefined) {
         const nextlevel = parseInt(parentPop.dataset.cgLevel) + 1;
         if (popInfo.elList[nextlevel]) {
+            // --- 要隐藏别的 pop ---
             hidePop(popInfo.elList[nextlevel]);
         }
     }
@@ -2275,28 +2285,38 @@ export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.I
         el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
         return;
     }
-    // --- 设定 pop 位置 ---
-    refreshPopPosition(el, pop, direction, opt.size);
-    if (opt.autoPosition && typeof direction === 'string') {
-        // --- 可能要重置 pop 位置 ---
-        clickgo.dom.watchSize(pop, () => {
-            refreshPopPosition(el, pop, direction, opt.size);
-        });
-    }
-    if (opt.autoScroll && typeof direction === 'string') {
-        // --- 可能根据原元素重置 pop 位置 ---
-        clickgo.dom.watchPosition(el, () => {
-            refreshPopPosition(el, pop, direction, opt.size);
-        });
-    }
+    // --- 准备显示 pop  ---
+    pop.removeAttribute('data-cg-pop-none');
     popInfo.list.push(pop);
     popInfo.elList.push(el);
     popInfo.wayList.push(opt.way ?? 'normal');
     popInfo.time.push(Date.now());
-    pop.dataset.cgOpen = '';
     pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
-    el.dataset.cgPopOpen = '';
     el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
+    clickgo.tool.sleep(34).then(() => {
+        if (pop.dataset.cgLevel === undefined) {
+            // --- 已经隐藏掉了 ---
+            return;
+        }
+        // --- 设定 pop 位置 ---
+        refreshPopPosition(el, pop, direction, opt.size);
+        if (opt.autoPosition && typeof direction === 'string') {
+            // --- 可能要重置 pop 位置 ---
+            clickgo.dom.watchSize(pop, () => {
+                refreshPopPosition(el, pop, direction, opt.size);
+            });
+        }
+        if (opt.autoScroll && typeof direction === 'string') {
+            // --- 可能根据原元素重置 pop 位置 ---
+            clickgo.dom.watchPosition(el, () => {
+                refreshPopPosition(el, pop, direction, opt.size);
+            });
+        }
+        pop.dataset.cgOpen = '';
+        el.dataset.cgPopOpen = '';
+    }).catch(() => {
+        //
+    });
 }
 
 /**
@@ -2320,19 +2340,22 @@ export function hidePop(pop?: HTMLElement | types.IVue): void {
         pop.removeAttribute('data-cg-flow');
         pop.removeAttribute('data-cg-open');
         clickgo.dom.unwatchSize(pop);
+        clickgo.tool.sleep(334).then(() => {
+            if (pop.dataset.cgFlow !== undefined) {
+                return;
+            }
+            pop.dataset.cgPopNone = '';
+        }).catch(() => {
+            //
+        });
         return;
     }
-    let isPop: boolean = false;
-    if (pop.dataset.cgPopOpen !== undefined) {
-        // --- el ---
-    }
-    else if (pop.dataset.cgOpen !== undefined) {
-        // --- pop ---
-        isPop = true;
-    }
-    else {
+    if (pop.dataset.cgLevel === undefined) {
         return;
     }
+    /** --- 是 pop 还是 el 基 --- */
+    const isPop: boolean = pop.dataset.cgPop !== undefined ? true : false;
+    /** --- 当前层级 --- */
     const level = pop.dataset.cgLevel ? parseInt(pop.dataset.cgLevel) : -1;
     if (level === -1) {
         return;
@@ -2347,6 +2370,14 @@ export function hidePop(pop?: HTMLElement | types.IVue): void {
         clickgo.dom.unwatchPosition(popInfo.elList[level]);
         popInfo.elList[level].removeAttribute('data-cg-pop-open');
         popInfo.elList[level].removeAttribute('data-cg-level');
+        clickgo.tool.sleep(334).then(() => {
+            if (pop.dataset.cgLevel !== undefined) {
+                return;
+            }
+            pop.dataset.cgPopNone = '';
+        }).catch(() => {
+            //
+        });
     }
     else {
         if (popInfo.list[level]) {
@@ -2354,6 +2385,14 @@ export function hidePop(pop?: HTMLElement | types.IVue): void {
             popInfo.list[level].removeAttribute('data-cg-level');
             clickgo.dom.unwatchSize(popInfo.list[level]);
             clickgo.dom.unwatchPosition(pop);
+            clickgo.tool.sleep(334).then(() => {
+                if (popInfo.list[level].dataset.cgLevel !== undefined) {
+                    return;
+                }
+                popInfo.list[level].dataset.cgPopNone = '';
+            }).catch(() => {
+                //
+            });
         }
         pop.removeAttribute('data-cg-pop-open');
         pop.removeAttribute('data-cg-level');

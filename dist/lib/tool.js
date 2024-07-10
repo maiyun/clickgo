@@ -337,7 +337,7 @@ function teleportGlue(layout, formId) {
         if (v2 !== 'system') {
             return v;
         }
-        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop';
+        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
     });
 }
 exports.teleportGlue = teleportGlue;

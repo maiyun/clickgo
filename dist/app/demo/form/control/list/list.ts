@@ -215,10 +215,11 @@ export default class extends clickgo.form.AbstractForm {
         else {
             const types: number[] = [];
             for (const item of this.select) {
-                if (this.slist[item].type === undefined) {
+                const sitem = this.slist[item];
+                if (sitem.type === undefined) {
                     continue;
                 }
-                types.push(this.slist[item].type);
+                types.push(sitem.type);
             }
             clickgo.form.dialog(`Type is ${types.join(', ')}.`).catch((e: Error) => { throw e; });
         }

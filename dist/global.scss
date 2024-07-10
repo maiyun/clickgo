@@ -258,6 +258,10 @@
     &:not([data-cg-open]) {
         pointer-events: none;
     }
+    &[data-cg-pop-none] {
+        // --- 完全不显示时卸载显示，提高页面执行效率 ---
+        display: none !important;
+    }
     &[data-cg-open] {
         transform: translateY(0px); opacity: 1;
     }

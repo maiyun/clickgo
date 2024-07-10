@@ -208,7 +208,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
-    public async prompt() {
+    public async prompt(): Promise<void> {
         this.dr = await clickgo.form.prompt('test');
     }
 

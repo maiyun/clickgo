@@ -1692,14 +1692,21 @@ function showPop(el, pop, direction, opt = {}) {
         return;
     }
     if (pop && !opt.flow) {
-        refreshPopPosition(el, pop, direction, opt.size);
-        if (opt.autoPosition) {
-            clickgo.dom.watchSize(pop, () => {
-                refreshPopPosition(el, pop, direction, opt.size);
-            });
-        }
-        pop.dataset.cgOpen = '';
+        pop.removeAttribute('data-cg-pop-none');
         pop.dataset.cgFlow = '';
+        clickgo.tool.sleep(34).then(() => {
+            if (pop.dataset.cgFlow === undefined) {
+                return;
+            }
+            refreshPopPosition(el, pop, direction, opt.size);
+            if (opt.autoPosition) {
+                clickgo.dom.watchSize(pop, () => {
+                    refreshPopPosition(el, pop, direction, opt.size);
+                });
+            }
+            pop.dataset.cgOpen = '';
+        }).catch(() => {
+        });
         return;
     }
     const now = Date.now();
@@ -1727,25 +1734,32 @@ function showPop(el, pop, direction, opt = {}) {
         el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
         return;
     }
-    refreshPopPosition(el, pop, direction, opt.size);
-    if (opt.autoPosition && typeof direction === 'string') {
-        clickgo.dom.watchSize(pop, () => {
-            refreshPopPosition(el, pop, direction, opt.size);
-        });
-    }
-    if (opt.autoScroll && typeof direction === 'string') {
-        clickgo.dom.watchPosition(el, () => {
-            refreshPopPosition(el, pop, direction, opt.size);
-        });
-    }
+    pop.removeAttribute('data-cg-pop-none');
     popInfo.list.push(pop);
     popInfo.elList.push(el);
     popInfo.wayList.push((_a = opt.way) !== null && _a !== void 0 ? _a : 'normal');
     popInfo.time.push(Date.now());
-    pop.dataset.cgOpen = '';
     pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
-    el.dataset.cgPopOpen = '';
     el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
+    clickgo.tool.sleep(34).then(() => {
+        if (pop.dataset.cgLevel === undefined) {
+            return;
+        }
+        refreshPopPosition(el, pop, direction, opt.size);
+        if (opt.autoPosition && typeof direction === 'string') {
+            clickgo.dom.watchSize(pop, () => {
+                refreshPopPosition(el, pop, direction, opt.size);
+            });
+        }
+        if (opt.autoScroll && typeof direction === 'string') {
+            clickgo.dom.watchPosition(el, () => {
+                refreshPopPosition(el, pop, direction, opt.size);
+            });
+        }
+        pop.dataset.cgOpen = '';
+        el.dataset.cgPopOpen = '';
+    }).catch(() => {
+    });
 }
 exports.showPop = showPop;
 function hidePop(pop) {
@@ -1766,17 +1780,19 @@ function hidePop(pop) {
         pop.removeAttribute('data-cg-flow');
         pop.removeAttribute('data-cg-open');
         clickgo.dom.unwatchSize(pop);
+        clickgo.tool.sleep(334).then(() => {
+            if (pop.dataset.cgFlow !== undefined) {
+                return;
+            }
+            pop.dataset.cgPopNone = '';
+        }).catch(() => {
+        });
         return;
     }
-    let isPop = false;
-    if (pop.dataset.cgPopOpen !== undefined) {
-    }
-    else if (pop.dataset.cgOpen !== undefined) {
-        isPop = true;
-    }
-    else {
+    if (pop.dataset.cgLevel === undefined) {
         return;
     }
+    const isPop = pop.dataset.cgPop !== undefined ? true : false;
     const level = pop.dataset.cgLevel ? parseInt(pop.dataset.cgLevel) : -1;
     if (level === -1) {
         return;
@@ -1791,6 +1807,13 @@ function hidePop(pop) {
         clickgo.dom.unwatchPosition(popInfo.elList[level]);
         popInfo.elList[level].removeAttribute('data-cg-pop-open');
         popInfo.elList[level].removeAttribute('data-cg-level');
+        clickgo.tool.sleep(334).then(() => {
+            if (pop.dataset.cgLevel !== undefined) {
+                return;
+            }
+            pop.dataset.cgPopNone = '';
+        }).catch(() => {
+        });
     }
     else {
         if (popInfo.list[level]) {
@@ -1798,6 +1821,13 @@ function hidePop(pop) {
             popInfo.list[level].removeAttribute('data-cg-level');
             clickgo.dom.unwatchSize(popInfo.list[level]);
             clickgo.dom.unwatchPosition(pop);
+            clickgo.tool.sleep(334).then(() => {
+                if (popInfo.list[level].dataset.cgLevel !== undefined) {
+                    return;
+                }
+                popInfo.list[level].dataset.cgPopNone = '';
+            }).catch(() => {
+            });
         }
         pop.removeAttribute('data-cg-pop-open');
         pop.removeAttribute('data-cg-level');
