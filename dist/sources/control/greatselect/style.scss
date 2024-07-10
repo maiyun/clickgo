@@ -1,15 +1,8 @@
 .wrap {
-    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden; box-shadow: var(--g-shadow); transition: var(--g-transition);
-
-    .op {
-        display: flex; flex: 1;
-    }
+    display: flex; outline: none; border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden; box-shadow: var(--g-shadow); transition: var(--g-transition);
 
     .content {
-        display: flex; flex: 1;
-        &.h {
-            align-items: center;
-        }
+        display: flex; flex: 1; padding: var(--g-padding);
         &.v {
             flex-direction: column;
         }

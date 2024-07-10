@@ -42,17 +42,13 @@ class default_1 extends clickgo.control.AbstractControl {
             'pop': 'greatlist',
             'plain': false,
             'virtual': false,
+            'padding': undefined,
             'map': {},
             'data': [],
             'sizes': {},
             'modelValue': []
         };
-        this.padding = '';
-        this.font = '';
         this.isSpaceDown = false;
-    }
-    get opMargin() {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
     showPop() {
         clickgo.form.showPop(this.element, this.refs.pop, 'v', {
@@ -160,20 +156,6 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
         this.emit('changed', event);
-    }
-    onMounted() {
-        clickgo.dom.watchStyle(this.element, ['font', 'padding'], (n, v) => {
-            switch (n) {
-                case 'font': {
-                    this.font = v;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
-                    break;
-                }
-            }
-        }, true);
     }
 }
 exports.default = default_1;

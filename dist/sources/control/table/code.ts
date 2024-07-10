@@ -58,7 +58,7 @@ export default class extends clickgo.control.AbstractControl {
     }> = [];
 
     /** --- 计算属性，获取 items 的总数 --- */
-    public get itemsLength() {
+    public get itemsLength(): number {
         return this.items.length;
     }
 
@@ -79,9 +79,9 @@ export default class extends clickgo.control.AbstractControl {
         'index': number;
         'sort': 'desc' | 'asc';
     } = {
-        'index': -1,
-        'sort': 'desc'
-    };
+            'index': -1,
+            'sort': 'desc'
+        };
 
     /**
      * --- 最大可拖动的 scroll 左侧位置 ---
@@ -163,7 +163,7 @@ export default class extends clickgo.control.AbstractControl {
                 continue;
             }
             const item = this.items[i];
-            const sort = item.sort === undefined ? this.propBoolean('sort') : item.sort;
+            const sort = item.sort ?? this.propBoolean('sort');
             if (sort) {
                 return;
             }
@@ -189,7 +189,7 @@ export default class extends clickgo.control.AbstractControl {
     public headerClick(e: MouseEvent | TouchEvent, i: number): void {
         clickgo.dom.bindClick(e, () => {
             const item = this.items[i];
-            const sort = item.sort === undefined ? this.propBoolean('sort') : item.sort;
+            const sort = item.sort ?? this.propBoolean('sort');
             if (!sort) {
                 return;
             }
@@ -248,12 +248,12 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 当前列是否是固定模式，是的话当前列是固定在左侧还是右侧 --- */
     public isFixed: {
-        'left'?: 'left' | 'right',
-        'right'?: 'left' | 'right',
+        'left'?: 'left' | 'right';
+        'right'?: 'left' | 'right';
     } = {
-        'left': undefined,
-        'right': undefined,
-    };
+            'left': undefined,
+            'right': undefined,
+        };
 
     public onMounted(): void {
         this.watch('sort', () => {
@@ -284,6 +284,9 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
         this.watch('split', () => {
+            if (!this.refs.header) {
+                return;
+            }
             if (this.props.split) {
                 // --- 不可拖动变可拖动 ---
                 for (let i = 0; i < this.items.length; ++i) {

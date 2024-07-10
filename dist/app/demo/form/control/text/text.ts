@@ -71,6 +71,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public min = undefined;
 
+    public plain = false;
+
     public get textBorder(): any {
         switch (this.border) {
             case 'underline': {
@@ -99,7 +101,7 @@ long`;
     /** --- 是否开启修改拦截 --- */
     public beforechange = false;
 
-    public onBeforechange(e: types.ITextBeforechangeEvent) {
+    public onBeforechange(e: types.ITextBeforechangeEvent): void {
         if (!this.beforechange) {
             return;
         }
@@ -108,7 +110,7 @@ long`;
             return;
         }
         if (e.detail.value === '1346') {
-            e.detail.change = '000000'
+            e.detail.change = '000000';
         }
     }
 

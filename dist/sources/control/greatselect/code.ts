@@ -20,6 +20,7 @@ export default class extends clickgo.control.AbstractControl {
         'pop': 'greatlist' | 'custom';
         'plain': boolean | string;
         'virtual': boolean | string;
+        'padding'?: string;
 
         /** --- 映射 disabled、control 的 key --- */
         'map': {
@@ -41,6 +42,7 @@ export default class extends clickgo.control.AbstractControl {
             'pop': 'greatlist',
             'plain': false,
             'virtual': false,
+            'padding': undefined,
 
             'map': {},
             'data': [],
@@ -48,15 +50,7 @@ export default class extends clickgo.control.AbstractControl {
             'modelValue': []
         };
 
-    public padding = '';
-
-    public font = '';
-
     public isSpaceDown = false;
-
-    public get opMargin(): string {
-        return this.padding.replace(/(\w+)/g, '-$1');
-    }
 
     /**
      * --- 显示 pop，可供别人调用 ---
@@ -185,21 +179,6 @@ export default class extends clickgo.control.AbstractControl {
             }
         };
         this.emit('changed', event);
-    }
-
-    public onMounted(): void {
-        clickgo.dom.watchStyle(this.element, ['font', 'padding'], (n, v) => {
-            switch (n) {
-                case 'font': {
-                    this.font = v;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
-                    break;
-                }
-            }
-        }, true);
     }
 
 }

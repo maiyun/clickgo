@@ -115,13 +115,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.listLabel = [];
         this.listItem = [];
         this.loading = 0;
-        this.background = '';
-        this.padding = '';
         this._needSearch = 0;
         this.searching = 0;
-    }
-    get opMargin() {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
     get isMust() {
         if (this.propBoolean('editable')) {
@@ -130,7 +125,22 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propBoolean('search')) {
             return false;
         }
+        if (this.propBoolean('multi')) {
+            return false;
+        }
         return true;
+    }
+    get listMulti() {
+        if (this.propBoolean('editable')) {
+            return false;
+        }
+        if (this.propBoolean('search')) {
+            return false;
+        }
+        return this.propBoolean('multi');
+    }
+    get labelMode() {
+        return !this.propBoolean('multi') && !this.propBoolean('editable');
     }
     get dataComp() {
         if (!this.propBoolean('search')) {
@@ -833,9 +843,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value.splice(index, 1);
         this.label.splice(index, 1);
-        if (this.isMust) {
-            this.listValue = clickgo.tool.clone(this.value);
-        }
+        this.listValue = clickgo.tool.clone(this.value);
         this.updateValue();
         this.emit('removed', {
             'detail': {
@@ -1028,18 +1036,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('label', clickgo.tool.clone(this.label));
             }
         }));
-        clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
-            switch (n) {
-                case 'background': {
-                    this.background = v;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
-                    break;
-                }
-            }
-        }, true);
     }
 }
 exports.default = default_1;

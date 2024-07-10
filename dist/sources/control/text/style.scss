@@ -1,11 +1,7 @@
 .wrap {
-    display: flex; outline: none; padding: var(--g-padding); border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden; background: var(--g-plain-background); transition: var(--g-transition); transition-property: color, background-color, border, box-shadow;
+    display: flex; outline: none; border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden; transition: var(--g-transition); transition-property: color, background-color, border, box-shadow; flex-direction: column;
     &.plain {
         border-style: none;
-    }
-    
-    .op {
-        flex: 1; width: 0; display: flex; flex-direction: column;
     }
 
     .multi-t {
@@ -53,7 +49,7 @@
     }
 
     .text {
-        flex: 1; width: 0; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit; min-height: 100%; background: transparent; transition: var(--g-transition); transition-property: color, background-color, border;
+        flex: 1; width: 0; -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit; min-height: 100%; background: transparent; transition: var(--g-transition); transition-property: color, background-color, border; padding: var(--g-padding);
         &::-webkit-scrollbar {
             display: none;
         }
@@ -110,22 +106,30 @@
     }
 
     &:not([data-cg-disabled]) {
-        background: var(--g-plain-background);
         border-color: var(--g-plain-border-color);
+        &:not(.plain) {
+            background: var(--g-plain-background);
+        }
         
         &.focus {
-            background: var(--g-plain-background-focus);
             border-color: var(--g-plain-border-color-focus);
             box-shadow: var(--g-outline-shadow);
+            &:not(.plain) {
+                background: var(--g-plain-background-focus);
+            }
         }
         &:hover:not(.focus) {
-            background: var(--g-plain-background-hover);
             border-color: var(--g-plain-border-color-hover);
+            &:not(.plain) {
+                background: var(--g-plain-background-hover);
+            }
         }
         &:active {
-            background: var(--g-plain-background-active);
             border-color: var(--g-plain-border-color-active);
             box-shadow: var(--g-outline-shadow);
+            &:not(.plain) {
+                background: var(--g-plain-background-active);
+            }
         }
     }
 

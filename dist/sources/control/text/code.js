@@ -72,7 +72,6 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.font = '';
         this.textAlign = '';
-        this.padding = '';
         this.darkbg = false;
         this.showPassword = false;
         this.isFocus = false;
@@ -148,9 +147,6 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
         this.adaptionHeight = 0;
-    }
-    get opMargin() {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
     maxScrollLeft() {
         return this.refs.text.scrollWidth - this.refs.text.clientWidth;
@@ -401,6 +397,7 @@ class default_1 extends clickgo.control.AbstractControl {
         e.stopPropagation();
     }
     numberClick(num) {
+        var _a;
         if (!this.value) {
             this.value = '0';
         }
@@ -419,11 +416,12 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             return;
         }
-        this.value = event.detail.change !== undefined ? event.detail.change : n;
+        this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : n;
         this.emit('update:modelValue', this.value);
     }
     execCmd(ac) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             this.refs.text.focus();
             if (ac === 'paste') {
                 if (this.propBoolean('readonly')) {
@@ -447,7 +445,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (!event.go) {
                     return;
                 }
-                this.value = event.detail.change !== undefined ? event.detail.change : this.value.slice(0, this.refs.text.selectionStart)
+                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.value.slice(0, this.refs.text.selectionStart)
                     + str
                     + this.value.slice(this.refs.text.selectionEnd);
                 yield this.nextTick();
@@ -523,6 +521,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onMounted() {
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             if (this.value === this.props.modelValue) {
                 return;
             }
@@ -551,7 +550,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.refs.text.value = this.value;
                 return;
             }
-            this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+            this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
             yield this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);
@@ -559,6 +558,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'immediate': true
         });
         this.watch('type', () => __awaiter(this, void 0, void 0, function* () {
+            var _b;
             yield this.nextTick();
             if (this.checkNumber()) {
                 const event = {
@@ -576,7 +576,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+                this.value = (_b = event.detail.change) !== null && _b !== void 0 ? _b : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
             yield this.nextTick();
@@ -584,6 +584,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.checkAdaption();
         }));
         this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
+            var _c;
             yield this.nextTick();
             if (this.checkNumber()) {
                 const event = {
@@ -601,11 +602,12 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+                this.value = (_c = event.detail.change) !== null && _c !== void 0 ? _c : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         }));
         this.watch('min', () => __awaiter(this, void 0, void 0, function* () {
+            var _d;
             yield this.nextTick();
             if (this.checkNumber()) {
                 const event = {
@@ -623,7 +625,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+                this.value = (_d = event.detail.change) !== null && _d !== void 0 ? _d : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         }));
@@ -640,6 +642,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.checkAdaption();
         }));
         this.watch('maxlength', () => __awaiter(this, void 0, void 0, function* () {
+            var _e;
             if (!this.propNumber('maxlength')) {
                 return;
             }
@@ -661,7 +664,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            this.value = event.detail.change !== undefined ? event.detail.change : value;
+            this.value = (_e = event.detail.change) !== null && _e !== void 0 ? _e : value;
             yield this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);
@@ -700,7 +703,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
-        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color', 'padding'], (n, v) => __awaiter(this, void 0, void 0, function* () {
+        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color'], (n, v) => __awaiter(this, void 0, void 0, function* () {
             switch (n) {
                 case 'font': {
                     this.font = v;
@@ -726,10 +729,6 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     const hsl = clickgo.tool.rgb2hsl(color);
                     this.darkbg = hsl[2] < 0.5 ? true : false;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
                     break;
                 }
             }

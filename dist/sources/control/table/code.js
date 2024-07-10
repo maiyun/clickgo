@@ -116,6 +116,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.checkNowSort();
     }
     checkNowSort() {
+        var _a;
         if (this.nowSort.index === -1) {
             return;
         }
@@ -124,7 +125,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 continue;
             }
             const item = this.items[i];
-            const sort = item.sort === undefined ? this.propBoolean('sort') : item.sort;
+            const sort = (_a = item.sort) !== null && _a !== void 0 ? _a : this.propBoolean('sort');
             if (sort) {
                 return;
             }
@@ -146,8 +147,9 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     headerClick(e, i) {
         clickgo.dom.bindClick(e, () => {
+            var _a;
             const item = this.items[i];
-            const sort = item.sort === undefined ? this.propBoolean('sort') : item.sort;
+            const sort = (_a = item.sort) !== null && _a !== void 0 ? _a : this.propBoolean('sort');
             if (!sort) {
                 return;
             }
@@ -230,6 +232,9 @@ class default_1 extends clickgo.control.AbstractControl {
             'immediate': true
         });
         this.watch('split', () => {
+            if (!this.refs.header) {
+                return;
+            }
             if (this.props.split) {
                 for (let i = 0; i < this.items.length; ++i) {
                     if (this.items[i].width > 0) {

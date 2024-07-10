@@ -64,15 +64,9 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 样式 ---
 
-    public get opMargin(): string {
-        return this.padding.replace(/(\w+)/g, '-$1');
-    }
-
     public font = '';
 
     public textAlign = '';
-
-    public padding = '';
 
     /** --- 如果 background 颜色比较深，则此值设定为 true --- */
     public darkbg = false;
@@ -257,7 +251,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 检测 value 值是否符合 max 和 min --- */
-    public checkNumber(target?: HTMLInputElement | HTMLTextAreaElement) {
+    public checkNumber(target?: HTMLInputElement | HTMLTextAreaElement): boolean {
         if (!target) {
             target = this.refs.text as unknown as HTMLInputElement | HTMLTextAreaElement;
         }
@@ -460,7 +454,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!event.go) {
             return;
         }
-        this.value = event.detail.change !== undefined ? event.detail.change : n;
+        this.value = event.detail.change ?? n;
         this.emit('update:modelValue', this.value);
     }
 
@@ -490,7 +484,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            this.value = event.detail.change !== undefined ? event.detail.change : this.value.slice(0, this.refs.text.selectionStart)
+            this.value = event.detail.change ?? this.value.slice(0, this.refs.text.selectionStart)
                 + str
                 + this.value.slice(this.refs.text.selectionEnd);
             // --- 等待 vue 响应一次 ---
@@ -613,7 +607,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.refs.text.value = this.value;
                 return;
             }
-            this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+            this.value = event.detail.change ?? this.refs.text.value;
             await this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);
@@ -639,7 +633,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+                this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
             await this.nextTick();
@@ -664,7 +658,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+                this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         });
@@ -686,7 +680,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = event.detail.change !== undefined ? event.detail.change : this.refs.text.value;
+                this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         });
@@ -724,7 +718,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            this.value = event.detail.change !== undefined ? event.detail.change : value;
+            this.value = event.detail.change ?? value;
             await this.nextTick();
             this.checkAdaption();
             this.emit('update:modelValue', this.value);
@@ -764,7 +758,7 @@ export default class extends clickgo.control.AbstractControl {
             this.refs.text.selectionEnd = prop;
         });
 
-        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color', 'padding'], async (n, v): Promise<void> => {
+        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color'], async (n, v): Promise<void> => {
             switch (n) {
                 case 'font': {
                     this.font = v;
@@ -790,10 +784,6 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     const hsl = clickgo.tool.rgb2hsl(color);
                     this.darkbg = hsl[2] < 0.5 ? true : false;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
                     break;
                 }
             }

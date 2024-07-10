@@ -1,7 +1,7 @@
-<cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :area="propBoolean('editable') ? (propBoolean('search') ? 'text' : 'arrow') : 'all'" :plain="propBoolean('plain')" :virtual="virtual" pop="custom">
-    <span v-if="!propBoolean('multi') && !propBoolean('editable')" :style="{'color':listItem[0]?listItem[0].color:undefined}">{{label[0] || '　'}}</span>
-    <div v-else class="op" :style="{'margin': opMargin}">
-        <div v-if="propBoolean('multi')" ref="tags" class="tags" :class="[propBoolean('editable') && 'editable']" :style="{'padding': padding, 'padding-right': '0'}" v-show="!propBoolean('editable') || label.length" @wheel="tagsWheel">
+<cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :area="propBoolean('editable') ? (propBoolean('search') ? 'text' : 'arrow') : 'all'" :plain="propBoolean('plain')" :virtual="virtual" pop="custom" :padding="!labelMode ? '0' : undefined">
+    <div v-if="labelMode" class="labelmode" :style="{'color':listItem[0]?listItem[0].color:undefined}">{{label[0] || '　'}}</div>
+    <template v-else>
+        <div v-if="propBoolean('multi')" ref="tags" class="tags" :class="[propBoolean('editable') && 'editable']" v-show="!propBoolean('editable') || label.length" @wheel="tagsWheel">
             <div v-for="item, index of label" class="tag" @mousedown="tagdown" @touchstart="tagdown">
                 <div class="label" @click="tagClick(index)">{{item}}</div>
                 <div class="close" @click="removeTag(index)">
@@ -10,13 +10,13 @@
             </div>
             <div v-if="!label.length" class="tag placeholder">　</div>
         </div>
-        <div v-if="propBoolean('editable')&&!propBoolean('multi')&&label[0]!==value[0]" class="leftlabel" :style="{'padding':padding}">{{label[0]}}</div>
-        <cg-text v-if="propBoolean('editable')" :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" :style="{'padding': padding, 'background': background}" @keydown="keydown" @blur="blur"></cg-text>
-    </div>
+        <div v-if="propBoolean('editable')&&!propBoolean('multi')&&label[0]!==value[0]" class="leftlabel">{{label[0]}}</div>
+        <cg-text v-if="propBoolean('editable')" :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" @keydown="keydown" @blur="blur" plain></cg-text>
+    </template>
     <template v-slot:pop>
         <div class="pop">
             <cg-text v-if="propBoolean('search') && !propBoolean('editable')" :modelValue="searchValue" @update:modelValue="updateSearchValue" :placeholder="l('search')" @keydown="textKeyDown" plain></cg-text>
-            <cg-list ref="list" :style="{'min-height':isEmpty?'80px':undefined}" @label="listLabel=$event" @item="listItem=$event" v-model="listValue" :data="dataComp" :must="isMust" :multi="isMust ? multi : false" :ctrl="false" :tree="tree" :treeDefault="treeDefault" :async="async" :icon="icon" :iconDefault="iconDefault" @itemclicked="listItemClicked" @load="onLoad" @add="onAdd" @remove="onRemove" @change="onChange" :map="map" plain></cg-list>
+            <cg-list ref="list" :style="{'min-height':isEmpty?'80px':undefined}" @label="listLabel=$event" @item="listItem=$event" v-model="listValue" :data="dataComp" :must="isMust" :multi="listMulti" :ctrl="false" :tree="tree" :treeDefault="treeDefault" :async="async" :icon="icon" :iconDefault="iconDefault" @itemclicked="listItemClicked" @load="onLoad" @add="onAdd" @remove="onRemove" @change="onChange" :map="map" plain></cg-list>
             <div class="loading" :class="[searching>0&&'show']">
                 <cg-loading></cg-loading>
             </div>

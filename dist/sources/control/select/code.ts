@@ -137,19 +137,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- pop 的 loading --- */
     public loading = 0;
 
-    // --- 样式 ---
-
-    public background = '';
-
-    public padding = '';
-
-    // --- 计算变量 ---
-
-    public get opMargin(): string {
-        return this.padding.replace(/(\w+)/g, '-$1');
-    }
-
-    // --- list 是否为必须选择的模式 ---
+    /** --- list 是否为必须选择的模式 --- */
     public get isMust(): boolean {
         if (this.propBoolean('editable')) {
             // --- 输入模式的 list 必定不是 must ---
@@ -159,8 +147,30 @@ export default class extends clickgo.control.AbstractControl {
             // --- 搜索模式的 list 必定不是 must ---
             return false;
         }
-        // --- 非输入模式、非搜索模式 ---
+        if (this.propBoolean('multi')) {
+            // --- 多选模式，可移除 tag ---
+            return false;
+        }
+        // --- 非输入模式、非搜索模式、单选模式 ---
         return true;
+    }
+
+    /** --- list 是否多选 --- */
+    public get listMulti(): boolean {
+        if (this.propBoolean('editable')) {
+            // --- 输入模式的 list 必定不是 must ---
+            return false;
+        }
+        if (this.propBoolean('search')) {
+            // --- 搜索模式的 list 必定不是 must ---
+            return false;
+        }
+        return this.propBoolean('multi');
+    }
+
+    /** --- 判断是输入框模式还是 label 模式 --- */
+    public get labelMode(): boolean {
+        return !this.propBoolean('multi') && !this.propBoolean('editable');
     }
 
     // --- 传递给 list 的 data ---
@@ -953,9 +963,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.value.splice(index, 1);
         this.label.splice(index, 1);
-        if (this.isMust) {
-            this.listValue = clickgo.tool.clone(this.value);
-        }
+        this.listValue = clickgo.tool.clone(this.value);
         this.updateValue();
         this.emit('removed', {
             'detail': {
@@ -1170,19 +1178,6 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('label', clickgo.tool.clone(this.label));
             }
         });
-
-        clickgo.dom.watchStyle(this.element, ['background', 'padding'], (n, v) => {
-            switch (n) {
-                case 'background': {
-                    this.background = v;
-                    break;
-                }
-                case 'padding': {
-                    this.padding = v;
-                    break;
-                }
-            }
-        }, true);
     }
 
 }

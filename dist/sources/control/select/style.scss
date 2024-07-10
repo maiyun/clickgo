@@ -1,54 +1,53 @@
 cg-greatselect {
-    .op {
-        display: flex; flex: 1; width: 0;
-
-        .tags {
-            display: flex; max-width: 100%; overflow-y: auto; position: relative;
-            &.editable {
-                max-width: 80%;
-            }
-            &::-webkit-scrollbar {
-                display: none;
-            }
-
-            .tag {
-                border-radius: 3px; overflow: hidden; line-height: 1; display: flex;
-                .label, .close {
-                    background: rgba(0, 0, 0, .07); transition: var(--g-transition);
-                }
-                .label {
-                    padding: 0 6px; display: flex; align-items: center;
-                    &:hover {
-                        background: rgba(0, 0, 0, .04);
-                    }
-                    &:active {
-                        background: rgba(0, 0, 0, .15);
-                    }
-                }
-                .close {
-                    display: flex; justify-content: center; align-items: center; width: 20px; height: 20px;
-                    &:hover {
-                        background: rgba(0,0,0,.05);
-                    }
-                    &:active {
-                        background: rgba(0,0,0,.1);
-                    }
-                }
-
-            }
-
-            > :not(:first-child) {
-                margin-left: 7px;
-            }
+    .labelmode {
+        display: flex; align-items: center;
+    }
+    .tags {
+        display: flex; align-items: center; max-width: 100%; overflow-y: auto; position: relative; padding: var(--g-padding); padding-right: 0;
+        &.editable {
+            max-width: 80%;
+        }
+        &::-webkit-scrollbar {
+            display: none;
         }
 
-        .leftlabel {
-            background: var(--face); align-items: center; display: flex;
+        .tag {
+            border-radius: 3px; overflow: hidden; line-height: 1; display: flex;
+            .label, .close {
+                background: rgba(0, 0, 0, .07); transition: var(--g-transition);
+            }
+            .label {
+                padding: 0 6px; display: flex; align-items: center;
+                &:hover {
+                    background: rgba(0, 0, 0, .04);
+                }
+                &:active {
+                    background: rgba(0, 0, 0, .15);
+                }
+            }
+            .close {
+                display: flex; justify-content: center; align-items: center; width: 20px; height: 20px;
+                &:hover {
+                    background: rgba(0,0,0,.05);
+                }
+                &:active {
+                    background: rgba(0,0,0,.1);
+                }
+            }
+
         }
 
-        cg-text {
-            flex: 1; border: none; background: transparent;
+        > :not(:first-child) {
+            margin-left: var(--g-padding);
         }
+    }
+
+    .leftlabel {
+        background: var(--face); align-items: center; display: flex; padding: var(--g-padding);
+    }
+
+    cg-text {
+        flex: 1; border: none; background: transparent;
     }
 }
 
