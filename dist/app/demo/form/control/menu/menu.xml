@@ -61,8 +61,8 @@
                             <template v-slot:pop>
                                 <menulist>
                                     <layout>
-                                        <menulist-item alt="A" style="padding: 20px;">Box 1</menulist-item>
-                                        <menulist-item alt="B" style="padding: 20px;">
+                                        <menulist-item alt="A">Box 1</menulist-item>
+                                        <menulist-item alt="B">
                                             <template v-slot>Box 2</template>
                                             <template v-slot:pop>
                                                 <menulist>

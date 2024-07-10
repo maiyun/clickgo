@@ -39,10 +39,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': ''
         };
         this.value = '';
-        this.padding = '';
-    }
-    get opMargin() {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
     enter(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -116,9 +112,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
-        }, true);
         const menulist = this.parentByName('menulist');
         if (!menulist) {
             return;

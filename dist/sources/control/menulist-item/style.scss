@@ -1,5 +1,5 @@
 .wrap {
-    padding: var(--g-padding) 35px var(--g-padding) 10px; border-radius: var(--g-radius); transition: var(--g-transition);
+    border-radius: var(--g-radius); transition: var(--g-transition); display: flex;
     &:not([data-cg-disabled]) {
         &:hover {
             background: var(--face-hover);
@@ -18,10 +18,6 @@
         background: var(--face-hover);
     }
 
-    .op {
-        display: flex; align-items: center;
-    }
-
     .check {
         background-color: var(--face-hover); width: 24px; height: 24px; visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color); stroke: var(--g-color); transition: var(--g-transition);
     }
@@ -33,7 +29,7 @@
     }
     
     .inner {
-        flex: 1; display: flex; align-items: center;
+        flex: 1; display: flex; align-items: center; padding: var(--g-padding) 35px var(--g-padding) 10px;
     }
     
     .arrow {

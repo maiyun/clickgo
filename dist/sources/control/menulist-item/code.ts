@@ -27,12 +27,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前本地的值 --- */
     public value: string | boolean = '';
 
-    public padding = '';
-
-    public get opMargin(): string {
-        return this.padding.replace(/(\w+)/g, '-$1');
-    }
-
     public enter(e: MouseEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -113,10 +107,6 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
-
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
-        }, true);
 
         const menulist = this.parentByName('menulist');
         if (!menulist) {
