@@ -292,7 +292,6 @@ export function unwatchPosition(el: HTMLElement): void {
     // --- 获取监视标签的所属 panel ---
     const panelWrap = findParentByData(el, 'panel-id');
     const panelId = panelWrap ? panelWrap.dataset.panelId! : 'default';
-    const item = watchPositionObjects[formId][panelId][index];
     el.removeAttribute('data-cg-poindex');
     delete watchPositionObjects[formId][panelId][index];
     if (Object.keys(watchPositionObjects[formId][panelId]).length) {
@@ -1181,7 +1180,7 @@ const watchTimerHandler = function(): void {
                         item.handler({
                             'position': position,
                             'size': size
-                        });
+                        }) as any;
                     }
                     watchPositionObjects[formId][panelId][index].rect = rect;
                 };
@@ -2514,7 +2513,6 @@ export function siblings(el: HTMLElement): HTMLElement[] {
     }
     const list: HTMLElement[] = [];
     for (let i = 0; i < el.parentNode.children.length; ++i) {
-        el.previousElementSibling
         const e = el.parentNode.children.item(i) as HTMLElement;
         if (e === el) {
             continue;
@@ -2579,11 +2577,10 @@ export async function exitFullscreen(): Promise<boolean> {
 }
 
 /**
- * 
- * @param tagName 
- * @returns 
+ * --- 创建 element ---
+ * @param tagName 标签名
  */
-export function createElement<K extends keyof HTMLElementTagNameMap>(tagName: K): HTMLElementTagNameMap[K] {
+export function createElement<T extends keyof HTMLElementTagNameMap>(tagName: T): HTMLElementTagNameMap[T] {
     return document.createElement(tagName);
 }
 

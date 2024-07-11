@@ -219,7 +219,6 @@ function unwatchPosition(el) {
     const formId = formWrap.dataset.formId;
     const panelWrap = findParentByData(el, 'panel-id');
     const panelId = panelWrap ? panelWrap.dataset.panelId : 'default';
-    const item = watchPositionObjects[formId][panelId][index];
     el.removeAttribute('data-cg-poindex');
     delete watchPositionObjects[formId][panelId][index];
     if (Object.keys(watchPositionObjects[formId][panelId]).length) {
@@ -1990,7 +1989,6 @@ function siblings(el) {
     }
     const list = [];
     for (let i = 0; i < el.parentNode.children.length; ++i) {
-        el.previousElementSibling;
         const e = el.parentNode.children.item(i);
         if (e === el) {
             continue;
