@@ -25,7 +25,7 @@ Load the module loader first, and then load it using the module loader.
 **index.html**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.7/dist/loader.min.js?path=index&npm={'clickgo':'3.14.2'}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.7/dist/loader.min.js?path=index&npm={'clickgo':'3.14.3'}"></script>
 ```
 
 **index.js**
