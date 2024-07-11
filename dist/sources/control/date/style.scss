@@ -39,16 +39,16 @@
 }
 
 .pop {
-    color: var(--g-color); border-radius: var(--g-radius); height: 250px; display: flex; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
+    color: var(--g-color); border-radius: var(--g-radius); display: flex; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 
     &.first {
-        height: 420px; width: 370px; display: flex;
+        display: flex;
         > * {
             flex: 1;
         }
     }
     &.list {
-        padding: var(--g-padding); flex-direction: column;
+        padding: var(--g-padding); flex-direction: column; height: 250px;
         > :first-child {
             // --- 列表项 ---
             display: flex; flex: 1; height: 0;

@@ -14,6 +14,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled: boolean = false;
 
+    public start: boolean = false;
+
+    public bottom: boolean = false;
+
     // --- 指定时间戳 ---
     public settime(): void {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);

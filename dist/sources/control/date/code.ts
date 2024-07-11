@@ -16,6 +16,10 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': number | string | undefined;
         /** --- 小时，如 8 --- */
         'tz'?: number | string;
+        /** --- 限定可选的最小时间 --- */
+        'start'?: number | string;
+        /** --- 限定可选的最大时间 --- */
+        'end'?: number | string;
 
         'date': boolean | string;
         'time': boolean | string;
