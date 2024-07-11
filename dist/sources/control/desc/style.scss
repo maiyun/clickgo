@@ -2,6 +2,9 @@
     border-radius: var(--g-radius);
     &.border {
         border: solid .5px var(--g-plain-border-color);
+        &.plain{
+            border-color: var(--face);
+        }
     }
     &.collapse {
         border-collapse: collapse;

@@ -24,6 +24,10 @@ export default class extends clickgo.form.AbstractForm {
             }
         ];
 
+    public plain: boolean = false;
+
+    public size: string[] = ['m'];
+
     /** --- 最大行数 --- */
     public get maxLine(): number {
         let len = 0;

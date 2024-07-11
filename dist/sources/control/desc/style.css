@@ -1,1 +1,1 @@
-.wrap{border-radius:var(--g-radius)}.wrap.border{border:solid .5px var(--g-plain-border-color)}.wrap.collapse{border-collapse:collapse}
+.wrap{border-radius:var(--g-radius)}.wrap.border{border:solid .5px var(--g-plain-border-color)}.wrap.border.plain{border-color:var(--face)}.wrap.collapse{border-collapse:collapse}

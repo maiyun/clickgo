@@ -1,6 +1,6 @@
 <form title="Desc" width="500" height="500" padding="10">
     <layout gutter="10" direction="v" style="flex: 1;">
-        <desc :border="border" :collapse="collapse">
+        <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain">
             <desc-row>
                 <desc-head>HEAD1</desc-head>
                 <desc-head>HEAD2</desc-head>
@@ -21,6 +21,10 @@
         <layout gutter="10">
             <button @click="border = !border" style="flex: 1">border: {{border ? 'true' : 'false'}}</button>
             <button @click="collapse = !collapse" style="flex: 1;">collapse: {{collapse ? 'true' : 'false'}}</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="plain = !plain" style="flex: 1;">plain: {{plain ? 'true' : 'false'}}</button>
+            <select v-model="size" style="flex: 1;" :data="['s', 'm']" />
         </layout>
         <label>Test: {{cols}}</label>
         <flow style="flex: 1;">

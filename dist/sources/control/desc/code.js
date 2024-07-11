@@ -29,7 +29,9 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'border': true,
-            'collapse': true
+            'plain': false,
+            'collapse': true,
+            'size': 'm'
         };
     }
 }

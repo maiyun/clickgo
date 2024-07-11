@@ -43,6 +43,8 @@ class default_1 extends clickgo.form.AbstractForm {
                 'child': ['val1', 'val2', 'val3', 'val4']
             }
         ];
+        this.plain = false;
+        this.size = ['m'];
     }
     get maxLine() {
         let len = 0;
