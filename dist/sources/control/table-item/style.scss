@@ -10,15 +10,15 @@
         }
     }
     &.fixed-left {
-        left: 0;
+        left: .5px;
         &::before {
-            box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, .15); right: -11px;
+            box-shadow: inset 10px 0 10px -10px rgba(0, 0, 0, .15); right: -10px;
         }
     }
     &.fixed-right {
-        right: 0;
+        right: .5px;
         &:before {
-            box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -11px;
+            box-shadow: inset -10px 0 10px -10px rgba(0, 0, 0, .15); left: -10px;
         }
     }
     &[data-cg-base] {

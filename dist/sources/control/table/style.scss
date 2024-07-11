@@ -36,7 +36,7 @@
             &.fixed-left, &.fixed-right {
                 position: sticky; z-index: 1;
                 &::before {
-                    content: ''; position: absolute; top: 0px; width: 10px; bottom: 0; opacity: 0; transition: var(--g-transition);
+                    content: ''; position: absolute; top: 0px; width: 10px; bottom: -1px; opacity: 0; transition: var(--g-transition);
                 }
             }
             &.fixed-left {
