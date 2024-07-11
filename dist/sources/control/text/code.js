@@ -57,7 +57,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'wrap': true,
             'maxlength': 0,
             'scroll': true,
-            'adaption': false,
             'gesture': [],
             'type': 'text',
             'plain': false,
@@ -70,9 +69,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'max': undefined,
             'min': undefined
         };
-        this.font = '';
-        this.textAlign = '';
-        this.darkbg = false;
         this.showPassword = false;
         this.isFocus = false;
         this.value = '';
@@ -146,7 +142,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 'paste': 'Dán'
             }
         };
-        this.adaptionHeight = 0;
     }
     maxScrollLeft() {
         return this.refs.text.scrollWidth - this.refs.text.clientWidth;
@@ -168,44 +163,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('focus');
     }
     tblur(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const target = e.target;
-            if (this.checkNumber(target)) {
-                const event = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'value': target.value,
-                        'change': undefined
-                    }
-                };
-                this.emit('beforechange', event);
-                if (event.go) {
-                    if (event.detail.change !== undefined) {
-                        target.value = event.detail.change;
-                    }
-                    this.value = target.value;
-                    yield this.nextTick();
-                    this.checkAdaption();
-                    this.emit('update:modelValue', this.value);
-                }
-                else {
-                    target.value = this.value;
-                }
-            }
-            this.isFocus = false;
-            this.emit('blur');
-        });
-    }
-    input(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const target = e.target;
-            if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
-                target.value = target.value.slice(0, this.propNumber('maxlength'));
-                return;
-            }
+        const target = e.target;
+        if (this.checkNumber(target)) {
             const event = {
                 'go': true,
                 preventDefault: function () {
@@ -217,18 +176,46 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             };
             this.emit('beforechange', event);
-            if (!event.go) {
+            if (event.go) {
+                if (event.detail.change !== undefined) {
+                    target.value = event.detail.change;
+                }
+                this.value = target.value;
+                this.emit('update:modelValue', this.value);
+            }
+            else {
                 target.value = this.value;
-                return;
             }
-            if (event.detail.change !== undefined) {
-                target.value = event.detail.change;
+        }
+        this.isFocus = false;
+        this.emit('blur');
+    }
+    input(e) {
+        const target = e.target;
+        if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
+            target.value = target.value.slice(0, this.propNumber('maxlength'));
+            return;
+        }
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': target.value,
+                'change': undefined
             }
-            this.value = target.value;
-            yield this.nextTick();
-            this.checkAdaption();
-            this.emit('update:modelValue', this.value);
-        });
+        };
+        this.emit('beforechange', event);
+        if (!event.go) {
+            target.value = this.value;
+            return;
+        }
+        if (event.detail.change !== undefined) {
+            target.value = event.detail.change;
+        }
+        this.value = target.value;
+        this.emit('update:modelValue', this.value);
     }
     checkNumber(target) {
         if (!target) {
@@ -448,8 +435,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.value.slice(0, this.refs.text.selectionStart)
                     + str
                     + this.value.slice(this.refs.text.selectionEnd);
-                yield this.nextTick();
-                this.checkAdaption();
                 this.emit('update:modelValue', this.value);
                 this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
                 this.refs.text.selectionEnd = this.refs.text.selectionStart;
@@ -496,28 +481,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('clientwidth', this.refs.text.clientWidth);
             this.size.ch = this.refs.text.clientHeight;
             this.emit('clientheight', this.refs.text.clientHeight);
-            this.checkAdaption();
         }, true);
-    }
-    checkAdaption() {
-        this.adaptionHeight = 0;
-        if (!this.refs.pre) {
-            return;
-        }
-        if (!this.propBoolean('adaption')) {
-            return;
-        }
-        if (this.props.type !== 'multi') {
-            return;
-        }
-        if (!this.propBoolean('wrap')) {
-            return;
-        }
-        if (this.propBoolean('scroll')) {
-            return;
-        }
-        this.refs.pre.style.width = this.refs.text.clientWidth.toString() + 'px';
-        this.adaptionHeight = this.refs.pre.offsetHeight;
     }
     onMounted() {
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
@@ -532,7 +496,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
             }
             if (this.refs.text.value === this.value) {
-                this.checkAdaption();
                 return;
             }
             const event = {
@@ -551,8 +514,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
-            yield this.nextTick();
-            this.checkAdaption();
             this.emit('update:modelValue', this.value);
         }), {
             'immediate': true
@@ -581,7 +542,6 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             yield this.nextTick();
             this.checkWatch();
-            this.checkAdaption();
         }));
         this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
             var _c;
@@ -629,20 +589,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:modelValue', this.value);
             }
         }));
-        this.watch('scroll', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
-            this.checkAdaption();
-        }));
-        this.watch('adaption', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
-            this.checkAdaption();
-        }));
-        this.watch('wrap', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
-            this.checkAdaption();
-        }));
-        this.watch('maxlength', () => __awaiter(this, void 0, void 0, function* () {
-            var _e;
+        this.watch('maxlength', () => {
+            var _a;
             if (!this.propNumber('maxlength')) {
                 return;
             }
@@ -664,11 +612,9 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            this.value = (_e = event.detail.change) !== null && _e !== void 0 ? _e : value;
-            yield this.nextTick();
-            this.checkAdaption();
+            this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : value;
             this.emit('update:modelValue', this.value);
-        }));
+        });
         this.watch('scrollLeft', () => {
             const prop = this.propInt('scrollLeft');
             if (prop === Math.round(this.refs.text.scrollLeft)) {
@@ -703,36 +649,6 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
-        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color'], (n, v) => __awaiter(this, void 0, void 0, function* () {
-            switch (n) {
-                case 'font': {
-                    this.font = v;
-                    yield this.nextTick();
-                    this.checkAdaption();
-                    break;
-                }
-                case 'text-align': {
-                    this.textAlign = v;
-                    break;
-                }
-                case 'background-color': {
-                    let color = v;
-                    let el = this.element;
-                    let match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);
-                    while (match && parseFloat(match[1]) <= 0.1) {
-                        el = el.parentElement;
-                        if (!el) {
-                            break;
-                        }
-                        color = getComputedStyle(el).backgroundColor;
-                        match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);
-                    }
-                    const hsl = clickgo.tool.rgb2hsl(color);
-                    this.darkbg = hsl[2] < 0.5 ? true : false;
-                    break;
-                }
-            }
-        }), true);
         this.refs.text.scrollTop = this.propInt('scrollTop');
         this.refs.text.scrollLeft = this.propInt('scrollLeft');
         if (this.props.type !== 'number') {

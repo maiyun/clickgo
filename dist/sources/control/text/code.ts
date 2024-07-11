@@ -26,7 +26,6 @@ export default class extends clickgo.control.AbstractControl {
         'wrap': boolean | string;
         'maxlength': number | string;
         'scroll': boolean | string;
-        'adaption': boolean | string;
         'gesture': string[] | string;
         'type': 'text' | 'multi' | 'password' | 'number';
         'plain': boolean | string;
@@ -46,7 +45,6 @@ export default class extends clickgo.control.AbstractControl {
             'wrap': true,
             'maxlength': 0,
             'scroll': true,
-            'adaption': false,
             'gesture': [],
             'type': 'text',
             'plain': false,
@@ -61,15 +59,6 @@ export default class extends clickgo.control.AbstractControl {
             'max': undefined,
             'min': undefined
         };
-
-    // --- 样式 ---
-
-    public font = '';
-
-    public textAlign = '';
-
-    /** --- 如果 background 颜色比较深，则此值设定为 true --- */
-    public darkbg = false;
 
     /** --- 当前是否正在显示密码的状态 --- */
     public showPassword = false;
@@ -185,7 +174,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的 blur 事件 --- */
-    public async tblur(e: FocusEvent): Promise<void> {
+    public tblur(e: FocusEvent): void {
         // --- 如果是 number 则要判断数字是否符合 min max，不能在 input 判断，因为会导致用户无法正常输入数字，比如最小值是 10，他在输入 1 的时候就自动重置成 10 了 ---
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
         if (this.checkNumber(target)) {
@@ -206,8 +195,6 @@ export default class extends clickgo.control.AbstractControl {
                     target.value = event.detail.change;
                 }
                 this.value = target.value;
-                await this.nextTick();
-                this.checkAdaption();
                 this.emit('update:modelValue', this.value);
             }
             else {
@@ -220,7 +207,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的 input 事件 --- */
-    public async input(e: InputEvent): Promise<void> {
+    public input(e: InputEvent): void {
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
         if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
             target.value = target.value.slice(0, this.propNumber('maxlength'));
@@ -245,8 +232,6 @@ export default class extends clickgo.control.AbstractControl {
             target.value = event.detail.change;
         }
         this.value = target.value;
-        await this.nextTick();
-        this.checkAdaption();
         this.emit('update:modelValue', this.value);
     }
 
@@ -487,9 +472,6 @@ export default class extends clickgo.control.AbstractControl {
             this.value = event.detail.change ?? this.value.slice(0, this.refs.text.selectionStart)
                 + str
                 + this.value.slice(this.refs.text.selectionEnd);
-            // --- 等待 vue 响应一次 ---
-            await this.nextTick();
-            this.checkAdaption();
             this.emit('update:modelValue', this.value);
             this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
             this.refs.text.selectionEnd = this.refs.text.selectionStart;
@@ -541,38 +523,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('clientwidth', this.refs.text.clientWidth);
             this.size.ch = this.refs.text.clientHeight;
             this.emit('clientheight', this.refs.text.clientHeight);
-            this.checkAdaption();
         }, true);
-    }
-
-    /** --- 设置的 textarea 的高度 --- */
-    public adaptionHeight: number = 0;
-
-    /** --- 若是自适应的情况下，需要进行一次判断，看看当前高度是否正确 --- */
-    public checkAdaption(): void {
-        this.adaptionHeight = 0;
-        if (!this.refs.pre) {
-            return;
-        }
-        if (!this.propBoolean('adaption')) {
-            // --- 不是自适应 ---
-            return;
-        }
-        if (this.props.type !== 'multi') {
-            // --- 不是多行 ---
-            return;
-        }
-        if (!this.propBoolean('wrap')) {
-            // --- 不是可换行 ---
-            return;
-        }
-        if (this.propBoolean('scroll')) {
-            // --- 不是隐藏滚动条 ---
-            return;
-        }
-        // --- 多行下，并且开启自适应 ---
-        this.refs.pre.style.width = this.refs.text.clientWidth.toString() + 'px';
-        this.adaptionHeight = this.refs.pre.offsetHeight;
     }
 
     public onMounted(): void {
@@ -589,7 +540,6 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 有可能设置后控件实际值和设置的值不同，所以要重新判断一下 ---
             if (this.refs.text.value === this.value) {
-                this.checkAdaption();
                 return;
             }
             const event: types.ITextBeforechangeEvent = {
@@ -608,8 +558,6 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.value = event.detail.change ?? this.refs.text.value;
-            await this.nextTick();
-            this.checkAdaption();
             this.emit('update:modelValue', this.value);
         }, {
             'immediate': true
@@ -638,7 +586,6 @@ export default class extends clickgo.control.AbstractControl {
             }
             await this.nextTick();
             this.checkWatch();
-            this.checkAdaption();
         });
         this.watch('max', async () => {
             await this.nextTick();
@@ -684,19 +631,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('update:modelValue', this.value);
             }
         });
-        this.watch('scroll', async (): Promise<void> => {
-            await this.nextTick();
-            this.checkAdaption();
-        });
-        this.watch('adaption', async (): Promise<void> => {
-            await this.nextTick();
-            this.checkAdaption();
-        });
-        this.watch('wrap', async (): Promise<void> => {
-            await this.nextTick();
-            this.checkAdaption();
-        });
-        this.watch('maxlength', async () => {
+        this.watch('maxlength', () => {
             if (!this.propNumber('maxlength')) {
                 return;
             }
@@ -719,8 +654,6 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.value = event.detail.change ?? value;
-            await this.nextTick();
-            this.checkAdaption();
             this.emit('update:modelValue', this.value);
         });
         this.watch('scrollLeft', (): void => {
@@ -757,37 +690,6 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
-
-        clickgo.dom.watchStyle(this.element, ['font', 'text-align', 'background-color'], async (n, v): Promise<void> => {
-            switch (n) {
-                case 'font': {
-                    this.font = v;
-                    await this.nextTick();
-                    this.checkAdaption();
-                    break;
-                }
-                case 'text-align': {
-                    this.textAlign = v;
-                    break;
-                }
-                case 'background-color': {
-                    let color = v;
-                    let el: HTMLElement | null = this.element;
-                    let match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);
-                    while (match && parseFloat(match[1]) <= 0.1) {
-                        el = el.parentElement;
-                        if (!el) {
-                            break;
-                        }
-                        color = getComputedStyle(el).backgroundColor;
-                        match = /rgba\([0-9 ]+,[0-9 ]+,[0-9 ]+,([0-9 ]+)\)/.exec(color);
-                    }
-                    const hsl = clickgo.tool.rgb2hsl(color);
-                    this.darkbg = hsl[2] < 0.5 ? true : false;
-                    break;
-                }
-            }
-        }, true);
 
         // --- 对 scroll 位置进行归位 ---
         this.refs.text.scrollTop = this.propInt('scrollTop');

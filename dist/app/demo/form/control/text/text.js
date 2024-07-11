@@ -49,7 +49,6 @@ class default_1 extends clickgo.form.AbstractForm {
         this.type = ['text'];
         this.disabled = false;
         this.readonly = false;
-        this.adaption = false;
         this.scroll = true;
         this.wrap = true;
         this.menu = false;
