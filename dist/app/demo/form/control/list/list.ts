@@ -63,6 +63,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public listMap5 = undefined;
 
+    public disabledList: string[] = [];
+
     // --- obejct ---
 
     public selectObject = ['test'];

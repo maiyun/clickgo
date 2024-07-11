@@ -110,6 +110,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.s3other = false;
         this.slist3r = ['a', 'b', 'c', 'haha3'];
         this.editableData = true;
+        this.disabledList = [];
         this.padding = false;
         this.fontSize = false;
         this.background = false;

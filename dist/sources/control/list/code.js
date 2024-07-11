@@ -57,6 +57,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'check': false,
             'map': {},
             'data': [],
+            'disabledList': [],
             'modelValue': []
         };
         this.dataFormat = [];
@@ -261,6 +262,7 @@ class default_1 extends clickgo.control.AbstractControl {
     unpack(data, level = 0) {
         var _a, _b, _c;
         const result = [];
+        const disabledList = this.propArray('disabledList');
         for (const item of data) {
             let tree = item.tree;
             if ((item.children.length === 0) && !this.propBoolean('async')) {
@@ -270,7 +272,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'label': item.label,
                 'value': item.value,
                 'title': item.title,
-                'disabled': item.disabled,
+                'disabled': disabledList.includes(item.value) ? true : item.disabled,
                 'color': item.color,
                 'control': item.control,
                 'tree': tree,

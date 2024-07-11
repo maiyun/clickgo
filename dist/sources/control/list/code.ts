@@ -45,6 +45,7 @@ export default class extends clickgo.control.AbstractControl {
         };
 
         'data': any[] | Record<string, string>;
+        'disabledList': string[] | string;
         'modelValue': string[];
     } = {
             'disabled': false,
@@ -66,6 +67,7 @@ export default class extends clickgo.control.AbstractControl {
             'map': {},
 
             'data': [],
+            'disabledList': [],
             'modelValue': []
         };
 
@@ -339,6 +341,7 @@ export default class extends clickgo.control.AbstractControl {
      */
     public unpack(data: any[], level = 0): any[] {
         const result: any[] = [];
+        const disabledList = this.propArray('disabledList');
         for (const item of data) {
             /** --- -1: 不存在子项, 0: 关闭状态, 1: 存在子项打开状态, 2: 加载状态, */
             let tree = item.tree;
@@ -350,7 +353,7 @@ export default class extends clickgo.control.AbstractControl {
                 'label': item.label,
                 'value': item.value,
                 'title': item.title,
-                'disabled': item.disabled,
+                'disabled': disabledList.includes(item.value) ? true : item.disabled,
                 'color': item.color,
                 'control': item.control,
                 'tree': tree,

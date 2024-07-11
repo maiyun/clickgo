@@ -85,6 +85,7 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         ];
         this.listMap5 = undefined;
+        this.disabledList = [];
         this.selectObject = ['test'];
         this.listDataObject = {
             'test': 'This is test',
