@@ -1,7 +1,7 @@
 .wrap {
     border-radius: var(--g-radius); display: flex; flex-direction: column; gap: var(--g-padding); padding: var(--g-padding);
     &:not(.plain) {
-        border: solid .5px var(--g-plain-border-color);
+        border: solid .5px var(--g-plain-border-color); background: var(--g-plain-background);
     }
     &[data-cg-disabled] {
         background: var(--g-plain-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
