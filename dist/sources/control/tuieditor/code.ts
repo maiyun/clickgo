@@ -134,7 +134,7 @@ export default class extends clickgo.control.AbstractControl {
                                         'height'?: number;
                                         'align'?: string;
                                     }) => {
-                                        if (opt && (opt.width || opt.height)) {
+                                        if (opt && (opt.width ?? opt.height)) {
                                             if (this.access.tuieditor.isMarkdownMode()) {
                                                 this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
                                                 return;
@@ -208,7 +208,7 @@ export default class extends clickgo.control.AbstractControl {
                                 'height'?: number;
                                 'align'?: string;
                             }) => {
-                                if (opt && (opt.width || opt.height)) {
+                                if (opt && (opt.width ?? opt.height)) {
                                     if (this.access.tuieditor.isMarkdownMode()) {
                                         this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
                                         return;
@@ -250,7 +250,7 @@ export default class extends clickgo.control.AbstractControl {
                 'height'?: number;
                 'align'?: string;
             }) => {
-                if (opt && (opt.width || opt.height)) {
+                if (opt && (opt.width ?? opt.height)) {
                     if (this.access.tuieditor.isMarkdownMode()) {
                         this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
                         return;
@@ -285,7 +285,7 @@ export default class extends clickgo.control.AbstractControl {
             clickgo.form.showPop(this.element, this.refs.pop, e);
         });
         // --- 绑定 paste ---
-        this.element.addEventListener('paste', async (e: ClipboardEvent) => {
+        this.element.addEventListener('paste', (e: ClipboardEvent) => {
             if (!e.clipboardData) {
                 return;
             }

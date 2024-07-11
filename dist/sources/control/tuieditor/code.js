@@ -146,8 +146,8 @@ class default_1 extends clickgo.control.AbstractControl {
                                     'detail': {
                                         'file': yield item.getType(item.types[0]),
                                         callback: (url, opt) => {
-                                            var _a;
-                                            if (opt && (opt.width || opt.height)) {
+                                            var _a, _b;
+                                            if (opt && ((_a = opt.width) !== null && _a !== void 0 ? _a : opt.height)) {
                                                 if (this.access.tuieditor.isMarkdownMode()) {
                                                     this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
                                                     return;
@@ -155,7 +155,7 @@ class default_1 extends clickgo.control.AbstractControl {
                                             }
                                             this.access.tuieditor.exec('addImage', {
                                                 'imageUrl': url,
-                                                'altText': (_a = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _a !== void 0 ? _a : ''
+                                                'altText': (_b = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _b !== void 0 ? _b : ''
                                             });
                                         }
                                     }
@@ -213,8 +213,8 @@ class default_1 extends clickgo.control.AbstractControl {
                             'detail': {
                                 'file': file,
                                 callback: (url, opt) => {
-                                    var _a;
-                                    if (opt && (opt.width || opt.height)) {
+                                    var _a, _b;
+                                    if (opt && ((_a = opt.width) !== null && _a !== void 0 ? _a : opt.height)) {
                                         if (this.access.tuieditor.isMarkdownMode()) {
                                             this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
                                             return;
@@ -222,7 +222,7 @@ class default_1 extends clickgo.control.AbstractControl {
                                     }
                                     this.access.tuieditor.exec('addImage', {
                                         'imageUrl': url,
-                                        'altText': (_a = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _a !== void 0 ? _a : ''
+                                        'altText': (_b = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _b !== void 0 ? _b : ''
                                     });
                                 }
                             }
@@ -250,8 +250,8 @@ class default_1 extends clickgo.control.AbstractControl {
             cgimage.style.margin = '0';
             cgimage.addEventListener('click', () => {
                 this.emit('imgselect', (url, opt) => {
-                    var _a;
-                    if (opt && (opt.width || opt.height)) {
+                    var _a, _b;
+                    if (opt && ((_a = opt.width) !== null && _a !== void 0 ? _a : opt.height)) {
                         if (this.access.tuieditor.isMarkdownMode()) {
                             this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
                             return;
@@ -259,7 +259,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     this.access.tuieditor.exec('addImage', {
                         'imageUrl': url,
-                        'altText': (_a = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _a !== void 0 ? _a : ''
+                        'altText': (_b = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _b !== void 0 ? _b : ''
                     });
                 });
             });
@@ -284,7 +284,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 clickgo.form.showPop(this.element, this.refs.pop, e);
             });
-            this.element.addEventListener('paste', (e) => __awaiter(this, void 0, void 0, function* () {
+            this.element.addEventListener('paste', (e) => {
                 if (!e.clipboardData) {
                     return;
                 }
@@ -301,7 +301,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.access.tuieditor.insertText(html);
                     });
                 }
-            }));
+            });
             const down = (e) => {
                 if (clickgo.dom.hasTouchButMouse(e)) {
                     return;
