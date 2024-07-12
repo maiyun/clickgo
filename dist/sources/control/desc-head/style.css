@@ -1,1 +1,1 @@
-.wrap{background:var(--face);border-radius:var(--g-radius)}.wrap.border{border:solid .5px var(--g-plain-border-color)}.wrap.border.plain{border-color:var(--face)}.wrap.size-s{padding:4px}.wrap.size-m{padding:10px}
+.wrap{background:var(--face);border-radius:var(--g-radius)}.wrap.border{border:solid .5px var(--g-plain-border-color)}.wrap.border.plain{border-color:var(--g-plain-border-color-plain)}.wrap.size-s{padding:4px}.wrap.size-m{padding:10px}

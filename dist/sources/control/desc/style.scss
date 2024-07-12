@@ -3,7 +3,7 @@
     &.border {
         border: solid .5px var(--g-plain-border-color);
         &.plain{
-            border-color: var(--face);
+            border-color: var(--g-plain-border-color-plain);
         }
     }
     &.collapse {
