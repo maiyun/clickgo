@@ -27,50 +27,12 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.emits = {
-            'media': null
-        };
         this.props = {
             'direction': 'h',
-            'media': [],
             'gutter': '',
             'alignH': undefined,
             'alignV': undefined
         };
-        this.mediaOld = -1;
-    }
-    onMounted() {
-        this.watch('media', () => {
-            if (this.propArray('media').length) {
-                clickgo.dom.watchSize(this.element, () => {
-                    let now = 0;
-                    for (const width of this.propArray('media')) {
-                        if (this.element.offsetWidth < width) {
-                            continue;
-                        }
-                        if (now > width) {
-                            continue;
-                        }
-                        now = width;
-                    }
-                    if (now === this.mediaOld) {
-                        return;
-                    }
-                    this.mediaOld = now;
-                    this.emit('media', now);
-                }, true);
-            }
-            else {
-                clickgo.dom.unwatchSize(this.element);
-                if (this.mediaOld === -1) {
-                    return;
-                }
-                this.mediaOld = -1;
-                this.emit('media', -1);
-            }
-        }, {
-            'immediate': true
-        });
     }
 }
 exports.default = default_1;
