@@ -80,6 +80,15 @@ export default class extends clickgo.control.AbstractControl {
                 'qsChange': false
             }
         };
+        const qsChangeShowEvent: types.IAbstractPanelQsChangeShowEvent = {
+            'detail': {
+                'action': opt.action ?? 'forword',
+                'data': data,
+                'nav': opt.nav ?? false,
+                'previous': opt.previous ?? '',
+                'qsChange': false
+            }
+        };
         this.loading = true;
         if (typeof cls === 'string') {
             cls = clickgo.tool.urlResolve(this.path + '/', cls);
@@ -97,6 +106,8 @@ export default class extends clickgo.control.AbstractControl {
                     // --- 有 nav 的话，就大概率不是用户来 go 的了 ---
                     item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     await item.vroot.onQsChange();
+                    qsChangeShowEvent.detail.qsChange = true;
+                    await item.vroot.onQsChangeShow(qsChangeShowEvent);
                 }
                 this.loading = false;
                 return true;
@@ -115,9 +126,11 @@ export default class extends clickgo.control.AbstractControl {
             if (this.access.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.access.nav.qs))) {
                 item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                 await item.vroot.onQsChange();
+                qsChangeShowEvent.detail.qsChange = true;
                 showEvent.detail.qsChange = true;
             }
             await item.vroot.onShow(showEvent);
+            await item.vroot.onQsChangeShow(qsChangeShowEvent);
             this.loading = false;
             return true;
         }
@@ -146,6 +159,7 @@ export default class extends clickgo.control.AbstractControl {
                 showEvent.detail.qsChange = true;
             }
             await rtn.vroot.onShow(showEvent);
+            await rtn.vroot.onQsChangeShow(qsChangeShowEvent);
             this.loading = false;
             return true;
         }

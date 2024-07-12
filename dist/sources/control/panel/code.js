@@ -66,7 +66,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     go(cls_1) {
         return __awaiter(this, arguments, void 0, function* (cls, data = {}, opt = {}) {
-            var _a, _b, _c;
+            var _a, _b, _c, _d, _e, _f;
             if (this.loading) {
                 return false;
             }
@@ -76,6 +76,15 @@ class default_1 extends clickgo.control.AbstractControl {
                     'nav': (_a = opt.nav) !== null && _a !== void 0 ? _a : false,
                     'action': (_b = opt.action) !== null && _b !== void 0 ? _b : 'forword',
                     'previous': (_c = opt.previous) !== null && _c !== void 0 ? _c : '',
+                    'qsChange': false
+                }
+            };
+            const qsChangeShowEvent = {
+                'detail': {
+                    'action': (_d = opt.action) !== null && _d !== void 0 ? _d : 'forword',
+                    'data': data,
+                    'nav': (_e = opt.nav) !== null && _e !== void 0 ? _e : false,
+                    'previous': (_f = opt.previous) !== null && _f !== void 0 ? _f : '',
                     'qsChange': false
                 }
             };
@@ -92,6 +101,8 @@ class default_1 extends clickgo.control.AbstractControl {
                     if (this.access.nav) {
                         item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                         yield item.vroot.onQsChange();
+                        qsChangeShowEvent.detail.qsChange = true;
+                        yield item.vroot.onQsChangeShow(qsChangeShowEvent);
                     }
                     this.loading = false;
                     return true;
@@ -104,9 +115,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (this.access.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.access.nav.qs))) {
                     item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     yield item.vroot.onQsChange();
+                    qsChangeShowEvent.detail.qsChange = true;
                     showEvent.detail.qsChange = true;
                 }
                 yield item.vroot.onShow(showEvent);
+                yield item.vroot.onQsChangeShow(qsChangeShowEvent);
                 this.loading = false;
                 return true;
             }
@@ -128,10 +141,11 @@ class default_1 extends clickgo.control.AbstractControl {
                     showEvent.detail.qsChange = true;
                 }
                 yield rtn.vroot.onShow(showEvent);
+                yield rtn.vroot.onQsChangeShow(qsChangeShowEvent);
                 this.loading = false;
                 return true;
             }
-            catch (_d) {
+            catch (_g) {
                 this.loading = false;
                 return false;
             }

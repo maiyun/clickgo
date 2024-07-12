@@ -448,6 +448,12 @@ export abstract class AbstractPanel extends AbstractCommon {
         return;
     }
 
+    /** --- 无论是 show 还是 qschange 都会触发，优先触发 show 或 qschange 事件本身，之后触发这个 --- */
+    public onQsChangeShow(e: types.IAbstractPanelQsChangeShowEvent): void | Promise<void>;
+    public onQsChangeShow(): void {
+        return;
+    }
+
 }
 
 /** --- 窗体的抽象类 --- */

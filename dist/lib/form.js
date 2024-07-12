@@ -324,6 +324,9 @@ class AbstractPanel extends AbstractCommon {
     onQsChange() {
         return;
     }
+    onQsChangeShow() {
+        return;
+    }
 }
 exports.AbstractPanel = AbstractPanel;
 class AbstractForm extends AbstractCommon {

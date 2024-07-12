@@ -31,11 +31,21 @@ export default class extends clickgo.form.AbstractPanel {
         });
     }
 
+    public async onQsChangeShow(e: types.IAbstractPanelQsChangeShowEvent): Promise<void> {
+        // --- 装作要做一些什么 await 的事件 ---
+        await clickgo.tool.sleep(500);
+        clickgo.form.notify({
+            'title': 'Test1 Panel',
+            'content': 'onQsChangeShow'
+        });
+        console.log('onQsChangeShow', e);
+    }
+
     public async click(): Promise<void> {
         await clickgo.form.dialog('Hello panel!');
     }
 
-    public async clearQss() {
+    public async clearQss(): Promise<void> {
         this.clearQs();
         await clickgo.form.dialog('cleard.');
     }
