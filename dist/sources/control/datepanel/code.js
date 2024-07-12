@@ -96,6 +96,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'year': 'Year',
                 'today': 'Today',
                 'back': 'Back',
+                'clear': 'Clear'
             },
             'sc': {
                 'w0': '日',
@@ -120,6 +121,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'year': '年',
                 'today': '今天',
                 'back': '返回',
+                'clear': '清除',
             },
             'tc': {
                 'w0': '日',
@@ -143,7 +145,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': '12月',
                 'year': '年',
                 'today': '今天',
-                'back': '返回'
+                'back': '返回',
+                'clear': '清除',
             },
             'ja': {
                 'w0': '日',
@@ -167,7 +170,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': '12月',
                 'year': '年',
                 'today': '今日',
-                'back': '戻る'
+                'back': '戻る',
+                'clear': 'クリア',
             },
             'ko': {
                 'w0': '일',
@@ -191,7 +195,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': '12월',
                 'year': '년',
                 'today': '오늘',
-                'back': '뒤로'
+                'back': '뒤로',
+                'clear': '지우기',
             },
             'th': {
                 'w0': 'อา',
@@ -215,7 +220,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': 'ธ.ค.',
                 'year': 'ปี',
                 'today': 'วันนี้',
-                'back': 'กลับ'
+                'back': 'กลับ',
+                'clear': 'ล้าง',
             },
             'es': {
                 'w0': 'Dom',
@@ -239,7 +245,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': 'Dic',
                 'year': 'Año',
                 'today': 'Hoy',
-                'back': 'Volver'
+                'back': 'Volver',
+                'clear': 'Claro',
             },
             'de': {
                 'w0': 'So',
@@ -263,7 +270,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': 'Dez',
                 'year': 'Jahr',
                 'today': 'Heute',
-                'back': 'Zurück'
+                'back': 'Zurück',
+                'clear': 'Löschen',
             },
             'fr': {
                 'w0': 'Dim',
@@ -287,7 +295,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': 'Déc',
                 'year': 'Année',
                 'today': 'Aujourd\'hui',
-                'back': 'Retour'
+                'back': 'Retour',
+                'clear': 'Effacer',
             },
             'pt': {
                 'w0': 'Dom',
@@ -311,7 +320,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': 'Dez',
                 'year': 'Ano',
                 'today': 'Hoje',
-                'back': 'Voltar'
+                'back': 'Voltar',
+                'clear': 'Limpar',
             },
             'ru': {
                 'w0': 'Вс',
@@ -335,7 +345,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': 'Дек',
                 'year': 'Год',
                 'today': 'Сегодня',
-                'back': 'Назад'
+                'back': 'Назад',
+                'clear': 'Очистить',
             },
             'vi': {
                 'w0': 'CN',
@@ -359,11 +370,15 @@ class default_1 extends clickgo.control.AbstractControl {
                 'm12': 'Th12',
                 'year': 'Năm',
                 'today': 'Hôm nay',
-                'back': 'Trở lại'
+                'back': 'Trở lại',
+                'clear': 'Xóa',
             }
         };
         this.maps = [];
         this.vyear = [''];
+        this.prevNextDate = new Date();
+        this.prevYm = '';
+        this.nextYm = '';
         this.vmonth = [''];
         this.vhour = [];
         this.hours = [];
@@ -544,6 +559,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('selected', event);
     }
     today() {
+        this.timestamp = 0;
         const now = new Date();
         this.dateObj.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
         this.refreshDateValue();
@@ -554,6 +570,26 @@ class default_1 extends clickgo.control.AbstractControl {
         this.vyear[0] = this.dateValue.year.toString();
         this.vmonth[0] = (this.dateValue.month + 1).toString();
         this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
+    }
+    prev() {
+        const month = parseInt(this.vmonth[0]);
+        if (month === 1) {
+            const year = parseInt(this.vyear[0]);
+            this.vyear[0] = (year - 1).toString();
+            this.vmonth[0] = '12';
+            return;
+        }
+        this.vmonth[0] = (month - 1).toString();
+    }
+    next() {
+        const month = parseInt(this.vmonth[0]);
+        if (month === 12) {
+            const year = parseInt(this.vyear[0]);
+            this.vyear[0] = (year + 1).toString();
+            this.vmonth[0] = '1';
+            return;
+        }
+        this.vmonth[0] = (month + 1).toString();
     }
     onMounted() {
         this.watch('start', () => {
@@ -570,6 +606,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.startDate.setMilliseconds(0);
             }
             this.refreshStartValue();
+            if (this.timestamp !== undefined && this.timestamp < this.startTs) {
+                this.dateObj.setTime(this.startDate.getTime());
+                this.refreshDateValue();
+                this.updateTimestamp();
+            }
         }, {
             'immediate': true
         });
@@ -588,6 +629,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.endDate.setMilliseconds(0);
             }
             this.refreshEndValue();
+            if (this.timestamp !== undefined && this.timestamp > this.endTs) {
+                this.dateObj.setTime(this.endDate.getTime());
+                this.refreshDateValue();
+                this.updateTimestamp();
+            }
         }, {
             'immediate': true
         });
@@ -603,12 +649,17 @@ class default_1 extends clickgo.control.AbstractControl {
         for (let i = -12; i <= 14; ++i) {
             this.zones.push((i >= 0 ? '+' : '') + i.toString());
         }
+        this.prevNextDate.setUTCHours(0, 0, 0, 0);
         this.watch(() => {
             return this.vyear[0] + '-' + this.vmonth[0];
         }, () => {
             if (!this.vyear[0] || !this.vmonth[0]) {
                 return;
             }
+            this.prevNextDate.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 2, 1);
+            this.prevYm = this.prevNextDate.getUTCFullYear().toString() + (this.prevNextDate.getUTCMonth() + 1).toString().padStart(2, '0');
+            this.prevNextDate.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]), 1);
+            this.nextYm = this.prevNextDate.getUTCFullYear().toString() + (this.prevNextDate.getUTCMonth() + 1).toString().padStart(2, '0');
             this.refreshView();
         });
         this.watch(() => {
@@ -755,8 +806,10 @@ class default_1 extends clickgo.control.AbstractControl {
         this.timestamp = undefined;
         this.emit('update:modelValue', undefined);
         this.rangeDate = undefined;
-        this.cursorDate = '';
-        this.emit('update:cursor', '');
+        if (this.cursorDate !== '') {
+            this.cursorDate = '';
+            this.emit('update:cursor', '');
+        }
     }
 }
 exports.default = default_1;

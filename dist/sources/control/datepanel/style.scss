@@ -15,6 +15,25 @@
 
         .left {
             flex: 1; display: flex; gap: var(--g-padding);
+
+            .monthleft, .monthright {
+                .arrow {
+                    display: flex; justify-content: center; align-items: center; width: 14px;
+                    &::after {
+                        content: ''; border: solid 1px var(--g-color); width: 6px; height: 6px; transform: rotate(45deg);
+                    }
+                }
+            }
+            .monthleft {
+                .arrow::after {
+                    border-width: 0 0 1px 1px; margin-left: 3px;
+                }
+            }
+            .monthright {
+                .arrow::after {
+                    border-width: 1px 1px 0 0; margin-right: 3px;
+                }
+            }
         }
         .right {
             justify-content: right; display: flex; gap: var(--g-padding);
