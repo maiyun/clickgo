@@ -5,7 +5,7 @@
         display: flex;
 
         cg-button {
-            margin-right: 1px; width: 24px; height: 24px; padding: 0;
+            margin-right: 1px; width: 28px; height: 28px;
             svg {
                 width: 14px; height: 14px;
             }
@@ -70,7 +70,10 @@
                 flex: 1; width: 0; display: flex; flex-direction: column; justify-content: center;
 
                 .text {
-                    padding: var(--g-padding); height: 26px;
+                    height: 28px; align-items: center; padding-left: var(--g-padding); display: flex;
+                }
+                .tcontrol {
+                    height: 28px;
                 }
 
                 cg-check {
@@ -83,12 +86,12 @@
                         flex: 1;
                     }
                     cg-button {
-                        padding: 0;
+                        width: 28px;
                     }
                 }
 
                 .arrow {
-                    display: flex; justify-content: center; align-items: center; width: 20px;
+                    display: flex; justify-content: center; align-items: center; width: 14px;
                     &::after {
                         content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
                     }

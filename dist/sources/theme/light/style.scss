@@ -254,7 +254,7 @@ global {
 .property_wrap {
     .property_controls {
         .property_tag-cg-button {
-            margin-right: 5px; width: 34px; height: 34px; padding: 0;
+            margin-right: 5px; width: 34px; height: 34px;
         }
         .property_split {
             margin: 0 5px 0 0;
@@ -274,11 +274,16 @@ global {
                 .property_text {
                     height: 32px;
                 }
+                .property_tcontrol {
+                    height: 32px;
+                }
                 .property_tag-cg-check {
                     margin-left: 10px;
                 }
-                .property_arrow {
-                    width: 30px;
+                .property_dock {
+                    .property_tag-cg-button {
+                        width: 32px;
+                    }
                 }
             }
         }
