@@ -64,6 +64,8 @@
         "/form/control/form/form.css",
         "/form/control/form/form.js",
         "/form/control/form/form.xml",
+        "/form/control/grid/grid.js",
+        "/form/control/grid/grid.xml",
         "/form/control/group/group.js",
         "/form/control/group/group.xml",
         "/form/control/html/html.js",

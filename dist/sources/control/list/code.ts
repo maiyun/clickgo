@@ -487,7 +487,7 @@ export default class extends clickgo.control.AbstractControl {
     public onChanged(e: types.IGreatlistChangedEvent): void {
         const event: types.IListChangedEvent = {
             'detail': {
-                'value': [this.dataGl[e.detail.value[0]].value]
+                'value': e.detail.value[0] === undefined ? [] : [this.dataGl[e.detail.value[0]].value]
             }
         };
         this.emit('changed', event);

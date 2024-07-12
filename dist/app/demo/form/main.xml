@@ -32,10 +32,11 @@
                 <layout gutter="10">
                     <button @click="openForm('cdialog')">Dialog</button>
                     <button @click="openForm('cfile')">File</button>
+                    <button @click="openForm('cgrid')">Grid</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cblock')">Block</button>
-                    <button @click="openForm('calayout')">Alayout</button>
+                    <button @click="openForm('calayout')">Alayout (deprecated)</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('csvg')">Svg</button>

@@ -68,7 +68,7 @@ export abstract class AbstractControl {
     }
 
     /** --- 当前组件是否是别的组件的子组件，仅仅是包裹在组件的 layout 初始化中的才算 --- */
-    private _rootControl: (AbstractControl & Record<string, any>) | null = null;
+    private readonly _rootControl: (AbstractControl & Record<string, any>) | null = null;
 
     /** --- 当前组件如果在开发控件层面被包裹了，则可以获取到包裹他的组件对象 --- */
     public get rootControl(): (AbstractControl & Record<string, any>) | null {
@@ -141,7 +141,7 @@ export abstract class AbstractControl {
             }
             case 'left':
             case 'start': {
-                return 'flex-start'
+                return 'flex-start';
             }
         }
         return 'flex-end';
@@ -158,7 +158,7 @@ export abstract class AbstractControl {
             }
             case 'top':
             case 'start': {
-                return 'flex-start'
+                return 'flex-start';
             }
         }
         return 'flex-end';
@@ -324,7 +324,7 @@ export abstract class AbstractControl {
     * --- 根据 control access 查询上层控件 ---
     */
     public get parentByAccess() {
-        return (name: string, val:string): (AbstractControl & Record<string, any>) | null => {
+        return (name: string, val: string): (AbstractControl & Record<string, any>) | null => {
             let parent = (this as any).$parent;
             while (true) {
                 if (!parent) {

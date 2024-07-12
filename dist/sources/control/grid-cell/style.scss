@@ -1,0 +1,6 @@
+.wrap {
+    display: flex; position: relative;
+    &.v {
+        flex-direction: column;
+    }
+}

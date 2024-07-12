@@ -2,6 +2,7 @@ import * as clickgo from 'clickgo';
 import * as types from '~/types/index';
 
 import calayoutFrm from './control/alayout/alayout';
+import cgridFrm from './control/grid/grid';
 import cboxFrm from './control/box/box';
 import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
@@ -86,6 +87,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'calayout': {
                 frm = await clickgo.form.create(calayoutFrm);
+                break;
+            }
+            case 'cgrid': {
+                frm = await clickgo.form.create(cgridFrm);
                 break;
             }
             case 'cbox': {

@@ -387,7 +387,7 @@ class default_1 extends clickgo.control.AbstractControl {
     onChanged(e) {
         const event = {
             'detail': {
-                'value': [this.dataGl[e.detail.value[0]].value]
+                'value': e.detail.value[0] === undefined ? [] : [this.dataGl[e.detail.value[0]].value]
             }
         };
         this.emit('changed', event);
