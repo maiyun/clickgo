@@ -475,7 +475,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
-                'value': [this.dataGl[e.detail.value[0]].value]
+                'value': e.detail.value[0] === undefined ? [] : [this.dataGl[e.detail.value[0]].value]
             }
         };
         this.emit('change', event);
