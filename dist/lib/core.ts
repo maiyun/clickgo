@@ -355,7 +355,7 @@ const modules: Record<string, {
             await loader.loadLinks([
                 loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.css'
             ]);
-            loader.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}');
+            loader.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}.jodit-wysiwyg a{color:unset;}');
             return (window as any).Jodit;
         },
         'obj': null,

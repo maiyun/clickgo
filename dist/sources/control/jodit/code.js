@@ -169,7 +169,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'allowResizeY': false,
                 'addNewLine': false,
                 'language': this.getLanguage(),
-                'theme': this.props.theme === 'dark' ? 'dark' : undefined
+                'theme': this.props.theme === 'dark' ? 'dark' : undefined,
+                'toolbarAdaptive': false
             });
             this.access.editor.value = this.props.modelValue;
             this.access.editor.events.on('change', () => {
