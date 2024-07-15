@@ -1091,6 +1091,9 @@ function run(url_1) {
                 formatSecond: function (second) {
                     return tool.formatSecond(second);
                 },
+                formatTime: function (ts, opts = {}) {
+                    return tool.formatTime(ts, opts);
+                },
                 queryStringify: function (query) {
                     return tool.queryStringify(query);
                 },

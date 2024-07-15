@@ -51,6 +51,7 @@ export default class extends clickgo.control.AbstractControl {
         'placeholder': string;
         'data': any[] | Record<string, string>;
         'disabledList': string[] | string;
+        'unavailableList': string[] | string;
     } = {
             'disabled': false,
             'editable': false,
@@ -71,7 +72,8 @@ export default class extends clickgo.control.AbstractControl {
             'modelValue': [],
             'placeholder': '',
             'data': [],
-            'disabledList': []
+            'disabledList': [],
+            'unavailableList': []
         };
 
     /** --- 语言包 --- */

@@ -58,10 +58,11 @@ class default_1 extends clickgo.control.AbstractControl {
             'map': {},
             'data': [],
             'disabledList': [],
+            'unavailableList': [],
             'modelValue': []
         };
         this.dataFormat = [];
-        this.checkValues = [];
+        this.values = [];
     }
     get value() {
         if (this.propBoolean('check')) {
@@ -71,7 +72,7 @@ class default_1 extends clickgo.control.AbstractControl {
             return [];
         }
         let change = false;
-        const modelValue = clickgo.tool.clone(this.props.modelValue);
+        const modelValue = clickgo.tool.clone(this.values);
         if (modelValue.length > 1 && !this.propBoolean('multi')) {
             change = true;
             modelValue.splice(1);
@@ -177,7 +178,8 @@ class default_1 extends clickgo.control.AbstractControl {
             label.push(this.dataGl[item].label);
             items.push(this.dataGl[item]);
         }
-        this.emit('update:modelValue', modelValue);
+        this.values = modelValue;
+        this.emit('update:modelValue', clickgo.tool.clone(modelValue));
         this.emit('label', label);
         this.emit('item', items);
     }
@@ -263,6 +265,7 @@ class default_1 extends clickgo.control.AbstractControl {
         var _a, _b, _c;
         const result = [];
         const disabledList = this.propArray('disabledList');
+        const unavailableList = this.propArray('unavailableList');
         for (const item of data) {
             let tree = item.tree;
             if ((item.children.length === 0) && !this.propBoolean('async')) {
@@ -273,6 +276,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'value': item.value,
                 'title': item.title,
                 'disabled': disabledList.includes(item.value) ? true : item.disabled,
+                'unavailable': unavailableList.includes(item.value) ? true : item.unavailable,
                 'color': item.color,
                 'control': item.control,
                 'tree': tree,
@@ -419,18 +423,18 @@ class default_1 extends clickgo.control.AbstractControl {
                 'check': e.detail.value ? (e.detail.indeterminate ? true : false) : true
             });
             if (r.change) {
-                this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+                this.emit('update:modelValue', clickgo.tool.clone(this.values));
             }
             return;
         }
-        const io = this.checkValues.indexOf(row.value);
+        const io = this.values.indexOf(row.value);
         if (io === -1) {
-            this.checkValues.push(row.value);
+            this.values.push(row.value);
         }
         else {
-            this.checkValues.splice(io, 1);
+            this.values.splice(io, 1);
         }
-        this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+        this.emit('update:modelValue', clickgo.tool.clone(this.values));
     }
     get isChecked() {
         return (data) => {
@@ -438,7 +442,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 const r = this.childrenTotal(data);
                 return r.check > 0 ? true : false;
             }
-            return this.checkValues.includes(data.value);
+            return this.values.includes(data.value);
         };
     }
     get isIndeterminate() {
@@ -501,22 +505,22 @@ class default_1 extends clickgo.control.AbstractControl {
                 ++rtn.total;
                 if (opt.check !== undefined) {
                     if (opt.check) {
-                        if (!this.checkValues.includes(item.value)) {
-                            this.checkValues.push(item.value);
+                        if (!this.values.includes(item.value)) {
+                            this.values.push(item.value);
                             rtn.change = true;
                         }
                         ++rtn.check;
                     }
                     else {
-                        const io = this.checkValues.indexOf(item.value);
+                        const io = this.values.indexOf(item.value);
                         if (io > -1) {
-                            this.checkValues.splice(io, 1);
+                            this.values.splice(io, 1);
                             rtn.change = true;
                         }
                     }
                     continue;
                 }
-                if (!this.checkValues.includes(item.value)) {
+                if (!this.values.includes(item.value)) {
                     continue;
                 }
                 ++rtn.check;
@@ -525,7 +529,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     refreshCheckValues() {
-        const waitingCheck = clickgo.tool.clone(this.checkValues);
+        const waitingCheck = clickgo.tool.clone(this.values);
         const result = [];
         this.childrenTotal(this.dataGl, {
             'checkValues': {
@@ -533,10 +537,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 'result': result
             }
         });
-        const r = clickgo.tool.compar(this.checkValues, result);
+        const r = clickgo.tool.compar(this.values, result);
         if (r.length.add || r.length.remove) {
-            this.checkValues = result;
-            this.emit('update:modelValue', this.checkValues);
+            this.values = result;
+            this.emit('update:modelValue', this.values);
         }
     }
     onMounted() {
@@ -544,7 +548,6 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.propBoolean('check')) {
                 return;
             }
-            this.checkValues = clickgo.tool.clone(this.props.modelValue);
             this.refreshCheckValues();
         });
         this.watch('data', () => {
@@ -564,15 +567,16 @@ class default_1 extends clickgo.control.AbstractControl {
             'deep': true
         });
         this.watch('modelValue', () => {
-            if (!this.propBoolean('check')) {
+            if ((this.values.length === this.propArray('modelValue').length)
+                && this.values.every((item) => this.propArray('modelValue').includes(item))) {
                 return;
             }
-            this.checkValues = clickgo.tool.clone(this.props.modelValue);
+            this.values = clickgo.tool.clone(this.propArray('modelValue'));
             this.refreshCheckValues();
         });
         this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        this.values = clickgo.tool.clone(this.propArray('modelValue'));
         if (this.propBoolean('check')) {
-            this.checkValues = this.props.modelValue;
             this.refreshCheckValues();
         }
     }

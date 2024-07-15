@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.queryParse = exports.queryStringify = exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.postResponseJson = exports.getResponseJson = exports.post = exports.get = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
+exports.queryParse = exports.queryStringify = exports.formatTime = exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.postResponseJson = exports.getResponseJson = exports.post = exports.get = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
 function getClassPrototype(obj, over = [], level = 0) {
     var _a;
     if (level === 0) {
@@ -719,6 +719,35 @@ function formatSecond(second) {
     return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
 }
 exports.formatSecond = formatSecond;
+function formatTime(ts, opts = {}) {
+    var _a;
+    if (opts.time === undefined) {
+        opts.time = true;
+    }
+    if (opts.date === undefined) {
+        opts.date = true;
+    }
+    if (opts.zone === undefined) {
+        opts.zone = false;
+    }
+    const dateTxt = [];
+    if (typeof ts === 'number') {
+        ts = new Date(ts * 1000);
+    }
+    const tz = (_a = opts.tz) !== null && _a !== void 0 ? _a : -(ts.getTimezoneOffset() / 60);
+    ts.setTime(ts.getTime() + tz * 60 * 60000);
+    if (opts.date) {
+        dateTxt.push(ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0'));
+    }
+    if (opts.time) {
+        dateTxt.push(ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0'));
+    }
+    if (opts.zone) {
+        dateTxt.push('UTC' + (tz >= 0 ? '+' : '') + tz.toString());
+    }
+    return dateTxt.join(' ');
+}
+exports.formatTime = formatTime;
 function queryStringify(query) {
     return Object.entries(query).map(([k, v]) => {
         if (Array.isArray(v)) {

@@ -97,6 +97,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabledList: string[] = [];
 
+    public unavailableList: string[] = [];
+
     // --- 操作 ---
 
     public padding = false;

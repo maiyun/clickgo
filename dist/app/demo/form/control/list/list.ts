@@ -29,6 +29,13 @@ export default class extends clickgo.form.AbstractForm {
             'disabled': true
         },
         {
+            'type': 0,
+            'name': 'Appraise3',
+            'path': 'Bob >> folder >> Appraise3',
+            'src': '/package/res/r-2.svg',
+            'unavailable': true
+        },
+        {
             'control': 'split'
         },
         {

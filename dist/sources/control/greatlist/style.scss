@@ -23,7 +23,7 @@
                 [data-cg-base] {
                     background: var(--g-plain-background);
                 }
-                &:not([data-cg-disabled]) {
+                &:not([data-cg-disabled]):not(.unavailable) {
                     &:hover {
                         background: var(--g-plain-background-hover);
                         [data-cg-base] {
@@ -40,7 +40,7 @@
                         border-color: var(--g-plain-border-color-plain);
                     }
                 }
-                &[data-cg-disabled] {
+                &[data-cg-disabled], &.unavailable {
                     color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); pointer-events: none;
                 }
     

@@ -103,10 +103,11 @@ class default_1 extends clickgo.control.AbstractControl {
         return w;
     }
     get mapComp() {
-        var _a, _b;
+        var _a, _b, _c;
         return {
             'disabled': (_a = this.props.map.disabled) !== null && _a !== void 0 ? _a : 'disabled',
-            'control': (_b = this.props.map.control) !== null && _b !== void 0 ? _b : 'control'
+            'control': (_b = this.props.map.control) !== null && _b !== void 0 ? _b : 'control',
+            'unavailable': (_c = this.props.map.unavailable) !== null && _c !== void 0 ? _c : 'unavailable'
         };
     }
     get isSelected() {
@@ -126,7 +127,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i][this.mapComp.disabled]) {
+            if (this.props.data[i][this.mapComp.disabled] || this.props.data[i][this.mapComp.unavailable]) {
                 continue;
             }
             if (this.props.data[i][this.mapComp.control] === 'split') {
@@ -148,7 +149,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i][this.mapComp.disabled]) {
+            if (this.props.data[i][this.mapComp.disabled] || this.props.data[i][this.mapComp.unavailable]) {
                 continue;
             }
             if (this.props.data[i][this.mapComp.control] === 'split') {
@@ -174,6 +175,7 @@ class default_1 extends clickgo.control.AbstractControl {
             let change = false;
             const notDisabledIndex = this.getFirstNotDisabledIndex();
             const dataMaxIndex = this.props.data.length - 1;
+            const oldValueData = clickgo.tool.clone(this.valueData);
             if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
                 change = true;
                 this.valueData.splice(1);
@@ -196,7 +198,36 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.shiftStart = this.valueData[0];
             }
             if (change) {
-                if (!this.propBoolean('multi')) {
+                if (this.propBoolean('multi')) {
+                    const res = clickgo.tool.compar(oldValueData, this.valueData);
+                    for (const key in res.remove) {
+                        const event = {
+                            'go': true,
+                            preventDefault: function () {
+                                this.go = false;
+                            },
+                            'detail': {
+                                'index': res.remove[key],
+                                'value': parseInt(key)
+                            }
+                        };
+                        this.emit('remove', event);
+                    }
+                    for (const key in res.add) {
+                        const event = {
+                            'go': true,
+                            preventDefault: function () {
+                                this.go = false;
+                            },
+                            'detail': {
+                                'index': res.add[key],
+                                'value': parseInt(key)
+                            }
+                        };
+                        this.emit('add', event);
+                    }
+                }
+                else {
                     const event = {
                         'go': true,
                         preventDefault: function () {
@@ -243,7 +274,24 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('multi') || (!shift && !ctrl)) {
             if (value === -1) {
                 if (this.valueData.length > 0) {
-                    if (!this.propBoolean('multi')) {
+                    if (this.propBoolean('multi')) {
+                        change = true;
+                        for (let i = 0; i < this.valueData.length; ++i) {
+                            const event = {
+                                'go': true,
+                                preventDefault: function () {
+                                    this.go = false;
+                                },
+                                'detail': {
+                                    'index': i,
+                                    'value': this.valueData[i]
+                                }
+                            };
+                            this.emit('remove', event);
+                        }
+                        this.valueData = [];
+                    }
+                    else {
                         const event = {
                             'go': true,
                             preventDefault: function () {
@@ -265,16 +313,45 @@ class default_1 extends clickgo.control.AbstractControl {
                             this.emit('changed', event);
                         }
                     }
-                    else {
-                        change = true;
-                        this.valueData = [];
-                    }
                 }
             }
             else {
                 if (this.valueData.length > 1 || this.valueData.length === 0) {
                     if (canSelect(value)) {
-                        if (!this.propBoolean('multi')) {
+                        if (this.propBoolean('multi')) {
+                            change = true;
+                            const oldValueData = clickgo.tool.clone(this.valueData);
+                            this.valueData = [value];
+                            const res = clickgo.tool.compar(oldValueData, this.valueData);
+                            for (const key in res.remove) {
+                                const event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'index': res.remove[key],
+                                        'value': parseInt(key)
+                                    }
+                                };
+                                this.emit('remove', event);
+                            }
+                            for (const key in res.add) {
+                                const event = {
+                                    'go': true,
+                                    preventDefault: function () {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'index': res.add[key],
+                                        'value': parseInt(key)
+                                    }
+                                };
+                                this.emit('add', event);
+                            }
+                            this.shiftStart = value;
+                        }
+                        else {
                             const event = {
                                 'go': true,
                                 preventDefault: function () {
@@ -297,17 +374,45 @@ class default_1 extends clickgo.control.AbstractControl {
                                 this.emit('changed', event);
                             }
                         }
-                        else {
-                            change = true;
-                            this.valueData = [value];
-                            this.shiftStart = value;
-                        }
                     }
                 }
                 else {
                     if (this.valueData[0] !== value) {
                         if (canSelect(value)) {
-                            if (!this.propBoolean('multi')) {
+                            if (this.propBoolean('multi')) {
+                                change = true;
+                                const oldValueData = clickgo.tool.clone(this.valueData);
+                                this.valueData[0] = value;
+                                const res = clickgo.tool.compar(oldValueData, this.valueData);
+                                for (const key in res.remove) {
+                                    const event = {
+                                        'go': true,
+                                        preventDefault: function () {
+                                            this.go = false;
+                                        },
+                                        'detail': {
+                                            'index': res.remove[key],
+                                            'value': parseInt(key)
+                                        }
+                                    };
+                                    this.emit('remove', event);
+                                }
+                                for (const key in res.add) {
+                                    const event = {
+                                        'go': true,
+                                        preventDefault: function () {
+                                            this.go = false;
+                                        },
+                                        'detail': {
+                                            'index': res.add[key],
+                                            'value': parseInt(key)
+                                        }
+                                    };
+                                    this.emit('add', event);
+                                }
+                                this.shiftStart = value;
+                            }
+                            else {
                                 const event = {
                                     'go': true,
                                     preventDefault: function () {
@@ -329,11 +434,6 @@ class default_1 extends clickgo.control.AbstractControl {
                                     };
                                     this.emit('changed', event);
                                 }
-                            }
-                            else {
-                                change = true;
-                                this.valueData[0] = value;
-                                this.shiftStart = value;
                             }
                         }
                     }

@@ -43,20 +43,12 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propNumber('content') === 0) {
             return '';
         }
-        const dateTxt = [];
-        const date = new Date(this.propNumber('content') * 1000);
-        const tz = this.props.tz === undefined ? -(date.getTimezoneOffset() / 60) : this.propNumber('tz');
-        date.setTime(date.getTime() + tz * 60 * 60 * 1000);
-        if (this.propBoolean('date')) {
-            dateTxt.push(date.getUTCFullYear().toString() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0'));
-        }
-        if (this.propBoolean('time')) {
-            dateTxt.push(date.getUTCHours().toString().padStart(2, '0') + ':' + date.getUTCMinutes().toString().padStart(2, '0') + ':' + date.getUTCSeconds().toString().padStart(2, '0'));
-        }
-        if (this.propBoolean('zone')) {
-            dateTxt.push('UTC' + (tz >= 0 ? '+' : '') + tz.toString());
-        }
-        return dateTxt.join(' ');
+        return clickgo.tool.formatTime(this.propNumber('content'), {
+            'date': this.propBoolean('date'),
+            'time': this.propBoolean('time'),
+            'zone': this.propBoolean('zone'),
+            'tz': this.props.tz === undefined ? undefined : this.propNumber('tz')
+        });
     }
 }
 exports.default = default_1;

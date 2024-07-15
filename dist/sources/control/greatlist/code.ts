@@ -43,6 +43,7 @@ export default class extends clickgo.control.AbstractControl {
         'map': {
             'disabled'?: string;
             'control'?: string;
+            'unavailable'?: string;
         };
         'data': Array<{
             'disabled': boolean;
@@ -97,10 +98,12 @@ export default class extends clickgo.control.AbstractControl {
     public get mapComp(): {
         'disabled': string;
         'control': string;
+        'unavailable': string;
     } {
         return {
             'disabled': this.props.map.disabled ?? 'disabled',
-            'control': this.props.map.control ?? 'control'
+            'control': this.props.map.control ?? 'control',
+            'unavailable': this.props.map.unavailable ?? 'unavailable'
         };
     }
 
@@ -162,7 +165,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i][this.mapComp.disabled]) {
+            if (this.props.data[i][this.mapComp.disabled] || this.props.data[i][this.mapComp.unavailable]) {
                 continue;
             }
             if (this.props.data[i][this.mapComp.control] === 'split') {
@@ -186,7 +189,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.props.data[i]) {
                 continue;
             }
-            if (this.props.data[i][this.mapComp.disabled]) {
+            if (this.props.data[i][this.mapComp.disabled] || this.props.data[i][this.mapComp.unavailable]) {
                 continue;
             }
             if (this.props.data[i][this.mapComp.control] === 'split') {
@@ -223,6 +226,9 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 当前数据最大的 index --- */
         const dataMaxIndex = this.props.data.length - 1;
 
+        /** --- 修改前的 value 数据 --- */
+        const oldValueData = clickgo.tool.clone(this.valueData);
+
         // --- 检测是否是单项，但却包含了多项值 ---
         if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
             change = true;
@@ -254,7 +260,38 @@ export default class extends clickgo.control.AbstractControl {
         }
 
         if (change) {
-            if (!this.propBoolean('multi')) {
+            if (this.propBoolean('multi')) {
+                // --- 多选模式 ---
+                const res = clickgo.tool.compar(oldValueData, this.valueData);
+                for (const key in res.remove) {
+                    const event: types.IGreatlistRemoveEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': res.remove[key],
+                            'value': parseInt(key)
+                        }
+                    };
+                    this.emit('remove', event);
+                }
+                for (const key in res.add) {
+                    const event: types.IGreatlistAddEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': res.add[key],
+                            'value': parseInt(key)
+                        }
+                    };
+                    this.emit('add', event);
+                }
+            }
+            else {
+                // --- 单选模式 ---
                 const event: types.IGreatlistChangeEvent = {
                     'go': true,
                     preventDefault: function() {
@@ -317,11 +354,30 @@ export default class extends clickgo.control.AbstractControl {
         };
 
         if (!this.propBoolean('multi') || (!shift && !ctrl)) {
-            // --- 单选 ---
+            // --- 选择单项 ---
             if (value === -1) {
                 // --- 清除 ---
                 if (this.valueData.length > 0) {
-                    if (!this.propBoolean('multi')) {
+                    if (this.propBoolean('multi')) {
+                        // --- 多选模式 ---
+                        change = true;
+                        for (let i = 0; i < this.valueData.length; ++i) {
+                            const event: types.IGreatlistRemoveEvent = {
+                                'go': true,
+                                preventDefault: function() {
+                                    this.go = false;
+                                },
+                                'detail': {
+                                    'index': i,
+                                    'value': this.valueData[i]
+                                }
+                            };
+                            this.emit('remove', event);
+                        }
+                        this.valueData = [];
+                    }
+                    else {
+                        // --- 单选模式 ---
                         const event: types.IGreatlistChangeEvent = {
                             'go': true,
                             preventDefault: function() {
@@ -343,19 +399,49 @@ export default class extends clickgo.control.AbstractControl {
                             this.emit('changed', event);
                         }
                     }
-                    else {
-                        // --- 多选模式 ---
-                        change = true;
-                        this.valueData = [];
-                    }
                 }
             }
             else {
-                // --- 选择 ---
+                // --- 选择单项 ---
                 if (this.valueData.length > 1 || this.valueData.length === 0) {
                     // --- 只选择一个，但现在有多个或一个都没有，则重置为一个 ---
                     if (canSelect(value)) {
-                        if (!this.propBoolean('multi')) {
+                        if (this.propBoolean('multi')) {
+                            // --- 多选模式 ---
+                            change = true;
+                            const oldValueData = clickgo.tool.clone(this.valueData);
+                            this.valueData = [value];
+                            const res = clickgo.tool.compar(oldValueData, this.valueData);
+                            for (const key in res.remove) {
+                                const event: types.IGreatlistRemoveEvent = {
+                                    'go': true,
+                                    preventDefault: function() {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'index': res.remove[key],
+                                        'value': parseInt(key)
+                                    }
+                                };
+                                this.emit('remove', event);
+                            }
+                            for (const key in res.add) {
+                                const event: types.IGreatlistAddEvent = {
+                                    'go': true,
+                                    preventDefault: function() {
+                                        this.go = false;
+                                    },
+                                    'detail': {
+                                        'index': res.add[key],
+                                        'value': parseInt(key)
+                                    }
+                                };
+                                this.emit('add', event);
+                            }
+                            this.shiftStart = value;
+                        }
+                        else {
+                            // --- 单选模式 ---
                             const event: types.IGreatlistChangeEvent = {
                                 'go': true,
                                 preventDefault: function() {
@@ -378,19 +464,48 @@ export default class extends clickgo.control.AbstractControl {
                                 this.emit('changed', event);
                             }
                         }
-                        else {
-                            // --- 多选模式 ---
-                            change = true;
-                            this.valueData = [value];
-                            this.shiftStart = value;
-                        }
                     }
                 }
                 else {
                     // --- 只有一个，看看是不是选择的 ---
                     if (this.valueData[0] !== value) {
                         if (canSelect(value)) {
-                            if (!this.propBoolean('multi')) {
+                            if (this.propBoolean('multi')) {
+                                // --- 多选模式 ---
+                                change = true;
+                                const oldValueData = clickgo.tool.clone(this.valueData);
+                                this.valueData[0] = value;
+                                const res = clickgo.tool.compar(oldValueData, this.valueData);
+                                for (const key in res.remove) {
+                                    const event: types.IGreatlistRemoveEvent = {
+                                        'go': true,
+                                        preventDefault: function() {
+                                            this.go = false;
+                                        },
+                                        'detail': {
+                                            'index': res.remove[key],
+                                            'value': parseInt(key)
+                                        }
+                                    };
+                                    this.emit('remove', event);
+                                }
+                                for (const key in res.add) {
+                                    const event: types.IGreatlistAddEvent = {
+                                        'go': true,
+                                        preventDefault: function() {
+                                            this.go = false;
+                                        },
+                                        'detail': {
+                                            'index': res.add[key],
+                                            'value': parseInt(key)
+                                        }
+                                    };
+                                    this.emit('add', event);
+                                }
+                                this.shiftStart = value;
+                            }
+                            else {
+                                // --- 单选模式 ---
                                 const event: types.IGreatlistChangeEvent = {
                                     'go': true,
                                     preventDefault: function() {
@@ -412,12 +527,6 @@ export default class extends clickgo.control.AbstractControl {
                                     };
                                     this.emit('changed', event);
                                 }
-                            }
-                            else {
-                                // --- 多选模式 ---
-                                change = true;
-                                this.valueData[0] = value;
-                                this.shiftStart = value;
                             }
                         }
                     }
@@ -701,7 +810,6 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         e.preventDefault();
-
         if (e.key === 'ArrowUp') {
             this.arrowUp();
         }

@@ -67,7 +67,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': [],
             'placeholder': '',
             'data': [],
-            'disabledList': []
+            'disabledList': [],
+            'unavailableList': []
         };
         this.localeData = {
             'en': {

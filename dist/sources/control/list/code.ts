@@ -46,7 +46,9 @@ export default class extends clickgo.control.AbstractControl {
 
         'data': any[] | Record<string, string>;
         'disabledList': string[] | string;
-        'modelValue': string[];
+        /** --- 不可用的列表（用户不能点击或键盘移动选择，但用代码可以选择） --- */
+        'unavailableList': string[] | string;
+        'modelValue': string[] | string;
     } = {
             'disabled': false,
             'must': true,
@@ -68,6 +70,7 @@ export default class extends clickgo.control.AbstractControl {
 
             'data': [],
             'disabledList': [],
+            'unavailableList': [],
             'modelValue': []
         };
 
@@ -86,7 +89,7 @@ export default class extends clickgo.control.AbstractControl {
 
         let change: boolean = false;
         // --- modelValue 的格式类似：[0, 3]，是 value，不是 data ---
-        const modelValue = clickgo.tool.clone(this.props.modelValue);
+        const modelValue = clickgo.tool.clone(this.values);
 
         // --- 判断不是多选，但是却有多个数值 ---
         if (modelValue.length > 1 && !this.propBoolean('multi')) {
@@ -233,7 +236,8 @@ export default class extends clickgo.control.AbstractControl {
             label.push(this.dataGl[item].label);
             items.push(this.dataGl[item]);
         }
-        this.emit('update:modelValue', modelValue);
+        this.values = modelValue;
+        this.emit('update:modelValue', clickgo.tool.clone(modelValue));
         this.emit('label', label);
         this.emit('item', items);
     }
@@ -342,6 +346,7 @@ export default class extends clickgo.control.AbstractControl {
     public unpack(data: any[], level = 0): any[] {
         const result: any[] = [];
         const disabledList = this.propArray('disabledList');
+        const unavailableList = this.propArray('unavailableList');
         for (const item of data) {
             /** --- -1: 不存在子项, 0: 关闭状态, 1: 存在子项打开状态, 2: 加载状态, */
             let tree = item.tree;
@@ -354,6 +359,7 @@ export default class extends clickgo.control.AbstractControl {
                 'value': item.value,
                 'title': item.title,
                 'disabled': disabledList.includes(item.value) ? true : item.disabled,
+                'unavailable': unavailableList.includes(item.value) ? true : item.unavailable,
                 'color': item.color,
                 'control': item.control,
                 'tree': tree,
@@ -517,8 +523,8 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 下面是 check 模式 ---
 
-    /** --- check 模式下选中的项 --- */
-    public checkValues: string[] = [];
+    /** --- 选中的项 --- */
+    public values: string[] = [];
 
     public onCheckChange(e: types.ICheckChangeEvent, row: any): void {
         e.preventDefault();
@@ -528,21 +534,21 @@ export default class extends clickgo.control.AbstractControl {
                 'check': e.detail.value ? (e.detail.indeterminate ? true : false) : true
             });
             if (r.change) {
-                this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+                this.emit('update:modelValue', clickgo.tool.clone(this.values));
             }
             return;
         }
         // --- 无下级 ---
-        const io = this.checkValues.indexOf(row.value);
+        const io = this.values.indexOf(row.value);
         if (io === -1) {
             // --- 没找到 ---
-            this.checkValues.push(row.value);
+            this.values.push(row.value);
         }
         else {
             // --- 找到了 ---
-            this.checkValues.splice(io, 1);
+            this.values.splice(io, 1);
         }
-        this.emit('update:modelValue', clickgo.tool.clone(this.checkValues));
+        this.emit('update:modelValue', clickgo.tool.clone(this.values));
     }
 
     /** --- 是否选中 --- */
@@ -554,7 +560,7 @@ export default class extends clickgo.control.AbstractControl {
                 return r.check > 0 ? true : false;
             }
             // --- 无下级 ---
-            return this.checkValues.includes(data.value);
+            return this.values.includes(data.value);
         };
     }
 
@@ -640,23 +646,23 @@ export default class extends clickgo.control.AbstractControl {
                 if (opt.check !== undefined) {
                     if (opt.check) {
                         // --- 选中 ---
-                        if (!this.checkValues.includes(item.value)) {
-                            this.checkValues.push(item.value);
+                        if (!this.values.includes(item.value)) {
+                            this.values.push(item.value);
                             rtn.change = true;
                         }
                         ++rtn.check;
                     }
                     else {
                         // --- 取消选中 ---
-                        const io = this.checkValues.indexOf(item.value);
+                        const io = this.values.indexOf(item.value);
                         if (io > -1) {
-                            this.checkValues.splice(io, 1);
+                            this.values.splice(io, 1);
                             rtn.change = true;
                         }
                     }
                     continue;
                 }
-                if (!this.checkValues.includes(item.value)) {
+                if (!this.values.includes(item.value)) {
                     // --- 未勾选 ---
                     continue;
                 }
@@ -669,7 +675,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 在 check 模式下检测 values 是否正常 --- */
     public refreshCheckValues(): void {
-        const waitingCheck = clickgo.tool.clone(this.checkValues);
+        const waitingCheck = clickgo.tool.clone(this.values);
         const result: string[] = [];
         this.childrenTotal(this.dataGl, {
             'checkValues': {
@@ -677,10 +683,10 @@ export default class extends clickgo.control.AbstractControl {
                 'result': result
             }
         });
-        const r = clickgo.tool.compar(this.checkValues, result);
+        const r = clickgo.tool.compar(this.values, result);
         if (r.length.add || r.length.remove) {
-            this.checkValues = result;
-            this.emit('update:modelValue', this.checkValues);
+            this.values = result;
+            this.emit('update:modelValue', this.values);
         }
     }
 
@@ -691,7 +697,6 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             // --- 普通 变 check ---
-            this.checkValues = clickgo.tool.clone(this.props.modelValue);
             this.refreshCheckValues();
         });
         this.watch('data', (): void => {
@@ -711,15 +716,18 @@ export default class extends clickgo.control.AbstractControl {
             'deep': true
         });
         this.watch('modelValue', () => {
-            if (!this.propBoolean('check')) {
+            if (
+                (this.values.length === this.propArray('modelValue').length)
+                && this.values.every((item: string) => this.propArray('modelValue').includes(item))
+            ) {
                 return;
             }
-            this.checkValues = clickgo.tool.clone(this.props.modelValue);
+            this.values = clickgo.tool.clone(this.propArray('modelValue'));
             this.refreshCheckValues();
         });
         this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        this.values = clickgo.tool.clone(this.propArray('modelValue'));
         if (this.propBoolean('check')) {
-            this.checkValues = this.props.modelValue;
             this.refreshCheckValues();
         }
     }
