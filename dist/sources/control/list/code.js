@@ -572,7 +572,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.values = clickgo.tool.clone(this.propArray('modelValue'));
-            this.refreshCheckValues();
+            if (this.propBoolean('check')) {
+                this.refreshCheckValues();
+            }
+        }, {
+            'deep': true
         });
         this.dataFormat = this.formatData(this.props.data, this.dataFormat);
         this.values = clickgo.tool.clone(this.propArray('modelValue'));

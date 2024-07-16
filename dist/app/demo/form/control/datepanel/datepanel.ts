@@ -23,7 +23,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public start: boolean = false;
 
-    public yearmonth: string = '';
+    public ym: string = '';
+
+    public hm: string = '';
 
     // --- 指定时间戳 ---
     public settime(): void {

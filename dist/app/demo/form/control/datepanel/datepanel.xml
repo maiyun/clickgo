@@ -1,7 +1,8 @@
-<form width="500" height="700" title="Datepanel">
+<form width="600" height="750" title="Datepanel">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
-        <label>Timestamp: {{ts}}, Time zone: {{tz}}, yearmonth: {{yearmonth}}</label>
-        <datepanel v-model="ts" v-model:tz="tz" v-model:yearmonth="yearmonth" :time="time" :zone="zone" :disabled="disabled" :plain="plain" :range="range" :start="start ? 1704067200_000 : undefined" @changed="onChanged" style="flex: 1;">
+        <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
+        <label>yearmonth: {{ym}}, hourminute: {{hm}}</label>
+        <datepanel v-model="ts" v-model:tz="tz" v-model:yearmonth="ym" v-model:hourminute="hm" :time="time" :zone="zone" :disabled="disabled" :plain="plain" :range="range" :start="start ? 1704067200_000 : undefined" @changed="onChanged" style="flex: 1;">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>
@@ -22,7 +23,8 @@
             <button @click="start = !start" style="flex: 1;">{{start ? '' : '!'}}start</button>
         </layout>
         <layout gutter="10" align-v="center">
-            <button @click="yearmonth = '200708'" style="flex: 1;">Set yearmonth</button>
+            <button @click="ym = '200708'" style="flex: 1;">Set yearmonth</button>
+            <button @click="hm = '220232'" style="flex: 1;">Set hourminute</button>
             <button @click="tz = 7.5" style="flex: 1;">Set tz</button>
         </layout>
     </layout>

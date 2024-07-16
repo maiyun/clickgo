@@ -6,7 +6,9 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'changed': null,
         'update:modelValue': null,
-        'update:tz': null
+        'update:tz': null,
+        'update:yearmonth': null,
+        'update:hourminute': null,
     };
 
     public props: {
@@ -16,6 +18,10 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': number | string | undefined;
         /** --- 小时，如 8 --- */
         'tz'?: number | string;
+        /** --- 年份月份的组合，如 200708，自动跳转到此页面但不选中 --- */
+        'yearmonth': string;
+        /** --- 时分秒的字符串，跳转也自动选中 --- */
+        'hourminute': string;
         /** --- 限定可选的最小时间 --- */
         'start'?: number | string;
         /** --- 限定可选的最大时间 --- */
@@ -29,6 +35,8 @@ export default class extends clickgo.control.AbstractControl {
 
             'modelValue': undefined,
             'tz': undefined,
+            'yearmonth': '',
+            'hourminute': '',
 
             'date': true,
             'time': true,
@@ -217,6 +225,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         };
         this.emit('changed', event);
+        this.emit('update:hourminute', this.vhour[0] + this.vminute[0] + this.vseconds[0]);
         clickgo.form.hidePop();
     }
 
@@ -238,7 +247,14 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
         this.dateStr = this.dateObj.getUTCFullYear().toString() + '-' + (this.dateObj.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + this.dateObj.getUTCDate().toString().padStart(2, '0');
-        this.timeStr = this.dateObj.getUTCHours().toString().padStart(2, '0') + ':' + this.dateObj.getUTCMinutes().toString().padStart(2, '0') + ':' + this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+        const hour = this.dateObj.getUTCHours().toString().padStart(2, '0');
+        const minute = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
+        const seconds = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+        this.timeStr = hour + ':' + minute + ':' + seconds;
+        const hourminute = hour + minute + seconds;
+        if (hourminute !== this.props.hourminute) {
+            this.emit('update:hourminute', hour + minute + seconds);
+        }
     }
 
     public selected(): void {
@@ -277,6 +293,9 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('modelValue', () => {
             if (this.props.modelValue === undefined) {
                 this.timestamp = undefined;
+                this.vhour[0] = '00';
+                this.vminute[0] = '00';
+                this.vseconds[0] = '00';
                 return;
             }
             this.timestamp = this.propInt('modelValue');
@@ -286,6 +305,21 @@ export default class extends clickgo.control.AbstractControl {
             this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
             this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
             this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+        }, {
+            'immediate': true
+        });
+        // --- 时分秒 ---
+        this.watch('hourminute', () => {
+            const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
+            if (!this.props.hourminute) {
+                this.emit('update:hourminute', hm);
+                return;
+            }
+            if (this.props.hourminute !== hm) {
+                this.vhour[0] = this.props.hourminute.slice(0, 2);
+                this.vminute[0] = this.props.hourminute.slice(2, 4);
+                this.vseconds[0] = this.props.hourminute.slice(4);
+            }
         }, {
             'immediate': true
         });

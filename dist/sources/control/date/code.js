@@ -30,12 +30,16 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'changed': null,
             'update:modelValue': null,
-            'update:tz': null
+            'update:tz': null,
+            'update:yearmonth': null,
+            'update:hourminute': null,
         };
         this.props = {
             'disabled': false,
             'modelValue': undefined,
             'tz': undefined,
+            'yearmonth': '',
+            'hourminute': '',
             'date': true,
             'time': true,
             'zone': false
@@ -201,6 +205,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
         this.emit('changed', event);
+        this.emit('update:hourminute', this.vhour[0] + this.vminute[0] + this.vseconds[0]);
         clickgo.form.hidePop();
     }
     cancel() {
@@ -219,7 +224,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
         this.dateStr = this.dateObj.getUTCFullYear().toString() + '-' + (this.dateObj.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + this.dateObj.getUTCDate().toString().padStart(2, '0');
-        this.timeStr = this.dateObj.getUTCHours().toString().padStart(2, '0') + ':' + this.dateObj.getUTCMinutes().toString().padStart(2, '0') + ':' + this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+        const hour = this.dateObj.getUTCHours().toString().padStart(2, '0');
+        const minute = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
+        const seconds = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+        this.timeStr = hour + ':' + minute + ':' + seconds;
+        const hourminute = hour + minute + seconds;
+        if (hourminute !== this.props.hourminute) {
+            this.emit('update:hourminute', hour + minute + seconds);
+        }
     }
     selected() {
         clickgo.form.hidePop(this.refs.firstpop);
@@ -254,6 +266,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('modelValue', () => {
             if (this.props.modelValue === undefined) {
                 this.timestamp = undefined;
+                this.vhour[0] = '00';
+                this.vminute[0] = '00';
+                this.vseconds[0] = '00';
                 return;
             }
             this.timestamp = this.propInt('modelValue');
@@ -263,6 +278,20 @@ class default_1 extends clickgo.control.AbstractControl {
             this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
             this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
             this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+        }, {
+            'immediate': true
+        });
+        this.watch('hourminute', () => {
+            const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
+            if (!this.props.hourminute) {
+                this.emit('update:hourminute', hm);
+                return;
+            }
+            if (this.props.hourminute !== hm) {
+                this.vhour[0] = this.props.hourminute.slice(0, 2);
+                this.vminute[0] = this.props.hourminute.slice(2, 4);
+                this.vseconds[0] = this.props.hourminute.slice(4);
+            }
         }, {
             'immediate': true
         });

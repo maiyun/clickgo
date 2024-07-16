@@ -1,11 +1,11 @@
 <div class="wrap" :class="[propBoolean('plain')&&'plain']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div class="header">
         <div class="left">
-            <cg-select :data="years" v-model="vyear" virtual @changed="emit('update:yearmonth',$event.detail.value[0]+vmonth[0].padStart(2,'0'))"></cg-select>
+            <cg-select :data="years" v-model="vyear" virtual></cg-select>
             <cg-button class="monthleft" :disabled="prevYm < startYm" @click="prev">
                 <div class="arrow"></div>
             </cg-button>
-            <cg-select :data="months" v-model="vmonth" virtual @changed="emit('update:yearmonth',vyear[0]+$event.detail.value[0].padStart(2,'0'))"></cg-select>
+            <cg-select :data="months" v-model="vmonth" virtual></cg-select>
             <cg-button class="monthright" :disabled="nextYm > endYm" @click="next">
                 <div class="arrow"></div>
             </cg-button>
@@ -33,7 +33,7 @@
             <label>:</label>
             <cg-select :data="minutes" v-model="vminute"></cg-select>
             <label>:</label>
-            <cg-select :data="seconds" v-model="vsecond"></cg-select>
+            <cg-select :data="seconds" v-model="vseconds"></cg-select>
         </template>
         <template v-if="propBoolean('zone')">
             <label>UTC</label>

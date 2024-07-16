@@ -34,6 +34,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'update:modelValue': null,
             'update:tz': null,
             'update:yearmonth': null,
+            'update:hourminute': null,
             'update:cursor': null
         };
         this.props = {
@@ -45,6 +46,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'end': undefined,
             'tz': undefined,
             'yearmonth': '',
+            'hourminute': '',
             'cursor': '',
             'time': true,
             'zone': false,
@@ -384,7 +386,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.hours = [];
         this.vminute = [];
         this.minutes = [];
-        this.vsecond = [];
+        this.vseconds = [];
         this.seconds = [];
         this.vzone = [];
         this.zones = [];
@@ -504,7 +506,10 @@ class default_1 extends clickgo.control.AbstractControl {
             change = true;
         }
         if (change) {
-            this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
+            const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
+            if (this.props.yearmonth !== ym) {
+                this.emit('update:yearmonth', ym);
+            }
         }
     }
     colClick(col) {
@@ -517,7 +522,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (cols > this.dateValueStr) {
                 const date = new Date();
                 date.setUTCFullYear(col.year, col.month, col.date);
-                date.setUTCHours(parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00'), parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00'), parseInt((_c = this.vsecond[0]) !== null && _c !== void 0 ? _c : '00'), 0);
+                date.setUTCHours(parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00'), parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00'), parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00'), 0);
                 const event = {
                     'go': true,
                     preventDefault: function () {
@@ -542,7 +547,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.timestamp = 0;
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
-        this.dateObj.setUTCHours(parseInt((_d = this.vhour[0]) !== null && _d !== void 0 ? _d : '00'), parseInt((_e = this.vminute[0]) !== null && _e !== void 0 ? _e : '00'), parseInt((_f = this.vsecond[0]) !== null && _f !== void 0 ? _f : '00'), 0);
+        this.dateObj.setUTCHours(parseInt((_d = this.vhour[0]) !== null && _d !== void 0 ? _d : '00'), parseInt((_e = this.vminute[0]) !== null && _e !== void 0 ? _e : '00'), parseInt((_f = this.vseconds[0]) !== null && _f !== void 0 ? _f : '00'), 0);
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
@@ -660,16 +665,24 @@ class default_1 extends clickgo.control.AbstractControl {
             this.prevYm = this.prevNextDate.getUTCFullYear().toString() + (this.prevNextDate.getUTCMonth() + 1).toString().padStart(2, '0');
             this.prevNextDate.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]), 1);
             this.nextYm = this.prevNextDate.getUTCFullYear().toString() + (this.prevNextDate.getUTCMonth() + 1).toString().padStart(2, '0');
+            const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
+            if (this.props.yearmonth !== ym) {
+                this.emit('update:yearmonth', ym);
+            }
             this.refreshView();
         });
         this.watch(() => {
             var _a, _b, _c;
-            return ((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '') + ':' + ((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '') + ':' + ((_c = this.vsecond[0]) !== null && _c !== void 0 ? _c : '');
+            return ((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '') + ':' + ((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '') + ':' + ((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '');
         }, () => {
-            if (!this.vhour[0] || !this.vminute[0] || !this.vsecond[0]) {
+            if (!this.vhour[0] || !this.vminute[0] || !this.vseconds[0]) {
                 return;
             }
-            this.dateObj.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vsecond[0]));
+            const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
+            if (this.props.hourminute !== hm) {
+                this.emit('update:hourminute', hm);
+            }
+            this.dateObj.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vseconds[0]));
             this.updateTimestamp();
         });
         this.watch(() => {
@@ -730,12 +743,16 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
                 this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
                 this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
-                this.vsecond[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+                this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
                 this.refreshDateValue();
                 if (!mvfirst) {
                     const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
                     if (this.props.yearmonth !== ym) {
-                        this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
+                        this.emit('update:yearmonth', ym);
+                    }
+                    const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
+                    if (this.props.hourminute !== hm) {
+                        this.emit('update:hourminute', hm);
                     }
                 }
             }
@@ -745,6 +762,9 @@ class default_1 extends clickgo.control.AbstractControl {
                     const date = new Date();
                     this.vyear[0] = date.getUTCFullYear().toString();
                     this.vmonth[0] = (date.getUTCMonth() + 1).toString();
+                    this.vhour[0] = '0';
+                    this.vminute[0] = '0';
+                    this.vseconds[0] = '0';
                 }
             }
             mvfirst = false;
@@ -756,8 +776,25 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
                 return;
             }
-            this.vyear[0] = this.props.yearmonth.slice(0, 4);
-            this.vmonth[0] = this.props.yearmonth.slice(4).replace('0', '');
+            const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
+            if (ym !== this.props.yearmonth) {
+                this.vyear[0] = this.props.yearmonth.slice(0, 4);
+                this.vmonth[0] = this.props.yearmonth.slice(4).replace('0', '');
+            }
+        }, {
+            'immediate': true
+        });
+        this.watch('hourminute', () => {
+            const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
+            if (!this.props.hourminute) {
+                this.emit('update:hourminute', hm);
+                return;
+            }
+            if (this.props.hourminute !== hm) {
+                this.vhour[0] = this.props.hourminute.slice(0, 2);
+                this.vminute[0] = this.props.hourminute.slice(2, 4);
+                this.vseconds[0] = this.props.hourminute.slice(4);
+            }
         }, {
             'immediate': true
         });

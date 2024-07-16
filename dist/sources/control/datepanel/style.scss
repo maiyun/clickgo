@@ -36,7 +36,7 @@
             }
         }
         .right {
-            justify-content: right; display: flex; gap: var(--g-padding);
+            justify-content: right; display: flex; gap: var(--g-padding); padding-left: var(--g-padding);
         }
     }
 

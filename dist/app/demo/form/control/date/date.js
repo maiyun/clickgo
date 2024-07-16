@@ -35,6 +35,8 @@ class default_1 extends clickgo.form.AbstractForm {
         this.disabled = false;
         this.start = false;
         this.bottom = false;
+        this.ym = '';
+        this.hm = '';
     }
     settime() {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
