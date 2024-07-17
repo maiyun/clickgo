@@ -424,14 +424,10 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.endYm + this.endValue.date.toString().padStart(2, '0');
     }
     get years() {
-        const arr = [];
-        for (let i = this.startValue.year; i <= this.endValue.year; ++i) {
-            arr.push({
-                'label': i.toString(),
-                'value': i.toString(),
-            });
-        }
-        return arr;
+        return Array.from({ 'length': this.endValue.year - this.startValue.year + 1 }, (_, i) => ({
+            'label': (this.startValue.year + i).toString(),
+            'value': (this.startValue.year + i).toString(),
+        }));
     }
     get months() {
         const arr = [];
@@ -446,28 +442,26 @@ class default_1 extends clickgo.control.AbstractControl {
         return arr;
     }
     refreshView() {
-        const now = new Date();
-        now.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 1, 1);
-        now.setUTCHours(0, 0, 0, 0);
+        const now = new Date(Date.UTC(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 1, 1));
         const day1 = now.getUTCDay();
         if (day1 > 0) {
             now.setUTCDate(1 - day1);
         }
         this.maps.length = 0;
-        const zone = this.tzData * 60 * 60 * 1000;
+        const zone = this.tzData * 60 * 60000;
         for (let i = 0; i < 6; ++i) {
-            this.maps[i] = [];
-            for (let j = 0; j < 7; ++j) {
-                this.maps[i].push({
+            this.maps[i] = Array.from({ length: 7 }, () => {
+                const col = {
                     'time': now.getTime() - zone,
                     'date': now.getUTCDate(),
                     'month': now.getUTCMonth(),
                     'year': now.getUTCFullYear(),
                     'day': now.getUTCDay(),
-                    'str': now.getUTCFullYear().toString() + (now.getUTCMonth() + 1).toString().padStart(2, '0') + now.getUTCDate().toString().padStart(2, '0')
-                });
+                    'str': `${now.getUTCFullYear()}${(now.getUTCMonth() + 1).toString().padStart(2, '0')}${now.getUTCDate().toString().padStart(2, '0')}`
+                };
                 now.setUTCDate(now.getUTCDate() + 1);
-            }
+                return col;
+            });
         }
     }
     refreshDateValue() {
@@ -487,7 +481,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             return;
         }
-        this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
+        this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60000;
         if (this.propNumber('modelValue') !== this.timestamp) {
             this.emit('update:modelValue', this.timestamp);
             const event = {
@@ -509,7 +503,7 @@ class default_1 extends clickgo.control.AbstractControl {
             change = true;
         }
         if (change) {
-            const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
+            const ym = `${this.vyear[0]}${this.vmonth[0].padStart(2, '0')}`;
             if (this.props.yearmonth !== ym) {
                 this.emit('update:yearmonth', ym);
             }
@@ -523,9 +517,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (cols > this.dateValueStr) {
-                const date = new Date();
-                date.setUTCFullYear(col.year, col.month, col.date);
-                date.setUTCHours(parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00'), parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00'), parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00'), 0);
+                const date = new Date(Date.UTC(col.year, col.month, col.date, parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00'), parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00'), parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00'), 0));
                 const event = {
                     'go': true,
                     preventDefault: function () {

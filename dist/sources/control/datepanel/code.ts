@@ -461,17 +461,10 @@ export default class extends clickgo.control.AbstractControl {
         'label': string;
         'value': string;
     }> {
-        const arr: Array<{
-            'label': string;
-            'value': string;
-        }> = [];
-        for (let i = this.startValue.year; i <= this.endValue.year; ++i) {
-            arr.push({
-                'label': i.toString(),
-                'value': i.toString(),
-            });
-        }
-        return arr;
+        return Array.from({ 'length': this.endValue.year - this.startValue.year + 1 }, (_, i) => ({
+            'label': (this.startValue.year + i).toString(),
+            'value': (this.startValue.year + i).toString(),
+        }));
     }
 
     public prevNextDate: Date = new Date();
@@ -529,31 +522,28 @@ export default class extends clickgo.control.AbstractControl {
      * --- 刷新视图（当时间戳或时区变动时执行） ---
      */
     public refreshView(): void {
-        const now = new Date();
-        now.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 1, 1);
-        now.setUTCHours(0, 0, 0, 0);
+        const now = new Date(Date.UTC(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 1, 1));
         /** --- 当月 1 号在周几，0 代表周日 --- */
         const day1 = now.getUTCDay();
         if (day1 > 0) {
             now.setUTCDate(1 - day1);
         }
         this.maps.length = 0;
-        const zone = this.tzData * 60 * 60 * 1000;
+        const zone = this.tzData * 60 * 60_000;
         for (let i = 0; i < 6; ++i) {
-            // --- 先生成行 ---
-            this.maps[i] = [];
-            for (let j = 0; j < 7; ++j) {
-                // --- 再生成列 ---
-                this.maps[i].push({
+            // --- 生成行列 ---
+            this.maps[i] = Array.from({ length: 7 }, () => {
+                const col = {
                     'time': now.getTime() - zone,
                     'date': now.getUTCDate(),
                     'month': now.getUTCMonth(),
                     'year': now.getUTCFullYear(),
                     'day': now.getUTCDay(),
-                    'str': now.getUTCFullYear().toString() + (now.getUTCMonth() + 1).toString().padStart(2, '0') + now.getUTCDate().toString().padStart(2, '0')
-                });
+                    'str': `${now.getUTCFullYear()}${(now.getUTCMonth() + 1).toString().padStart(2, '0')}${now.getUTCDate().toString().padStart(2, '0')}`
+                };
                 now.setUTCDate(now.getUTCDate() + 1);
-            }
+                return col;
+            });
         }
     }
 
@@ -581,7 +571,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             return;
         }
-        this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
+        this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60_000;
         if (this.propNumber('modelValue') !== this.timestamp) {
             this.emit('update:modelValue', this.timestamp);
             const event: types.IDatepanelChangedEvent = {
@@ -607,7 +597,7 @@ export default class extends clickgo.control.AbstractControl {
             change = true;
         }
         if (change) {
-            const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
+            const ym = `${this.vyear[0]}${this.vmonth[0].padStart(2, '0')}`;
             if (this.props.yearmonth !== ym) {
                 this.emit('update:yearmonth', ym);
             }
@@ -629,9 +619,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             if (cols > this.dateValueStr) {
-                const date = new Date();
-                date.setUTCFullYear(col.year, col.month, col.date);
-                date.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vseconds[0] ?? '00'), 0);
+                const date = new Date(Date.UTC(col.year, col.month, col.date, parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vseconds[0] ?? '00'), 0));
                 const event: types.IDatepanelRangeEvent = {
                     'go': true,
                     preventDefault: function() {
