@@ -540,12 +540,18 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             ++this.searching;
-            this.emit('remote', searchValue, async (data?: any[] | Record<string, string>): Promise<void> => {
-                --this.searching;
-                this.searchData = data ? clickgo.tool.clone(data) : [];
-                await this.nextTick();
-                await success?.();
-            });
+            const event: types.ISelectRemoteEvent = {
+                'detail': {
+                    'value': searchValue,
+                    'callback': async (data?: any[] | Record<string, string>): Promise<void> => {
+                        --this.searching;
+                        this.searchData = data ? clickgo.tool.clone(data) : [];
+                        await this.nextTick();
+                        await success?.();
+                    }
+                }
+            };
+            this.emit('remote', event);
         }
         else {
             // --- 本地搜索 ---

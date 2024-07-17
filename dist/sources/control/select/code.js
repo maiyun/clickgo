@@ -466,12 +466,18 @@ class default_1 extends clickgo.control.AbstractControl {
                     return;
                 }
                 ++this.searching;
-                this.emit('remote', searchValue, (data) => __awaiter(this, void 0, void 0, function* () {
-                    --this.searching;
-                    this.searchData = data ? clickgo.tool.clone(data) : [];
-                    yield this.nextTick();
-                    yield (success === null || success === void 0 ? void 0 : success());
-                }));
+                const event = {
+                    'detail': {
+                        'value': searchValue,
+                        'callback': (data) => __awaiter(this, void 0, void 0, function* () {
+                            --this.searching;
+                            this.searchData = data ? clickgo.tool.clone(data) : [];
+                            yield this.nextTick();
+                            yield (success === null || success === void 0 ? void 0 : success());
+                        })
+                    }
+                };
+                this.emit('remote', event);
             }
             else {
                 yield this.nextTick();

@@ -168,13 +168,13 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public async onRemote(value: string, resolve: (data?: any[] | Record<string, string>) => void): Promise<void> {
+    public async onRemote(e: types.ISelectRemoteEvent): Promise<void> {
         await clickgo.tool.sleep(300);
-        if (!value || value === '8') {
-            resolve();
+        if (!e.detail.value || e.detail.value === '8') {
+            await e.detail.callback();
             return;
         }
-        resolve(['test', value, 'remote', {
+        await e.detail.callback(['test', e.detail.value, 'remote', {
             'label': 'label',
             'value': 'ok'
         }, {

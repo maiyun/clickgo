@@ -1074,6 +1074,13 @@ export interface ISelectTagclickEvent {
     };
 }
 
+export interface ISelectRemoteEvent {
+    'detail': {
+        'value': string;
+        'callback': (data?: any[] | Record<string, string>) => Promise<void>;
+    };
+}
+
 // --- Switch Control ---
 
 export interface ISwitchChangeEvent extends ICustomEvent {

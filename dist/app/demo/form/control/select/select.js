@@ -164,14 +164,14 @@ class default_1 extends clickgo.form.AbstractForm {
             'content': 'Done'
         });
     }
-    onRemote(value, resolve) {
+    onRemote(e) {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.tool.sleep(300);
-            if (!value || value === '8') {
-                resolve();
+            if (!e.detail.value || e.detail.value === '8') {
+                yield e.detail.callback();
                 return;
             }
-            resolve(['test', value, 'remote', {
+            yield e.detail.callback(['test', e.detail.value, 'remote', {
                     'label': 'label',
                     'value': 'ok'
                 }, {
