@@ -1241,13 +1241,12 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             formatSecond: function(second: number): string {
                 return tool.formatSecond(second);
             },
-            formatTime: function(ts: number | Date, opts: {
-                'time'?: boolean;
-                'date'?: boolean;
-                'zone'?: boolean;
-                'tz'?: number;
-            } = {}): string {
-                return tool.formatTime(ts, opts);
+            formatTime: function(ts: number | Date, tz?: number): {
+                'date': string;
+                'time': string;
+                'zone': string;
+            } {
+                return tool.formatTime(ts, tz);
             },
             queryStringify: function(query: Record<string, any>): string {
                 return tool.queryStringify(query);

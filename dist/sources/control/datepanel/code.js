@@ -48,9 +48,12 @@ class default_1 extends clickgo.control.AbstractControl {
             'yearmonth': '',
             'hourminute': '',
             'cursor': '',
+            'jump': true,
             'time': true,
             'zone': false,
-            'range': false
+            'range': false,
+            'clearbtn': true,
+            'backbtn': true
         };
         this.dateObj = new Date();
         this.dateValue = {
@@ -739,21 +742,23 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.timestamp = this.propNumber('modelValue');
                 this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
                 this.dateObj.setMilliseconds(0);
-                this.vyear[0] = this.dateObj.getUTCFullYear().toString();
-                this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
                 this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
                 this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
                 this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
-                this.refreshDateValue();
-                if (!mvfirst) {
-                    const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
-                    if (this.props.yearmonth !== ym) {
-                        this.emit('update:yearmonth', ym);
+                if (this.propBoolean('jump')) {
+                    this.vyear[0] = this.dateObj.getUTCFullYear().toString();
+                    this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
+                    this.refreshDateValue();
+                    if (!mvfirst) {
+                        const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
+                        if (this.props.yearmonth !== ym) {
+                            this.emit('update:yearmonth', ym);
+                        }
                     }
-                    const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
-                    if (this.props.hourminute !== hm) {
-                        this.emit('update:hourminute', hm);
-                    }
+                }
+                const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
+                if (this.props.hourminute !== hm) {
+                    this.emit('update:hourminute', hm);
                 }
             }
             else {

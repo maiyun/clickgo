@@ -922,47 +922,31 @@ export function formatSecond(second: number): string {
 }
 
 /**
- * --- 将日期对象或秒级时间戳转换为字符串 ---
+ * --- 将日期对象或毫秒级时间戳转换为字符串 ---
  * @param ts 时间戳或日期对象
- * @param opts 选项
+ * @param tz 传入要显示的时区，小时，如 8，默认以当前客户端时区为准
  */
-export function formatTime(ts: number | Date, opts: {
-    /** --- 是否显示时间，默认显示 --- */
-    'time'?: boolean;
-    /** --- 是否显示日期，默认显示 --- */
-    'date'?: boolean;
-    /** --- 是否显示时区，默认不显示 --- */
-    'zone'?: boolean;
-    /** --- 传入要显示的时区，小时，如 8，默认以当前客户端时区为准 --- */
-    'tz'?: number;
-} = {}): string {
-    if (opts.time === undefined) {
-        opts.time = true;
-    }
-    if (opts.date === undefined) {
-        opts.date = true;
-    }
-    if (opts.zone === undefined) {
-        opts.zone = false;
-    }
+export function formatTime(ts: number | Date, tz?: number): {
+    'date': string;
+    'time': string;
+    'zone': string;
+} {
+    const rtn = {
+        'date': '',
+        'time': '',
+        'zone': ''
+    };
     // --- 代码开始 ---
-    const dateTxt: string[] = [];
     if (typeof ts === 'number') {
-        ts = new Date(ts * 1000);
+        ts = new Date(ts);
     }
     /** --- 当前设定的时区 --- */
-    const tz = opts.tz ?? -(ts.getTimezoneOffset() / 60);
-    ts.setTime(ts.getTime() + tz * 60 * 60_000);
-    if (opts.date) {
-        dateTxt.push(ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0'));
-    }
-    if (opts.time) {
-        dateTxt.push(ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0'));
-    }
-    if (opts.zone) {
-        dateTxt.push('UTC' + (tz >= 0 ? '+' : '') + tz.toString());
-    }
-    return dateTxt.join(' ');
+    const ntz = tz ?? -(ts.getTimezoneOffset() / 60);
+    ts.setTime(ts.getTime() + ntz * 60 * 60_000);
+    rtn.date = ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0');
+    rtn.time = ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0');
+    rtn.zone = 'UTC' + (ntz >= 0 ? '+' : '') + ntz.toString();
+    return rtn;
 }
 
 /**

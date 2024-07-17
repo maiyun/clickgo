@@ -210,6 +210,17 @@ export default class extends clickgo.control.AbstractControl {
             this.tzData = vz - (parseInt(this.vzdec[0]) / 60);
         }
         this.emit('update:tz', this.tzData);
+        const ts = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
+        if (this.timestamp !== undefined && ts !== this.timestamp) {
+            this.timestamp = ts;
+            this.emit('update:modelValue', this.timestamp);
+            const event: types.IDateChangedEvent = {
+                'detail': {
+                    'value': this.timestamp
+                }
+            };
+            this.emit('changed', event);
+        }
         clickgo.form.hidePop();
     }
 
@@ -277,16 +288,25 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 监测 prop 时区信息变动 ---
         this.watch('tz', () => {
+            let tz: number = 0;
             if (this.props.tz === undefined) {
-                this.tzData = -(this.dateObj.getTimezoneOffset() / 60);
-                this.emit('update:tz', this.tzData);
+                tz = -(this.dateObj.getTimezoneOffset() / 60);
+                this.emit('update:tz', tz);
             }
             else {
-                this.tzData = this.propNumber('tz');
+                tz = this.propNumber('tz');
             }
+            if (this.tzData === tz) {
+                return;
+            }
+            this.tzData = tz;
             const z = this.tzData.toString().split('.');
             this.vzone[0] = (parseInt(z[0]) >= 0 ? '+' : '') + z[0];
             this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
+            // --- 更新时间戳 ---
+            if (this.timestamp !== undefined) {
+                this.emit('update:modelValue', this.dateObj.getTime() - this.tzData * 60 * 60_000);
+            }
         }, {
             'immediate': true
         });

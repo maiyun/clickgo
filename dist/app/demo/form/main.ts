@@ -8,6 +8,7 @@ import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
 import cdatepanelFrm from './control/datepanel/datepanel';
 import cdateFrm from './control/date/date';
+import cdaterangeFrm from './control/daterange/daterange';
 import cdialogFrm from './control/dialog/dialog';
 import cdrawerFrm from './control/drawer/drawer';
 import cfileFrm from './control/file/file';
@@ -111,6 +112,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdate': {
                 frm = await clickgo.form.create(cdateFrm);
+                break;
+            }
+            case 'cdaterange': {
+                frm = await clickgo.form.create(cdaterangeFrm);
                 break;
             }
             case 'cdesc': {

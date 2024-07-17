@@ -43,6 +43,7 @@ const button_1 = __importDefault(require("~c/button/button"));
 const check_1 = __importDefault(require("./control/check/check"));
 const datepanel_1 = __importDefault(require("./control/datepanel/datepanel"));
 const date_1 = __importDefault(require("./control/date/date"));
+const daterange_1 = __importDefault(require("./control/daterange/daterange"));
 const dialog_1 = __importDefault(require("./control/dialog/dialog"));
 const drawer_1 = __importDefault(require("./control/drawer/drawer"));
 const file_1 = __importDefault(require("./control/file/file"));
@@ -143,6 +144,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cdate': {
                     frm = yield clickgo.form.create(date_1.default);
+                    break;
+                }
+                case 'cdaterange': {
+                    frm = yield clickgo.form.create(daterange_1.default);
                     break;
                 }
                 case 'cdesc': {

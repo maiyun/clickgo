@@ -1,5 +1,5 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
-    <div @click="click('first')" ref="first" class="first" v-if="propBoolean('date') || propBoolean('time')">
+    <div @click="click('first')" class="first" ref="first" v-if="propBoolean('date') || propBoolean('time')">
         <template v-if="timestamp === undefined">
             <div>{{l('please click select')}}</div>
         </template>
@@ -11,7 +11,7 @@
     <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
     <teleport v-if="propBoolean('date')" to="system">
         <div ref="firstpop" class="pop">
-            <cg-datepanel plain :tz="tzData" :yearmonth="yearmonth" :hourminute="hourminute" @update:yearmonth="emit('update:yearmonth')" :time="propBoolean('time')" v-model="timestamp" @changed="changed" @selected="selected" ref="firstpanel">
+            <cg-datepanel plain :tz="tzData" :yearmonth="yearmonth" :hourminute="hourminute" @update:yearmonth="emit('update:yearmonth')" :time="propBoolean('time')" v-model="timestamp" @changed="changed" @selected="selected">
                 <template v-if="slots['default']" v-slot="col">
                     <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
                 </template>

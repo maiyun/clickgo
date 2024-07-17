@@ -719,33 +719,21 @@ function formatSecond(second) {
     return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
 }
 exports.formatSecond = formatSecond;
-function formatTime(ts, opts = {}) {
-    var _a;
-    if (opts.time === undefined) {
-        opts.time = true;
-    }
-    if (opts.date === undefined) {
-        opts.date = true;
-    }
-    if (opts.zone === undefined) {
-        opts.zone = false;
-    }
-    const dateTxt = [];
+function formatTime(ts, tz) {
+    const rtn = {
+        'date': '',
+        'time': '',
+        'zone': ''
+    };
     if (typeof ts === 'number') {
-        ts = new Date(ts * 1000);
+        ts = new Date(ts);
     }
-    const tz = (_a = opts.tz) !== null && _a !== void 0 ? _a : -(ts.getTimezoneOffset() / 60);
-    ts.setTime(ts.getTime() + tz * 60 * 60000);
-    if (opts.date) {
-        dateTxt.push(ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0'));
-    }
-    if (opts.time) {
-        dateTxt.push(ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0'));
-    }
-    if (opts.zone) {
-        dateTxt.push('UTC' + (tz >= 0 ? '+' : '') + tz.toString());
-    }
-    return dateTxt.join(' ');
+    const ntz = tz !== null && tz !== void 0 ? tz : -(ts.getTimezoneOffset() / 60);
+    ts.setTime(ts.getTime() + ntz * 60 * 60000);
+    rtn.date = ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0');
+    rtn.time = ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0');
+    rtn.zone = 'UTC' + (ntz >= 0 ? '+' : '') + ntz.toString();
+    return rtn;
 }
 exports.formatTime = formatTime;
 function queryStringify(query) {

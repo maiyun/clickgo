@@ -748,15 +748,6 @@ export interface IDatepanelSelectedEvent {
     };
 }
 
-// --- Date Control ---
-
-export interface IDateRangeEvent {
-    'detail': {
-        'start': number;
-        'end': number;
-    };
-}
-
 // --- Form Control ---
 
 export interface IFormCloseEvent extends ICustomEvent {

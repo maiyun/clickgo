@@ -24,37 +24,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.props = {
-            'mode': 'default',
-            'content': '',
-            'time': true,
-            'date': true,
-            'zone': false,
-            'tz': undefined
-        };
+        this.time = true;
+        this.zone = true;
+        this.ts = [];
+        this.tz = undefined;
+        this.disabled = false;
+        this.start = false;
+        this.bottom = false;
     }
-    get contentComp() {
-        if (this.props.mode !== 'date') {
-            return this.props.content;
-        }
-        if (this.propNumber('content') === 0) {
-            return '';
-        }
-        const rtn = [];
-        const res = clickgo.tool.formatTime(this.propNumber('content') * 1000, this.props.tz === undefined ? undefined : this.propNumber('tz'));
-        if (this.propBoolean('date')) {
-            rtn.push(res.date);
-        }
-        if (this.propBoolean('time')) {
-            rtn.push(res.time);
-        }
-        if (this.propBoolean('zone')) {
-            rtn.push(res.zone);
-        }
-        return rtn.join(' ');
+    settime() {
+        this.ts[0] = clickgo.tool.rand(1504304812000, 1704304812000);
+        this.ts[1] = this.ts[0] + 60000 * 60 * 24 * 30;
     }
 }
 exports.default = default_1;

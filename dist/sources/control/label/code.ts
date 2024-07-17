@@ -29,12 +29,18 @@ export default class extends clickgo.control.AbstractControl {
         if (this.propNumber('content') === 0) {
             return '';
         }
-        return clickgo.tool.formatTime(this.propNumber('content'), {
-            'date': this.propBoolean('date'),
-            'time': this.propBoolean('time'),
-            'zone': this.propBoolean('zone'),
-            'tz': this.props.tz === undefined ? undefined : this.propNumber('tz')
-        });
+        const rtn: string[] = [];
+        const res = clickgo.tool.formatTime(this.propNumber('content') * 1000, this.props.tz === undefined ? undefined : this.propNumber('tz'));
+        if (this.propBoolean('date')) {
+            rtn.push(res.date);
+        }
+        if (this.propBoolean('time')) {
+            rtn.push(res.time);
+        }
+        if (this.propBoolean('zone')) {
+            rtn.push(res.zone);
+        }
+        return rtn.join(' ');
     }
 
 }

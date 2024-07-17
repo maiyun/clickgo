@@ -1,0 +1,50 @@
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div class="first">
+        <div @click="click('first')" ref="first">
+            <template v-if="dateStr.length">
+                <div>{{dateStr[0]}}</div>
+                <div v-if="propBoolean('time')">{{timeStr[0]}}</div>
+                <div>-</div>
+                <div>{{dateStr[1]}}</div>
+                <div v-if="propBoolean('time')">{{timeStr[1]}}</div>
+            </template>
+            <template v-else>
+                <div>{{l('please click select')}}</div>
+            </template>
+        </div>
+        <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
+    </div>
+    <div class="clear" @click="clear" v-if="dateStr.length"><svg width="24" height="24" viewBox="0 0 24 24" stroke="none"><path d="m7.53033 6.46967c-.29289-.29289-.76777-.29289-1.06066 0s-.29289.76777 0 1.06066l4.46963 4.46967-4.46963 4.4697c-.29289.2929-.29289.7677 0 1.0606s.76777.2929 1.06066 0l4.46967-4.4696 4.4697 4.4696c.2929.2929.7677.2929 1.0606 0s.2929-.7677 0-1.0606l-4.4696-4.4697 4.4696-4.46967c.2929-.29289.2929-.76777 0-1.06066s-.7677-.29289-1.0606 0l-4.4697 4.46963z" /></svg></div>
+    <teleport to="system">
+        <div ref="firstpop" class="pop first">
+            <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="ts" v-model:cursor="cursor" range :clearbtn="false" ref="firstpanel" @range="onRange" :yearmonth="firstym" @update:yearmonth="firstym=$event;onYmChange()">
+                <template v-if="slots['default']" v-slot="col">
+                    <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
+                </template>
+            </cg-datepanel>
+            <cg-datepanel plain :tz="tzData" hourminute="235959" :time="propBoolean('time')" :modelValue="ts" v-model:cursor="cursor" range :start="ts" :clearbtn="false" :backbtn="false" ref="endpanel" @range="onRange" :yearmonth="endym" @update:yearmonth="endym=$event;onYmChange()" :jump="false">
+                <template v-if="slots['default']" v-slot="col">
+                    <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
+                </template>
+            </cg-datepanel>
+        </div>
+    </teleport>
+    <teleport v-if="propBoolean('zone')" to="system">
+        <div ref="zonepop" class="pop list">
+            <div>
+                <div class="item">
+                    <div class="title">{{l('zone')}}</div>
+                    <cg-list :data="zones" v-model="vzone" virtual></cg-list>
+                </div>
+                <div class="item">
+                    <div class="title">{{l('minute')}}</div>
+                    <cg-list :data="zdecs" v-model="vzdec" virtual></cg-list>
+                </div>
+            </div>
+            <div>
+                <cg-button @click="cancel">{{l('cancel')}}</cg-button>
+                <cg-button @click="zoneOk">{{l('ok')}}</cg-button>
+            </div>
+        </div>
+    </teleport>
+</div>

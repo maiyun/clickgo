@@ -1091,8 +1091,8 @@ function run(url_1) {
                 formatSecond: function (second) {
                     return tool.formatSecond(second);
                 },
-                formatTime: function (ts, opts = {}) {
-                    return tool.formatTime(ts, opts);
+                formatTime: function (ts, tz) {
+                    return tool.formatTime(ts, tz);
                 },
                 queryStringify: function (query) {
                     return tool.queryStringify(query);

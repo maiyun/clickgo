@@ -11,8 +11,8 @@
             </cg-button>
         </div>
         <div class="right">
-            <cg-button v-if="timestamp !== undefined" @click="clear">{{l('clear')}}</cg-button>
-            <cg-button v-if="(timestamp !== undefined) && ((dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1))" @click="back">{{l('back')}}</cg-button>
+            <cg-button v-if="propBoolean('clear') && (timestamp !== undefined)" @click="clear">{{l('clear')}}</cg-button>
+            <cg-button v-if="propBoolean('backbtn') && (timestamp !== undefined) && ((dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1))" @click="back">{{l('back')}}</cg-button>
             <cg-button @click="today">{{l('today')}}</cg-button>
         </div>
     </div>

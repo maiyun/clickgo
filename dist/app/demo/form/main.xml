@@ -10,6 +10,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cimg')">Img</button>
                     <button @click="openForm('cbutton')">Button</button>
+                    <button @click="openForm('ctext')">Text</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ccheck')">Check</button>
@@ -17,9 +18,9 @@
                     <button @click="openForm('cswitch')">Switch</button>
                 </layout>
                 <layout gutter="10">
-                    <button @click="openForm('ctext')">Text</button>
                     <button @click="openForm('cdatepanel')">Datepanel</button>
                     <button @click="openForm('cdate')">Date</button>
+                    <button @click="openForm('cdaterange')">Daterange</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ctab')">Tab</button>

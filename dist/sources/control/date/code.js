@@ -191,6 +191,17 @@ class default_1 extends clickgo.control.AbstractControl {
             this.tzData = vz - (parseInt(this.vzdec[0]) / 60);
         }
         this.emit('update:tz', this.tzData);
+        const ts = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
+        if (this.timestamp !== undefined && ts !== this.timestamp) {
+            this.timestamp = ts;
+            this.emit('update:modelValue', this.timestamp);
+            const event = {
+                'detail': {
+                    'value': this.timestamp
+                }
+            };
+            this.emit('changed', event);
+        }
         clickgo.form.hidePop();
     }
     timeOk() {
@@ -250,16 +261,24 @@ class default_1 extends clickgo.control.AbstractControl {
             this.zones.push((i >= 0 ? '+' : '') + i.toString());
         }
         this.watch('tz', () => {
+            let tz = 0;
             if (this.props.tz === undefined) {
-                this.tzData = -(this.dateObj.getTimezoneOffset() / 60);
-                this.emit('update:tz', this.tzData);
+                tz = -(this.dateObj.getTimezoneOffset() / 60);
+                this.emit('update:tz', tz);
             }
             else {
-                this.tzData = this.propNumber('tz');
+                tz = this.propNumber('tz');
             }
+            if (this.tzData === tz) {
+                return;
+            }
+            this.tzData = tz;
             const z = this.tzData.toString().split('.');
             this.vzone[0] = (parseInt(z[0]) >= 0 ? '+' : '') + z[0];
             this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
+            if (this.timestamp !== undefined) {
+                this.emit('update:modelValue', this.dateObj.getTime() - this.tzData * 60 * 60000);
+            }
         }, {
             'immediate': true
         });
