@@ -1,7 +1,7 @@
 .wrap {
     display: flex; position: relative;
     .menuwrap {
-        display: flex; overflow: hidden; z-index: 7; // --- 原 2，目前与 drawer 相同 ---
+        display: flex; overflow: hidden; z-index: 7; // --- 不设置的话，收起来的瞬间会到底部去，不能设置 2，会被 header 挡住 ---
         .menu {
             background: var(--face); border-right: solid .5px var(--g-border-color); padding: 1px; width: 250px; transition: all .3s var(--g-cubic); transition-property: transform;
             .logo {
@@ -11,7 +11,7 @@
     }
     &.layer {
         .menuwrap {
-            position: absolute; width: 100%; height: 100%; left: 0; top: 0; background-color: rgba(0, 0, 0, 0); pointer-events: none; z-index: 2; transition: all .3s var(--g-cubic); transition-property: background-color;
+            position: absolute; width: 100%; height: 100%; left: 0; top: 0; background-color: rgba(0, 0, 0, 0); pointer-events: none; transition: all .3s var(--g-cubic); transition-property: background-color;
             .menu {
                 box-shadow: 0px 15px 30px rgba(0,0,0,.07); transform: translateX(-300px);
             }
