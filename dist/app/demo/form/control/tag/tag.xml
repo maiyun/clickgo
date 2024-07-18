@@ -35,7 +35,7 @@
             <tag :close="vclose" type="primary" plain rsize="l">rsize l</tag>
             <tag :close="vclose" type="primary" plain rsize="xl">rsize xl</tag>
         </layout>
-        <label>Event and close:</label>
+        <label>Event:</label>
         <layout gutter="10" align-v="center">
             <tag :close="vclose" v-for="item, index of list" type="cg" rsize="xl" size="lh" plain @close="list.splice(index, 1)">{{item}}</tag>
             <button v-if="list.length < 6" @click="list.push('tag' + list.length)">Add</button>

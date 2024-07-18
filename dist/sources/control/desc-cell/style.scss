@@ -18,4 +18,8 @@
     &.size-xl {
         padding: var(--g-padding-xl);
     }
+
+    > * {
+        vertical-align: middle;
+    }
 }

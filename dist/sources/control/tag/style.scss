@@ -45,6 +45,9 @@
         &.danger {
             background: var(--danger); border-color: var(--danger);
         }
+        &.cg {
+            background: var(--cg); border-color: var(--cg);
+        }
 
         svg {
             &:hover {
