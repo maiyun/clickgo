@@ -1081,6 +1081,14 @@ export interface ISelectRemoteEvent {
     };
 }
 
+export interface ISelectItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': string;
+        'arrow': boolean;
+    };
+}
+
 // --- Switch Control ---
 
 export interface ISwitchChangeEvent extends ICustomEvent {

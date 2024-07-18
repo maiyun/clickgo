@@ -11,6 +11,7 @@ export default class extends clickgo.control.AbstractControl {
         'change': null,
         'changed': null,
         'tagclick': null,
+        'itemclicked': null,
 
         'remote': null,
         'load': null,
@@ -674,7 +675,15 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- list 上的点击事件 --- */
-    public async listItemClicked(): Promise<void> {
+    public async listItemClicked(e: types.IListItemclickedEvent): Promise<void> {
+        const event: types.IListItemclickedEvent = {
+            'detail': {
+                'event': e.detail.event,
+                'value': e.detail.value,
+                'arrow': e.detail.arrow
+            }
+        };
+        this.emit('itemclicked', event);
         if (this.propBoolean('editable')) {
             const v = this.listValue[0];
             // -- 可编辑 ---

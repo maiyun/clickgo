@@ -44,6 +44,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'change': null,
             'changed': null,
             'tagclick': null,
+            'itemclicked': null,
             'remote': null,
             'load': null,
             'label': null,
@@ -589,8 +590,16 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
-    listItemClicked() {
+    listItemClicked(e) {
         return __awaiter(this, void 0, void 0, function* () {
+            const event = {
+                'detail': {
+                    'event': e.detail.event,
+                    'value': e.detail.value,
+                    'arrow': e.detail.arrow
+                }
+            };
+            this.emit('itemclicked', event);
             if (this.propBoolean('editable')) {
                 const v = this.listValue[0];
                 if (this.propBoolean('multi')) {
