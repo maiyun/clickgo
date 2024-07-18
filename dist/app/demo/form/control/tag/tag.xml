@@ -1,20 +1,47 @@
-<form width="450" height="300" title="Tag" padding="10">
-    <layout direction="v" gutter="10">
+<form width="550" height="500" title="Tag" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
         <label>Default:</label>
         <layout gutter="10">
-            <tag>Default</tag>
-            <tag type="primary">Primary</tag>
-            <tag type="info">Info</tag>
-            <tag type="warning">Warning</tag>
-            <tag type="danger">Danger</tag>
+            <tag :close="vclose">Default</tag>
+            <tag :close="vclose" type="primary">Primary</tag>
+            <tag :close="vclose" type="info">Info</tag>
+            <tag :close="vclose" type="warning">Warning</tag>
+            <tag :close="vclose" type="danger">Danger</tag>
+            <tag :close="vclose" type="cg">Danger</tag>
         </layout>
         <label>Plain:</label>
         <layout gutter="10">
-            <tag plain>Default</tag>
-            <tag type="primary" plain>Primary</tag>
-            <tag type="info" plain>Info</tag>
-            <tag type="warning" plain>Warning</tag>
-            <tag type="danger" plain>Danger</tag>
+            <tag :close="vclose" plain>Default</tag>
+            <tag :close="vclose" type="primary" plain>Primary</tag>
+            <tag :close="vclose" type="info" plain>Info</tag>
+            <tag :close="vclose" type="warning" plain>Warning</tag>
+            <tag :close="vclose" type="danger" plain>Danger</tag>
+            <tag :close="vclose" type="cg" plain>Danger</tag>
+        </layout>
+        <label>Size:</label>
+        <layout gutter="10" align-v="center">
+            <tag :close="vclose" type="primary" plain size="xl">xl</tag>
+            <tag :close="vclose" type="primary" plain size="l">l</tag>
+            <tag :close="vclose" type="primary" plain size="m">m</tag>
+            <tag :close="vclose" type="primary" plain size="s">s</tag>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <tag :close="vclose" type="primary" plain size="xlh">xlh</tag>
+            <tag :close="vclose" type="primary" plain size="lh">lh</tag>
+            <tag :close="vclose" type="primary" plain size="mh">mh</tag>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <tag :close="vclose" type="primary" plain rsize="m">rsize m</tag>
+            <tag :close="vclose" type="primary" plain rsize="l">rsize l</tag>
+            <tag :close="vclose" type="primary" plain rsize="xl">rsize xl</tag>
+        </layout>
+        <label>Event and close:</label>
+        <layout gutter="10" align-v="center">
+            <tag :close="vclose" v-for="item, index of list" type="cg" rsize="xl" size="lh" plain @close="list.splice(index, 1)">{{item}}</tag>
+            <button v-if="list.length < 6" @click="list.push('tag'+list.length)">Add</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="vclose = !vclose" style="flex: 1;">{{vclose ? '' : '!'}}close</button>
         </layout>
     </layout>
 </form>

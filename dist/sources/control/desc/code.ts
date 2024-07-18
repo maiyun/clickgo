@@ -6,7 +6,7 @@ export default class extends clickgo.control.AbstractControl {
         'border': boolean | string;
         'plain': boolean | string;
         'collapse': boolean | string;
-        'size': 's' | 'm';
+        'size': 's' | 'm' | 'l' | 'xl';
     } = {
             'border': true,
             'plain': false,

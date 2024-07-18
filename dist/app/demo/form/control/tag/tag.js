@@ -24,19 +24,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.emits = {
-            'close': null
-        };
-        this.props = {
-            'type': 'default',
-            'plain': false,
-            'size': 's',
-            'rsize': 'l',
-            'close': false
-        };
+        this.list = [];
+        this.vclose = false;
     }
 }
 exports.default = default_1;

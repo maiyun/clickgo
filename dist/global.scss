@@ -1,11 +1,17 @@
 #cg-wrap {
     position: fixed; left: 0; top: 0;
+    --g-padding-s:4px;
     --g-padding:7px;
+    --g-padding-h:4px var(--g-padding);
     --g-padding-l:14px;
-    --g-padding-xl:30px;
+    --g-padding-l-h:8px var(--g-padding-l);
+    --g-padding-xl:22px;
+    --g-padding-xl-h:12px var(--g-padding-xl);
     --g-bpadding:18px;
     --g-margin:2px;
     --g-radius:0;
+    --g-radius-l:4px;
+    --g-radius-xl:8px;
     --g-size:12px;
     --g-family:"Lucida Sans Unicode","Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei","sans-serif";
     --g-line:1;

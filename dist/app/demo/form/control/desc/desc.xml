@@ -24,7 +24,7 @@
         </layout>
         <layout gutter="10">
             <button @click="plain = !plain" style="flex: 1;">plain: {{plain ? 'true' : 'false'}}</button>
-            <select v-model="size" style="flex: 1;" :data="['s', 'm']" />
+            <select v-model="size" style="flex: 1;" :data="['s', 'm', 'l', 'xl']" />
         </layout>
         <label>Test: {{cols}}</label>
         <flow style="flex: 1;">

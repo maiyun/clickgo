@@ -1,10 +1,16 @@
 global {
+    --g-padding-s:6px;
     --g-padding:10px;
+    --g-padding-h:6px var(--g-padding);
     --g-padding-l:18px;
-    --g-padding-xl:34px;
+    --g-padding-l-h:10px var(--g-padding-l);
+    --g-padding-xl:28px;
+    --g-padding-xl-h:14px var(--g-padding-xl);
     --g-bpadding:25px;
     --g-margin:7px;
     --g-radius:5px;
+    --g-radius-l:8px;
+    --g-radius-xl:12px;
     --g-size:13px;
     --g-transition:all .3s var(--g-cubic);
 
@@ -108,29 +114,9 @@ global {
     }
 }
 
-// -- CONTROL -- desc-cell --
-
-.desc-cell_wrap {
-    padding: 15px;
-}
-
-// -- CONTROL -- desc-head --
-
-.desc-head_wrap {
-    padding: 15px;
-}
-
 // -- CONTROL -- form --
 
 .form_wrap {
-    &:not(.form_border-none):not([data-cg-max]) {
-        border: none;
-    }
-    &.form_focus {
-        &:not(.form_border-none):not([data-cg-max]) {
-            border: none;
-        }
-    }
     // --- 内部 ---
     .form_inner {
         // --- 主体内容 ---
@@ -451,12 +437,6 @@ global {
     .tab_panel {
         background: transparent; border: none;
     }
-}
-
-// --- CONTROL -- tag ---
-
-.tag_wrap {
-    padding: 6px 7px; border-radius: 8px;
 }
 
 // -- CONTROL -- task --

@@ -7,9 +7,15 @@
         }
     }
     &.size-s {
-        padding: 4px;
+        padding: var(--g-padding-s);
     }
     &.size-m {
-        padding: 10px;
+        padding: var(--g-padding);
+    }
+    &.size-l {
+        padding: var(--g-padding-l);
+    }
+    &.size-xl {
+        padding: var(--g-padding-xl);
     }
 }

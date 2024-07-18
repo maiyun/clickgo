@@ -4,7 +4,7 @@
             <slot></slot>
         </cg-layout>
         <cg-layout align-h="end" class="controls" gutter="10">
-            <cg-button v-for="item, i of buttons" @click="click(item)" :type="i === buttons.length - 1 ? 'primary' : undefined">{{item}}</cg-button>
+            <cg-button v-for="item, i of buttons" @click="click(item)" :type="i === buttons.length - 1 ? 'info' : undefined">{{item}}</cg-button>
         </cg-layout>
     </div>
 </div>
