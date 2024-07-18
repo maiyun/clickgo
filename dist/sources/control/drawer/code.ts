@@ -29,7 +29,7 @@ export default class extends clickgo.control.AbstractControl {
             'close': false
         };
 
-    public get widthComp() {
+    public get widthComp(): string {
         if (typeof this.props.width === 'number') {
             return this.props.width.toString() + 'px';
         }
@@ -37,12 +37,12 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 关闭按钮 --- */
-    public closeClick() {
+    public closeClick(): void {
         this.emit('update:modelValue', false);
     }
 
     /** --- wrap 点击事件 --- */
-    public click(e: MouseEvent) {
+    public click(e: MouseEvent): void {
         if (e.target !== this.element) {
             return;
         }
