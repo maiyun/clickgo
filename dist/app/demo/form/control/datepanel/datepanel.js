@@ -38,12 +38,16 @@ class default_1 extends clickgo.form.AbstractForm {
         this.start = false;
         this.ym = '';
         this.hm = '';
+        this.lockhm = false;
     }
     settime() {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
     }
     onChanged(e) {
         console.log('onChanged', e, JSON.stringify(e));
+    }
+    onRange(e) {
+        console.log('onRange', e);
     }
 }
 exports.default = default_1;

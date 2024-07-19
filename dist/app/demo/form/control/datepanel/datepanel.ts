@@ -27,6 +27,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public hm: string = '';
 
+    public lockhm: boolean = false;
+
     // --- 指定时间戳 ---
     public settime(): void {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
@@ -34,6 +36,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public onChanged(e: types.IDatepanelChangedEvent): void {
         console.log('onChanged', e, JSON.stringify(e));
+    }
+
+    public onRange(e: types.IDatepanelRangeEvent): void {
+        console.log('onRange', e);
     }
 
 }

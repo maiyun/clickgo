@@ -22,7 +22,7 @@
                     <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
                 </template>
             </cg-datepanel>
-            <cg-datepanel plain :tz="tzData" hourminute="235959" :time="propBoolean('time')" :modelValue="ts" v-model:cursor="cursor" range :start="ts" :clearbtn="false" :backbtn="false" ref="endpanel" @range="onRange" :yearmonth="endym" @update:yearmonth="endym=$event;onYmChange()" :jump="false">
+            <cg-datepanel plain :tz="tzData" hourminute="235959" :time="propBoolean('time')" :modelValue="ts" v-model:cursor="cursor" range :start="ts" :clearbtn="false" :backbtn="false" ref="endpanel" @range="onRange" :yearmonth="endym" @update:yearmonth="endym=$event;onYmChange()" :jump="false" lockhm>
                 <template v-if="slots['default']" v-slot="col">
                     <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
                 </template>

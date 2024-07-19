@@ -47,6 +47,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'tz': undefined,
             'yearmonth': '',
             'hourminute': '',
+            'lockhm': false,
             'cursor': '',
             'jump': true,
             'time': true,
@@ -514,6 +515,21 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.rangeDate === undefined && (this.timestamp !== undefined) && this.propBoolean('range')) {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (cols === this.dateValueStr) {
+                const date = new Date(Date.UTC(col.year, col.month, col.date, 23, 59, 59, 0));
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'start': this.timestamp,
+                        'end': date.getTime() - this.tzData * 60 * 60000
+                    }
+                };
+                this.emit('range', event);
+                if (event.go) {
+                    this.rangeDate = date;
+                }
                 return;
             }
             if (cols > this.dateValueStr) {
@@ -525,7 +541,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     },
                     'detail': {
                         'start': this.timestamp,
-                        'end': date.getTime() - this.tzData * 60 * 60 * 1000
+                        'end': date.getTime() - this.tzData * 60 * 60000
                     }
                 };
                 this.emit('range', event);
@@ -732,11 +748,31 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
                 this.timestamp = this.propNumber('modelValue');
+                const oldDate = {
+                    'h': this.dateObj.getUTCHours(),
+                    'm': this.dateObj.getUTCMinutes(),
+                    's': this.dateObj.getUTCSeconds()
+                };
                 this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
                 this.dateObj.setMilliseconds(0);
-                this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
-                this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
-                this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+                if (this.propBoolean('lockhm')) {
+                    this.dateObj.setUTCHours(oldDate.h, oldDate.m, oldDate.s);
+                    this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60000;
+                    if (this.propNumber('modelValue') !== this.timestamp) {
+                        this.emit('update:modelValue', this.timestamp);
+                        const event = {
+                            'detail': {
+                                'value': this.timestamp
+                            }
+                        };
+                        this.emit('changed', event);
+                    }
+                }
+                else {
+                    this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
+                    this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
+                    this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+                }
                 if (this.propBoolean('jump')) {
                     this.vyear[0] = this.dateObj.getUTCFullYear().toString();
                     this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
