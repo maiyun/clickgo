@@ -109,7 +109,12 @@ class default_1 extends clickgo.form.AbstractForm {
         this.level3 = [];
         this.s3other = false;
         this.slist3r = ['a', 'b', 'c', 'haha3'];
-        this.editableData = true;
+        this.editableDataValue = ['0'];
+        this.editableData = {
+            '0': ['1', '2', '3', { 'label': 'is gDa', 'value': 'gDa' }, '5'],
+            '1': ['6', '7', '8', '9', '10', { 'label': 'But gDa', 'value': 'gDa' }],
+            '2': ['11', '12', '13', '14', 'gDa', { 'label': 'Other', 'value': 'o' }]
+        };
         this.disabledList = [];
         this.unavailableList = [];
         this.padding = false;
