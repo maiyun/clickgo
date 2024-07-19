@@ -1029,13 +1029,17 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (this.propBoolean('multi')) {
                     return;
                 }
-                if (this.value[0] !== this.listValue[0]) {
-                    return;
-                }
+                this.listValue = this.value;
+                yield this.nextTick();
                 if (this.label[0] === this.listLabel[0]) {
                     return;
                 }
-                this.label = clickgo.tool.clone(this.listLabel);
+                if (this.listValue.length) {
+                    this.label = clickgo.tool.clone(this.listLabel);
+                }
+                else {
+                    this.label[0] = this.value[0];
+                }
                 this.emit('label', clickgo.tool.clone(this.label));
                 return;
             }

@@ -1147,6 +1147,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.inputValue = (this.value[0] ?? '').toString();
             }
         });
+        // --- 监听 mulit ---
         this.watch('multi', (): void => {
             if (!this.propBoolean('multi')) {
                 // --- 多变单 ---
@@ -1166,20 +1167,30 @@ export default class extends clickgo.control.AbstractControl {
                 this.inputValue = '';
             }
         });
+        // --- 监听 data 变动 ---
         this.watch(() => JSON.stringify(this.props.data), async (n, o): Promise<void> => {
             if (this.propBoolean('editable')) {
+                // --- 当前是输入模式 ---
                 await this._search();
                 if (this.propBoolean('multi')) {
+                    // --- 多选模式，不管 ---
                     return;
                 }
+                this.listValue = this.value;
+                await this.nextTick();
                 // --- 单选模式 ---
-                if (this.value[0] !== this.listValue[0]) {
-                    return;
-                }
+                // if (this.value[0] !== this.listValue[0]) {
+                //     return;
+                // }
                 if (this.label[0] === this.listLabel[0]) {
                     return;
                 }
-                this.label = clickgo.tool.clone(this.listLabel);
+                if (this.listValue.length) {
+                    this.label = clickgo.tool.clone(this.listLabel);
+                }
+                else {
+                    this.label[0] = this.value[0];
+                }
                 this.emit('label', clickgo.tool.clone(this.label));
                 return;
             }

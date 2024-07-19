@@ -10,7 +10,7 @@
             </div>
             <div v-if="!label.length" class="tag placeholder">　</div>
         </div>
-        <div v-if="propBoolean('editable')&&!propBoolean('multi')&&label[0]!==value[0]" class="leftlabel">{{label[0]}}</div>
+        <div v-if="propBoolean('editable')&&!propBoolean('multi')&&label.length&&(label[0]!==value[0])" class="leftlabel">{{label[0]}}</div>
         <cg-text v-if="propBoolean('editable')" :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" @keydown="keydown" @blur="blur" plain></cg-text>
     </template>
     <template v-slot:pop>
