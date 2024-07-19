@@ -50,8 +50,4 @@ export default class extends clickgo.control.AbstractControl {
         }
     };
 
-    public onMounted(): void {
-        console.log('xx', this.props);
-    }
-
 }

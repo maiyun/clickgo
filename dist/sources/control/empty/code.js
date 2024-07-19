@@ -70,8 +70,5 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
     }
-    onMounted() {
-        console.log('xx', this.props);
-    }
 }
 exports.default = default_1;
