@@ -1,0 +1,5 @@
+<form width="300" height="300" title="Empty" padding="10">
+    <layout style="flex: 1;">
+        <empty></empty>
+    </layout>
+</form>

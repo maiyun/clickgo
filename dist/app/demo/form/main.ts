@@ -135,6 +135,10 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create(cechartsFrm);
                 break;
             }
+            case 'cempty': {
+                frm = await clickgo.form.create('/form/control/empty/empty');
+                break;
+            }
             case 'cfile': {
                 frm = await clickgo.form.create(cfileFrm);
                 break;

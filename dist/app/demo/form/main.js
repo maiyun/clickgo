@@ -167,6 +167,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create(echarts_1.default);
                     break;
                 }
+                case 'cempty': {
+                    frm = yield clickgo.form.create('/form/control/empty/empty');
+                    break;
+                }
                 case 'cfile': {
                     frm = yield clickgo.form.create(file_1.default);
                     break;

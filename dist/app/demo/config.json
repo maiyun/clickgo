@@ -58,6 +58,7 @@
         "/form/control/drawer/drawer.xml",
         "/form/control/echarts/echarts.js",
         "/form/control/echarts/echarts.xml",
+        "/form/control/empty/empty.xml",
         "/form/control/file/file.js",
         "/form/control/file/file.xml",
         "/form/control/flow/flow.css",

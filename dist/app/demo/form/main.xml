@@ -6,6 +6,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cform')">Form</button>
                     <button @click="openForm('clayout')">Layout</button>
+                    <button @click="openForm('cempty')">Empty</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cimg')">Img</button>
