@@ -68,6 +68,10 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 ## Third-party licenses
 
+#### Empty
+
+<a href="https://www.flaticon.com/free-icons/empty" title="empty icons">Empty icons created by Ghozi Muhtarom - Flaticon</a>
+
 #### Greatlist
 
 <a href="https://www.flaticon.com/free-icons/empty" title="empty icons">Empty icons created by Ghozi Muhtarom - Flaticon</a>
