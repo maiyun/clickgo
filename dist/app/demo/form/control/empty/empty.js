@@ -24,54 +24,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.props = {
-            'tip': false,
-            'layer': true
-        };
-        this.localeData = {
-            'en': {
-                'no data': 'No data'
-            },
-            'sc': {
-                'no data': '无数据'
-            },
-            'tc': {
-                'no data': '無資料'
-            },
-            'ja': {
-                'no data': 'データなし'
-            },
-            'ko': {
-                'no data': '데이터 없음'
-            },
-            'th': {
-                'no data': 'ไม่มีข้อมูล'
-            },
-            'es': {
-                'no data': 'Sin datos'
-            },
-            'de': {
-                'no data': 'Keine Daten'
-            },
-            'fr': {
-                'no data': 'Pas de données'
-            },
-            'pt': {
-                'no data': 'Sem dados'
-            },
-            'ru': {
-                'no data': 'Нет данных'
-            },
-            'vi': {
-                'no data': 'Không có dữ liệu'
-            }
-        };
-    }
-    onMounted() {
-        console.log('xx', this.props);
+        this.tip = false;
+        this.layer = false;
     }
 }
 exports.default = default_1;

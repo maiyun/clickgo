@@ -45,6 +45,7 @@ import cvideoFrm from './control/video/video';
 import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
 import cechartsFrm from './control/echarts/echarts';
+import cemptyFrm from './control/empty/empty';
 import cjoditFrm from './control/jodit/jodit';
 import ctuieditorFrm from './control/tuieditor/tuieditor';
 import ctuiviewerFrm from './control/tuiviewer/tuiviewer';
@@ -136,7 +137,7 @@ export default class extends clickgo.form.AbstractForm {
                 break;
             }
             case 'cempty': {
-                frm = await clickgo.form.create('/form/control/empty/empty');
+                frm = await clickgo.form.create(cemptyFrm);
                 break;
             }
             case 'cfile': {

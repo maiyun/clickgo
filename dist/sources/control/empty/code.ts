@@ -4,8 +4,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'tip': boolean | string;
+        'layer': boolean | string;
     } = {
-            'tip': false
+            'tip': false,
+            'layer': true
         };
 
     /** --- 语言包 --- */
@@ -47,5 +49,9 @@ export default class extends clickgo.control.AbstractControl {
             'no data': 'Không có dữ liệu'
         }
     };
+
+    public onMounted(): void {
+        console.log('xx', this.props);
+    }
 
 }

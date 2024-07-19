@@ -1,5 +1,9 @@
 <form width="300" height="300" title="Empty" padding="10">
-    <layout style="flex: 1;">
-        <empty></empty>
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <empty :tip="tip" :layer="layer"></empty>
+        <layout gutter="10">
+            <button @click="tip = !tip" style="flex: 1;">{{tip ? '' : '!'}}tip</button>
+            <button @click="layer = !layer" style="flex: 1;">{{layer ? '' : '!'}}layer</button>
+        </layout>
     </layout>
 </form>
