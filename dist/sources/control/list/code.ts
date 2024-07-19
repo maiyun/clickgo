@@ -83,9 +83,12 @@ export default class extends clickgo.control.AbstractControl {
             return undefined;
         }
 
+        /*
+        // --- 以下代码交给 glist 处理，要不然可能 checkValue 不通过，空 data 时没法及时 updateModelValue ---
         if (!this.dataGl.length) {
             return [];
         }
+        */
 
         let change: boolean = false;
         // --- modelValue 的格式类似：[0, 3]，是 value，不是 data ---
@@ -699,8 +702,11 @@ export default class extends clickgo.control.AbstractControl {
             // --- 普通 变 check ---
             this.refreshCheckValues();
         });
-        this.watch('data', (): void => {
-            this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        this.watch(() => JSON.stringify(this.props.data), (n, o): void => {
+            if (n === o) {
+                return;
+            }
+            this.dataFormat = this.props.data.length ? this.formatData(this.props.data, this.dataFormat) : [];
             if (this.propBoolean('check')) {
                 this.refreshCheckValues();
             }

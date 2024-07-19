@@ -209,9 +209,6 @@ export default class extends clickgo.control.AbstractControl {
      * --- 检测 value 是否合法 ---
      */
     public async checkValue(): Promise<void> {
-        if (!this.props.data.length) {
-            return;
-        }
         ++this._needCheckValue;
         await this.nextTick();
         if (this._needCheckValue > 1) {
@@ -246,6 +243,9 @@ export default class extends clickgo.control.AbstractControl {
                 change = true;
                 if (this.shiftStart === this.valueData[i]) {
                     this.shiftStart = i > 0 ? (this.valueData[0] ?? notDisabledIndex) : notDisabledIndex;
+                    if (this.shiftStart < 0) {
+                        this.shiftStart = 0;
+                    }
                 }
                 this.valueData.splice(i, 1);
                 --i;
@@ -255,8 +255,8 @@ export default class extends clickgo.control.AbstractControl {
         // --- 检测是否必须，但却没选择（或在上面被剔除了） ---
         if (this.propBoolean('must') && (this.valueData.length === 0)) {
             change = true;
-            this.valueData = [notDisabledIndex];
-            this.shiftStart = this.valueData[0];
+            this.valueData = notDisabledIndex < 0 ? [] : [notDisabledIndex];
+            this.shiftStart = this.valueData.length ? this.valueData[0] : 0;
         }
 
         if (change) {
@@ -819,10 +819,10 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /**
-     * --- 获取数据中第一个不是 disabled 的 index ---
+     * --- 获取数据中第一个不是 disabled 的 index（data 没值将返回 -1，即使是 must 状态） ---
      */
     public getFirstNotDisabledIndex(): number {
-        let notDisabledIndex = 0;
+        let notDisabledIndex = -1;
         for (let i = 0; i < this.props.data.length; ++i) {
             if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
@@ -956,8 +956,8 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 else {
                     const notDisabledIndex = this.getFirstNotDisabledIndex();
-                    this.valueData = [notDisabledIndex];
-                    this.shiftStart = this.valueData[0];
+                    this.valueData = notDisabledIndex > -1 ? [notDisabledIndex] : [];
+                    this.shiftStart = this.valueData.length ? this.valueData[0] : 0;
                 }
                 const event: types.IGreatlistChangedEvent = {
                     'detail': {
@@ -1010,7 +1010,7 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         // --- 监听 data 变动 ---
-        this.watch('data', async () => {
+        this.watch(() => JSON.stringify(this.props.data), async () => {
             await this.checkValue();
         }, {
             'deep': true

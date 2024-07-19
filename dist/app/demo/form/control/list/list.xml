@@ -52,11 +52,14 @@
             <label>Raw data:</label>
             <flow direction="v" style="border: solid 1px #b3b3b3; line-height: 1.5; height: 50px; padding: 5px;">{{listData}}</flow>
             <layout gutter="10" style="flex: 1; height: 0;">
-                <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listData" :check="check" @label="label2 = $event" style="flex: 2; width: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" :virtual="virtual" @load="onSelectLoad" @add="onLAdd" @Remove="onLRemove">
-                    <menulist>
-                        <menulist-item alt="I" @click="showIndex2">Show select</menulist-item>
-                    </menulist>
-                </list>
+                <layout direction="v" gutter="10" style="flex: 2; width: 0;">
+                    <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listDataEmpty ? [] : listData" :check="check" @label="label2 = $event" style="flex: 1; height: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" :virtual="virtual" @load="onSelectLoad" @add="onLAdd" @Remove="onLRemove">
+                        <menulist>
+                            <menulist-item alt="I" @click="showIndex2">Show select</menulist-item>
+                        </menulist>
+                    </list>
+                    <button @click="listDataEmpty = !listDataEmpty">{{listDataEmpty ? '' : '!'}}empty</button>
+                </layout>
                 <layout direction="v" gutter="10" style="flex: 1; width: 0;">
                     <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual" :data="listData2" :check="check" :disabledList="disabledList" style="flex: 1;">
                         <template v-slot:row="data">

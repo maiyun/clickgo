@@ -68,9 +68,6 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propBoolean('check')) {
             return undefined;
         }
-        if (!this.dataGl.length) {
-            return [];
-        }
         let change = false;
         const modelValue = clickgo.tool.clone(this.values);
         if (modelValue.length > 1 && !this.propBoolean('multi')) {
@@ -550,8 +547,11 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refreshCheckValues();
         });
-        this.watch('data', () => {
-            this.dataFormat = this.formatData(this.props.data, this.dataFormat);
+        this.watch(() => JSON.stringify(this.props.data), (n, o) => {
+            if (n === o) {
+                return;
+            }
+            this.dataFormat = this.props.data.length ? this.formatData(this.props.data, this.dataFormat) : [];
             if (this.propBoolean('check')) {
                 this.refreshCheckValues();
             }

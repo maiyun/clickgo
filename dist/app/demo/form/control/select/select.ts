@@ -98,7 +98,8 @@ export default class extends clickgo.form.AbstractForm {
     public editableData = {
         '0': ['1', '2', '3', { 'label': 'is gDa', 'value': 'gDa' }, '5'],
         '1': ['6', '7', '8', '9', '10', { 'label': 'But gDa', 'value': 'gDa' }],
-        '2': ['11', '12', '13', '14', 'gDa', { 'label': 'Other', 'value': 'o' }]
+        '2': ['11', '12', '13', '14', 'gDa', { 'label': 'Other', 'value': 'o' }],
+        '3': []
     };
 
     public disabledList: string[] = [];

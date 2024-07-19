@@ -162,9 +162,6 @@ class default_1 extends clickgo.control.AbstractControl {
     checkValue() {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c;
-            if (!this.props.data.length) {
-                return;
-            }
             ++this._needCheckValue;
             yield this.nextTick();
             if (this._needCheckValue > 1) {
@@ -187,6 +184,9 @@ class default_1 extends clickgo.control.AbstractControl {
                     change = true;
                     if (this.shiftStart === this.valueData[i]) {
                         this.shiftStart = i > 0 ? ((_c = this.valueData[0]) !== null && _c !== void 0 ? _c : notDisabledIndex) : notDisabledIndex;
+                        if (this.shiftStart < 0) {
+                            this.shiftStart = 0;
+                        }
                     }
                     this.valueData.splice(i, 1);
                     --i;
@@ -194,8 +194,8 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             if (this.propBoolean('must') && (this.valueData.length === 0)) {
                 change = true;
-                this.valueData = [notDisabledIndex];
-                this.shiftStart = this.valueData[0];
+                this.valueData = notDisabledIndex < 0 ? [] : [notDisabledIndex];
+                this.shiftStart = this.valueData.length ? this.valueData[0] : 0;
             }
             if (change) {
                 if (this.propBoolean('multi')) {
@@ -685,7 +685,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     getFirstNotDisabledIndex() {
-        let notDisabledIndex = 0;
+        let notDisabledIndex = -1;
         for (let i = 0; i < this.props.data.length; ++i) {
             if (this.props.data[i][this.mapComp.disabled]) {
                 continue;
@@ -791,8 +791,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 else {
                     const notDisabledIndex = this.getFirstNotDisabledIndex();
-                    this.valueData = [notDisabledIndex];
-                    this.shiftStart = this.valueData[0];
+                    this.valueData = notDisabledIndex > -1 ? [notDisabledIndex] : [];
+                    this.shiftStart = this.valueData.length ? this.valueData[0] : 0;
                 }
                 const event = {
                     'detail': {
@@ -837,7 +837,7 @@ class default_1 extends clickgo.control.AbstractControl {
             };
             cb();
         });
-        this.watch('data', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch(() => JSON.stringify(this.props.data), () => __awaiter(this, void 0, void 0, function* () {
             yield this.checkValue();
         }), {
             'deep': true
