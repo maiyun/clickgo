@@ -40,7 +40,7 @@ export function hasFrame(): boolean {
 export abstract class AbstractBoot {
 
     /** --- 当前是否是 debug 模式 --- */
-    private _debug: boolean = false;
+    private readonly _debug: boolean = false;
 
     /** --- 判断当前是否是 debug 模式 --- */
     public isDebug(): boolean {
@@ -145,7 +145,9 @@ export abstract class AbstractBoot {
     }
 
     /** --- 窗体的 formHash 改变事件 --- */
-    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void | Promise<void>;
+    public onFormHashChange(
+        taskId: number, formId: number, value: string, data: Record<string, any>
+    ): void | Promise<void>;
     public onFormHashChange(): void {
         return;
     }
