@@ -28,7 +28,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- html 内部的 style 标签的 style --- */
     public get innerStyle(): string {
-        let layout = this.props.html;
+        const layout = this.props.html;
         if (!layout) {
             return '';
         }

@@ -46,7 +46,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return layout;
     }
     get innerStyle() {
-        let layout = this.props.html;
+        const layout = this.props.html;
         if (!layout) {
             return '';
         }
