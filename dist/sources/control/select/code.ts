@@ -1169,6 +1169,9 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 监听 data 变动 ---
         this.watch(() => JSON.stringify(this.props.data), async (n, o): Promise<void> => {
+            if (n === o) {
+                return;
+            }
             if (this.propBoolean('editable')) {
                 // --- 当前是输入模式 ---
                 await this._search();
@@ -1192,9 +1195,6 @@ export default class extends clickgo.control.AbstractControl {
                     this.label[0] = this.value[0];
                 }
                 this.emit('label', clickgo.tool.clone(this.label));
-                return;
-            }
-            if (n === o) {
                 return;
             }
             await this.nextTick();

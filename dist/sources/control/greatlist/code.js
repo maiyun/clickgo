@@ -162,6 +162,9 @@ class default_1 extends clickgo.control.AbstractControl {
     checkValue() {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c;
+            if (!this.props.data.length) {
+                return;
+            }
             ++this._needCheckValue;
             yield this.nextTick();
             if (this._needCheckValue > 1) {

@@ -1024,6 +1024,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
         this.watch(() => JSON.stringify(this.props.data), (n, o) => __awaiter(this, void 0, void 0, function* () {
+            if (n === o) {
+                return;
+            }
             if (this.propBoolean('editable')) {
                 yield this._search();
                 if (this.propBoolean('multi')) {
@@ -1041,9 +1044,6 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.label[0] = this.value[0];
                 }
                 this.emit('label', clickgo.tool.clone(this.label));
-                return;
-            }
-            if (n === o) {
                 return;
             }
             yield this.nextTick();

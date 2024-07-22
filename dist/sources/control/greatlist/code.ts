@@ -209,6 +209,9 @@ export default class extends clickgo.control.AbstractControl {
      * --- 检测 value 是否合法 ---
      */
     public async checkValue(): Promise<void> {
+        if (!this.props.data.length) {
+            return;
+        }
         ++this._needCheckValue;
         await this.nextTick();
         if (this._needCheckValue > 1) {
