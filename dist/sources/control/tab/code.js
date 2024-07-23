@@ -108,7 +108,6 @@ class default_1 extends clickgo.control.AbstractControl {
         const nval = this.tabsComp[index].value;
         if (this.value !== nval) {
             this.value = nval;
-            console.log('x3x', this.value, this.props.modelValue);
             this.emit('update:modelValue', this.value);
         }
         clickgo.dom.bindDrag(e, {
