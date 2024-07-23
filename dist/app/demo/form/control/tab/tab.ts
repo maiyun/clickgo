@@ -3,7 +3,7 @@ import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public ntab = '';
+    public ntab = 'ok';
 
     public tabs: any[] = ['tab1', {
         'label': 'haha',

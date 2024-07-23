@@ -1099,6 +1099,18 @@ export interface ISwitchChangeEvent extends ICustomEvent {
 
 // --- Tab Control ---
 
+export interface ITabChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+    };
+}
+
+export interface ITabChangedEvent {
+    'detail': {
+        'value': string;
+    };
+}
+
 export interface ITabCloseEvent extends ICustomEvent {
     'detail': {
         'index': number;

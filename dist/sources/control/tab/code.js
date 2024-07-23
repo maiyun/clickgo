@@ -38,6 +38,8 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'close': null,
+            'change': null,
+            'changed': null,
             'update:tabs': null,
             'update:modelValue': null
         };
@@ -106,6 +108,7 @@ class default_1 extends clickgo.control.AbstractControl {
         const nval = this.tabsComp[index].value;
         if (this.value !== nval) {
             this.value = nval;
+            console.log('x3x', this.value, this.props.modelValue);
             this.emit('update:modelValue', this.value);
         }
         clickgo.dom.bindDrag(e, {
@@ -146,8 +149,27 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:tabs', this.tabsData);
     }
     tabClick(e, item) {
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': item.value
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            return;
+        }
         this.value = item.value;
         this.emit('update:modelValue', this.value);
+        const event2 = {
+            'detail': {
+                'value': item.value
+            }
+        };
+        this.emit('changed', event2);
     }
     longDown(e, type) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -209,6 +231,12 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     onMounted() {
+        this.watch('tabs', () => {
+            this.tabsData = clickgo.tool.clone(this.props.tabs);
+        }, {
+            'deep': true,
+            'immediate': true
+        });
         this.watch('modelValue', () => {
             if (this.value !== this.props.modelValue) {
                 this.value = this.props.modelValue;
@@ -216,11 +244,6 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }, {
             'immediate': true
-        });
-        this.watch('tabs', () => {
-            this.tabsData = this.props.tabs;
-        }, {
-            'deep': true
         });
         this.watch('tabsComp', () => {
             this.refreshValue();
@@ -243,7 +266,6 @@ class default_1 extends clickgo.control.AbstractControl {
             });
         }));
         this.rand = clickgo.tool.random(16);
-        this.tabsData = this.props.tabs;
         this.oldTabs = this.refs.tabs[0];
         clickgo.dom.watchSize(this.refs.tabs[0], () => {
             this.onResize();

@@ -5,6 +5,8 @@ export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'close': null,
+        'change': null,
+        'changed': null,
 
         'update:tabs': null,
         'update:modelValue': null
@@ -91,6 +93,7 @@ export default class extends clickgo.control.AbstractControl {
         const nval = this.tabsComp[index].value;
         if (this.value !== nval) {
             this.value = nval;
+            console.log('x3x', this.value, this.props.modelValue);
             this.emit('update:modelValue', this.value);
         }
         clickgo.dom.bindDrag(e, {
@@ -134,8 +137,27 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public tabClick(e: MouseEvent | TouchEvent, item: Record<string, any>): void {
+        const event: types.ITabChangeEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'value': item.value
+            }
+        };
+        this.emit('change', event);
+        if (!event.go) {
+            return;
+        }
         this.value = item.value;
         this.emit('update:modelValue', this.value);
+        const event2: types.ITabChangedEvent = {
+            'detail': {
+                'value': item.value
+            }
+        };
+        this.emit('changed', event2);
     }
 
     public longDown(e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
@@ -203,6 +225,12 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void {
+        this.watch('tabs', (): void => {
+            this.tabsData = clickgo.tool.clone(this.props.tabs);
+        }, {
+            'deep': true,
+            'immediate': true
+        });
         this.watch('modelValue', (): void => {
             if (this.value !== this.props.modelValue) {
                 this.value = this.props.modelValue;
@@ -210,11 +238,6 @@ export default class extends clickgo.control.AbstractControl {
             }
         }, {
             'immediate': true
-        });
-        this.watch('tabs', (): void => {
-            this.tabsData = this.props.tabs;
-        }, {
-            'deep': true
         });
         this.watch('tabsComp', (): void => {
             this.refreshValue();
@@ -238,7 +261,6 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         this.rand = clickgo.tool.random(16);
-        this.tabsData = this.props.tabs;
         // --- 检测是否显示箭头 ---
         this.oldTabs = this.refs.tabs[0];
         clickgo.dom.watchSize(this.refs.tabs[0], () => {

@@ -36,7 +36,7 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.ntab = '';
+        this.ntab = 'ok';
         this.tabs = ['tab1', {
                 'label': 'haha',
                 'value': 'ok'

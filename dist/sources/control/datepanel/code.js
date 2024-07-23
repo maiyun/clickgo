@@ -724,6 +724,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:tz', this.tzData);
             }
             else {
+                if (this.tzData === this.propNumber('tz')) {
+                    return;
+                }
                 this.tzData = this.propNumber('tz');
             }
             const z = this.tzData.toString().split('.');
