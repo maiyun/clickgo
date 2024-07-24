@@ -105,5 +105,8 @@ long`;
             e.detail.change = '000000';
         }
     }
+    onMinMaxChange(e) {
+        console.log('onMinMaxChange', e);
+    }
 }
 exports.default = default_1;

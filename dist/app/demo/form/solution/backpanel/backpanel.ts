@@ -15,7 +15,7 @@ export default class extends clickgo.form.AbstractForm {
         'test2': '../../control/panel/test2'
     };
 
-    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void {
+    public onFormHashChange(taskId: number, formId: number, value: string): void {
         if (formId !== this.formId) {
             return;
         }
@@ -27,7 +27,7 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('Show form');
     }
 
-    public onJumpdataSelect(e: types.INavItemSelectEvent) {
+    public onJumpdataSelect(e: types.INavItemSelectEvent): void {
         e.preventDefault();
         this.formHashData = { 'key': 'form hash data' };
         this.formHash = 'test1';

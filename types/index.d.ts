@@ -714,6 +714,13 @@ export interface ITextBeforechangeEvent extends ICustomEvent {
     };
 }
 
+export interface ITextMinMaxChangeEvent extends ICustomEvent {
+    'detail': {
+        'before': string;
+        'value': string;
+    };
+}
+
 // --- Date Control ---
 
 export interface IDateChangedEvent {

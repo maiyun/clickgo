@@ -8,6 +8,7 @@
     <button @click="click">Hi</button>
     <button @click="sendToRootPanel({'a':1})" style="height: 30px;">sendToRootPanel({'a':1})</button>
     <button @click="clearQss">clearQs()</button>
+    <button @click="jump">Jump</button>
     <layout>
         <button size="xl" area="split">
             Size xl

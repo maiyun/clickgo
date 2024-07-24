@@ -45,6 +45,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'scrollwidth': null,
             'scrollheight': null,
             'beforechange': null,
+            'minmaxchange': null,
             'update:modelValue': null,
             'update:scrollLeft': null,
             'update:scrollTop': null,
@@ -165,23 +166,39 @@ class default_1 extends clickgo.control.AbstractControl {
     tblur(e) {
         const target = e.target;
         if (this.checkNumber(target)) {
-            const event = {
+            const mxEvent = {
                 'go': true,
                 preventDefault: function () {
                     this.go = false;
                 },
                 'detail': {
+                    'before': this.value,
                     'value': target.value,
-                    'change': undefined
                 }
             };
-            this.emit('beforechange', event);
-            if (event.go) {
-                if (event.detail.change !== undefined) {
-                    target.value = event.detail.change;
+            this.emit('minmaxchange', mxEvent);
+            if (mxEvent.go) {
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': target.value,
+                        'change': undefined
+                    }
+                };
+                this.emit('beforechange', event);
+                if (event.go) {
+                    if (event.detail.change !== undefined) {
+                        target.value = event.detail.change;
+                    }
+                    this.value = target.value;
+                    this.emit('update:modelValue', this.value);
                 }
-                this.value = target.value;
-                this.emit('update:modelValue', this.value);
+                else {
+                    target.value = this.value;
+                }
             }
             else {
                 target.value = this.value;
@@ -522,23 +539,37 @@ class default_1 extends clickgo.control.AbstractControl {
             var _b;
             yield this.nextTick();
             if (this.checkNumber()) {
-                const event = {
+                const mxEvent = {
                     'go': true,
                     preventDefault: function () {
                         this.go = false;
                     },
                     'detail': {
-                        'value': this.value,
-                        'change': undefined
+                        'before': this.value,
+                        'value': this.refs.text.value
                     }
                 };
-                this.emit('beforechange', event);
-                if (!event.go) {
-                    this.refs.text.value = this.value;
-                    return;
+                this.emit('minmaxchange', mxEvent);
+                if (mxEvent.go) {
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'value': this.value,
+                            'change': undefined
+                        }
+                    };
+                    this.emit('beforechange', event);
+                    if (event.go) {
+                        this.value = (_b = event.detail.change) !== null && _b !== void 0 ? _b : this.refs.text.value;
+                        this.emit('update:modelValue', this.value);
+                    }
+                    else {
+                        this.refs.text.value = this.value;
+                    }
                 }
-                this.value = (_b = event.detail.change) !== null && _b !== void 0 ? _b : this.refs.text.value;
-                this.emit('update:modelValue', this.value);
             }
             yield this.nextTick();
             this.checkWatch();
@@ -547,6 +578,21 @@ class default_1 extends clickgo.control.AbstractControl {
             var _c;
             yield this.nextTick();
             if (this.checkNumber()) {
+                const mxEvent = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'before': this.value,
+                        'value': this.refs.text.value
+                    }
+                };
+                this.emit('minmaxchange', mxEvent);
+                if (!mxEvent.go) {
+                    this.refs.text.value = this.value;
+                    return;
+                }
                 const event = {
                     'go': true,
                     preventDefault: function () {
@@ -570,6 +616,21 @@ class default_1 extends clickgo.control.AbstractControl {
             var _d;
             yield this.nextTick();
             if (this.checkNumber()) {
+                const mxEvent = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'before': this.value,
+                        'value': this.refs.text.value
+                    }
+                };
+                this.emit('minmaxchange', mxEvent);
+                if (!mxEvent.go) {
+                    this.refs.text.value = this.value;
+                    return;
+                }
                 const event = {
                     'go': true,
                     preventDefault: function () {

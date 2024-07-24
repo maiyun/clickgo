@@ -12,6 +12,7 @@ export default class extends clickgo.control.AbstractControl {
         'scrollwidth': null,
         'scrollheight': null,
         'beforechange': null,
+        'minmaxchange': null,
 
         'update:modelValue': null,
         'update:scrollLeft': null,
@@ -178,24 +179,41 @@ export default class extends clickgo.control.AbstractControl {
         // --- 如果是 number 则要判断数字是否符合 min max，不能在 input 判断，因为会导致用户无法正常输入数字，比如最小值是 10，他在输入 1 的时候就自动重置成 10 了 ---
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
         if (this.checkNumber(target)) {
-            const event: types.ITextBeforechangeEvent = {
+            const mxEvent: types.ITextMinMaxChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
                 },
                 'detail': {
+                    'before': this.value,
                     'value': target.value,
-                    'change': undefined
                 }
             };
-            this.emit('beforechange', event);
-            if (event.go) {
-                // --- 允许 ---
-                if (event.detail.change !== undefined) {
-                    target.value = event.detail.change;
+            this.emit('minmaxchange', mxEvent);
+            if (mxEvent.go) {
+                const event: types.ITextBeforechangeEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': target.value,
+                        'change': undefined
+                    }
+                };
+                this.emit('beforechange', event);
+                if (event.go) {
+                    // --- 允许 ---
+                    if (event.detail.change !== undefined) {
+                        target.value = event.detail.change;
+                    }
+                    this.value = target.value;
+                    this.emit('update:modelValue', this.value);
                 }
-                this.value = target.value;
-                this.emit('update:modelValue', this.value);
+                else {
+                    // --- 禁止 ---
+                    target.value = this.value;
+                }
             }
             else {
                 // --- 禁止 ---
@@ -566,23 +584,39 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('type', async (): Promise<void> => {
             await this.nextTick();
             if (this.checkNumber()) {
-                const event: types.ITextBeforechangeEvent = {
+                const mxEvent: types.ITextMinMaxChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
                     },
                     'detail': {
-                        'value': this.value,
-                        'change': undefined
+                        'before': this.value,
+                        'value': this.refs.text.value
                     }
                 };
-                this.emit('beforechange', event);
-                if (!event.go) {
-                    this.refs.text.value = this.value;
-                    return;
+                this.emit('minmaxchange', mxEvent);
+                if (mxEvent.go) {
+                    const event: types.ITextBeforechangeEvent = {
+                        'go': true,
+                        preventDefault: function() {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'value': this.value,
+                            'change': undefined
+                        }
+                    };
+                    this.emit('beforechange', event);
+                    if (event.go) {
+                        // --- 允许 ---
+                        this.value = event.detail.change ?? this.refs.text.value;
+                        this.emit('update:modelValue', this.value);
+                    }
+                    else {
+                        // --- 禁止 ---
+                        this.refs.text.value = this.value;
+                    }
                 }
-                this.value = event.detail.change ?? this.refs.text.value;
-                this.emit('update:modelValue', this.value);
             }
             await this.nextTick();
             this.checkWatch();
@@ -590,6 +624,21 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('max', async () => {
             await this.nextTick();
             if (this.checkNumber()) {
+                const mxEvent: types.ITextMinMaxChangeEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'before': this.value,
+                        'value': this.refs.text.value
+                    }
+                };
+                this.emit('minmaxchange', mxEvent);
+                if (!mxEvent.go) {
+                    this.refs.text.value = this.value;
+                    return;
+                }
                 const event: types.ITextBeforechangeEvent = {
                     'go': true,
                     preventDefault: function() {
@@ -612,6 +661,21 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('min', async () => {
             await this.nextTick();
             if (this.checkNumber()) {
+                const mxEvent: types.ITextMinMaxChangeEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'before': this.value,
+                        'value': this.refs.text.value
+                    }
+                };
+                this.emit('minmaxchange', mxEvent);
+                if (!mxEvent.go) {
+                    this.refs.text.value = this.value;
+                    return;
+                }
                 const event: types.ITextBeforechangeEvent = {
                     'go': true,
                     preventDefault: function() {

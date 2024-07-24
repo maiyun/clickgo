@@ -85,6 +85,9 @@ class default_1 extends clickgo.form.AbstractPanel {
             yield clickgo.form.dialog('cleard.');
         });
     }
+    jump() {
+        this.rootForm.formHash = 'test1?a=1&b=3';
+    }
     onMounted() {
         this.rootMountData = this.rootForm.mountData;
     }

@@ -50,6 +50,10 @@ export default class extends clickgo.form.AbstractPanel {
         await clickgo.form.dialog('cleard.');
     }
 
+    public jump(): void {
+        this.rootForm.formHash = 'test1?a=1&b=3';
+    }
+
     public rootMountData = 'none';
 
     public onMounted(): void {

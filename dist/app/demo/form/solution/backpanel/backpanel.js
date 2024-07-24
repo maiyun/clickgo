@@ -48,7 +48,7 @@ class default_1 extends clickgo.form.AbstractForm {
             'test2': '../../control/panel/test2'
         };
     }
-    onFormHashChange(taskId, formId, value, data) {
+    onFormHashChange(taskId, formId, value) {
         if (formId !== this.formId) {
             return;
         }

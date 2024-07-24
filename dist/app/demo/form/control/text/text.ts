@@ -112,4 +112,8 @@ long`;
         }
     }
 
+    public onMinMaxChange(e: types.ITextMinMaxChangeEvent): void {
+        console.log('onMinMaxChange', e);
+    }
+
 }
