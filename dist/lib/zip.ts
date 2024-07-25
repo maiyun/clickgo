@@ -90,6 +90,8 @@ export class Zip {
                 return null;
             }
             return {
+                'compressedSize': file.compressedSize,
+                'uncompressedSize': file.uncompressedSize,
                 'date': file.date,
                 'isFile': true,
                 'isDirectory': false
@@ -99,6 +101,8 @@ export class Zip {
             // --- 文件夹 ---
             if (dirpath === '/') {
                 return {
+                    'compressedSize': 0,
+                    'uncompressedSize': 0,
                     'date': new Date(),
                     'isFile': false,
                     'isDirectory': true
@@ -111,6 +115,8 @@ export class Zip {
             const pfolder = this._list[dpath];
             const folder = pfolder[fname];
             return {
+                'compressedSize': 0,
+                'uncompressedSize': 0,
                 'date': folder.date,
                 'isFile': false,
                 'isDirectory': true
@@ -308,6 +314,8 @@ export class Zip {
             }
             list[parentPath][name] = {
                 'name': name,
+                'compressedSize': (item as any)._data.compressedSize ?? 0,
+                'uncompressedSize': (item as any)._data.uncompressedSize ?? 0,
                 'date': item.date,
                 'isFile': !item.dir,
                 'isDirectory': item.dir,

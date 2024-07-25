@@ -91,6 +91,20 @@ export function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
 }
 
 /**
+ * --- 将文件大小格式化为带单位的字符串 ---
+ * @param size 文件大小
+ * @param spliter 分隔符
+ */
+export function sizeFormat(size: number, spliter: string = ' '): string {
+    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    let i = 0;
+    for (; i < 6 && size >= 1024.0; ++i) {
+        size /= 1024.0;
+    }
+    return (Math.round(size * 100) / 100).toString() + spliter + units[i];
+}
+
+/**
  * --- 完整的克隆一份数组/对象 ---
  * @param obj 要克隆的对象
  */

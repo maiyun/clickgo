@@ -92,6 +92,8 @@ class Zip {
                 return null;
             }
             return {
+                'compressedSize': file.compressedSize,
+                'uncompressedSize': file.uncompressedSize,
                 'date': file.date,
                 'isFile': true,
                 'isDirectory': false
@@ -100,6 +102,8 @@ class Zip {
         else {
             if (dirpath === '/') {
                 return {
+                    'compressedSize': 0,
+                    'uncompressedSize': 0,
                     'date': new Date(),
                     'isFile': false,
                     'isDirectory': true
@@ -112,6 +116,8 @@ class Zip {
             const pfolder = this._list[dpath];
             const folder = pfolder[fname];
             return {
+                'compressedSize': 0,
+                'uncompressedSize': 0,
                 'date': folder.date,
                 'isFile': false,
                 'isDirectory': true
@@ -244,6 +250,7 @@ class Zip {
     _refreshList() {
         const list = {};
         this._zip.forEach(function (relativePath, item) {
+            var _a, _b;
             if (relativePath.startsWith('/')) {
                 relativePath = relativePath.slice(1);
             }
@@ -271,6 +278,8 @@ class Zip {
             }
             list[parentPath][name] = {
                 'name': name,
+                'compressedSize': (_a = item._data.compressedSize) !== null && _a !== void 0 ? _a : 0,
+                'uncompressedSize': (_b = item._data.uncompressedSize) !== null && _b !== void 0 ? _b : 0,
                 'date': item.date,
                 'isFile': !item.dir,
                 'isDirectory': item.dir,

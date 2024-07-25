@@ -164,8 +164,8 @@ export async function getContent(path: string, options?: BufferEncoding | {
             const rand = '?' + (options.cache ?? Math.random().toString());
             let blob: Blob | null = null;
             const headers: Record<string, string> = {};
-            if (start || end) {
-                headers['range'] = `bytes=${start === undefined ? '0' : start}-${end === undefined ? '' : end}`;
+            if (start ?? end) {
+                headers['range'] = `bytes=${start ?? '0'}-${end ?? ''}`;
             }
             if (options.progress) {
                 blob = await tool.request(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
@@ -190,7 +190,7 @@ export async function getContent(path: string, options?: BufferEncoding | {
                 fr.addEventListener('load', function() {
                     resolve(fr.result as string | null);
                 });
-                fr.readAsText(blob!, encoding);
+                fr.readAsText(blob, encoding);
             });
         }
         catch {

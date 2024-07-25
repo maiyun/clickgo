@@ -992,6 +992,9 @@ function run(url_1) {
                 blob2ArrayBuffer: function (blob) {
                     return tool.blob2ArrayBuffer(blob);
                 },
+                sizeFormat: function (size, spliter = ' ') {
+                    return tool.sizeFormat(size, spliter);
+                },
                 clone: function (obj) {
                     return tool.clone(obj);
                 },

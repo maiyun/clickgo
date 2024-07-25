@@ -75,7 +75,7 @@ class default_1 extends clickgo.form.AbstractForm {
         const ls = this.access.zip.readDir(path);
         for (const item of ls) {
             this.list.push({
-                'label': (item.isDirectory ? '[FOLD]' : '[FILE]') + ' ' + item.name,
+                'label': (item.isDirectory ? '[FOLD]' : '[FILE]') + ' ' + item.name + ' (' + clickgo.tool.sizeFormat(item.uncompressedSize) + ')',
                 'value': path + item.name
             });
         }

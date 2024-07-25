@@ -539,6 +539,8 @@ export type TZip = import('../dist/lib/zip').Zip;
 
 export interface IZipItem {
     'name': string;
+    'compressedSize': number;
+    'uncompressedSize': number;
     'date': Date;
     'isFile': boolean;
     'isDirectory': boolean;
@@ -546,6 +548,8 @@ export interface IZipItem {
 }
 
 export interface IZipStats {
+    'compressedSize': number;
+    'uncompressedSize': number;
     'date': Date;
     'isFile': boolean;
     'isDirectory': boolean;

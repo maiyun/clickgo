@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.queryParse = exports.queryStringify = exports.formatTime = exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.postResponseJson = exports.getResponseJson = exports.post = exports.get = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
+exports.queryParse = exports.queryStringify = exports.formatTime = exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.postResponseJson = exports.getResponseJson = exports.post = exports.get = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.sizeFormat = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
 function getClassPrototype(obj, over = [], level = 0) {
     var _a;
     if (level === 0) {
@@ -66,6 +66,15 @@ function blob2ArrayBuffer(blob) {
     });
 }
 exports.blob2ArrayBuffer = blob2ArrayBuffer;
+function sizeFormat(size, spliter = ' ') {
+    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    let i = 0;
+    for (; i < 6 && size >= 1024.0; ++i) {
+        size /= 1024.0;
+    }
+    return (Math.round(size * 100) / 100).toString() + spliter + units[i];
+}
+exports.sizeFormat = sizeFormat;
 function clone(obj) {
     let newObj = {};
     if (obj instanceof Array) {

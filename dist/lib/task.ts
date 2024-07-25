@@ -1123,6 +1123,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             blob2ArrayBuffer: function(blob: Blob): Promise<ArrayBuffer> {
                 return tool.blob2ArrayBuffer(blob);
             },
+            sizeFormat: function(size: number, spliter: string = ' '): string {
+                return tool.sizeFormat(size, spliter);
+            },
             clone: function(obj: Record<string, any> | any[]): any[] | any {
                 return tool.clone(obj);
             },

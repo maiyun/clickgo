@@ -149,8 +149,8 @@ function getContent(path, options, taskId) {
                 const rand = '?' + ((_a = options.cache) !== null && _a !== void 0 ? _a : Math.random().toString());
                 let blob = null;
                 const headers = {};
-                if (start || end) {
-                    headers['range'] = `bytes=${start === undefined ? '0' : start}-${end === undefined ? '' : end}`;
+                if (start !== null && start !== void 0 ? start : end) {
+                    headers['range'] = `bytes=${start !== null && start !== void 0 ? start : '0'}-${end !== null && end !== void 0 ? end : ''}`;
                 }
                 if (options.progress) {
                     blob = yield tool.request(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
