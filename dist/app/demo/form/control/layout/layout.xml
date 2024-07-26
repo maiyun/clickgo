@@ -3,7 +3,7 @@
         <label>direction: {{direction[0]}}</label>
         <layout :direction="direction[0]" :gutter="gutter[0]" style="flex: 1; border: solid 1px var(--g-border-color); padding: 10px;">
             <block style="background: var(--success); flex: 1;" />
-            <block style="flex: 1;" :style="{'background': bigColor ? 'var(--warning)' : 'var(--info)'}" />
+            <block style="flex: 1; background: var(--info);" />
         </layout>
         <layout align-v="center" gutter="10">
             <label>gutter:</label>

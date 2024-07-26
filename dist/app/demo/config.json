@@ -72,6 +72,8 @@
         "/form/control/grid/grid.xml",
         "/form/control/group/group.js",
         "/form/control/group/group.xml",
+        "/form/control/hske/hske.js",
+        "/form/control/hske/hske.xml",
         "/form/control/html/html.js",
         "/form/control/html/html.xml",
         "/form/control/iconview/iconview.js",

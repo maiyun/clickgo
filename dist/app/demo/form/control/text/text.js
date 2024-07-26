@@ -48,6 +48,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.scrollWidth = 0;
         this.type = ['text'];
         this.disabled = false;
+        this.placeholder = 'placeholder\nplaceholder';
         this.readonly = false;
         this.scroll = true;
         this.wrap = true;

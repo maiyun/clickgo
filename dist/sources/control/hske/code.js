@@ -24,11 +24,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.form.AbstractForm {
+class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.direction = ['h'];
-        this.gutter = [0];
+        this.props = {
+            'direction': 'h',
+            'gutter': '',
+            'alignH': undefined,
+            'alignV': undefined
+        };
+        this.size = 's';
+    }
+    onMounted() {
+        clickgo.dom.watchSize(this.element, () => {
+            this.size = this.element.offsetWidth < 600 ? 's' : 'm';
+        }, true);
     }
 }
 exports.default = default_1;

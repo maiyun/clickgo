@@ -1,0 +1,8 @@
+<div class="wrap" :class="[direction, 'size-' + size]">
+    <div class="first">
+        <slot name="first"></slot>
+    </div>
+    <div class="last" :style="{'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
+        <slot></slot>
+    </div>
+</div>
