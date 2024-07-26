@@ -32,54 +32,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.activePanels = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
-exports.superConfirm = superConfirm;
-exports.min = min;
-exports.max = max;
-exports.close = close;
-exports.bindResize = bindResize;
-exports.bindDrag = bindDrag;
-exports.refreshMaxPosition = refreshMaxPosition;
-exports.getTaskId = getTaskId;
-exports.get = get;
-exports.send = send;
-exports.getList = getList;
-exports.getFocus = getFocus;
-exports.getActivePanel = getActivePanel;
-exports.removeActivePanel = removeActivePanel;
-exports.setActivePanel = setActivePanel;
-exports.hash = hash;
-exports.getHash = getHash;
-exports.hashBack = hashBack;
-exports.changeFocus = changeFocus;
-exports.getMaxZIndexID = getMaxZIndexID;
-exports.getRectByBorder = getRectByBorder;
-exports.showCircular = showCircular;
-exports.moveRectangle = moveRectangle;
-exports.showRectangle = showRectangle;
-exports.hideRectangle = hideRectangle;
-exports.showDrag = showDrag;
-exports.moveDrag = moveDrag;
-exports.hideDrag = hideDrag;
-exports.notify = notify;
-exports.notifyProgress = notifyProgress;
-exports.hideNotify = hideNotify;
-exports.appendToPop = appendToPop;
-exports.removeFromPop = removeFromPop;
-exports.showPop = showPop;
-exports.hidePop = hidePop;
-exports.isJustPop = isJustPop;
-exports.doFocusAndPopEvent = doFocusAndPopEvent;
-exports.remove = remove;
-exports.removePanel = removePanel;
-exports.createPanel = createPanel;
-exports.create = create;
-exports.dialog = dialog;
-exports.confirm = confirm;
-exports.prompt = prompt;
-exports.flash = flash;
-exports.showLauncher = showLauncher;
-exports.hideLauncher = hideLauncher;
+exports.prompt = exports.confirm = exports.dialog = exports.create = exports.createPanel = exports.removePanel = exports.remove = exports.doFocusAndPopEvent = exports.isJustPop = exports.hidePop = exports.showPop = exports.removeFromPop = exports.appendToPop = exports.hideNotify = exports.notifyProgress = exports.notify = exports.hideDrag = exports.moveDrag = exports.showDrag = exports.hideRectangle = exports.showRectangle = exports.moveRectangle = exports.showCircular = exports.getRectByBorder = exports.getMaxZIndexID = exports.changeFocus = exports.hashBack = exports.getHash = exports.hash = exports.setActivePanel = exports.removeActivePanel = exports.getActivePanel = exports.activePanels = exports.getFocus = exports.getList = exports.send = exports.get = exports.getTaskId = exports.refreshMaxPosition = exports.bindDrag = exports.bindResize = exports.close = exports.max = exports.min = exports.superConfirm = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
+exports.hideLauncher = exports.showLauncher = exports.flash = void 0;
 const clickgo = __importStar(require("../clickgo"));
 const core = __importStar(require("./core"));
 const task = __importStar(require("./task"));
@@ -946,6 +900,7 @@ function superConfirm(html) {
         };
     });
 }
+exports.superConfirm = superConfirm;
 function changeState(state, formId) {
     const tid = getTaskId(formId);
     const t = task.list[tid];
@@ -970,12 +925,15 @@ function changeState(state, formId) {
 function min(formId) {
     return changeState('min', formId);
 }
+exports.min = min;
 function max(formId) {
     return changeState('max', formId);
 }
+exports.max = max;
 function close(formId) {
     return changeState('close', formId);
 }
+exports.close = close;
 function bindResize(e, border) {
     const formWrap = dom.findParentByClass(e.target, 'cg-form-wrap');
     if (!formWrap) {
@@ -993,6 +951,7 @@ function bindResize(e, border) {
     }
     t.forms[fid].vroot.$refs.form.resizeMethod(e, border);
 }
+exports.bindResize = bindResize;
 function bindDrag(e) {
     const formWrap = dom.findParentByClass(e.target, 'cg-form-wrap');
     if (!formWrap) {
@@ -1010,6 +969,7 @@ function bindDrag(e) {
     }
     t.forms[fid].vroot.$refs.form.moveMethod(e, true);
 }
+exports.bindDrag = bindDrag;
 function refreshMaxPosition() {
     const area = core.getAvailArea();
     for (let i = 0; i < exports.elements.list.children.length; ++i) {
@@ -1036,6 +996,7 @@ function refreshMaxPosition() {
         }
     }
 }
+exports.refreshMaxPosition = refreshMaxPosition;
 function getTaskId(formId) {
     const formElement = exports.elements.list.querySelector(`[data-form-id='${formId}']`);
     if (!formElement) {
@@ -1047,6 +1008,7 @@ function getTaskId(formId) {
     }
     return parseInt(taskIdAttr);
 }
+exports.getTaskId = getTaskId;
 function get(formId) {
     const taskId = getTaskId(formId);
     if (taskId === 0) {
@@ -1067,6 +1029,7 @@ function get(formId) {
         'showInSystemTask': item.vroot.showInSystemTask
     };
 }
+exports.get = get;
 function send(formId, obj) {
     const taskId = getTaskId(formId);
     if (taskId === 0) {
@@ -1075,6 +1038,7 @@ function send(formId, obj) {
     const item = task.list[taskId].forms[formId];
     item.vroot.onReceive(obj);
 }
+exports.send = send;
 function getList(taskId) {
     if (!task.list[taskId]) {
         return {};
@@ -1095,14 +1059,17 @@ function getList(taskId) {
     }
     return list;
 }
+exports.getList = getList;
 function getFocus() {
     return focusId;
 }
+exports.getFocus = getFocus;
 exports.activePanels = {};
 function getActivePanel(formId) {
     var _a;
     return (_a = exports.activePanels[formId]) !== null && _a !== void 0 ? _a : [];
 }
+exports.getActivePanel = getActivePanel;
 function removeActivePanel(panelId, formId, taskId) {
     if (!taskId) {
         return false;
@@ -1126,6 +1093,7 @@ function removeActivePanel(panelId, formId, taskId) {
     }
     return true;
 }
+exports.removeActivePanel = removeActivePanel;
 function setActivePanel(panelId, formId, taskId) {
     if (!taskId) {
         return false;
@@ -1146,6 +1114,7 @@ function setActivePanel(panelId, formId, taskId) {
     exports.activePanels[formId].push(panelId);
     return true;
 }
+exports.setActivePanel = setActivePanel;
 function hash(hash, formId) {
     const taskId = getTaskId(formId);
     if (taskId === 0) {
@@ -1162,6 +1131,7 @@ function hash(hash, formId) {
     item.vroot.formHash = hash;
     return true;
 }
+exports.hash = hash;
 function getHash(formId) {
     const taskId = getTaskId(formId);
     if (taskId === 0) {
@@ -1177,6 +1147,7 @@ function getHash(formId) {
     }
     return item.vroot.$data._formHash;
 }
+exports.getHash = getHash;
 function hashBack(formId) {
     return __awaiter(this, void 0, void 0, function* () {
         const taskId = getTaskId(formId);
@@ -1195,6 +1166,7 @@ function hashBack(formId) {
         return true;
     });
 }
+exports.hashBack = hashBack;
 function changeFocus(formId = 0) {
     var _a;
     if (typeof formId === 'string') {
@@ -1266,6 +1238,7 @@ function changeFocus(formId = 0) {
         core.trigger('formFocused', taskId, formId);
     }
 }
+exports.changeFocus = changeFocus;
 function getMaxZIndexID(out = {}) {
     var _a, _b;
     let zIndex = 0;
@@ -1301,6 +1274,7 @@ function getMaxZIndexID(out = {}) {
     }
     return formId;
 }
+exports.getMaxZIndexID = getMaxZIndexID;
 function getRectByBorder(border) {
     var _a, _b, _c, _d;
     const area = core.getAvailArea();
@@ -1381,6 +1355,7 @@ function getRectByBorder(border) {
         'top': top
     };
 }
+exports.getRectByBorder = getRectByBorder;
 function showCircular(x, y) {
     exports.elements.circular.style.transition = 'none';
     requestAnimationFrame(function () {
@@ -1401,6 +1376,7 @@ function showCircular(x, y) {
         });
     });
 }
+exports.showCircular = showCircular;
 function moveRectangle(border) {
     var _a, _b, _c, _d;
     const dataReady = (_a = exports.elements.rectangle.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
@@ -1425,6 +1401,7 @@ function moveRectangle(border) {
         exports.elements.rectangle.style.top = top.toString() + 'px';
     }
 }
+exports.moveRectangle = moveRectangle;
 function showRectangle(x, y, border) {
     exports.elements.rectangle.style.transition = 'none';
     requestAnimationFrame(function () {
@@ -1444,9 +1421,11 @@ function showRectangle(x, y, border) {
         });
     });
 }
+exports.showRectangle = showRectangle;
 function hideRectangle() {
     exports.elements.rectangle.style.opacity = '0';
 }
+exports.hideRectangle = hideRectangle;
 let dragTimeOut = 0;
 function showDrag() {
     if (dragTimeOut) {
@@ -1457,6 +1436,7 @@ function showDrag() {
     exports.elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
     exports.elements.drag.style.borderBottomWidth = '2px';
 }
+exports.showDrag = showDrag;
 function moveDrag(opt) {
     if (opt.top) {
         exports.elements.drag.style.top = opt.top.toString() + 'px';
@@ -1487,6 +1467,7 @@ function moveDrag(opt) {
         exports.elements.drag.childNodes[0].style.display = 'none';
     }
 }
+exports.moveDrag = moveDrag;
 function hideDrag() {
     exports.elements.drag.style.transform = 'initial';
     exports.elements.drag.style.borderBottomWidth = '1px';
@@ -1495,6 +1476,7 @@ function hideDrag() {
         exports.elements.drag.style.opacity = '0';
     }, 300);
 }
+exports.hideDrag = hideDrag;
 let notifyTop = 10;
 let notifyId = 0;
 function notify(opt) {
@@ -1540,6 +1522,7 @@ function notify(opt) {
     });
     return nid;
 }
+exports.notify = notify;
 function notifyProgress(notifyId, per) {
     const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
@@ -1563,6 +1546,7 @@ function notifyProgress(notifyId, per) {
     }
     progress.style.width = (per < 1 ? per * 100 : per).toString() + '%';
 }
+exports.notifyProgress = notifyProgress;
 function hideNotify(notifyId) {
     const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
@@ -1589,12 +1573,15 @@ function hideNotify(notifyId) {
         el.remove();
     }, 100);
 }
+exports.hideNotify = hideNotify;
 function appendToPop(el) {
     exports.elements.popList.appendChild(el);
 }
+exports.appendToPop = appendToPop;
 function removeFromPop(el) {
     exports.elements.popList.removeChild(el);
 }
+exports.removeFromPop = removeFromPop;
 function refreshPopPosition(el, pop, direction, size = {}) {
     var _a, _b;
     const width = (_a = size.width) !== null && _a !== void 0 ? _a : pop.offsetWidth;
@@ -1683,13 +1670,13 @@ function refreshPopPosition(el, pop, direction, size = {}) {
 let lastShowPopTime = 0;
 function showPop(el, pop, direction, opt = {}) {
     var _a;
-    if (!(el instanceof HTMLElement)) {
+    if (!(el instanceof Element)) {
         if (!el.$el) {
             return;
         }
         el = el.$el;
     }
-    if (pop && !(pop instanceof HTMLElement)) {
+    if (pop && !(pop instanceof Element)) {
         if (!pop.$el) {
             return;
         }
@@ -1777,6 +1764,7 @@ function showPop(el, pop, direction, opt = {}) {
     }).catch(() => {
     });
 }
+exports.showPop = showPop;
 function hidePop(pop) {
     if (pop && !(pop instanceof HTMLElement)) {
         if (!pop.$el) {
@@ -1853,6 +1841,7 @@ function hidePop(pop) {
     popInfo.wayList.splice(level);
     popInfo.time.splice(level);
 }
+exports.hidePop = hidePop;
 function isJustPop(el) {
     if (el instanceof HTMLElement) {
         const level = el.dataset.cgLevel;
@@ -1867,6 +1856,7 @@ function isJustPop(el) {
     }
     return true;
 }
+exports.isJustPop = isJustPop;
 function doFocusAndPopEvent(e) {
     var _a, _b;
     if (dom.hasTouchButMouse(e)) {
@@ -1923,6 +1913,7 @@ function doFocusAndPopEvent(e) {
     hidePop();
     changeFocus();
 }
+exports.doFocusAndPopEvent = doFocusAndPopEvent;
 window.addEventListener('touchstart', doFocusAndPopEvent, {
     'passive': true
 });
@@ -1977,6 +1968,7 @@ function remove(formId) {
     }, 300);
     return true;
 }
+exports.remove = remove;
 function removePanel(id, vapp, el) {
     var _a;
     const formWrap = dom.findParentByClass(el, 'cg-form-wrap');
@@ -2010,6 +2002,7 @@ function removePanel(id, vapp, el) {
     }
     return true;
 }
+exports.removePanel = removePanel;
 function getForm(taskId, formId) {
     const t = task.list[taskId];
     if (!t) {
@@ -2327,6 +2320,7 @@ function createPanel(rootPanel_1, cls_1) {
         };
     });
 }
+exports.createPanel = createPanel;
 function create(cls_1, data_1) {
     return __awaiter(this, arguments, void 0, function* (cls, data, opt = {}, taskId) {
         var _a, _b;
@@ -2724,6 +2718,7 @@ function create(cls_1, data_1) {
         return rtn.vroot;
     });
 }
+exports.create = create;
 function dialog(opt) {
     return new Promise(function (resolve) {
         var _a, _b, _c, _d;
@@ -2798,6 +2793,7 @@ function dialog(opt) {
         });
     });
 }
+exports.dialog = dialog;
 function confirm(opt) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
@@ -2834,6 +2830,7 @@ function confirm(opt) {
         return false;
     });
 }
+exports.confirm = confirm;
 function prompt(opt) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -2869,6 +2866,7 @@ function prompt(opt) {
         return res;
     });
 }
+exports.prompt = prompt;
 function flash(formId, taskId) {
     if (!taskId) {
         return;
@@ -2891,12 +2889,14 @@ function flash(formId, taskId) {
     }, 1000);
     core.trigger('formFlash', taskId, formId);
 }
+exports.flash = flash;
 function showLauncher() {
     exports.elements.launcher.style.display = 'flex';
     requestAnimationFrame(function () {
         exports.elements.launcher.classList.add('cg-show');
     });
 }
+exports.showLauncher = showLauncher;
 function hideLauncher() {
     exports.elements.launcher.classList.remove('cg-show');
     setTimeout(function () {
@@ -2907,6 +2907,7 @@ function hideLauncher() {
         exports.elements.launcher.style.display = 'none';
     }, 300);
 }
+exports.hideLauncher = hideLauncher;
 window.addEventListener('resize', function () {
     task.refreshSystemPosition();
 });

@@ -293,9 +293,9 @@
     &::after, .inner::after, .arrow::after {    // --- 焦点框 ---
         border: var(--focusbox-border);
     }
-    color: var(--color);                        // --- 文字色 ---
-    fill: var(--color);
-    stroke: var(--color);
+    color: var(--color, var(--g-color));                        // --- 文字色 ---
+    fill: var(--color, var(--g-color));
+    stroke: var(--color, var(--g-color));
     background: var(--background);              // --- 背景色 ---
     box-shadow: var(--shadow);
     &.area-split {

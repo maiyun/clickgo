@@ -2213,13 +2213,13 @@ export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.I
     /** --- 展示托管方式 --- */
     'way'?: 'normal' | 'click' | 'hover';
 } = {}): void {
-    if (!(el instanceof HTMLElement)) {
+    if (!(el instanceof Element)) {
         if (!el.$el) {
             return;
         }
         el = el.$el;
     }
-    if (pop && !(pop instanceof HTMLElement)) {
+    if (pop && !(pop instanceof Element)) {
         if (!pop.$el) {
             return;
         }

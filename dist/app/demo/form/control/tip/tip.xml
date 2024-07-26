@@ -12,6 +12,12 @@
         <tip label="This is so long long long long long long long long long long">
             <label>So long</label>
         </tip>
+        <layout gutter="5" align-v="center">
+            <label>Right</label>
+            <tip label="This is right">
+                <svg src="../../../res/icon.svg" style="width: 16px; height: 16px;" />
+            </tip>
+        </layout>
         <tip>
             <template v-slot:content>
                 <layout direction="v" gutter="5">
