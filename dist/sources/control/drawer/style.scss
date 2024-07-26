@@ -9,7 +9,7 @@
         .header {
             display: flex; align-items: center;
             .title {
-                flex: 1; padding: var(--g-bpadding); font-size: 20px;
+                flex: 1; padding: var(--g-bpadding); font-size: var(--g-size-m);
             }
             .close {
                 padding: var(--g-padding); margin-right: var(--g-bpadding); display: flex; align-items: center; transition: var(--g-transition); border-radius: var(--g-radius); border: solid .5px transparent;

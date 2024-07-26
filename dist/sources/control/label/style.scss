@@ -7,4 +7,15 @@
     &.mtip {
         color: var(--g-color-disabled); margin-top: var(--g-padding);
     }
+
+    // --- size ---
+    &.size-m {
+        font-size: var(--g-size-m);
+    }
+    &.size-l {
+        font-size: var(--g-size-l);
+    }
+    &.size-xl {
+        font-size: var(--g-size-xl);
+    }
 }

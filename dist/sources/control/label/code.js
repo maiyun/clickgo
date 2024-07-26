@@ -30,6 +30,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.props = {
             'mode': 'default',
             'content': '',
+            'size': 's',
             'time': true,
             'date': true,
             'zone': false,

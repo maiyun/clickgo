@@ -536,7 +536,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'immediate': true
         });
         this.watch('type', () => __awaiter(this, void 0, void 0, function* () {
-            var _b;
+            var _a;
             yield this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
@@ -563,7 +563,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     };
                     this.emit('beforechange', event);
                     if (event.go) {
-                        this.value = (_b = event.detail.change) !== null && _b !== void 0 ? _b : this.refs.text.value;
+                        this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
                         this.emit('update:modelValue', this.value);
                     }
                     else {
@@ -575,7 +575,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.checkWatch();
         }));
         this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
-            var _c;
+            var _a;
             yield this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
@@ -608,12 +608,12 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = (_c = event.detail.change) !== null && _c !== void 0 ? _c : this.refs.text.value;
+                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         }));
         this.watch('min', () => __awaiter(this, void 0, void 0, function* () {
-            var _d;
+            var _a;
             yield this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
@@ -646,7 +646,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = (_d = event.detail.change) !== null && _d !== void 0 ? _d : this.refs.text.value;
+                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
             }
         }));

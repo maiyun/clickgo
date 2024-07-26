@@ -32,11 +32,11 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 一行排几列 --- */
     public get columns(): number {
-        if (this.width >= 1400) {
+        if (this.width >= 1000) {
             this.size = 'l';
             return this.propInt('sizeL') || 4;
         }
-        if (this.width >= 700) {
+        if (this.width >= 600) {
             this.size = 'm';
             return this.propInt('sizeM') || 2;
         }

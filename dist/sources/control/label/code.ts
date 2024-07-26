@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'mode': 'default' | 'tip' | 'mtip' | 'date';
         'content': string;
+        'size': 's' | 'm' | 'l' | 'xl';
 
         'time': boolean | string;
         'date': boolean | string;
@@ -14,6 +15,7 @@ export default class extends clickgo.control.AbstractControl {
     } = {
             'mode': 'default',
             'content': '',
+            'size': 's',
 
             'time': true,
             'date': true,

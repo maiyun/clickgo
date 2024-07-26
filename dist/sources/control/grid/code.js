@@ -40,11 +40,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.size = 's';
     }
     get columns() {
-        if (this.width >= 1400) {
+        if (this.width >= 1000) {
             this.size = 'l';
             return this.propInt('sizeL') || 4;
         }
-        if (this.width >= 700) {
+        if (this.width >= 600) {
             this.size = 'm';
             return this.propInt('sizeM') || 2;
         }

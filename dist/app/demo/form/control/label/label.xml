@@ -1,4 +1,4 @@
-<form width="390" height="380" title="Label">
+<form width="390" height="480" title="Label">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>You can use CSS to customize the label:</label>
         <label>Normal</label>
@@ -9,6 +9,9 @@
         <label style="font-size: 36px;">Font size</label>
         <label mode="tip">mode: tip</label>
         <label mode="mtip">mode: mtip</label>
+        <label size="m">size m</label>
+        <label size="l">size l</label>
+        <label size="xl">size xl</label>
         <layout gutter="10" align-v="center">
             <label>mode: date</label>
             <label mode="date" :date="date" :time="time" :zone="zone" :tz="tz[0]" :content="daten" style="flex: 1;"></label>

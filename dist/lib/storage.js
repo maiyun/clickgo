@@ -32,7 +32,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clear = exports.all = exports.list = exports.remove = exports.set = exports.get = void 0;
+exports.get = get;
+exports.set = set;
+exports.remove = remove;
+exports.list = list;
+exports.all = all;
+exports.clear = clear;
 const task = __importStar(require("./task"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -90,7 +95,6 @@ function get(key, taskId) {
     }
     return JSON.parse(v);
 }
-exports.get = get;
 function set(key, val, taskId) {
     if (!taskId) {
         return false;
@@ -122,7 +126,6 @@ function set(key, val, taskId) {
     localStorage.setItem('clickgo-item-' + t.path + '-' + key, v);
     return true;
 }
-exports.set = set;
 function remove(key, taskId) {
     if (!taskId) {
         return false;
@@ -149,7 +152,6 @@ function remove(key, taskId) {
     localStorage.removeItem('clickgo-item-' + t.path + '-' + key);
     return true;
 }
-exports.remove = remove;
 function list(taskId) {
     if (!taskId) {
         return {};
@@ -164,7 +166,6 @@ function list(taskId) {
     }
     return JSON.parse(sizes);
 }
-exports.list = list;
 function all() {
     const rtn = {};
     for (let i = 0; i < localStorage.length; i++) {
@@ -182,7 +183,6 @@ function all() {
     }
     return rtn;
 }
-exports.all = all;
 function clear(path) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -207,4 +207,3 @@ function clear(path) {
         return count;
     });
 }
-exports.clear = clear;

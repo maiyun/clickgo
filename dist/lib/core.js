@@ -33,7 +33,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.open = exports.back = exports.getLocation = exports.location = exports.getHost = exports.getHash = exports.hash = exports.getAvailArea = exports.fetchApp = exports.readApp = exports.trigger = exports.getModule = exports.regModule = exports.boot = exports.getCdn = exports.AbstractApp = exports.global = exports.config = void 0;
+exports.boot = exports.AbstractApp = exports.global = exports.config = void 0;
+exports.getCdn = getCdn;
+exports.regModule = regModule;
+exports.getModule = getModule;
+exports.trigger = trigger;
+exports.readApp = readApp;
+exports.fetchApp = fetchApp;
+exports.getAvailArea = getAvailArea;
+exports.hash = hash;
+exports.getHash = getHash;
+exports.getHost = getHost;
+exports.location = location;
+exports.getLocation = getLocation;
+exports.back = back;
+exports.open = open;
 const clickgo = __importStar(require("../clickgo"));
 const fs = __importStar(require("./fs"));
 const form = __importStar(require("./form"));
@@ -140,7 +154,6 @@ exports.AbstractApp = AbstractApp;
 function getCdn() {
     return loader.cdn;
 }
-exports.getCdn = getCdn;
 clickgo.vue.watch(exports.config, function () {
     for (const key in configOrigin) {
         if (exports.config[key] !== undefined) {
@@ -308,7 +321,6 @@ function regModule(name, func) {
     };
     return true;
 }
-exports.regModule = regModule;
 function getModule(name) {
     return new Promise((resolve) => {
         if (!modules[name]) {
@@ -350,7 +362,6 @@ function getModule(name) {
         return;
     });
 }
-exports.getModule = getModule;
 const globalEvents = {
     screenResize: function () {
         form.refreshMaxPosition();
@@ -563,7 +574,6 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         }
     }
 }
-exports.trigger = trigger;
 function readApp(blob) {
     return __awaiter(this, void 0, void 0, function* () {
         const head = yield tool.blob2Text(blob.slice(0, 5));
@@ -618,7 +628,6 @@ function readApp(blob) {
         };
     });
 }
-exports.readApp = readApp;
 function fetchApp(url_1) {
     return __awaiter(this, arguments, void 0, function* (url, opt = {}, taskId) {
         let cga = '';
@@ -755,7 +764,6 @@ function fetchApp(url_1) {
         };
     });
 }
-exports.fetchApp = fetchApp;
 function getAvailArea() {
     if (Object.keys(form.simpleSystemTaskRoot.forms).length > 0) {
         return {
@@ -811,7 +819,6 @@ function getAvailArea() {
         };
     }
 }
-exports.getAvailArea = getAvailArea;
 function hash(hash, taskId) {
     if (!taskId) {
         return false;
@@ -826,11 +833,9 @@ function hash(hash, taskId) {
     window.location.hash = hash;
     return true;
 }
-exports.hash = hash;
 function getHash() {
     return window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
 }
-exports.getHash = getHash;
 function getHost() {
     const match = /https?:\/\/([-a-zA-Z0-9:.]+)/.exec(window.location.href);
     if (!match) {
@@ -838,7 +843,6 @@ function getHost() {
     }
     return match[1];
 }
-exports.getHost = getHost;
 function location(url, taskId) {
     if (!taskId) {
         return false;
@@ -853,11 +857,9 @@ function location(url, taskId) {
     window.location.href = url;
     return true;
 }
-exports.location = location;
 function getLocation() {
     return window.location.href;
 }
-exports.getLocation = getLocation;
 function back(taskId) {
     if (!taskId) {
         return false;
@@ -872,11 +874,9 @@ function back(taskId) {
     window.history.back();
     return true;
 }
-exports.back = back;
 function open(url) {
     window.open(url);
 }
-exports.open = open;
 window.addEventListener('hashchange', function () {
     trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '');
 });

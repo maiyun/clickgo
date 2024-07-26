@@ -32,13 +32,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isMax = exports.ping = exports.maximizable = exports.size = exports.restore = exports.min = exports.max = exports.invoke = exports.getListenerList = exports.clear = exports.off = exports.once = exports.on = exports.getToken = void 0;
+exports.getToken = getToken;
+exports.on = on;
+exports.once = once;
+exports.off = off;
+exports.clear = clear;
+exports.getListenerList = getListenerList;
+exports.invoke = invoke;
+exports.max = max;
+exports.min = min;
+exports.restore = restore;
+exports.size = size;
+exports.maximizable = maximizable;
+exports.ping = ping;
+exports.isMax = isMax;
 const clickgo = __importStar(require("../clickgo"));
 const token = (Math.random() * 100000000000000 * (100 + Math.round(Math.random() * (999 - 100)))).toString(32);
 function getToken() {
     return token;
 }
-exports.getToken = getToken;
 const methods = {};
 window.clickgoNativeWeb = {
     invoke: function (name, ...param) {
@@ -70,11 +82,9 @@ function on(name, handler, once = false, formId, taskId) {
         'handler': handler
     };
 }
-exports.on = on;
 function once(name, handler, formId, taskId) {
     on(name, handler, true, formId, taskId);
 }
-exports.once = once;
 function off(name, formId, taskId) {
     if (!taskId) {
         return;
@@ -88,7 +98,6 @@ function off(name, formId, taskId) {
     }
     delete methods[taskId][key];
 }
-exports.off = off;
 function clear(formId, taskId) {
     if (!taskId) {
         return;
@@ -107,7 +116,6 @@ function clear(formId, taskId) {
         delete methods[taskId][key];
     }
 }
-exports.clear = clear;
 function getListenerList(taskId) {
     const rtn = {};
     for (const tid in methods) {
@@ -134,7 +142,6 @@ function getListenerList(taskId) {
     }
     return rtn;
 }
-exports.getListenerList = getListenerList;
 function invoke(name, ...param) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!clickgo.isNative()) {
@@ -143,47 +150,39 @@ function invoke(name, ...param) {
         return window.clickgoNative.invoke(name, ...param);
     });
 }
-exports.invoke = invoke;
 invoke('cg-init', token);
 function max() {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-set-state', token, 'max');
     });
 }
-exports.max = max;
 function min() {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-set-state', token, 'min');
     });
 }
-exports.min = min;
 function restore() {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-set-state', token, 'restore');
     });
 }
-exports.restore = restore;
 function size(width, height) {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-set-size', token, width, height);
     });
 }
-exports.size = size;
 function maximizable(val) {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-maximizable', token, val);
     });
 }
-exports.maximizable = maximizable;
 function ping(val) {
     return __awaiter(this, void 0, void 0, function* () {
         return invoke('cg-ping', val);
     });
 }
-exports.ping = ping;
 function isMax() {
     return __awaiter(this, void 0, void 0, function* () {
         return invoke('cg-is-max');
     });
 }
-exports.isMax = isMax;

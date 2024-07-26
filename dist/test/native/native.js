@@ -32,7 +32,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = exports.launcher = exports.AbstractBoot = exports.tool = exports.fs = void 0;
+exports.AbstractBoot = exports.tool = exports.fs = void 0;
+exports.launcher = launcher;
+exports.verifyToken = verifyToken;
 const electron = __importStar(require("electron"));
 const path = __importStar(require("path"));
 const libFs = __importStar(require("./lib/fs"));
@@ -370,7 +372,6 @@ function launcher(boot) {
         return;
     });
 }
-exports.launcher = launcher;
 electron.Menu.setApplicationMenu(null);
 electron.ipcMain.handle('pre', function (e, name, ...param) {
     if (!methods[name]) {
@@ -388,7 +389,6 @@ function verifyToken(t) {
     }
     return true;
 }
-exports.verifyToken = verifyToken;
 function createForm(p) {
     const op = {
         'webPreferences': {

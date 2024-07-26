@@ -9,7 +9,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.queryParse = exports.queryStringify = exports.formatTime = exports.formatSecond = exports.compar = exports.execCommand = exports.blob2DataUrl = exports.blob2Text = exports.urlAtom = exports.urlResolve = exports.parseUrl = exports.postResponseJson = exports.getResponseJson = exports.post = exports.get = exports.fetch = exports.request = exports.rgb2hsl = exports.escapeHTML = exports.getArray = exports.getNumber = exports.getBoolean = exports.random = exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = exports.rand = exports.getMimeByPath = exports.stylePrepend = exports.teleportGlue = exports.eventsAttrWrap = exports.layoutClassPrepend = exports.layoutInsertAttr = exports.layoutAddTagClassAndReTagName = exports.styleUrl2DataUrl = exports.match = exports.purify = exports.sleepFrame = exports.nextFrame = exports.sleep = exports.clone = exports.sizeFormat = exports.blob2ArrayBuffer = exports.getClassPrototype = void 0;
+exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = void 0;
+exports.getClassPrototype = getClassPrototype;
+exports.blob2ArrayBuffer = blob2ArrayBuffer;
+exports.sizeFormat = sizeFormat;
+exports.clone = clone;
+exports.sleep = sleep;
+exports.nextFrame = nextFrame;
+exports.sleepFrame = sleepFrame;
+exports.purify = purify;
+exports.match = match;
+exports.styleUrl2DataUrl = styleUrl2DataUrl;
+exports.layoutAddTagClassAndReTagName = layoutAddTagClassAndReTagName;
+exports.layoutInsertAttr = layoutInsertAttr;
+exports.layoutClassPrepend = layoutClassPrepend;
+exports.eventsAttrWrap = eventsAttrWrap;
+exports.teleportGlue = teleportGlue;
+exports.stylePrepend = stylePrepend;
+exports.getMimeByPath = getMimeByPath;
+exports.rand = rand;
+exports.random = random;
+exports.getBoolean = getBoolean;
+exports.getNumber = getNumber;
+exports.getArray = getArray;
+exports.escapeHTML = escapeHTML;
+exports.rgb2hsl = rgb2hsl;
+exports.request = request;
+exports.fetch = fetch;
+exports.get = get;
+exports.post = post;
+exports.getResponseJson = getResponseJson;
+exports.postResponseJson = postResponseJson;
+exports.parseUrl = parseUrl;
+exports.urlResolve = urlResolve;
+exports.urlAtom = urlAtom;
+exports.blob2Text = blob2Text;
+exports.blob2DataUrl = blob2DataUrl;
+exports.execCommand = execCommand;
+exports.compar = compar;
+exports.formatSecond = formatSecond;
+exports.formatTime = formatTime;
+exports.queryStringify = queryStringify;
+exports.queryParse = queryParse;
 function getClassPrototype(obj, over = [], level = 0) {
     var _a;
     if (level === 0) {
@@ -55,7 +96,6 @@ function getClassPrototype(obj, over = [], level = 0) {
     Object.assign(rtn.access, rtn2.access);
     return rtn;
 }
-exports.getClassPrototype = getClassPrototype;
 function blob2ArrayBuffer(blob) {
     return new Promise(function (resove) {
         const fr = new FileReader();
@@ -65,7 +105,6 @@ function blob2ArrayBuffer(blob) {
         fr.readAsArrayBuffer(blob);
     });
 }
-exports.blob2ArrayBuffer = blob2ArrayBuffer;
 function sizeFormat(size, spliter = ' ') {
     const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
     let i = 0;
@@ -74,7 +113,6 @@ function sizeFormat(size, spliter = ' ') {
     }
     return (Math.round(size * 100) / 100).toString() + spliter + units[i];
 }
-exports.sizeFormat = sizeFormat;
 function clone(obj) {
     let newObj = {};
     if (obj instanceof Array) {
@@ -126,7 +164,6 @@ function clone(obj) {
     }
     return newObj;
 }
-exports.clone = clone;
 function sleep(ms = 0) {
     return new Promise(function (resolve) {
         if (ms > 1000 * 3) {
@@ -138,7 +175,6 @@ function sleep(ms = 0) {
         }, ms);
     });
 }
-exports.sleep = sleep;
 function nextFrame() {
     return new Promise(function (resolve) {
         requestAnimationFrame(() => {
@@ -146,7 +182,6 @@ function nextFrame() {
         });
     });
 }
-exports.nextFrame = nextFrame;
 function sleepFrame(count) {
     return __awaiter(this, void 0, void 0, function* () {
         if (count > 10) {
@@ -157,7 +192,6 @@ function sleepFrame(count) {
         }
     });
 }
-exports.sleepFrame = sleepFrame;
 function purify(text) {
     text = '>' + text + '<';
     const scripts = [];
@@ -173,7 +207,6 @@ function purify(text) {
     });
     return text.slice(1, -1);
 }
-exports.purify = purify;
 function match(str, regs) {
     for (const reg of regs) {
         if (reg.test(str)) {
@@ -182,7 +215,6 @@ function match(str, regs) {
     }
     return false;
 }
-exports.match = match;
 function styleUrl2DataUrl(path, style, files) {
     return __awaiter(this, void 0, void 0, function* () {
         const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
@@ -202,7 +234,6 @@ function styleUrl2DataUrl(path, style, files) {
         return style;
     });
 }
-exports.styleUrl2DataUrl = styleUrl2DataUrl;
 function layoutAddTagClassAndReTagName(layout, retagname) {
     const list = [];
     layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function (t, t1) {
@@ -244,7 +275,6 @@ function layoutAddTagClassAndReTagName(layout, retagname) {
         return list[++i];
     });
 }
-exports.layoutAddTagClassAndReTagName = layoutAddTagClassAndReTagName;
 function layoutInsertAttr(layout, insert, opt = {}) {
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function (t, t1) {
         if (opt.ignore) {
@@ -271,7 +301,6 @@ function layoutInsertAttr(layout, insert, opt = {}) {
         });
     });
 }
-exports.layoutInsertAttr = layoutInsertAttr;
 function layoutClassPrependObject(object) {
     object = object.slice(1, -1).trim();
     return '{' + object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, function (t, t1, t2) {
@@ -325,7 +354,6 @@ function layoutClassPrepend(layout, preps) {
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
 }
-exports.layoutClassPrepend = layoutClassPrepend;
 function eventsAttrWrap(layout) {
     const events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
     const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
@@ -336,7 +364,6 @@ function eventsAttrWrap(layout) {
         return `@${t1}=";if(allowEvent($event)){${t2}}"`;
     });
 }
-exports.eventsAttrWrap = eventsAttrWrap;
 function teleportGlue(layout, formId) {
     if (typeof formId !== 'string') {
         formId = formId.toString();
@@ -349,7 +376,6 @@ function teleportGlue(layout, formId) {
         return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
     });
 }
-exports.teleportGlue = teleportGlue;
 function stylePrepend(style, prep = '') {
     if (prep === '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000).toString() + '_';
@@ -402,7 +428,6 @@ function stylePrepend(style, prep = '') {
         'style': style
     };
 }
-exports.stylePrepend = stylePrepend;
 function getMimeByPath(path) {
     var _a;
     const lio = path.lastIndexOf('.');
@@ -423,14 +448,12 @@ function getMimeByPath(path) {
         'ext': ext
     };
 }
-exports.getMimeByPath = getMimeByPath;
 function rand(min, max) {
     if (min > max) {
         [min, max] = [max, min];
     }
     return min + Math.round(Math.random() * (max - min));
 }
-exports.rand = rand;
 exports.RANDOM_N = '0123456789';
 exports.RANDOM_U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 exports.RANDOM_L = 'abcdefghijklmnopqrstuvwxyz';
@@ -457,7 +480,6 @@ function random(length = 8, source = exports.RANDOM_LN, block = '') {
     }
     return temp;
 }
-exports.random = random;
 function getBoolean(param) {
     const t = typeof param;
     if (t === 'boolean') {
@@ -468,14 +490,12 @@ function getBoolean(param) {
     }
     return param ? true : false;
 }
-exports.getBoolean = getBoolean;
 function getNumber(param) {
     if (typeof param === 'number') {
         return param;
     }
     return parseFloat(param);
 }
-exports.getNumber = getNumber;
 function getArray(param) {
     if (typeof param !== 'string') {
         return param;
@@ -496,11 +516,9 @@ function getArray(param) {
     }
     return rtn;
 }
-exports.getArray = getArray;
 function escapeHTML(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-exports.escapeHTML = escapeHTML;
 function rgb2hsl(rgb) {
     if (rgb.includes('(')) {
         const match = /[0-9., ]+/.exec(rgb);
@@ -534,7 +552,6 @@ function rgb2hsl(rgb) {
     }
     return [h, s, l];
 }
-exports.rgb2hsl = rgb2hsl;
 function request(url, opt) {
     return new Promise(function (resove) {
         var _a;
@@ -640,58 +657,46 @@ function request(url, opt) {
         xhr.send(opt.body);
     });
 }
-exports.request = request;
 function fetch(url, init) {
     return loader.fetch(url, init);
 }
-exports.fetch = fetch;
 function get(url, opt) {
     return loader.get(url, opt);
 }
-exports.get = get;
 function post(url, data, opt) {
     return loader.post(url, data, opt);
 }
-exports.post = post;
 function getResponseJson(url, opt) {
     return __awaiter(this, void 0, void 0, function* () {
         return loader.getResponseJson(url, opt);
     });
 }
-exports.getResponseJson = getResponseJson;
 function postResponseJson(url, data, opt) {
     return __awaiter(this, void 0, void 0, function* () {
         return loader.postResponseJson(url, data, opt);
     });
 }
-exports.postResponseJson = postResponseJson;
 function parseUrl(url) {
     return loader.parseUrl(url);
 }
-exports.parseUrl = parseUrl;
 function urlResolve(from, to) {
     return loader.urlResolve(from, to);
 }
-exports.urlResolve = urlResolve;
 function urlAtom(url) {
     return loader.urlAtom(url);
 }
-exports.urlAtom = urlAtom;
 function blob2Text(blob) {
     return loader.blob2Text(blob);
 }
-exports.blob2Text = blob2Text;
 function blob2DataUrl(blob) {
     return loader.blob2DataUrl(blob);
 }
-exports.blob2DataUrl = blob2DataUrl;
 function execCommand(ac) {
     if (!['copy', 'cut'].includes(ac)) {
         return;
     }
     document.execCommand(ac);
 }
-exports.execCommand = execCommand;
 function compar(before, after) {
     const rtn = {
         'remove': {},
@@ -719,7 +724,6 @@ function compar(before, after) {
     }
     return rtn;
 }
-exports.compar = compar;
 function formatSecond(second) {
     const h = Math.floor(second / 3600);
     second = second - h * 3600;
@@ -727,7 +731,6 @@ function formatSecond(second) {
     const s = Math.floor(second - m * 60);
     return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
 }
-exports.formatSecond = formatSecond;
 function formatTime(ts, tz) {
     const rtn = {
         'date': '',
@@ -744,7 +747,6 @@ function formatTime(ts, tz) {
     rtn.zone = 'UTC' + (ntz >= 0 ? '+' : '') + ntz.toString();
     return rtn;
 }
-exports.formatTime = formatTime;
 function queryStringify(query) {
     return Object.entries(query).map(([k, v]) => {
         if (Array.isArray(v)) {
@@ -753,7 +755,6 @@ function queryStringify(query) {
         return `${encodeURIComponent(k)}=${encodeURIComponent(`${v}`)}`;
     }).join('&');
 }
-exports.queryStringify = queryStringify;
 function queryParse(query) {
     const ret = {};
     const arrayKeys = {};
@@ -777,4 +778,3 @@ function queryParse(query) {
     }
     return ret;
 }
-exports.queryParse = queryParse;

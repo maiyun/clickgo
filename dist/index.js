@@ -9,27 +9,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.launcher = exports.AbstractBoot = exports.hasFrame = exports.isImmersion = exports.getPlatform = exports.isNative = exports.getVersion = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.storage = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
+exports.AbstractBoot = exports.vue = exports.zip = exports.tool = exports.theme = exports.task = exports.storage = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.clickgo = void 0;
+exports.getVersion = getVersion;
+exports.isNative = isNative;
+exports.getPlatform = getPlatform;
+exports.isImmersion = isImmersion;
+exports.hasFrame = hasFrame;
+exports.launcher = launcher;
 function getVersion() {
     return exports.clickgo.getVersion();
 }
-exports.getVersion = getVersion;
 function isNative() {
     return exports.clickgo.isNative();
 }
-exports.isNative = isNative;
 function getPlatform() {
     return exports.clickgo.getPlatform();
 }
-exports.getPlatform = getPlatform;
 function isImmersion() {
     return exports.clickgo.isImmersion();
 }
-exports.isImmersion = isImmersion;
 function hasFrame() {
     return exports.clickgo.hasFrame();
 }
-exports.hasFrame = hasFrame;
 class AbstractBoot {
     isDebug() {
         return this._debug;
@@ -169,4 +170,3 @@ function launcher(boot) {
         console.log('launcher', e);
     });
 }
-exports.launcher = launcher;

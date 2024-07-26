@@ -32,7 +32,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.copyFile = exports.readDir = exports.rename = exports.chmod = exports.rmdir = exports.mkdir = exports.stats = exports.unlink = exports.symlink = exports.readLink = exports.putContent = exports.getContent = exports.refreshDrives = void 0;
+exports.refreshDrives = refreshDrives;
+exports.getContent = getContent;
+exports.putContent = putContent;
+exports.readLink = readLink;
+exports.symlink = symlink;
+exports.unlink = unlink;
+exports.stats = stats;
+exports.mkdir = mkdir;
+exports.rmdir = rmdir;
+exports.chmod = chmod;
+exports.rename = rename;
+exports.readDir = readDir;
+exports.copyFile = copyFile;
 const fs = __importStar(require("fs"));
 const tool = __importStar(require("./tool"));
 const platform = process.platform;
@@ -63,7 +75,6 @@ function refreshDrives() {
         }
     });
 }
-exports.refreshDrives = refreshDrives;
 function getContent(path, options) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -110,7 +121,6 @@ function getContent(path, options) {
         }
     });
 }
-exports.getContent = getContent;
 function putContent(path, data, options) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -123,7 +133,6 @@ function putContent(path, data, options) {
         }
     });
 }
-exports.putContent = putContent;
 function readLink(path, encoding) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -137,7 +146,6 @@ function readLink(path, encoding) {
         }
     });
 }
-exports.readLink = readLink;
 function symlink(filePath, linkPath, type) {
     return __awaiter(this, void 0, void 0, function* () {
         filePath = formatPath(filePath);
@@ -151,7 +159,6 @@ function symlink(filePath, linkPath, type) {
         }
     });
 }
-exports.symlink = symlink;
 function unlink(path) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -173,7 +180,6 @@ function unlink(path) {
         }
     });
 }
-exports.unlink = unlink;
 function stats(path) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -200,7 +206,6 @@ function stats(path) {
         }
     });
 }
-exports.stats = stats;
 function mkdir(path, mode) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -220,7 +225,6 @@ function mkdir(path, mode) {
         }
     });
 }
-exports.mkdir = mkdir;
 function rmdir(path) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -237,7 +241,6 @@ function rmdir(path) {
         }
     });
 }
-exports.rmdir = rmdir;
 function chmod(path, mod) {
     return __awaiter(this, void 0, void 0, function* () {
         path = formatPath(path);
@@ -250,7 +253,6 @@ function chmod(path, mod) {
         }
     });
 }
-exports.chmod = chmod;
 function rename(oldPath, newPath) {
     return __awaiter(this, void 0, void 0, function* () {
         oldPath = formatPath(oldPath);
@@ -264,7 +266,6 @@ function rename(oldPath, newPath) {
         }
     });
 }
-exports.rename = rename;
 function readDir(path, encoding) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -307,7 +308,6 @@ function readDir(path, encoding) {
         }
     });
 }
-exports.readDir = readDir;
 function copyFile(src, dest) {
     return __awaiter(this, void 0, void 0, function* () {
         src = formatPath(src);
@@ -321,4 +321,3 @@ function copyFile(src, dest) {
         }
     });
 }
-exports.copyFile = copyFile;

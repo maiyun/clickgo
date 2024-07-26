@@ -32,7 +32,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.copyFile = exports.copyFolder = exports.readDir = exports.rename = exports.chmod = exports.rmdirDeep = exports.rmdir = exports.mkdir = exports.isFile = exports.isDir = exports.stats = exports.unlink = exports.symlink = exports.readLink = exports.putContent = exports.getContent = exports.unmount = exports.mount = void 0;
+exports.mount = mount;
+exports.unmount = unmount;
+exports.getContent = getContent;
+exports.putContent = putContent;
+exports.readLink = readLink;
+exports.symlink = symlink;
+exports.unlink = unlink;
+exports.stats = stats;
+exports.isDir = isDir;
+exports.isFile = isFile;
+exports.mkdir = mkdir;
+exports.rmdir = rmdir;
+exports.rmdirDeep = rmdirDeep;
+exports.chmod = chmod;
+exports.rename = rename;
+exports.readDir = readDir;
+exports.copyFolder = copyFolder;
+exports.copyFile = copyFile;
 const tool = __importStar(require("./tool"));
 const task = __importStar(require("./task"));
 const form = __importStar(require("./form"));
@@ -102,7 +119,6 @@ function mount(name, handler, taskId) {
     mounts[name] = handler;
     return true;
 }
-exports.mount = mount;
 function unmount(name) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -117,7 +133,6 @@ function unmount(name) {
         return true;
     });
 }
-exports.unmount = unmount;
 function getContent(path, options, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -243,7 +258,6 @@ function getContent(path, options, taskId) {
         }
     });
 }
-exports.getContent = getContent;
 function putContent(path_1, data_1) {
     return __awaiter(this, arguments, void 0, function* (path, data, options = {}, taskId) {
         var _a, _b;
@@ -285,7 +299,6 @@ function putContent(path_1, data_1) {
         }
     });
 }
-exports.putContent = putContent;
 function readLink(path, encoding, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -323,7 +336,6 @@ function readLink(path, encoding, taskId) {
         }
     });
 }
-exports.readLink = readLink;
 function symlink(filePath, linkPath, type, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -368,7 +380,6 @@ function symlink(filePath, linkPath, type, taskId) {
         }
     });
 }
-exports.symlink = symlink;
 function unlink(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -406,7 +417,6 @@ function unlink(path, taskId) {
         }
     });
 }
-exports.unlink = unlink;
 function getClickGoStats(path) {
     return __awaiter(this, void 0, void 0, function* () {
         if (path.endsWith('/')) {
@@ -698,7 +708,6 @@ function stats(path, taskId) {
         }
     });
 }
-exports.stats = stats;
 function isDir(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         const pstats = yield stats(path, taskId);
@@ -708,7 +717,6 @@ function isDir(path, taskId) {
         return pstats;
     });
 }
-exports.isDir = isDir;
 function isFile(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         const pstats = yield stats(path, taskId);
@@ -718,7 +726,6 @@ function isFile(path, taskId) {
         return pstats;
     });
 }
-exports.isFile = isFile;
 function mkdir(path_1) {
     return __awaiter(this, arguments, void 0, function* (path, mode = 0o755, taskId) {
         var _a, _b;
@@ -759,7 +766,6 @@ function mkdir(path_1) {
         }
     });
 }
-exports.mkdir = mkdir;
 function rmdir(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -797,7 +803,6 @@ function rmdir(path, taskId) {
         }
     });
 }
-exports.rmdir = rmdir;
 function rmdirDeep(path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         path = tool.urlResolve('/', path);
@@ -826,7 +831,6 @@ function rmdirDeep(path, taskId) {
         return rmdir(path, taskId);
     });
 }
-exports.rmdirDeep = rmdirDeep;
 function chmod(path, mod, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -864,7 +868,6 @@ function chmod(path, mod, taskId) {
         }
     });
 }
-exports.chmod = chmod;
 function rename(oldPath, newPath, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -915,7 +918,6 @@ function rename(oldPath, newPath, taskId) {
         }
     });
 }
-exports.rename = rename;
 function readDir(path, encoding, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -1140,7 +1142,6 @@ function readDir(path, encoding, taskId) {
         }
     });
 }
-exports.readDir = readDir;
 function copyFolder(from_1, to_1) {
     return __awaiter(this, arguments, void 0, function* (from, to, ignore = [], taskId) {
         let num = 0;
@@ -1178,7 +1179,6 @@ function copyFolder(from_1, to_1) {
         return num;
     });
 }
-exports.copyFolder = copyFolder;
 function copyFile(src, dest, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -1229,4 +1229,3 @@ function copyFile(src, dest, taskId) {
         }
     });
 }
-exports.copyFile = copyFile;

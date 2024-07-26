@@ -32,7 +32,55 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createElement = exports.exitFullscreen = exports.fullscreen = exports.siblingsData = exports.siblings = exports.index = exports.findParentByTag = exports.findParentByClass = exports.findParentByData = exports.bindResize = exports.bindMove = exports.is = exports.bindDrag = exports.setDragData = exports.bindLong = exports.allowEvent = exports.bindGesture = exports.bindDown = exports.bindDblClick = exports.bindClick = exports.getWatchInfo = exports.clearWatchProperty = exports.isWatchProperty = exports.watchProperty = exports.clearWatchStyle = exports.isWatchStyle = exports.watchStyle = exports.clearWatch = exports.isWatch = exports.unwatch = exports.watch = exports.getWatchCount = exports.clearWatchSize = exports.isWatchSize = exports.unwatchSize = exports.watchSize = exports.getWatchSizeCount = exports.clearWatchPosition = exports.isWatchPosition = exports.unwatchPosition = exports.watchPosition = exports.getStyleCount = exports.removeStyle = exports.pushStyle = exports.removeFromStyleList = exports.createToStyleList = exports.hasTouchButMouse = exports.setGlobalCursor = exports.inPage = void 0;
+exports.is = void 0;
+exports.inPage = inPage;
+exports.setGlobalCursor = setGlobalCursor;
+exports.hasTouchButMouse = hasTouchButMouse;
+exports.createToStyleList = createToStyleList;
+exports.removeFromStyleList = removeFromStyleList;
+exports.pushStyle = pushStyle;
+exports.removeStyle = removeStyle;
+exports.getStyleCount = getStyleCount;
+exports.watchPosition = watchPosition;
+exports.unwatchPosition = unwatchPosition;
+exports.isWatchPosition = isWatchPosition;
+exports.clearWatchPosition = clearWatchPosition;
+exports.getWatchSizeCount = getWatchSizeCount;
+exports.watchSize = watchSize;
+exports.unwatchSize = unwatchSize;
+exports.isWatchSize = isWatchSize;
+exports.clearWatchSize = clearWatchSize;
+exports.getWatchCount = getWatchCount;
+exports.watch = watch;
+exports.unwatch = unwatch;
+exports.isWatch = isWatch;
+exports.clearWatch = clearWatch;
+exports.watchStyle = watchStyle;
+exports.isWatchStyle = isWatchStyle;
+exports.clearWatchStyle = clearWatchStyle;
+exports.watchProperty = watchProperty;
+exports.isWatchProperty = isWatchProperty;
+exports.clearWatchProperty = clearWatchProperty;
+exports.getWatchInfo = getWatchInfo;
+exports.bindClick = bindClick;
+exports.bindDblClick = bindDblClick;
+exports.bindDown = bindDown;
+exports.bindGesture = bindGesture;
+exports.allowEvent = allowEvent;
+exports.bindLong = bindLong;
+exports.setDragData = setDragData;
+exports.bindDrag = bindDrag;
+exports.bindMove = bindMove;
+exports.bindResize = bindResize;
+exports.findParentByData = findParentByData;
+exports.findParentByClass = findParentByClass;
+exports.findParentByTag = findParentByTag;
+exports.index = index;
+exports.siblings = siblings;
+exports.siblingsData = siblingsData;
+exports.fullscreen = fullscreen;
+exports.exitFullscreen = exitFullscreen;
+exports.createElement = createElement;
 const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
@@ -63,7 +111,6 @@ ${classUnfold()}, ${classUnfold('input')}, ${classUnfold('textarea')} {font-fami
 function inPage(el) {
     return document.body.contains(el);
 }
-exports.inPage = inPage;
 let globalCursorStyle;
 function setGlobalCursor(type) {
     if (!globalCursorStyle) {
@@ -76,7 +123,6 @@ function setGlobalCursor(type) {
         globalCursorStyle.innerHTML = '';
     }
 }
-exports.setGlobalCursor = setGlobalCursor;
 let lastTouchTime = 0;
 document.addEventListener('touchstart', function () {
     lastTouchTime = Date.now();
@@ -97,16 +143,13 @@ function hasTouchButMouse(e) {
     }
     return false;
 }
-exports.hasTouchButMouse = hasTouchButMouse;
 function createToStyleList(taskId) {
     styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><div class="cg-style-control"></div><div class="cg-style-theme"></div><style class="cg-style-global"></style><div class="cg-style-form"></div></div>`);
 }
-exports.createToStyleList = createToStyleList;
 function removeFromStyleList(taskId) {
     var _a;
     (_a = document.getElementById('cg-style-task' + taskId.toString())) === null || _a === void 0 ? void 0 : _a.remove();
 }
-exports.removeFromStyleList = removeFromStyleList;
 function pushStyle(taskId, style, type = 'global', formId = 0, panelId) {
     const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
     if (!el) {
@@ -122,7 +165,6 @@ function pushStyle(taskId, style, type = 'global', formId = 0, panelId) {
         el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}" data-panel="${panelId ? panelId.toString() : ''}">${style}</style>`);
     }
 }
-exports.pushStyle = pushStyle;
 function removeStyle(taskId, type = 'global', formId = 0, panelId) {
     const styleTask = document.getElementById('cg-style-task' + taskId.toString());
     if (!styleTask) {
@@ -157,11 +199,9 @@ function removeStyle(taskId, type = 'global', formId = 0, panelId) {
         }
     }
 }
-exports.removeStyle = removeStyle;
 function getStyleCount(taskId, type) {
     return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
 }
-exports.getStyleCount = getStyleCount;
 const watchPositionObjects = {};
 let watchPositionIndex = 0;
 function watchPosition(el, cb, immediate = false) {
@@ -206,7 +246,6 @@ function watchPosition(el, cb, immediate = false) {
     ++watchPositionIndex;
     return true;
 }
-exports.watchPosition = watchPosition;
 function unwatchPosition(el) {
     const index = el.dataset.cgPoindex;
     if (index === undefined) {
@@ -230,11 +269,9 @@ function unwatchPosition(el) {
     }
     delete watchPositionObjects[formId];
 }
-exports.unwatchPosition = unwatchPosition;
 function isWatchPosition(el) {
     return el.dataset.cgPoindex ? true : false;
 }
-exports.isWatchPosition = isWatchPosition;
 function clearWatchPosition(formId, panelId) {
     if (!watchPositionObjects[formId]) {
         return;
@@ -256,7 +293,6 @@ function clearWatchPosition(formId, panelId) {
     }
     delete watchPositionObjects[formId];
 }
-exports.clearWatchPosition = clearWatchPosition;
 const watchSizeList = {};
 function getWatchSizeCount(taskId) {
     if (!taskId) {
@@ -271,7 +307,6 @@ function getWatchSizeCount(taskId) {
     }
     return count;
 }
-exports.getWatchSizeCount = getWatchSizeCount;
 let watchSizeIndex = 0;
 const resizeObserver = new ResizeObserver(function (entries) {
     for (const entrie of entries) {
@@ -324,7 +359,6 @@ function watchSize(el, cb, immediate = false, taskId) {
     ++watchSizeIndex;
     return true;
 }
-exports.watchSize = watchSize;
 function unwatchSize(el, taskId) {
     const index = el.dataset.cgRoindex;
     if (index === undefined) {
@@ -338,11 +372,9 @@ function unwatchSize(el, taskId) {
     el.removeAttribute('data-cg-roindex');
     delete watchSizeList[index];
 }
-exports.unwatchSize = unwatchSize;
 function isWatchSize(el) {
     return el.dataset.cgRoindex ? true : false;
 }
-exports.isWatchSize = isWatchSize;
 function clearWatchSize(taskId) {
     for (const index in watchSizeList) {
         const item = watchSizeList[index];
@@ -354,7 +386,6 @@ function clearWatchSize(taskId) {
         delete watchSizeList[index];
     }
 }
-exports.clearWatchSize = clearWatchSize;
 const watchList = {};
 function getWatchCount(taskId) {
     if (!taskId) {
@@ -369,7 +400,6 @@ function getWatchCount(taskId) {
     }
     return count;
 }
-exports.getWatchCount = getWatchCount;
 let watchIndex = 0;
 function watch(el, cb, mode = 'default', immediate = false, taskId) {
     if (isWatch(el)) {
@@ -461,7 +491,6 @@ function watch(el, cb, mode = 'default', immediate = false, taskId) {
     ++watchIndex;
     return true;
 }
-exports.watch = watch;
 function unwatch(el, taskId) {
     const index = el.dataset.cgMoindex;
     if (index === undefined) {
@@ -475,11 +504,9 @@ function unwatch(el, taskId) {
     watchList[index].mo.disconnect();
     delete watchList[index];
 }
-exports.unwatch = unwatch;
 function isWatch(el) {
     return el.dataset.cgMoindex ? true : false;
 }
-exports.isWatch = isWatch;
 function clearWatch(taskId) {
     for (const index in watchList) {
         const item = watchList[index];
@@ -491,7 +518,6 @@ function clearWatch(taskId) {
         delete watchList[index];
     }
 }
-exports.clearWatch = clearWatch;
 const watchCgTimerHandler = function () {
     for (const index in watchSizeList) {
         const item = watchSizeList[index];
@@ -567,11 +593,9 @@ function watchStyle(el, name, cb, immediate = false) {
     el.dataset.cgStyleindex = watchStyleIndex.toString();
     ++watchStyleIndex;
 }
-exports.watchStyle = watchStyle;
 function isWatchStyle(el) {
     return el.dataset.cgStyleindex ? true : false;
 }
-exports.isWatchStyle = isWatchStyle;
 function clearWatchStyle(formId, panelId) {
     if (!watchStyleList[formId]) {
         return;
@@ -593,7 +617,6 @@ function clearWatchStyle(formId, panelId) {
     }
     delete watchStyleList[formId];
 }
-exports.clearWatchStyle = clearWatchStyle;
 const watchPropertyObjects = {};
 let watchPropertyIndex = 0;
 function watchProperty(el, name, cb, immediate = false) {
@@ -649,11 +672,9 @@ function watchProperty(el, name, cb, immediate = false) {
     el.dataset.cgPropertyindex = watchPropertyIndex.toString();
     ++watchPropertyIndex;
 }
-exports.watchProperty = watchProperty;
 function isWatchProperty(el) {
     return el.dataset.cgPropertyindex ? true : false;
 }
-exports.isWatchProperty = isWatchProperty;
 function clearWatchProperty(formId, panelId) {
     if (!watchPropertyObjects[formId]) {
         return;
@@ -675,7 +696,6 @@ function clearWatchProperty(formId, panelId) {
     }
     delete watchPropertyObjects[formId];
 }
-exports.clearWatchProperty = clearWatchProperty;
 function getWatchInfo() {
     var _a, _b;
     const rtn = {
@@ -767,7 +787,6 @@ function getWatchInfo() {
     }
     return rtn;
 }
-exports.getWatchInfo = getWatchInfo;
 let watchTimer = 0;
 const watchTimerHandler = function () {
     if (form.getFocus) {
@@ -912,7 +931,6 @@ function bindClick(e, handler) {
         }
     });
 }
-exports.bindClick = bindClick;
 const lastDblClickData = {
     'time': 0,
     'x': 0,
@@ -937,7 +955,6 @@ function bindDblClick(e, handler) {
         lastDblClickData.y = y;
     });
 }
-exports.bindDblClick = bindDblClick;
 function bindDown(oe, opt) {
     var _a;
     if (hasTouchButMouse(oe)) {
@@ -1047,7 +1064,6 @@ function bindDown(oe, opt) {
     }
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
 }
-exports.bindDown = bindDown;
 const gestureWheel = {
     'last': 0,
     'offset': 0,
@@ -1339,7 +1355,6 @@ function bindGesture(oe, before, handler) {
         });
     }
 }
-exports.bindGesture = bindGesture;
 let lastLongTime = 0;
 function allowEvent(e) {
     const now = Date.now();
@@ -1355,7 +1370,6 @@ function allowEvent(e) {
     }
     return true;
 }
-exports.allowEvent = allowEvent;
 function bindLong(e, long) {
     if (hasTouchButMouse(e)) {
         return;
@@ -1396,12 +1410,10 @@ function bindLong(e, long) {
         }
     });
 }
-exports.bindLong = bindLong;
 let bindDragData = undefined;
 function setDragData(data) {
     bindDragData = data;
 }
-exports.setDragData = setDragData;
 function bindDrag(e, opt) {
     bindDragData = opt.data;
     let otop = 0;
@@ -1495,7 +1507,6 @@ function bindDrag(e, opt) {
         }
     });
 }
-exports.bindDrag = bindDrag;
 exports.is = clickgo.vue.reactive({
     'move': false,
     'shift': false,
@@ -1819,7 +1830,6 @@ function bindMove(e, opt) {
         'bottom': bottom
     };
 }
-exports.bindMove = bindMove;
 function bindResize(e, opt) {
     var _a, _b;
     if (hasTouchButMouse(e)) {
@@ -1910,7 +1920,6 @@ function bindResize(e, opt) {
         'end': opt.end
     });
 }
-exports.bindResize = bindResize;
 function findParentByData(el, name, value) {
     let parent = el.parentNode;
     while (parent) {
@@ -1934,7 +1943,6 @@ function findParentByData(el, name, value) {
     }
     return null;
 }
-exports.findParentByData = findParentByData;
 function findParentByClass(el, name) {
     let parent = el.parentNode;
     while (parent) {
@@ -1951,7 +1959,6 @@ function findParentByClass(el, name) {
     }
     return null;
 }
-exports.findParentByClass = findParentByClass;
 function findParentByTag(el, name) {
     let parent = el.parentNode;
     while (parent) {
@@ -1969,7 +1976,6 @@ function findParentByTag(el, name) {
     }
     return null;
 }
-exports.findParentByTag = findParentByTag;
 function index(el) {
     let index = 0;
     let p = el.previousElementSibling;
@@ -1982,7 +1988,6 @@ function index(el) {
     }
     return index;
 }
-exports.index = index;
 function siblings(el) {
     if (!el.parentNode) {
         return [];
@@ -1997,7 +2002,6 @@ function siblings(el) {
     }
     return list;
 }
-exports.siblings = siblings;
 function siblingsData(el, name) {
     const list = siblings(el);
     const olist = [];
@@ -2009,7 +2013,6 @@ function siblingsData(el, name) {
     }
     return olist;
 }
-exports.siblingsData = siblingsData;
 function fullscreen() {
     return __awaiter(this, void 0, void 0, function* () {
         const he = document.getElementsByTagName('html')[0];
@@ -2026,7 +2029,6 @@ function fullscreen() {
         }
     });
 }
-exports.fullscreen = fullscreen;
 function exitFullscreen() {
     return __awaiter(this, void 0, void 0, function* () {
         const d = document;
@@ -2043,11 +2045,9 @@ function exitFullscreen() {
         }
     });
 }
-exports.exitFullscreen = exitFullscreen;
 function createElement(tagName) {
     return document.createElement(tagName);
 }
-exports.createElement = createElement;
 document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
         cancelAnimationFrame(watchTimer);
