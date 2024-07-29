@@ -434,20 +434,6 @@ global {
     background: var(--pop-background);
 }
 
-// --- tip ---
-
-.tip_pop {
-    border: none;
-    &::after {
-        border: none; bottom: -5px;
-    }
-    &[data-pop-t-bottom] {
-        &::after {
-            top: -5px; 
-        }
-    }
-}
-
 // -- CONTROL -- title --
 
 .title_wrap {
