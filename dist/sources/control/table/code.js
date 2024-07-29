@@ -236,12 +236,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (this.props.split) {
-                for (let i = 0; i < this.items.length; ++i) {
-                    if (this.items[i].width > 0) {
-                        continue;
-                    }
-                    this.widthMap[i] = this.refs.header.children[i].offsetWidth;
-                }
             }
             else {
                 for (let i = 0; i < this.items.length; ++i) {

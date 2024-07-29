@@ -289,12 +289,14 @@ export default class extends clickgo.control.AbstractControl {
             }
             if (this.props.split) {
                 // --- 不可拖动变可拖动 ---
+                /*
                 for (let i = 0; i < this.items.length; ++i) {
                     if (this.items[i].width > 0) {
                         continue;
                     }
                     this.widthMap[i] = (this.refs.header.children[i] as HTMLElement).offsetWidth;
                 }
+                    */
             }
             else {
                 // --- 可拖动变不可拖动 ---
