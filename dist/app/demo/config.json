@@ -28,9 +28,8 @@
     "style": "/package/global",
 
     "files": [
-        "/form/control/alayout/alayout.js",
-        "/form/control/alayout/alayout.css",
-        "/form/control/alayout/alayout.xml",
+        "/form/control/alayout2/alayout2.js",
+        "/form/control/alayout2/alayout2.xml",
         "/form/control/arteditor/arteditor.js",
         "/form/control/arteditor/arteditor.xml",
         "/form/control/arteditor/img.js",

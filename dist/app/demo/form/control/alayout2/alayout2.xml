@@ -1,0 +1,16 @@
+<form width="350" height="500" title="alayout2" padding="10">
+    <flow direction="v" style="flex: 1;">
+        <alayout2 :gutter="gutter[0]">
+            <layout style="flex: 2; background: var(--info);">
+                <block style="height: 200px;"></block>
+            </layout>
+            <layout style="flex: 1; background: var(--success);">
+                <block style="height: 200px;"></block>
+            </layout>
+        </alayout2>
+    </flow>
+    <layout direction="v" gutter="10" style="margin-left: 10px;">
+        <label>gutter:</label>
+        <select v-model="gutter" :data="[0, 10, 12, 30, 31, 50]"></select>
+    </layout>
+</form>

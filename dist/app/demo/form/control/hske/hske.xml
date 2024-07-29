@@ -6,7 +6,7 @@
             <button>OK1</button>
             <button>OK2</button>
             <template v-slot:first>
-                <layout style="flex: 1;" align-h="center" align-v="bottom" style="padding-bottom: 20px; background: var(--info); color: rgba(255, 255, 255, .6)">Copyright</layout>
+                <layout align-h="center" align-v="bottom" style="flex: 1; padding-bottom: 20px; background: var(--info); color: rgba(255, 255, 255, .6)">Copyright</layout>
             </template>
         </hske>
         <layout align-v="center" gutter="10">

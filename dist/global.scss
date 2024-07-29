@@ -15,7 +15,7 @@
     --g-size:12px;
     --g-size-m:16px;
     --g-size-l:20px;
-    --g-size-xl: 28px;
+    --g-size-xl:28px;
     --g-family:"Lucida Sans Unicode","Helvetica Neue","Helvetica","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Noto Sans CJK","Source Han Sans","WenQuanYi Micro Hei","Microsoft YaHei","sans-serif";
     --g-line:1;
     --g-cubic:cubic-bezier(0.39, 0.575, 0.565, 1);
@@ -201,7 +201,7 @@
 }
 
 .cg-launcher-name {
-    font-size: 13px; font-weight: bold; text-shadow: 0 0 3px rgba(0, 0, 0, .6); text-align: center; margin-top: 20px;
+    font-size: var(--g-size); font-weight: bold; text-shadow: 0 0 3px rgba(0, 0, 0, .6); text-align: center; margin-top: 20px;
 }
 .cg-launcher-icon, .cg-launcher-name {
     transition: all .3s var(--g-cubic); transition-property: opacity;
@@ -311,7 +311,7 @@
     }
 }
 .cg-notify-title {
-    font-size: 16px; font-weight: bold;
+    font-size: var(--g-size-m); font-weight: bold;
 }
 .cg-notify-content {
     line-height: 1.5; word-break: break-word;

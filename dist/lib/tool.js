@@ -381,7 +381,7 @@ function stylePrepend(style, prep = '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000).toString() + '_';
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
-        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g, function (t, t1, t2) {
+        t1 = t1.replace(/(^|[ >,}\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g, function (t, t1, t2) {
             if (t2 === 'global') {
                 return '[CGTMP-GLOBAL]';
             }

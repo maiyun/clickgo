@@ -1,20 +1,21 @@
 global {
     --g-padding-s:6px;
-    --g-padding:10px;
+    --g-padding:13px;
     --g-padding-h:6px var(--g-padding);
     --g-padding-l:18px;
-    --g-padding-l-h:10px var(--g-padding-l);
+    --g-padding-l-h:13px var(--g-padding-l);
     --g-padding-xl:28px;
     --g-padding-xl-h:14px var(--g-padding-xl);
     --g-bpadding:25px;
     --g-margin:7px;
     --g-radius:5px;
     --g-radius-l:8px;
-    --g-radius-xl:12px;
-    --g-size:13px;
+    --g-radius-xl:13px;
+    --g-size:14px;
     --g-size-m:20px;
     --g-size-l:28px;
     --g-size-xl: 38px;
+    --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei", "Roboto", Helvetica, Arial, "sans-serif";
     --g-transition:all .3s var(--g-cubic);
 
     // --- 基础颜色 ---
@@ -244,7 +245,7 @@ global {
 .property_wrap {
     .property_controls {
         .property_tag-cg-button {
-            margin-right: 5px; width: 34px; height: 34px;
+            margin-right: 5px;
         }
         .property_split {
             margin: 0 5px 0 0;
@@ -253,33 +254,18 @@ global {
     .property_content {
         .property_bigTitle {
             .property_control {
-                width: 34px;
+                width: 40px;
             }
         }
         .property_line {
-            .property_control {
-                width: 34px;
-            }
             .property_value {
-                .property_text {
-                    height: 32px;
-                }
-                .property_tcontrol {
-                    height: 32px;
-                }
                 .property_tag-cg-check {
                     margin-left: 10px;
-                }
-                .property_dock {
-                    .property_tag-cg-button {
-                        width: 32px;
-                    }
                 }
             }
         }
     }
     .property_description {
-        height: 77px;
         .property_desc {
             line-height: 1.5;
         }

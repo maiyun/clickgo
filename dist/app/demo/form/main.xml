@@ -38,7 +38,7 @@
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cblock')">Block</button>
-                    <button @click="openForm('calayout')">Alayout (deprecated)</button>
+                    <button @click="openForm('calayout2')">Alayout2</button>
                     <button @click="openForm('chske')">Hske</button>
                 </layout>
                 <layout gutter="10">

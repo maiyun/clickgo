@@ -32,13 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.global = void 0;
-exports.read = read;
-exports.load = load;
-exports.remove = remove;
-exports.clear = clear;
-exports.setGlobal = setGlobal;
-exports.clearGlobal = clearGlobal;
+exports.clearGlobal = exports.setGlobal = exports.clear = exports.remove = exports.load = exports.read = exports.global = void 0;
 const zip = __importStar(require("./zip"));
 const tool = __importStar(require("./tool"));
 const task = __importStar(require("./task"));
@@ -85,6 +79,7 @@ function read(blob) {
         };
     });
 }
+exports.read = read;
 function load(theme, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!taskId) {
@@ -122,6 +117,7 @@ function load(theme, taskId) {
         return true;
     });
 }
+exports.load = load;
 function remove(name, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!taskId) {
@@ -143,6 +139,7 @@ function remove(name, taskId) {
         }
     });
 }
+exports.remove = remove;
 function clear(taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!taskId) {
@@ -162,6 +159,7 @@ function clear(taskId) {
         }
     });
 }
+exports.clear = clear;
 function setGlobal(theme) {
     return __awaiter(this, void 0, void 0, function* () {
         exports.global = theme;
@@ -170,6 +168,7 @@ function setGlobal(theme) {
         }
     });
 }
+exports.setGlobal = setGlobal;
 function clearGlobal() {
     if (!exports.global) {
         return;
@@ -183,3 +182,4 @@ function clearGlobal() {
         dom.removeStyle(t.id, 'theme');
     }
 }
+exports.clearGlobal = clearGlobal;

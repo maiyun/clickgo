@@ -485,7 +485,7 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
         // --- xxx { xxx; } ---
         // --- 将 element 模式的 css 变为 class 模式，如 div 变为 .tag-div ---
         // --- 这里面遇到了一个 bug， @keyframe 也被转换了，这是不对的，因此在下面修复 ---
-        t1 = t1.replace(/(^|[ >,\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g,
+        t1 = t1.replace(/(^|[ >,}\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g,
             function(t: string, t1: string, t2: string) {
                 if (t2 === 'global') {
                     return '[CGTMP-GLOBAL]';
