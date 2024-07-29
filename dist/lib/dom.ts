@@ -1397,6 +1397,10 @@ export function bindDown<T extends MouseEvent | TouchEvent>(oe: T, opt: types.IB
     opt.down?.(oe);
 }
 
+export function bindScale(oe: MouseEvent | TouchEvent | WheelEvent): void {
+    
+}
+
 /** --- 绑定拖拉响应操作的 wheel 数据对象 --- */
 const gestureWheel = {
     /** --- 最后一次响应事件时间 --- */

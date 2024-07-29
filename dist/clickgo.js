@@ -23,20 +23,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.zip = exports.tool = exports.theme = exports.task = exports.storage = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = void 0;
-exports.getVersion = getVersion;
-exports.isNative = isNative;
-exports.getPlatform = getPlatform;
-exports.isImmersion = isImmersion;
-exports.hasFrame = hasFrame;
+exports.zip = exports.tool = exports.theme = exports.task = exports.storage = exports.native = exports.fs = exports.form = exports.dom = exports.core = exports.control = exports.vue = exports.hasFrame = exports.isImmersion = exports.getPlatform = exports.isNative = exports.getVersion = void 0;
 const version = '3.15.12';
 function getVersion() {
     return version;
 }
+exports.getVersion = getVersion;
 const native = navigator.userAgent.includes('electron') ? true : false;
 function isNative() {
     return native;
 }
+exports.isNative = isNative;
 let platform = 'web';
 let immersion = false;
 let frame = false;
@@ -51,12 +48,15 @@ if (native) {
 function getPlatform() {
     return platform;
 }
+exports.getPlatform = getPlatform;
 function isImmersion() {
     return immersion;
 }
+exports.isImmersion = isImmersion;
 function hasFrame() {
     return frame;
 }
+exports.hasFrame = hasFrame;
 exports.vue = window.Vue;
 exports.control = __importStar(require("./lib/control"));
 exports.core = __importStar(require("./lib/core"));

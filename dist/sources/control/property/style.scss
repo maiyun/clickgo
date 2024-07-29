@@ -1,7 +1,7 @@
 .wrap {
     display: flex; flex-direction: column;
 
-    --boxsize:calc(var(--g-size) + var(--g-padding) * 2);
+    --boxsize:calc(var(--g-size) + 2px + var(--g-padding) * 2);
 
     .controls {
         display: flex;

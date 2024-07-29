@@ -65,6 +65,7 @@ exports.getWatchInfo = getWatchInfo;
 exports.bindClick = bindClick;
 exports.bindDblClick = bindDblClick;
 exports.bindDown = bindDown;
+exports.bindScale = bindScale;
 exports.bindGesture = bindGesture;
 exports.allowEvent = allowEvent;
 exports.bindLong = bindLong;
@@ -1063,6 +1064,8 @@ function bindDown(oe, opt) {
         oe.target.addEventListener('touchcancel', end);
     }
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
+}
+function bindScale(oe) {
 }
 const gestureWheel = {
     'last': 0,
