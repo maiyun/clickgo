@@ -28,7 +28,7 @@
         </layout>
         <label>Test: {{cols}}</label>
         <flow style="flex: 1;">
-            <desc :border="border" :collapse="collapse" style="flex: 1;">
+            <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" style="flex: 1;">
                 <desc-row v-for="line of maxLine">
                     <!-- 行 1 - max -->
                     <template v-for="col of data.length">
