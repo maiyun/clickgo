@@ -60,6 +60,10 @@
                 <label>bindMove(e, { ... })</label>
                 <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @touchstart="moveDown" @mousedown="moveDown"></block>
             </block>
+            <!-- 双指缩放 -->
+            <block @mousedown="bindScaleDown" @touchstart="bindScaleDown" @touchmove="bindScaleDown" @touchend="bindScaleDown" @wheel="bindScaleDown" style="height: 200px; display: flex; justify-content: center; align-items: center; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color); overflow: hidden;">
+                <block style="background: #07c160; width: 25px; height: 25px; pointer-events: none;" :style="{'transform': 'translate3d(' + scaleX + 'px, ' + scaleY + 'px, 0) scale(' + scaleS + ')'}"></block>
+            </block>
             <button @click="fullscreen" >fullscreen()</button>
             <label>clickgo.dom.is.move: {{isMove ? 'true' : 'false'}}</label>
             <label>clickgo.dom.is.shift: {{isShift ? 'true' : 'false'}}</label>

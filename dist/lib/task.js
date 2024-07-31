@@ -32,7 +32,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.refreshSystemPosition = exports.clearSystem = exports.setSystem = exports.systemTaskInfo = exports.sleep = exports.removeTimer = exports.createTimer = exports.clearLocaleLang = exports.setLocaleLang = exports.setLocale = exports.clearLocale = exports.loadLocale = exports.loadLocaleData = exports.end = exports.checkPermission = exports.run = exports.getList = exports.getPermissions = exports.get = exports.offFrame = exports.onFrame = exports.getFocus = exports.setFocus = exports.lastId = exports.list = void 0;
+exports.systemTaskInfo = exports.lastId = exports.list = void 0;
+exports.setFocus = setFocus;
+exports.getFocus = getFocus;
+exports.onFrame = onFrame;
+exports.offFrame = offFrame;
+exports.get = get;
+exports.getPermissions = getPermissions;
+exports.getList = getList;
+exports.run = run;
+exports.checkPermission = checkPermission;
+exports.end = end;
+exports.loadLocaleData = loadLocaleData;
+exports.loadLocale = loadLocale;
+exports.clearLocale = clearLocale;
+exports.setLocale = setLocale;
+exports.setLocaleLang = setLocaleLang;
+exports.clearLocaleLang = clearLocaleLang;
+exports.createTimer = createTimer;
+exports.removeTimer = removeTimer;
+exports.sleep = sleep;
+exports.setSystem = setSystem;
+exports.clearSystem = clearSystem;
+exports.refreshSystemPosition = refreshSystemPosition;
 const clickgo = __importStar(require("../clickgo"));
 const core = __importStar(require("./core"));
 const dom = __importStar(require("./dom"));
@@ -48,11 +70,9 @@ let focusId = null;
 function setFocus(id) {
     focusId = id !== null && id !== void 0 ? id : null;
 }
-exports.setFocus = setFocus;
 function getFocus() {
     return focusId;
 }
-exports.getFocus = getFocus;
 const localeData = {
     'en': {
         'loading': 'Loading...',
@@ -159,7 +179,6 @@ function onFrame(fun, opt = {}) {
     task.timers['1x' + ft.toString()] = formId !== null && formId !== void 0 ? formId : 0;
     return ft;
 }
-exports.onFrame = onFrame;
 function offFrame(ft, opt = {}) {
     const taskId = opt.taskId;
     if (!taskId) {
@@ -176,7 +195,6 @@ function offFrame(ft, opt = {}) {
     delete exports.list[taskId].timers['1x' + ft.toString()];
     delete frameMaps[ft];
 }
-exports.offFrame = offFrame;
 function get(tid) {
     if (exports.list[tid] === undefined) {
         return null;
@@ -191,14 +209,12 @@ function get(tid) {
         'current': exports.list[tid].current
     };
 }
-exports.get = get;
 function getPermissions(tid) {
     if (exports.list[tid] === undefined) {
         return [];
     }
     return tool.clone(exports.list[tid].runtime.permissions);
 }
-exports.getPermissions = getPermissions;
 function getList() {
     const rtn = {};
     for (const tid in exports.list) {
@@ -215,7 +231,6 @@ function getList() {
     }
     return rtn;
 }
-exports.getList = getList;
 function run(url_1) {
     return __awaiter(this, arguments, void 0, function* (url, opt = {}, ntid) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
@@ -533,6 +548,9 @@ function run(url_1) {
                 },
                 bindDown: function (oe, opt) {
                     dom.bindDown(oe, opt);
+                },
+                bindScale: function (oe, handler) {
+                    dom.bindScale(oe, handler);
                 },
                 bindGesture: function (oe, before, handler) {
                     dom.bindGesture(oe, before, handler);
@@ -1243,7 +1261,6 @@ function run(url_1) {
         return taskId;
     });
 }
-exports.run = run;
 const locale = {
     'sc': {
         'unknown': '未知权限',
@@ -1460,7 +1477,6 @@ function checkPermission(vals_1) {
         return rtn;
     });
 }
-exports.checkPermission = checkPermission;
 function end(taskId) {
     var _a;
     if (typeof taskId === 'string') {
@@ -1527,7 +1543,6 @@ function end(taskId) {
     clearSystem(taskId);
     return true;
 }
-exports.end = end;
 function loadLocaleData(lang, data, pre = '', taskId) {
     if (!taskId) {
         return;
@@ -1545,7 +1560,6 @@ function loadLocaleData(lang, data, pre = '', taskId) {
         }
     }
 }
-exports.loadLocaleData = loadLocaleData;
 function loadLocale(lang, path, taskId) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!taskId) {
@@ -1571,7 +1585,6 @@ function loadLocale(lang, path, taskId) {
         }
     });
 }
-exports.loadLocale = loadLocale;
 function clearLocale(taskId) {
     if (!taskId) {
         return;
@@ -1582,12 +1595,10 @@ function clearLocale(taskId) {
     }
     task.locale.data = {};
 }
-exports.clearLocale = clearLocale;
 function setLocale(lang, path, taskId) {
     clearLocale(taskId);
     return loadLocale(lang, path, taskId);
 }
-exports.setLocale = setLocale;
 function setLocaleLang(lang, taskId) {
     if (!taskId) {
         return;
@@ -1598,7 +1609,6 @@ function setLocaleLang(lang, taskId) {
     }
     task.locale.lang = lang;
 }
-exports.setLocaleLang = setLocaleLang;
 function clearLocaleLang(taskId) {
     if (!taskId) {
         return;
@@ -1609,7 +1619,6 @@ function clearLocaleLang(taskId) {
     }
     task.locale.lang = '';
 }
-exports.clearLocaleLang = clearLocaleLang;
 function createTimer(fun, delay, opt = {}) {
     var _a;
     const taskId = opt.taskId;
@@ -1667,7 +1676,6 @@ function createTimer(fun, delay, opt = {}) {
     task.timers[timer] = formId !== null && formId !== void 0 ? formId : 0;
     return timer;
 }
-exports.createTimer = createTimer;
 function removeTimer(timer, taskId) {
     if (!taskId) {
         return;
@@ -1682,14 +1690,12 @@ function removeTimer(timer, taskId) {
     clearTimeout(timer);
     delete exports.list[taskId].timers[timer];
 }
-exports.removeTimer = removeTimer;
 function sleep(fun, delay, taskId) {
     return createTimer(fun, delay, {
         'taskId': taskId,
         'count': 1
     });
 }
-exports.sleep = sleep;
 exports.systemTaskInfo = clickgo.vue.reactive({
     'taskId': 0,
     'formId': 0,
@@ -1765,7 +1771,6 @@ function setSystem(formId, taskId) {
     refreshSystemPosition();
     return true;
 }
-exports.setSystem = setSystem;
 function clearSystem(taskId) {
     if (!taskId) {
         return false;
@@ -1796,7 +1801,6 @@ function clearSystem(taskId) {
     }
     return true;
 }
-exports.clearSystem = clearSystem;
 function refreshSystemPosition() {
     if (exports.systemTaskInfo.taskId > 0) {
         const form = exports.list[exports.systemTaskInfo.taskId].forms[exports.systemTaskInfo.formId];
@@ -1848,4 +1852,3 @@ function refreshSystemPosition() {
         core.trigger('screenResize');
     }
 }
-exports.refreshSystemPosition = refreshSystemPosition;

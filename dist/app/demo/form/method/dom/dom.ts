@@ -206,6 +206,21 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
+    public scaleX = 0;
+
+    public scaleY = 0;
+
+    public scaleS = 1;
+
+    public bindScaleDown(e: MouseEvent | TouchEvent): void {
+        clickgo.dom.bindScale(e, (e, scale, cpos) => {
+            e.preventDefault();
+            this.scaleX += cpos.x;
+            this.scaleY += cpos.y;
+            this.scaleS *= scale;
+        });
+    }
+
     public async fullscreen(): Promise<void> {
         await clickgo.dom.fullscreen();
     }

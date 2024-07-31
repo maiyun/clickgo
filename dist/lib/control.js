@@ -32,7 +32,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildComponents = exports.init = exports.read = exports.AbstractControl = void 0;
+exports.AbstractControl = void 0;
+exports.read = read;
+exports.init = init;
+exports.buildComponents = buildComponents;
 const core = __importStar(require("./core"));
 const zip = __importStar(require("./zip"));
 const tool = __importStar(require("./tool"));
@@ -325,7 +328,6 @@ function read(blob) {
         return controlPkg;
     });
 }
-exports.read = read;
 function init(taskId, invoke, cache) {
     return __awaiter(this, void 0, void 0, function* () {
         const t = task.list[taskId];
@@ -494,7 +496,6 @@ function init(taskId, invoke, cache) {
         return 1;
     });
 }
-exports.init = init;
 function buildComponents(taskId, formId, path) {
     const t = task.list[taskId];
     if (!t) {
@@ -593,4 +594,3 @@ function buildComponents(taskId, formId, path) {
     }
     return components;
 }
-exports.buildComponents = buildComponents;

@@ -1065,7 +1065,88 @@ function bindDown(oe, opt) {
     }
     (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
 }
-function bindScale(oe) {
+function bindScale(oe, handler) {
+    var _a, _b, _c, _d;
+    const el = oe.currentTarget;
+    if (!el) {
+        return;
+    }
+    if (oe instanceof TouchEvent) {
+        if (oe.type === 'touchend') {
+            if (oe.touches.length) {
+                return;
+            }
+            el.removeAttribute('data-cg-scale');
+            return;
+        }
+        const ex = [oe.touches[0].clientX, (_b = (_a = oe.touches[1]) === null || _a === void 0 ? void 0 : _a.clientX) !== null && _b !== void 0 ? _b : -1000];
+        const ey = [oe.touches[0].clientY, (_d = (_c = oe.touches[1]) === null || _c === void 0 ? void 0 : _c.clientY) !== null && _d !== void 0 ? _d : -1000];
+        let ndis = 0;
+        const epos = {
+            'x': ex[0],
+            'y': ey[0]
+        };
+        if (ex[1] !== -1000) {
+            const nx = ex[0] - ex[1];
+            const ny = ey[0] - ey[1];
+            ndis = Math.hypot(nx, ny);
+            const cnx = (ex[0] + ex[1]) / 2;
+            const cny = (ey[0] + ey[1]) / 2;
+            epos['x'] = cnx;
+            epos['y'] = cny;
+        }
+        if (el.dataset.cgScale === undefined) {
+            el.dataset.cgScale = JSON.stringify({
+                'dis': ndis,
+                'x': ex,
+                'y': ey,
+                'pos': epos
+            });
+            return;
+        }
+        const d = JSON.parse(el.dataset.cgScale);
+        let notchange = false;
+        if (ex[1] !== -1000) {
+            if (d.x[1] === -1000) {
+                notchange = true;
+            }
+        }
+        else {
+            if (d.x[1] !== -1000) {
+                notchange = true;
+            }
+        }
+        const scale = ndis > 0 && d.dis > 0 ? ndis / d.dis : 1;
+        handler(oe, scale, {
+            'x': notchange ? 0 : epos['x'] - d.pos['x'],
+            'y': notchange ? 0 : epos['y'] - d.pos['y']
+        });
+        el.dataset.cgScale = JSON.stringify({
+            'dis': ndis,
+            'x': ex,
+            'y': ey,
+            'pos': epos
+        });
+        return;
+    }
+    if (oe instanceof WheelEvent) {
+        if (!oe.deltaY) {
+            return;
+        }
+        handler(oe, oe.deltaY * (oe.deltaY > 0 ? 0.012 : 0.008), {
+            'x': 0,
+            'y': 0
+        });
+        return;
+    }
+    bindMove(oe, {
+        'move': (e, opt) => {
+            handler(oe, 1, {
+                'x': opt.ox,
+                'y': opt.oy
+            });
+        }
+    });
 }
 const gestureWheel = {
     'last': 0,

@@ -51,6 +51,9 @@ class default_1 extends clickgo.form.AbstractForm {
         this.watchPositionText = false;
         this.getWatchInfoDisabled = false;
         this.getWatchInfoText = '{}';
+        this.scaleX = 0;
+        this.scaleY = 0;
+        this.scaleS = 1;
     }
     get isMove() {
         return clickgo.dom.is.move;
@@ -211,6 +214,14 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.dom.bindDblClick(e, () => {
             this.moveWidth = this.moveWidth === 25 ? 50 : 25;
             this.moveHeight = this.moveHeight === 25 ? 50 : 25;
+        });
+    }
+    bindScaleDown(e) {
+        clickgo.dom.bindScale(e, (e, scale, cpos) => {
+            e.preventDefault();
+            this.scaleX += cpos.x;
+            this.scaleY += cpos.y;
+            this.scaleS *= scale;
         });
     }
     fullscreen() {

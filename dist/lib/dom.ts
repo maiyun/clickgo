@@ -1397,8 +1397,109 @@ export function bindDown<T extends MouseEvent | TouchEvent>(oe: T, opt: types.IB
     opt.down?.(oe);
 }
 
-export function bindScale(oe: MouseEvent | TouchEvent | WheelEvent): void {
-    
+/**
+ * --- 绑定缩放，要绑定到 mousedown、touchstart、touchmove、touchend、wheel 上 ---
+ * @param oe 触发的时间
+ * @param handler 回调函数
+ */
+export function bindScale(oe: MouseEvent | TouchEvent | WheelEvent, handler: (e: MouseEvent | TouchEvent | WheelEvent, scale: number, cpos: { 'x': number; 'y': number; }) => void | Promise<void>): void {
+    const el = oe.currentTarget as HTMLElement;
+    if (!el) {
+        return;
+    }
+    if (oe instanceof TouchEvent) {
+        // --- 指头 ---
+        if (oe.type === 'touchend') {
+            if (oe.touches.length) {
+                return;
+            }
+            el.removeAttribute('data-cg-scale');
+            return;
+        }
+        /** --- 本次 x 坐标点 --- */
+        const ex = [oe.touches[0].clientX, oe.touches[1]?.clientX ?? -1000];
+        /** --- 本次 y 坐标点 --- */
+        const ey = [oe.touches[0].clientY, oe.touches[1]?.clientY ?? -1000];
+        /** --- 当前两指间的距离 --- */
+        let ndis = 0;
+        /** --- 当前中心点 --- */
+        const epos = {
+            'x': ex[0],
+            'y': ey[0]
+        };
+        if (ex[1] !== -1000) {
+            // --- 计算两指间距离 ---
+            const nx = ex[0] - ex[1];
+            const ny = ey[0] - ey[1];
+            ndis = Math.hypot(nx, ny);
+            // --- 计算中心点 ---
+            const cnx = (ex[0] + ex[1]) / 2;
+            const cny = (ey[0] + ey[1]) / 2;
+            epos['x'] = cnx;
+            epos['y'] = cny;
+        }
+        if (el.dataset.cgScale === undefined) {
+            // --- 首次 ---
+            el.dataset.cgScale = JSON.stringify({
+                /** --- 上次两指间距离 --- */
+                'dis': ndis,
+                /** --- 上次 x 坐标点 --- */
+                'x': ex,
+                /** --- 上次 y 坐标点 --- */
+                'y': ey,
+                /** --- 上次的中心点 --- */
+                'pos': epos
+            });
+            return;
+        }
+        const d = JSON.parse(el.dataset.cgScale);
+        // --- 看看是否计算偏移 ---
+        let notchange = false;
+        if (ex[1] !== -1000) {
+            if (d.x[1] === -1000) {
+                notchange = true;
+            }
+        }
+        else {
+            if (d.x[1] !== -1000) {
+                notchange = true;
+            }
+        }
+        // --- 计算缩放偏移 ---
+        const scale = ndis > 0 && d.dis > 0 ? ndis / d.dis : 1;
+        handler(oe, scale, {
+            'x': notchange ? 0 : epos['x'] - d.pos['x'],
+            'y': notchange ? 0 : epos['y'] - d.pos['y']
+        }) as any;
+        // --- 覆盖 ---
+        el.dataset.cgScale = JSON.stringify({
+            'dis': ndis,
+            'x': ex,
+            'y': ey,
+            'pos': epos
+        });
+        return;
+    }
+    if (oe instanceof WheelEvent) {
+        // --- 滚轮 ---
+        if (!oe.deltaY) {
+            return;
+        }
+        handler(oe, oe.deltaY * (oe.deltaY > 0 ? 0.012 : 0.008), {
+            'x': 0,
+            'y': 0
+        }) as any;
+        return;
+    }
+    // --- 纯鼠标拖动 ---
+    bindMove(oe, {
+        'move': (e, opt) => {
+            handler(oe, 1, {
+                'x': opt.ox,
+                'y': opt.oy
+            }) as any;
+        }
+    });
 }
 
 /** --- 绑定拖拉响应操作的 wheel 数据对象 --- */

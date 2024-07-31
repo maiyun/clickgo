@@ -2,11 +2,11 @@
     .list {
         display: flex; justify-content: center;
         > :not(.tag-cg-select) {
-            border: solid .5px var(--g-border-color); background: var(--g-background); line-height: 1; position: relative; outline: none; display: flex; justify-content: center; align-items: center; border-radius: var(--g-radius); transition: var(--g-transition); box-shadow: var(--g-shadow); width: 29px; height: 29px;
+            --boxsize:calc(var(--g-padding) * 2 + var(--g-size)); border: solid .5px var(--g-border-color); background: var(--g-background); line-height: 1; position: relative; outline: none; display: flex; justify-content: center; align-items: center; border-radius: var(--g-radius); transition: var(--g-transition); box-shadow: var(--g-shadow); width: var(--boxsize); height: var(--boxsize);
             &::after {
                 content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); display: none; z-index: 1; border: dotted .5px var(--g-border-color); border-radius: var(--g-radius);
             }
-    
+
             &:focus {
                 border-color: var(--g-border-color-focus); background: var(--g-background-focus); color: var(--g-color-focus); fill: var(--g-color-focus); stroke: var(--g-color-focus); box-shadow: var(--g-outline-shadow);
                 &::after {
