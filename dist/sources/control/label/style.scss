@@ -1,11 +1,23 @@
 .wrap {
-    display: inline-block;
+    display: inline-block; transition: var(--g-transition);
 
+    // --- mode ---
     &.tip {
         color: var(--g-color-disabled);
     }
     &.mtip {
         color: var(--g-color-disabled); margin-top: var(--g-padding);
+    }
+    &.important {
+        color: var(--danger); background: var(--danger-bg);
+    }
+    &.click {
+        &:hover {
+            color: var(--info-hover);
+        }
+        &:active {
+            color: var(--info-active);
+        }
     }
 
     // --- size ---
