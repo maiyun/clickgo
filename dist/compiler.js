@@ -83,7 +83,7 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (['alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'grid', 'grid-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'label', 'layout', 'hske', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty'].includes(item.name)) {
+            if (['alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'grid', 'grid-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty'].includes(item.name)) {
                 continue;
             }
             if (item.name.startsWith('.')) {
@@ -111,6 +111,7 @@ function run() {
                 yield addFile(zipo, base + 'vflow', 'vflow');
                 yield addFile(zipo, base + 'video', 'video');
                 yield addFile(zipo, base + 'img', 'img');
+                yield addFile(zipo, base + 'imgviewer', 'imgviewer');
                 yield addFile(zipo, base + 'label', 'label');
                 yield addFile(zipo, base + 'layout', 'layout');
                 yield addFile(zipo, base + 'hske', 'hske');

@@ -11,14 +11,14 @@ export default class extends clickgo.control.AbstractControl {
         'alignH': string | undefined;
         'alignV': string | undefined;
     } = {
-        'src': '',
-        'mode': 'default',
+            'src': '',
+            'mode': 'default',
 
-        'direction': 'h',
-        'gutter': '',
-        'alignH': undefined,
-        'alignV': undefined
-    };
+            'direction': 'h',
+            'gutter': '',
+            'alignH': undefined,
+            'alignV': undefined
+        };
 
     public imgData = '';
 

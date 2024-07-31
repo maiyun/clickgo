@@ -1,0 +1,5 @@
+<div class="wrap" @touchstart="scale" @touchmove="scale" @touchend="scale" @wheel="scale" @mousedown="scale">
+    <div class="content" :style="{'left': -((10000 - width) / 2) + 'px', 'top': -((10000 - height) / 2) + 'px'}">
+        <img ref="img" :src="imgData" @load="load" @dragstart="$event.preventDefault()" :style="{'transform': 'translate3d(' + scaleX + 'px, ' + scaleY + 'px, 0) scale(' + scaleS + ')'}">
+    </div>
+</div>

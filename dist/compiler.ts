@@ -62,7 +62,7 @@ async function run(): Promise<void> {
         'withFileTypes': true
     });
     for (const item of list) {
-        if (['alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'grid', 'grid-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'label', 'layout', 'hske', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty'].includes(item.name)) {
+        if (['alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'grid', 'grid-cell', 'check', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty'].includes(item.name)) {
             continue;
         }
         if (item.name.startsWith('.')) {
@@ -92,6 +92,7 @@ async function run(): Promise<void> {
             await addFile(zipo, base + 'vflow', 'vflow');
             await addFile(zipo, base + 'video', 'video');
             await addFile(zipo, base + 'img', 'img');
+            await addFile(zipo, base + 'imgviewer', 'imgviewer');
             await addFile(zipo, base + 'label', 'label');
             await addFile(zipo, base + 'layout', 'layout');
             await addFile(zipo, base + 'hske', 'hske');

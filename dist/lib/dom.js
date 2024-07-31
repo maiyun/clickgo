@@ -1133,7 +1133,7 @@ function bindScale(oe, handler) {
         if (!oe.deltaY) {
             return;
         }
-        handler(oe, oe.deltaY * (oe.deltaY > 0 ? 0.012 : 0.008), {
+        handler(oe, oe.deltaY * (oe.deltaY > 0 ? 0.012 : -0.008), {
             'x': 0,
             'y': 0
         });

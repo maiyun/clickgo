@@ -1,0 +1,9 @@
+<form title="Imgviewer" width="600" height="450" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <imgviewer v-model="value" :src="src" style="flex: 1;"></imgviewer>
+        <layout gutter="10">
+            <button style="flex: 1;" @click="value = 0">Value 0</button>
+            <button style="flex: 1;" @click="value = 1">Value 1</button>
+        </layout>
+    </layout>
+</form>

@@ -78,6 +78,7 @@ const table_1 = __importDefault(require("./control/table/table"));
 const text_1 = __importDefault(require("./control/text/text"));
 const vflow_1 = __importDefault(require("./control/vflow/vflow"));
 const video_1 = __importDefault(require("./control/video/video"));
+const imgviewer_1 = __importDefault(require("./control/imgviewer/imgviewer"));
 const step_1 = __importDefault(require("./control/step/step"));
 const xterm_1 = __importDefault(require("./control/xterm/xterm"));
 const echarts_1 = __importDefault(require("./control/echarts/echarts"));
@@ -199,6 +200,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cvflow': {
                     frm = yield clickgo.form.create(vflow_1.default);
+                    break;
+                }
+                case 'cimgviewer': {
+                    frm = yield clickgo.form.create(imgviewer_1.default);
                     break;
                 }
                 case 'cvideo': {
