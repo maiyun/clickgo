@@ -1,0 +1,36 @@
+<form width="550" height="500" title="Circle" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <label>Default:</label>
+        <layout gutter="10">
+            <circle />
+            <circle type="primary" />
+            <circle type="info" />
+            <circle type="warning" />
+            <circle type="danger" />
+            <circle type="cg" />
+        </layout>
+        <label>Plain:</label>
+        <layout gutter="10">
+            <circle plain />
+            <circle type="primary" plain />
+            <circle type="info" />
+            <circle type="warning" plain />
+            <circle type="danger" plain />
+            <circle type="cg" plain />
+        </layout>
+        <label>Size:</label>
+        <layout gutter="10" align-v="center">
+            <circle type="primary" size="xl" />
+            <circle type="primary" size="l" />
+            <circle type="primary" size="m" />
+            <circle type="primary" size="s" />
+        </layout>
+        <label>Slot:</label>
+        <layout gutter="10" align-v="center">
+            <circle type="cg" size="xl">1</circle>
+            <circle type="cg" plain size="xl">2</circle>
+            <circle size="xl">3</circle>
+            <circle size="xl" plain>4</circle>
+        </layout>
+    </layout>
+</form>

@@ -204,6 +204,12 @@ export default class extends clickgo.form.AbstractForm {
                 });
                 break;
             }
+            case 'ccircle': {
+                frm = await clickgo.form.create('control/circle/circle', undefined, {
+                    'path': this.filename
+                });
+                break;
+            }
             case 'clink': {
                 frm = await clickgo.form.create(clinkFrm);
                 break;

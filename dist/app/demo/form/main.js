@@ -236,6 +236,12 @@ class default_1 extends clickgo.form.AbstractForm {
                     });
                     break;
                 }
+                case 'ccircle': {
+                    frm = yield clickgo.form.create('control/circle/circle', undefined, {
+                        'path': this.filename
+                    });
+                    break;
+                }
                 case 'clink': {
                     frm = yield clickgo.form.create(link_1.default);
                     break;

@@ -43,6 +43,7 @@
         "/form/control/button/button.xml",
         "/form/control/check/check.js",
         "/form/control/check/check.xml",
+        "/form/control/circle/circle.xml",
         "/form/control/date/date.js",
         "/form/control/date/date.xml",
         "/form/control/datepanel/datepanel.js",

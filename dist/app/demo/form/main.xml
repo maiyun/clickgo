@@ -30,6 +30,7 @@
                 <layout gutter="10">
                     <button @click="openForm('clink')">Link</button>
                     <button @click="openForm('cloading')">Loading</button>
+                    <button @click="openForm('ccircle')">Circle</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cdialog')">Dialog</button>
