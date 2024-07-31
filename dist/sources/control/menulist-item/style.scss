@@ -1,5 +1,5 @@
 .wrap {
-    border-radius: var(--g-radius); transition: var(--g-transition); display: flex;
+    border-radius: var(--g-radius); transition: var(--g-transition); display: flex; align-items: center;
     &:not([data-cg-disabled]) {
         &:hover {
             background: var(--face-hover);
