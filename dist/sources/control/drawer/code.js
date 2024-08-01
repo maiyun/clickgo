@@ -28,6 +28,7 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
+            'changed': null,
             'update:modelValue': null
         };
         this.props = {
@@ -49,6 +50,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     closeClick() {
         this.emit('update:modelValue', false);
+        this.emit('changed');
     }
     click(e) {
         if (e.target !== this.element) {
@@ -58,6 +60,7 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.emit('update:modelValue', false);
+        this.emit('changed');
     }
 }
 exports.default = default_1;

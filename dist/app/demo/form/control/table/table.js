@@ -51,7 +51,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.scroll = 'auto';
         this.sort = undefined;
         this.index = false;
-        this.split = true;
+        this.split = false;
         this.virtual = false;
         this.slot = false;
         this.fixed = ['undefined'];

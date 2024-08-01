@@ -3,6 +3,7 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
+        'changed': null,
         'update:modelValue': null
     };
 
@@ -39,6 +40,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 关闭按钮 --- */
     public closeClick(): void {
         this.emit('update:modelValue', false);
+        this.emit('changed');
     }
 
     /** --- wrap 点击事件 --- */
@@ -50,6 +52,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.emit('update:modelValue', false);
+        this.emit('changed');
     }
 
 }

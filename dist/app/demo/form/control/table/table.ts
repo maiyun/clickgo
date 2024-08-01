@@ -35,7 +35,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public index: boolean = false;
 
-    public split: boolean = true;
+    public split: boolean = false;
 
     public virtual: boolean = false;
 
