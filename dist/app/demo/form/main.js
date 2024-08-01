@@ -51,6 +51,7 @@ const form_1 = __importDefault(require("./control/form/form"));
 const group_1 = __importDefault(require("./control/group/group"));
 const html_1 = __importDefault(require("./control/html/html"));
 const progress_1 = __importDefault(require("./control/progress/progress"));
+const alert_1 = __importDefault(require("./control/alert/alert"));
 const iconview_1 = __importDefault(require("./control/iconview/iconview"));
 const link_1 = __importDefault(require("./control/link/link"));
 const label_1 = __importDefault(require("./control/label/label"));
@@ -246,6 +247,10 @@ class default_1 extends clickgo.form.AbstractForm {
                     frm = yield clickgo.form.create('control/content/content', undefined, {
                         'path': this.filename
                     });
+                    break;
+                }
+                case 'calert': {
+                    frm = yield clickgo.form.create(alert_1.default);
                     break;
                 }
                 case 'clink': {

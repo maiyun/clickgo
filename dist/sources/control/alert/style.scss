@@ -1,0 +1,92 @@
+.wrap {
+    border-color: var(--g-plain-border-color); background: var(--g-plain-background); padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-plain-border-color); display: flex; align-items: center;
+
+    .content {
+        flex: 1; display: flex; flex-direction: column; gap: var(--g-padding);
+
+        .title {
+            font-size: var(--g-size-m);
+        }
+
+        cg-layout {
+            line-height: var(--g-lineheight);
+        }
+    }
+
+    svg {
+        &:hover, &:active {
+            fill: #FFF; stroke: #FFF;
+        }
+    }
+    
+    &:not(.cg) {
+        // --- default ---
+        color: var(--g-plain-border-color); fill: var(--g-plain-border-color); stroke: var(--g-plain-border-color);
+        svg {
+            &:hover {
+                background: var(--g-plain-border-color);
+            }
+            &:active {
+                background: var(--g-border-color);
+            }
+        }
+    }
+    &.primary {
+        border-color: var(--success); color: var(--success); fill: var(--success); stroke: var(--success); background: var(--success-bg);
+        svg {
+            &:hover {
+                background: var(--success);
+            }
+            &:active {
+                background: var(--success-active);
+            }
+        }
+    }
+    &.info {
+        border-color: var(--info); color: var(--info); fill: var(--info); stroke: var(--info); background: var(--info-bg);
+        svg {
+            &:hover {
+                background: var(--info);
+            }
+            &:active {
+                background: var(--info-active);
+            }
+        }
+    }
+    &.warning {
+        border-color: var(--warning); color: var(--warning); fill: var(--warning); stroke: var(--warning); background: var(--warning-bg);
+        svg {
+            &:hover {
+                background: var(--warning);
+            }
+            &:active {
+                background: var(--warning-active);
+            }
+        }
+    }
+    &.danger {
+        border-color: var(--danger); color: var(--danger); fill: var(--danger); stroke: var(--danger); background: var(--danger-bg);
+        svg {
+            &:hover {
+                background: var(--danger);
+            }
+            &:active {
+                background: var(--danger-active);
+            }
+        }
+    }
+    &.cg {
+        svg {
+            &:hover {
+                background: var(--cg);
+            }
+            &:active {
+                background: var(--g-color);
+            }
+        }
+    }
+
+    svg {
+        margin-left: var(--g-padding); transition: var(--g-transition); border-radius: var(--g-radius);
+    }
+}

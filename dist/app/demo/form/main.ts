@@ -16,6 +16,7 @@ import cformFrm from './control/form/form';
 import cgroupFrm from './control/group/group';
 import chtmlFrm from './control/html/html';
 import cprogressFrm from './control/progress/progress';
+import calertFrm from './control/alert/alert';
 import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
 import clabelFrm from './control/label/label';
@@ -214,6 +215,10 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create('control/content/content', undefined, {
                     'path': this.filename
                 });
+                break;
+            }
+            case 'calert': {
+                frm = await clickgo.form.create(calertFrm);
                 break;
             }
             case 'clink': {

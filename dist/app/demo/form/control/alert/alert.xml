@@ -1,0 +1,32 @@
+<form width="650" height="500" title="Alert" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <label>Default:</label>
+        <layout gutter="10">
+            <alert :close="vclose">Default</alert>
+            <alert :close="vclose" type="primary">Primary</alert>
+            <alert :close="vclose" type="info">Info</alert>
+            <alert :close="vclose" type="warning">Warning</alert>
+            <alert :close="vclose" type="danger">Danger</alert>
+            <alert :close="vclose" type="cg">Cg</alert>
+        </layout>
+        <label>Gutter:</label>
+        <alert :close="vclose" gutter="10" type="info">
+            <label>1</label>
+            <label>2</label>
+            <label>3</label>
+        </alert>
+        <label>Direction:</label>
+        <alert :close="vclose" direction="v" type="info">
+            <label>1</label>
+            <label>2</label>
+            <label>3</label>
+        </alert>
+        <label>Title:</label>
+        <alert :close="vclose" title="Hello world" type="info">
+            Message
+        </alert>
+        <layout gutter="10">
+            <button @click="vclose = !vclose" style="flex: 1;">{{vclose ? '' : '!'}}close</button>
+        </layout>
+    </layout>
+</form>

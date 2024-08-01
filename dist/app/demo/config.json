@@ -30,6 +30,8 @@
     "files": [
         "/form/control/alayout2/alayout2.js",
         "/form/control/alayout2/alayout2.xml",
+        "/form/control/alert/alert.js",
+        "/form/control/alert/alert.xml",
         "/form/control/arteditor/arteditor.js",
         "/form/control/arteditor/arteditor.xml",
         "/form/control/arteditor/img.js",

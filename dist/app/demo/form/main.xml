@@ -55,6 +55,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cscroll')">Scroll</button>
                     <button @click="openForm('cmenu')">Menu</button>
+                    <button @click="openForm('calert')">Alert</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('clist')">List</button>
