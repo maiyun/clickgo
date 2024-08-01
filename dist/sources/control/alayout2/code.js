@@ -27,6 +27,9 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'direction': null
+        };
         this.props = {
             'gutter': 0,
         };
@@ -45,6 +48,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.direction = 'v';
                 }
             }
+            this.emit('direction', this.direction);
         }, true);
     }
 }

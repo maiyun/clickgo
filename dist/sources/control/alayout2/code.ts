@@ -2,6 +2,10 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'direction': null
+    };
+
     public props: {
         'gutter': number | string;
     } = {
@@ -25,6 +29,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.direction = 'v';
                 }
             }
+            this.emit('direction', this.direction);
         }, true);
     }
 
