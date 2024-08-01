@@ -298,7 +298,7 @@ export abstract class AbstractControl {
     /**
      * --- 获取上层控件 ---
      */
-    public get parent(): AbstractControl & form.AbstractForm {
+    public get parent(): AbstractControl & form.AbstractForm & Record<string, any> {
         return (this as any).$parent;
     }
 

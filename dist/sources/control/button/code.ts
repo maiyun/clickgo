@@ -22,6 +22,50 @@ export default class extends clickgo.control.AbstractControl {
             'size': 'm'
         };
 
+    /** --- 是否禁用状态 --- */
+    public get isDisabled(): boolean {
+        if (!this.inBgroup) {
+            return this.propBoolean('disabled');
+        }
+        if (this.parent.disabled === undefined) {
+            return this.propBoolean('disabled');
+        }
+        return (this.parent as any).propBoolean('disabled');
+    }
+
+    /** --- 是否朴素模式 --- */
+    public get isPlain(): boolean {
+        if (!this.inBgroup) {
+            return this.propBoolean('plain');
+        }
+        if (this.parent.plain === undefined) {
+            return this.propBoolean('plain');
+        }
+        return (this.parent as any).propBoolean('plain');
+    }
+
+    /** --- type --- */
+    public get typeComp(): 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger' {
+        if (!this.inBgroup) {
+            return this.props.type;
+        }
+        if (this.parent.type === undefined) {
+            return this.props.type;
+        }
+        return (this.parent as any).props.type;
+    }
+
+    /** --- size --- */
+    public get sizeComp(): 'm' | 'l' | 'xl' {
+        if (!this.inBgroup) {
+            return this.props.size;
+        }
+        if (this.parent.size === undefined) {
+            return this.props.size;
+        }
+        return (this.parent as any).props.size;
+    }
+
     /** --- 当前是否有键盘空格正在按下中 --- */
     public isSpaceDown = false;
 
@@ -181,6 +225,52 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 // clickgo.form.hidePop(this.refs.arrow);
             }
+        }
+    }
+
+    /** --- 当前是第几列，从 0 开始 --- */
+    public index: number = 0;
+
+    /** --- 是否在按钮贴贴内部 --- */
+    public inBgroup = false;
+
+    /** --- 当前按钮在贴贴的位置 --- */
+    public get bgroupPos(): 'first' | 'center' | 'end' | '' {
+        if (!this.inBgroup) {
+            return '';
+        }
+        if (this.index === 0) {
+            // --- 第一个 ---
+            if (this.parent.itemsLength === 1) {
+                // --- 只有一个 ---
+                return '';
+            }
+            return 'first';
+        }
+        if (this.parent.itemsLength === this.index + 1) {
+            // --- 最后一个 ---
+            return 'end';
+        }
+        // --- 中间 ---
+        return 'center';
+    }
+
+    public onMounted(): void {
+        if (this.parent.controlName === 'bgroup') {
+            this.inBgroup = true;
+            this.index = clickgo.dom.index(this.element);
+            ++this.parent.itemsLength;
+            this.watch(() => {
+                return this.parent.itemsLength;
+            }, () => {
+                this.index = clickgo.dom.index(this.element);
+            });
+        }
+    }
+
+    public onUnmounted(): void | Promise<void> {
+        if (this.parent.controlName === 'bgroup') {
+            --this.parent.itemsLength;
         }
     }
 

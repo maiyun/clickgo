@@ -40,6 +40,26 @@
         }
     }
 
+    // --- pos ---
+    &.first {
+        margin-right: -.5px; border-radius: var(--g-radius) 0 0 var(--g-radius);
+        &::before {
+            border-radius: var(--g-radius) 0 0 var(--g-radius);
+        }
+    }
+    &.center {
+        margin-right: -.5px; border-radius: 0;
+        &::before {
+            border-radius: 0;
+        }
+    }
+    &.end {
+        border-radius: 0 var(--g-radius) var(--g-radius) 0;
+        &::before {
+            border-radius: 0 var(--g-radius) var(--g-radius) 0;
+        }
+    }
+
     &.default {
         &:not(.plain) {
             --color-hover:var(--g-color-hover);
@@ -305,6 +325,7 @@
     }
     &:not([data-cg-disabled]) {
         &:focus, &.childfocus {                 // --- 焦点状态 ---
+            z-index: 1;
             box-shadow: var(--g-outline-shadow);
             &::before {                         // --- 外边框 ---
                 border: var(--border-focus);
@@ -339,6 +360,7 @@
             }
         }
         &:active, &.active, &[data-cg-pop-open] {     // --- 鼠标按下 ---
+            z-index: 1;
             box-shadow: var(--g-outline-shadow);
             &::before {
                 border: var(--border-active);
@@ -356,6 +378,7 @@
             }
         }
         &.checked {
+            z-index: 1;
             &::before {
                 border: solid .5px var(--g-border-color-active);
             }

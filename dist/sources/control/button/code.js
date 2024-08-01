@@ -38,6 +38,44 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isSpaceDown = false;
         this.innerFocus = false;
         this.arrowFocus = false;
+        this.index = 0;
+        this.inBgroup = false;
+    }
+    get isDisabled() {
+        if (!this.inBgroup) {
+            return this.propBoolean('disabled');
+        }
+        if (this.parent.disabled === undefined) {
+            return this.propBoolean('disabled');
+        }
+        return this.parent.propBoolean('disabled');
+    }
+    get isPlain() {
+        if (!this.inBgroup) {
+            return this.propBoolean('plain');
+        }
+        if (this.parent.plain === undefined) {
+            return this.propBoolean('plain');
+        }
+        return this.parent.propBoolean('plain');
+    }
+    get typeComp() {
+        if (!this.inBgroup) {
+            return this.props.type;
+        }
+        if (this.parent.type === undefined) {
+            return this.props.type;
+        }
+        return this.parent.props.type;
+    }
+    get sizeComp() {
+        if (!this.inBgroup) {
+            return this.props.size;
+        }
+        if (this.parent.size === undefined) {
+            return this.props.size;
+        }
+        return this.parent.props.size;
     }
     get canDoMain() {
         return (this.props.area === 'all' || this.props.area === 'mark') ? true : false;
@@ -160,6 +198,38 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             else {
             }
+        }
+    }
+    get bgroupPos() {
+        if (!this.inBgroup) {
+            return '';
+        }
+        if (this.index === 0) {
+            if (this.parent.itemsLength === 1) {
+                return '';
+            }
+            return 'first';
+        }
+        if (this.parent.itemsLength === this.index + 1) {
+            return 'end';
+        }
+        return 'center';
+    }
+    onMounted() {
+        if (this.parent.controlName === 'bgroup') {
+            this.inBgroup = true;
+            this.index = clickgo.dom.index(this.element);
+            ++this.parent.itemsLength;
+            this.watch(() => {
+                return this.parent.itemsLength;
+            }, () => {
+                this.index = clickgo.dom.index(this.element);
+            });
+        }
+    }
+    onUnmounted() {
+        if (this.parent.controlName === 'bgroup') {
+            --this.parent.itemsLength;
         }
     }
 }

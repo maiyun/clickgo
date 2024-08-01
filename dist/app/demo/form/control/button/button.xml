@@ -121,6 +121,12 @@
                     </template>
                 </button>
             </layout>
+            <label>Bgroup:</label>
+            <bgroup plain>
+                <button>Btn1</button>
+                <button>Btn2</button>
+                <button>Btn3</button>
+            </bgroup>
         </layout>
     </flow>
 </form>
