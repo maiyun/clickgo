@@ -148,7 +148,7 @@ export default class extends clickgo.control.AbstractControl {
                 'sort': slot.props.sort !== undefined ? clickgo.tool.getBoolean(slot.props.sort) : slot.props.sort
             });
             // --- 再根据 split 状态确定是否设置为默认 width  ---
-            this.widthMap.push(this.propBoolean('split') ? (width ? width : 150) : width);
+            this.widthMap.push(this.propBoolean('split') ? (width ? width : 0) : width);
         }
         this.checkNowSort();
     }

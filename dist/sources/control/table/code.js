@@ -111,7 +111,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'width': width,
                 'sort': slot.props.sort !== undefined ? clickgo.tool.getBoolean(slot.props.sort) : slot.props.sort
             });
-            this.widthMap.push(this.propBoolean('split') ? (width ? width : 150) : width);
+            this.widthMap.push(this.propBoolean('split') ? (width ? width : 0) : width);
         }
         this.checkNowSort();
     }
