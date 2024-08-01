@@ -19,4 +19,16 @@ export default class extends clickgo.control.AbstractControl {
         this.element.click();
     }
 
+    public down(e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (this.element.dataset.cgPopOpen !== undefined) {
+            return;
+        }
+        clickgo.form.showPop(this.element, this.refs.pop, 'v', {
+            'autoScroll': true,
+        });
+    }
+
 }

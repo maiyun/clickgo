@@ -242,6 +242,12 @@ class default_1 extends clickgo.form.AbstractForm {
                     });
                     break;
                 }
+                case 'ccontent': {
+                    frm = yield clickgo.form.create('control/content/content', undefined, {
+                        'path': this.filename
+                    });
+                    break;
+                }
                 case 'clink': {
                     frm = yield clickgo.form.create(link_1.default);
                     break;

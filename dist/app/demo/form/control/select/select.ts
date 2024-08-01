@@ -81,7 +81,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public asyncModel = ['1'];
 
-    public asyncData: any[] = [];
+    public asyncData: Record<string, any> = {};
 
     public select3 = '';
 
@@ -270,8 +270,8 @@ export default class extends clickgo.form.AbstractForm {
             'label': 'ok',
             'value': '1'
         }, '2', '3'];
-        for (const item of list) {
-            this.asyncData.push(item);
+        for (let i = 0; i < list.length; ++i) {
+            this.asyncData[i.toString()] = list[i];
         }
     }
 

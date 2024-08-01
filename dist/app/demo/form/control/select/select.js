@@ -103,7 +103,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.aemodel = [];
         this.label2 = [];
         this.asyncModel = ['1'];
-        this.asyncData = [];
+        this.asyncData = {};
         this.select3 = '';
         this.label3 = '';
         this.level3 = [];
@@ -253,8 +253,8 @@ class default_1 extends clickgo.form.AbstractForm {
                 'label': 'ok',
                 'value': '1'
             }, '2', '3'];
-        for (const item of list) {
-            this.asyncData.push(item);
+        for (let i = 0; i < list.length; ++i) {
+            this.asyncData[i.toString()] = list[i];
         }
     }
     onMounted() {

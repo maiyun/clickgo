@@ -551,7 +551,9 @@ class default_1 extends clickgo.control.AbstractControl {
             if (n === o) {
                 return;
             }
-            this.dataFormat = this.props.data.length ? this.formatData(this.props.data, this.dataFormat) : [];
+            this.dataFormat =
+                (Array.isArray(this.props.data) ? this.props.data.length : Object.keys(this.props.data).length) ?
+                    this.formatData(this.props.data, this.dataFormat) : [];
             if (this.propBoolean('check')) {
                 this.refreshCheckValues();
             }

@@ -210,6 +210,12 @@ export default class extends clickgo.form.AbstractForm {
                 });
                 break;
             }
+            case 'ccontent': {
+                frm = await clickgo.form.create('control/content/content', undefined, {
+                    'path': this.filename
+                });
+                break;
+            }
             case 'clink': {
                 frm = await clickgo.form.create(clinkFrm);
                 break;

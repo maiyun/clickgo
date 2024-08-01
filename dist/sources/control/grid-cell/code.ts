@@ -8,7 +8,9 @@ export default class extends clickgo.control.AbstractControl {
         'alignH': string | undefined;
         'alignV': string | undefined;
 
+        /** --- 默认跨行，不用写 1，s 时强制所有 span 为 1 --- */
         'span': number | string;
+        /** --- size m 时跨的列数 --- */
         'sizeM': number | string;
         'sizeL': number | string;
     } = {

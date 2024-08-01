@@ -599,7 +599,7 @@ export interface IFormDialogOptions {
     /** --- 传值，需要用 data.x 读取 --- */
     'data'?: Record<string, any>;
     /** --- 传值，需要用 methods.x 读取 --- */
-    'methods'?: Record<string, () => any>;
+    'methods'?: Record<string, (...param: any) => any>;
     /** --- 样式表 --- */
     'style'?: string;
     /** --- 路径基，以 / 结束或文件路径则以文件的基路径为准，可留空 --- */
