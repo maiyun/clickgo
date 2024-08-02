@@ -81,7 +81,7 @@
                 <label>fixed</label>
                 <select v-model="fixed" :data="['undefined', 'left', 'right', 'both']" style="flex: 1;"></select>
                 <label>mode</label>
-                <select v-model="mode" :data="['default','view']"></select>
+                <select v-model="mode" :data="['default','view']" style="flex: 1;"></select>
             </layout>
         </template>
         <button v-else @click="load">Load</button>
