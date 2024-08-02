@@ -1,4 +1,5 @@
-<div class="wrap" :class="[mode, 'size-' + size]">
+<div class="wrap" :class="[mode, propBoolean('copy') && 'copy', 'size-' + size]" @click="click">
     <template v-if="content">{{contentComp}}</template>
     <slot v-else></slot>
+    <div class="copied" :class="[copied&&'show']">{{l('copied')}}</div>
 </div>

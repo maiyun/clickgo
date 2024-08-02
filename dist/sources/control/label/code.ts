@@ -7,6 +7,7 @@ export default class extends clickgo.control.AbstractControl {
         'content': string;
         'size': 's' | 'm' | 'l' | 'xl';
 
+        'copy': boolean | string;
         'time': boolean | string;
         'date': boolean | string;
         'zone': boolean | string;
@@ -17,11 +18,55 @@ export default class extends clickgo.control.AbstractControl {
             'content': '',
             'size': 's',
 
+            'copy': false,
             'time': true,
             'date': true,
             'zone': false,
             'tz': undefined
         };
+
+    /** --- 语言包 --- */
+    public localeData = {
+        'en': {
+            'copied': 'Copied'
+        },
+        'sc': {
+            'copied': '已复制'
+        },
+        'tc': {
+            'copied': '已複製'
+        },
+        'ja': {
+            'copied': 'コピーしました'
+        },
+        'ko': {
+            'copied': '복사됨'
+        },
+        'th': {
+            'copied': 'คัดลอกแล้ว'
+        },
+        'es': {
+            'copied': 'Copiado'
+        },
+        'de': {
+            'copied': 'Kopiert'
+        },
+        'fr': {
+            'copied': 'Copié'
+        },
+        'pt': {
+            'copied': 'Copiado'
+        },
+        'ru': {
+            'copied': 'Скопировано'
+        },
+        'vi': {
+            'copied': 'Đã sao chép'
+        }
+    };
+
+    /** --- 是否刚复制完 --- */
+    public copied = false;
 
     /** --- 替换 slot 数据 --- */
     public get contentComp(): string {
@@ -43,6 +88,20 @@ export default class extends clickgo.control.AbstractControl {
             rtn.push(res.zone);
         }
         return rtn.join(' ');
+    }
+
+    /** --- label 点击 --- */
+    public async click(): Promise<void> {
+        if (!this.propBoolean('copy')) {
+            return;
+        }
+        if (this.copied) {
+            return;
+        }
+        await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
+        this.copied = true;
+        await clickgo.tool.sleep(500);
+        this.copied = false;
     }
 
 }

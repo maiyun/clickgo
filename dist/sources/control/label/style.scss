@@ -1,5 +1,5 @@
 .wrap {
-    display: inline-block; transition: var(--g-transition);
+    display: inline-block; transition: var(--g-transition); position: relative;
 
     // --- mode ---
     &.tip {
@@ -29,5 +29,19 @@
     }
     &.size-xl {
         font-size: var(--g-size-xl);
+    }
+
+    // --- copy ---
+    &.copy {
+        &:hover {
+            text-decoration: underline; text-decoration-style: dashed;
+        }
+    }
+
+    .copied {
+        position: absolute; left: -2px; top: -2px; width: calc(100% + 4px); height: calc(100% + 4px); background: rgba(255, 255, 255, .7); display: flex; align-items: center; justify-content: center; font-size: var(--g-size); color: var(--g-color); font-weight: normal; opacity: 0; pointer-events: none; transition: var(--g-transition);
+        &.show {
+            opacity: 1;
+        }
     }
 }

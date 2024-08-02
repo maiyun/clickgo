@@ -32,6 +32,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.time = true;
         this.zone = true;
         this.tz = ['08'];
+        this.copy = false;
     }
     addDate() {
         this.daten += clickgo.tool.rand(0, 3600);

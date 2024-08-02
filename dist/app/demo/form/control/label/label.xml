@@ -1,28 +1,31 @@
-<form width="390" height="550" title="Label">
+<form width="390" height="580" title="Label">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>You can use CSS to customize the label:</label>
-        <label>Normal</label>
-        <label style="text-align: center;">Center</label>
-        <label style="color: red;">Color</label>
-        <label style="background: rgba(0, 0, 0, .1);">Background</label>
-        <label style="background: rgba(0, 0, 0, .1); padding: 10px;">Padding</label>
-        <label style="font-size: 36px;">Font size</label>
-        <label mode="tip">mode: tip</label>
-        <label mode="mtip">mode: mtip</label>
-        <label mode="important">mode: important</label>
-        <label mode="click">mode: click</label>
-        <label size="m">size m</label>
-        <label size="l">size l</label>
-        <label size="xl">size xl</label>
+        <label :copy="copy">Normal</label>
+        <label :copy="copy" style="text-align: center;">Center</label>
+        <label :copy="copy" style="color: red;">Color</label>
+        <label :copy="copy" style="background: rgba(0, 0, 0, .1);">Background</label>
+        <label :copy="copy" style="background: rgba(0, 0, 0, .1); padding: 10px;">Padding</label>
+        <label :copy="copy" style="font-size: 36px;">Font size</label>
+        <label :copy="copy" mode="tip">mode: tip</label>
+        <label :copy="copy" mode="mtip">mode: mtip</label>
+        <label :copy="copy" mode="important">mode: important</label>
+        <label :copy="copy" mode="click">mode: click</label>
+        <label :copy="copy" size="m">size m</label>
+        <label :copy="copy" size="l">size l</label>
+        <label :copy="copy" size="xl">size xl</label>
         <layout gutter="10" align-v="center">
             <label>mode: date</label>
-            <label mode="date" :date="date" :time="time" :zone="zone" :tz="tz[0]" :content="daten" style="flex: 1;"></label>
+            <label :copy="copy" mode="date" :date="date" :time="time" :zone="zone" :tz="tz[0]" :content="daten" style="flex: 1;"></label>
             <button @click="daten = 0">Set 0</button>
             <button @click="addDate">Add</button>
         </layout>
         <layout gutter="10">
             <button @click="date = !date" style="flex: 1;">{{date ? '' : '!'}}date</button>
             <button @click="time = !time" style="flex: 1;">{{time ? '' : '!'}}time</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="copy = !copy" style="flex: 1;">{{copy ? '' : '!'}}copy</button>
             <button @click="zone = !zone" style="flex: 1;">{{zone ? '' : '!'}}zone</button>
             <select :data="['01', '02', '08', '09']" v-model="tz"></select>
         </layout>

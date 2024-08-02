@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -31,11 +40,51 @@ class default_1 extends clickgo.control.AbstractControl {
             'mode': 'default',
             'content': '',
             'size': 's',
+            'copy': false,
             'time': true,
             'date': true,
             'zone': false,
             'tz': undefined
         };
+        this.localeData = {
+            'en': {
+                'copied': 'Copied'
+            },
+            'sc': {
+                'copied': '已复制'
+            },
+            'tc': {
+                'copied': '已複製'
+            },
+            'ja': {
+                'copied': 'コピーしました'
+            },
+            'ko': {
+                'copied': '복사됨'
+            },
+            'th': {
+                'copied': 'คัดลอกแล้ว'
+            },
+            'es': {
+                'copied': 'Copiado'
+            },
+            'de': {
+                'copied': 'Kopiert'
+            },
+            'fr': {
+                'copied': 'Copié'
+            },
+            'pt': {
+                'copied': 'Copiado'
+            },
+            'ru': {
+                'copied': 'Скопировано'
+            },
+            'vi': {
+                'copied': 'Đã sao chép'
+            }
+        };
+        this.copied = false;
     }
     get contentComp() {
         if (this.props.mode !== 'date') {
@@ -56,6 +105,20 @@ class default_1 extends clickgo.control.AbstractControl {
             rtn.push(res.zone);
         }
         return rtn.join(' ');
+    }
+    click() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.propBoolean('copy')) {
+                return;
+            }
+            if (this.copied) {
+                return;
+            }
+            yield navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
+            this.copied = true;
+            yield clickgo.tool.sleep(500);
+            this.copied = false;
+        });
     }
 }
 exports.default = default_1;
