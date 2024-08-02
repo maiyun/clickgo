@@ -93,7 +93,7 @@
                         &.selected {
                             background: transparent;
                             [data-cg-base] {
-                                background: transparent
+                                background: var(--g-plain-background);
                             }
                             &:hover {
                                 background: var(--g-plain-background-hover);
