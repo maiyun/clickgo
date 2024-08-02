@@ -1,5 +1,5 @@
 .wrap {
-    display: inline-block; transition: var(--g-transition); position: relative;
+    display: inline-block; transition: var(--g-transition); position: relative; overflow: hidden; text-overflow: ellipsis;
 
     // --- mode ---
     &.tip {
