@@ -31,6 +31,8 @@ export default class extends clickgo.control.AbstractControl {
         'data': any[];
         'sizes': Record<string, number | undefined>;
         'modelValue': Array<string | number>;
+        /** --- 展现样式 --- */
+        'mode': 'default' | 'view';
     } = {
             'disabled': false,
             'must': true,
@@ -46,7 +48,8 @@ export default class extends clickgo.control.AbstractControl {
 
             'data': [],
             'sizes': {},
-            'modelValue': []
+            'modelValue': [],
+            'mode': 'default'
         };
 
     /** --- 列头信息 --- */

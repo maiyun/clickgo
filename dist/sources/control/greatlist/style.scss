@@ -3,7 +3,7 @@
     &:not(.plain) {
         border: solid .5px var(--g-plain-border-color); background: var(--g-plain-background);
         &.mode-view {
-            border: none; border-top: solid .5px var(--g-plain-border-color-plain);
+            border: none;
         }
     }
     &[data-cg-disabled] {

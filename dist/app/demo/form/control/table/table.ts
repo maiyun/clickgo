@@ -43,6 +43,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public fixed: string[] = ['undefined'];
 
+    public mode: string[] = ['default'];
+
     /** --- 已选中的个数 --- */
     public checkinfo = {
         'total': 0,

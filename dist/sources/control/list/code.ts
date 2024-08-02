@@ -734,7 +734,6 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.values = clickgo.tool.clone(this.propArray('modelValue'));
-            console.log('x', this.values);
             if (this.propBoolean('check')) {
                 this.refreshCheckValues();
             }

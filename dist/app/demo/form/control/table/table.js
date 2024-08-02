@@ -55,6 +55,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.virtual = false;
         this.slot = false;
         this.fixed = ['undefined'];
+        this.mode = ['default'];
         this.checkinfo = {
             'total': 0,
             'selected': 0

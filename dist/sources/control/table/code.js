@@ -47,7 +47,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'fixed': undefined,
             'data': [],
             'sizes': {},
-            'modelValue': []
+            'modelValue': [],
+            'mode': 'default'
         };
         this.items = [];
         this.widthMap = [];

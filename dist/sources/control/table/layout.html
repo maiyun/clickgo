@@ -1,4 +1,4 @@
-<div class="wrap" :class="[propBoolean('split') && 'split']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined">
+<div class="wrap" :class="[propBoolean('split') && 'split','mode-'+mode]" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined">
     <div class="header" ref="header" v-if="itemsLength">
         <div v-for="item, i of items" class="item" :class="[(i === nowSort.index) && nowSort.sort, (i === 0) && isFixed.left && 'fixed-left', (i === itemsLength - 1) && isFixed.right && 'fixed-right', (i === 0) && (isFixed.left === 'left') && (scrollLeft > 0) && 'base-left', (i === itemsLength - 1) && (isFixed.right === 'right') && (scrollLeft < maxScrollLeft) && 'base-right']" :style="{'width': widthMap[i] ? widthMap[i] + 'px' : '0', 'flex': widthMap[i] ? undefined : '1', 'min-width': widthMap[i] ? undefined : '150px'}" @mousedown="headerClick($event, i)" @touchstart="headerClick($event, i)">
             <template v-if="slots['label'] && !item.label">
@@ -8,7 +8,7 @@
             <div v-if="propBoolean('split')" class="split" @mousedown="bindResize($event, i)" @touchstart="bindResize($event, i)"></div>
         </div>
     </div>
-    <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" :virtual="virtual" content-width="max" @update:scroll-left="updateScrollLeft" @scrollwidth="scrollWidth = $event" @clientwidth="clientWidth = $event">
+    <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" :virtual="virtual" :mode="mode" content-width="max" @update:scroll-left="updateScrollLeft" @scrollwidth="scrollWidth = $event" @clientwidth="clientWidth = $event">
         <template v-slot="data">
             <div class="gitem">
                 <div class="top">
