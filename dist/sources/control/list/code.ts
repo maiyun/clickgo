@@ -43,6 +43,8 @@ export default class extends clickgo.control.AbstractControl {
             'value'?: string;
             'children'?: string;
         };
+        /** --- 展现样式 --- */
+        'mode': 'default' | 'view';
 
         'data': any[] | Record<string, string>;
         'disabledList': string[] | string;
@@ -67,6 +69,7 @@ export default class extends clickgo.control.AbstractControl {
             'iconDefault': '',
             'check': false,
             'map': {},
+            'mode': 'default',
 
             'data': [],
             'disabledList': [],
@@ -731,6 +734,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.values = clickgo.tool.clone(this.propArray('modelValue'));
+            console.log('x', this.values);
             if (this.propBoolean('check')) {
                 this.refreshCheckValues();
             }

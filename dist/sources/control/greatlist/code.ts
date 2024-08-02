@@ -38,6 +38,8 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 是否开启虚拟 dom 模式，默认不开启，如果数据量超大的话才需要开启 --- */
         'virtual': boolean | string;
         'plain': boolean | string;
+        /** --- 展现样式 --- */
+        'mode': 'default' | 'view';
 
         /** --- 映射 disabled、control 的 key --- */
         'map': {
@@ -66,6 +68,7 @@ export default class extends clickgo.control.AbstractControl {
             'contentWidth': 'fill',
             'virtual': false,
             'plain': false,
+            'mode': 'default',
 
             'map': {},
             'data': [],

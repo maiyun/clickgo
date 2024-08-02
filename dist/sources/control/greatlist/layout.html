@@ -1,4 +1,4 @@
-<div class="wrap" :class="[propBoolean('plain')&&'plain']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @keydown="keydown">
+<div class="wrap" :class="[propBoolean('plain')&&'plain','mode-'+mode]" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @keydown="keydown">
     <div class="t">
         <!-- 虚拟 dom -->
         <cg-vflow v-if="propBoolean('virtual')" ref="flow" :selection="selection" :gesture="gesture" @gesture="emit('gesture', $event)" :data="data" v-slot="d" :sizes="sizes" direction="v" :scroll-left="sl" @update:scroll-left="sl=$event" :scroll-top="offset" @update:scroll-top="offset=$event" @beforeselect="onBeforeSelect" @select="onSelect($event)" @afterselect="onAfterSelect" @clientwidth="cw=$event;$emit('clientwidth',cw)" @clientheight="client=$event;$emit('client',client)" @scrollwidth="onScrollWidth" @scrollheight="onScrollHeight" @contextmenu="context" @touchstart="down" @mousedown="down">

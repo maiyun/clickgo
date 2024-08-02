@@ -123,6 +123,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public check = false;
 
+    public mode = ['default'];
+
     // --- size 高度 ---
     public get sizes(): any {
         const rtn: any = {};

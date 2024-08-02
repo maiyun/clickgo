@@ -66,6 +66,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'contentWidth': 'fill',
             'virtual': false,
             'plain': false,
+            'mode': 'default',
             'map': {},
             'data': [],
             'sizes': {},
