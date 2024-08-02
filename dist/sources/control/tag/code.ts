@@ -12,12 +12,14 @@ export default class extends clickgo.control.AbstractControl {
         'size': 's' | 'm' | 'mh' | 'l' | 'lh' | 'xl' | 'xlh';
         'rsize': 'm' | 'l' | 'xl';
         'close': boolean;
+        'inline': boolean | string;
     } = {
             'type': 'default',
             'plain': false,
             'size': 's',
             'rsize': 'l',
-            'close': false
+            'close': false,
+            'inline': false
         };
 
 }

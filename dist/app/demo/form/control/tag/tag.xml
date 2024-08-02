@@ -40,6 +40,11 @@
             <tag :close="vclose" v-for="item, index of list" type="cg" rsize="xl" size="lh" plain @close="list.splice(index, 1)">{{item}}</tag>
             <button v-if="list.length < 6" @click="list.push('tag' + list.length)">Add</button>
         </layout>
+        <label>Inline:</label>
+        <layout gutter="10" align-v="center">
+            <label>label</label>
+            <tag inline>abc</tag>
+        </layout>
         <layout gutter="10">
             <button @click="vclose = !vclose" style="flex: 1;">{{vclose ? '' : '!'}}close</button>
         </layout>

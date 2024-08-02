@@ -35,7 +35,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'plain': false,
             'size': 's',
             'rsize': 'l',
-            'close': false
+            'close': false,
+            'inline': false
         };
     }
 }
