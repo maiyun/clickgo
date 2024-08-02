@@ -1,11 +1,19 @@
 .wrap {
-    color: var(--info); fill: var(--info); stroke: var(--info); text-decoration: underline; position: relative; display: flex; cursor: pointer; outline: none; transition: var(--g-transition); align-items: center;
+    color: var(--info); fill: var(--info); stroke: var(--info); position: relative; display: flex; cursor: pointer; outline: none; transition: var(--g-transition); align-items: center; overflow: hidden; text-overflow: ellipsis;
 
     &.plain {
-        color: var(--g-color-disabled); text-decoration: none;
+        color: var(--g-color-disabled);
         &:hover {
             color: var(--g-color);
         }
+    }
+
+    // --- 加下划线 ---
+    &.line {
+        text-decoration: underline;
+    }
+    &:not(.line) {
+        text-decoration: none;
     }
 
     // --- 内有 menu ---

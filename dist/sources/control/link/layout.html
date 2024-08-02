@@ -1,7 +1,7 @@
-<a v-if="url" class="wrap" :class="[propBoolean('plain')&&'plain',slots['pop']&&'spop']" :href="url" target="_blank">
+<a v-if="url" class="wrap" :class="[propBoolean('plain')&&'plain',slots['pop']&&'spop',propBoolean('line')&&'line']" :href="url" target="_blank">
     <slot></slot>
 </a>
-<div v-else class="wrap" :class="[propBoolean('plain')&&'plain',slots['pop']&&'spop']" :tabindex="formFocus ? '0' : undefined" @keydown="keydown" @mousedown="down" @touchstart="down">
+<div v-else class="wrap" :class="[propBoolean('plain')&&'plain',slots['pop']&&'spop',propBoolean('line')&&'line']" :tabindex="formFocus ? '0' : undefined" @keydown="keydown" @mousedown="down" @touchstart="down">
     <teleport v-if="slots['pop']" to="system">
         <div ref="pop" class="pop">
             <slot name="pop"></slot>
