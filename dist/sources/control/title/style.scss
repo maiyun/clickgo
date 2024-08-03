@@ -1,10 +1,10 @@
 .wrap {
     display: flex; align-items: center;
     .left {
-        height: 12px; width: 4px; background: var(--g-plain-border-color);
+        height: var(--g-size); width: 4px; background: var(--g-plain-border-color);
     }
     .content {
-        font-size: 14px; margin-left: var(--g-padding);
+        font-size: var(--g-size-m); margin-left: var(--g-padding);
     }
     
     &.primary {

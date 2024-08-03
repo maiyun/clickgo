@@ -2,7 +2,7 @@
     display: flex; align-items: center; outline: none; transition: var(--g-transition);
 
     .check {
-        width: 14px; height: 14px; border-radius: var(--g-radius); border: solid .5px transparent; position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow); display: flex; justify-content: center; align-items: center;
+        width: var(--g-control); height: var(--g-control); border-radius: var(--g-radius); border: solid .5px transparent; position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow); display: flex; justify-content: center; align-items: center;
         &::after {
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; transition: var(--g-transition); background: transparent;
         }
@@ -22,7 +22,7 @@
     // --- 半选中模式 ---
     &.indeterminate {
         .check::after {
-            left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
+            left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border-radius: var(--g-radius);
         }
     }
 

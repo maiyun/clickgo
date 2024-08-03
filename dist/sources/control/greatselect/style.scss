@@ -9,7 +9,7 @@
     }
 
     .arrow {
-        position: relative; display: flex; justify-content: center; align-items: center; width: 20px; border: solid .5px transparent; transition: var(--g-transition);
+        position: relative; display: flex; justify-content: center; align-items: center; border: solid .5px transparent; transition: var(--g-transition); padding: 0 var(--g-padding);
         &::after {
             content: ''; border: solid 1px var(--g-color); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px;
         }

@@ -5,7 +5,7 @@
     }
 
     .radio {
-        width: 14px; height: 14px; border-radius: 50%; border: solid .5px transparent; position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow);
+        width: var(--g-control); height: var(--g-control); border-radius: 50%; border: solid .5px transparent; position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow);
         &::after {
             content: ''; pointer-events: none; position: absolute; left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border-radius: 50%; transition: var(--g-transition); background: transparent;
         }

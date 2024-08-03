@@ -14,10 +14,12 @@ global {
     --g-size:14px;
     --g-size-m:20px;
     --g-size-l:28px;
-    --g-size-xl: 38px;
+    --g-size-xl:38px;
+    --g-control:18px;   // --- 如 check、radio 等的宽度 ---
     --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei", "Roboto", Helvetica, Arial, "sans-serif";
     --g-transition:all .3s var(--g-cubic);
     --g-lineheight:1.5;
+    --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
 
@@ -85,40 +87,6 @@ global {
     }
 }
 
-// -- CONTROL -- check --
-
-.check_wrap {
-    .check_check {
-        width: 18px; height: 18px;
-    }
-
-    // --- 半选中模式 ---
-    &.check_indeterminate {
-        .check_check::after {
-            left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); border-radius: 3px;
-        }
-    }
-
-    &:not([data-cg-disabled]) {
-        &.check_checked, &:focus, &:hover, &:active, &.check_active {
-            &.check_indeterminate {
-                .check_check::after {
-                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
-                }
-            }
-        }
-    }
-    &[data-cg-disabled] {
-        &.check_checked {
-            &.check_indeterminate {
-                .check_check::after {
-                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
-                }
-            }
-        }
-    }
-}
-
 // -- CONTROL -- form --
 
 .form_wrap {
@@ -126,9 +94,6 @@ global {
     .form_inner {
         // --- 主体内容 ---
         .form_content {
-            .form_step {
-                min-width: 400px; border-radius: 30px; padding: 15px 35px;
-            }
             .form_loading {
                 background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
                 &:not(.form_show) {
@@ -139,21 +104,10 @@ global {
     }
 }
 
-// -- CONTROL -- greatselect --
-
-.greatselect_wrap {
-    .greatselect_arrow {
-        width: 25px;
-    }
-}
-
 // -- CONTROL -- group --
 
 .group_wrap {
-    border-radius: 15px; box-shadow: 0 12px 16px -4px rgba(0, 0, 0, .08), 0 4px 6px -2px rgba(16, 24, 40, .03);
-    .group_title {
-        font-size: 24px;
-    }
+    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px rgba(0, 0, 0, .08), 0 4px 6px -2px rgba(16, 24, 40, .03);
 }
 
 // --- CONTROL -- levelselect ---
@@ -168,25 +122,6 @@ global {
 .levelselect_pop {
     .levelselect_loading {
         background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
-    }
-}
-
-// -- CONTROL -- menulist-item --
-
-.menulist-item_wrap {
-    .menulist-item_check {
-        width: 32px; height: 32px; border-radius: 3px;
-    }
-    .menulist-item_radio {
-        width: 32px; height: 32px; border-radius: 3px;
-    }
-}
-
-// -- CONTROL -- menulist-split --
-
-.menulist-split_wrap {
-    .menulist-split_type {
-        width: 32px;
     }
 }
 
@@ -230,16 +165,6 @@ global {
     padding-left: 15px;
 }
 
-// --- CONTROL -- page ---
-
-.page_wrap {
-    .page_list {
-        > :not(.page_tag-cg-select) {
-            width: 35px; height: 35px;
-        }
-    }
-}
-
 // -- CONTROL -- property --
 
 .property_wrap {
@@ -252,11 +177,6 @@ global {
         }
     }
     .property_content {
-        .property_bigTitle {
-            .property_control {
-                width: 40px;
-            }
-        }
         .property_line {
             .property_value {
                 .property_tag-cg-check {
@@ -270,37 +190,6 @@ global {
             line-height: 1.5;
         }
     }
-}
-
-// -- CONTROL -- radio --
-
-.radio_wrap {
-    .radio_radio {
-        width: 18px; height: 18px;
-        &::after {
-            left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px);
-        }
-    }
-
-    &:not([data-cg-disabled]) {
-        &.radio_selected, &:focus, &:hover, &:active, &.radio_active {
-            .radio_radio {
-                &::after {
-                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
-                }
-            }
-        }
-    }
-    &[data-cg-disabled] {
-        &.radio_selected {
-            .radio_radio {
-                &::after {
-                    left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px);
-                }
-            }
-        }
-    }
-
 }
 
 // -- CONTROL -- scroll --
@@ -444,15 +333,4 @@ global {
 
 .task_wrap {
     background: var(--pop-background);
-}
-
-// -- CONTROL -- title --
-
-.title_wrap {
-    .title_left {
-        height: 14px;
-    }
-    .title_content {
-        font-size: 16px;
-    }
 }

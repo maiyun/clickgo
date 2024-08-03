@@ -19,10 +19,10 @@
     }
 
     .check {
-        background-color: var(--face-hover); width: 24px; height: 24px; visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color); stroke: var(--g-color); transition: var(--g-transition);
+        background-color: var(--face-hover); width: var(--g-boxsize); height: var(--g-boxsize); visibility: hidden; display: flex; justify-content: center; align-items: center; fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); transition: var(--g-transition);
     }
     .radio {
-        background-color: var(--face-hover); display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; visibility: hidden; transition: var(--g-transition);
+        background-color: var(--face-hover); display: flex; align-items: center; justify-content: center; width: var(--g-boxsize); height: var(--g-boxsize); visibility: hidden; border-radius: var(--g-radius); transition: var(--g-transition);
         &::before {
             content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: var(--g-color);
         }

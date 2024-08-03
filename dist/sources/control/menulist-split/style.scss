@@ -2,7 +2,7 @@
     margin: 3px 0; display: flex;
 
     .type {
-        width: 24px;
+        width: var(--g-boxsize);
     }
     
     .line {
