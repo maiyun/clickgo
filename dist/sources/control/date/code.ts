@@ -244,6 +244,12 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.form.hidePop();
     }
 
+    // --- 清除已选中的 ---
+    public clear(): void {
+        this.timestamp = undefined;
+        this.emit('update:modelValue', undefined);
+    }
+
     // --- date panel 的 changed ---
     public changed(): void {
         this.emit('update:modelValue', this.timestamp);

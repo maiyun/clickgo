@@ -1,12 +1,22 @@
 .wrap {
-    display: flex; outline: none; border-radius: var(--g-radius); border-style: solid; border-width: .5px; justify-content: center; transition: var(--g-transition);
-
-    > div {
-        padding: var(--g-padding); display: flex;
-    }
+    display: flex; outline: none; border-radius: var(--g-radius); border-style: solid; border-width: .5px; transition: var(--g-transition);
 
     .first {
-        gap: var(--g-padding)
+        display: flex; justify-content: center; flex: 1;
+
+        > div {
+            padding: var(--g-padding); gap: var(--g-padding); display: flex;
+        }
+    }
+
+    .clear {
+        display: flex; align-items: center; justify-content: center; opacity: .6; transition: var(--g-transition);
+        svg {
+            width: 24px; height: 24px;
+        }
+        &:hover {
+            opacity: 1;
+        }
     }
 
     &:not([data-cg-disabled]) {
@@ -20,7 +30,7 @@
             border-color: var(--g-plain-border-color-active);
         }
 
-        > div {
+        .first > div {
             transition: var(--g-transition);
             &:hover:not(:active):not([data-cg-pop-open]) {
                 background: var(--g-plain-background-hover);

@@ -10,7 +10,13 @@
     }
 
     .clear {
-        display: flex; align-items: center; justify-content: center;
+        display: flex; align-items: center; justify-content: center; opacity: .6; transition: var(--g-transition);
+        svg {
+            width: 24px; height: 24px;
+        }
+        &:hover {
+            opacity: 1;
+        }
     }
 
     &:not([data-cg-disabled]) {
@@ -24,7 +30,7 @@
             border-color: var(--g-plain-border-color-active);
         }
 
-        .first > div, .clear {
+        .first > div {
             transition: var(--g-transition);
             &:hover:not(:active):not([data-cg-pop-open]) {
                 background: var(--g-plain-background-hover);

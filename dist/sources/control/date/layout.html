@@ -1,17 +1,22 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
-    <div @click="click('first')" class="first" ref="first" v-if="propBoolean('date') || propBoolean('time')">
-        <template v-if="timestamp === undefined">
-            <div>{{l('please click select')}}</div>
-        </template>
-        <template v-else>
-            <div v-if="propBoolean('date')">{{dateStr}}</div>
-            <div v-if="propBoolean('time')">{{timeStr}}</div>
-        </template>
+    <div class="first">
+        <div @click="click('first')" ref="first" v-if="propBoolean('date') || propBoolean('time')">
+            <template v-if="timestamp === undefined">
+                <div>{{l('please click select')}}</div>
+            </template>
+            <template v-else>
+                <div v-if="propBoolean('date')">{{dateStr}}</div>
+                <div v-if="propBoolean('time')">{{timeStr}}</div>
+            </template>
+        </div>
+        <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
     </div>
-    <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
+    <div class="clear" @click="clear" v-if="timestamp !== undefined">
+        <svg viewBox="0 0 24 24" stroke="none"><path d="m7.53033 6.46967c-.29289-.29289-.76777-.29289-1.06066 0s-.29289.76777 0 1.06066l4.46963 4.46967-4.46963 4.4697c-.29289.2929-.29289.7677 0 1.0606s.76777.2929 1.06066 0l4.46967-4.4696 4.4697 4.4696c.2929.2929.7677.2929 1.0606 0s.2929-.7677 0-1.0606l-4.4696-4.4697 4.4696-4.46967c.2929-.29289.2929-.76777 0-1.06066s-.7677-.29289-1.0606 0l-4.4697 4.46963z" /></svg>
+    </div>
     <teleport v-if="propBoolean('date')" to="system">
         <div ref="firstpop" class="pop">
-            <cg-datepanel plain :tz="tzData" :yearmonth="yearmonth" :hourminute="hourminute" @update:yearmonth="emit('update:yearmonth')" :time="propBoolean('time')" v-model="timestamp" @changed="changed" @selected="selected">
+            <cg-datepanel plain :tz="tzData" :yearmonth="yearmonth" :hourminute="hourminute" @update:yearmonth="emit('update:yearmonth')" :clearbtn="false" :time="propBoolean('time')" v-model="timestamp" @changed="changed" @selected="selected">
                 <template v-if="slots['default']" v-slot="col">
                     <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
                 </template>

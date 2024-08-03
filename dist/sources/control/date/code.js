@@ -222,6 +222,10 @@ class default_1 extends clickgo.control.AbstractControl {
     cancel() {
         clickgo.form.hidePop();
     }
+    clear() {
+        this.timestamp = undefined;
+        this.emit('update:modelValue', undefined);
+    }
     changed() {
         this.emit('update:modelValue', this.timestamp);
         const event = {
