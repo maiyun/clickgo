@@ -32,7 +32,7 @@ export default class extends clickgo.control.AbstractControl {
         'minWidth': number | string;
         'minHeight': number | string;
 
-        'border': string;
+        'border': 'normal' | 'thin' | 'plain' | 'none';
         'background': string;
         'padding': string;
         'direction': 'h' | 'v';
@@ -386,12 +386,6 @@ export default class extends clickgo.control.AbstractControl {
         if (this.isInside) {
             return true;
         }
-        const event = {
-            'go': true,
-            preventDefault: function() {
-                this.go = false;
-            }
-        };
         // --- 如果当前是最大化状态，要先还原 ---
         // --- 不应该还原，直接最小化，然后点击后返回来还是最大化状态 ---
         /*
@@ -689,12 +683,12 @@ export default class extends clickgo.control.AbstractControl {
         }
         /** --- 拖动过程中贴入的边边 --- */
         let isBorder: types.TDomBorder = '';
-        let top = this.topData;
-        let left = this.leftData;
+        const top = this.topData;
+        const left = this.leftData;
         /** --- 真实窗体高度 --- */
-        let height = this.heightData || this.element.offsetHeight;
+        const height = this.heightData || this.element.offsetHeight;
         /** --- 真实窗体宽度 --- */
-        let width = this.widthData || this.element.offsetWidth;
+        const width = this.widthData || this.element.offsetWidth;
         /** --- 恢复吸附标记 --- */
         // let changeStateAbs = false;
         if (this.stateAbs) {

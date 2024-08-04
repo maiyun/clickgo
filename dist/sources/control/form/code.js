@@ -328,12 +328,6 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.isInside) {
             return true;
         }
-        const event = {
-            'go': true,
-            preventDefault: function () {
-                this.go = false;
-            }
-        };
         if (!this.stateMinData) {
             const event = {
                 'detail': {
@@ -571,10 +565,10 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         let isBorder = '';
-        let top = this.topData;
-        let left = this.leftData;
-        let height = this.heightData || this.element.offsetHeight;
-        let width = this.widthData || this.element.offsetWidth;
+        const top = this.topData;
+        const left = this.leftData;
+        const height = this.heightData || this.element.offsetHeight;
+        const width = this.widthData || this.element.offsetWidth;
         if (this.stateAbs) {
         }
         else {
