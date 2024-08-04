@@ -109,24 +109,14 @@
         }
         
         &.focus {
-            border-color: var(--g-plain-border-color-focus);
-            box-shadow: var(--g-outline-shadow);
-            &:not(.plain) {
-                background: var(--g-plain-background-focus);
-            }
+            border-color: var(--g-plain-border-color-focus); box-shadow: var(--g-outline-shadow);
         }
         &:hover:not(.focus) {
             border-color: var(--g-plain-border-color-hover);
-            &:not(.plain) {
-                background: var(--g-plain-background-hover);
-            }
         }
         &:active {
             border-color: var(--g-plain-border-color-active);
             box-shadow: var(--g-outline-shadow);
-            &:not(.plain) {
-                background: var(--g-plain-background-active);
-            }
         }
     }
 
