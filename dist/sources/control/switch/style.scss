@@ -1,14 +1,14 @@
 .wrap {
-    outline: none; width: 32px; height: 16px; border-radius: var(--g-radius); position: relative; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow) inset; border: solid .5px var(--g-plain-border-color);
+    outline: none; width: calc(var(--g-control) * 2); height: var(--g-control); border-radius: var(--g-radius); position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow) inset; border: solid 1px var(--g-plain-border-color);
     &::after {
-        content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; border: dotted .5px hsl(0, 0%, 100%)
+        content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; z-index: 1; border-radius: var(--g-radius); border: dotted 1px var(--g-plain-border-color); transition: var(--g-transition);
     }
     // --- 获取焦点时自动显示焦点框 ---
     &:focus::after {
         display: block;
     }
     .block {
-        left: 3px; top: 3px; width: 10px; height: calc(100% - 6px); background: var(--g-plain-background); position: absolute; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow); border: solid .5px var(--g-plain-border-color);
+        left: 3px; top: 3px; width: calc(var(--g-control) - 8px); height: calc(100% - 6px); background: var(--g-plain-background); position: absolute; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow); border: solid 1px var(--g-plain-border-color); border-radius: var(--g-radius);
         &:hover {
             background: var(--g-plain-background-hover);
         }
@@ -16,12 +16,15 @@
     // --- 选中模式 ---
     &.checked {
         .block {
-            left: 19px;
+            left: calc(var(--g-control) + 3px);
         }
     }
     &:not([data-cg-disabled]) {
         &.checked {
             background: var(--success);
+            &:focus::after {
+                border-color: #FFF;
+            }
         }
         &:not(.checked) {
             background: var(--g-plain-background);

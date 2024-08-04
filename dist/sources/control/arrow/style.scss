@@ -1,0 +1,24 @@
+.wrap {
+    outline: none; padding: var(--g-padding); position: relative;
+    &::after {
+        content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; border: dotted .5px hsl(0, 0%, 100%)
+    }
+    // --- 获取焦点时自动显示焦点框 ---
+    &:focus::after {
+        display: block;
+    }
+    .block {
+        border: solid 2px var(--g-color-disabled); border-width: 0 2px 2px 0; width: 6px; height: 6px; transform: rotate(-45deg); transition: var(--g-transition);
+    }
+    &:hover {
+        .block {
+            border-color: var(--g-color);
+        }
+    }
+    // --- 选中模式 ---
+    &.checked {
+        .block {
+            transform: rotate(45deg);
+        }
+    }
+}

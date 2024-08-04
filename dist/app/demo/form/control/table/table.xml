@@ -4,11 +4,12 @@
         <table :data="data" :style="{'flex': adaptation ? undefined : '1'}" v-model="val" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" :split="split" @gesture="onGesture" :scroll="scroll" :sizes="sizes" :sort="sort" :virtual="virtual" :mode="mode" :fixed="fixed[0]==='undefined'?undefined:fixed[0]" @select="onSelect" @sort="onSort">
             <template v-slot="d">
                 <table-item v-if="index" width="100" sort="false" align-h="center" align-v="center">
+                    <arrow v-if="bottom" v-model="d.row.bottom"></arrow>
                     <check v-model="d.row.check" @changed="refreshCheckinfo">{{d.index}}</check>
                 </table-item>
                 <table-item label="name">{{d.row.name ?? 'name'}}</table-item>
                 <table-item label="size" width="80" align-v="center" align-h="center">{{d.row.type ?? '0'}}</table-item>
-                <table-item label="col" width="120" direction="v" gutter="5" sort="false">
+                <table-item label="col" width="150" direction="v" gutter="5" sort="false">
                     <label>line1</label>
                     <layout gutter="5">
                         <button>line2</button>
