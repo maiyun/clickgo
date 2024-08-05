@@ -31,7 +31,22 @@ class default_1 extends clickgo.control.AbstractControl {
             'url': '',
             'plain': false,
             'line': false,
+            'align': 'left',
         };
+    }
+    get alignComp() {
+        switch (this.props.align) {
+            case 'center': {
+                return 'center';
+            }
+            case 'left':
+            case 'start': {
+                return 'flex-start';
+            }
+            default: {
+                return 'flex-end';
+            }
+        }
     }
     keydown(e) {
         if (e.key !== 'Enter') {
