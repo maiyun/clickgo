@@ -6,6 +6,7 @@ export default class extends clickgo.control.AbstractControl {
         'mode': 'default' | 'tip' | 'mtip' | 'date' | 'important' | 'click';
         'content': string;
         'size': 's' | 'm' | 'l' | 'xl';
+        'align': 'left' | 'start' | 'center' | 'right' | 'end';
 
         'copy': boolean | string;
         'time': boolean | string;
@@ -17,6 +18,7 @@ export default class extends clickgo.control.AbstractControl {
             'mode': 'default',
             'content': '',
             'size': 's',
+            'align': 'left',
 
             'copy': false,
             'time': true,
@@ -64,6 +66,22 @@ export default class extends clickgo.control.AbstractControl {
             'copied': 'Đã sao chép'
         }
     };
+
+    /** --- 获取 align 的 css 属性模式 --- */
+    public get alignComp(): string | undefined {
+        switch (this.props.align) {
+            case 'center': {
+                return 'center';
+            }
+            case 'left':
+            case 'start': {
+                return 'flex-start';
+            }
+            default: {
+                return 'flex-end';
+            }
+        }
+    }
 
     /** --- 替换 slot 数据 --- */
     public get contentComp(): string {

@@ -1,4 +1,4 @@
-<div class="wrap" :class="[mode, propBoolean('copy') && 'copy', 'size-' + size]" @click="click">
+<div class="wrap" :style="{'justify-content': alignComp}" :class="[mode, propBoolean('copy') && 'copy', 'size-' + size]" @click="click">
     <template v-if="content">{{contentComp}}</template>
     <slot v-else></slot>
 </div>

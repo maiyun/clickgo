@@ -40,6 +40,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'mode': 'default',
             'content': '',
             'size': 's',
+            'align': 'left',
             'copy': false,
             'time': true,
             'date': true,
@@ -84,6 +85,20 @@ class default_1 extends clickgo.control.AbstractControl {
                 'copied': 'Đã sao chép'
             }
         };
+    }
+    get alignComp() {
+        switch (this.props.align) {
+            case 'center': {
+                return 'center';
+            }
+            case 'left':
+            case 'start': {
+                return 'flex-start';
+            }
+            default: {
+                return 'flex-end';
+            }
+        }
     }
     get contentComp() {
         if (this.props.mode !== 'date') {
