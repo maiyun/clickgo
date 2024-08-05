@@ -33,7 +33,9 @@
         <!-- 自适应 -->
         <layout v-else-if="ntab === 'adaptation'" direction="v" style="flex: 1; width: 0; padding: 10px;">
             <greatlist :data="adData" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual" :mode="mode[0]">
-                <template v-slot="data">type: {{data.row.type}}, index: {{data.index}}. {{(data.index === 20) ? 'long test long test long test long test long test' : ''}}</template>
+                <template v-slot="data">
+                    <label style="white-space: nowrap;">type: {{data.row.type}}, index: {{data.index}}. {{(data.index === 20) ? 'long test long test long test long test long test' : ''}}</label>
+                </template>
                 <template v-slot:itempop>
                     <menulist>
                         <menulist-item alt="N">None</menulist-item>

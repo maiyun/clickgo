@@ -256,6 +256,7 @@ class default_1 extends clickgo.form.AbstractForm {
         for (let i = 0; i < list.length; ++i) {
             this.asyncData[i.toString()] = list[i];
         }
+        this.asyncModel[0] = '1';
     }
     onMounted() {
         this.watch(() => this.select.join(','), (n, o) => {

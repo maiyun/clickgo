@@ -273,6 +273,7 @@ export default class extends clickgo.form.AbstractForm {
         for (let i = 0; i < list.length; ++i) {
             this.asyncData[i.toString()] = list[i];
         }
+        this.asyncModel[0] = '1';
     }
 
     public onMounted(): void {

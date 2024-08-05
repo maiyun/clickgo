@@ -1,5 +1,5 @@
 .wrap {
-    outline: none; max-width: 100%; max-height: 100%; position: relative; min-width: 32px; min-height: 32px; display: flex; flex-direction: column; border-radius: var(--g-radius);
+    outline: none; max-width: 100%; max-height: 100%; position: relative; min-width: 32px; min-height:32px; display: flex; flex-direction: column; border-radius: var(--g-radius);
     &:not(.plain) {
         border: solid .5px var(--g-plain-border-color); background: var(--g-plain-background);
         &.mode-view {
@@ -12,9 +12,15 @@
             pointer-events: none;
         }
     }
+    &.empty {
+        min-height: 80px;
+    }
 
     .t {
-        display: flex; max-height: 100%; flex: 1; height: 0; position: relative;
+        display: flex; flex: 1; max-height: calc(100%); min-height: max-content; position: relative;
+        &.hasb {
+            max-height: calc(100% - var(--g-control-m));
+        }
 
         cg-vflow, cg-flow {
             flex: 1; padding: 1px;
@@ -81,7 +87,7 @@
             }
         }
         cg-scroll {
-            width: 16px;
+            width: var(--g-control-m);
         }
     }
     &.mode-view {
@@ -114,10 +120,10 @@
     .b {
         display: flex; position: sticky; bottom: 0; z-index: 1;
         cg-scroll {
-            height: 16px; flex: 1; width: 0;
+            height: var(--g-control-m); flex: 1; width: 0;
         }
         .rb {
-            width: 16px; background: var(--face);
+            width: var(--g-control-m); background: var(--face);
         }
     }
 

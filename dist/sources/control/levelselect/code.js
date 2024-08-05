@@ -152,12 +152,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return searchData;
     }
-    get isEmpty() {
-        if (Array.isArray(this.nowlistComp)) {
-            return this.nowlistComp.length ? false : true;
-        }
-        return Object.keys(this.nowlistComp).length ? false : true;
-    }
     updateValue() {
         const event = {
             'detail': {

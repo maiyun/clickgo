@@ -188,14 +188,6 @@ export default class extends clickgo.control.AbstractControl {
         return searchValue ? this.searchData : this.props.data;
     }
 
-    // --- 当前的 data 数据是否是空的 ---
-    public get isEmpty(): boolean {
-        if (Array.isArray(this.dataComp)) {
-            return this.dataComp.length ? false : true;
-        }
-        return Object.keys(this.dataComp).length ? false : true;
-    }
-
     /** --- 向上更新值 --- */
     public updateValue(opt: {
         'clearList'?: boolean;
