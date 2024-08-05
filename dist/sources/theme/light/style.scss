@@ -18,7 +18,7 @@ global {
     --g-control:18px;   // --- 如 check、radio 等的宽度 ---
     --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei", "Roboto", Helvetica, Arial, "sans-serif";
     --g-transition:all .3s var(--g-cubic);
-    --g-lineheight:1.5;
+    --g-line:1.5;
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---

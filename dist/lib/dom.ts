@@ -42,7 +42,7 @@ ${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0; positi
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size); line-height: var(--g-line); -webkit-font-smoothing: antialiased;}
+${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size); line-height: 1; -webkit-font-smoothing: antialiased;}
 </style>`);
 
 /**
