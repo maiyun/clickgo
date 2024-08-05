@@ -86,7 +86,7 @@ const clickgo = __importStar(require("../clickgo"));
 const form = __importStar(require("./form"));
 const core = __importStar(require("./core"));
 const tool = __importStar(require("./tool"));
-const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-simpletask', '#cg-launcher', '#cg-confirm'];
+const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-alert', '#cg-simpletask', '#cg-launcher', '#cg-confirm'];
 function classUnfold(after, out = []) {
     const arr = [];
     for (const name of topClass) {
@@ -103,7 +103,7 @@ document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
 ${classUnfold()} {-webkit-user-select: none; user-select: none; cursor: default; box-sizing: border-box;}
-${topClass.slice(0, 3).join(', ')} {left: 0; top: 0; width: 0; height: 0; position: absolute;}
+${topClass.slice(0, 4).join(', ')} {left: 0; top: 0; width: 0; height: 0; position: absolute;}
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}

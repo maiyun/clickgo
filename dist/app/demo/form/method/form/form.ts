@@ -8,6 +8,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public type = ['primary'];
 
+    public atype = ['default'];
+
     public progress = ['noraml'];
 
     public dr: string | number | boolean = '';
@@ -134,6 +136,11 @@ export default class extends clickgo.form.AbstractForm {
             await clickgo.tool.sleep(1000);
             clickgo.form.notifyProgress(nid, 100);
         }
+    }
+
+    public alert(): void {
+        const aid = clickgo.form.alert(this.atype[0], this.atype[0] as any);
+        console.log('aid', aid);
     }
 
     public showPop(e: MouseEvent): void {

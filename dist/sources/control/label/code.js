@@ -84,7 +84,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 'copied': 'Đã sao chép'
             }
         };
-        this.copied = false;
     }
     get contentComp() {
         if (this.props.mode !== 'date') {
@@ -112,13 +111,8 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!this.propBoolean('copy')) {
                 return;
             }
-            if (this.copied) {
-                return;
-            }
             yield navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
-            this.copied = true;
-            yield clickgo.tool.sleep(500);
-            this.copied = false;
+            clickgo.form.alert(this.l('copied'));
         });
     }
 }

@@ -889,6 +889,7 @@ export const elements: {
     'gesture': HTMLDivElement;
     'drag': HTMLDivElement;
     'notify': HTMLElement;
+    'alert': HTMLElement;
     'simpletask': HTMLDivElement;
     'launcher': HTMLDivElement;
     'confirm': HTMLDivElement;
@@ -902,6 +903,7 @@ export const elements: {
     'gesture': document.createElement('div'),
     'drag': document.createElement('div'),
     'notify': document.createElement('div'),
+    'alert': document.createElement('div'),
     'simpletask': document.createElement('div'),
     'launcher': document.createElement('div'),
     'confirm': document.createElement('div'),
@@ -972,6 +974,8 @@ export const elements: {
         // --- 添加 cg-system 的 dom ---
         this.notify.id = 'cg-notify';
         this.wrap.appendChild(this.notify);
+        this.alert.id = 'cg-alert';
+        this.wrap.appendChild(this.alert);
 
         // --- 添加 cg-simpletask 的 dom ---
         this.simpletask.id = 'cg-simpletask';
@@ -1961,7 +1965,71 @@ export function hideDrag(): void {
     }, 300);
 }
 
-let notifyTop: number = 10;
+// --- Alert ---
+
+let alertBottom: number = 0;
+let alertId: number = 0;
+
+/**
+ * --- 从下方弹出 alert ---
+ * @param content 内容
+ * @param type 样式，可留空
+ */
+export function alert(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'progress'): number {
+    // --- 申请 aid ---
+    const nid = ++alertId;
+    // --- 设置 timeout ---
+    const timeout = 3000;
+    // --- 创建 notify element ---
+    const el = document.createElement('div');
+    const y = alertBottom;
+    el.classList.add('cg-alert-wrap');
+    el.classList.add('cg-' + (type ?? 'default'));
+    el.setAttribute('data-alertid', nid.toString());
+    el.style.transform = `translateY(${y + 10}px)`;
+    el.style.opacity = '0';
+    el.innerHTML = `<div class="cg-alert-content">` +
+        `<div class="cg-alert-icon"></div>` +
+        `<div>${tool.escapeHTML(content)}</div>` +
+    '</div>';
+    elements.alert.appendChild(el);
+    alertBottom -= el.offsetHeight + 10;
+    requestAnimationFrame(function() {
+        el.style.transform = `translateY(${y}px)`;
+        el.style.opacity = '1';
+        const timer = window.setTimeout(function() {
+            // --- 隐藏 alert ---
+            clearTimeout(timer);
+            const alertHeight = el.offsetHeight;
+            el.style.opacity = '0';
+            setTimeout(function() {
+                alertBottom += alertHeight + 10;
+                const alertElementList = document.getElementsByClassName('cg-alert-wrap') as HTMLCollectionOf<HTMLDivElement>;
+                let needSub = false;
+                for (const alertElement of alertElementList) {
+                    if (alertElement === el) {
+                        // --- el 之后的 alert 都要往下移动 ---
+                        needSub = true;
+                        continue;
+                    }
+                    if (needSub) {
+                        alertElement.style.transform = alertElement.style.transform.replace(/translateY\(([-0-9]+)px\)/,
+                            function(t: string, t1: string): string {
+                                return `translateY(${parseInt(t1) + alertHeight + 10}px)`;
+                            }
+                        );
+                    }
+                }
+                el.remove();
+            }, 100);
+        }, timeout);
+    });
+    return nid;
+}
+
+// --- Notify ---
+
+let notifyBottom: number = -10;
 let notifyId: number = 0;
 /**
  * --- 弹出右上角信息框 ---
@@ -1986,11 +2054,20 @@ export function notify(opt: types.INotifyOptions): number {
     }
     // --- 创建 notify element ---
     const el = document.createElement('div');
-    const y = notifyTop;
+    let y = notifyBottom;
+    let x = -10;
+    if (task.systemTaskInfo.taskId > 0) {
+        if (core.config['task.position'] === 'bottom') {
+            y -= task.systemTaskInfo.length;
+        }
+        else if (core.config['task.position'] === 'right') {
+            x -= task.systemTaskInfo.length;
+        }
+    }
     el.classList.add('cg-notify-wrap');
     el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
-    el.style.opacity = '1';
+    el.style.opacity = '0';
     el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
     el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML(opt.type ?? 'primary')}"></div>` +
     '<div style="flex: 1;">' +
@@ -2000,12 +2077,13 @@ export function notify(opt: types.INotifyOptions): number {
     '</div>';
     if (opt.icon) {
         (el.childNodes.item(0) as HTMLElement).style.background = 'url(' + opt.icon + ')';
-        (el.childNodes.item(0) as HTMLElement).style.backgroundSize = '16px';
+        (el.childNodes.item(0) as HTMLElement).style.backgroundSize = '14px';
     }
     elements.notify.appendChild(el);
-    notifyTop += el.offsetHeight + 10;
+    notifyBottom -= el.offsetHeight + 10;
     requestAnimationFrame(function() {
-        el.style.transform = `translateY(${y}px) translateX(-10px)`;
+        el.style.transform = `translateY(${y}px) translateX(${x}px)`;
+        el.style.opacity = '1';
         const timer = window.setTimeout(function() {
             hideNotify(nid);
         }, timeout);
@@ -2056,19 +2134,19 @@ export function hideNotify(notifyId: number): void {
     const notifyHeight = el.offsetHeight;
     el.style.opacity = '0';
     setTimeout(function() {
-        notifyTop -= notifyHeight + 10;
+        notifyBottom += notifyHeight + 10;
         const notifyElementList = document.getElementsByClassName('cg-notify-wrap') as HTMLCollectionOf<HTMLDivElement>;
         let needSub = false;
         for (const notifyElement of notifyElementList) {
             if (notifyElement === el) {
-                // --- el 之后的 notify 都要往上移动 ---
+                // --- el 之后的 notify 都要往下移动 ---
                 needSub = true;
                 continue;
             }
             if (needSub) {
-                notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([0-9]+)px\)/,
+                notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([-0-9]+)px\)/,
                     function(t: string, t1: string): string {
-                        return `translateY(${parseInt(t1) - notifyHeight - 10}px)`;
+                        return `translateY(${parseInt(t1) + notifyHeight + 10}px)`;
                     }
                 );
             }

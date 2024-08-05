@@ -647,6 +647,11 @@ export interface IMoveDragOptions {
     'icon'?: boolean;
 }
 
+export interface IAlertOptions {
+    'content'?: string;
+    'type'?: 'primary' | 'info' | 'warning' | 'danger' | 'progress';
+}
+
 export interface INotifyOptions {
     'title'?: string;
     'content'?: string;

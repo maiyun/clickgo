@@ -65,9 +65,6 @@ export default class extends clickgo.control.AbstractControl {
         }
     };
 
-    /** --- 是否刚复制完 --- */
-    public copied = false;
-
     /** --- 替换 slot 数据 --- */
     public get contentComp(): string {
         if (this.props.mode !== 'date') {
@@ -96,13 +93,8 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.propBoolean('copy')) {
             return;
         }
-        if (this.copied) {
-            return;
-        }
         await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
-        this.copied = true;
-        await clickgo.tool.sleep(500);
-        this.copied = false;
+        clickgo.form.alert(this.l('copied'));
     }
 
 }

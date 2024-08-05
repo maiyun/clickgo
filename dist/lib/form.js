@@ -61,6 +61,7 @@ exports.hideRectangle = hideRectangle;
 exports.showDrag = showDrag;
 exports.moveDrag = moveDrag;
 exports.hideDrag = hideDrag;
+exports.alert = alert;
 exports.notify = notify;
 exports.notifyProgress = notifyProgress;
 exports.hideNotify = hideNotify;
@@ -640,6 +641,7 @@ exports.elements = {
     'gesture': document.createElement('div'),
     'drag': document.createElement('div'),
     'notify': document.createElement('div'),
+    'alert': document.createElement('div'),
     'simpletask': document.createElement('div'),
     'launcher': document.createElement('div'),
     'confirm': document.createElement('div'),
@@ -691,6 +693,8 @@ exports.elements = {
         this.wrap.appendChild(this.drag);
         this.notify.id = 'cg-notify';
         this.wrap.appendChild(this.notify);
+        this.alert.id = 'cg-alert';
+        this.wrap.appendChild(this.alert);
         this.simpletask.id = 'cg-simpletask';
         this.wrap.appendChild(this.simpletask);
         const simpletaskApp = clickgo.vue.createApp({
@@ -1495,7 +1499,53 @@ function hideDrag() {
         exports.elements.drag.style.opacity = '0';
     }, 300);
 }
-let notifyTop = 10;
+let alertBottom = 0;
+let alertId = 0;
+function alert(content, type) {
+    const nid = ++alertId;
+    const timeout = 3000;
+    const el = document.createElement('div');
+    const y = alertBottom;
+    el.classList.add('cg-alert-wrap');
+    el.classList.add('cg-' + (type !== null && type !== void 0 ? type : 'default'));
+    el.setAttribute('data-alertid', nid.toString());
+    el.style.transform = `translateY(${y + 10}px)`;
+    el.style.opacity = '0';
+    el.innerHTML = `<div class="cg-alert-content">` +
+        `<div class="cg-alert-icon"></div>` +
+        `<div>${tool.escapeHTML(content)}</div>` +
+        '</div>';
+    exports.elements.alert.appendChild(el);
+    alertBottom -= el.offsetHeight + 10;
+    requestAnimationFrame(function () {
+        el.style.transform = `translateY(${y}px)`;
+        el.style.opacity = '1';
+        const timer = window.setTimeout(function () {
+            clearTimeout(timer);
+            const alertHeight = el.offsetHeight;
+            el.style.opacity = '0';
+            setTimeout(function () {
+                alertBottom += alertHeight + 10;
+                const alertElementList = document.getElementsByClassName('cg-alert-wrap');
+                let needSub = false;
+                for (const alertElement of alertElementList) {
+                    if (alertElement === el) {
+                        needSub = true;
+                        continue;
+                    }
+                    if (needSub) {
+                        alertElement.style.transform = alertElement.style.transform.replace(/translateY\(([-0-9]+)px\)/, function (t, t1) {
+                            return `translateY(${parseInt(t1) + alertHeight + 10}px)`;
+                        });
+                    }
+                }
+                el.remove();
+            }, 100);
+        }, timeout);
+    });
+    return nid;
+}
+let notifyBottom = -10;
 let notifyId = 0;
 function notify(opt) {
     var _a;
@@ -1513,11 +1563,20 @@ function notify(opt) {
         opt.type = 'progress';
     }
     const el = document.createElement('div');
-    const y = notifyTop;
+    let y = notifyBottom;
+    let x = -10;
+    if (task.systemTaskInfo.taskId > 0) {
+        if (core.config['task.position'] === 'bottom') {
+            y -= task.systemTaskInfo.length;
+        }
+        else if (core.config['task.position'] === 'right') {
+            x -= task.systemTaskInfo.length;
+        }
+    }
     el.classList.add('cg-notify-wrap');
     el.setAttribute('data-notifyid', nid.toString());
     el.style.transform = `translateY(${y}px) translateX(280px)`;
-    el.style.opacity = '1';
+    el.style.opacity = '0';
     el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
     el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>` +
         '<div style="flex: 1;">' +
@@ -1527,12 +1586,13 @@ function notify(opt) {
         '</div>';
     if (opt.icon) {
         el.childNodes.item(0).style.background = 'url(' + opt.icon + ')';
-        el.childNodes.item(0).style.backgroundSize = '16px';
+        el.childNodes.item(0).style.backgroundSize = '14px';
     }
     exports.elements.notify.appendChild(el);
-    notifyTop += el.offsetHeight + 10;
+    notifyBottom -= el.offsetHeight + 10;
     requestAnimationFrame(function () {
-        el.style.transform = `translateY(${y}px) translateX(-10px)`;
+        el.style.transform = `translateY(${y}px) translateX(${x}px)`;
+        el.style.opacity = '1';
         const timer = window.setTimeout(function () {
             hideNotify(nid);
         }, timeout);
@@ -1572,7 +1632,7 @@ function hideNotify(notifyId) {
     const notifyHeight = el.offsetHeight;
     el.style.opacity = '0';
     setTimeout(function () {
-        notifyTop -= notifyHeight + 10;
+        notifyBottom += notifyHeight + 10;
         const notifyElementList = document.getElementsByClassName('cg-notify-wrap');
         let needSub = false;
         for (const notifyElement of notifyElementList) {
@@ -1581,8 +1641,8 @@ function hideNotify(notifyId) {
                 continue;
             }
             if (needSub) {
-                notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([0-9]+)px\)/, function (t, t1) {
-                    return `translateY(${parseInt(t1) - notifyHeight - 10}px)`;
+                notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([-0-9]+)px\)/, function (t, t1) {
+                    return `translateY(${parseInt(t1) + notifyHeight + 10}px)`;
                 });
             }
         }

@@ -685,6 +685,9 @@ function run(url_1) {
                 hideDrag: function () {
                     form.hideDrag();
                 },
+                alert: function (content, type) {
+                    return form.alert(content, type);
+                },
                 notify: function (opt) {
                     return form.notify(opt);
                 },

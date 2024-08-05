@@ -279,12 +279,14 @@
     }
 }
 
+// --- Notify ---
+
 #cg-notify {
     z-index: 20020005;
 }
 
 .cg-notify-wrap {
-    background: var(--system-background); position: fixed; padding: 15px; border-radius: 5px; right: 0; top: 0; width: 280px; font-size: 14px; display: flex; transition: .3s var(--g-cubic); transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); pointer-events: none;
+    background: var(--system-background); position: fixed; padding: 15px; border-radius: 5px; right: 0; bottom: 0; width: 280px; font-size: 14px; display: flex; transition: .3s var(--g-cubic); transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
     &.cg-notify-only {
         align-items: center;
     }
@@ -295,7 +297,7 @@
     }
 }
 .cg-notify-icon {
-    margin-right: 10px; width: 16px; height: 16px; border-radius: 50%;
+    margin-right: 10px; width: 14px; height: 14px; border-radius: 50%;
     &.cg-primary {
         background: var(--success);
     }
@@ -313,13 +315,71 @@
     }
 }
 .cg-notify-title {
-    font-size: var(--g-size-m); font-weight: bold;
+    font-size: 16px; font-weight: bold;
 }
 .cg-notify-content {
     line-height: 1.5; word-break: break-word;
 }
 .cg-notify-progress {
     position: absolute; bottom: 0; left: 0; border-radius: 1px; background: var(--cg); transition: width 1s ease-out; width: 0%; height: 2px;
+}
+
+// --- Alert ---
+
+#cg-alert {
+    z-index: 20020006;
+}
+
+.cg-alert-wrap {
+    position: fixed; left: 0; bottom: 100px; width: 100%; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: .3s var(--g-cubic); transition-property: transform, opacity; color: var(--system-color); pointer-events: none;
+
+    &.cg-default {
+        .cg-alert-icon {
+            display: none;
+        }
+    }
+    &.cg-primary {
+        color: var(--success);
+        .cg-alert-content {
+            border-color: var(--success); background: var(--success-bg);
+        }
+        .cg-alert-icon {
+            background: var(--success);
+        }
+    }
+    &.cg-info {
+        color: var(--info);
+        .cg-alert-content {
+            border-color: var(--info); background: var(--info-bg);
+        }
+        .cg-alert-icon {
+            background: var(--info);
+        }
+    }
+    &.cg-warning {
+        color: var(--warning);
+        .cg-alert-content {
+            border-color: var(--warning); background: var(--warning-bg);
+        }
+        .cg-alert-icon {
+            background: var(--warning);
+        }
+    }
+    &.cg-danger {
+        color: var(--danger);
+        .cg-alert-content {
+            border-color: var(--danger); background: var(--danger-bg);
+        }
+        .cg-alert-icon {
+            background: var(--danger);
+        }
+    }
+}
+.cg-alert-content {
+    padding: 15px; background: var(--system-background); display: flex; align-items: center; box-shadow: 0px 15px 30px rgba(0,0,0,.07); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); border: solid .5px transparent; border-radius: 5px;
+}
+.cg-alert-icon {
+    margin-right: 10px; width: 14px; height: 14px; border-radius: 50%;
 }
 
 #cg-simpletask {
@@ -342,7 +402,7 @@
 }
 
 #cg-confirm {
-    z-index: 20020006; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: var(--system-background); -webkit-backdrop-filter: blur(150px) saturate(1.5); backdrop-filter: blur(150px) saturate(1.5); justify-content: center; align-items: center;
+    z-index: 20020007; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background: var(--system-background); -webkit-backdrop-filter: blur(150px) saturate(1.5); backdrop-filter: blur(150px) saturate(1.5); justify-content: center; align-items: center;
 
     .cg-confirm-box {
         background: var(--system-background); width: 60%; box-shadow: 0px 15px 30px rgba(0,0,0,.07); font-size: 14px; border-radius: 3px; overflow: hidden; color: var(--system-color);

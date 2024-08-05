@@ -39,6 +39,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.fid = '0';
         this.tid = '0';
         this.type = ['primary'];
+        this.atype = ['default'];
         this.progress = ['noraml'];
         this.dr = '';
         this.hash = 'hash' + clickgo.tool.rand(0, 100).toString();
@@ -160,6 +161,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 clickgo.form.notifyProgress(nid, 100);
             }
         });
+    }
+    alert() {
+        const aid = clickgo.form.alert(this.atype[0], this.atype[0]);
+        console.log('aid', aid);
     }
     showPop(e) {
         if (!e.currentTarget) {
