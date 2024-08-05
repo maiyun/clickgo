@@ -3,7 +3,7 @@
 
     &.plain {
         color: var(--g-color-disabled);
-        &:hover {
+        &:hover, &:focus {
             color: var(--g-color);
         }
     }
@@ -33,7 +33,9 @@
         }
     }
     &:active {
-        color: var(--info-active); fill: var(--info-active); stroke: var(--info-active);
+        &:not(.plain) {
+            color: var(--info-active); fill: var(--info-active); stroke: var(--info-active);
+        }
         &.spop {
             &::after {
                 border-color: var(--info-active);
@@ -41,7 +43,10 @@
         }
     }
     &:focus {
-        color: var(--info-focus); fill: var(--info-focus); stroke: var(--info-focus);
+        &:not(.plain) {
+            color: var(--info-focus); fill: var(--info-focus); stroke: var(--info-focus);
+        }
+
         &::before {
             content: ''; position: absolute; width: 100%; height: 100%; border: dotted .5px var(--g-plain-border-color); left: 0; top: 0;
         }
