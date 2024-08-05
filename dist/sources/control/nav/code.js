@@ -114,7 +114,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.nextTick();
             clickgo.dom.watchSize(this.element, () => {
-                if (this.element.offsetWidth < 500) {
+                if (this.element.offsetWidth < 600) {
                     if (!this.layer) {
                         this.layer = true;
                         this.emit('layer', this.layer);
