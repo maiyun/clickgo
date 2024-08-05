@@ -77,7 +77,7 @@
                 }
 
                 cg-check {
-                    margin-left: 5px;
+                    margin-left: var(--g-padding);
                 }
 
                 .dock {
@@ -101,13 +101,13 @@
     }
 
     .description {
-        margin-top: var(--g-margin); background: var(--face); height: calc(var(--g-size) * 3 + 5px + var(--g-padding) * 2); padding: var(--g-padding); overflow: hidden; border: solid .5px var(--g-border-color); border-radius: var(--g-radius);
+        margin-top: var(--g-margin); background: var(--face); height: calc(var(--g-size) + 5px + var(--g-size) * var(--g-line) * 2 + var(--g-padding) * 2); padding: var(--g-padding); overflow: hidden; border: solid .5px var(--g-border-color); border-radius: var(--g-radius);
 
         .title {
             font-weight: bold;
         }
         .desc {
-            margin-top: 5px;
+            margin-top: 5px; line-height: var(--g-line);
         }
     }
 
