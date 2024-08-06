@@ -2033,16 +2033,16 @@ let notifyBottom: number = -10;
 let notifyId: number = 0;
 /**
  * --- 弹出右上角信息框 ---
- * @param opt timeout 默认 5 秒，最大 30 秒
+ * @param opt timeout 默认 5 秒，最大 5 分钟
  */
 export function notify(opt: types.INotifyOptions): number {
     // --- 申请 nid ---
     const nid = ++notifyId;
     // --- 设置 timeout ---
-    let timeout = 5000;
+    let timeout = 5_000;
     if (opt.timeout !== undefined) {
         if (opt.timeout <= 0 || opt.timeout > 30000) {
-            timeout = 30000;
+            timeout = 60_000 * 5;
         }
         else {
             timeout = opt.timeout;

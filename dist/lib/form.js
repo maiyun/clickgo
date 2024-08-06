@@ -1553,7 +1553,7 @@ function notify(opt) {
     let timeout = 5000;
     if (opt.timeout !== undefined) {
         if (opt.timeout <= 0 || opt.timeout > 30000) {
-            timeout = 30000;
+            timeout = 60000 * 5;
         }
         else {
             timeout = opt.timeout;
