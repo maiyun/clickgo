@@ -7,6 +7,9 @@
                     <button>test</button>
                 </layout>
             </template>
+            <template v-if="slotRight" v-slot:right>
+                <button style="margin-left: 10px;">test</button>
+            </template>
             <flow direction="v" gutter="10" style="flex: 1;">
                 <label>123</label>
                 <button>abc</button>
@@ -33,6 +36,7 @@
         </layout>
         <layout gutter="10">
             <button style="flex: 1;" @click="slotTitle = !slotTitle">{{slotTitle ? '' : '!'}}slotTitle</button>
+            <button style="flex: 1;" @click="slotRight = !slotRight">{{slotRight ? '' : '!'}}slotRight</button>
             <button style="flex: 1;" @click="slotFooter = !slotFooter">{{slotFooter ? '' : '!'}}slotFooter</button>
         </layout>
     </layout>

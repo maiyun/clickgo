@@ -29,6 +29,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.title = 'The title';
         this.slotTitle = false;
+        this.slotRight = false;
         this.slotFooter = false;
     }
 }

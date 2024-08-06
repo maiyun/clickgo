@@ -2,7 +2,13 @@
     padding: var(--g-bpadding); background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; flex-direction: column;
 
     .title {
-        font-size: var(--g-size-m); margin-bottom: var(--g-bpadding); display: flex;
+        margin-bottom: var(--g-bpadding); display: flex; align-items: center;
+        .text {
+            flex: 1; font-size: var(--g-size-m);
+        }
+        .right {
+            display: flex; align-items: center;
+        }
     }
     .content {
         display: flex; flex: 1; height: 0;

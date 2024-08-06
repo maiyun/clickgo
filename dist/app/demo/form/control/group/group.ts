@@ -6,6 +6,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public slotTitle = false;
 
+    public slotRight = false;
+
     public slotFooter = false;
 
 }
