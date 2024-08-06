@@ -93,7 +93,12 @@ function get(key, taskId) {
     if (v === null) {
         return null;
     }
-    return JSON.parse(v);
+    try {
+        return JSON.parse(v);
+    }
+    catch (_a) {
+        return null;
+    }
 }
 function set(key, val, taskId) {
     if (!taskId) {
@@ -101,6 +106,9 @@ function set(key, val, taskId) {
     }
     const t = task.list[taskId];
     if (!t) {
+        return false;
+    }
+    if (val === undefined) {
         return false;
     }
     const v = JSON.stringify(val);

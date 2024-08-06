@@ -80,7 +80,12 @@ export function get(key: string, taskId?: number): any {
     if (v === null) {
         return null;
     }
-    return JSON.parse(v);
+    try {
+        return JSON.parse(v);
+    }
+    catch {
+        return null;
+    }
 }
 
 /**
@@ -95,6 +100,9 @@ export function set(key: string, val: string | number | any[] | Record<string, a
     }
     const t = task.list[taskId];
     if (!t) {
+        return false;
+    }
+    if (val === undefined) {
         return false;
     }
     const v = JSON.stringify(val);
