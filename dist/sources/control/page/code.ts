@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -19,7 +18,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 每页条数 --- */
         'count': number | string;
         /** --- 设置后出现选项可选择每页多少条 --- */
-        'counts': Array<number> | string;
+        'counts': number[] | string;
         /** --- 控制页按钮显示几个 --- */
         'control': number | string;
     } = {
@@ -30,24 +29,24 @@ export default class extends clickgo.control.AbstractControl {
             'counts': [],
             'control': 2
         };
-    
+
     /** --- 每页多少条 --- */
-    public countSelect = [0];
-    
+    public countSelect = ['0'];
+
     /** --- 格式化每页多少条 counts --- */
     public get countsComp(): Array<{
         'label': string;
-        'value': number;
+        'value': string;
     }> {
         const counts = this.propArray('counts');
         const list: Array<{
             'label': string;
-            'value': number;
+            'value': string;
         }> = [];
         for (const item of counts) {
             list.push({
                 'label': item.toString() + ' / ' + this.l('page'),
-                'value': item
+                'value': item.toString()
             });
         }
         return list;
@@ -151,7 +150,7 @@ export default class extends clickgo.control.AbstractControl {
             this.maxPage = 1;
             return;
         }
-        this.maxPage = Math.ceil(this.propInt('total') / this.countSelect[0]);
+        this.maxPage = Math.ceil(this.propInt('total') / parseInt(this.countSelect[0]));
     }
 
     public keydown(e: KeyboardEvent): void {
@@ -163,16 +162,16 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- select changed --- */
-    public changed(e: types.ISelectChangedEvent) {
-        this.emit('update:count', this.countSelect[0]);
+    public changed(): void {
+        this.emit('update:count', parseInt(this.countSelect[0]));
         this.refreshMaxPage();
         this.refresh();
     }
 
     public onMounted(): void | Promise<void> {
-        this.countSelect[0] = this.propInt('count');
+        this.countSelect[0] = this.propInt('count').toString();
         this.watch('count', () => {
-            this.countSelect[0] = this.propInt('count');
+            this.countSelect[0] = this.propInt('count').toString();
             this.refreshMaxPage();
             this.refresh();
         });

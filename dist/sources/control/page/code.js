@@ -40,7 +40,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'counts': [],
             'control': 2
         };
-        this.countSelect = [0];
+        this.countSelect = ['0'];
         this.svg = '<svg width="14" height="14" viewBox="0 0 24 24" stroke="none"><path d="m6 10.25c-.9665 0-1.75.7835-1.75 1.75s.7835 1.75 1.75 1.75h.01c.9665 0 1.75-.7835 1.75-1.75s-.7835-1.75-1.75-1.75zm4.25 1.75c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75zm6 0c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75z" /></svg>';
         this.prevs = [];
         this.nexts = [];
@@ -103,7 +103,7 @@ class default_1 extends clickgo.control.AbstractControl {
         for (const item of counts) {
             list.push({
                 'label': item.toString() + ' / ' + this.l('page'),
-                'value': item
+                'value': item.toString()
             });
         }
         return list;
@@ -136,7 +136,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.maxPage = 1;
             return;
         }
-        this.maxPage = Math.ceil(this.propInt('total') / this.countSelect[0]);
+        this.maxPage = Math.ceil(this.propInt('total') / parseInt(this.countSelect[0]));
     }
     keydown(e) {
         if (e.key !== 'Enter') {
@@ -145,15 +145,15 @@ class default_1 extends clickgo.control.AbstractControl {
         e.preventDefault();
         e.target.click();
     }
-    changed(e) {
-        this.emit('update:count', this.countSelect[0]);
+    changed() {
+        this.emit('update:count', parseInt(this.countSelect[0]));
         this.refreshMaxPage();
         this.refresh();
     }
     onMounted() {
-        this.countSelect[0] = this.propInt('count');
+        this.countSelect[0] = this.propInt('count').toString();
         this.watch('count', () => {
-            this.countSelect[0] = this.propInt('count');
+            this.countSelect[0] = this.propInt('count').toString();
             this.refreshMaxPage();
             this.refresh();
         });
