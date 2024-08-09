@@ -4,6 +4,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'change': null,
+        'countChange': null,
 
         'update:modelValue': null,
         'update:count': null
@@ -163,6 +164,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- select changed --- */
     public changed(): void {
+        this.emit('countChange', parseInt(this.countSelect[0]));
         this.emit('update:count', parseInt(this.countSelect[0]));
         this.refreshMaxPage();
         this.refresh();
