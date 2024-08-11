@@ -1485,7 +1485,11 @@ export function bindScale(oe: MouseEvent | TouchEvent | WheelEvent, handler: (e:
         if (!oe.deltaY) {
             return;
         }
-        handler(oe, oe.deltaY * (oe.deltaY > 0 ? 0.012 : -0.008), {
+        /** --- 本次数值 --- */
+        const delta = Math.abs(oe.deltaY);
+        /** --- 缩放因子 --- */
+        const zoomFactor = delta * (delta > 50 ? 0.0015 : 0.003);
+        handler(oe, oe.deltaY < 0 ? 1 + zoomFactor : 1 - zoomFactor, {
             'x': 0,
             'y': 0
         }) as any;
