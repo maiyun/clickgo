@@ -1,3 +1,5 @@
-<table class="wrap" :class="[propBoolean('border') && 'border', propBoolean('collapse') && 'collapse', propBoolean('plain') && 'plain']">
-    <slot></slot>
-</table>
+<div class="wrap">
+    <table :class="[propBoolean('border') && 'border', propBoolean('collapse') && 'collapse', propBoolean('plain') && 'plain']">
+        <slot></slot>
+    </table>
+</div>

@@ -1,12 +1,19 @@
 .wrap {
-    border-radius: var(--g-radius);
-    &.border {
-        border: solid .5px var(--g-plain-border-color);
-        &.plain{
-            border-color: var(--g-plain-border-color-plain);
-        }
+    overflow: auto; display: flex; flex-direction: column;
+    &::-webkit-scrollbar {
+        display: none;
     }
-    &.collapse {
-        border-collapse: collapse;
+    table {
+        border-radius: var(--g-radius);
+
+        &.border {
+            border: solid .5px var(--g-plain-border-color);
+            &.plain{
+                border-color: var(--g-plain-border-color-plain);
+            }
+        }
+        &.collapse {
+            border-collapse: collapse;
+        }
     }
 }
