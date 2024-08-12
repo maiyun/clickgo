@@ -30,6 +30,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'change': null,
             'countchange': null,
+            'countchanged': null,
             'update:modelValue': null,
             'update:count': null
         };
@@ -149,6 +150,7 @@ class default_1 extends clickgo.control.AbstractControl {
     changed() {
         this.emit('countchange', parseInt(this.countSelect[0]));
         this.emit('update:count', parseInt(this.countSelect[0]));
+        this.emit('countchanged', parseInt(this.countSelect[0]));
         this.refreshMaxPage();
         this.refresh();
     }
