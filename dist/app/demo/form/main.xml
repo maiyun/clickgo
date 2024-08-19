@@ -1,4 +1,4 @@
-<form width="500" height="650" title="ClickGo demo" icon="/package/res/icon.svg">
+<form width="520" height="650" title="ClickGo demo" icon="/package/res/icon.svg">
     <tab v-model="ntab" :tabs="['control', 'method', 'event', 'solution']" style="margin: 10px; flex: 1;">
         <flow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
@@ -26,7 +26,7 @@
                 <layout gutter="10">
                     <button @click="openForm('ctab')">Tab</button>
                     <button @click="openForm('clabel')">Label</button>
-                    <button @click="openForm('cpalette')">Palette</button>
+                    <button @click="openForm('cpalette')">Palette + Colorist</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('clink')">Link</button>

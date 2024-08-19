@@ -32,6 +32,9 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 当前列是否是固定模式，是的话当前列是固定在左侧还是右侧 --- */
     public get isFixed(): 'left' | 'right' | undefined {
+        if (this.table.clientWidth < 600) {
+            return undefined;
+        }
         if (this.index === 0) {
             return this.table.isFixed?.left;
         }
@@ -43,6 +46,9 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 当前是固定模式下，是否正在浮动中 --- */
     public get isBase(): 'left' | 'right' | undefined {
+        if (this.table.clientWidth < 600) {
+            return undefined;
+        }
         if (this.isFixed === 'left') {
             if (this.scrollLeft > 0) {
                 return 'left';
