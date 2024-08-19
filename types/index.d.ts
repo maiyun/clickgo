@@ -730,6 +730,17 @@ export interface ITextMinMaxChangeEvent extends ICustomEvent {
     };
 }
 
+// --- MenulistItem Control ---
+
+export interface IMenulistItemCheckEvent extends ICustomEvent {
+    'detail': {
+        /** --- 当前要选中的项 --- */
+        'value': string | boolean;
+        /** --- radio 模式下，当前项的 label 内容 --- */
+        'label'?: string;
+    };
+}
+
 // --- Date Control ---
 
 export interface IDateChangedEvent {
@@ -1036,6 +1047,28 @@ export interface IRadioChangeEvent extends ICustomEvent {
         'value': string;
         /** --- 选中的值 --- */
         'selected': string;
+    };
+}
+
+// --- Palette Control ---
+
+export interface IPaletteChangedEvent {
+    'detail': {
+        /** --- 颜色值 --- */
+        'value': string;
+        /** --- 对象 --- */
+        'hsl'?: {
+            'h': number;
+            's': number;
+            'l': number;
+            'a': number;
+        };
+        'rgb'?: {
+            'r': number;
+            'g': number;
+            'b': number;
+            'a': number;
+        };
     };
 }
 

@@ -55,6 +55,7 @@ const alert_1 = __importDefault(require("./control/alert/alert"));
 const iconview_1 = __importDefault(require("./control/iconview/iconview"));
 const link_1 = __importDefault(require("./control/link/link"));
 const label_1 = __importDefault(require("./control/label/label"));
+const palette_1 = __importDefault(require("./control/palette/palette"));
 const layout_1 = __importDefault(require("./control/layout/layout"));
 const hske_1 = __importDefault(require("./control/hske/hske"));
 const list_1 = __importDefault(require("./control/list/list"));
@@ -259,6 +260,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'clabel': {
                     frm = yield clickgo.form.create(label_1.default);
+                    break;
+                }
+                case 'cpalette': {
+                    frm = yield clickgo.form.create(palette_1.default);
                     break;
                 }
                 case 'clayout': {

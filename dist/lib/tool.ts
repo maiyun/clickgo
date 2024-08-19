@@ -105,6 +105,20 @@ export function sizeFormat(size: number, spliter: string = ' '): string {
 }
 
 /**
+ * --- 将毫克重量格式化为带单位的字符串 ---
+ * @param weight 毫克重量
+ * @param spliter 分隔符
+ */
+export function weightFormat(weight: number, spliter: string = ' '): string {
+    const units = ['mg', 'g', 'kg'];
+    let i = 0;
+    for (; i < 3 && weight >= 1000; ++i) {
+        weight /= 1000;
+    }
+    return (Math.round(weight * 10000) / 10000).toString() + spliter + units[i];
+}
+
+/**
  * --- 完整的克隆一份数组/对象 ---
  * @param obj 要克隆的对象
  */
@@ -675,44 +689,209 @@ export function escapeHTML(html: string): string {
 }
 
 /**
+ * --- 将 rgb 或 hsl 等颜色转换为数字数组 ---
+ * @param color 颜色字符串
+ */
+export function formatColor(color: string): number[] {
+    const match = /[0-9.%, ]+/.exec(color);
+    if (!match) {
+        return [];
+    }
+    const arr = match[0].split(',');
+    return arr.map((v: string) => {
+        return parseFloat(v);
+    });
+}
+
+/**
+ * --- 将 r, g, b 转换为 hex 字符串，不含 # ---
+ * @param r r 或 rgb 用 , 分隔的字符串
+ * @param g 可留空，g
+ * @param b 可留空，b
+ */
+export function rgb2hex(r: string | number, g?: string | number, b?: string | number, a: string | number = 1): string {
+    if (g === undefined || b === undefined) {
+        if (typeof r !== 'string') {
+            return '';
+        }
+        const rgb = formatColor(r);
+        r = Math.round(rgb[0]);
+        g = Math.round(rgb[1]);
+        b = Math.round(rgb[2]);
+        a = rgb[3] ?? 1;
+    }
+    else {
+        if (typeof r === 'string') {
+            r = Math.round(parseFloat(r));
+        }
+        if (typeof g === 'string') {
+            g = Math.round(parseFloat(g));
+        }
+        if (typeof b === 'string') {
+            b = Math.round(parseFloat(b));
+        }
+        if (typeof a === 'string') {
+            a = parseFloat(a);
+        }
+    }
+    return ((r << 16) + (g << 8) + b).toString(16).padStart(6, '0') + (a === 1 ? '' : Math.round(a * 255).toString(16).padStart(2, '0'));
+}
+
+/**
+ * --- hex 转换为 rgba，#27ae60ff, 27ae60 #fff
+ * @param hex hex 字符串，无所谓带不带 #
+ */
+export function hex2rgb(hex: string): {
+    'r': number;
+    'g': number;
+    'b': number;
+    'a': number;
+    'rgb': string;
+} {
+    const rgb = {
+        'r': 0,
+        'g': 0,
+        'b': 0,
+        'a': 1,
+        'rgb': 'rgb'
+    };
+    let alpha = false,
+        h = hex.slice(hex.startsWith('#') ? 1 : 0);
+    if (h.length === 3) {
+        h = [...h].map(x => x + x).join('');
+    }
+    else if (h.length === 8) {
+        alpha = true;
+    }
+    const hn = parseInt(h, 16);
+    rgb.r = (hn >>> (alpha ? 24 : 16));
+    rgb.g = (hn & (alpha ? 0x00ff0000 : 0x00ff00)) >>> (alpha ? 16 : 8);
+    rgb.b = (hn & (alpha ? 0x0000ff00 : 0x0000ff)) >>> (alpha ? 8 : 0);
+    if (alpha) {
+        rgb.a = Math.round((hn & 0x000000ff) / 255 * 100) / 1000;
+    }
+    rgb.rgb = `${alpha ? 'a' : ''}(${rgb.r},${rgb.g},${rgb.b}${alpha ? ',' + rgb.a : ''})`;
+    return rgb;
+}
+
+/**
  * --- rgb 字符串转 hsl 数组 ---
  * @param rgb rgb(x, x, x) 或直接 x,x,x
  */
-export function rgb2hsl(rgb: string): number[] {
-    if (rgb.includes('(')) {
-        const match = /[0-9., ]+/.exec(rgb);
-        if (!match) {
-            return [0, 0, 0];
+export function rgb2hsl(r: string | number, g?: string | number, b?: string | number, a: string | number = 1): {
+    'h': number;
+    's': number;
+    'l': number;
+    'a': number;
+    'hsl': string;
+} {
+    const hsl = {
+        'h': 0,
+        's': 0,
+        'l': 0,
+        'a': 1,
+        'hsl': 'hsl'
+    };
+    if (g === undefined || b === undefined) {
+        if (typeof r !== 'string') {
+            return hsl;
         }
-        rgb = match[0];
+        const rgb = formatColor(r);
+        r = Math.round(rgb[0]);
+        g = Math.round(rgb[1]);
+        b = Math.round(rgb[2]);
+        a = rgb[3] ?? 1;
     }
-    const arr = rgb.split(',');
-    const [r, g, b] = arr.map(v => parseInt(v) / 255);
-
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const diff = max - min;
-
-    let h = 0 ;
-    const l = (max + min) / 2;
-    const s2 = 1 - Math.abs(max + min - 1);
-    const s = s2 ? (diff / s2) : 0;
-
-    switch (min) {
-        case max:
-            h = 0 ;
-            break;
-        case r:
-            h = (60 * ((b - g) / diff)) + 180;
-            break;
-        case g:
-            h = (60 * ((r - b) / diff)) + 300;
-            break;
-        case b:
-            h = (60 * ((g - r) / diff)) + 60;
-            break;
+    else {
+        if (typeof r === 'string') {
+            r = Math.round(parseFloat(r));
+        }
+        if (typeof g === 'string') {
+            g = Math.round(parseFloat(g));
+        }
+        if (typeof b === 'string') {
+            b = Math.round(parseFloat(b));
+        }
+        if (typeof a === 'string') {
+            a = parseFloat(a);
+        }
     }
-    return [h, s, l];
+
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const l = Math.max(r, g, b);
+    const s = l - Math.min(r, g, b);
+    const h = s
+        ? l === r
+            ? (g - b) / s
+            : l === g
+                ? 2 + (b - r) / s
+                : 4 + (r - g) / s
+        : 0;
+    hsl.h = Math.round(60 * h < 0 ? 60 * h + 360 : 60 * h);
+    hsl.s = Math.round(100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0));
+    hsl.l = Math.round((100 * (2 * l - s)) / 2);
+    hsl.a = a;
+    hsl.hsl += (hsl.a === 1 ? '' : 'a') + `(${hsl.h},${hsl.s}%,${hsl.l}%${hsl.a === 1 ? '' : ',' + hsl.a})`;
+    return hsl;
+}
+
+/**
+ * --- hsl 字符串转 rgb 数组 ---
+ * @param rgb rgb(x, x, x) 或直接 x,x,x
+ */
+export function hsl2rgb(h: string | number, s?: string | number, l?: string | number, a: string | number = 1): {
+    'r': number;
+    'g': number;
+    'b': number;
+    'a': number;
+    'rgb': string;
+} {
+    const rgb = {
+        'r': 0,
+        'g': 0,
+        'b': 0,
+        'a': 1,
+        'rgb': 'rgb'
+    };
+    if (s === undefined || l === undefined) {
+        if (typeof h !== 'string') {
+            return rgb;
+        }
+        const hsl = formatColor(h);
+        h = Math.round(hsl[0]);
+        s = Math.round(hsl[1]);
+        l = Math.round(hsl[2]);
+        a = hsl[3] ?? 1;
+    }
+    else {
+        if (typeof h === 'string') {
+            h = Math.round(parseFloat(h));
+        }
+        if (typeof s === 'string') {
+            s = Math.round(parseFloat(s));
+        }
+        if (typeof l === 'string') {
+            l = Math.round(parseFloat(l));
+        }
+        if (typeof a === 'string') {
+            a = parseFloat(a);
+        }
+    }
+
+    s /= 100;
+    l /= 100;
+    const k = (n: number): number => (n + h / 30) % 12;
+    const aa = s * Math.min(l, 1 - l);
+    const f = (n: number): number =>
+        l - aa * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    rgb.r = Math.round(255 * f(0));
+    rgb.g = Math.round(255 * f(8));
+    rgb.b = Math.round(255 * f(4));
+    rgb.a = a;
+    rgb.rgb += (rgb.a === 1 ? '' : 'a') + `(${rgb.r},${rgb.g},${rgb.b}${rgb.a === 1 ? '' : ',' + rgb.a})`;
+    return rgb;
 }
 
 /**

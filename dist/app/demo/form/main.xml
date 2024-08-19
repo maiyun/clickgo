@@ -26,6 +26,7 @@
                 <layout gutter="10">
                     <button @click="openForm('ctab')">Tab</button>
                     <button @click="openForm('clabel')">Label</button>
+                    <button @click="openForm('cpalette')">Palette</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('clink')">Link</button>

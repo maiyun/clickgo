@@ -1132,6 +1132,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             sizeFormat: function(size: number, spliter: string = ' '): string {
                 return tool.sizeFormat(size, spliter);
             },
+            weightFormat: function(weight: number, spliter: string = ' '): string {
+                return tool.weightFormat(weight, spliter);
+            },
             clone: function(obj: Record<string, any> | any[]): any[] | any {
                 return tool.clone(obj);
             },
@@ -1186,8 +1189,40 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             escapeHTML: function(html: string): string {
                 return tool.escapeHTML(html);
             },
-            rgb2hsl: function(rgb: string): number[] {
-                return tool.rgb2hsl(rgb);
+            formatColor: function(color: string): number[] {
+                return tool.formatColor(color);
+            },
+            rgb2hex: function(
+                r: string | number, g?: string | number, b?: string | number, a: string | number = 1
+            ): string {
+                return tool.rgb2hex(r, g, b, a);
+            },
+            hex2rgb: function(hex: string): {
+                'r': number;
+                'g': number;
+                'b': number;
+                'a': number;
+                'rgb': string;
+            } {
+                return tool.hex2rgb(hex);
+            },
+            rgb2hsl: function(r: string | number, g?: string | number, b?: string | number, a: string | number = 1): {
+                'h': number;
+                's': number;
+                'l': number;
+                'a': number;
+                'hsl': string;
+            } {
+                return tool.rgb2hsl(r, g, b, a);
+            },
+            hsl2rgb: function(h: string | number, s?: string | number, l?: string | number, a: string | number = 1): {
+                'r': number;
+                'g': number;
+                'b': number;
+                'a': number;
+                'rgb': string;
+            } {
+                return tool.hsl2rgb(h, s, l, a);
             },
             request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
                 return tool.request(url, opt);

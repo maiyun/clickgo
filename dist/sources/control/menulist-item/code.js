@@ -61,9 +61,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 'go': true,
                 preventDefault: function () {
                     this.go = false;
+                },
+                'detail': {
+                    'value': this.value,
+                    'label': undefined
                 }
             };
             if (this.props.type === 'radio') {
+                event.detail.label = this.props.label;
                 this.emit('check', event, this.value, this.props.label);
                 if (event.go) {
                     this.value = this.props.label;

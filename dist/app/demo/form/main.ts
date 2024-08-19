@@ -20,6 +20,7 @@ import calertFrm from './control/alert/alert';
 import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
 import clabelFrm from './control/label/label';
+import cpaletteFrm from './control/palette/palette';
 import clayoutFrm from './control/layout/layout';
 import chskeFrm from './control/hske/hske';
 import clistFrm from './control/list/list';
@@ -227,6 +228,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'clabel': {
                 frm = await clickgo.form.create(clabelFrm);
+                break;
+            }
+            case 'cpalette': {
+                frm = await clickgo.form.create(cpaletteFrm);
                 break;
             }
             case 'clayout': {

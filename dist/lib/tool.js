@@ -13,6 +13,7 @@ exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU 
 exports.getClassPrototype = getClassPrototype;
 exports.blob2ArrayBuffer = blob2ArrayBuffer;
 exports.sizeFormat = sizeFormat;
+exports.weightFormat = weightFormat;
 exports.clone = clone;
 exports.sleep = sleep;
 exports.nextFrame = nextFrame;
@@ -33,7 +34,11 @@ exports.getBoolean = getBoolean;
 exports.getNumber = getNumber;
 exports.getArray = getArray;
 exports.escapeHTML = escapeHTML;
+exports.formatColor = formatColor;
+exports.rgb2hex = rgb2hex;
+exports.hex2rgb = hex2rgb;
 exports.rgb2hsl = rgb2hsl;
+exports.hsl2rgb = hsl2rgb;
 exports.request = request;
 exports.fetch = fetch;
 exports.get = get;
@@ -112,6 +117,14 @@ function sizeFormat(size, spliter = ' ') {
         size /= 1024.0;
     }
     return (Math.round(size * 100) / 100).toString() + spliter + units[i];
+}
+function weightFormat(weight, spliter = ' ') {
+    const units = ['mg', 'g', 'kg'];
+    let i = 0;
+    for (; i < 3 && weight >= 1000; ++i) {
+        weight /= 1000;
+    }
+    return (Math.round(weight * 10000) / 10000).toString() + spliter + units[i];
 }
 function clone(obj) {
     let newObj = {};
@@ -519,38 +532,165 @@ function getArray(param) {
 function escapeHTML(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-function rgb2hsl(rgb) {
-    if (rgb.includes('(')) {
-        const match = /[0-9., ]+/.exec(rgb);
-        if (!match) {
-            return [0, 0, 0];
+function formatColor(color) {
+    const match = /[0-9.%, ]+/.exec(color);
+    if (!match) {
+        return [];
+    }
+    const arr = match[0].split(',');
+    return arr.map((v) => {
+        return parseFloat(v);
+    });
+}
+function rgb2hex(r, g, b, a = 1) {
+    var _a;
+    if (g === undefined || b === undefined) {
+        if (typeof r !== 'string') {
+            return '';
         }
-        rgb = match[0];
+        const rgb = formatColor(r);
+        r = Math.round(rgb[0]);
+        g = Math.round(rgb[1]);
+        b = Math.round(rgb[2]);
+        a = (_a = rgb[3]) !== null && _a !== void 0 ? _a : 1;
     }
-    const arr = rgb.split(',');
-    const [r, g, b] = arr.map(v => parseInt(v) / 255);
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const diff = max - min;
-    let h = 0;
-    const l = (max + min) / 2;
-    const s2 = 1 - Math.abs(max + min - 1);
-    const s = s2 ? (diff / s2) : 0;
-    switch (min) {
-        case max:
-            h = 0;
-            break;
-        case r:
-            h = (60 * ((b - g) / diff)) + 180;
-            break;
-        case g:
-            h = (60 * ((r - b) / diff)) + 300;
-            break;
-        case b:
-            h = (60 * ((g - r) / diff)) + 60;
-            break;
+    else {
+        if (typeof r === 'string') {
+            r = Math.round(parseFloat(r));
+        }
+        if (typeof g === 'string') {
+            g = Math.round(parseFloat(g));
+        }
+        if (typeof b === 'string') {
+            b = Math.round(parseFloat(b));
+        }
+        if (typeof a === 'string') {
+            a = parseFloat(a);
+        }
     }
-    return [h, s, l];
+    return ((r << 16) + (g << 8) + b).toString(16).padStart(6, '0') + (a === 1 ? '' : Math.round(a * 255).toString(16).padStart(2, '0'));
+}
+function hex2rgb(hex) {
+    const rgb = {
+        'r': 0,
+        'g': 0,
+        'b': 0,
+        'a': 1,
+        'rgb': 'rgb'
+    };
+    let alpha = false, h = hex.slice(hex.startsWith('#') ? 1 : 0);
+    if (h.length === 3) {
+        h = [...h].map(x => x + x).join('');
+    }
+    else if (h.length === 8) {
+        alpha = true;
+    }
+    const hn = parseInt(h, 16);
+    rgb.r = (hn >>> (alpha ? 24 : 16));
+    rgb.g = (hn & (alpha ? 0x00ff0000 : 0x00ff00)) >>> (alpha ? 16 : 8);
+    rgb.b = (hn & (alpha ? 0x0000ff00 : 0x0000ff)) >>> (alpha ? 8 : 0);
+    if (alpha) {
+        rgb.a = Math.round((hn & 0x000000ff) / 255 * 100) / 1000;
+    }
+    rgb.rgb = `${alpha ? 'a' : ''}(${rgb.r},${rgb.g},${rgb.b}${alpha ? ',' + rgb.a : ''})`;
+    return rgb;
+}
+function rgb2hsl(r, g, b, a = 1) {
+    var _a;
+    const hsl = {
+        'h': 0,
+        's': 0,
+        'l': 0,
+        'a': 1,
+        'hsl': 'hsl'
+    };
+    if (g === undefined || b === undefined) {
+        if (typeof r !== 'string') {
+            return hsl;
+        }
+        const rgb = formatColor(r);
+        r = Math.round(rgb[0]);
+        g = Math.round(rgb[1]);
+        b = Math.round(rgb[2]);
+        a = (_a = rgb[3]) !== null && _a !== void 0 ? _a : 1;
+    }
+    else {
+        if (typeof r === 'string') {
+            r = Math.round(parseFloat(r));
+        }
+        if (typeof g === 'string') {
+            g = Math.round(parseFloat(g));
+        }
+        if (typeof b === 'string') {
+            b = Math.round(parseFloat(b));
+        }
+        if (typeof a === 'string') {
+            a = parseFloat(a);
+        }
+    }
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const l = Math.max(r, g, b);
+    const s = l - Math.min(r, g, b);
+    const h = s
+        ? l === r
+            ? (g - b) / s
+            : l === g
+                ? 2 + (b - r) / s
+                : 4 + (r - g) / s
+        : 0;
+    hsl.h = Math.round(60 * h < 0 ? 60 * h + 360 : 60 * h);
+    hsl.s = Math.round(100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0));
+    hsl.l = Math.round((100 * (2 * l - s)) / 2);
+    hsl.a = a;
+    hsl.hsl += (hsl.a === 1 ? '' : 'a') + `(${hsl.h},${hsl.s}%,${hsl.l}%${hsl.a === 1 ? '' : ',' + hsl.a})`;
+    return hsl;
+}
+function hsl2rgb(h, s, l, a = 1) {
+    var _a;
+    const rgb = {
+        'r': 0,
+        'g': 0,
+        'b': 0,
+        'a': 1,
+        'rgb': 'rgb'
+    };
+    if (s === undefined || l === undefined) {
+        if (typeof h !== 'string') {
+            return rgb;
+        }
+        const hsl = formatColor(h);
+        h = Math.round(hsl[0]);
+        s = Math.round(hsl[1]);
+        l = Math.round(hsl[2]);
+        a = (_a = hsl[3]) !== null && _a !== void 0 ? _a : 1;
+    }
+    else {
+        if (typeof h === 'string') {
+            h = Math.round(parseFloat(h));
+        }
+        if (typeof s === 'string') {
+            s = Math.round(parseFloat(s));
+        }
+        if (typeof l === 'string') {
+            l = Math.round(parseFloat(l));
+        }
+        if (typeof a === 'string') {
+            a = parseFloat(a);
+        }
+    }
+    s /= 100;
+    l /= 100;
+    const k = (n) => (n + h / 30) % 12;
+    const aa = s * Math.min(l, 1 - l);
+    const f = (n) => l - aa * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    rgb.r = Math.round(255 * f(0));
+    rgb.g = Math.round(255 * f(8));
+    rgb.b = Math.round(255 * f(4));
+    rgb.a = a;
+    rgb.rgb += (rgb.a === 1 ? '' : 'a') + `(${rgb.r},${rgb.g},${rgb.b}${rgb.a === 1 ? '' : ',' + rgb.a})`;
+    return rgb;
 }
 function request(url, opt) {
     return new Promise(function (resove) {

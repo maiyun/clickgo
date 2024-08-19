@@ -1,0 +1,17 @@
+<div class="wrap">
+    <div class="top">
+        <div class="left" ref="left" @mousedown="leftDown" @touchstart="leftDown" :style="{'background': 'hsl(' + hsl.h + ', 100%, 50%)'}">
+            <div class="white"></div>
+            <div class="black"></div>
+            <div class="control" :style="{'top': 'calc(' + leftTop + '% - 2px)', 'left': 'calc(' + leftLeft + '% - 2px)'}"></div>
+        </div>
+        <div class="right" ref="right" @mousedown="rightDown" @touchstart="rightDown">
+            <div class="control" :style="{'top': 'calc(' + rightTop + '% - 2px)'}"></div>
+        </div>
+    </div>
+    <div class="bottom">
+        <cg-text v-model="color"></cg-text>
+        <cg-link @click="formatColor('')">{{l('clear')}}</cg-link>
+        <cg-button v-if="ok" @click="emit('ok')">{{l('ok')}}</cg-button>
+    </div>
+</div>

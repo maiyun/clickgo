@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -49,13 +50,18 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 有 type ---
         if (this.props.type) {
-            const event = {
+            const event: types.IMenulistItemCheckEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
+                },
+                'detail': {
+                    'value': this.value,
+                    'label': undefined
                 }
             };
             if (this.props.type === 'radio') {
+                event.detail.label = this.props.label;
                 this.emit('check', event, this.value, this.props.label);
                 if (event.go) {
                     this.value = this.props.label;

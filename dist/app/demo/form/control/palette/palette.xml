@@ -1,0 +1,7 @@
+<form width="700" height="500" title="Palette">
+    <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <label>value: {{value}}</label>
+        <palette v-model="value" :mode="mode[0]" style="flex: 1;"></palette>
+        <select v-model="mode" :data="['hsl', 'rgb', 'hex']"></select>
+    </layout>
+</form>

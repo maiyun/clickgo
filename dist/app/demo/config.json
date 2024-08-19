@@ -108,6 +108,8 @@
         "/form/control/nav/nav.xml",
         "/form/control/page/page.js",
         "/form/control/page/page.xml",
+        "/form/control/palette/palette.js",
+        "/form/control/palette/palette.xml",
         "/form/control/panel/panel.js",
         "/form/control/panel/panel.xml",
         "/form/control/panel/test1.js",

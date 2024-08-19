@@ -92,18 +92,24 @@ export default class extends clickgo.form.AbstractForm {
 
     public second = '4531';
 
-    public async formatSecond() {
+    public async formatSecond(): Promise<void> {
         await clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
+    }
+
+    public weight = '8761';
+
+    public async weightFormat(): Promise<void> {
+        await clickgo.form.dialog(clickgo.tool.weightFormat(parseInt(this.weight) || 0));
     }
 
     public qs = 'a=1&b=2&c=3';
 
-    public async queryParse() {
+    public async queryParse(): Promise<void> {
         await clickgo.form.dialog(JSON.stringify(clickgo.tool.queryParse(this.qs)));
     }
 
-    public async queryStringify() {
-        await clickgo.form.dialog(clickgo.tool.queryStringify({'a':1,'b':'c'}));
+    public async queryStringify(): Promise<void>  {
+        await clickgo.form.dialog(clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
     }
 
 }

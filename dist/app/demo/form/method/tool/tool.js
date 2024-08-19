@@ -67,6 +67,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.url1 = '/abc/def/hehe';
         this.url2 = '../bb.index';
         this.second = '4531';
+        this.weight = '8761';
         this.qs = 'a=1&b=2&c=3';
     }
     sleep() {
@@ -103,6 +104,11 @@ class default_1 extends clickgo.form.AbstractForm {
     formatSecond() {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
+        });
+    }
+    weightFormat() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(clickgo.tool.weightFormat(parseInt(this.weight) || 0));
         });
     }
     queryParse() {

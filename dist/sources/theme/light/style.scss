@@ -17,7 +17,7 @@ global {
     --g-size-xl:38px;
     --g-control:18px;   // --- 如 check、radio 等的宽度 ---
     --g-control-m:22px;
-    --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei", "Roboto", Helvetica, Arial, "sans-serif";
+    --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei", "ui-sans-serif", "Roboto", Helvetica, Arial, "sans-serif";
     --g-transition:all .3s var(--g-cubic);
     --g-line:1.5;
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));

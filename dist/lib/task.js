@@ -1016,6 +1016,9 @@ function run(url_1) {
                 sizeFormat: function (size, spliter = ' ') {
                     return tool.sizeFormat(size, spliter);
                 },
+                weightFormat: function (weight, spliter = ' ') {
+                    return tool.weightFormat(weight, spliter);
+                },
                 clone: function (obj) {
                     return tool.clone(obj);
                 },
@@ -1070,8 +1073,20 @@ function run(url_1) {
                 escapeHTML: function (html) {
                     return tool.escapeHTML(html);
                 },
-                rgb2hsl: function (rgb) {
-                    return tool.rgb2hsl(rgb);
+                formatColor: function (color) {
+                    return tool.formatColor(color);
+                },
+                rgb2hex: function (r, g, b, a = 1) {
+                    return tool.rgb2hex(r, g, b, a);
+                },
+                hex2rgb: function (hex) {
+                    return tool.hex2rgb(hex);
+                },
+                rgb2hsl: function (r, g, b, a = 1) {
+                    return tool.rgb2hsl(r, g, b, a);
+                },
+                hsl2rgb: function (h, s, l, a = 1) {
+                    return tool.hsl2rgb(h, s, l, a);
                 },
                 request: function (url, opt) {
                     return tool.request(url, opt);

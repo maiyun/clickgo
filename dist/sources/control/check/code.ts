@@ -29,7 +29,7 @@ export default class extends clickgo.control.AbstractControl {
             'indeterminate': false
         };
 
-    public async click() {
+    public async click(): Promise<void> {
         const event: types.ICheckChangeEvent = {
             'go': true,
             preventDefault: function() {
@@ -59,13 +59,13 @@ export default class extends clickgo.control.AbstractControl {
                 'indeterminate': this.indeterminateData
             }
         };
-        this.emit('changed', event);
+        this.emit('changed', event2);
     }
 
-    public keydown(e: KeyboardEvent): void {
+    public async keydown(e: KeyboardEvent): Promise<void> {
         if (e.key === 'Enter') {
             e.preventDefault();
-            this.click();
+            await this.click();
         }
         else if (e.key === ' ') {
             e.preventDefault();
@@ -73,12 +73,12 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public keyup(): void {
+    public async keyup(): Promise<void> {
         if (!this.isSpaceDown) {
             return;
         }
         this.isSpaceDown = false;
-        this.click();
+        await this.click();
     }
 
     public onMounted(): void | Promise<void> {

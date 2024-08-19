@@ -82,25 +82,29 @@ class default_1 extends clickgo.control.AbstractControl {
                     'indeterminate': this.indeterminateData
                 }
             };
-            this.emit('changed', event);
+            this.emit('changed', event2);
         });
     }
     keydown(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            this.click();
-        }
-        else if (e.key === ' ') {
-            e.preventDefault();
-            this.isSpaceDown = true;
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                yield this.click();
+            }
+            else if (e.key === ' ') {
+                e.preventDefault();
+                this.isSpaceDown = true;
+            }
+        });
     }
     keyup() {
-        if (!this.isSpaceDown) {
-            return;
-        }
-        this.isSpaceDown = false;
-        this.click();
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.isSpaceDown) {
+                return;
+            }
+            this.isSpaceDown = false;
+            yield this.click();
+        });
     }
     onMounted() {
         this.watch('modelValue', () => {
