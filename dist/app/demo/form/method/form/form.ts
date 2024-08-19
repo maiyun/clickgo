@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -183,7 +184,7 @@ export default class extends clickgo.form.AbstractForm {
         this.dr = await clickgo.form.dialog({
             'content': 'Hello world!',
             'buttons': ['Do not close', 'Close'],
-            'select': (e: Event, button: string): void => {
+            'select': (e: types.IFormDialogSelectEvent, button: string): void => {
                 if (button === 'Do not close') {
                     e.preventDefault();
                 }
