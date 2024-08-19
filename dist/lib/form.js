@@ -2827,6 +2827,9 @@ function dialog(opt) {
                     'go': true,
                     preventDefault: function () {
                         this.go = false;
+                    },
+                    'detail': {
+                        'button': button
                     }
                 };
                 if (nopt.select) {
@@ -2896,7 +2899,7 @@ function confirm(opt) {
 }
 function prompt(opt) {
     return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         if (typeof opt === 'string') {
             opt = {
                 'content': opt
@@ -2911,6 +2914,11 @@ function prompt(opt) {
             return '';
         }
         const locale = t.locale.lang || core.config.locale;
+        const buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : info.locale['en'].ok];
+        const cancelBtn = (_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.cancel) !== null && _d !== void 0 ? _d : info.locale['en'].cancel;
+        if (opt.cancel === true || opt.cancel === undefined) {
+            buttons.unshift(cancelBtn);
+        }
         const res = yield dialog({
             'taskId': taskId,
             'title': opt.title,
@@ -2918,12 +2926,16 @@ function prompt(opt) {
             'gutter': 10,
             'content': '<block>' + opt.content + '</block><text v-model="data.text" />',
             'data': {
-                'text': (_a = opt.text) !== null && _a !== void 0 ? _a : ''
+                'text': (_e = opt.text) !== null && _e !== void 0 ? _e : ''
             },
-            'select': function () {
+            'select': function (e) {
+                if (e.detail.button === cancelBtn) {
+                    this.dialogResult = '';
+                    return;
+                }
                 this.dialogResult = this.data.text;
             },
-            'buttons': [(_c = (_b = info.locale[locale]) === null || _b === void 0 ? void 0 : _b.ok) !== null && _c !== void 0 ? _c : info.locale['en'].ok],
+            'buttons': buttons,
             'autoDialogResult': false
         });
         return res;

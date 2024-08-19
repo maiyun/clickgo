@@ -605,10 +605,16 @@ export interface IFormDialogOptions {
     /** --- 路径基，以 / 结束或文件路径则以文件的基路径为准，可留空 --- */
     'path'?: string;
 
-    'select'?: (e: Event, button: string) => void;
+    'select'?: (this: AbstractForm & { 'data': Record<string, any>; }, e: IFormDialogSelectEvent, button: string) => void;
 
     /** --- 当前的 taskId，App 模式下无效 --- */
     'taskId'?: number;
+}
+
+export interface IFormDialogSelectEvent extends ICustomEvent {
+    'detail': {
+        'button': string;
+    };
 }
 
 /** --- Confirm 选项 --- */
@@ -626,9 +632,14 @@ export interface IFormPromptOptions {
     /** --- 当前的 taskId，App 模式下无效 --- */
     'taskId'?: number;
 
+    /** --- 标题 --- */
     'title'?: string;
+    /** --- 内容说明 --- */
     'content': string;
+    /** --- 文本默认值 --- */
     'text'?: string;
+    /** --- 是否显示取消按钮，默认显示 --- */
+    'cancel'?: boolean;
 }
 
 export interface IFormSetTopMostOptions {

@@ -3585,14 +3585,17 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
             }
 
             public select(button: string): void {
-                const event = {
+                const event: types.IFormDialogSelectEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
+                    },
+                    'detail': {
+                        'button': button
                     }
                 };
                 if (nopt.select) {
-                    nopt.select.call(this, event as unknown as Event, button);
+                    nopt.select.call(this, event, button);
                 }
                 if (event.go) {
                     if (nopt.autoDialogResult !== false) {
@@ -3679,6 +3682,11 @@ export async function prompt(opt: string | types.IFormPromptOptions): Promise<st
         return '';
     }
     const locale = t.locale.lang || core.config.locale;
+    const buttons = [info.locale[locale]?.ok ?? info.locale['en'].ok];
+    const cancelBtn = info.locale[locale]?.cancel ?? info.locale['en'].cancel;
+    if (opt.cancel === true || opt.cancel === undefined) {
+        buttons.unshift(cancelBtn);
+    }
     const res = await dialog({
         'taskId': taskId,
 
@@ -3689,10 +3697,14 @@ export async function prompt(opt: string | types.IFormPromptOptions): Promise<st
         'data': {
             'text': opt.text ?? ''
         },
-        'select': function(this: any) {
+        'select': function(e: types.IFormDialogSelectEvent) {
+            if (e.detail.button === cancelBtn) {
+                this.dialogResult = '';
+                return;
+            }
             this.dialogResult = this.data.text;
         },
-        'buttons': [info.locale[locale]?.ok ?? info.locale['en'].ok],
+        'buttons': buttons,
         'autoDialogResult': false
     });
     return res;
