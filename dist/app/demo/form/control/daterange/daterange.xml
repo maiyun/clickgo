@@ -1,7 +1,7 @@
 <form width="400" height="350" title="Daterange">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
-        <daterange v-model="ts" v-model:tz="tz" :time="time" :zone="zone" :disabled="disabled" :start="start ? 1704067200_000 : undefined">
+        <daterange v-model="ts" v-model:tz="tz" :time="time" :zone="zone" :disabled="disabled" :start="start ? 1706745600 : undefined">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>

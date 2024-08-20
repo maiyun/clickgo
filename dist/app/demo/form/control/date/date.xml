@@ -2,7 +2,7 @@
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
         <label>yearmonth: {{ym}}, hourminute: {{hm}}</label>
-        <date v-model="ts" v-model:tz="tz" :date="date" :time="time" :zone="zone" :disabled="disabled" :start="start ? 1704067200_000 : undefined" v-model:yearmonth="ym" v-model:hourminute="hm">
+        <date v-model="ts" v-model:tz="tz" :date="date" :time="time" :zone="zone" :disabled="disabled" :start="start ? 1706745600 : undefined" v-model:yearmonth="ym" v-model:hourminute="hm">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>
