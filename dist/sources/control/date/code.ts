@@ -37,6 +37,8 @@ export default class extends clickgo.control.AbstractControl {
             'tz': undefined,
             'yearmonth': '',
             'hourminute': '',
+            'start': undefined,
+            'end': undefined,
 
             'date': true,
             'time': true,

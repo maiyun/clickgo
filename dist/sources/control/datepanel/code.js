@@ -533,7 +533,15 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (cols > this.dateValueStr) {
-                const date = new Date(Date.UTC(col.year, col.month, col.date, parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00'), parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00'), parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00'), 0));
+                let ehour = parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00');
+                let eminute = parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00');
+                let eseconds = parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00');
+                if (ehour === 0 && eminute === 0 && eseconds === 0) {
+                    ehour = 23;
+                    eminute = 59;
+                    eseconds = 59;
+                }
+                const date = new Date(Date.UTC(col.year, col.month, col.date, ehour, eminute, eseconds, 0));
                 const event = {
                     'go': true,
                     preventDefault: function () {

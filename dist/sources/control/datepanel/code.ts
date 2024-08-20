@@ -638,7 +638,17 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             if (cols > this.dateValueStr) {
-                const date = new Date(Date.UTC(col.year, col.month, col.date, parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vseconds[0] ?? '00'), 0));
+                let ehour = parseInt(this.vhour[0] ?? '00');
+                let eminute = parseInt(this.vminute[0] ?? '00');
+                let eseconds = parseInt(this.vseconds[0] ?? '00');
+                if (ehour === 0 && eminute === 0 && eseconds === 0) {
+                    // --- 特殊情况 ---
+                    ehour = 23;
+                    eminute = 59;
+                    eseconds = 59;
+                }
+                /** --- 截止日 --- */
+                const date = new Date(Date.UTC(col.year, col.month, col.date, ehour, eminute, eseconds, 0));
                 const event: types.IDatepanelRangeEvent = {
                     'go': true,
                     preventDefault: function() {

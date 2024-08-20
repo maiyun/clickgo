@@ -19,12 +19,12 @@
     </div>
     <teleport to="system">
         <div ref="firstpop" class="pop first">
-            <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="ts" v-model:cursor="cursor" range :clearbtn="false" ref="firstpanel" @range="onRange" :yearmonth="firstym" @update:yearmonth="firstym=$event;onYmChange()">
+            <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="ts" v-model:cursor="cursor" range :clearbtn="false" ref="firstpanel" @range="onRange" :yearmonth="firstym" @update:yearmonth="firstym=$event;onYmChange()" :start="start" :end="end">
                 <template v-if="slots['default']" v-slot="col">
                     <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
                 </template>
             </cg-datepanel>
-            <cg-datepanel plain :tz="tzData" hourminute="235959" :time="propBoolean('time')" :modelValue="ts" v-model:cursor="cursor" range :start="ts" :clearbtn="false" :backbtn="false" ref="endpanel" @range="onRange" :yearmonth="endym" @update:yearmonth="endym=$event;onYmChange()" :jump="false" lockhm>
+            <cg-datepanel plain :tz="tzData" hourminute="235959" :time="propBoolean('time')" :modelValue="ts" v-model:cursor="cursor" range :start="ts" :end="end" :clearbtn="false" :backbtn="false" ref="endpanel" @range="onRange" :yearmonth="endym" @update:yearmonth="endym=$event;onYmChange()" :jump="false" lockhm>
                 <template v-if="slots['default']" v-slot="col">
                     <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
                 </template>

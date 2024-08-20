@@ -40,6 +40,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'tz': undefined,
             'yearmonth': '',
             'hourminute': '',
+            'start': undefined,
+            'end': undefined,
             'date': true,
             'time': true,
             'zone': false

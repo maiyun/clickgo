@@ -28,6 +28,8 @@ export default class extends clickgo.control.AbstractControl {
 
             'modelValue': [],
             'tz': undefined,
+            'start': undefined,
+            'end': undefined,
 
             'time': true,
             'zone': false

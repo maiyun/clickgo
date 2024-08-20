@@ -36,6 +36,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'disabled': false,
             'modelValue': [],
             'tz': undefined,
+            'start': undefined,
+            'end': undefined,
             'time': true,
             'zone': false
         };
