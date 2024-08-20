@@ -2930,7 +2930,17 @@ function prompt(opt) {
             },
             'select': function (e, button) {
                 var _a;
-                (_a = opt.select) === null || _a === void 0 ? void 0 : _a.call(this, e, button);
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'button': button,
+                        'value': this.data.text
+                    }
+                };
+                (_a = opt.select) === null || _a === void 0 ? void 0 : _a.call(this, event, button);
                 if (e.detail.button === cancelBtn) {
                     this.dialogResult = '';
                     return;

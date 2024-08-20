@@ -641,7 +641,14 @@ export interface IFormPromptOptions {
     /** --- 是否显示取消按钮，默认显示 --- */
     'cancel'?: boolean;
 
-    'select'?: (this: AbstractForm & { 'data': Record<string, any>; }, e: IFormDialogSelectEvent, button: string) => void;
+    'select'?: (this: AbstractForm & { 'data': Record<string, any>; }, e: IFormPromptSelectEvent, button: string) => void;
+}
+
+export interface IFormPromptSelectEvent extends ICustomEvent {
+    'detail': {
+        'button': string;
+        'value': string;
+    };
 }
 
 export interface IFormSetTopMostOptions {
