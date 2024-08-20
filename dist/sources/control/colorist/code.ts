@@ -11,11 +11,13 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
+        'mode': 'hsl' | 'rgb' | 'hex';
 
         /** --- 当前日期时间戳，毫秒 --- */
         'modelValue': string;
     } = {
             'disabled': false,
+            'mode': 'hsl',
 
             'modelValue': '',
         };

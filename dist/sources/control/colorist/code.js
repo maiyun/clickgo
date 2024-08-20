@@ -33,6 +33,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'disabled': false,
+            'mode': 'hsl',
             'modelValue': '',
         };
         this.paletteChanged = {

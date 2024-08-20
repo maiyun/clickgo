@@ -2,7 +2,7 @@
     <div class="color" :style="{'background': value}"></div>
     <teleport to="system">
         <div ref="pop" class="pop">
-            <cg-palette v-model="color" ok @ok="ok" @changed="changed"></cg-palette>
+            <cg-palette v-model="color" ok :mode="mode" @ok="ok" @changed="changed"></cg-palette>
         </div>
     </teleport>
 </div>
