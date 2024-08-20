@@ -61,6 +61,7 @@
                 <layout gutter="10">
                     <button @click="openForm('clist')">List</button>
                     <button @click="openForm('cselect')">Select</button>
+                    <button @click="openForm('cuploader')">Uploader</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cpanel')">Panel</button>

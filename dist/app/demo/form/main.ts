@@ -39,6 +39,7 @@ import cradioFrm from './control/radio/radio';
 import cswitchFrm from './control/switch/switch';
 import cscrollFrm from './control/scroll/scroll';
 import cselectFrm from './control/select/select';
+import cuploaderFrm from './control/uploader/uploader';
 import csvgFrm from './control/svg/svg';
 import ctabFrm from './control/tab/tab';
 import ctableFrm from './control/table/table';
@@ -302,6 +303,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cselect': {
                 frm = await clickgo.form.create(cselectFrm);
+                break;
+            }
+            case 'cuploader': {
+                frm = await clickgo.form.create(cuploaderFrm);
                 break;
             }
             case 'csvg': {

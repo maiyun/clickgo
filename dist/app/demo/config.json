@@ -145,6 +145,8 @@
         "/form/control/tuieditor/tuieditor.xml",
         "/form/control/tuiviewer/tuiviewer.js",
         "/form/control/tuiviewer/tuiviewer.xml",
+        "/form/control/uploader/uploader.js",
+        "/form/control/uploader/uploader.xml",
         "/form/control/vflow/vflow.css",
         "/form/control/vflow/vflow.js",
         "/form/control/vflow/vflow.xml",

@@ -125,6 +125,11 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Plus SVG Vector](https://www.svgrepo.com/svg/447037/plus)
 
+#### Uploader
+
+[Plus SVG Vector](https://www.svgrepo.com/svg/447037/plus)
+[Trash SVG Vector](https://www.svgrepo.com/svg/447040/trash)
+
 #### Video
 
 [Play SVG Vector](https://www.svgrepo.com/svg/447035/play)  

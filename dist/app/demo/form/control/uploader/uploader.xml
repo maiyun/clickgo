@@ -1,0 +1,10 @@
+<form width="700" height="500" title="Uploader">
+    <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <label>value: {{list}}</label>
+        <uploader :disabled="disabled" v-model="list" :multi="multi" @select="select" pre="/package/" :progress="progress"></uploader>
+        <layout gutter="10">
+            <button style="flex: 1" @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
+            <button style="flex: 1" @click="multi = !multi">{{multi ? '' : '!'}}multi</button>
+        </layout>
+    </layout>
+</form>
