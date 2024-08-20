@@ -22,9 +22,9 @@ export default class extends clickgo.control.AbstractControl {
 
         /** --- 当前日期时间戳，毫秒，可不选中 --- */
         'modelValue'?: number | string;
-        /** --- 限定可选的最小时间 --- */
+        /** --- 限定可选的最小时间，秒/毫秒 --- */
         'start'?: number | string;
-        /** --- 限定可选的最大时间 --- */
+        /** --- 限定可选的最大时间，秒/毫秒 --- */
         'end'?: number | string;
         /** --- 小时，如 8 --- */
         'tz'?: number | string;
@@ -740,12 +740,15 @@ export default class extends clickgo.control.AbstractControl {
                 this.startDate.setUTCFullYear(1900, 0, 1);
                 this.startDate.setUTCHours(0, 0, 0, 0);
                 this.startTs = this.startDate.getTime();
-                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1_000);
                 this.startDate.setMilliseconds(0);
             }
             else {
                 this.startTs = this.propNumber('start');
-                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+                if (this.startTs.toString().length < 13) {
+                    this.startTs *= 1_000;
+                }
+                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1_000);
                 this.startDate.setMilliseconds(0);
             }
             this.refreshStartValue();
@@ -764,12 +767,15 @@ export default class extends clickgo.control.AbstractControl {
                 this.endDate.setUTCFullYear(this.endDate.getUTCFullYear() + 100);
                 this.endDate.setUTCHours(23, 59, 59, 0);
                 this.endTs = this.endDate.getTime();
-                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1_000);
                 this.endDate.setMilliseconds(0);
             }
             else {
                 this.endTs = this.propNumber('end');
-                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+                if (this.endTs.toString().length < 13) {
+                    this.endTs *= 1_000;
+                }
+                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1_000);
                 this.endDate.setMilliseconds(0);
             }
             this.refreshEndValue();

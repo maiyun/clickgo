@@ -92,7 +92,7 @@ export default class extends clickgo.control.AbstractControl {
             return '';
         }
         const rtn: string[] = [];
-        const content = this.props.content.toString().length >= 13 ? this.propNumber('content') : this.propNumber('content') * 1000;
+        const content = this.props.content.toString().length >= 13 ? this.propNumber('content') : this.propNumber('content') * 1_000;
         const res = clickgo.tool.formatTime(content, this.props.tz === undefined ? undefined : this.propNumber('tz'));
         if (this.propBoolean('date')) {
             rtn.push(res.date);

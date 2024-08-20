@@ -626,6 +626,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             else {
                 this.startTs = this.propNumber('start');
+                if (this.startTs.toString().length < 13) {
+                    this.startTs *= 1000;
+                }
                 this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
                 this.startDate.setMilliseconds(0);
             }
@@ -649,6 +652,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             else {
                 this.endTs = this.propNumber('end');
+                if (this.endTs.toString().length < 13) {
+                    this.endTs *= 1000;
+                }
                 this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
                 this.endDate.setMilliseconds(0);
             }
