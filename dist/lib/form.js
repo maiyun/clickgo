@@ -2928,7 +2928,9 @@ function prompt(opt) {
             'data': {
                 'text': (_e = opt.text) !== null && _e !== void 0 ? _e : ''
             },
-            'select': function (e) {
+            'select': function (e, button) {
+                var _a;
+                (_a = opt.select) === null || _a === void 0 ? void 0 : _a.call(this, e, button);
                 if (e.detail.button === cancelBtn) {
                     this.dialogResult = '';
                     return;

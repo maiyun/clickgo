@@ -3697,7 +3697,8 @@ export async function prompt(opt: string | types.IFormPromptOptions): Promise<st
         'data': {
             'text': opt.text ?? ''
         },
-        'select': function(e: types.IFormDialogSelectEvent) {
+        'select': function(e: types.IFormDialogSelectEvent, button: string) {
+            opt.select?.call(this, e, button);
             if (e.detail.button === cancelBtn) {
                 this.dialogResult = '';
                 return;
