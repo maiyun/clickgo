@@ -1083,6 +1083,28 @@ export interface IPaletteChangedEvent {
     };
 }
 
+// --- Colorist Control ---
+
+export interface IColoristChangedEvent {
+    'detail': {
+        /** --- 颜色值 --- */
+        'value': string;
+        /** --- 对象 --- */
+        'hsl'?: {
+            'h': number;
+            's': number;
+            'l': number;
+            'a': number;
+        };
+        'rgb'?: {
+            'r': number;
+            'g': number;
+            'b': number;
+            'a': number;
+        };
+    };
+}
+
 // --- Select Control ---
 
 export interface ISelectAddEvent extends ICustomEvent {

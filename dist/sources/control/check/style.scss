@@ -45,7 +45,7 @@
 
         .label {
             &::before {
-                border: dotted .5px var(--g-plain-border-color);
+                border: dotted .5px var(--g-focusbox-border-color);
             }
         }
 

@@ -2,10 +2,10 @@
     display: flex; flex-direction: column; gap: var(--g-padding);
 
     .top {
-        flex: 1; display: flex; gap: var(--g-padding);
+        flex: 1; display: flex; gap: var(--g-padding); min-height: 140px; overflow: hidden;
 
         .left {
-            flex: 1; position: relative;
+            flex: 1; position: relative; border-radius: var(--g-radius);
 
             .white, .black {
                 position: absolute; left: 0; top: 0; width: 100%; height: 100%;
@@ -25,7 +25,7 @@
         }
 
         .right {
-            width: var(--g-control); background: linear-gradient(to bottom, hsl(0, 100%, 50%), hsl(60, 100%, 50%) 17%, hsl(120, 100%, 50%) 33%, hsl(180, 100%, 50%), hsl(240, 100%, 50%) 67%, hsl(300, 100%, 50%) 83%, hsl(0, 100%, 50%)); position: relative;
+            width: var(--g-control); background: linear-gradient(to bottom, hsl(0, 100%, 50%), hsl(60, 100%, 50%) 17%, hsl(120, 100%, 50%) 33%, hsl(180, 100%, 50%), hsl(240, 100%, 50%) 67%, hsl(300, 100%, 50%) 83%, hsl(0, 100%, 50%)); position: relative; border-radius: var(--g-radius);
 
             .control {
                 height: 4px; background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); box-shadow: var(--g-shadow); border-radius: var(--g-radius); pointer-events: none; left: -2px; width: calc(100% + 4px); position: absolute;
@@ -35,6 +35,10 @@
 
     .bottom {
         display: flex; gap: var(--g-padding); align-items: center; justify-content: flex-end;
+
+        .color {
+            width: var(--g-boxsize); height: var(--g-boxsize); border-radius: var(--g-radius);
+        }
 
         cg-text {
             min-width: 180px;

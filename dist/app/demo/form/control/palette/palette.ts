@@ -6,4 +6,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public mode = ['hsl'];
 
+    public value2 = '';
+
+    public disabled = false;
+
 }

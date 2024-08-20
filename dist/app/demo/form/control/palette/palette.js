@@ -29,6 +29,8 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.value = '';
         this.mode = ['hsl'];
+        this.value2 = '';
+        this.disabled = false;
     }
 }
 exports.default = default_1;
