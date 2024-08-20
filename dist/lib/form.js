@@ -2941,6 +2941,9 @@ function prompt(opt) {
                     }
                 };
                 (_a = opt.select) === null || _a === void 0 ? void 0 : _a.call(this, event, button);
+                if (!event.go) {
+                    e.preventDefault();
+                }
                 if (e.detail.button === cancelBtn) {
                     this.dialogResult = '';
                     return;

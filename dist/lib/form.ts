@@ -3709,6 +3709,9 @@ export async function prompt(opt: string | types.IFormPromptOptions): Promise<st
                 }
             };
             opt.select?.call(this, event, button);
+            if (!event.go) {
+                e.preventDefault();
+            }
             if (e.detail.button === cancelBtn) {
                 this.dialogResult = '';
                 return;
