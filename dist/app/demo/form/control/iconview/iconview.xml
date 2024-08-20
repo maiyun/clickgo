@@ -1,7 +1,7 @@
 <form title="Iconview" width="500" height="500" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <label>select: {{select}}</label>
-        <iconview :data="list" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :size="size[0] ? size[0] : undefined" :name="name" style="flex: 1;" @drop="drop" @select="onSelect" @open="onOpen">
+        <iconview :data="list" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :size="size[0] ? size[0] : undefined" :name="name" :plain="plain" style="flex: 1;" @drop="drop" @select="onSelect" @open="onOpen">
             <template v-slot:pop>
                 <menulist>
                     <menulist-item alt="S">Some options</menulist-item>
@@ -29,6 +29,7 @@
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
             <button @click="multi = !multi" style="flex: 1;">{{multi ? '' : '!'}}multi</button>
             <button @click="ctrl = !ctrl" style="flex: 1;">{{ctrl ? '' : '!'}}ctrl</button>
+            <button @click="plain = !plain" style="flex: 1;">{{plain ? '' : '!'}}plain</button>
         </layout>
         <layout class="ctr" gutter="10">
             <button @click="must = !must" style="flex: 1;">{{must ? '' : '!'}}must</button>

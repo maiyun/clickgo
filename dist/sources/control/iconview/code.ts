@@ -29,6 +29,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
+        'plain': boolean | string;
         'must': boolean | string;
         'multi': boolean | string;
         /** --- 默认 true，多选时，PC 端为 true 时则按键盘 ctrl 才能多选，手机端无论如何都是点击自动多选 --- */
@@ -43,6 +44,7 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': number[];
     } = {
             'disabled': false,
+            'plain': false,
             'must': false,
             'multi': true,
             'ctrl': true,

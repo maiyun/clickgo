@@ -80,6 +80,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public size = [100];
 
+    public plain = false;
+
     public showIndex(): void {
         clickgo.form.dialog('Index is ' + this.select.toString() + '.').catch((e: Error) => { throw e; });
     }
@@ -93,7 +95,7 @@ export default class extends clickgo.form.AbstractForm {
             for (const item of this.select) {
                 types.push(this.list[item].type);
             }
-            clickgo.form.dialog(`Type is ${types}.`).catch((e: Error) => { throw e; });
+            clickgo.form.dialog(`Type is ${JSON.stringify(types)}.`).catch((e: Error) => { throw e; });
         }
     }
 

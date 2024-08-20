@@ -99,6 +99,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.selectionArea = {};
         this.scroll = 'auto';
         this.size = [100];
+        this.plain = false;
     }
     showIndex() {
         clickgo.form.dialog('Index is ' + this.select.toString() + '.').catch((e) => { throw e; });
@@ -112,7 +113,7 @@ class default_1 extends clickgo.form.AbstractForm {
             for (const item of this.select) {
                 types.push(this.list[item].type);
             }
-            clickgo.form.dialog(`Type is ${types}.`).catch((e) => { throw e; });
+            clickgo.form.dialog(`Type is ${JSON.stringify(types)}.`).catch((e) => { throw e; });
         }
     }
     add() {
