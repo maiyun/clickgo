@@ -124,7 +124,7 @@ function weightFormat(weight, spliter = ' ') {
     for (; i < 3 && weight >= 1000; ++i) {
         weight /= 1000;
     }
-    return (Math.round(weight * 10000) / 10000).toString() + spliter + units[i];
+    return (Math.round(weight * 100) / 100).toString() + spliter + units[i];
 }
 function clone(obj) {
     let newObj = {};
