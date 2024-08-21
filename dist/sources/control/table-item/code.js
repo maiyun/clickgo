@@ -45,7 +45,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get isFixed() {
         var _a, _b;
-        if (this.table.clientWidth < 600) {
+        if (this.table.clientWidth < 500) {
             return undefined;
         }
         if (this.index === 0) {
@@ -57,7 +57,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return undefined;
     }
     get isBase() {
-        if (this.table.clientWidth < 600) {
+        if (this.table.clientWidth < 500) {
             return undefined;
         }
         if (this.isFixed === 'left') {
