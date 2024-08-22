@@ -11,6 +11,7 @@ export default class extends clickgo.control.AbstractControl {
 
         'area': 'all' | 'mark' | 'split';
         'size': 'm' | 'l' | 'xl';
+        'gutter': number | string;
     } = {
             'disabled': false,
             'plain': false,
@@ -19,7 +20,8 @@ export default class extends clickgo.control.AbstractControl {
             'type': 'default',
 
             'area': 'all',
-            'size': 'm'
+            'size': 'm',
+            'gutter': 0
         };
 
     /** --- 是否禁用状态 --- */

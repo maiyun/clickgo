@@ -33,7 +33,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'checked': false,
             'type': 'default',
             'area': 'all',
-            'size': 'm'
+            'size': 'm',
+            'gutter': 0
         };
         this.isSpaceDown = false;
         this.innerFocus = false;
