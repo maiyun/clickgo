@@ -1,5 +1,5 @@
 .wrap {
-    padding: var(--g-bpadding); display: flex; border: solid .5px var(--g-plain-border-color);
+    padding: var(--g-bpadding); display: flex; border: solid .5px var(--g-plain-border-color); border-radius: var(--g-radius-l);
     &.v {
         flex-direction: column;
     }

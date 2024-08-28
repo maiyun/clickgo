@@ -33,20 +33,13 @@ class default_1 extends clickgo.control.AbstractControl {
         this.props = {
             'direction': 'h',
             'gutter': '',
+            'width': undefined,
+            'height': undefined,
             'buttons': ['OK']
         };
-        this.padding = '';
-    }
-    get paddingMargin() {
-        return this.padding.replace(/(\w+)/g, '-$1');
     }
     click(item) {
         this.emit('select', item);
-    }
-    onMounted() {
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
-        }, true);
     }
 }
 exports.default = default_1;

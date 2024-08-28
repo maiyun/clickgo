@@ -1,15 +1,18 @@
 .wrap {
-    padding: 15px; min-width: 200px; max-width: 400px; word-break: break-all;
+    word-break: break-all; display: flex; flex-direction: column;
+    &.minmax {
+        min-width: 200px; max-width: 400px;
+    }
 
     .content {
-        background: var(--g-plain-background);
+        background: var(--g-plain-background); padding: var(--g-padding-l); flex: 1;
     }
     
     .controls {
         padding: 10px 10px 10px 70px; border-top: solid .5px var(--g-border-color);
     
         cg-button {
-            height: 30px; width: 80px;
+            min-width: 80px;
         }
     }
 }

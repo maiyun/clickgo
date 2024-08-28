@@ -3,9 +3,13 @@
     .menuwrap {
         display: flex; overflow: hidden; z-index: 7; // --- 不设置的话，收起来的瞬间会到底部去，不能设置 2，会被 header 挡住 ---
         .menu {
-            background: var(--face); border-right: solid .5px var(--g-border-color); padding: 1px; width: 250px; transition: all .3s var(--g-cubic); transition-property: transform;
+            background: var(--face); border-right: solid .5px var(--g-border-color); padding: 1px; width: 270px; transition: all .3s var(--g-cubic); transition-property: transform;
             .logo {
                 height: 60px; background-size: auto 50%; background-position: center; background-repeat: no-repeat;
+            }
+
+            > * {
+                margin: 0 var(--g-padding);
             }
         }
     }
@@ -42,7 +46,7 @@
         .header {
             display: flex; align-items: center; box-shadow: 0px 15px 30px rgba(0,0,0,.07); z-index: 1; padding: var(--g-padding-h);
             .mbutton {
-                width: 30px; min-height: 30px; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius); border: solid .5px transparent; transition: var(--g-transition);
+                width: var(--g-boxsize); min-height: var(--g-boxsize); height: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius); border: solid .5px transparent; transition: var(--g-transition);
                 &:hover {
                     background: var(--g-background-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover); border: solid .5px var(--g-border-color-hover);
                 }
@@ -51,7 +55,7 @@
                 }
 
                 svg {
-                    width: 22px; height: 22px;
+                    width: var(--g-size-l); height: var(--g-size-l);
                 }
             }
         }

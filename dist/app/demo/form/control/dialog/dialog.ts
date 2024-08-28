@@ -8,4 +8,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public btn = 'none';
 
+    public width = false;
+
 }

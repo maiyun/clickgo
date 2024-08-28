@@ -6,27 +6,24 @@ export default class extends clickgo.control.AbstractControl {
         'select': null
     };
 
-    public props = {
-        'direction': 'h',
-        'gutter': '',
+    public props: {
+        'direction': 'h' | 'v';
+        'gutter': string;
+        'width'?: number | string;
+        'height'?: number | string;
 
-        'buttons': ['OK']
-    };
+        'buttons': string[];
+    } = {
+            'direction': 'h',
+            'gutter': '',
+            'width': undefined,
+            'height': undefined,
 
-    public padding: string = '';
-
-    public get paddingMargin(): string {
-        return this.padding.replace(/(\w+)/g, '-$1');
-    }
+            'buttons': ['OK']
+        };
 
     public click(item: string): void {
         this.emit('select', item);
-    }
-
-    public onMounted(): void {
-        clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
-            this.padding = v;
-        }, true);
     }
 
 }

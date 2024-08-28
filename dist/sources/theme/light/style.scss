@@ -17,7 +17,7 @@ global {
     --g-size-xl:38px;
     --g-control:18px;   // --- 如 check、radio 等的宽度 ---
     --g-control-m:22px;
-    --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei", "ui-sans-serif", "Roboto", Helvetica, Arial, "sans-serif";
+    --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei","ui-sans-serif","Roboto",Helvetica,Arial,"sans-serif";
     --g-transition:all .3s var(--g-cubic);
     --g-line:1.5;
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
@@ -126,29 +126,6 @@ global {
     }
 }
 
-// -- CONTROL -- nav --
-
-.nav_wrap {
-    .nav_menuwrap {
-        .nav_menu {
-            width: 270px;
-            > * {
-                margin: 0 15px;
-            }
-        }
-    }
-    .nav_content {
-        .nav_header {
-            .nav_mbutton {
-                width: 50px; min-height: 50px;
-                .nav_tag-svg {
-                    width: 34px; height: 34px;
-                }
-            }
-        }
-    }
-}
-
 // -- CONTROL -- nav-item --
 
 .nav-item_wrap {
@@ -158,12 +135,6 @@ global {
             width: 20px; height: 20px; margin-right: 8px;
         }
     }
-}
-
-// -- CONTROL -- nav-title --
-
-.nav-title_wrap {
-    padding-left: 15px;
 }
 
 // -- CONTROL -- property --
@@ -208,12 +179,6 @@ global {
             }
         }
     }
-}
-
-// -- CONTROL -- sgroup --
-
-.sgroup_wrap {
-    border-radius: 10px;
 }
 
 // -- CONTROL -- tab --
