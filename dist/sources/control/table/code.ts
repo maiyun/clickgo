@@ -68,6 +68,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- item width 的映射 --- */
     public widthMap: number[] = [];
 
+    /** --- item min width 的映射 --- */
+    public minWidthMap: number[] = [];
+
     /** --- 当前的滚动位置 --- */
     public scrollLeft: number = 0;
 
@@ -120,6 +123,14 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.widthMap[index] = width;
+    }
+
+    /** --- 修改 header 的最小宽度 --- */
+    public setHeaderMinWidth(index: number, minWidth: number): void {
+        if (this.minWidthMap[index] === undefined) {
+            return;
+        }
+        this.minWidthMap[index] = minWidth;
     }
 
     /** --- 修改 header 的 sort --- */
@@ -242,7 +253,7 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.bindResize(e, {
             'object': el,
             'border': 'r',
-            'minWidth': 50,
+            'minWidth': this.minWidthMap[i],
             'move': (left, top, width) => {
                 this.widthMap[i] = width;
             }

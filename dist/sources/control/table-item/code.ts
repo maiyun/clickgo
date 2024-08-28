@@ -4,6 +4,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'width': number | string;
+        'minWidth': number | string;
         'label': string;
         'sort'?: boolean | string;
         'direction': 'h' | 'v';
@@ -12,6 +13,7 @@ export default class extends clickgo.control.AbstractControl {
         'alignV': string | undefined;
     } = {
             'width': 0,
+            'minWidth': 50,
             'label': 'label',
             'sort': undefined,
             'direction': 'h',
@@ -26,6 +28,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 所属的 table 控件 --- */
     public table: any = {
         'widthMap': {
+            [this.index]: 0
+        },
+        'minWidthMap': {
             [this.index]: 0
         }
     };
@@ -86,6 +91,9 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.watch('width', () => {
             table.setHeaderWidth(this.index, this.propNumber('width'));
+        });
+        this.watch('minWidth', () => {
+            table.setHeaderMinWidth(this.index, this.propNumber('minWidth'));
         });
         this.watch('sort', () => {
             table.setHeaderSort(this.index, this.props.sort === undefined ? undefined : this.propBoolean('sort'));

@@ -29,6 +29,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'width': 0,
+            'minWidth': 50,
             'label': 'label',
             'sort': undefined,
             'direction': 'h',
@@ -39,6 +40,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.index = 0;
         this.table = {
             'widthMap': {
+                [this.index]: 0
+            },
+            'minWidthMap': {
                 [this.index]: 0
             }
         };
@@ -94,6 +98,9 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.watch('width', () => {
             table.setHeaderWidth(this.index, this.propNumber('width'));
+        });
+        this.watch('minWidth', () => {
+            table.setHeaderMinWidth(this.index, this.propNumber('minWidth'));
         });
         this.watch('sort', () => {
             table.setHeaderSort(this.index, this.props.sort === undefined ? undefined : this.propBoolean('sort'));

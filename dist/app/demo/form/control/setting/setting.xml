@@ -1,5 +1,6 @@
 <form width="450" height="350" title="Setting" padding="10">
-    <layout direction="v" style="flex: 1;">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <label>Options</label>
         <setting>
             <setting-item title="How are you" note="Ok, I'm ok, you?">END</setting-item>
             <setting-item title="How are you" note="Ok, I'm ok, you?">

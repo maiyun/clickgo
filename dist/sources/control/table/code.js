@@ -52,6 +52,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.items = [];
         this.widthMap = [];
+        this.minWidthMap = [];
         this.scrollLeft = 0;
         this.scrollWidth = 0;
         this.clientWidth = 0;
@@ -88,6 +89,12 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.widthMap[index] = width;
+    }
+    setHeaderMinWidth(index, minWidth) {
+        if (this.minWidthMap[index] === undefined) {
+            return;
+        }
+        this.minWidthMap[index] = minWidth;
     }
     setHeaderSort(index, sort) {
         const item = this.items[index];
@@ -198,7 +205,7 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.dom.bindResize(e, {
             'object': el,
             'border': 'r',
-            'minWidth': 50,
+            'minWidth': this.minWidthMap[i],
             'move': (left, top, width) => {
                 this.widthMap[i] = width;
             }
