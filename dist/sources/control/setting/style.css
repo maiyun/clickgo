@@ -1,1 +1,1 @@
-.wrap{background:var(--g-plain-background);border-radius:var(--g-radius-l)}.wrap>:not(:last-child){border-bottom:solid .5px var(--g-plain-border-color-plain)}
+.wrap{background:var(--g-plain-background);border-radius:var(--g-radius-l);border:solid .5px var(--g-plain-border-color)}.wrap>:not(:last-child){border-bottom:solid .5px var(--g-plain-border-color-plain)}
