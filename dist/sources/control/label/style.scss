@@ -33,8 +33,11 @@
 
     // --- copy ---
     &.copy {
-        &:hover {
-            text-decoration: underline; text-decoration-style: dashed;
+        &::after {
+            content: ''; position: absolute; left: 0; bottom: 0; width: 100%; border-bottom: dashed 1px var(--g-color); opacity: 0; transition: var(--g-transition);
+        }
+        &:hover::after {
+            opacity: 1;
         }
     }
 }
