@@ -125,6 +125,7 @@
         "/form/control/scroll/scroll.xml",
         "/form/control/select/select.js",
         "/form/control/select/select.xml",
+        "/form/control/setting/setting.xml",
         "/form/control/sgroup/sgroup.xml",
         "/form/control/step/step.js",
         "/form/control/step/step.xml",

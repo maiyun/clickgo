@@ -66,6 +66,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cpanel')">Panel</button>
                     <button @click="openForm('cproperty')">Property</button>
+                    <button @click="openForm('csetting')">Setting</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ctable')">Table</button>

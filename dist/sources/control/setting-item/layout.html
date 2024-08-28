@@ -1,0 +1,9 @@
+<div class="wrap">
+    <div class="left">
+        <div class="title">{{title}}</div>
+        <div class="note">{{note}}</div>
+    </div>
+    <div class="right" :class="[direction]" :style="{'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
+        <slot></slot>
+    </div>
+</div>

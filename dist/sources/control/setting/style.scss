@@ -1,0 +1,7 @@
+.wrap {
+    background: var(--g-plain-background); border-radius: var(--g-radius-l);
+
+    > :not(:last-child) {
+        border-bottom: solid .5px var(--g-plain-border-color-plain);
+    }
+}
