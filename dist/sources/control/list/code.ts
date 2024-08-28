@@ -42,6 +42,10 @@ export default class extends clickgo.control.AbstractControl {
             'label'?: string;
             'value'?: string;
             'children'?: string;
+
+            'disabled'?: string;
+            'control'?: string;
+            'unavailable'?: string;
         };
         /** --- 展现样式 --- */
         'mode': 'default' | 'view';
@@ -151,11 +155,19 @@ export default class extends clickgo.control.AbstractControl {
         'label': string;
         'value': string;
         'children': string;
+
+        'disabled': string;
+        'control': string;
+        'unavailable': string;
     } {
         return {
             'children': this.props.map.children ?? 'children',
             'label': this.props.map.label ?? 'label',
             'value': this.props.map.value ?? 'value',
+
+            'disabled': this.props.map.disabled ?? 'disabled',
+            'control': this.props.map.control ?? 'control',
+            'unavailable': this.props.map.unavailable ?? 'unavailable'
         };
     }
 
@@ -281,6 +293,8 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 遍历新数据 ---
         for (let k = 0; k < nowData.length; ++k) {
+            /** --- 用户单对象 --- */
+            const item = nowData[k];
             /** --- 序列化后的单对象 --- */
             const over: Record<string, any> = {
                 'label': '',
@@ -290,10 +304,9 @@ export default class extends clickgo.control.AbstractControl {
                 'color': undefined,
                 'control': 'item',
                 'tree': this.propInt('treeDefault'),
-                'children': []
+                'children': [],
+                'data': item
             };
-            /** --- 用户单对象 --- */
-            const item = nowData[k];
             /** --- 单对象的值 --- */
             let value = typeof item === 'object' ? (item[this.mapComp.value] ?? item[this.mapComp.label] ?? k) : item;
             if (typeof value === 'number') {
@@ -305,7 +318,10 @@ export default class extends clickgo.control.AbstractControl {
                 over.label = item[this.mapComp.label] ?? item[this.mapComp.value] ?? k;
                 over.value = value;
                 over.title = item.title !== undefined ? item.title : false;
-                over.disabled = item.disabled !== undefined ? item.disabled : (over.title ? true : false);
+                over.disabled = item[this.mapComp.disabled] !== undefined ?
+                    item[this.mapComp.disabled] : (over.title ? true : false);
+                over.control = item[this.mapComp.control];
+                over.unavailable = item[this.mapComp.unavailable];
                 over.color = item.color ? (item.color === 'tip' ? 'var(--g-color-disabled)' : item.color) : undefined;
                 over.control = item.control ?? 'item';
                 if (item.icon) {
@@ -372,7 +388,8 @@ export default class extends clickgo.control.AbstractControl {
                 'icon': item.icon ?? this.props.iconDefault,
                 'openicon': item.openicon ?? item.icon ?? this.props.iconDefault,
                 'level': level,
-                'format': item
+                'format': item,
+                'data': item.data
             });
             if (!this.propBoolean('tree') || (tree === 1)) {
                 result.push(...this.unpack(item.children, level + 1));

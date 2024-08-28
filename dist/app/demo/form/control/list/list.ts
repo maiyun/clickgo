@@ -57,12 +57,18 @@ export default class extends clickgo.form.AbstractForm {
             'id': '1'
         },
         {
-            'name': 'hi2',
+            'name': 'hi2dis',
             'id': '2',
+            'disabled': true,
+            'count': 2
+        },
+        {
+            'name': 'hi2',
+            'id': '3',
             'sub': [
                 {
                     'name': 'hi3',
-                    'id': '3'
+                    'id': '4'
                 }
             ]
         }

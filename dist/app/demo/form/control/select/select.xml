@@ -53,7 +53,9 @@
                     <button @click="unavailableList = unavailableList.length > 1 ? ['haha4'] : ['haha3', 'ha5']">{{unavailableList.length ? unavailableList : 'unavailableList'}}</button>
                     <list :data="addRemoveList" style="height: 100px;"></list>
                     <label>Custom height:</label>
-                    <select :data="['1','2','3','4','5']" :disabled="disabled" :editable="editable" :multi="multi" :plain="plain" :tree="tree" :async="async" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" style="height: 60px;" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <select :data="['1','2','3','4','5']" :disabled="disabled" :editable="editable" :multi="multi" :plain="plain" :tree="tree" :async="async" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" style="height: 60px;" @load="onLoad" @remote="onRemote" :style="{'font-size': fontSize ? '16px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}" v-slot:row="data">
+                        <layout gutter="5" align-v="center"><circle />{{data.row.label}}</layout>
+                    </select>
                     <label>Always editable: {{aemodel}}</label>
                     <layout gutter="10" align-v="center">
                         <select v-model="aemodel" :data="editableData[editableDataValue[0]]" :disabled="disabled" editable editablelabel :multi="multi" :plain="plain" :tree="tree" :async="async" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" placeholder="Please enter" @load="onLoad" @remote="onRemote" style="flex: 1;" :style="{'font-size': fontSize ? '16px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>

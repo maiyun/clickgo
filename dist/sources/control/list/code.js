@@ -108,11 +108,14 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.unpack(this.dataFormat);
     }
     get mapComp() {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f;
         return {
             'children': (_a = this.props.map.children) !== null && _a !== void 0 ? _a : 'children',
             'label': (_b = this.props.map.label) !== null && _b !== void 0 ? _b : 'label',
             'value': (_c = this.props.map.value) !== null && _c !== void 0 ? _c : 'value',
+            'disabled': (_d = this.props.map.disabled) !== null && _d !== void 0 ? _d : 'disabled',
+            'control': (_e = this.props.map.control) !== null && _e !== void 0 ? _e : 'control',
+            'unavailable': (_f = this.props.map.unavailable) !== null && _f !== void 0 ? _f : 'unavailable'
         };
     }
     select(index) {
@@ -204,6 +207,7 @@ class default_1 extends clickgo.control.AbstractControl {
             oldValues.push(item.value);
         }
         for (let k = 0; k < nowData.length; ++k) {
+            const item = nowData[k];
             const over = {
                 'label': '',
                 'value': '',
@@ -212,9 +216,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 'color': undefined,
                 'control': 'item',
                 'tree': this.propInt('treeDefault'),
-                'children': []
+                'children': [],
+                'data': item
             };
-            const item = nowData[k];
             let value = typeof item === 'object' ? ((_b = (_a = item[this.mapComp.value]) !== null && _a !== void 0 ? _a : item[this.mapComp.label]) !== null && _b !== void 0 ? _b : k) : item;
             if (typeof value === 'number') {
                 value = value.toString();
@@ -224,7 +228,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 over.label = (_d = (_c = item[this.mapComp.label]) !== null && _c !== void 0 ? _c : item[this.mapComp.value]) !== null && _d !== void 0 ? _d : k;
                 over.value = value;
                 over.title = item.title !== undefined ? item.title : false;
-                over.disabled = item.disabled !== undefined ? item.disabled : (over.title ? true : false);
+                over.disabled = item[this.mapComp.disabled] !== undefined ?
+                    item[this.mapComp.disabled] : (over.title ? true : false);
+                over.control = item[this.mapComp.control];
+                over.unavailable = item[this.mapComp.unavailable];
                 over.color = item.color ? (item.color === 'tip' ? 'var(--g-color-disabled)' : item.color) : undefined;
                 over.control = (_e = item.control) !== null && _e !== void 0 ? _e : 'item';
                 if (item.icon) {
@@ -281,7 +288,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'icon': (_a = item.icon) !== null && _a !== void 0 ? _a : this.props.iconDefault,
                 'openicon': (_c = (_b = item.openicon) !== null && _b !== void 0 ? _b : item.icon) !== null && _c !== void 0 ? _c : this.props.iconDefault,
                 'level': level,
-                'format': item
+                'format': item,
+                'data': item.data
             });
             if (!this.propBoolean('tree') || (tree === 1)) {
                 result.push(...this.unpack(item.children, level + 1));
