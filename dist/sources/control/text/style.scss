@@ -1,16 +1,16 @@
 .wrap {
-    display: flex; outline: none; border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden; transition: var(--g-transition); transition-property: color, background-color, border, box-shadow; flex-direction: column;
+    display: flex; outline: none; border-radius: var(--g-radius); border-style: solid; border-width: .5px; overflow: hidden; transition: var(--g-transition); transition-property: color, background-color, border, box-shadow; flex-direction: column; position: relative;
     &.plain {
         border-style: none;
     }
+    &.require::after {
+        content: ''; width: var(--g-padding-s); height: var(--g-padding-s); position: absolute; right: var(--g-padding); top: calc(50% - var(--g-padding-s) / 2); background: var(--danger); border-radius: 50%; pointer-events: none;
+    }
 
     .multi-t {
-        flex: 1; display: flex; position: relative;
-        textarea {font: inherit;
-            width: 0;
-        }
-        pre {
-            position: absolute; left: 0; top: 0; margin: 0; pointer-events: none; word-break: break-word; white-space: pre-wrap; opacity: 0;
+        flex: 1; display: flex;
+        textarea {
+            font: inherit; width: 0;
         }
         cg-scroll {
             width: 16px;
@@ -104,6 +104,9 @@
 
     &:not([data-cg-disabled]) {
         border-color: var(--g-plain-border-color);
+        &.mustinput {
+            border-color: var(--danger);
+        }
         &:not(.plain) {
             background: var(--g-plain-background);
         }

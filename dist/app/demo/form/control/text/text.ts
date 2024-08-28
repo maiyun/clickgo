@@ -31,7 +31,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled = false;
 
-    public placeholder = 'placeholder\nplaceholder';
+    public placeholder = 'placeholder';
 
     public readonly = false;
 
@@ -72,6 +72,8 @@ export default class extends clickgo.form.AbstractForm {
     public min = undefined;
 
     public plain = false;
+
+    public require = false;
 
     public get textBorder(): any {
         switch (this.border) {

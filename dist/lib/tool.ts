@@ -895,7 +895,7 @@ export function hsl2rgb(h: string | number, s?: string | number, l?: string | nu
 }
 
 /**
- * --- 发起一个网络请求 ---
+ * --- 发起一个网络请求，若是返回值是 JSON 则自动解析，否则直接返回字符串 ---
  * @param url 网址
  * @param opt 选项
  */

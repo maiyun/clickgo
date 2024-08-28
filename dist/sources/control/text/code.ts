@@ -30,6 +30,7 @@ export default class extends clickgo.control.AbstractControl {
         'gesture': string[] | string;
         'type': 'text' | 'multi' | 'password' | 'number';
         'plain': boolean | string;
+        'require': boolean | string;
 
         'modelValue': string;
         'placeholder': string;
@@ -49,6 +50,7 @@ export default class extends clickgo.control.AbstractControl {
             'gesture': [],
             'type': 'text',
             'plain': false,
+            'require': false,
 
             'modelValue': '',
             'placeholder': '',
@@ -168,10 +170,16 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.form.hidePop();
     }
 
+    /** --- 为 true 的话会显示红色边框 --- */
+    public mustInput = false;
+
     /** --- 文本框的 focus 事件 --- */
     public tfocus(): void {
         this.isFocus = true;
         this.emit('focus');
+        if (this.mustInput) {
+            this.mustInput = false;
+        }
     }
 
     /** --- 文本框的 blur 事件 --- */
@@ -222,6 +230,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.isFocus = false;
         this.emit('blur');
+        // --- 判断是否显示红色边框 ---
+        if (this.propBoolean('require') && !this.value) {
+            this.mustInput = true;
+        }
     }
 
     /** --- 文本框的 input 事件 --- */

@@ -61,6 +61,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'gesture': [],
             'type': 'text',
             'plain': false,
+            'require': false,
             'modelValue': '',
             'placeholder': '',
             'selectionStart': 0,
@@ -143,6 +144,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'paste': 'Dán'
             }
         };
+        this.mustInput = false;
     }
     maxScrollLeft() {
         return this.refs.text.scrollWidth - this.refs.text.clientWidth;
@@ -162,6 +164,9 @@ class default_1 extends clickgo.control.AbstractControl {
     tfocus() {
         this.isFocus = true;
         this.emit('focus');
+        if (this.mustInput) {
+            this.mustInput = false;
+        }
     }
     tblur(e) {
         const target = e.target;
@@ -206,6 +211,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.isFocus = false;
         this.emit('blur');
+        if (this.propBoolean('require') && !this.value) {
+            this.mustInput = true;
+        }
     }
     input(e) {
         const target = e.target;
