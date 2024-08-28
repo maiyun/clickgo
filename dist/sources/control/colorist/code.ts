@@ -38,12 +38,11 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 调色板确定 --- */
     public ok(): void {
-        if (this.value === this.color) {
-            return;
+        if (this.value !== this.color) {
+            this.value = this.color;
+            this.emit('update:modelValue', this.value);
+            this.emit('changed', this.paletteChanged);
         }
-        this.value = this.color;
-        this.emit('update:modelValue', this.value);
-        this.emit('changed', this.paletteChanged);
         clickgo.form.hidePop(this.element);
     }
 

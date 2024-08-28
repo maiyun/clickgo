@@ -47,12 +47,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.value = '';
     }
     ok() {
-        if (this.value === this.color) {
-            return;
+        if (this.value !== this.color) {
+            this.value = this.color;
+            this.emit('update:modelValue', this.value);
+            this.emit('changed', this.paletteChanged);
         }
-        this.value = this.color;
-        this.emit('update:modelValue', this.value);
-        this.emit('changed', this.paletteChanged);
         clickgo.form.hidePop(this.element);
     }
     down(e) {
