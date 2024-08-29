@@ -6,6 +6,7 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'focus': null,
         'blur': null,
+        'enter': null,
         'gesture': null,
         'clientwidth': null,
         'clientheight': null,
@@ -31,6 +32,7 @@ export default class extends clickgo.control.AbstractControl {
         'type': 'text' | 'multi' | 'password' | 'number';
         'plain': boolean | string;
         'require': boolean | string;
+        'rule': string;
 
         'modelValue': string;
         'placeholder': string;
@@ -51,6 +53,7 @@ export default class extends clickgo.control.AbstractControl {
             'type': 'text',
             'plain': false,
             'require': false,
+            'rule': '',
 
             'modelValue': '',
             'placeholder': '',
@@ -171,14 +174,14 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 为 true 的话会显示红色边框 --- */
-    public mustInput = false;
+    public dangerBorder = false;
 
     /** --- 文本框的 focus 事件 --- */
     public tfocus(): void {
         this.isFocus = true;
         this.emit('focus');
-        if (this.mustInput) {
-            this.mustInput = false;
+        if (this.dangerBorder) {
+            this.dangerBorder = false;
         }
     }
 
@@ -231,9 +234,7 @@ export default class extends clickgo.control.AbstractControl {
         this.isFocus = false;
         this.emit('blur');
         // --- 判断是否显示红色边框 ---
-        if (this.propBoolean('require') && !this.value) {
-            this.mustInput = true;
-        }
+        this.check();
     }
 
     /** --- 文本框的 input 事件 --- */
@@ -554,6 +555,38 @@ export default class extends clickgo.control.AbstractControl {
             this.size.ch = this.refs.text.clientHeight;
             this.emit('clientheight', this.refs.text.clientHeight);
         }, true);
+    }
+
+    /** --- 文本框的键盘事件 --- */
+    public keydown(e: KeyboardEvent): void {
+        if (e.key === 'Enter') {
+            this.emit('enter');
+        }
+    }
+
+    /** --- 检测 require 和 rule --- */
+    public check(): boolean {
+        // --- 先检测必填 ---
+        if (this.propBoolean('require')) {
+            if (!this.value) {
+                this.dangerBorder = true;
+                return false;
+            }
+        }
+        if (!this.value) {
+            return true;
+        }
+        // --- 再检测是否符合格式 ---
+        if (!this.props.rule) {
+            return true;
+        }
+        const reg = new RegExp(this.props.rule.slice(1, -1));
+        const r = reg.test(this.value);
+        if (r) {
+            return true;
+        }
+        this.dangerBorder = true;
+        return false;
     }
 
     public onMounted(): void {

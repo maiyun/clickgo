@@ -104,7 +104,7 @@
 
     &:not([data-cg-disabled]) {
         border-color: var(--g-plain-border-color);
-        &.mustinput {
+        &.dangerBorder {
             border-color: var(--danger);
         }
         &:not(.plain) {

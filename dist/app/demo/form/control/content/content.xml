@@ -5,7 +5,7 @@
         <label>Label2:</label>
         <text require></text>
         <label>Label3:</label>
-        <text></text>
+        <text rule="/^[a-zA-Z]+$/"></text>
         <label>Label4:</label>
         <text require></text>
         <button @click="refs.content.check()">Check</button>

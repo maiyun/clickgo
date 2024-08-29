@@ -39,6 +39,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'focus': null,
             'blur': null,
+            'enter': null,
             'gesture': null,
             'clientwidth': null,
             'clientheight': null,
@@ -62,6 +63,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'type': 'text',
             'plain': false,
             'require': false,
+            'rule': '',
             'modelValue': '',
             'placeholder': '',
             'selectionStart': 0,
@@ -144,7 +146,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'paste': 'Dán'
             }
         };
-        this.mustInput = false;
+        this.dangerBorder = false;
     }
     maxScrollLeft() {
         return this.refs.text.scrollWidth - this.refs.text.clientWidth;
@@ -164,8 +166,8 @@ class default_1 extends clickgo.control.AbstractControl {
     tfocus() {
         this.isFocus = true;
         this.emit('focus');
-        if (this.mustInput) {
-            this.mustInput = false;
+        if (this.dangerBorder) {
+            this.dangerBorder = false;
         }
     }
     tblur(e) {
@@ -211,9 +213,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.isFocus = false;
         this.emit('blur');
-        if (this.propBoolean('require') && !this.value) {
-            this.mustInput = true;
-        }
+        this.check();
     }
     input(e) {
         const target = e.target;
@@ -507,6 +507,32 @@ class default_1 extends clickgo.control.AbstractControl {
             this.size.ch = this.refs.text.clientHeight;
             this.emit('clientheight', this.refs.text.clientHeight);
         }, true);
+    }
+    keydown(e) {
+        if (e.key === 'Enter') {
+            this.emit('enter');
+        }
+    }
+    check() {
+        if (this.propBoolean('require')) {
+            if (!this.value) {
+                this.dangerBorder = true;
+                return false;
+            }
+        }
+        if (!this.value) {
+            return true;
+        }
+        if (!this.props.rule) {
+            return true;
+        }
+        const reg = new RegExp(this.props.rule.slice(1, -1));
+        const r = reg.test(this.value);
+        if (r) {
+            return true;
+        }
+        this.dangerBorder = true;
+        return false;
     }
     onMounted() {
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {

@@ -47,10 +47,9 @@ class default_1 extends clickgo.control.AbstractControl {
     check() {
         let rtn = true;
         for (const item of this.controls) {
-            if (item.value === '') {
+            const r = item.check();
+            if (!r) {
                 rtn = false;
-                item.mustInput = true;
-                continue;
             }
         }
         return rtn;
