@@ -718,6 +718,19 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
+        const content = this.parentByName('content');
+        if (content) {
+            this.watch('require', () => {
+                if (this.propBoolean('require')) {
+                    content.controls.push(this);
+                }
+                else {
+                    content.remove(this);
+                }
+            }, {
+                'immediate': true
+            });
+        }
         this.refs.text.scrollTop = this.propInt('scrollTop');
         this.refs.text.scrollLeft = this.propInt('scrollLeft');
         if (this.props.type !== 'number') {

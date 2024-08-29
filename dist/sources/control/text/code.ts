@@ -766,6 +766,19 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.refs.text.selectionEnd = prop;
         });
+        const content = this.parentByName('content');
+        if (content) {
+            this.watch('require', (): void => {
+                if (this.propBoolean('require')) {
+                    content.controls.push(this);
+                }
+                else {
+                    content.remove(this);
+                }
+            }, {
+                'immediate': true
+            });
+        }
 
         // --- 对 scroll 位置进行归位 ---
         this.refs.text.scrollTop = this.propInt('scrollTop');

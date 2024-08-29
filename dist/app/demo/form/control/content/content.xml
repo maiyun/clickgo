@@ -1,12 +1,13 @@
 <form width="550" height="500" title="Content" padding="10">
-    <content direction="v" gutter="10" style="flex: 1;">
+    <content direction="v" gutter="10" ref="content" style="flex: 1;">
         <label>Label1:</label>
         <text></text>
         <label>Label2:</label>
-        <text></text>
+        <text require></text>
         <label>Label3:</label>
         <text></text>
         <label>Label4:</label>
-        <text></text>
+        <text require></text>
+        <button @click="refs.content.check()">Check</button>
     </content>
 </form>

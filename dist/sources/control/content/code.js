@@ -33,6 +33,27 @@ class default_1 extends clickgo.control.AbstractControl {
             'alignH': undefined,
             'alignV': undefined
         };
+        this.controls = [];
+    }
+    remove(c) {
+        for (let i = 0; i < this.controls.length; ++i) {
+            if (this.controls[i] !== c) {
+                continue;
+            }
+            this.controls.splice(i, 1);
+            break;
+        }
+    }
+    check() {
+        let rtn = true;
+        for (const item of this.controls) {
+            if (item.value === '') {
+                rtn = false;
+                item.mustInput = true;
+                continue;
+            }
+        }
+        return rtn;
     }
 }
 exports.default = default_1;
