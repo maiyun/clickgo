@@ -1,4 +1,4 @@
-<form title="List" width="500" height="650" min-width="300" min-height="400" padding="10" direction="v">
+<form title="List" width="550" height="650" min-width="300" min-height="400" padding="10" direction="v">
     <label>Greatlist: {{select}}, list: {{select2}}, label: {{label2}}</label>
     <tab v-model="ntab" :tabs="['greatlist', 'adaptation', 'beyond', 'list', 'object', 'async']" style="flex: 1; height: 0;">
         <!-- 默认 -->
@@ -75,7 +75,7 @@
                     <label v-else>{{disabledList}}</label>
                 </layout>
                 <layout direction="v" gutter="10" style="flex: 1; width: 0;">
-                    <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual"  :mode="mode[0]" :data="listData5" :check="check" :map="listMap5" :tree="tree" style="flex: 1;">
+                    <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual"  :mode="mode[0]" :data="listData5" :check="check" :map="listMap5" :tree="tree" :async="async" @load="onlist5Load" style="flex: 1;">
                         <template v-slot:row="data">
                             <layout gutter="10" align-v="center">
                                 <label style="flex: 1;">{{data.row.label}}</label>
@@ -84,6 +84,7 @@
                         </template>
                     </list>
                     <button v-if="listMap5===undefined" @click="listMap5={'label':'name','value':'id','children':'sub','disabled':'disabled1'}">Set map</button>
+                    <button v-if="listMap5!==undefined" @click="changelistData5Index">{{listData5Index ? '' : '!'}}index</button>
                 </layout>
             </layout>
             <label class="mtip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>

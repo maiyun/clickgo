@@ -348,11 +348,18 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 是不是加载的结果出来了 ---
             if (over.tree === 2) {
+                // --- 之前是加载中的 ---
                 if (over.children.length === 0) {
                     over.tree = -1;
                 }
                 else {
                     over.tree = 1;
+                }
+            }
+            else if (over.tree === 1) {
+                // --- 之前可能是开启或关闭，但如果是开启，并且没有 children，children 可能是异步加载的，所以默认关起 ---
+                if (over.children.length === 0) {
+                    over.tree = 0;
                 }
             }
             data.push(over);
@@ -722,6 +729,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 普通 变 check ---
             this.refreshCheckValues();
         });
+        // --- 监听 data 变动 ---
         this.watch(() => JSON.stringify(this.props.data), (n, o): void => {
             if (n === o) {
                 return;

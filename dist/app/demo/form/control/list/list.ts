@@ -54,27 +54,33 @@ export default class extends clickgo.form.AbstractForm {
     public listData5 = [
         {
             'name': 'hi',
+            'name2': 'xhi',
             'id': '1'
         },
         {
             'name': 'hi2dis',
+            'name2': 'xhi2dis',
             'id': '2',
             'disabled': true,
             'count': 2
         },
         {
             'name': 'hi2',
+            'name2': 'xhi2',
             'id': '3',
             'sub': [
                 {
                     'name': 'hi3',
+                    'name2': 'xhi3',
                     'id': '4'
                 }
             ]
         }
     ];
 
-    public listMap5 = undefined;
+    public listMap5: any = undefined;
+
+    public listData5Index = false;
 
     public disabledList: string[] = [];
 
@@ -334,6 +340,37 @@ export default class extends clickgo.form.AbstractForm {
             'title': 'List @remove',
             'content': 'value: ' + e.detail.value
         });
+    }
+
+    public changelistData5Index(): void {
+        this.listData5Index = !this.listData5Index;
+        if (this.listData5Index) {
+            this.listMap5 = { 'label': 'name2', 'value': 'id', 'children': 'sub', 'disabled': 'disabled1' };
+        }
+        else {
+            this.listMap5 = { 'label': 'name', 'value': 'id', 'children': 'sub', 'disabled': 'disabled1' };
+        }
+    }
+
+    public async onlist5Load(value: string, resolve: (child?: any[]) => void): Promise<void> {
+        if (value === '4') {
+            await clickgo.tool.sleep(100);
+            resolve([
+                {
+                    'name': 'hi5',
+                    'name2': 'xhi5',
+                    'id': '5'
+                },
+                {
+                    'name': 'hi6',
+                    'name2': 'xhi6',
+                    'id': '6'
+                }
+            ]);
+            return;
+        }
+        await clickgo.tool.sleep(300);
+        resolve();
     }
 
 }

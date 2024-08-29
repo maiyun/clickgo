@@ -78,26 +78,31 @@ class default_1 extends clickgo.form.AbstractForm {
         this.listData5 = [
             {
                 'name': 'hi',
+                'name2': 'xhi',
                 'id': '1'
             },
             {
                 'name': 'hi2dis',
+                'name2': 'xhi2dis',
                 'id': '2',
                 'disabled': true,
                 'count': 2
             },
             {
                 'name': 'hi2',
+                'name2': 'xhi2',
                 'id': '3',
                 'sub': [
                     {
                         'name': 'hi3',
+                        'name2': 'xhi3',
                         'id': '4'
                     }
                 ]
             }
         ];
         this.listMap5 = undefined;
+        this.listData5Index = false;
         this.disabledList = [];
         this.selectObject = ['test'];
         this.listDataObject = {
@@ -311,6 +316,37 @@ class default_1 extends clickgo.form.AbstractForm {
             'type': 'info',
             'title': 'List @remove',
             'content': 'value: ' + e.detail.value
+        });
+    }
+    changelistData5Index() {
+        this.listData5Index = !this.listData5Index;
+        if (this.listData5Index) {
+            this.listMap5 = { 'label': 'name2', 'value': 'id', 'children': 'sub', 'disabled': 'disabled1' };
+        }
+        else {
+            this.listMap5 = { 'label': 'name', 'value': 'id', 'children': 'sub', 'disabled': 'disabled1' };
+        }
+    }
+    onlist5Load(value, resolve) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (value === '4') {
+                yield clickgo.tool.sleep(100);
+                resolve([
+                    {
+                        'name': 'hi5',
+                        'name2': 'xhi5',
+                        'id': '5'
+                    },
+                    {
+                        'name': 'hi6',
+                        'name2': 'xhi6',
+                        'id': '6'
+                    }
+                ]);
+                return;
+            }
+            yield clickgo.tool.sleep(300);
+            resolve();
         });
     }
 }

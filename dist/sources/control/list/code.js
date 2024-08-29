@@ -262,6 +262,11 @@ class default_1 extends clickgo.control.AbstractControl {
                     over.tree = 1;
                 }
             }
+            else if (over.tree === 1) {
+                if (over.children.length === 0) {
+                    over.tree = 0;
+                }
+            }
             data.push(over);
         }
         return data;
