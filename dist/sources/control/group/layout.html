@@ -1,4 +1,4 @@
-<div class="wrap" :class="[direction]">
+<div class="wrap" :class="[direction, propBoolean('plain')&&'plain']">
     <div class="title" v-if="title || slots['title']">
         <div v-if="title" class="text">{{title}}</div>
         <template v-else>

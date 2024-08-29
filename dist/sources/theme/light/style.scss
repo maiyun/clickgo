@@ -25,7 +25,6 @@ global {
     // --- 基础颜色 ---
 
     --face:hsl(210, 20%, 98%);
-    --face-child:transparent;
     --face-hover:hsl(210, 20%, 96%);
     --face-selected:hsl(210, 20%, 94%);
     --g-pop-background:rgba(255, 255, 255, .8);
@@ -108,7 +107,10 @@ global {
 // -- CONTROL -- group --
 
 .group_wrap {
-    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px rgba(0, 0, 0, .08), 0 4px 6px -2px rgba(16, 24, 40, .03);
+    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px rgba(0, 0, 0, .08), 0 4px 6px -2px hsla(220, 43%, 10%, 0.03);
+    &.group_plain {
+        box-shadow: 0px 0px 0px 1px hsl(0, 0, 0, .04), 0px 3px 16px 0px hsl(220, 43%, 10%, 0.06)
+    }
 }
 
 // --- CONTROL -- levelselect ---

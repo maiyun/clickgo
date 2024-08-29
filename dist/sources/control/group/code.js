@@ -29,6 +29,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'title': '',
+            'plain': false,
             'direction': 'h',
             'gutter': '',
             'alignH': undefined,

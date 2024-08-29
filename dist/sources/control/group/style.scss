@@ -1,5 +1,8 @@
 .wrap {
     padding: var(--g-bpadding); background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; flex-direction: column;
+    &.plain {
+        border: none;
+    }
 
     .title {
         margin-bottom: var(--g-bpadding); display: flex; align-items: center;

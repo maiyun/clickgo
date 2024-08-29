@@ -23,7 +23,7 @@
     &:not(.child) {
         &.show {
             > .text {
-                background: var(--face-child); border-radius: var(--g-radius) var(--g-radius) 0 0;
+                border-radius: var(--g-radius) var(--g-radius) 0 0;
             }
         }
     }
@@ -41,10 +41,5 @@
 
     > .menu {
         overflow: hidden; transition: all .3s var(--g-cubic); transition-property: height; padding-left: 24px; border-radius: 0 0 var(--g-radius) var(--g-radius);
-    }
-    &:not(.child) {
-        > .menu {
-            background: var(--face-child);
-        }
     }
 }
