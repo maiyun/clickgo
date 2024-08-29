@@ -215,6 +215,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     keydown(e) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             if (e.key === 'Backspace') {
                 if (this.propBoolean('multi')) {
                     if (e.target.value === '' && this.propBoolean('multi') && this.value.length > 0) {
@@ -273,7 +274,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('add', event);
                 if (event.go) {
                     this.value.push(this.inputValue);
-                    this.label.push(this.listLabel[0] || this.inputValue);
+                    this.label.push((_a = this.listLabel[0]) !== null && _a !== void 0 ? _a : this.inputValue);
                     this.updateValue({
                         'clearInput': true,
                         'clearList': true
@@ -300,22 +301,24 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     textKeyDown(e) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             e.stopPropagation();
             if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.element.dataset.cgPopOpen !== undefined) {
                 e.preventDefault();
                 switch (e.key) {
                     case 'ArrowUp': {
                         this.refs.list.arrowUp();
-                        this.inputValue = this.listValue[0];
-                        this.searchValue = this.listValue[0];
+                        this.inputValue = (_a = this.listValue[0]) !== null && _a !== void 0 ? _a : '';
+                        this.searchValue = (_b = this.listValue[0]) !== null && _b !== void 0 ? _b : '';
                         break;
                     }
                     default: {
                         this.refs.list.arrowDown();
-                        this.inputValue = this.listValue[0];
-                        this.searchValue = this.listValue[0];
+                        this.inputValue = (_c = this.listValue[0]) !== null && _c !== void 0 ? _c : '';
+                        this.searchValue = (_d = this.listValue[0]) !== null && _d !== void 0 ? _d : '';
                     }
                 }
+                yield this.updateInputValue(this.propBoolean('editable') ? this.inputValue : this.searchValue);
                 return;
             }
             if (e.key !== 'Enter') {
@@ -347,7 +350,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.emit('add', event);
                     if (event.go) {
                         this.value.push(value);
-                        this.label.push(this.listLabel[0] || value);
+                        this.label.push((_e = this.listLabel[0]) !== null && _e !== void 0 ? _e : value);
                         this.updateValue({
                             'clearInput': true,
                             'clearList': true
@@ -372,7 +375,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.value = [value];
                     this.listValue = [value];
                     yield this.nextTick();
-                    this.label = [this.listLabel[0] || value];
+                    this.label = [(_f = this.listLabel[0]) !== null && _f !== void 0 ? _f : value];
                     this.updateValue();
                     this.refs.gs.hidePop();
                 }
@@ -408,7 +411,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.emit('add', event);
                     if (event.go) {
                         this.value.push(value);
-                        this.label.push(this.listLabel[0]);
+                        this.label.push((_g = this.listLabel[0]) !== null && _g !== void 0 ? _g : '');
                         this.searchValue = '';
                         this.updateValue();
                         this.emit('added', {
@@ -428,8 +431,8 @@ class default_1 extends clickgo.control.AbstractControl {
                         yield this._search();
                         return;
                     }
-                    this.value = [this.listValue[0]];
-                    this.label = [this.listLabel[0]];
+                    this.value = [(_h = this.listValue[0]) !== null && _h !== void 0 ? _h : ''];
+                    this.label = [(_j = this.listLabel[0]) !== null && _j !== void 0 ? _j : ''];
                     this.searchValue = '';
                     this.updateValue();
                     this.refs.gs.hidePop();
@@ -586,6 +589,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     listItemClicked(e) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
             const event = {
                 'detail': {
                     'event': e.detail.event,
@@ -595,7 +599,7 @@ class default_1 extends clickgo.control.AbstractControl {
             };
             this.emit('itemclicked', event);
             if (this.propBoolean('editable')) {
-                const v = this.listValue[0];
+                const v = (_a = this.listValue[0]) !== null && _a !== void 0 ? _a : '';
                 if (this.propBoolean('multi')) {
                     if (this.value.includes(v)) {
                         this.refs.gs.hidePop();
@@ -615,7 +619,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.emit('add', event);
                     if (event.go) {
                         this.value.push(v);
-                        this.label.push(this.listLabel[0]);
+                        this.label.push((_b = this.listLabel[0]) !== null && _b !== void 0 ? _b : '');
                         this.updateValue({
                             'clearInput': true,
                             'clearList': true
@@ -650,7 +654,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         if (event.go) {
                             this.inputValue = v;
                             this.value = [v];
-                            this.label = [this.listLabel[0]];
+                            this.label = [(_c = this.listLabel[0]) !== null && _c !== void 0 ? _c : ''];
                             this.updateValue();
                             if (this.propBoolean('search')) {
                                 yield this._search();
@@ -669,7 +673,7 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
                 if (this.propBoolean('multi')) {
                     if (this.propBoolean('search')) {
-                        if (this.value.includes(this.listValue[0])) {
+                        if (this.value.includes((_d = this.listValue[0]) !== null && _d !== void 0 ? _d : '')) {
                             this.refs.gs.hidePop();
                             this.searchValue = '';
                             yield this._search();
@@ -683,13 +687,13 @@ class default_1 extends clickgo.control.AbstractControl {
                             },
                             'detail': {
                                 'index': addIndex,
-                                'value': this.listValue[0]
+                                'value': (_e = this.listValue[0]) !== null && _e !== void 0 ? _e : ''
                             }
                         };
                         this.emit('add', event);
                         if (event.go) {
-                            this.value.push(this.listValue[0]);
-                            this.label.push(this.listLabel[0]);
+                            this.value.push((_f = this.listValue[0]) !== null && _f !== void 0 ? _f : '');
+                            this.label.push((_g = this.listLabel[0]) !== null && _g !== void 0 ? _g : '');
                             this.updateValue({
                                 'clearInput': true,
                                 'clearList': true
@@ -708,8 +712,8 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
                 else {
-                    this.value = [this.listValue[0]];
-                    this.label = [this.listLabel[0]];
+                    this.value = [(_h = this.listValue[0]) !== null && _h !== void 0 ? _h : ''];
+                    this.label = [(_j = this.listLabel[0]) !== null && _j !== void 0 ? _j : ''];
                     if (this.propBoolean('search')) {
                         this.updateValue({
                             'clearInput': true

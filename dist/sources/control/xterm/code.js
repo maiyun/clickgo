@@ -104,9 +104,11 @@ class default_1 extends clickgo.control.AbstractControl {
             this.access.term.open(this.refs.content);
             clickgo.dom.watchSize(this.element, () => {
                 fitAddon.fit();
-            }, true);
+            });
             this.isLoading = false;
             this.emit('init', this.access.term);
+            yield clickgo.tool.sleep(34);
+            fitAddon.fit();
         });
     }
 }

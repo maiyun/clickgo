@@ -326,7 +326,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('add', event);
             if (event.go) {
                 this.value.push(this.inputValue);
-                this.label.push(this.listLabel[0] || this.inputValue);
+                this.label.push(this.listLabel[0] ?? this.inputValue);
                 this.updateValue({
                     'clearInput': true,
                     'clearList': true
@@ -361,16 +361,17 @@ export default class extends clickgo.control.AbstractControl {
             switch (e.key) {
                 case 'ArrowUp': {
                     this.refs.list.arrowUp();
-                    this.inputValue = this.listValue[0];
-                    this.searchValue = this.listValue[0];
+                    this.inputValue = this.listValue[0] ?? '';
+                    this.searchValue = this.listValue[0] ?? '';
                     break;
                 }
                 default: {
                     this.refs.list.arrowDown();
-                    this.inputValue = this.listValue[0];
-                    this.searchValue = this.listValue[0];
+                    this.inputValue = this.listValue[0] ?? '';
+                    this.searchValue = this.listValue[0] ?? '';
                 }
             }
+            await this.updateInputValue(this.propBoolean('editable') ? this.inputValue : this.searchValue);
             return;
         }
         if (e.key !== 'Enter') {
@@ -407,7 +408,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('add', event);
                 if (event.go) {
                     this.value.push(value);
-                    this.label.push(this.listLabel[0] || value);
+                    this.label.push(this.listLabel[0] ?? value);
                     this.updateValue({
                         'clearInput': true,
                         'clearList': true
@@ -433,7 +434,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.value = [value];
                 this.listValue = [value];
                 await this.nextTick();
-                this.label = [this.listLabel[0] || value];
+                this.label = [this.listLabel[0] ?? value];
                 this.updateValue();
                 this.refs.gs.hidePop();
             }
@@ -472,7 +473,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('add', event);
                 if (event.go) {
                     this.value.push(value);
-                    this.label.push(this.listLabel[0]);
+                    this.label.push(this.listLabel[0] ?? '');
                     this.searchValue = '';
                     this.updateValue();
                     this.emit('added', {
@@ -493,8 +494,8 @@ export default class extends clickgo.control.AbstractControl {
                     await this._search();
                     return;
                 }
-                this.value = [this.listValue[0]];
-                this.label = [this.listLabel[0]];
+                this.value = [this.listValue[0] ?? ''];
+                this.label = [this.listLabel[0] ?? ''];
                 this.searchValue = '';
                 this.updateValue();
                 this.refs.gs.hidePop();
@@ -677,7 +678,7 @@ export default class extends clickgo.control.AbstractControl {
         };
         this.emit('itemclicked', event);
         if (this.propBoolean('editable')) {
-            const v = this.listValue[0];
+            const v = this.listValue[0] ?? '';
             // -- 可编辑 ---
             if (this.propBoolean('multi')) {
                 // --- 多选 ---
@@ -700,7 +701,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('add', event);
                 if (event.go) {
                     this.value.push(v);
-                    this.label.push(this.listLabel[0]);
+                    this.label.push(this.listLabel[0] ?? '');
                     this.updateValue({
                         'clearInput': true,
                         'clearList': true
@@ -736,7 +737,7 @@ export default class extends clickgo.control.AbstractControl {
                     if (event.go) {
                         this.inputValue = v;
                         this.value = [v];
-                        this.label = [this.listLabel[0]];
+                        this.label = [this.listLabel[0] ?? ''];
                         this.updateValue();
                         if (this.propBoolean('search')) {
                             await this._search();
@@ -757,7 +758,7 @@ export default class extends clickgo.control.AbstractControl {
             if (this.propBoolean('multi')) {
                 // --- 多选 ---
                 if (this.propBoolean('search')) {
-                    if (this.value.includes(this.listValue[0])) {
+                    if (this.value.includes(this.listValue[0] ?? '')) {
                         this.refs.gs.hidePop();
                         this.searchValue = '';
                         await this._search();
@@ -772,13 +773,13 @@ export default class extends clickgo.control.AbstractControl {
                         },
                         'detail': {
                             'index': addIndex,
-                            'value': this.listValue[0]
+                            'value': this.listValue[0] ?? ''
                         }
                     };
                     this.emit('add', event);
                     if (event.go) {
-                        this.value.push(this.listValue[0]);
-                        this.label.push(this.listLabel[0]);
+                        this.value.push(this.listValue[0] ?? '');
+                        this.label.push(this.listLabel[0] ?? '');
                         this.updateValue({
                             'clearInput': true,
                             'clearList': true
@@ -818,8 +819,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             else {
                 // --- 单选 ---
-                this.value = [this.listValue[0]];
-                this.label = [this.listLabel[0]];
+                this.value = [this.listValue[0] ?? ''];
+                this.label = [this.listLabel[0] ?? ''];
                 if (this.propBoolean('search')) {
                     this.updateValue({
                         'clearInput': true

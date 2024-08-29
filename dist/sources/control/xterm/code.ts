@@ -93,10 +93,13 @@ export default class extends clickgo.control.AbstractControl {
         // --- 自适应大小 ---
         clickgo.dom.watchSize(this.element, () => {
             fitAddon.fit();
-        }, true);
+        });
         // --- 初始化成功 ---
         this.isLoading = false;
         this.emit('init', this.access.term);
+        // --- 得等待一下，xterm 有可能有问题不能立马 fit ---
+        await clickgo.tool.sleep(34);
+        fitAddon.fit();
     }
 
 }
