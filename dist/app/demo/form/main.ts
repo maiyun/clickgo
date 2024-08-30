@@ -32,6 +32,7 @@ import cdescFrm from './control/desc/desc';
 import cnavFrm from './control/nav/nav';
 import cpageFrm from './control/page/page';
 import ctagFrm from './control/tag/tag';
+import ctipFrm from './control/tip/tip';
 import cpanelFrm from './control/panel/panel';
 import cflowFrm from './control/flow/flow';
 import cpropertyFrm from './control/property/property';
@@ -198,7 +199,7 @@ export default class extends clickgo.form.AbstractForm {
                 break;
             }
             case 'ctip': {
-                frm = await clickgo.form.create('/form/control/tip/tip');
+                frm = await clickgo.form.create(ctipFrm);
                 break;
             }
             case 'cxterm': {

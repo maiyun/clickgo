@@ -1,5 +1,5 @@
 <div class="wrap" :class="[(width===undefined)&&'minmax']" :style="{'width': width === undefined ? undefined : propNumber('width') + 'px', 'height': height === undefined ? undefined : propNumber('height') + 'px'}">
-    <cg-layout class="content" :direction="direction" :gutter="gutter">
+    <cg-layout class="content" :direction="direction" :gutter="gutter" :style="{'height': height === undefined ? undefined : '0'}">
         <slot></slot>
     </cg-layout>
     <cg-layout align-h="end" class="controls" gutter="10">

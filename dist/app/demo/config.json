@@ -141,6 +141,7 @@
         "/form/control/tag/tag.xml",
         "/form/control/text/text.js",
         "/form/control/text/text.xml",
+        "/form/control/tip/tip.js",
         "/form/control/tip/tip.xml",
         "/form/control/tuieditor/tuieditor.js",
         "/form/control/tuieditor/tuieditor.xml",

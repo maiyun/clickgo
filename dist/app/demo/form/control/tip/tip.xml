@@ -6,6 +6,10 @@
         <tip label="Click me">
             <button>456</button>
         </tip>
+        <tip v-if="!change" label="Click me">
+            <button>789</button>
+        </tip>
+        <label v-else>no tip</label>
         <tip label="This is a select">
             <select :data="[1,2,3,4]"></select>
         </tip>
@@ -30,5 +34,6 @@
             </template>
             <button>789</button>
         </tip>
+        <button @click="change = !change">{{change ? '' : '!'}}change</button>
     </layout>
 </form>

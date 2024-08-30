@@ -67,6 +67,7 @@ const desc_1 = __importDefault(require("./control/desc/desc"));
 const nav_1 = __importDefault(require("./control/nav/nav"));
 const page_1 = __importDefault(require("./control/page/page"));
 const tag_1 = __importDefault(require("./control/tag/tag"));
+const tip_1 = __importDefault(require("./control/tip/tip"));
 const panel_1 = __importDefault(require("./control/panel/panel"));
 const flow_1 = __importDefault(require("./control/flow/flow"));
 const property_1 = __importDefault(require("./control/property/property"));
@@ -230,7 +231,7 @@ class default_1 extends clickgo.form.AbstractForm {
                     break;
                 }
                 case 'ctip': {
-                    frm = yield clickgo.form.create('/form/control/tip/tip');
+                    frm = yield clickgo.form.create(tip_1.default);
                     break;
                 }
                 case 'cxterm': {
