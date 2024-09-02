@@ -119,17 +119,11 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 修改 header 的宽度 --- */
     public setHeaderWidth(index: number, width: number): void {
-        if (this.widthMap[index] === undefined) {
-            return;
-        }
         this.widthMap[index] = width;
     }
 
     /** --- 修改 header 的最小宽度 --- */
     public setHeaderMinWidth(index: number, minWidth: number): void {
-        if (this.minWidthMap[index] === undefined) {
-            return;
-        }
         this.minWidthMap[index] = minWidth;
     }
 
@@ -153,6 +147,7 @@ export default class extends clickgo.control.AbstractControl {
         const slots = this.slotsAll('default');
         this.items.length = 0;
         this.widthMap.length = 0;
+        this.minWidthMap.length = 0;
         for (const slot of slots) {
             // --- 用户的应该的 width ---
             const width = slot.props.width ? parseInt(slot.props.width) : 0;
@@ -163,6 +158,9 @@ export default class extends clickgo.control.AbstractControl {
             });
             // --- 再根据 split 状态确定是否设置为默认 width  ---
             this.widthMap.push(this.propBoolean('split') ? (width ? width : 0) : width);
+            // --- min width ---
+            const minWidth = slot.props.minWidth ?? slot.props['min-width'];
+            this.minWidthMap.push(minWidth ? parseInt(minWidth) : 50);
         }
         this.checkNowSort();
     }

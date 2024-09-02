@@ -85,15 +85,9 @@ class default_1 extends clickgo.control.AbstractControl {
         item.label = n;
     }
     setHeaderWidth(index, width) {
-        if (this.widthMap[index] === undefined) {
-            return;
-        }
         this.widthMap[index] = width;
     }
     setHeaderMinWidth(index, minWidth) {
-        if (this.minWidthMap[index] === undefined) {
-            return;
-        }
         this.minWidthMap[index] = minWidth;
     }
     setHeaderSort(index, sort) {
@@ -108,10 +102,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.scrollLeft = sl;
     }
     refreshHeader() {
-        var _a;
+        var _a, _b;
         const slots = this.slotsAll('default');
         this.items.length = 0;
         this.widthMap.length = 0;
+        this.minWidthMap.length = 0;
         for (const slot of slots) {
             const width = slot.props.width ? parseInt(slot.props.width) : 0;
             this.items.push({
@@ -120,6 +115,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'sort': slot.props.sort !== undefined ? clickgo.tool.getBoolean(slot.props.sort) : slot.props.sort
             });
             this.widthMap.push(this.propBoolean('split') ? (width ? width : 0) : width);
+            const minWidth = (_b = slot.props.minWidth) !== null && _b !== void 0 ? _b : slot.props['min-width'];
+            this.minWidthMap.push(minWidth ? parseInt(minWidth) : 50);
         }
         this.checkNowSort();
     }
