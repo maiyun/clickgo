@@ -1010,6 +1010,9 @@ function run(url_1) {
                 }
             },
             'tool': {
+                compressor: function (file, options = {}) {
+                    return tool.compressor(file, options);
+                },
                 blob2ArrayBuffer: function (blob) {
                     return tool.blob2ArrayBuffer(blob);
                 },

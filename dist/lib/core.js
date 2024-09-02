@@ -307,6 +307,22 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'compressorjs': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    loader.cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js'
+                ]);
+                if (!window.Compressor) {
+                    throw Error('Compressor load failed.');
+                }
+                return [window.Compressor];
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 function regModule(name, func) {

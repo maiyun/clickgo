@@ -361,6 +361,20 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'compressorjs': {
+        func: async function() {
+            await loader.loadScripts([
+                loader.cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js'
+            ]);
+            if (!(window as any).Compressor) {
+                throw Error('Compressor load failed.');
+            }
+            return [(window as any).Compressor];
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 

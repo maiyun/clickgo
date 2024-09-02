@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,6 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = void 0;
+exports.compressor = compressor;
 exports.getClassPrototype = getClassPrototype;
 exports.blob2ArrayBuffer = blob2ArrayBuffer;
 exports.sizeFormat = sizeFormat;
@@ -56,6 +80,33 @@ exports.formatSecond = formatSecond;
 exports.formatTime = formatTime;
 exports.queryStringify = queryStringify;
 exports.queryParse = queryParse;
+const core = __importStar(require("./core"));
+let compressorjs = null;
+function compressor(file_1) {
+    return __awaiter(this, arguments, void 0, function* (file, options = {}) {
+        if (!compressorjs) {
+            try {
+                compressorjs = yield core.getModule('compressorjs');
+            }
+            catch (_a) {
+                return false;
+            }
+        }
+        return new Promise((resolve) => {
+            new compressorjs(file, {
+                'quality': options.quality,
+                'maxWidth': options.maxWidth,
+                'maxHeight': options.maxHeight,
+                success: (result) => {
+                    resolve(result);
+                },
+                error: () => {
+                    resolve(false);
+                }
+            });
+        });
+    });
+}
 function getClassPrototype(obj, over = [], level = 0) {
     var _a;
     if (level === 0) {

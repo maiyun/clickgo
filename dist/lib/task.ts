@@ -1126,6 +1126,16 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             }
         },
         'tool': {
+            compressor: function<T extends File | Blob>(file: T, options: {
+                /** --- 最大宽度，默认无限 --- */
+                'maxWidth'?: number;
+                /** --- 最高高度，默认无限 --- */
+                'maxHeight'?: number;
+                /** --- 压缩质量，默认 0.8 --- */
+                'quality'?: number;
+            } = {}): Promise<File | Blob | false> {
+                return tool.compressor(file, options);
+            },
             blob2ArrayBuffer: function(blob: Blob): Promise<ArrayBuffer> {
                 return tool.blob2ArrayBuffer(blob);
             },

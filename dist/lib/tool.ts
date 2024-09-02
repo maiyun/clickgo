@@ -14,6 +14,46 @@
  * limitations under the License.
  */
 import * as types from '../../types';
+import * as core from './core';
+
+/** --- compressorjs, mit --- */
+let compressorjs: any = null;
+
+/**
+ * --- 压缩一个图片 ---
+ * @param file 文件或 blob 类型 ---
+ * @param options 参数
+ */
+export async function compressor<T extends File | Blob>(file: T, options: {
+    /** --- 最大宽度，默认无限 --- */
+    'maxWidth'?: number;
+    /** --- 最高高度，默认无限 --- */
+    'maxHeight'?: number;
+    /** --- 压缩质量，默认 0.8 --- */
+    'quality'?: number;
+} = {}): Promise<File | Blob | false> {
+    if (!compressorjs) {
+        try {
+            compressorjs = await core.getModule('compressorjs');
+        }
+        catch {
+            return false;
+        }
+    }
+    return new Promise((resolve) => {
+        new compressorjs(file, {
+            'quality': options.quality,
+            'maxWidth': options.maxWidth,
+            'maxHeight': options.maxHeight,
+            success: (result: T) => {
+                resolve(result);
+            },
+            error: () => {
+                resolve(false);
+            }
+        });
+    });
+}
 
 interface IClassPrototype {
     'method': Record<string, any>;
