@@ -92,6 +92,7 @@ const tuieditor_1 = __importDefault(require("./control/tuieditor/tuieditor"));
 const tuiviewer_1 = __importDefault(require("./control/tuiviewer/tuiviewer"));
 const arteditor_1 = __importDefault(require("./control/arteditor/arteditor"));
 const content_1 = __importDefault(require("./control/content/content"));
+const delete_1 = __importDefault(require("./control/delete/delete"));
 const form_2 = __importDefault(require("./event/form/form"));
 const other_1 = __importDefault(require("./event/other/other"));
 const screen_1 = __importDefault(require("./event/screen/screen"));
@@ -375,6 +376,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'carteditor': {
                     frm = yield clickgo.form.create(arteditor_1.default);
+                    break;
+                }
+                case 'cdelete': {
+                    frm = yield clickgo.form.create(delete_1.default);
                     break;
                 }
                 case 'eform': {

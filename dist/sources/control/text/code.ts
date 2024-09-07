@@ -595,6 +595,9 @@ export default class extends clickgo.control.AbstractControl {
             if (this.value === this.props.modelValue) {
                 return;
             }
+            if (this.dangerBorder) {
+                this.dangerBorder = false;
+            }
             this.value = this.props.modelValue;
             await this.nextTick();
             this.checkNumber();
@@ -603,6 +606,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 有可能设置后控件实际值和设置的值不同，所以要重新判断一下 ---
             if (this.refs.text.value === this.value) {
+                this.check();
                 return;
             }
             const event: types.ITextBeforechangeEvent = {
@@ -617,11 +621,13 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('beforechange', event);
             if (!event.go) {
+                this.check();
                 this.refs.text.value = this.value;
                 return;
             }
             this.value = event.detail.change ?? this.refs.text.value;
             this.emit('update:modelValue', this.value);
+            this.check();
         }, {
             'immediate': true
         });

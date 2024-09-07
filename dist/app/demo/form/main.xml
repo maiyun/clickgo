@@ -71,6 +71,7 @@
                 <layout gutter="10">
                     <button @click="openForm('ctable')">Table</button>
                     <button @click="openForm('cnav')">Nav</button>
+                    <button @click="openForm('cdelete')">Delete</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cpage')">Page</button>

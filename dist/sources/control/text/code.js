@@ -540,6 +540,9 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.value === this.props.modelValue) {
                 return;
             }
+            if (this.dangerBorder) {
+                this.dangerBorder = false;
+            }
             this.value = this.props.modelValue;
             yield this.nextTick();
             this.checkNumber();
@@ -547,6 +550,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
             }
             if (this.refs.text.value === this.value) {
+                this.check();
                 return;
             }
             const event = {
@@ -561,11 +565,13 @@ class default_1 extends clickgo.control.AbstractControl {
             };
             this.emit('beforechange', event);
             if (!event.go) {
+                this.check();
                 this.refs.text.value = this.value;
                 return;
             }
             this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
             this.emit('update:modelValue', this.value);
+            this.check();
         }), {
             'immediate': true
         });

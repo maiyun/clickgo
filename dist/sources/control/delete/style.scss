@@ -1,0 +1,24 @@
+.wrap {
+    display: inline-block; position: relative;
+
+    .control {
+        transition: var(--g-transition); position: absolute; width: var(--g-control); height: var(--g-control); border-radius: 50%; right: calc(0px - var(--g-control) / 2); top: calc(0px - var(--g-control) / 2); background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); z-index: 1; display: flex; align-items: center; justify-content: center; box-shadow: var(--g-shadow); opacity: 0; pointer-events: none;
+
+        svg {
+            width: var(--g-control); height: var(--g-control);
+        }
+
+        &:hover {
+            background: var(--danger-hover); color: #FFF; stroke: #FFF; fill: #FFF;
+        }
+        &:active {
+            background: var(--danger-active);
+        }
+    }
+
+    &:hover {
+        .control {
+            opacity: 1; pointer-events: initial;
+        }
+    }
+}
