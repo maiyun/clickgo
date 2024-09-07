@@ -526,7 +526,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.props.rule) {
             return true;
         }
-        const reg = new RegExp(this.props.rule.slice(1, -1));
+        const reg = this.props.rule instanceof RegExp ? this.props.rule : new RegExp(this.props.rule.slice(1, -1));
         const r = reg.test(this.value);
         if (r) {
             return true;

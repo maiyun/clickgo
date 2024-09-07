@@ -46,6 +46,7 @@
         "/form/control/check/check.js",
         "/form/control/check/check.xml",
         "/form/control/circle/circle.xml",
+        "/form/control/content/content.js",
         "/form/control/content/content.xml",
         "/form/control/date/date.js",
         "/form/control/date/date.xml",

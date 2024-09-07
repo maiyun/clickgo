@@ -91,6 +91,7 @@ const jodit_1 = __importDefault(require("./control/jodit/jodit"));
 const tuieditor_1 = __importDefault(require("./control/tuieditor/tuieditor"));
 const tuiviewer_1 = __importDefault(require("./control/tuiviewer/tuiviewer"));
 const arteditor_1 = __importDefault(require("./control/arteditor/arteditor"));
+const content_1 = __importDefault(require("./control/content/content"));
 const form_2 = __importDefault(require("./event/form/form"));
 const other_1 = __importDefault(require("./event/other/other"));
 const screen_1 = __importDefault(require("./event/screen/screen"));
@@ -251,9 +252,7 @@ class default_1 extends clickgo.form.AbstractForm {
                     break;
                 }
                 case 'ccontent': {
-                    frm = yield clickgo.form.create('control/content/content', undefined, {
-                        'path': this.filename
-                    });
+                    frm = yield clickgo.form.create(content_1.default);
                     break;
                 }
                 case 'calert': {

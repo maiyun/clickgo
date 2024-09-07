@@ -7,11 +7,13 @@ export default class extends clickgo.control.AbstractControl {
         'gutter': number | string;
         'alignH': string | undefined;
         'alignV': string | undefined;
+        'fill': boolean | string;
     } = {
             'direction': 'h',
             'gutter': '',
             'alignH': undefined,
-            'alignV': undefined
+            'alignV': undefined,
+            'fill': false
         };
 
     /** --- 内部有的需要判断 require 的控件 --- */

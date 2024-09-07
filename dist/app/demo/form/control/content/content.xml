@@ -1,13 +1,16 @@
 <form width="550" height="500" title="Content" padding="10">
-    <content direction="v" gutter="10" ref="content" style="flex: 1;">
-        <label>Label1:</label>
-        <text></text>
-        <label>Label2:</label>
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <content direction="v" gutter="10" ref="content" fill>
+            <label>Label1:</label>
+            <text></text>
+            <label>Label2:</label>
+            <text require></text>
+            <label>Label3:</label>
+            <text rule="/^[a-zA-Z]+$/"></text>
+            <button @click="check">Check</button>
+        </content>
+        <label>outer:</label>
         <text require></text>
-        <label>Label3:</label>
-        <text rule="/^[a-zA-Z]+$/"></text>
-        <label>Label4:</label>
-        <text require></text>
-        <button @click="refs.content.check()">Check</button>
-    </content>
+        <button @click="fill = !fill">{{fill ? '' : '!'}}fill</button>
+    </layout>
 </form>

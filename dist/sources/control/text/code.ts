@@ -32,7 +32,7 @@ export default class extends clickgo.control.AbstractControl {
         'type': 'text' | 'multi' | 'password' | 'number';
         'plain': boolean | string;
         'require': boolean | string;
-        'rule': string;
+        'rule': string | RegExp;
 
         'modelValue': string;
         'placeholder': string;
@@ -580,7 +580,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.props.rule) {
             return true;
         }
-        const reg = new RegExp(this.props.rule.slice(1, -1));
+        const reg = this.props.rule instanceof RegExp ? this.props.rule : new RegExp(this.props.rule.slice(1, -1));
         const r = reg.test(this.value);
         if (r) {
             return true;

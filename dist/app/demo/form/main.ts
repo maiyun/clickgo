@@ -56,6 +56,7 @@ import cjoditFrm from './control/jodit/jodit';
 import ctuieditorFrm from './control/tuieditor/tuieditor';
 import ctuiviewerFrm from './control/tuiviewer/tuiviewer';
 import carteditorFrm from './control/arteditor/arteditor';
+import ccontentFrm from './control/content/content';
 
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
@@ -219,9 +220,7 @@ export default class extends clickgo.form.AbstractForm {
                 break;
             }
             case 'ccontent': {
-                frm = await clickgo.form.create('control/content/content', undefined, {
-                    'path': this.filename
-                });
+                frm = await clickgo.form.create(ccontentFrm);
                 break;
             }
             case 'calert': {
