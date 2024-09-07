@@ -1683,6 +1683,7 @@ function refreshPopPosition(el, pop, direction, size = {}) {
                 left = bcr.left - width + 2;
             }
             else {
+                left = window.innerWidth - width;
             }
         }
         if (height + top > window.innerHeight) {

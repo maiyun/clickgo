@@ -2197,6 +2197,7 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
             left = bcr.left + bcr.width / 2 - width / 2;
             top = bcr.top - height - 10;
         }
+        // --- 下面检测是否出框 ---
         // --- 检查水平是否出框 ---
         if (width + left > window.innerWidth) {
             if (direction === 'v') {
@@ -2208,7 +2209,8 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
                 left = bcr.left - width + 2;
             }
             else {
-                // --- 垂直水平居中，水平超出不管 ---
+                // --- 垂直水平居中，水平超出 ---
+                left = window.innerWidth - width;
             }
         }
         // --- 检测垂直是否下侧出框 ---
