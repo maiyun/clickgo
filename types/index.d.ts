@@ -181,8 +181,8 @@ export interface IBindDownOptions<T extends MouseEvent | TouchEvent> {
         e: T,
         dir: 'top' | 'right' | 'bottom' | 'left'
     ) => any;
-    'up'?: (e: T) => void;
-    'end'?: (e: T) => void;
+    'up'?: (e: T) => void | Promise<void>;
+    'end'?: (e: T) => void | Promise<void>;
 }
 
 /** --- 绑定拖动选项 move 回调的回调参数 --- */

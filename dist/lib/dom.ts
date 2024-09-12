@@ -76,7 +76,6 @@ let lastTouchTime: number = 0;
 // --- 添加 touchstart 事件，既优化了点击行为，也记录了 touch 的时间戳信息 ---
 document.addEventListener('touchstart', function() {
     lastTouchTime = Date.now();
-    return;
 }, {
     'passive': true
 });
@@ -93,7 +92,7 @@ export function hasTouchButMouse(e: MouseEvent | TouchEvent | PointerEvent): boo
         return true;
     }
     const now = Date.now();
-    if (now - lastTouchTime < 1000 * 60) {
+    if (now - lastTouchTime < 1_000 * 60) {
         // --- 当前是 mouse 但是 10000ms 内有 touch start ---
         return true;
     }
@@ -1376,9 +1375,9 @@ export function bindDown<T extends MouseEvent | TouchEvent>(oe: T, opt: types.IB
                 (oe.target as HTMLElement).removeEventListener('touchcancel', end as EventListener);
             }
         }
-        opt.up?.(e);
+        opt.up?.(e) as any;
         if (isStart) {
-            opt.end?.(e);
+            opt.end?.(e) as any;
         }
     };
     if (oe instanceof MouseEvent) {

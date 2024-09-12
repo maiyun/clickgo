@@ -1,0 +1,294 @@
+global {
+    --g-padding-s:6px;
+    --g-padding:13px;
+    --g-padding-h:6px var(--g-padding);
+    --g-padding-l:18px;
+    --g-padding-l-h:13px var(--g-padding-l);
+    --g-padding-xl:28px;
+    --g-padding-xl-h:14px var(--g-padding-xl);
+    --g-bpadding:25px;
+    --g-margin:7px;
+    --g-radius:5px;
+    --g-radius-l:8px;
+    --g-radius-xl:13px;
+    --g-size:13px;
+    --g-size-m:18px;
+    --g-size-l:26px;
+    --g-size-xl:36px;
+    --g-control:18px;   // --- 如 check、radio 等的宽度 ---
+    --g-control-m:22px;
+    --g-family:"Noto Sans CJK SC","Noto Sans CJK","WenQuanYi Micro Hei","Microsoft YaHei","ui-sans-serif","Roboto",Helvetica,Arial,"sans-serif";
+    --g-transition:all .3s var(--g-cubic);
+    --g-line:1.5;
+    --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
+
+    // --- 基础颜色 ---
+    --cg:hsl(220, 75%, 55%);
+
+    --face:hsl(210, 20%, 98%);
+    --face-hover:hsl(210, 20%, 96%);
+    --face-selected:hsl(210, 20%, 94%);
+    --g-pop-background:rgba(255, 255, 255, .8);
+    --g-pop-backdrop:blur(30px) saturate(2);
+    --g-pop-border:solid .5px var(--g-border-color);
+    --g-shadow:0 1px 2px hsla(220,45%,10%,0.05);
+    --g-outline-shadow:0 0 0 4px hsl(220,20%,95%); 
+
+    // --- 组件默认颜色（如按钮） ---
+
+    --g-background:hsl(0,0%,100%);
+    --g-background-hover:hsl(0,0%,100%);
+    --g-background-active:hsl(0,0%,100%);
+    --g-background-opacity:hsla(210,20%,98%,.2);
+    --g-background-focus:hsl(0,0%,100%);
+    --g-background-disabled:hsl(0,0%,100%);
+
+    --g-border-color:hsl(220,15%,85%);
+    --g-border-color-hover:var(--cg);
+    --g-border-color-active:var(--cg);
+    --g-border-color-focus:var(--cg);
+    --g-border-color-disabled:hsl(220,15%,85%);
+    
+    // --- 组件轻量颜色（如文本框） ---
+
+    --g-plain-background:hsl(210,20%,99.5%);
+    --g-plain-background-hover:hsl(210,20%,97%);
+    --g-plain-background-active:hsl(210,20%,99.5%);
+    --g-plain-background-focus:hsl(210,20%,99.5%);
+    --g-plain-background-disabled:hsl(210,20%,99.5%);
+    --g-plain-background-selected:hsl(210,20%,95%);
+
+    --g-plain-border-color:hsl(220,15%,85%);
+    --g-plain-border-color-hover:var(--cg);
+    --g-plain-border-color-active:var(--cg);
+    --g-plain-border-color-focus:var(--cg);
+    --g-plain-border-color-disabled:hsl(220,15%,85%);
+    --g-plain-border-color-plain:hsl(220,15%,92%);
+
+    // --- 特殊组件颜色 ---
+
+    --g-block-background:hsl(210, 20%, 96%);
+    --g-block-background-hover:hsl(210, 20%, 94%);
+    --g-block-dark-background:hsl(210, 20%, 4%);
+    --g-block-dark-background-hover:hsl(210, 20%, 6%);
+
+    ::selection {
+        background-color: rgba(0, 0, 0, .1);
+    }
+}
+
+.button_wrap {
+    &:not([data-cg-disabled]) {
+        &.button_checked {
+            &::before {
+                border: solid .5px var(--g-color);
+            }
+            color: var(--g-color); fill: var(--g-color); stroke: var(--g-color);
+        }
+    }
+}
+
+// -- CONTROL -- form --
+
+.form_wrap {
+    // --- 内部 ---
+    .form_inner {
+        // --- 主体内容 ---
+        .form_content {
+            .form_loading {
+                background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+                &:not(.form_show) {
+                    transform: scale(1.3);
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- group --
+
+.group_wrap {
+    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px rgba(0, 0, 0, .08), 0 4px 6px -2px hsla(220, 43%, 10%, 0.03);
+    &.group_plain {
+        box-shadow: 0px 0px 0px 1px hsl(0, 0%, 0%, .04), 0px 3px 16px 0px hsl(220, 43%, 10%, 0.06)
+    }
+}
+
+// --- CONTROL -- levelselect ---
+
+.levelselect_tag-cg-greatselect {
+    .levelselect_op {
+        .levelselect_oploading {
+            background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+        }
+    }
+}
+.levelselect_pop {
+    .levelselect_loading {
+        background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+    }
+}
+
+// --- CONTROL -- nav ---
+
+.nav_wrap {
+    .nav_menuwrap {
+        .nav_menu {
+            background: hsl(215, 68%, 12%); color: hsl(218, 13%, 67%); fill: hsl(218, 13%, 67%); stroke: hsl(218, 13%, 67%);
+        }
+    }
+}
+
+// -- CONTROL -- nav-item --
+
+.nav-item_wrap {
+    > .nav-item_text {
+        &.nav-item_hasChild::after {
+            border-color: hsl(218, 13%, 67%);
+        }
+    }
+
+    &:not(.nav-item_selected) {
+        > .nav-item_text:hover {
+            background: var(--cg); color: #FFF; fill: #FFF; stroke: #FFF;
+        }
+    }
+    &.nav-item_selected {
+        > .nav-item_text {
+            background: var(--cg); font-weight: bold; color: #FFF; fill: #FFF; stroke: #FFF;
+        }
+    }
+}
+
+// -- CONTROL -- property --
+
+.property_wrap {
+    .property_controls {
+        .property_tag-cg-button {
+            margin-right: 5px;
+        }
+        .property_split {
+            margin: 0 5px 0 0;
+        }
+    }
+}
+
+// -- CONTROL -- scroll --
+
+.scroll_wrap {
+    background-color: transparent;
+    .scroll_start, .scroll_end {
+        display: none;
+    }
+    .scroll_bar {
+        .scroll_block {
+            transition-property: background-color;
+        }
+    }
+}
+
+// -- CONTROL -- select --
+
+.select_tag-cg-greatselect {
+    .select_op {
+        .select_tags {
+            .select_tag {
+                .select_label {
+                    padding: 0 10px;
+                }
+                .select_close {
+                    width: 22px; height: 22px;
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- tab --
+
+.tab_wrap {
+    .tab_tab {
+        background: transparent; border: none;
+        &::after {
+            background: var(--cg); transition: all .3s var(--g-cubic);
+        }
+        &:not(.tab_selected):not([data-cg-hover]):hover {
+            background: transparent; color: var(--cg); fill: var(--cg); stroke: var(--cg);
+        }
+        &.tab_selected {
+            background: transparent; font-weight: bold; color: var(--cg); fill: var(--cg); stroke: var(--cg);
+        }
+    }
+    &.tab_top {
+        .tab_tabs {
+            .tab_tab {
+                padding-bottom: 2px;
+                &.tab_selected {
+                    padding-bottom: 2px;    // --- 用来覆盖控件默认样式的 ---
+                    &::after {
+                        top: initial; bottom: 0; height: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-right: var(--g-padding);
+            }
+        }
+    }
+    &.tab_bottom {
+        .tab_tabs {
+            .tab_tab {
+                padding-top: 2px;
+                &.tab_selected {
+                    padding-top: 2px;   // --- 用来覆盖控件默认样式的 ---
+                    &::after {
+                        top: 0; height: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-right: var(--g-padding);
+            }
+        }
+    }
+    &.tab_left {
+        .tab_tabs {
+            .tab_tab {
+                padding-right: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: initial; right: 0; width: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-bottom: var(--g-padding);
+            }
+        }
+    }
+    &.tab_right {
+        .tab_tabs {
+            .tab_tab {
+                padding-left: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: 0; width: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-bottom: var(--g-padding);
+            }
+        }
+    }
+
+    .tab_panel {
+        background: transparent; border: none;
+    }
+}
+
+// -- CONTROL -- task --
+
+.task_wrap {
+    background: var(--pop-background);
+}

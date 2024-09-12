@@ -127,7 +127,6 @@ function setGlobalCursor(type) {
 let lastTouchTime = 0;
 document.addEventListener('touchstart', function () {
     lastTouchTime = Date.now();
-    return;
 }, {
     'passive': true
 });

@@ -1975,7 +1975,7 @@ let alertId: number = 0;
  * @param content 内容
  * @param type 样式，可留空
  */
-export function alert(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'progress'): number {
+export function alert(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger'): number {
     // --- 申请 aid ---
     const nid = ++alertId;
     // --- 设置 timeout ---

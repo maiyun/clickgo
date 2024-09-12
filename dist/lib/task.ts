@@ -765,7 +765,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             hideDrag: function(): void {
                 form.hideDrag();
             },
-            alert: function(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'progress'): number {
+            alert: function(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger'): number {
                 return form.alert(content, type);
             },
             notify: function(opt: types.INotifyOptions): number {

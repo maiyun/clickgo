@@ -57,7 +57,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 'content': 'Theme loading...',
                 'type': 'info'
             });
-            const t = yield this.get('familiar');
+            const t = yield this.get('blue');
             if (!t) {
                 clickgo.form.hideNotify(n);
                 return;
@@ -68,7 +68,7 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     remove() {
-        clickgo.theme.remove('familiar').catch((e) => { throw e; });
+        clickgo.theme.remove('blue').catch((e) => { throw e; });
     }
     clear() {
         clickgo.theme.clear().catch((e) => { throw e; });
