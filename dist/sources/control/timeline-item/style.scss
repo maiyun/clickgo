@@ -1,0 +1,17 @@
+.wrap {
+    display: flex; align-items: center; gap: var(--g-padding); padding: var(--g-padding) 0; transform: translateX(calc(-3px - (var(--g-control) + 1px) / 2));
+
+    .left {
+        border: solid 3px var(--g-plain-border-color-plain); background: var(--g-plain-background); border-radius: 50%; width: calc(var(--g-control) + 4px); height: calc(var(--g-control) + 4px);
+        &.selected {
+            border-color: var(--cg);
+        }
+    }
+
+    .right {
+        display: flex; flex: 1;
+        &.v {
+            flex-direction: column;
+        }
+    }
+}

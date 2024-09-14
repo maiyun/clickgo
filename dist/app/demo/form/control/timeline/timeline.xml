@@ -1,0 +1,19 @@
+<form width="300" height="500" title="Timeline">
+    <layout direction="v" style="flex: 1; padding: 10px;">
+        <timeline>
+            <timeline-item gutter="5" direction="v" selected>
+                <label mode="tip">2024-9-14 14:40:58</label>
+                <label>The last one</label>
+                <link>Nothing</link>
+            </timeline-item>
+            <timeline-item gutter="5" direction="v">
+                <label mode="tip">2024-9-14 14:40:57</label>
+                <label>What the ok</label>
+            </timeline-item>
+            <timeline-item gutter="5" direction="v">
+                <label mode="tip">2024-9-14 14:40:56</label>
+                <label>The first tip</label>
+            </timeline-item>
+        </timeline>
+    </layout>
+</form>

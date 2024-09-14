@@ -76,6 +76,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cpage')">Page</button>
                     <button @click="openForm('cbox')">Box</button>
+                    <button @click="openForm('ctimeline')">Timeline</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cdesc')">Desc</button>

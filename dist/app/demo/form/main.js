@@ -80,6 +80,7 @@ const svg_1 = __importDefault(require("./control/svg/svg"));
 const tab_1 = __importDefault(require("./control/tab/tab"));
 const table_1 = __importDefault(require("./control/table/table"));
 const text_1 = __importDefault(require("./control/text/text"));
+const timeline_1 = __importDefault(require("./control/timeline/timeline"));
 const vflow_1 = __importDefault(require("./control/vflow/vflow"));
 const video_1 = __importDefault(require("./control/video/video"));
 const imgviewer_1 = __importDefault(require("./control/imgviewer/imgviewer"));
@@ -360,6 +361,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'ctext': {
                     frm = yield clickgo.form.create(text_1.default);
+                    break;
+                }
+                case 'ctimeline': {
+                    frm = yield clickgo.form.create(timeline_1.default);
                     break;
                 }
                 case 'cjodit': {

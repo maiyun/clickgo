@@ -45,6 +45,7 @@ import csvgFrm from './control/svg/svg';
 import ctabFrm from './control/tab/tab';
 import ctableFrm from './control/table/table';
 import ctextFrm from './control/text/text';
+import ctimelineFrm from './control/timeline/timeline';
 import cvflowFrm from './control/vflow/vflow';
 import cvideoFrm from './control/video/video';
 import cimgviewerFrm from './control/imgviewer/imgviewer';
@@ -328,6 +329,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ctext': {
                 frm = await clickgo.form.create(ctextFrm);
+                break;
+            }
+            case 'ctimeline': {
+                frm = await clickgo.form.create(ctimelineFrm);
                 break;
             }
             case 'cjodit': {

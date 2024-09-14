@@ -1,0 +1,6 @@
+<div class="wrap">
+    <div class="left" :class="[propBoolean('selected')&&'selected']"></div>
+    <div class="right" :class="[direction]" :style="{'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
+        <slot></slot>
+    </div>
+</div>

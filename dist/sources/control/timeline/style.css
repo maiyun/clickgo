@@ -1,0 +1,1 @@
+.wrap{border-left:solid 3px var(--g-plain-border-color-plain);transform:translateX(calc((var(--g-control) + 1px) / 2))}
