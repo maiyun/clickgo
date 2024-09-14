@@ -139,6 +139,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'please click select': 'Vui lòng nhấp chọn'
             }
         };
+        this.showTwoDatePanel = false;
         this.firstym = '';
         this.endym = '';
     }
@@ -147,6 +148,10 @@ class default_1 extends clickgo.control.AbstractControl {
         if (el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(el);
             return;
+        }
+        if (type === 'first') {
+            const area = clickgo.core.getAvailArea();
+            this.showTwoDatePanel = area.width >= 600 ? true : false;
         }
         clickgo.form.showPop(el, this.refs[type + 'pop'], 'v');
     }

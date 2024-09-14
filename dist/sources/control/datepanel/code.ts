@@ -947,9 +947,9 @@ export default class extends clickgo.control.AbstractControl {
                     const date = new Date();
                     this.vyear[0] = date.getUTCFullYear().toString();
                     this.vmonth[0] = (date.getUTCMonth() + 1).toString();
-                    this.vhour[0] = '0';
-                    this.vminute[0] = '0';
-                    this.vseconds[0] = '0';
+                    this.vhour[0] = '00';
+                    this.vminute[0] = '00';
+                    this.vseconds[0] = '00';
                 }
             }
             mvfirst = false;
@@ -966,7 +966,11 @@ export default class extends clickgo.control.AbstractControl {
             const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
             if (ym !== this.props.yearmonth) {
                 this.vyear[0] = this.props.yearmonth.slice(0, 4);
-                this.vmonth[0] = this.props.yearmonth.slice(4).replace('0', '');
+                let vmonth = this.props.yearmonth.slice(4);
+                if (vmonth.startsWith('0')) {
+                    vmonth = vmonth[1];
+                }
+                this.vmonth[0] = vmonth;
             }
         }, {
             'immediate': true

@@ -16,7 +16,7 @@
     <div v-else class="single">
         <div v-if="slots['before']" class="before"><slot name="before"></slot></div>
         <div v-if="slots['prepend']" class="prepend"><slot name="prepend"></slot></div>
-        <input ref="text" class="text" :type="type === 'password' ? (showPassword ? 'text' : 'password') : type" :value="value" :maxlength="propNumber('maxlength') || undefined" :placeholder="placeholder" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scrollEvent" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @keydown="keydown" data-cg-scroll>
+        <input ref="text" class="text" :type="type === 'password' ? (showPassword ? 'text' : 'password') : type" :value="value" :maxlength="propNumber('maxlength') || undefined" :placeholder="placeholder" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" :min="min===undefined?undefined:propNumber('min')" :max="max===undefined?undefined:propNumber('max')" @focus="tfocus" @blur="tblur" @input="input" @wheel="wheel" @scroll="scrollEvent" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @keydown="keydown" data-cg-scroll>
         <div v-if="type === 'number'" class="number">
             <div class="up" @click="numberClick(1)" :data-cg-disabled="(max !== undefined && max !== 'undefined' && (value >= propNumber('max'))) ? '' : undefined"></div>
             <div class="down" @click="numberClick(-1)" :data-cg-disabled="(min !== undefined && min !== 'undefined' && (value <= propNumber('min'))) ? '' : undefined"></div>

@@ -147,12 +147,19 @@ export default class extends clickgo.control.AbstractControl {
         }
     };
 
+    /** --- 小屏不显示两个 --- */
+    public showTwoDatePanel = false;
+
     // --- 单击事件 ---
     public click(type: 'first' | 'zone'): void {
         const el = this.refs[type];
         if (el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(el);
             return;
+        }
+        if (type === 'first') {
+            const area = clickgo.core.getAvailArea();
+            this.showTwoDatePanel = area.width >= 600 ? true : false;
         }
         clickgo.form.showPop(el, this.refs[type + 'pop'], 'v');
     }
