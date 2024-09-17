@@ -14,6 +14,7 @@
         <label :copy="copy" size="m">size m</label>
         <label :copy="copy" size="l">size l</label>
         <label :copy="copy" size="xl">size xl</label>
+        <label :copy="copy" thru>thru thru thru thru</label>
         <layout gutter="10" align-v="center">
             <label>mode: date</label>
             <label :copy="copy" mode="date" :date="date" :time="time" :zone="zone" :tz="tz[0]" :content="daten" style="flex: 1;"></label>

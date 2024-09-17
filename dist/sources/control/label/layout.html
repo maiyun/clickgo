@@ -1,4 +1,11 @@
-<div class="wrap" :style="{'justify-content': alignComp}" :class="[mode, propBoolean('copy') && 'copy', 'size-' + size]" @click="click">
+<div class="wrap" :style="{'justify-content': alignComp}" :class="[mode, propBoolean('copy') && 'copy', propBoolean('thru') && 'thru', 'size-' + size]" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
     <template v-if="content">{{contentComp}}</template>
     <slot v-else></slot>
+    <teleport v-if="propBoolean('copy')" to="system">
+        <div ref="pop" class="pop">
+            <cg-menulist>
+                <cg-menulist-item alt="C" @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
+            </cg-menulist>
+        </div>
+    </teleport>
 </div>

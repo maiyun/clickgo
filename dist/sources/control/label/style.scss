@@ -19,6 +19,9 @@
             color: var(--info-active);
         }
     }
+    &.thru {
+        text-decoration: line-through;
+    }
 
     // --- size ---
     &.size-m {
@@ -33,6 +36,7 @@
 
     // --- copy ---
     &.copy {
+        -webkit-user-select: text; user-select: text;
         &::after {
             content: ''; position: absolute; left: 0; bottom: 0; width: 100%; border-bottom: dashed 1px var(--g-color); opacity: 0; transition: var(--g-transition);
         }
@@ -40,4 +44,8 @@
             opacity: 1;
         }
     }
+}
+
+.pop {
+    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

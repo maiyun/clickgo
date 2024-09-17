@@ -9,6 +9,7 @@ export default class extends clickgo.control.AbstractControl {
         'align': 'left' | 'start' | 'center' | 'right' | 'end';
 
         'copy': boolean | string;
+        'thru': boolean | string;
         'time': boolean | string;
         'date': boolean | string;
         'zone': boolean | string;
@@ -21,6 +22,7 @@ export default class extends clickgo.control.AbstractControl {
             'align': 'left',
 
             'copy': false,
+            'thru': false,
             'time': true,
             'date': true,
             'zone': false,
@@ -30,39 +32,51 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 语言包 --- */
     public localeData = {
         'en': {
+            'copy': 'Copy',
             'copied': 'Copied'
         },
         'sc': {
+            'copy': '复制',
             'copied': '已复制'
         },
         'tc': {
+            'copy': '複製',
             'copied': '已複製'
         },
         'ja': {
+            'copy': 'コピー',
             'copied': 'コピーしました'
         },
         'ko': {
+            'copy': '복사',
             'copied': '복사됨'
         },
         'th': {
+            'copy': 'คัดลอก',
             'copied': 'คัดลอกแล้ว'
         },
         'es': {
+            'copy': 'Copiar',
             'copied': 'Copiado'
         },
         'de': {
+            'copy': 'Kopieren',
             'copied': 'Kopiert'
         },
         'fr': {
+            'copy': 'Copier',
             'copied': 'Copié'
         },
         'pt': {
+            'copy': 'Copiar',
             'copied': 'Copiado'
         },
         'ru': {
+            'copy': 'Копировать',
             'copied': 'Скопировано'
         },
         'vi': {
+            'copy': 'Sao chép',
             'copied': 'Đã sao chép'
         }
     };
@@ -113,6 +127,54 @@ export default class extends clickgo.control.AbstractControl {
         }
         await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
         clickgo.form.alert(this.l('copied'));
+    }
+
+    /** --- wrap 的 down --- */
+    public down(e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.propBoolean('copy')) {
+            return;
+        }
+        // --- 点击复制 ---
+        clickgo.dom.bindClick(e, async (): Promise<void> => {
+            await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
+            clickgo.form.alert(this.l('copied'));
+        });
+        if (!navigator.clipboard) {
+            return;
+        }
+        if (e instanceof TouchEvent) {
+            clickgo.dom.bindLong(e, () => {
+                clickgo.form.showPop(this.element, this.refs.pop, e);
+            });
+        }
+        // --- 若正在显示菜单则隐藏 ---
+        if (this.element.dataset.cgPopOpen === undefined) {
+            return;
+        }
+        clickgo.form.hidePop();
+    }
+
+    /** --- contextmenu --- */
+    public contextmenu(e: MouseEvent): void {
+        if (!this.propBoolean('copy')) {
+            return;
+        }
+        if (!navigator.clipboard) {
+            e.stopPropagation();
+            return;
+        }
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        clickgo.form.showPop(this.element, this.refs.pop, e);
+    }
+
+    /** --- 执行复制 --- */
+    public execCmd(ac: string): void {
+        clickgo.tool.execCommand(ac);
     }
 
 }

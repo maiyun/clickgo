@@ -603,7 +603,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             bindClick: function(
                 e: MouseEvent | TouchEvent,
-                handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void
+                handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void | Promise<void>
             ): void {
                 dom.bindClick(e, handler);
             },

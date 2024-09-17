@@ -42,6 +42,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'size': 's',
             'align': 'left',
             'copy': false,
+            'thru': false,
             'time': true,
             'date': true,
             'zone': false,
@@ -49,39 +50,51 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.localeData = {
             'en': {
+                'copy': 'Copy',
                 'copied': 'Copied'
             },
             'sc': {
+                'copy': '复制',
                 'copied': '已复制'
             },
             'tc': {
+                'copy': '複製',
                 'copied': '已複製'
             },
             'ja': {
+                'copy': 'コピー',
                 'copied': 'コピーしました'
             },
             'ko': {
+                'copy': '복사',
                 'copied': '복사됨'
             },
             'th': {
+                'copy': 'คัดลอก',
                 'copied': 'คัดลอกแล้ว'
             },
             'es': {
+                'copy': 'Copiar',
                 'copied': 'Copiado'
             },
             'de': {
+                'copy': 'Kopieren',
                 'copied': 'Kopiert'
             },
             'fr': {
+                'copy': 'Copier',
                 'copied': 'Copié'
             },
             'pt': {
+                'copy': 'Copiar',
                 'copied': 'Copiado'
             },
             'ru': {
+                'copy': 'Копировать',
                 'copied': 'Скопировано'
             },
             'vi': {
+                'copy': 'Sao chép',
                 'copied': 'Đã sao chép'
             }
         };
@@ -129,6 +142,46 @@ class default_1 extends clickgo.control.AbstractControl {
             yield navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
             clickgo.form.alert(this.l('copied'));
         });
+    }
+    down(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.propBoolean('copy')) {
+            return;
+        }
+        clickgo.dom.bindClick(e, () => __awaiter(this, void 0, void 0, function* () {
+            yield navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
+            clickgo.form.alert(this.l('copied'));
+        }));
+        if (!navigator.clipboard) {
+            return;
+        }
+        if (e instanceof TouchEvent) {
+            clickgo.dom.bindLong(e, () => {
+                clickgo.form.showPop(this.element, this.refs.pop, e);
+            });
+        }
+        if (this.element.dataset.cgPopOpen === undefined) {
+            return;
+        }
+        clickgo.form.hidePop();
+    }
+    contextmenu(e) {
+        if (!this.propBoolean('copy')) {
+            return;
+        }
+        if (!navigator.clipboard) {
+            e.stopPropagation();
+            return;
+        }
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        clickgo.form.showPop(this.element, this.refs.pop, e);
+    }
+    execCmd(ac) {
+        clickgo.tool.execCommand(ac);
     }
 }
 exports.default = default_1;

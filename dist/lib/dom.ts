@@ -1211,7 +1211,7 @@ watchTimerHandler();
  */
 export function bindClick(
     e: MouseEvent | TouchEvent,
-    handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void
+    handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void | Promise<void>
 ): void {
     if ((e instanceof MouseEvent) && (e.button > 0)) {
         return;
@@ -1227,7 +1227,7 @@ export function bindClick(
             const nx = ne instanceof MouseEvent ? ne.clientX : ne.changedTouches[0].clientX;
             const ny = ne instanceof MouseEvent ? ne.clientY : ne.changedTouches[0].clientY;
             if (nx === x && ny === y) {
-                handler(ne, nx, ny);
+                handler(ne, nx, ny) as any;
             }
         }
     });
