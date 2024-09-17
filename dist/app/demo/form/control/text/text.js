@@ -37,7 +37,9 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.value = '';
+        this.nvalue = '';
         this.isFocus = false;
+        this.nisFocus = false;
         this.selectionStart = 0;
         this.selectionEnd = 0;
         this.scrollLeft = 0;

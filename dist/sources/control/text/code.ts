@@ -149,6 +149,11 @@ export default class extends clickgo.control.AbstractControl {
         }
     };
 
+    /** --- 供外部调用的使框获取焦点的事件 --- */
+    public focus(): void {
+        this.refs.text.focus();
+    }
+
     // --- 最大可拖动的 scroll 左侧位置 ---
     public maxScrollLeft(): number {
         return this.refs.text.scrollWidth - this.refs.text.clientWidth;
@@ -202,7 +207,7 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('minmaxchange', mxEvent);
             if (mxEvent.go) {
-                const event: types.ITextBeforechangeEvent = {
+                const event: types.ITextBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -244,7 +249,7 @@ export default class extends clickgo.control.AbstractControl {
             target.value = target.value.slice(0, this.propNumber('maxlength'));
             return;
         }
-        const event: types.ITextBeforechangeEvent = {
+        const event: types.ITextBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -456,7 +461,7 @@ export default class extends clickgo.control.AbstractControl {
             this.value = '0';
         }
         const n = (parseFloat(this.value) + num).toString();
-        const event: types.ITextBeforechangeEvent = {
+        const event: types.ITextBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -486,7 +491,7 @@ export default class extends clickgo.control.AbstractControl {
             const value = this.value.slice(0, this.refs.text.selectionStart)
             + str
             + this.value.slice(this.refs.text.selectionEnd);
-            const event: types.ITextBeforechangeEvent = {
+            const event: types.ITextBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -609,7 +614,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.check();
                 return;
             }
-            const event: types.ITextBeforechangeEvent = {
+            const event: types.ITextBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -647,7 +652,7 @@ export default class extends clickgo.control.AbstractControl {
                 };
                 this.emit('minmaxchange', mxEvent);
                 if (mxEvent.go) {
-                    const event: types.ITextBeforechangeEvent = {
+                    const event: types.ITextBeforeChangeEvent = {
                         'go': true,
                         preventDefault: function() {
                             this.go = false;
@@ -690,7 +695,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                const event: types.ITextBeforechangeEvent = {
+                const event: types.ITextBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -727,7 +732,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                const event: types.ITextBeforechangeEvent = {
+                const event: types.ITextBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -754,7 +759,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             const value = this.value.slice(0, this.propNumber('maxlength'));
-            const event: types.ITextBeforechangeEvent = {
+            const event: types.ITextBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;

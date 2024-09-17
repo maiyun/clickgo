@@ -11,7 +11,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cbutton')">Button + Bgroup</button>
                     <button @click="openForm('cimg')">Img</button>
-                    <button @click="openForm('ctext')">Text</button>
+                    <button @click="openForm('ctext')">Text + Number</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ccheck')">Check</button>

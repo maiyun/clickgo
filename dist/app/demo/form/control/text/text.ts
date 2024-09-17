@@ -5,7 +5,11 @@ export default class extends clickgo.form.AbstractForm {
 
     public value = '';
 
+    public nvalue = '';
+
     public isFocus = false;
+
+    public nisFocus = false;
 
     // --- 属性 ---
 
@@ -103,7 +107,7 @@ long`;
     /** --- 是否开启修改拦截 --- */
     public beforechange = false;
 
-    public onBeforechange(e: types.ITextBeforechangeEvent): void {
+    public onBeforechange(e: types.ITextBeforeChangeEvent): void {
         if (!this.beforechange) {
             return;
         }

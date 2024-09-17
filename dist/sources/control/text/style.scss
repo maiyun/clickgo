@@ -65,7 +65,7 @@
     .number {
         display: flex; flex-direction: column;
         .up, .down {
-            flex: 1; width: 20px; display: flex; align-items: center; justify-content: center;
+            flex: 1; width: var(--g-control-m); display: flex; align-items: center; justify-content: center; transition: var(--g-transition);
             &::before {
                 content: ''; border-style: solid; border-color: var(--g-color); width: 5px; height: 5px; transform: rotate(45deg);
             }

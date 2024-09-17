@@ -40,50 +40,22 @@ class default_1 extends clickgo.control.AbstractControl {
             'focus': null,
             'blur': null,
             'enter': null,
-            'gesture': null,
-            'clientwidth': null,
-            'clientheight': null,
-            'scrollwidth': null,
-            'scrollheight': null,
             'beforechange': null,
             'minmaxchange': null,
             'update:modelValue': null,
-            'update:scrollLeft': null,
-            'update:scrollTop': null,
-            'update:selectionStart': null,
-            'update:selectionEnd': null,
         };
         this.props = {
             'disabled': false,
             'readonly': false,
-            'wrap': true,
-            'maxlength': 0,
-            'scroll': true,
-            'gesture': [],
-            'type': 'text',
             'plain': false,
             'require': false,
-            'rule': '',
             'modelValue': '',
             'placeholder': '',
-            'selectionStart': 0,
-            'selectionEnd': 0,
-            'scrollLeft': 0,
-            'scrollTop': 0,
             'max': undefined,
             'min': undefined
         };
-        this.showPassword = false;
         this.isFocus = false;
         this.value = '';
-        this.size = {
-            'sw': 0,
-            'sh': 0,
-            'cw': 0,
-            'ch': 0,
-            'st': 0,
-            'sl': 0
-        };
         this.localeData = {
             'en': {
                 'copy': 'Copy',
@@ -151,12 +123,6 @@ class default_1 extends clickgo.control.AbstractControl {
     focus() {
         this.refs.text.focus();
     }
-    maxScrollLeft() {
-        return this.refs.text.scrollWidth - this.refs.text.clientWidth;
-    }
-    maxScrollTop() {
-        return this.refs.text.scrollHeight - this.refs.text.clientHeight;
-    }
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -220,10 +186,6 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     input(e) {
         const target = e.target;
-        if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
-            target.value = target.value.slice(0, this.propNumber('maxlength'));
-            return;
-        }
         const event = {
             'go': true,
             preventDefault: function () {
@@ -249,9 +211,6 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!target) {
             target = this.refs.text;
         }
-        if (this.props.type !== 'number') {
-            return false;
-        }
         let change = false;
         if (!target.value && this.value) {
             change = true;
@@ -269,129 +228,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return change;
     }
-    scrollEvent() {
-        let sl = Math.round(this.refs.text.scrollLeft);
-        const msl = this.maxScrollLeft();
-        if (sl > msl) {
-            sl = msl;
-        }
-        this.size.sl = sl;
-        if (this.propInt('scrollLeft') !== sl) {
-            this.emit('update:scrollLeft', sl);
-        }
-        let st = Math.round(this.refs.text.scrollTop);
-        const mst = this.maxScrollTop();
-        if (st > mst) {
-            st = mst;
-        }
-        this.size.st = st;
-        if (this.propInt('scrollTop') !== st) {
-            this.emit('update:scrollTop', st);
-        }
-    }
-    wheel(e) {
-        clickgo.dom.bindGesture(e, (e, dir) => {
-            switch (dir) {
-                case 'top': {
-                    if (this.refs.text.scrollTop > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('top')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'bottom': {
-                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('bottom')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'left': {
-                    if (this.refs.text.scrollLeft > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('left')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                default: {
-                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('right')) {
-                            return 1;
-                        }
-                    }
-                }
-            }
-            return 0;
-        }, (dir) => {
-            this.emit('gesture', dir);
-        });
-    }
     inputTouch(e) {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
-            switch (dir) {
-                case 'top': {
-                    if (this.refs.text.scrollTop > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('top')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'bottom': {
-                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('bottom')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'left': {
-                    if (this.refs.text.scrollLeft > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('left')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                default: {
-                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('right')) {
-                            return 1;
-                        }
-                    }
-                }
-            }
-            return 0;
-        }, (dir) => {
-            this.emit('gesture', dir);
-        });
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
                 clickgo.form.showPop(this.element, this.refs.pop, e);
@@ -443,16 +280,13 @@ class default_1 extends clickgo.control.AbstractControl {
                     return;
                 }
                 const str = yield navigator.clipboard.readText();
-                const value = this.value.slice(0, this.refs.text.selectionStart)
-                    + str
-                    + this.value.slice(this.refs.text.selectionEnd);
                 const event = {
                     'go': true,
                     preventDefault: function () {
                         this.go = false;
                     },
                     'detail': {
-                        'value': value,
+                        'value': str,
                         'change': undefined
                     }
                 };
@@ -460,56 +294,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (!event.go) {
                     return;
                 }
-                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.value.slice(0, this.refs.text.selectionStart)
-                    + str
-                    + this.value.slice(this.refs.text.selectionEnd);
+                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : str;
                 this.emit('update:modelValue', this.value);
-                this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
-                this.refs.text.selectionEnd = this.refs.text.selectionStart;
             }
             else {
                 clickgo.tool.execCommand(ac);
             }
         });
-    }
-    checkWatch() {
-        if (clickgo.dom.isWatchProperty(this.refs.text)) {
-            return;
-        }
-        clickgo.dom.watchProperty(this.refs.text, [
-            'selectionStart',
-            'selectionEnd',
-            'scrollWidth',
-            'scrollHeight'
-        ], (n, v) => {
-            if (v === null) {
-                v = 0;
-            }
-            switch (n) {
-                case 'selectionStart':
-                case 'selectionEnd': {
-                    this.emit('update:' + n, v);
-                    break;
-                }
-                case 'scrollWidth':
-                case 'scrollHeight': {
-                    this.emit(n.toLowerCase(), v);
-                    if (n === 'scrollWidth') {
-                        this.size.sw = parseFloat(v);
-                    }
-                    else {
-                        this.size.sh = parseFloat(v);
-                    }
-                    break;
-                }
-            }
-        }, true);
-        clickgo.dom.watchSize(this.refs.text, () => {
-            this.size.cw = this.refs.text.clientWidth;
-            this.emit('clientwidth', this.refs.text.clientWidth);
-            this.size.ch = this.refs.text.clientHeight;
-            this.emit('clientheight', this.refs.text.clientHeight);
-        }, true);
     }
     keydown(e) {
         if (e.key === 'Enter') {
@@ -523,19 +314,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return false;
             }
         }
-        if (!this.value) {
-            return true;
-        }
-        if (!this.props.rule) {
-            return true;
-        }
-        const reg = this.props.rule instanceof RegExp ? this.props.rule : new RegExp(this.props.rule.slice(1, -1));
-        const r = reg.test(this.value);
-        if (r) {
-            return true;
-        }
-        this.dangerBorder = true;
-        return false;
+        return true;
     }
     onMounted() {
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
@@ -549,9 +328,6 @@ class default_1 extends clickgo.control.AbstractControl {
             this.value = this.props.modelValue;
             yield this.nextTick();
             this.checkNumber();
-            if (this.propNumber('maxlength') && this.refs.text.value.length > this.propNumber('maxlength')) {
-                this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
-            }
             if (this.refs.text.value === this.value) {
                 this.check();
                 return;
@@ -578,45 +354,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }), {
             'immediate': true
         });
-        this.watch('type', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield this.nextTick();
-            if (this.checkNumber()) {
-                const mxEvent = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'before': this.value,
-                        'value': this.refs.text.value
-                    }
-                };
-                this.emit('minmaxchange', mxEvent);
-                if (mxEvent.go) {
-                    const event = {
-                        'go': true,
-                        preventDefault: function () {
-                            this.go = false;
-                        },
-                        'detail': {
-                            'value': this.value,
-                            'change': undefined
-                        }
-                    };
-                    this.emit('beforechange', event);
-                    if (event.go) {
-                        this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
-                        this.emit('update:modelValue', this.value);
-                    }
-                    else {
-                        this.refs.text.value = this.value;
-                    }
-                }
-            }
-            yield this.nextTick();
-            this.checkWatch();
-        }));
         this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
             var _a;
             yield this.nextTick();
@@ -693,66 +430,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:modelValue', this.value);
             }
         }));
-        this.watch('maxlength', () => {
-            var _a;
-            if (!this.propNumber('maxlength')) {
-                return;
-            }
-            if (this.value.length <= this.propNumber('maxlength')) {
-                return;
-            }
-            const value = this.value.slice(0, this.propNumber('maxlength'));
-            const event = {
-                'go': true,
-                preventDefault: function () {
-                    this.go = false;
-                },
-                'detail': {
-                    'value': value,
-                    'change': undefined
-                }
-            };
-            this.emit('beforechange', event);
-            if (!event.go) {
-                return;
-            }
-            this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : value;
-            this.emit('update:modelValue', this.value);
-        });
-        this.watch('scrollLeft', () => {
-            const prop = this.propInt('scrollLeft');
-            if (prop === Math.round(this.refs.text.scrollLeft)) {
-                return;
-            }
-            this.refs.text.scrollLeft = prop;
-        });
-        this.watch('scrollTop', () => {
-            const prop = this.propInt('scrollTop');
-            if (prop === Math.round(this.refs.text.scrollTop)) {
-                return;
-            }
-            this.refs.text.scrollTop = prop;
-        });
-        this.watch('selectionStart', () => {
-            const prop = this.propInt('selectionStart');
-            if (prop === this.refs.text.selectionStart) {
-                return;
-            }
-            if (this.props.type === 'number') {
-                return;
-            }
-            this.refs.text.selectionStart = prop;
-        });
-        this.watch('selectionEnd', () => {
-            const prop = this.propInt('selectionEnd');
-            if (prop === this.refs.text.selectionEnd) {
-                return;
-            }
-            if (this.props.type === 'number') {
-                return;
-            }
-            this.refs.text.selectionEnd = prop;
-        });
         const content = this.parentByName('content');
         if (content) {
             this.watch('require', () => {
@@ -766,13 +443,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 'immediate': true
             });
         }
-        this.refs.text.scrollTop = this.propInt('scrollTop');
-        this.refs.text.scrollLeft = this.propInt('scrollLeft');
-        if (this.props.type !== 'number') {
-            this.refs.text.selectionStart = this.propInt('selectionStart');
-            this.refs.text.selectionEnd = this.propInt('selectionEnd');
-        }
-        this.checkWatch();
     }
 }
 exports.default = default_1;

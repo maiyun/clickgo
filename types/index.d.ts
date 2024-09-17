@@ -734,9 +734,25 @@ export interface ICheckChangedEvent {
     };
 }
 
+// --- Number Control ---
+
+export interface INumberBeforeChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+        'change'?: string;
+    };
+}
+
+export interface INumberMinMaxChangeEvent extends ICustomEvent {
+    'detail': {
+        'before': string;
+        'value': string;
+    };
+}
+
 // --- Text Control ---
 
-export interface ITextBeforechangeEvent extends ICustomEvent {
+export interface ITextBeforeChangeEvent extends ICustomEvent {
     'detail': {
         'value': string;
         'change'?: string;
