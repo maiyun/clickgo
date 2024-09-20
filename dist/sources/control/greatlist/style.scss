@@ -2,7 +2,7 @@
     outline: none; max-width: 100%; max-height: 100%; position: relative; min-width: 32px; min-height: 32px; display: flex; flex-direction: column; border-radius: var(--g-radius);
     &:not(.plain) {
         border: solid .5px var(--g-plain-border-color); background: var(--g-plain-background);
-        &.mode-view {
+        &.mode-view, &.mode-iview {
             border: none;
         }
     }
@@ -90,19 +90,12 @@
             width: var(--g-control-m);
         }
     }
-    &.mode-view {
+    &.mode-view, &.mode-iview {
         .t {
             cg-vflow, cg-flow {
                 .item {
                     border-bottom-color: var(--g-plain-border-color-plain);
                     &:not([data-cg-disabled]):not(.unavailable) {
-                        &::after {
-                            position: absolute; content: ''; width: 100%; height: 100%; box-shadow: inset 0 0 0 2px var(--g-plain-border-color); opacity: 0; transition: var(--g-transition); pointer-events: none; left: 0; top: 0; z-index: 1; border-radius: var(--g-radius);
-                        }
-                        &:hover::after {
-                            opacity: 1;
-                        }
-
                         &.selected {
                             background: transparent;
                             [data-cg-base] {
@@ -117,6 +110,22 @@
                         }
                         &.shift {
                             border-color: transparent transparent var(--g-plain-border-color-plain) transparent;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    &.mode-iview {
+        .t {
+            cg-vflow, cg-flow {
+                .item {
+                    &:not([data-cg-disabled]):not(.unavailable) {
+                        &::after {
+                            position: absolute; content: ''; width: 100%; height: 100%; box-shadow: inset 0 0 0 2px var(--g-plain-border-color); opacity: 0; transition: var(--g-transition); pointer-events: none; left: 0; top: 0; z-index: 1; border-radius: var(--g-radius);
+                        }
+                        &:hover::after {
+                            opacity: 1;
                         }
                     }
                 }

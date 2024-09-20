@@ -39,7 +39,7 @@ export default class extends clickgo.control.AbstractControl {
         'virtual': boolean | string;
         'plain': boolean | string;
         /** --- 展现样式 --- */
-        'mode': 'default' | 'view';
+        'mode': 'default' | 'view' | 'iview';
 
         /** --- 映射 disabled、control 的 key --- */
         'map': {

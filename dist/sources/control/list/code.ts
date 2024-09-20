@@ -49,7 +49,7 @@ export default class extends clickgo.control.AbstractControl {
             'unavailable'?: string;
         };
         /** --- 展现样式 --- */
-        'mode': 'default' | 'view';
+        'mode': 'default' | 'view' | 'iview';
 
         'data': any[] | Record<string, string>;
         'disabledList': string[] | string;

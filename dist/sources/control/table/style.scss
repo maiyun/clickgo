@@ -6,7 +6,7 @@
             pointer-events: none;
         }
     }
-    &.mode-view {
+    &.mode-view, &.mode-iview {
         border: none;
     }
 
@@ -77,7 +77,7 @@
             }
         }
     }
-    &.mode-view {
+    &.mode-view, &.mode-iview {
         .header {
             border-bottom-color: var(--g-plain-border-color-plain);
             > :not(:last-child) {

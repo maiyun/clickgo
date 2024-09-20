@@ -32,7 +32,7 @@ export default class extends clickgo.control.AbstractControl {
         'sizes': Record<string, number | undefined>;
         'modelValue': Array<string | number>;
         /** --- 展现样式 --- */
-        'mode': 'default' | 'view';
+        'mode': 'default' | 'view' | 'iview';
     } = {
             'disabled': false,
             'must': true,
