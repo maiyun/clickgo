@@ -37,7 +37,7 @@
             border-color: var(--g-plain-border-color);
 
             &:hover {
-                border-color: var(--g-plain-border-color-hover); fill: var(--g-plain-border-color-hover); stroke: var(--g-plain-border-color-hover);
+                border-color: var(--g-color); fill: var(--g-color); stroke: var(--g-color);
             }
             &:active {
                 border-color: var(--g-plain-border-color-active); fill: var(--g-plain-border-color-active); stroke: var(--g-plain-border-color-active);
