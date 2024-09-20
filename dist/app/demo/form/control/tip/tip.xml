@@ -13,7 +13,7 @@
         <tip label="This is a select">
             <select :data="[1,2,3,4]"></select>
         </tip>
-        <tip label="This is so long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long">
+        <tip label="This is so long long long long long longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong">
             <label>So long</label>
         </tip>
         <tip label="link tip">
