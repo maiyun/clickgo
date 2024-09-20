@@ -108,14 +108,15 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.unpack(this.dataFormat);
     }
     get mapComp() {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g;
         return {
             'children': (_a = this.props.map.children) !== null && _a !== void 0 ? _a : 'children',
             'label': (_b = this.props.map.label) !== null && _b !== void 0 ? _b : 'label',
             'value': (_c = this.props.map.value) !== null && _c !== void 0 ? _c : 'value',
-            'disabled': (_d = this.props.map.disabled) !== null && _d !== void 0 ? _d : 'disabled',
-            'control': (_e = this.props.map.control) !== null && _e !== void 0 ? _e : 'control',
-            'unavailable': (_f = this.props.map.unavailable) !== null && _f !== void 0 ? _f : 'unavailable'
+            'title': (_d = this.props.map.title) !== null && _d !== void 0 ? _d : 'title',
+            'disabled': (_e = this.props.map.disabled) !== null && _e !== void 0 ? _e : 'disabled',
+            'control': (_f = this.props.map.control) !== null && _f !== void 0 ? _f : 'control',
+            'unavailable': (_g = this.props.map.unavailable) !== null && _g !== void 0 ? _g : 'unavailable'
         };
     }
     select(index) {
@@ -227,7 +228,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (typeof item === 'object') {
                 over.label = (_d = (_c = item[this.mapComp.label]) !== null && _c !== void 0 ? _c : item[this.mapComp.value]) !== null && _d !== void 0 ? _d : k;
                 over.value = value;
-                over.title = item.title !== undefined ? item.title : false;
+                over.title = item[this.mapComp.title] !== undefined ? item[this.mapComp.title] : false;
                 over.disabled = item[this.mapComp.disabled] !== undefined ?
                     item[this.mapComp.disabled] : (over.title ? true : false);
                 over.control = item[this.mapComp.control];

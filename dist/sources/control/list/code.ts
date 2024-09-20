@@ -42,6 +42,7 @@ export default class extends clickgo.control.AbstractControl {
             'label'?: string;
             'value'?: string;
             'children'?: string;
+            'title'?: string;
 
             'disabled'?: string;
             'control'?: string;
@@ -155,6 +156,7 @@ export default class extends clickgo.control.AbstractControl {
         'label': string;
         'value': string;
         'children': string;
+        'title': string;
 
         'disabled': string;
         'control': string;
@@ -164,6 +166,7 @@ export default class extends clickgo.control.AbstractControl {
             'children': this.props.map.children ?? 'children',
             'label': this.props.map.label ?? 'label',
             'value': this.props.map.value ?? 'value',
+            'title': this.props.map.title ?? 'title',
 
             'disabled': this.props.map.disabled ?? 'disabled',
             'control': this.props.map.control ?? 'control',
@@ -317,7 +320,7 @@ export default class extends clickgo.control.AbstractControl {
             if (typeof item === 'object') {
                 over.label = item[this.mapComp.label] ?? item[this.mapComp.value] ?? k;
                 over.value = value;
-                over.title = item.title !== undefined ? item.title : false;
+                over.title = item[this.mapComp.title] !== undefined ? item[this.mapComp.title] : false;
                 over.disabled = item[this.mapComp.disabled] !== undefined ?
                     item[this.mapComp.disabled] : (over.title ? true : false);
                 over.control = item[this.mapComp.control];

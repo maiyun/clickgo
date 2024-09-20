@@ -158,7 +158,9 @@ export default class extends clickgo.control.AbstractControl {
             'addNewLine': false,
             'language': this.getLanguage(),
             'theme': this.props.theme === 'dark' ? 'dark' : undefined,
-            'toolbarAdaptive': false
+            'toolbarAdaptive': false,
+            'beautifyHTMLCDNUrlsJS': [],
+            'sourceEditorCDNUrlsJS': []
         });
         this.access.editor.value = this.props.modelValue;
         this.access.editor.events.on('change', () => {
