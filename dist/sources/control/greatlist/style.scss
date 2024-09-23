@@ -17,7 +17,7 @@
     }
 
     .t {
-        display: flex; flex: 1; max-height: calc(100%); min-height: max-content; position: relative;
+        display: flex; flex: 1; height: max-content; max-height: 100%; position: relative;
         &.hasb {
             max-height: calc(100% - var(--g-control-m));
         }
