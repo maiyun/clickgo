@@ -96,7 +96,7 @@
                 display: flex;
             }
             .bottom {
-                display: flex; position: sticky; left: 0; margin: 0 -2px; padding: var(--g-padding); border-top: solid .5px var(--g-plain-border-color); width: calc(var(--bottom-width) - 2px);
+                display: flex; position: sticky; left: 0; margin: 0 -2px; padding: var(--g-padding); border-top: solid .5px var(--g-plain-border-color); max-width: calc(var(--bottom-width) - 2px);
             }
         }
     }
