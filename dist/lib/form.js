@@ -64,6 +64,7 @@ exports.hideDrag = hideDrag;
 exports.alert = alert;
 exports.notify = notify;
 exports.notifyProgress = notifyProgress;
+exports.notifyContent = notifyContent;
 exports.hideNotify = hideNotify;
 exports.appendToPop = appendToPop;
 exports.removeFromPop = removeFromPop;
@@ -1551,9 +1552,13 @@ function notify(opt) {
     var _a;
     const nid = ++notifyId;
     let timeout = 5000;
+    const maxTimeout = 60000 * 10;
     if (opt.timeout !== undefined) {
-        if (opt.timeout <= 0 || opt.timeout > 30000) {
-            timeout = 60000 * 5;
+        if (opt.timeout <= 0) {
+            timeout = 5000;
+        }
+        else if (opt.timeout > maxTimeout) {
+            timeout = maxTimeout;
         }
         else {
             timeout = opt.timeout;
@@ -1622,6 +1627,26 @@ function notifyProgress(notifyId, per) {
         progress.style.transitionDelay = '.1s';
     }
     progress.style.width = (per < 1 ? per * 100 : per).toString() + '%';
+}
+function notifyContent(notifyId, opt) {
+    const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
+    if (!el) {
+        return;
+    }
+    if (opt.title) {
+        const title = el.querySelector('.cg-notify-title');
+        if (!title) {
+            return;
+        }
+        title.innerHTML = tool.escapeHTML(opt.title);
+    }
+    if (opt.content) {
+        const content = el.querySelector('.cg-notify-content');
+        if (!content) {
+            return;
+        }
+        content.innerHTML = tool.escapeHTML(opt.content);
+    }
 }
 function hideNotify(notifyId) {
     const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);

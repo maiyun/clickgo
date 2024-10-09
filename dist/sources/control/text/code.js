@@ -774,5 +774,13 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.checkWatch();
     }
+    onUnmounted() {
+        if (this.propBoolean('require')) {
+            const content = this.parentByName('content');
+            if (content) {
+                content.remove(this);
+            }
+        }
+    }
 }
 exports.default = default_1;

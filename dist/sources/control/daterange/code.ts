@@ -44,6 +44,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- first 的 ts --- */
     public ts?: number = undefined;
 
+    /** --- end 的 ts --- */
+    public ts2?: number = undefined;
+
     public dateStr: string[] = ['', ''];
 
     public timeStr: string[] = ['', ''];
@@ -214,6 +217,17 @@ export default class extends clickgo.control.AbstractControl {
         // --- 清空选中 ---
         this.refs.firstpanel.clear();
         this.refs.endpanel.clear();
+    }
+
+    /** --- 左侧的 changed --- */
+    public firstChanged(e: types.IDatepanelChangedEvent): void {
+        if (e.detail.value === undefined) {
+            this.ts2 = undefined;
+            return;
+        }
+        const date = new Date(e.detail.value);
+        date.setUTCHours(23, 59, 59, 0);
+        this.ts2 = date.getTime() - this.tzData * 60 * 60_000;
     }
 
     // --- yearmonth 处理 ---

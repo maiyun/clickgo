@@ -155,10 +155,20 @@ class default_1 extends clickgo.form.AbstractForm {
                 clickgo.form.notifyProgress(nid, 30);
                 yield clickgo.tool.sleep(300);
                 clickgo.form.notifyProgress(nid, 50);
+                clickgo.form.notifyContent(nid, {
+                    'content': 'loading... (3/4)'
+                });
                 yield clickgo.tool.sleep(700);
                 clickgo.form.notifyProgress(nid, 75);
+                clickgo.form.notifyContent(nid, {
+                    'content': 'loading... (4/4)'
+                });
                 yield clickgo.tool.sleep(1000);
                 clickgo.form.notifyProgress(nid, 100);
+                clickgo.form.notifyContent(nid, {
+                    'title': 'Done',
+                    'content': 'loaded'
+                });
             }
         });
     }

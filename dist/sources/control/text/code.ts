@@ -835,4 +835,13 @@ export default class extends clickgo.control.AbstractControl {
         this.checkWatch();
     }
 
+    public onUnmounted(): void {
+        if (this.propBoolean('require')) {
+            const content = this.parentByName('content');
+            if (content) {
+                content.remove(this);
+            }
+        }
+    }
+
 }

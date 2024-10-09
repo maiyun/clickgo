@@ -29,6 +29,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.direction = ['h'];
         this.gutter = [0];
+        this.wrap = false;
     }
 }
 exports.default = default_1;

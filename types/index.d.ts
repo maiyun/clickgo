@@ -681,6 +681,11 @@ export interface INotifyOptions {
     'progress'?: boolean;
 }
 
+export interface INotifyContentOptions {
+    'title'?: string;
+    'content'?: string;
+}
+
 // --- Custom Event Control ---
 
 interface ICustomEvent {

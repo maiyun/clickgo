@@ -13,6 +13,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public logo = '';
 
+    public slogo = false;
+
     public hash = false;
 
     public async onSelect(e: types.INavItemSelectEvent): Promise<void> {

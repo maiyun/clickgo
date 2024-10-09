@@ -694,6 +694,9 @@ function run(url_1) {
                 notifyProgress: function (notifyId, per) {
                     form.notifyProgress(notifyId, per);
                 },
+                notifyContent: function (notifyId, opt) {
+                    form.notifyContent(notifyId, opt);
+                },
                 hideNotify: function (notifyId) {
                     form.hideNotify(notifyId);
                 },

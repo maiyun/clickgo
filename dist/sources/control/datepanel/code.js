@@ -47,7 +47,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'tz': undefined,
             'yearmonth': '',
             'hourminute': '',
-            'lockhm': false,
             'cursor': '',
             'jump': true,
             'time': true,
@@ -515,7 +514,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.rangeDate === undefined && (this.timestamp !== undefined) && this.propBoolean('range')) {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (cols === this.dateValueStr) {
-                const date = new Date(Date.UTC(col.year, col.month, col.date, 23, 59, 59, 0));
+                const endDate = new Date(Date.UTC(col.year, col.month, col.date, 23, 59, 59, 0));
                 const event = {
                     'go': true,
                     preventDefault: function () {
@@ -523,38 +522,40 @@ class default_1 extends clickgo.control.AbstractControl {
                     },
                     'detail': {
                         'start': this.timestamp,
-                        'end': date.getTime() - this.tzData * 60 * 60000
+                        'end': endDate.getTime() - this.tzData * 60 * 60000
                     }
                 };
                 this.emit('range', event);
                 if (event.go) {
-                    this.rangeDate = date;
+                    this.rangeDate = endDate;
                 }
                 return;
             }
             if (cols > this.dateValueStr) {
-                let ehour = parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00');
-                let eminute = parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00');
-                let eseconds = parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00');
-                if (ehour === 0 && eminute === 0 && eseconds === 0) {
-                    ehour = 23;
-                    eminute = 59;
-                    eseconds = 59;
+                const nhour = parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00');
+                const nminute = parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00');
+                const nseconds = parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00');
+                const sdate = new Date(this.dateObj.getTime());
+                if (nhour === 23 && nminute === 59 && nseconds === 59) {
+                    sdate.setUTCHours(0, 0, 0, 0);
                 }
-                const date = new Date(Date.UTC(col.year, col.month, col.date, ehour, eminute, eseconds, 0));
+                const edate = new Date(Date.UTC(col.year, col.month, col.date, nhour, nminute, nseconds, 0));
+                if (nhour === 0 && nminute === 0 && nseconds === 0) {
+                    edate.setUTCHours(23, 59, 59, 0);
+                }
                 const event = {
                     'go': true,
                     preventDefault: function () {
                         this.go = false;
                     },
                     'detail': {
-                        'start': this.timestamp,
-                        'end': date.getTime() - this.tzData * 60 * 60000
+                        'start': sdate.getTime() - this.tzData * 60 * 60000,
+                        'end': edate.getTime() - this.tzData * 60 * 60000
                     }
                 };
                 this.emit('range', event);
                 if (event.go) {
-                    this.rangeDate = date;
+                    this.rangeDate = edate;
                 }
                 return;
             }
@@ -765,31 +766,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
                 this.timestamp = this.propNumber('modelValue');
-                const oldDate = {
-                    'h': this.dateObj.getUTCHours(),
-                    'm': this.dateObj.getUTCMinutes(),
-                    's': this.dateObj.getUTCSeconds()
-                };
                 this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
                 this.dateObj.setMilliseconds(0);
-                if (this.propBoolean('lockhm')) {
-                    this.dateObj.setUTCHours(oldDate.h, oldDate.m, oldDate.s);
-                    this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60000;
-                    if (this.propNumber('modelValue') !== this.timestamp) {
-                        this.emit('update:modelValue', this.timestamp);
-                        const event = {
-                            'detail': {
-                                'value': this.timestamp
-                            }
-                        };
-                        this.emit('changed', event);
-                    }
-                }
-                else {
-                    this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
-                    this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
-                    this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
-                }
+                this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
+                this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
+                this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
                 if (this.propBoolean('jump')) {
                     this.vyear[0] = this.dateObj.getUTCFullYear().toString();
                     this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
@@ -897,6 +878,12 @@ class default_1 extends clickgo.control.AbstractControl {
         this.timestamp = undefined;
         this.emit('update:modelValue', undefined);
         this.rangeDate = undefined;
+        const event = {
+            'detail': {
+                'value': undefined
+            }
+        };
+        this.emit('changed', event);
         if (this.cursorDate !== '') {
             this.cursorDate = '';
             this.emit('update:cursor', '');

@@ -41,6 +41,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.name = '';
         this.isShow = true;
         this.logo = '';
+        this.slogo = false;
         this.hash = false;
     }
     onSelect(e) {

@@ -46,6 +46,7 @@ class default_1 extends clickgo.control.AbstractControl {
         ];
         this.cursor = '';
         this.ts = undefined;
+        this.ts2 = undefined;
         this.dateStr = ['', ''];
         this.timeStr = ['', ''];
         this.tzData = 0;
@@ -197,6 +198,15 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.form.hidePop(this.refs.firstpop);
         this.refs.firstpanel.clear();
         this.refs.endpanel.clear();
+    }
+    firstChanged(e) {
+        if (e.detail.value === undefined) {
+            this.ts2 = undefined;
+            return;
+        }
+        const date = new Date(e.detail.value);
+        date.setUTCHours(23, 59, 59, 0);
+        this.ts2 = date.getTime() - this.tzData * 60 * 60000;
     }
     onYmChange() {
         if (this.endym > this.firstym) {

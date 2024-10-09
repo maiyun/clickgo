@@ -6,4 +6,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public gutter = [0];
 
+    public wrap = false;
+
 }

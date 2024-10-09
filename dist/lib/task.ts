@@ -774,6 +774,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             notifyProgress: function(notifyId: number, per: number): void {
                 form.notifyProgress(notifyId, per);
             },
+            notifyContent: function(notifyId: number, opt: types.INotifyContentOptions): void {
+                form.notifyContent(notifyId, opt);
+            },
             hideNotify: function(notifyId: number): void {
                 form.hideNotify(notifyId);
             },

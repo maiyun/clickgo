@@ -2033,16 +2033,21 @@ let notifyBottom: number = -10;
 let notifyId: number = 0;
 /**
  * --- 弹出右上角信息框 ---
- * @param opt timeout 默认 5 秒，最大 5 分钟
+ * @param opt timeout 默认 5 秒，最大 10 分钟
  */
 export function notify(opt: types.INotifyOptions): number {
     // --- 申请 nid ---
     const nid = ++notifyId;
     // --- 设置 timeout ---
     let timeout = 5_000;
+    /** --- 限定的最大 maxTimeout --- */
+    const maxTimeout = 60_000 * 10;
     if (opt.timeout !== undefined) {
-        if (opt.timeout <= 0 || opt.timeout > 30000) {
-            timeout = 60_000 * 5;
+        if (opt.timeout <= 0) {
+            timeout = 5_000;
+        }
+        else if (opt.timeout > maxTimeout) {
+            timeout = maxTimeout;
         }
         else {
             timeout = opt.timeout;
@@ -2119,6 +2124,32 @@ export function notifyProgress(notifyId: number, per: number): void {
         progress.style.transitionDelay = '.1s';
     }
     progress.style.width = (per < 1 ? per * 100 : per).toString() + '%';
+}
+
+/**
+ * --- 修改 notify 的提示信息 ---
+ * @param notifyId notify id
+ * @param opt 参数
+ */
+export function notifyContent(notifyId: number, opt: types.INotifyContentOptions): void {
+    const el: HTMLElement = elements.notify.querySelector(`[data-notifyid="${notifyId}"]`)!;
+    if (!el) {
+        return;
+    }
+    if (opt.title) {
+        const title: HTMLElement = el.querySelector('.cg-notify-title')!;
+        if (!title) {
+            return;
+        }
+        title.innerHTML = tool.escapeHTML(opt.title);
+    }
+    if (opt.content) {
+        const content: HTMLElement = el.querySelector('.cg-notify-content')!;
+        if (!content) {
+            return;
+        }
+        content.innerHTML = tool.escapeHTML(opt.content);
+    }
 }
 
 /**
