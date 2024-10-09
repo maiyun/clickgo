@@ -605,7 +605,7 @@ export interface IFormDialogOptions {
     /** --- 路径基，以 / 结束或文件路径则以文件的基路径为准，可留空 --- */
     'path'?: string;
 
-    'select'?: (this: AbstractForm & { 'data': Record<string, any>; }, e: IFormDialogSelectEvent, button: string) => void;
+    'select'?: (this: AbstractForm & { 'data': Record<string, any>; 'methods': Record<string, (...param: any) => any>; }, e: IFormDialogSelectEvent, button: string) => void;
 
     /** --- 当前的 taskId，App 模式下无效 --- */
     'taskId'?: number;

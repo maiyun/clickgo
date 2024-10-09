@@ -33,6 +33,11 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': Array<string | number>;
         /** --- 展现样式 --- */
         'mode': 'default' | 'view' | 'iview';
+        'map': {
+            'disabled'?: string;
+            'control'?: string;
+            'unavailable'?: string;
+        };
     } = {
             'disabled': false,
             'must': true,
@@ -46,6 +51,7 @@ export default class extends clickgo.control.AbstractControl {
             'virtual': false,
             'fixed': undefined,
 
+            'map': {},
             'data': [],
             'sizes': {},
             'modelValue': [],
