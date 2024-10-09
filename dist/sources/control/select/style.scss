@@ -43,11 +43,15 @@ cg-greatselect {
     }
 
     .leftlabel {
-        background: var(--face); align-items: center; display: flex; padding: var(--g-padding);
+        background: var(--face); align-items: center; display: flex; padding: var(--g-padding); transition: var(--g-transition);
     }
 
     cg-text {
         flex: 1; border: none; background: transparent;
+
+        &.showleftlabel {
+            opacity: .3;
+        }
     }
 }
 
