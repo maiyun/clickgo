@@ -29,6 +29,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'changed': null,
+            'yearmonthchanged': null,
             'selected': null,
             'range': null,
             'update:modelValue': null,
@@ -41,6 +42,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'disabled': false,
             'readonly': false,
             'plain': false,
+            'disabledList': [],
             'modelValue': undefined,
             'start': undefined,
             'end': undefined,
@@ -506,6 +508,7 @@ class default_1 extends clickgo.control.AbstractControl {
             const ym = `${this.vyear[0]}${this.vmonth[0].padStart(2, '0')}`;
             if (this.props.yearmonth !== ym) {
                 this.emit('update:yearmonth', ym);
+                this.emit('yearmonthchanged');
             }
         }
     }
@@ -595,6 +598,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.vyear[0] = this.dateValue.year.toString();
         this.vmonth[0] = (this.dateValue.month + 1).toString();
         this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
+        this.emit('yearmonthchanged');
     }
     prev() {
         const month = parseInt(this.vmonth[0]);
@@ -694,6 +698,7 @@ class default_1 extends clickgo.control.AbstractControl {
             const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
             if (this.props.yearmonth !== ym) {
                 this.emit('update:yearmonth', ym);
+                this.emit('yearmonthchanged');
             }
             this.refreshView();
         });
@@ -779,6 +784,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
                         if (this.props.yearmonth !== ym) {
                             this.emit('update:yearmonth', ym);
+                            this.emit('yearmonthchanged');
                         }
                     }
                 }
@@ -805,6 +811,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('yearmonth', () => {
             if (!this.props.yearmonth) {
                 this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
+                this.emit('yearmonthchanged');
                 return;
             }
             const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
@@ -850,6 +857,11 @@ class default_1 extends clickgo.control.AbstractControl {
     get isDisabled() {
         return (col) => {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
+            if (this.propArray('disabledList').length) {
+                if (this.propArray('disabledList').includes(cols)) {
+                    return '';
+                }
+            }
             return cols > this.endYmd || cols < this.startYmd ? '' : undefined;
         };
     }

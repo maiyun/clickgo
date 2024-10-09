@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'changed': null,
+        'yearmonthchanged': null,
         'update:modelValue': null,
         'update:tz': null,
         'update:yearmonth': null,
@@ -13,6 +14,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
+        'disabledList': string[] | string;
 
         /** --- 当前日期时间戳，毫秒 --- */
         'modelValue': number | string | undefined;
@@ -32,6 +34,7 @@ export default class extends clickgo.control.AbstractControl {
         'zone': boolean | string;
     } = {
             'disabled': false,
+            'disabledList': [],
 
             'modelValue': undefined,
             'tz': undefined,

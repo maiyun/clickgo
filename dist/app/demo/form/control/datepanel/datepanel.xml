@@ -2,7 +2,7 @@
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
         <label>yearmonth: {{ym}}, hourminute: {{hm}}</label>
-        <datepanel v-model="ts" v-model:tz="tz" v-model:yearmonth="ym" v-model:hourminute="hm" :time="time" :zone="zone" :disabled="disabled" :plain="plain" :range="range" @range="onRange" :start="start ? 1704067200_000 : undefined" @changed="onChanged" style="flex: 1;">
+        <datepanel v-model="ts" v-model:tz="tz" v-model:yearmonth="ym" v-model:hourminute="hm" :time="time" :zone="zone" :disabled="disabled" :plain="plain" :range="range" @range="onRange" :start="start ? 1704067200_000 : undefined" :disabledList="dlist ? ['20240101'] : undefined" @changed="onChanged" style="flex: 1;">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>
@@ -26,6 +26,7 @@
             <button @click="ym = '200708'" style="flex: 1;">Set yearmonth</button>
             <button @click="hm = '220232'" style="flex: 1;">Set hourminute</button>
             <button @click="tz = 7.5" style="flex: 1;">Set tz</button>
+            <button @click="dlist = !dlist" style="flex: 1;">{{dlist ? '' : '!'}}disabledList</button>
         </layout>
     </layout>
 </form>

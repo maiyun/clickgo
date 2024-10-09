@@ -49,7 +49,7 @@
 }
 
 .pop {
-    color: var(--g-color); border-radius: var(--g-radius); display: flex; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
+    color: var(--g-color); border-radius: var(--g-radius); display: flex; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border); width: max-content;
 
     &.list {
         padding: var(--g-padding); flex-direction: column; height: 250px;

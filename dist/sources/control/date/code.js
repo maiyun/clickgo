@@ -29,6 +29,7 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'changed': null,
+            'yearmonthchanged': null,
             'update:modelValue': null,
             'update:tz': null,
             'update:yearmonth': null,
@@ -36,6 +37,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'disabled': false,
+            'disabledList': [],
             'modelValue': undefined,
             'tz': undefined,
             'yearmonth': '',
