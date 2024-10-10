@@ -100,6 +100,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cmonaco')">Monaco</button>
                     <button @click="openForm('cxterm')">Xterm</button>
+                    <button @click="openForm('cpdf')">Pdf</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cecharts')">Echarts</button>

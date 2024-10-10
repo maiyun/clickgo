@@ -926,6 +926,15 @@ export interface IGreatselectAddEvent extends ICustomEvent {
     };
 }
 
+// --- Pdf Control ---
+
+export interface IPdfViewEvent {
+    'detail': {
+        'width': number;
+        'height': number;
+    };
+}
+
 // --- Iconview Control ---
 
 export interface IIconviewItemclickedEvent {

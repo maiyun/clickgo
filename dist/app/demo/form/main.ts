@@ -59,6 +59,7 @@ import ctuiviewerFrm from './control/tuiviewer/tuiviewer';
 import carteditorFrm from './control/arteditor/arteditor';
 import ccontentFrm from './control/content/content';
 import cdeleteFrm from './control/delete/delete';
+import cpdfFrm from './control/pdf/pdf';
 
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
@@ -353,6 +354,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdelete': {
                 frm = await clickgo.form.create(cdeleteFrm);
+                break;
+            }
+            case 'cpdf': {
+                frm = await clickgo.form.create(cpdfFrm);
                 break;
             }
 

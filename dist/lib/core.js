@@ -250,7 +250,7 @@ const modules = {
             return __awaiter(this, void 0, void 0, function* () {
                 yield loader.loadScript(loader.cdn + '/npm/echarts@5.4.2/dist/echarts.min.js');
                 if (!window.echarts) {
-                    throw Error('Xterm load failed.');
+                    throw Error('Echarts load failed.');
                 }
                 return window.echarts;
             });
@@ -318,6 +318,25 @@ const modules = {
                     throw Error('Compressor load failed.');
                 }
                 return [window.Compressor];
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
+    },
+    'pdfjs': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.min.mjs'
+                ], {
+                    'module': true
+                });
+                if (!window.pdfjsLib) {
+                    throw Error('pdf.js load failed.');
+                }
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.mjs';
+                return window.pdfjsLib;
             });
         },
         'obj': null,

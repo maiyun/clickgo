@@ -1,0 +1,12 @@
+<form title="Pdf" width="500" height="400" min-width="300" min-height="400" padding="10">
+    <layout gutter="10" direction="v" style="flex: 1; width: 0;">
+        <pdf :src="src" @loaded="onLoaded" @view="onView" ref="pdf" :page="page" style="flex: 1; height: 0;" />
+        <layout gutter="10" align-v="center">
+            <button @click="load" style="flex: 1;">Load pdf</button>
+            <button @click="select" style="flex: 1;">Select</button>
+            <label>page:</label>
+            <text v-model="page" style="flex: 1;" />
+            <file ref="file" @change="change" :accept="['pdf']"></file>
+        </layout>
+    </layout>
+</form>

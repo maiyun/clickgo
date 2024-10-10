@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.1.7",
-    "@litert/loader": "^3.5.7",
+    "@litert/loader": "^3.5.8",
     "@types/node": "^20.14.11",
     "electron": "^31.2.1",
     "jszip": "^3.10.1",

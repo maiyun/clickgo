@@ -1,0 +1,9 @@
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div v-if="notInit" class="notInit">pdf.js module not found.</div>
+    <cg-flow v-else direction="v">
+        <canvas class="content" ref="content"></canvas>
+    </cg-flow>
+    <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
+        <cg-loading></cg-loading>
+    </div>
+</div>

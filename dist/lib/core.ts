@@ -309,7 +309,7 @@ const modules: Record<string, {
         func: async function() {
             await loader.loadScript(loader.cdn + '/npm/echarts@5.4.2/dist/echarts.min.js');
             if (!(window as any).echarts) {
-                throw Error('Xterm load failed.');
+                throw Error('Echarts load failed.');
             }
             return (window as any).echarts;
         },
@@ -371,6 +371,23 @@ const modules: Record<string, {
                 throw Error('Compressor load failed.');
             }
             return [(window as any).Compressor];
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
+    },
+    'pdfjs': {
+        func: async function() {
+            await loader.loadScripts([
+                loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.min.mjs'
+            ], {
+                'module': true
+            });
+            if (!(window as any).pdfjsLib) {
+                throw Error('pdf.js load failed.');
+            }
+            (window as any).pdfjsLib.GlobalWorkerOptions.workerSrc = loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.mjs';
+            return (window as any).pdfjsLib;
         },
         'obj': null,
         'loading': false,

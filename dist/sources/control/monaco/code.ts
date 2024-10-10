@@ -114,7 +114,7 @@ export default class extends clickgo.control.AbstractControl {
             [
                 {
                     range: model.getFullModelRange(),
-                    text: val === undefined ? model.getValue() : val
+                    text: val ?? model.getValue()
                 }
             ],
             () => { /* Nothing */ },

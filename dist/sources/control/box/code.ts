@@ -9,6 +9,7 @@ interface IDItem {
     'y': number;
     'move'?: boolean;
     'resize'?: string[];
+    'index'?: number;
 }
 
 export default class extends clickgo.control.AbstractControl {

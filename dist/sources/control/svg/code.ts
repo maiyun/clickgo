@@ -11,14 +11,14 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 或者从文件中读取 --- */
         'src': string;
     } = {
-        'viewBox': '0 0 24 24',
-        'fill': '',
-        'stroke': '',
-        /** --- 直接插入 svg 内部标签，有的话优先显示本图形 --- */
-        'layout': '',
-        /** --- 或者从文件中读取 --- */
-        'src': ''
-    };
+            'viewBox': '0 0 24 24',
+            'fill': '',
+            'stroke': '',
+            /** --- 直接插入 svg 内部标签，有的话优先显示本图形 --- */
+            'layout': '',
+            /** --- 或者从文件中读取 --- */
+            'src': ''
+        };
 
     public fileViewBox: string = '';
 

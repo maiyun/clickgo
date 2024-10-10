@@ -126,7 +126,7 @@ class default_1 extends clickgo.control.AbstractControl {
         model.pushEditOperations([], [
             {
                 range: model.getFullModelRange(),
-                text: val === undefined ? model.getValue() : val
+                text: val !== null && val !== void 0 ? val : model.getValue()
             }
         ], () => { });
     }

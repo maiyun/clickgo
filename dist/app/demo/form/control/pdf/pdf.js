@@ -36,16 +36,32 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.v = 0;
-        this.v2 = 20;
-        this.v3 = 60;
+        this.access = {
+            'pdf': undefined
+        };
+        this.src = '';
+        this.page = '1';
     }
-    onMounted() {
-        clickgo.tool.sleep(500).then(() => __awaiter(this, void 0, void 0, function* () {
-            this.v2 = 40;
-            yield clickgo.tool.sleep(500);
-            this.v2 = 70;
-        })).catch(() => {
+    onLoaded(pdf) {
+        this.access.pdf = pdf;
+    }
+    onView(e) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog(JSON.stringify(e.detail));
+        });
+    }
+    load() {
+        this.src = '/package/form/control/pdf/test.pdf';
+    }
+    select() {
+        this.refs.file.select();
+    }
+    change(files) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!files) {
+                return;
+            }
+            yield this.refs.pdf.load(files[0]);
         });
     }
 }
