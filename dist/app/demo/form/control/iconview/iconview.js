@@ -89,6 +89,7 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         ];
         this.select = [];
+        this.custom = false;
         this.disabled = false;
         this.must = false;
         this.multi = true;

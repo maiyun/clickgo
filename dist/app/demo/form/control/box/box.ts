@@ -14,6 +14,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public id: number = 0;
 
+    public selected: string[] = [];
+
     public val2: Record<string, any> = {
         'btn': {
             'type': 'rect',
@@ -38,6 +40,18 @@ export default class extends clickgo.form.AbstractForm {
         for (const id in this.val2) {
             delete this.val2[id];
             break;
+        }
+    }
+
+    public up(): void {
+        for (const item of this.selected) {
+            this.val2[item].index = 999;
+        }
+    }
+
+    public down(): void {
+        for (const item of this.selected) {
+            this.val2[item].index = 0;
         }
     }
 

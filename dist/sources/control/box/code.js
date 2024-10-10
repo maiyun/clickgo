@@ -27,12 +27,21 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
+        this.emits = {
+            'update:selected': null,
+        };
         this.props = {
-            'modelValue': {}
+            'modelValue': {},
+            'selected': []
         };
         this.isInteract = false;
         this.isSelection = false;
-        this.selected = [];
+        this.selectedData = [];
+    }
+    get modelValueComp() {
+        const arr = Object.keys(this.props.modelValue).map(key => (Object.assign({ 'id': key }, this.props.modelValue[key])));
+        arr.sort((a, b) => { var _a, _b; return ((_a = a.index) !== null && _a !== void 0 ? _a : 1) - ((_b = b.index) !== null && _b !== void 0 ? _b : 1); });
+        return arr;
     }
     wrapDown(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -42,7 +51,8 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         if (!e.ctrlKey && !e.metaKey) {
-            this.selected.length = 0;
+            this.selectedData.length = 0;
+            this.updateSelected();
         }
         const rect = this.element.getBoundingClientRect();
         const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
@@ -77,7 +87,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 const top = Math.round(parseFloat(this.refs.selection.getAttribute('y')));
                 const bottom = Math.round(parseFloat(this.refs.selection.getAttribute('height'))) + top;
                 if (!ne.ctrlKey && !ne.metaKey) {
-                    this.selected.length = 0;
+                    this.selectedData.length = 0;
                 }
                 for (const id in this.props.modelValue) {
                     const item = this.props.modelValue[id];
@@ -87,11 +97,12 @@ class default_1 extends clickgo.control.AbstractControl {
                         (top > item.y + item.height)) {
                         continue;
                     }
-                    if (this.selected.includes(id)) {
+                    if (this.selectedData.includes(id)) {
                         continue;
                     }
-                    this.selected.push(id);
+                    this.selectedData.push(id);
                 }
+                this.updateSelected();
                 this.refs.selection.setAttribute('x', '0');
                 this.refs.selection.setAttribute('y', '0');
                 this.refs.selection.setAttribute('width', '1');
@@ -127,7 +138,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 let heightx = item.height;
                 item.height = height;
                 heightx = item.height - heightx;
-                for (const key of this.selected) {
+                for (const key of this.selectedData) {
                     if (key === id) {
                         continue;
                     }
@@ -147,12 +158,13 @@ class default_1 extends clickgo.control.AbstractControl {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
-        if (!this.selected.includes(id)) {
+        if (!this.selectedData.includes(id)) {
             if (!e.ctrlKey && !e.metaKey) {
-                this.selected.length = 0;
+                this.selectedData.length = 0;
             }
-            this.selected.push(id);
+            this.selectedData.push(id);
         }
+        this.updateSelected();
         if (this.props.modelValue[id].move === false) {
             return;
         }
@@ -164,7 +176,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.isInteract = true;
             },
             move: (e, o) => {
-                for (const key of this.selected) {
+                for (const key of this.selectedData) {
                     this.props.modelValue[key].x += o.ox;
                     this.props.modelValue[key].y += o.oy;
                 }
@@ -176,15 +188,29 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onMounted() {
         this.watch('modelValue', () => {
-            for (let i = 0; i < this.selected.length; ++i) {
-                const id = this.selected[i];
+            for (let i = 0; i < this.selectedData.length; ++i) {
+                const id = this.selectedData[i];
                 if (this.props.modelValue[id]) {
                     continue;
                 }
-                this.selected.splice(i, 1);
+                this.selectedData.splice(i, 1);
                 --i;
             }
+            this.updateSelected();
         });
+        this.watch('selected', () => {
+            this.selectedData = clickgo.tool.clone(this.propArray('selected'));
+        }, {
+            'deep': true,
+            'immediate': true
+        });
+    }
+    updateSelected() {
+        if ((this.selectedData.length === this.propArray('selected').length)
+            && this.selectedData.every((item) => this.propArray('selected').includes(item))) {
+            return;
+        }
+        this.emit('update:selected', clickgo.tool.clone(this.selectedData));
     }
 }
 exports.default = default_1;

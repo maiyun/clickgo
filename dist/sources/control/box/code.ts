@@ -14,10 +14,16 @@ interface IDItem {
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'update:selected': null,
+    };
+
     public props: {
         'modelValue': Record<string, IDItem>;
+        'selected': string[] | string;
     } = {
-            'modelValue': {}
+            'modelValue': {},
+            'selected': []
         };
 
     /** --- 是否正在拖动、改变大小的交互 --- */
@@ -27,7 +33,13 @@ export default class extends clickgo.control.AbstractControl {
     public isSelection: boolean = false;
 
     /** --- 当前选中状态的 id 列表 --- */
-    public selected: string[] = [];
+    public selectedData: string[] = [];
+
+    public get modelValueComp(): IDItem[] {
+        const arr = Object.keys(this.props.modelValue).map(key => ({ 'id': key, ...this.props.modelValue[key] }));
+        arr.sort((a, b) => (a.index ?? 1) - (b.index ?? 1));
+        return arr;
+    }
 
     public wrapDown(e: MouseEvent | TouchEvent): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -37,7 +49,8 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         if (!e.ctrlKey && !e.metaKey) {
-            this.selected.length = 0;
+            this.selectedData.length = 0;
+            this.updateSelected();
         }
         // --- 选框相关 ---
         const rect = this.element.getBoundingClientRect();
@@ -75,7 +88,7 @@ export default class extends clickgo.control.AbstractControl {
                 const top = Math.round(parseFloat(this.refs.selection.getAttribute('y')!));
                 const bottom = Math.round(parseFloat(this.refs.selection.getAttribute('height')!)) + top;
                 if (!ne.ctrlKey && !ne.metaKey) {
-                    this.selected.length = 0;
+                    this.selectedData.length = 0;
                 }
                 for (const id in this.props.modelValue) {
                     const item = this.props.modelValue[id];
@@ -86,11 +99,12 @@ export default class extends clickgo.control.AbstractControl {
                     ) {
                         continue;
                     }
-                    if (this.selected.includes(id)) {
+                    if (this.selectedData.includes(id)) {
                         continue;
                     }
-                    this.selected.push(id);
+                    this.selectedData.push(id);
                 }
+                this.updateSelected();
                 // --- 重置 ---
                 this.refs.selection.setAttribute('x', '0');
                 this.refs.selection.setAttribute('y', '0');
@@ -133,7 +147,7 @@ export default class extends clickgo.control.AbstractControl {
                 item.height = height;
                 heightx = item.height - heightx;
 
-                for (const key of this.selected) {
+                for (const key of this.selectedData) {
                     if (key === id) {
                         continue;
                     }
@@ -155,12 +169,13 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- 判断是否选中 ---
-        if (!this.selected.includes(id)) {
+        if (!this.selectedData.includes(id)) {
             if (!e.ctrlKey && !e.metaKey) {
-                this.selected.length = 0;
+                this.selectedData.length = 0;
             }
-            this.selected.push(id);
+            this.selectedData.push(id);
         }
+        this.updateSelected();
         // --- 再来看是否拖动 ---
         if (this.props.modelValue[id].move === false) {
             return;
@@ -173,7 +188,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.isInteract = true;
             },
             move: (e, o): void => {
-                for (const key of this.selected) {
+                for (const key of this.selectedData) {
                     this.props.modelValue[key].x += o.ox;
                     this.props.modelValue[key].y += o.oy;
                 }
@@ -186,15 +201,33 @@ export default class extends clickgo.control.AbstractControl {
 
     public onMounted(): void {
         this.watch('modelValue', () => {
-            for (let i = 0; i < this.selected.length; ++i) {
-                const id = this.selected[i];
+            for (let i = 0; i < this.selectedData.length; ++i) {
+                const id = this.selectedData[i];
                 if (this.props.modelValue[id]) {
                     continue;
                 }
-                this.selected.splice(i, 1);
+                this.selectedData.splice(i, 1);
                 --i;
             }
+            this.updateSelected();
         });
+        this.watch('selected', () => {
+            this.selectedData = clickgo.tool.clone(this.propArray('selected'));
+        }, {
+            'deep': true,
+            'immediate': true
+        });
+    }
+
+    /** --- 向上更新 --- */
+    public updateSelected(): void {
+        if (
+            (this.selectedData.length === this.propArray('selected').length)
+            && this.selectedData.every((item: string) => this.propArray('selected').includes(item))
+        ) {
+            return;
+        }
+        this.emit('update:selected', clickgo.tool.clone(this.selectedData));
     }
 
 }

@@ -2,6 +2,9 @@
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <label>select: {{select}}</label>
         <iconview :data="list" v-model="select" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :size="size[0] ? size[0] : undefined" :name="name" :plain="plain" style="flex: 1;" @drop="drop" @select="onSelect" @open="onOpen">
+            <template v-if="custom" v-slot="d">
+                <label>{{d.item}}</label>
+            </template>
             <template v-slot:pop>
                 <menulist>
                     <menulist-item alt="S">Some options</menulist-item>
@@ -19,6 +22,7 @@
             <button @click="add" style="flex: 1;">Add</button>
             <button @click="remove" style="flex: 1;">Remove</button>
             <button @click="scrollChange" style="flex: 1;">Scroll {{scroll}}</button>
+            <button @click="custom = !custom" style="flex: 1;">{{custom ? '' : '!'}}Custom</button>
         </layout>
         <layout class="ctr" gutter="10">
             <select v-model="size" :data="[32, 64, 100, 128, 256]" style="flex: 1;"></select>

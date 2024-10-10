@@ -37,6 +37,7 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         };
         this.id = 0;
+        this.selected = [];
         this.val2 = {
             'btn': {
                 'type': 'rect',
@@ -60,6 +61,16 @@ class default_1 extends clickgo.form.AbstractForm {
         for (const id in this.val2) {
             delete this.val2[id];
             break;
+        }
+    }
+    up() {
+        for (const item of this.selected) {
+            this.val2[item].index = 999;
+        }
+    }
+    down() {
+        for (const item of this.selected) {
+            this.val2[item].index = 0;
         }
     }
 }

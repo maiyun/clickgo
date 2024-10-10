@@ -3,9 +3,11 @@
         <div class="row">
             <template v-for="item, index of d.row">
                 <div v-if="item.type > -1" class="item" data-cg-item :class="[isSelected(d.index * rowCount + index) && 'selected', (shiftStart === d.index * rowCount + index) && 'shift']" @touchstart="itemDown($event, d.index, index)" @mousedown="itemDown($event, d.index, index)" @contextmenu="itemContext($event, d.index, index)" data-cg-flow-down-cancel :data-cg-drop="(item.type === 0 && (!focus || !isSelected(d.index * rowCount + index))) ? '' : undefined" @drop="drop($event, d.index, index)">
-                    <div class="icon" :class="['type' + item.type]" :style="{'background-size': this.propInt('size') + 'px', 'width': this.propInt('size') + 'px', 'height': this.propInt('size') + 'px', 'background-image': item.icon ? 'url(' + getIconData(item.icon) + ')' : undefined}"></div>
-                    <div v-if="propBoolean('name')" class="name">{{item.name ? item.name : '　'}}</div>
-                    <div v-if="propBoolean('name') && (propInt('size') >= 60)" class="time">{{item.time === undefined ? '　' : timeFormat(item.time)}}</div>
+                    <slot :item="item">
+                        <div class="icon" :class="['type' + item.type]" :style="{'background-size': this.propInt('size') + 'px', 'width': this.propInt('size') + 'px', 'height': this.propInt('size') + 'px', 'background-image': item.icon ? 'url(' + getIconData(item.icon) + ')' : undefined}"></div>
+                        <div v-if="propBoolean('name')" class="name">{{item.name ? item.name : '　'}}</div>
+                        <div v-if="propBoolean('name') && (propInt('size') >= 60)" class="time">{{item.time === undefined ? '　' : timeFormat(item.time)}}</div>
+                    </slot>
                 </div>
                 <div v-else class="blank"></div>
             </template>
