@@ -483,6 +483,7 @@ function run(url_1) {
                 inPage: function (el) {
                     return dom.inPage(el);
                 },
+                'dpi': dom.dpi,
                 setGlobalCursor: function (type) {
                     dom.setGlobalCursor(type);
                 },

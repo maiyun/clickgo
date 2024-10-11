@@ -10,7 +10,7 @@
         }
     }
     cg-flow {
-        align-items: center; flex: 1; width: 0;
+        flex: 1; width: 0; align-items: flex-start; justify-content: flex-start;
     }
 
     &[data-cg-disabled] {

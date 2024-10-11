@@ -526,6 +526,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             inPage: function(el: HTMLElement): boolean {
                 return dom.inPage(el);
             },
+            'dpi': dom.dpi,
             setGlobalCursor: function(type?: string): void {
                 dom.setGlobalCursor(type);
             },

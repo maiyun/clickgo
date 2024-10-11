@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.is = void 0;
+exports.is = exports.dpi = void 0;
 exports.inPage = inPage;
 exports.setGlobalCursor = setGlobalCursor;
 exports.hasTouchButMouse = hasTouchButMouse;
@@ -112,6 +112,12 @@ ${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size)
 function inPage(el) {
     return document.body.contains(el);
 }
+const dpiDiv = document.createElement('div');
+dpiDiv.style.visibility = 'hidden';
+dpiDiv.style.width = '1in';
+document.getElementsByTagName('body')[0].appendChild(dpiDiv);
+exports.dpi = dpiDiv.getBoundingClientRect().width;
+dpiDiv.remove();
 let globalCursorStyle;
 function setGlobalCursor(type) {
     if (!globalCursorStyle) {

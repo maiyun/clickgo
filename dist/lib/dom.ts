@@ -53,6 +53,14 @@ export function inPage(el: HTMLElement): boolean {
     return document.body.contains(el);
 }
 
+// --- 计算 dpi ---
+const dpiDiv = document.createElement('div');
+dpiDiv.style.visibility = 'hidden';
+dpiDiv.style.width = '1in';
+document.getElementsByTagName('body')[0].appendChild(dpiDiv);
+export const dpi: number = dpiDiv.getBoundingClientRect().width;
+dpiDiv.remove();
+
 /** --- 全局 cursor 设置的 style 标签 --- */
 let globalCursorStyle: HTMLStyleElement;
 /**

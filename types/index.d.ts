@@ -932,8 +932,18 @@ export interface IGreatselectAddEvent extends ICustomEvent {
 
 export interface IPdfViewEvent {
     'detail': {
+        /** --- 宽度 point --- */
         'width': number;
+        /** --- 高度 point --- */
         'height': number;
+        /** --- 宽度英寸 --- */
+        'inwidth': number;
+        /** --- 高度英寸 --- */
+        'inheight': number;
+        /** --- 宽度像素 --- */
+        'pxwidth': number;
+        /** --- 高度像素 --- */
+        'pxheight': number;
     };
 }
 

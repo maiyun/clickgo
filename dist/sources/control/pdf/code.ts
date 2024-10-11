@@ -71,18 +71,28 @@ export default class extends clickgo.control.AbstractControl {
         const viewport = page.getViewport({
             'scale': 1
         });
-        this.refs.content.height = viewport.height;
-        this.refs.content.width = viewport.width;
-        page.render({
-            'canvasContext': this.access.context,
-            'viewport': viewport
-        });
         const event: types.IPdfViewEvent = {
             'detail': {
                 'width': viewport.width,
-                'height': viewport.height
+                'height': viewport.height,
+                'inwidth': Math.round((viewport.width / 72) * 100) / 100,
+                'inheight': Math.round((viewport.height / 72) * 100) / 100,
+                'pxwidth': 0,
+                'pxheight': 0,
             }
         };
+        /** --- 重新获取 --- */
+        const viewport2 = page.getViewport({
+            'scale': event.detail.inwidth * clickgo.dom.dpi / viewport.width
+        });
+        event.detail.pxwidth = Math.round(viewport2.width);
+        event.detail.pxheight = Math.round(viewport2.height);
+        this.refs.content.width = event.detail.pxwidth;
+        this.refs.content.height = event.detail.pxheight;
+        page.render({
+            'canvasContext': this.access.context,
+            'viewport': viewport2
+        });
         this.emit('view', event);
         this.isLoading = false;
         return true;
