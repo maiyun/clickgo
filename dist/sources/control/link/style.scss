@@ -1,14 +1,45 @@
 .wrap {
     display: flex;
 
-    > * {
-        color: var(--info); fill: var(--info); stroke: var(--info); flex: 1; display: flex; align-items: center; position: relative; outline: none; transition: var(--g-transition); overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+    &[data-cg-disabled] {
+        filter: grayscale(1);
+        > * {
+            pointer-events: none;
+        }
+    }
 
+    > * {
+        flex: 1; display: flex; align-items: center; position: relative; outline: none; transition: var(--g-transition); overflow: hidden; text-overflow: ellipsis; cursor: pointer; color: var(--default); fill: var(--default); stroke: var(--default);
+
+        &.primary {
+            --default:var(--success);
+            --hover:var(--success-hover);
+            --active:var(--success-active);
+            --focus:var(--success-focus);
+        }
+        &.info {
+            --default:var(--info);
+            --hover:var(--info-hover);
+            --active:var(--info-active);
+            --focus:var(--info-focus);
+        }
+        &.warning {
+            --default:var(--warning);
+            --hover:var(--warning-hover);
+            --active:var(--warning-active);
+            --focus:var(--warning-focus);
+        }
+        &.danger {
+            --default:var(--danger);
+            --hover:var(--danger-hover);
+            --active:var(--danger-active);
+            --focus:var(--danger-focus);
+        }
         &.plain {
-            color: var(--g-color-disabled);
-            &:hover, &:focus {
-                color: var(--g-color);
-            }
+            --default:var(--g-color-disabled);
+            --hover:var(--g-color);
+            --active:var(--g-color);
+            --focus:var(--g-color);
         }
 
         // --- 加下划线 ---
@@ -19,44 +50,42 @@
             text-decoration: none;
         }
 
+        // --- 焦点虚线 ---
+        &:focus {
+            &::before {
+                content: ''; position: absolute; width: 100%; height: 100%; border: dotted .5px var(--g-plain-border-color); left: 0; top: 0;
+            }
+        }
+
         // --- 内有 menu ---
         &.spop {
             &::after {
-                content: ''; border: solid 1px var(--info); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px; margin-left: 5px;
+                content: ''; border: solid 1px var(--default); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px; margin-left: 5px;
             }
         }
-        
+
         // --- 伪类 ---
         &:hover {
-            color: var(--info-hover); fill: var(--info-hover); stroke: var(--info-hover);
+            color: var(--hover); fill: var(--hover); stroke: var(--hover);
             &.spop {
                 &::after {
-                    border-color: var(--info-hover);
+                    border-color: var(--hover);
                 }
             }
         }
         &:active {
-            &:not(.plain) {
-                color: var(--info-active); fill: var(--info-active); stroke: var(--info-active);
-            }
+            color: var(--active); fill: var(--active); stroke: var(--active);
             &.spop {
                 &::after {
-                    border-color: var(--info-active);
+                    border-color: var(--active);
                 }
             }
         }
         &:focus {
-            &:not(.plain) {
-                color: var(--info-focus); fill: var(--info-focus); stroke: var(--info-focus);
-            }
-
-            &::before {
-                content: ''; position: absolute; width: 100%; height: 100%; border: dotted .5px var(--g-plain-border-color); left: 0; top: 0;
-            }
-
+            color: var(--focus); fill: var(--focus); stroke: var(--focus);
             &.spop {
                 &::after {
-                    border-color: var(--info-focus);
+                    border-color: var(--focus);
                 }
             }
         }

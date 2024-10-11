@@ -29,9 +29,10 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.props = {
             'url': '',
-            'plain': false,
             'line': false,
             'align': 'left',
+            'disabled': false,
+            'type': 'info'
         };
     }
     get alignComp() {

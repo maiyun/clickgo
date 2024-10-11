@@ -4,14 +4,16 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'url': string;
-        'plain': boolean | string;
         'line': boolean | string;
         'align': 'left' | 'start' | 'center' | 'right' | 'end';
+        'disabled': boolean | string;
+        'type': 'primary' | 'info' | 'warning' | 'danger' | 'plain';
     } = {
             'url': '',
-            'plain': false,
             'line': false,
             'align': 'left',
+            'disabled': false,
+            'type': 'info'
         };
 
     /** --- 获取 align 的 css 属性模式 --- */
