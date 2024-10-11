@@ -14,7 +14,7 @@
         display: flex; white-space: nowrap;
 
         .left {
-            flex: 1; display: flex; gap: var(--g-padding);
+            flex: 1; display: flex; gap: var(--g-padding-s);
 
             .monthleft, .monthright {
                 .arrow {
@@ -36,7 +36,7 @@
             }
         }
         .right {
-            justify-content: right; display: flex; gap: var(--g-padding); padding-left: var(--g-padding);
+            justify-content: right; display: flex; gap: var(--g-padding-s); padding-left: var(--g-padding-s);
         }
     }
 
@@ -44,15 +44,15 @@
         display: flex;
 
         > * {
-            flex: 1; display: flex; justify-content: center; padding: var(--g-padding);
+            flex: 1; display: flex; justify-content: center; padding: var(--g-padding-s);
         }
     }
 
     .row {
-        display: flex; gap: var(--g-padding); flex: 1;
+        display: flex; gap: var(--g-padding-s); flex: 1;
 
         .col {
-            flex: 1; display: flex; flex-direction: column; gap: var(--g-padding); padding: var(--g-padding); border-radius: var(--g-radius); transition: var(--g-transition); outline: solid .5px transparent; position: relative;
+            flex: 1; display: flex; flex-direction: column; gap: var(--g-padding-s); padding: var(--g-padding-s); border-radius: var(--g-radius); transition: var(--g-transition); outline: solid .5px transparent; position: relative;
             &:not([data-cg-disabled]) {
                 &:hover:not(.selected):not(.range-left):not(.range-right) {
                     background: var(--g-plain-background-hover); outline: solid .5px var(--g-plain-border-color-hover);
@@ -71,13 +71,13 @@
                 background: var(--g-plain-background-selected); outline: solid .5px var(--g-plain-border-color);
             }
             &::before, &::after {
-                content: ''; position: absolute; top: 0; bottom: 0; width: var(--g-padding); background: var(--g-plain-border-color); opacity: 0; transition: var(--g-transition);
+                content: ''; position: absolute; top: 0; bottom: 0; width: var(--g-padding-s); background: var(--g-plain-border-color); opacity: 0; transition: var(--g-transition);
             }
             &::before {
-                left: calc(0px - var(--g-padding));
+                left: calc(0px - var(--g-padding-s));
             }
             &::after {
-                right: calc(0px - var(--g-padding));
+                right: calc(0px - var(--g-padding-s));
             }
 
             &.range {
@@ -109,6 +109,6 @@
     }
 
     .footer {
-        display: flex; gap: var(--g-padding); align-items: center; justify-content: center;
+        display: flex; gap: var(--g-padding-s); align-items: center; justify-content: center;
     }
 }

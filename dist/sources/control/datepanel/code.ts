@@ -563,10 +563,12 @@ export default class extends clickgo.control.AbstractControl {
      * --- 更新 time stamp，会自动根据 dateObj 设置时间戳基 ---
      */
     public updateTimestamp(): void {
+        const modelValue = this.props.modelValue === undefined ? undefined : this.propNumber('modelValue');
         if (this.timestamp === undefined) {
-            if (this.props.modelValue !== undefined) {
+            if (modelValue !== undefined) {
                 const event: types.IDatepanelChangedEvent = {
                     'detail': {
+                        'before': modelValue,
                         'value': undefined
                     }
                 };
@@ -575,13 +577,14 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60_000;
-        if (this.propNumber('modelValue') !== this.timestamp) {
-            this.emit('update:modelValue', this.timestamp);
+        if (modelValue !== this.timestamp) {
             const event: types.IDatepanelChangedEvent = {
                 'detail': {
+                    'before': modelValue,
                     'value': this.timestamp
                 }
             };
+            this.emit('update:modelValue', this.timestamp);
             this.emit('changed', event);
         }
     }
@@ -1055,14 +1058,15 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 清除所有状态 --- */
     public clear(): void {
-        this.timestamp = undefined;
-        this.emit('update:modelValue', undefined);
-        this.rangeDate = undefined;
         const event: types.IDatepanelChangedEvent = {
             'detail': {
+                'before': this.timestamp,
                 'value': undefined
             }
         };
+        this.timestamp = undefined;
+        this.emit('update:modelValue', undefined);
+        this.rangeDate = undefined;
         this.emit('changed', event);
         if (this.cursorDate !== '') {
             this.cursorDate = '';

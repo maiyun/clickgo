@@ -786,6 +786,7 @@ export interface IMenulistItemCheckEvent extends ICustomEvent {
 
 export interface IDateChangedEvent {
     'detail': {
+        'before'?: number;
         'value'?: number;
     };
 }
@@ -801,6 +802,7 @@ export interface IDatepanelRangeEvent extends ICustomEvent {
 
 export interface IDatepanelChangedEvent {
     'detail': {
+        'before'?: number;
         'value'?: number;
     };
 }

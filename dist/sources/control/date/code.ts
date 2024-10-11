@@ -217,31 +217,33 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:tz', this.tzData);
         const ts = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
         if (this.timestamp !== undefined && ts !== this.timestamp) {
-            this.timestamp = ts;
-            this.emit('update:modelValue', this.timestamp);
             const event: types.IDateChangedEvent = {
                 'detail': {
-                    'value': this.timestamp
+                    'before': this.timestamp,
+                    'value': ts
                 }
             };
+            this.timestamp = ts;
+            this.emit('update:modelValue', this.timestamp);
             this.emit('changed', event);
         }
         clickgo.form.hidePop();
     }
 
     public timeOk(): void {
+        const event: types.IDateChangedEvent = {
+            'detail': {
+                'before': this.timestamp,
+                'value': this.dateObj.getTime() - this.tzData * 60 * 60 * 1000
+            }
+        };
         this.dateObj.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vseconds[0]), 0);
-        this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
+        this.timestamp = event.detail.value;
         this.dateStr = this.dateObj.getUTCFullYear().toString() + '-' + (this.dateObj.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + this.dateObj.getUTCDate().toString().padStart(2, '0');
         this.timeStr = this.dateObj.getUTCHours().toString().padStart(2, '0') + ':' + this.dateObj.getUTCMinutes().toString().padStart(2, '0') + ':' + this.dateObj.getUTCSeconds().toString().padStart(2, '0');
         this.emit('update:modelValue', this.timestamp);
-        const event: types.IDateChangedEvent = {
-            'detail': {
-                'value': this.timestamp
-            }
-        };
-        this.emit('changed', event);
         this.emit('update:hourminute', this.vhour[0] + this.vminute[0] + this.vseconds[0]);
+        this.emit('changed', event);
         clickgo.form.hidePop();
     }
 
@@ -256,10 +258,11 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- date panel 的 changed ---
-    public changed(): void {
+    public changed(e: types.IDatepanelChangedEvent): void {
         this.emit('update:modelValue', this.timestamp);
         const event: types.IDateChangedEvent = {
             'detail': {
+                'before': e.detail.before,
                 'value': this.timestamp
             }
         };

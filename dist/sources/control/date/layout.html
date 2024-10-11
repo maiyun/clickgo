@@ -16,7 +16,7 @@
     </div>
     <teleport v-if="propBoolean('date')" to="system">
         <div ref="firstpop" class="pop">
-            <cg-datepanel plain :tz="tzData" :yearmonth="yearmonth" :hourminute="hourminute" @update:yearmonth="emit('update:yearmonth')" @yearmonthchanged="emit('yearmonthchanged')" :clearbtn="false" :time="propBoolean('time')" :start="start" :end="end" v-model="timestamp" @changed="changed" @selected="selected" :disabledList="disabledList">
+            <cg-datepanel plain :tz="tzData" :yearmonth="yearmonth" :hourminute="hourminute" @update:yearmonth="emit('update:yearmonth', $event)" @yearmonthchanged="emit('yearmonthchanged')" :clearbtn="false" :time="propBoolean('time')" :start="start" :end="end" v-model="timestamp" @changed="changed" @selected="selected" :disabledList="disabledList">
                 <template v-if="slots['default']" v-slot="col">
                     <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
                 </template>

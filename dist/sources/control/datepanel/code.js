@@ -472,10 +472,12 @@ class default_1 extends clickgo.control.AbstractControl {
         this.dateValue.year = this.dateObj.getUTCFullYear();
     }
     updateTimestamp() {
+        const modelValue = this.props.modelValue === undefined ? undefined : this.propNumber('modelValue');
         if (this.timestamp === undefined) {
-            if (this.props.modelValue !== undefined) {
+            if (modelValue !== undefined) {
                 const event = {
                     'detail': {
+                        'before': modelValue,
                         'value': undefined
                     }
                 };
@@ -484,13 +486,14 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60000;
-        if (this.propNumber('modelValue') !== this.timestamp) {
-            this.emit('update:modelValue', this.timestamp);
+        if (modelValue !== this.timestamp) {
             const event = {
                 'detail': {
+                    'before': modelValue,
                     'value': this.timestamp
                 }
             };
+            this.emit('update:modelValue', this.timestamp);
             this.emit('changed', event);
         }
     }
@@ -887,14 +890,15 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     clear() {
-        this.timestamp = undefined;
-        this.emit('update:modelValue', undefined);
-        this.rangeDate = undefined;
         const event = {
             'detail': {
+                'before': this.timestamp,
                 'value': undefined
             }
         };
+        this.timestamp = undefined;
+        this.emit('update:modelValue', undefined);
+        this.rangeDate = undefined;
         this.emit('changed', event);
         if (this.cursorDate !== '') {
             this.cursorDate = '';
