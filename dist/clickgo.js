@@ -29,7 +29,7 @@ exports.isNative = isNative;
 exports.getPlatform = getPlatform;
 exports.isImmersion = isImmersion;
 exports.hasFrame = hasFrame;
-const version = '3.15.46';
+const version = '3.15.47';
 function getVersion() {
     return version;
 }
