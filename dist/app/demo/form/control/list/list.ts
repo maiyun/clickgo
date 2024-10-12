@@ -19,14 +19,16 @@ export default class extends clickgo.form.AbstractForm {
             'name': 'Card',
             'path': 'Bob >> folder >> Card',
             'src': '/package/res/r-2.svg',
-            'menu': true
+            'menu': true,
+            'leftline': 'warning'
         },
         {
             'type': 0,
             'name': 'Appraise2',
             'path': 'Bob >> folder >> Appraise2',
             'src': '/package/res/r-1.svg',
-            'disabled': true
+            'disabled': true,
+            'leftline': 'warning'
         },
         {
             'type': 0,
@@ -173,9 +175,10 @@ export default class extends clickgo.form.AbstractForm {
     public get listData(): any[] {
         const data: any[] = ['Item1', {
             'label': 'Tip',
-            'color': 'tip'
+            'color': 'tip',
         }, {
             'label': 'Title1',
+            'leftline': 'danger',
             'children': [
                 'Sub1',
                 {

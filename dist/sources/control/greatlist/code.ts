@@ -46,6 +46,7 @@ export default class extends clickgo.control.AbstractControl {
             'disabled'?: string;
             'control'?: string;
             'unavailable'?: string;
+            'leftline'?: string;
         };
         'data': Array<{
             'disabled': boolean;
@@ -102,11 +103,26 @@ export default class extends clickgo.control.AbstractControl {
         'disabled': string;
         'control': string;
         'unavailable': string;
+        'leftline': string;
     } {
         return {
             'disabled': this.props.map.disabled ?? 'disabled',
             'control': this.props.map.control ?? 'control',
-            'unavailable': this.props.map.unavailable ?? 'unavailable'
+            'unavailable': this.props.map.unavailable ?? 'unavailable',
+            'leftline': this.props.map.leftline ?? 'leftline',
+        };
+    }
+
+    /** --- 左侧线的颜色 format --- */
+    public get leftlinecolor() {
+        return (text?: string) => {
+            if (!text) {
+                return undefined;
+            }
+            if (['primary', 'info', 'warning', 'danger'].includes(text)) {
+                return 'var(--' + (text === 'primary' ? 'success' : text) + ')';
+            }
+            return text;
         };
     }
 

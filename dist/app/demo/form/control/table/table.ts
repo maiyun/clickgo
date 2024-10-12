@@ -189,13 +189,15 @@ export default class extends clickgo.form.AbstractForm {
                 'check': false,
                 'type': 0,
                 'name': 'Appraise',
-                'bottom': false
+                'bottom': false,
+                'leftline': 'info'
             },
             {
                 'check': false,
                 'type': 0,
                 'name': 'Card',
-                'bottom': false
+                'bottom': false,
+                'leftline': 'info'
             },
             {
                 'check': false,

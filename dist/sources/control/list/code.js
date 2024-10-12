@@ -108,7 +108,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.unpack(this.dataFormat);
     }
     get mapComp() {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         return {
             'children': (_a = this.props.map.children) !== null && _a !== void 0 ? _a : 'children',
             'label': (_b = this.props.map.label) !== null && _b !== void 0 ? _b : 'label',
@@ -116,7 +116,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'title': (_d = this.props.map.title) !== null && _d !== void 0 ? _d : 'title',
             'disabled': (_e = this.props.map.disabled) !== null && _e !== void 0 ? _e : 'disabled',
             'control': (_f = this.props.map.control) !== null && _f !== void 0 ? _f : 'control',
-            'unavailable': (_g = this.props.map.unavailable) !== null && _g !== void 0 ? _g : 'unavailable'
+            'unavailable': (_g = this.props.map.unavailable) !== null && _g !== void 0 ? _g : 'unavailable',
+            'leftline': (_h = this.props.map.leftline) !== null && _h !== void 0 ? _h : 'leftline'
         };
     }
     select(index) {
@@ -233,6 +234,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     item[this.mapComp.disabled] : (over.title ? true : false);
                 over.control = item[this.mapComp.control];
                 over.unavailable = item[this.mapComp.unavailable];
+                over.leftline = item[this.mapComp.leftline];
                 over.color = item.color ? (item.color === 'tip' ? 'var(--g-color-disabled)' : item.color) : undefined;
                 over.control = (_e = item.control) !== null && _e !== void 0 ? _e : 'item';
                 if (item.icon) {
@@ -288,6 +290,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'title': item.title,
                 'disabled': disabledList.includes(item.value) ? true : item.disabled,
                 'unavailable': unavailableList.includes(item.value) ? true : item.unavailable,
+                'leftline': item.leftline,
                 'color': item.color,
                 'control': item.control,
                 'tree': tree,

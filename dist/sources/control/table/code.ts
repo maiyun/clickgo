@@ -37,6 +37,7 @@ export default class extends clickgo.control.AbstractControl {
             'disabled'?: string;
             'control'?: string;
             'unavailable'?: string;
+            'leftline'?: string;
         };
     } = {
             'disabled': false,

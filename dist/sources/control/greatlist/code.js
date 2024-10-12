@@ -104,11 +104,23 @@ class default_1 extends clickgo.control.AbstractControl {
         return w;
     }
     get mapComp() {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return {
             'disabled': (_a = this.props.map.disabled) !== null && _a !== void 0 ? _a : 'disabled',
             'control': (_b = this.props.map.control) !== null && _b !== void 0 ? _b : 'control',
-            'unavailable': (_c = this.props.map.unavailable) !== null && _c !== void 0 ? _c : 'unavailable'
+            'unavailable': (_c = this.props.map.unavailable) !== null && _c !== void 0 ? _c : 'unavailable',
+            'leftline': (_d = this.props.map.leftline) !== null && _d !== void 0 ? _d : 'leftline',
+        };
+    }
+    get leftlinecolor() {
+        return (text) => {
+            if (!text) {
+                return undefined;
+            }
+            if (['primary', 'info', 'warning', 'danger'].includes(text)) {
+                return 'var(--' + (text === 'primary' ? 'success' : text) + ')';
+            }
+            return text;
         };
     }
     get isSelected() {

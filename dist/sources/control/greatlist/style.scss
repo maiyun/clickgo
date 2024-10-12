@@ -52,6 +52,14 @@
                 &[data-cg-disabled], &.unavailable {
                     color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); pointer-events: none;
                 }
+
+                // --- 左侧颜色 ---
+                &.leftline {
+                    --leftline:transparent;
+                    &::before {
+                        position: absolute; content: ''; left: -1px; top: -1px; width: 3px; height: calc(100% + 2px); border-left: solid 3px var(--leftline); z-index: 1;
+                    }
+                }
     
                 .itemInner {
                     padding: var(--g-padding);

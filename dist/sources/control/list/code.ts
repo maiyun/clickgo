@@ -47,6 +47,7 @@ export default class extends clickgo.control.AbstractControl {
             'disabled'?: string;
             'control'?: string;
             'unavailable'?: string;
+            'leftline'?: string;
         };
         /** --- 展现样式 --- */
         'mode': 'default' | 'view' | 'iview';
@@ -161,6 +162,7 @@ export default class extends clickgo.control.AbstractControl {
         'disabled': string;
         'control': string;
         'unavailable': string;
+        'leftline': string;
     } {
         return {
             'children': this.props.map.children ?? 'children',
@@ -170,7 +172,8 @@ export default class extends clickgo.control.AbstractControl {
 
             'disabled': this.props.map.disabled ?? 'disabled',
             'control': this.props.map.control ?? 'control',
-            'unavailable': this.props.map.unavailable ?? 'unavailable'
+            'unavailable': this.props.map.unavailable ?? 'unavailable',
+            'leftline': this.props.map.leftline ?? 'leftline'
         };
     }
 
@@ -325,6 +328,7 @@ export default class extends clickgo.control.AbstractControl {
                     item[this.mapComp.disabled] : (over.title ? true : false);
                 over.control = item[this.mapComp.control];
                 over.unavailable = item[this.mapComp.unavailable];
+                over.leftline = item[this.mapComp.leftline];
                 over.color = item.color ? (item.color === 'tip' ? 'var(--g-color-disabled)' : item.color) : undefined;
                 over.control = item.control ?? 'item';
                 if (item.icon) {
@@ -392,6 +396,7 @@ export default class extends clickgo.control.AbstractControl {
                 'title': item.title,
                 'disabled': disabledList.includes(item.value) ? true : item.disabled,
                 'unavailable': unavailableList.includes(item.value) ? true : item.unavailable,
+                'leftline': item.leftline,
                 'color': item.color,
                 'control': item.control,
                 'tree': tree,
