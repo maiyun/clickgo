@@ -642,6 +642,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- 单项 ---
+        const before = clickgo.tool.clone(this.value);
         if (this.inputValue === '') {
             this.value = [];
             this.label = [];
@@ -660,6 +661,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.propBoolean('editable') && !this.propBoolean('multi')) {
             const event: types.ISelectChangedEvent = {
                 'detail': {
+                    'before': before,
                     'value': [value]
                 }
             };
@@ -736,6 +738,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.emit('change', event);
                     if (event.go) {
                         this.inputValue = v;
+                        const before = clickgo.tool.clone(this.value);
                         this.value = [v];
                         this.label = [this.listLabel[0] ?? ''];
                         this.updateValue();
@@ -744,6 +747,7 @@ export default class extends clickgo.control.AbstractControl {
                         }
                         const event: types.ISelectChangedEvent = {
                             'detail': {
+                                'before': before,
                                 'value': [v]
                             }
                         };
@@ -819,6 +823,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             else {
                 // --- 单选 ---
+                const before = clickgo.tool.clone(this.value);
                 this.value = [this.listValue[0] ?? ''];
                 this.label = [this.listLabel[0] ?? ''];
                 if (this.propBoolean('search')) {
@@ -834,6 +839,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 const event: types.ISelectChangedEvent = {
                     'detail': {
+                        'before': before,
                         'value': this.value
                     }
                 };

@@ -562,6 +562,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 return;
             }
+            const before = clickgo.tool.clone(this.value);
             if (this.inputValue === '') {
                 this.value = [];
                 this.label = [];
@@ -580,6 +581,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.propBoolean('editable') && !this.propBoolean('multi')) {
                 const event = {
                     'detail': {
+                        'before': before,
                         'value': [value]
                     }
                 };
@@ -653,6 +655,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.emit('change', event);
                         if (event.go) {
                             this.inputValue = v;
+                            const before = clickgo.tool.clone(this.value);
                             this.value = [v];
                             this.label = [(_c = this.listLabel[0]) !== null && _c !== void 0 ? _c : ''];
                             this.updateValue();
@@ -661,6 +664,7 @@ class default_1 extends clickgo.control.AbstractControl {
                             }
                             const event = {
                                 'detail': {
+                                    'before': before,
                                     'value': [v]
                                 }
                             };
@@ -712,6 +716,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
                 else {
+                    const before = clickgo.tool.clone(this.value);
                     this.value = [(_h = this.listValue[0]) !== null && _h !== void 0 ? _h : ''];
                     this.label = [(_j = this.listLabel[0]) !== null && _j !== void 0 ? _j : ''];
                     if (this.propBoolean('search')) {
@@ -727,6 +732,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     const event = {
                         'detail': {
+                            'before': before,
                             'value': this.value
                         }
                     };

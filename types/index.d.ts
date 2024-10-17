@@ -1196,6 +1196,7 @@ export interface ISelectChangeEvent extends ICustomEvent {
 
 export interface ISelectChangedEvent {
     'detail': {
+        'before': string[];
         'value': string[];
     };
 }
