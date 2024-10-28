@@ -4,9 +4,11 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'label': string;
+        'maxwidth': number;
         'class': string;    // --- 用来解决 vue 的一个警告 ---
     } = {
             'label': '',
+            'maxwidth': 400,
             'class': ''
         };
 

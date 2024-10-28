@@ -1,7 +1,7 @@
 <slot></slot>
 <span ref="span"></span>
 <teleport to="system">
-    <div ref="pop" class="pop">
+    <div ref="pop" class="pop" :style="{'max-width': propNumber('maxwidth') + 'px'}">
         <template v-if="label">{{label}}</template>
         <template v-else-if="slots['content']"><slot name="content"></slot></template>
     </div>
