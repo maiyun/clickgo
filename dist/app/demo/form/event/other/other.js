@@ -48,5 +48,21 @@ class default_1 extends clickgo.form.AbstractForm {
             'content': hash
         });
     }
+    onKeydown(e) {
+        const date = new Date();
+        this.list.unshift({
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
+            'name': 'keydown',
+            'content': e.key
+        });
+    }
+    onKeyup(e) {
+        const date = new Date();
+        this.list.unshift({
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
+            'name': 'keyup',
+            'content': e.key
+        });
+    }
 }
 exports.default = default_1;

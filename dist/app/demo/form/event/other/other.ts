@@ -25,4 +25,22 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
+    public onKeydown(e: KeyboardEvent): void {
+        const date = new Date();
+        this.list.unshift({
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
+            'name': 'keydown',
+            'content': e.key
+        });
+    }
+
+    public onKeyup(e: KeyboardEvent): void {
+        const date = new Date();
+        this.list.unshift({
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
+            'name': 'keyup',
+            'content': e.key
+        });
+    }
+
 }

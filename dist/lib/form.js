@@ -623,6 +623,12 @@ class AbstractForm extends AbstractCommon {
     onHashChanged() {
         return;
     }
+    onKeydown() {
+        return;
+    }
+    onKeyup() {
+        return;
+    }
 }
 exports.AbstractForm = AbstractForm;
 const popInfo = {

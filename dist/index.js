@@ -98,6 +98,12 @@ class AbstractBoot {
     onHashChanged() {
         return;
     }
+    onKeydown() {
+        return;
+    }
+    onKeyup() {
+        return;
+    }
     onRuntimeFileLoad() {
         return;
     }

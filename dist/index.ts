@@ -176,6 +176,18 @@ export abstract class AbstractBoot {
         return;
     }
 
+    /** --- 键盘按下事件 --- */
+    public onKeydown(e: KeyboardEvent): void | Promise<void>;
+    public onKeydown(): void {
+        return;
+    }
+
+    /** --- 键盘弹起事件 --- */
+    public onKeyup(e: KeyboardEvent): void | Promise<void>;
+    public onKeyup(): void {
+        return;
+    }
+
     /** --- 环境文件准备加载时的事件 --- */
     public onRuntimeFileLoad(url: string): void | Promise<void>;
     public onRuntimeFileLoad(): void {

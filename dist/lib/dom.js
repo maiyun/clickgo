@@ -1620,6 +1620,7 @@ window.addEventListener('keydown', function (e) {
             break;
         }
     }
+    core.trigger('keydown', e);
 });
 window.addEventListener('keyup', function (e) {
     switch (e.key) {
@@ -1636,6 +1637,7 @@ window.addEventListener('keyup', function (e) {
             break;
         }
     }
+    core.trigger('keyup', e);
 });
 function bindMove(e, opt) {
     var _a, _b, _c, _d;

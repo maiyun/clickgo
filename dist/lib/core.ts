@@ -198,6 +198,18 @@ export abstract class AbstractApp {
         return;
     }
 
+    /** --- 键盘按下事件 --- */
+    public onKeydown(e: KeyboardEvent): void | Promise<void>;
+    public onKeydown(): void {
+        return;
+    }
+
+    /** --- 键盘弹起事件 --- */
+    public onKeyup(e: KeyboardEvent): void | Promise<void>;
+    public onKeyup(): void {
+        return;
+    }
+
 }
 
 /** --- CDN 地址 --- */
@@ -511,7 +523,7 @@ const globalEvents = {
 /**
  * --- 主动触发系统级事件，App 中无效，用 this.trigger 替代 ---
  */
-export function trigger(name: types.TGlobalEvent, taskId: number | string | boolean = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string | Record<string, any> = '', param3: boolean = true): void {
+export function trigger(name: types.TGlobalEvent, taskId: number | string | boolean | KeyboardEvent = 0, formId: number | string | boolean | Record<string, any> | null = 0, param1: boolean | Error | string = '', param2: string | Record<string, any> = '', param3: boolean = true): void {
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
@@ -666,6 +678,19 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
             if (typeof taskId !== 'string') {
                 break;
             }
+            (boot as any)?.[eventName](taskId);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                (t.class as any)?.[eventName](taskId);
+                for (const fid in t.forms) {
+                    t.forms[fid].vroot[eventName]?.(taskId);
+                }
+            }
+            break;
+        }
+        case 'keydown':
+        case 'keyup': {
+            (globalEvents as any)[name]?.(taskId);
             (boot as any)?.[eventName](taskId);
             for (const tid in task.list) {
                 const t = task.list[tid];

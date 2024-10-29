@@ -149,6 +149,12 @@ class AbstractApp {
     onHashChanged() {
         return;
     }
+    onKeydown() {
+        return;
+    }
+    onKeyup() {
+        return;
+    }
 }
 exports.AbstractApp = AbstractApp;
 function getCdn() {
@@ -442,7 +448,7 @@ const globalEvents = {
     }
 };
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 = true) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30;
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
@@ -603,6 +609,19 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
                 (_23 = t.class) === null || _23 === void 0 ? void 0 : _23[eventName](taskId);
                 for (const fid in t.forms) {
                     (_25 = (_24 = t.forms[fid].vroot)[eventName]) === null || _25 === void 0 ? void 0 : _25.call(_24, taskId);
+                }
+            }
+            break;
+        }
+        case 'keydown':
+        case 'keyup': {
+            (_27 = (_26 = globalEvents)[name]) === null || _27 === void 0 ? void 0 : _27.call(_26, taskId);
+            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId);
+            for (const tid in task.list) {
+                const t = task.list[tid];
+                (_28 = t.class) === null || _28 === void 0 ? void 0 : _28[eventName](taskId);
+                for (const fid in t.forms) {
+                    (_30 = (_29 = t.forms[fid].vroot)[eventName]) === null || _30 === void 0 ? void 0 : _30.call(_29, taskId);
                 }
             }
             break;

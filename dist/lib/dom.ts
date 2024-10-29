@@ -2059,6 +2059,7 @@ window.addEventListener('keydown', function(e: KeyboardEvent) {
             break;
         }
     }
+    core.trigger('keydown', e);
 });
 window.addEventListener('keyup', function(e: KeyboardEvent) {
     switch (e.key) {
@@ -2075,6 +2076,7 @@ window.addEventListener('keyup', function(e: KeyboardEvent) {
             break;
         }
     }
+    core.trigger('keyup', e);
 });
 
 /**
