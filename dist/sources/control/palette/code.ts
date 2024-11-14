@@ -31,8 +31,11 @@ export default class extends clickgo.control.AbstractControl {
         'a': 1
     };
 
-    /** --- color 文本框 --- */
+    /** --- color 文本框的值 --- */
     public color = '';
+
+    /** --- 用户的值 --- */
+    public value = '';
 
     /** --- 语言包 --- */
     public localeData = {
@@ -192,7 +195,7 @@ export default class extends clickgo.control.AbstractControl {
         event.detail.value = '';
         switch (this.props.mode) {
             case 'hsl': {
-                event.detail.value = `hsl(${this.hsl.h},${this.hsl.s}%,${this.hsl.l}%${this.hsl.a === 1 ? '' : ',' + this.hsl.a})`;
+                event.detail.value = `hsl${this.hsl.a === 1 ? '' : 'a'}(${this.hsl.h},${this.hsl.s}%,${this.hsl.l}%${this.hsl.a === 1 ? '' : ',' + this.hsl.a})`;
                 event.detail.hsl = {
                     'h': this.hsl.h,
                     's': this.hsl.s,
@@ -219,10 +222,11 @@ export default class extends clickgo.control.AbstractControl {
                 event.detail.value = '#' + hex;
             }
         }
-        if (this.props.modelValue === event.detail.value) {
+        if (this.value === event.detail.value) {
             return;
         }
         this.color = event.detail.value;
+        this.value = this.color;
         this.emit('update:modelValue', event.detail.value);
         this.emit('changed', event);
     }
@@ -238,6 +242,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
             };
             this.color = '';
+            this.value = '';
             this.emit('update:modelValue', event.detail.value);
             this.emit('changed', event);
             return;
@@ -291,25 +296,31 @@ export default class extends clickgo.control.AbstractControl {
         this.updateModelValue();
     }
 
+    /** --- color 文本框输入 --- */
+    public input(): void {
+        if (this.color === this.value) {
+            return;
+        }
+        // --- 格式化 ---
+        this.formatColor(this.color);
+    }
+
     public onMounted(): void | Promise<void> {
         this.watch('modelValue', () => {
-            if (this.props.modelValue === this.color) {
+            if (this.props.modelValue === this.value) {
                 return;
             }
-            this.formatColor(this.props.modelValue);
+            this.color = this.props.modelValue;
+            this.value = this.color;
+            this.formatColor(this.value);
         }, {
             'immediate': true
         });
         this.watch('mode', () => {
-            this.updateModelValue();
-        });
-        this.watch('color', () => {
-            // --- 也可能是代码设置的 ---
-            if (this.color === this.props.modelValue) {
+            if (!this.value) {
                 return;
             }
-            // --- 格式化 ---
-            this.formatColor(this.color);
+            this.updateModelValue();
         });
     }
 

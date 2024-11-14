@@ -8,6 +8,7 @@ export default class extends clickgo.control.AbstractControl {
         'blur': null,
         'enter': null,
         'gesture': null,
+        'input': null,
         'clientwidth': null,
         'clientheight': null,
         'scrollwidth': null,
@@ -245,10 +246,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 文本框的 input 事件 --- */
     public input(e: InputEvent): void {
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-        if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
-            target.value = target.value.slice(0, this.propNumber('maxlength'));
-            return;
-        }
         const event: types.ITextBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
@@ -262,6 +259,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('beforechange', event);
         if (!event.go) {
             target.value = this.value;
+            this.emit('input');
             return;
         }
         if (event.detail.change !== undefined) {
@@ -269,6 +267,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.value = target.value;
         this.emit('update:modelValue', this.value);
+        this.emit('input');
     }
 
     /** --- 检测 value 值是否符合 max 和 min --- */

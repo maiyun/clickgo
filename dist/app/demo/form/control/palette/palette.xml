@@ -4,11 +4,13 @@
         <palette v-model="value" :mode="mode[0]" style="flex: 1;"></palette>
         <layout gutter="10" align-v="center">
             <label style="flex: 1">value2: {{value2}}</label>
+            <button @click="value2='#c91d1d'">set</button>
             <colorist v-model="value2" :disabled="disabled" :mode="mode[0]"></colorist>
         </layout>
         <layout gutter="10">
             <select v-model="mode" :data="['hsl', 'rgb', 'hex']" style="flex: 1;"></select>
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
+            <button @click="value='#0303e2'" style="flex: 1;">set first</button>
         </layout>
     </layout>
 </form>

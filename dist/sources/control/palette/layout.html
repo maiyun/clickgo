@@ -11,7 +11,7 @@
     </div>
     <div class="bottom">
         <div class="color" :style="{'background': color}"></div>
-        <cg-text v-model="color"></cg-text>
+        <cg-text v-model="color" @input="input"></cg-text>
         <cg-link @click="formatColor('')">{{l('clear')}}</cg-link>
         <cg-button v-if="propBoolean('ok')" @click="emit('ok')">{{l('ok')}}</cg-button>
     </div>

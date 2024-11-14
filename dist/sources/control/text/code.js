@@ -41,6 +41,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'blur': null,
             'enter': null,
             'gesture': null,
+            'input': null,
             'clientwidth': null,
             'clientheight': null,
             'scrollwidth': null,
@@ -220,10 +221,6 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     input(e) {
         const target = e.target;
-        if (this.propNumber('maxlength') && (target.value.length > this.propNumber('maxlength'))) {
-            target.value = target.value.slice(0, this.propNumber('maxlength'));
-            return;
-        }
         const event = {
             'go': true,
             preventDefault: function () {
@@ -237,6 +234,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('beforechange', event);
         if (!event.go) {
             target.value = this.value;
+            this.emit('input');
             return;
         }
         if (event.detail.change !== undefined) {
@@ -244,6 +242,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value = target.value;
         this.emit('update:modelValue', this.value);
+        this.emit('input');
     }
     checkNumber(target) {
         if (!target) {
