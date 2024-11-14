@@ -27,20 +27,18 @@
             <select v-model="size" style="flex: 1;" :data="['s', 'm', 'l', 'xl']" />
         </layout>
         <label>Test: {{cols}}</label>
-        <flow style="flex: 1;">
-            <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" style="flex: 1;">
-                <desc-row v-for="line of maxLine">
-                    <!-- 行 1 - max -->
-                    <template v-for="col of data.length">
-                        <!-- 列 1 - max -->
-                        <desc-cell v-if="col===data.length">{{data[col-1].child[(line-1)%cols[col-2]]}}</desc-cell>
-                        <desc-cell v-else-if="line%cols[col-1]===1" :rowspan="cols[col-1]">{{data[col-1].child[Math.floor((line-1)/cols[col-1])%data[col-1].child.length]}}</desc-cell>
-                    </template>
-                    <desc-cell>LINE-{{line}}</desc-cell>
-                    <desc-cell>DATA1</desc-cell>
-                    <desc-cell>DATA2</desc-cell>
-                </desc-row>
-            </desc>
-        </flow>
+        <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" style="flex: 1;">
+            <desc-row v-for="line of maxLine">
+                <!-- 行 1 - max -->
+                <template v-for="col of data.length">
+                    <!-- 列 1 - max -->
+                    <desc-cell v-if="col===data.length">{{data[col-1].child[(line-1)%cols[col-2]]}}</desc-cell>
+                    <desc-cell v-else-if="line%cols[col-1]===1" :rowspan="cols[col-1]">{{data[col-1].child[Math.floor((line-1)/cols[col-1])%data[col-1].child.length]}}</desc-cell>
+                </template>
+                <desc-cell>LINE-{{line}}</desc-cell>
+                <desc-cell>DATA1</desc-cell>
+                <desc-cell>DATA2</desc-cell>
+            </desc-row>
+        </desc>
     </layout>
 </form>
