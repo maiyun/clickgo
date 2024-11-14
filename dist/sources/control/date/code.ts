@@ -32,6 +32,7 @@ export default class extends clickgo.control.AbstractControl {
         'date': boolean | string;
         'time': boolean | string;
         'zone': boolean | string;
+        'close': boolean | string;
     } = {
             'disabled': false,
             'disabledList': [],
@@ -45,7 +46,8 @@ export default class extends clickgo.control.AbstractControl {
 
             'date': true,
             'time': true,
-            'zone': false
+            'zone': false,
+            'close': true
         };
 
     public dateObj: Date = new Date();

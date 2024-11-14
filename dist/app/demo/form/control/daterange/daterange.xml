@@ -1,7 +1,7 @@
 <form width="400" height="350" title="Daterange">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
-        <daterange v-model="ts" v-model:tz="tz" :time="time" :zone="zone" :disabled="disabled" :start="start ? 1706745600 : undefined">
+        <daterange v-model="ts" v-model:tz="tz" :time="time" :zone="zone" :close="cclose" :disabled="disabled" :start="start ? 1706745600 : undefined">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>
@@ -9,6 +9,7 @@
         <layout gutter="10">
             <button @click="time = !time" style="flex: 1;">{{time ? '' : '!'}}time</button>
             <button @click="zone = !zone" style="flex: 1;">{{zone ? '' : '!'}}zone</button>
+            <button @click="cclose = !cclose" style="flex: 1;">{{cclose ? '' : '!'}}close</button>
             <button @click="tz = 9" style="flex: 1;">tz to 9</button>
         </layout>
         <layout gutter="10">

@@ -39,7 +39,8 @@ class default_1 extends clickgo.control.AbstractControl {
             'start': undefined,
             'end': undefined,
             'time': true,
-            'zone': false
+            'zone': false,
+            'close': true,
         };
         this.dateObj = [
             new Date(), new Date()

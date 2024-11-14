@@ -6,6 +6,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public zone: boolean = true;
 
+    public cclose: boolean = true;
+
     public ts: number[] = [];
 
     public tz?: number = undefined;

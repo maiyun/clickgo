@@ -2,7 +2,7 @@
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
         <label>yearmonth: {{ym}}, hourminute: {{hm}}</label>
-        <date v-model="ts" v-model:tz="tz" :date="date" :time="time" :zone="zone" :disabled="disabled" :start="start ? 1706745600 : undefined" v-model:yearmonth="ym" v-model:hourminute="hm">
+        <date v-model="ts" v-model:tz="tz" :date="date" :time="time" :zone="zone" :close="cclose" :disabled="disabled" :start="start ? 1706745600 : undefined" v-model:yearmonth="ym" v-model:hourminute="hm">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>
@@ -11,6 +11,7 @@
             <button @click="date = !date" style="flex: 1;">{{date ? '' : '!'}}date</button>
             <button @click="time = !time" style="flex: 1;">{{time ? '' : '!'}}time</button>
             <button @click="zone = !zone" style="flex: 1;">{{zone ? '' : '!'}}zone</button>
+            <button @click="cclose = !cclose" style="flex: 1;">{{cclose ? '' : '!'}}close</button>
         </layout>
         <layout gutter="10">
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>

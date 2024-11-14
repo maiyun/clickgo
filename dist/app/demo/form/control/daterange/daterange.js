@@ -29,6 +29,7 @@ class default_1 extends clickgo.form.AbstractForm {
         super(...arguments);
         this.time = true;
         this.zone = true;
+        this.cclose = true;
         this.ts = [];
         this.tz = undefined;
         this.disabled = false;
