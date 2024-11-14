@@ -332,6 +332,9 @@ export default class extends clickgo.control.AbstractControl {
                 this.vseconds[0] = '00';
                 return;
             }
+            if (this.timestamp === this.propInt('modelValue')) {
+                return;
+            }
             this.timestamp = this.propInt('modelValue');
             this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
             this.dateStr = this.dateObj.getUTCFullYear().toString() + '-' + (this.dateObj.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + this.dateObj.getUTCDate().toString().padStart(2, '0');
