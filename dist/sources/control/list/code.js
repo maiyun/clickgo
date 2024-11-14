@@ -337,22 +337,24 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         else if (item.format.tree === 1) {
             item.format.tree = 0;
-            for (const vitem of this.props.modelValue) {
-                if (!this.findFormat(vitem, false, item.format.children)) {
-                    continue;
-                }
-                this.emit('update:modelValue', [item.value]);
-                this.emit('label', [item.label]);
-                this.emit('item', [item]);
-                const event = {
-                    'detail': {
-                        'event': e,
-                        'value': item.value,
-                        'arrow': false
+            if (!this.propBoolean('check')) {
+                for (const vitem of this.props.modelValue) {
+                    if (!this.findFormat(vitem, false, item.format.children)) {
+                        continue;
                     }
-                };
-                this.emit('itemclicked', event);
-                break;
+                    this.emit('update:modelValue', [item.value]);
+                    this.emit('label', [item.label]);
+                    this.emit('item', [item]);
+                    const event = {
+                        'detail': {
+                            'event': e,
+                            'value': item.value,
+                            'arrow': false
+                        }
+                    };
+                    this.emit('itemclicked', event);
+                    break;
+                }
             }
         }
     }

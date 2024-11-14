@@ -456,23 +456,25 @@ export default class extends clickgo.control.AbstractControl {
         else if (item.format.tree === 1) {
             // --- 在打开状态，直接变成关闭状态 ---
             item.format.tree = 0;
-            // --- 如果当前选择值在这个 child 之内，则收不上来，所以要检测是否在 child 之内，在的话就把值改成自己 ---
-            for (const vitem of this.props.modelValue) {
-                if (!this.findFormat(vitem, false, item.format.children)) {
-                    continue;
-                }
-                this.emit('update:modelValue', [item.value]);
-                this.emit('label', [item.label]);
-                this.emit('item', [item]);
-                const event: types.IListItemclickedEvent = {
-                    'detail': {
-                        'event': e,
-                        'value': item.value,
-                        'arrow': false
+            if (!this.propBoolean('check')) {
+                // --- 如果当前选择值在这个 child 之内，则收不上来，所以要检测是否在 child 之内，在的话就把值改成自己 ---
+                for (const vitem of this.props.modelValue) {
+                    if (!this.findFormat(vitem, false, item.format.children)) {
+                        continue;
                     }
-                };
-                this.emit('itemclicked', event);
-                break;
+                    this.emit('update:modelValue', [item.value]);
+                    this.emit('label', [item.label]);
+                    this.emit('item', [item]);
+                    const event: types.IListItemclickedEvent = {
+                        'detail': {
+                            'event': e,
+                            'value': item.value,
+                            'arrow': false
+                        }
+                    };
+                    this.emit('itemclicked', event);
+                    break;
+                }
             }
         }
         // --- 其他不存在和加载状态不处理 ---
