@@ -8,7 +8,7 @@
             <div v-if="propBoolean('split')" class="split" @mousedown="bindResize($event, i)" @touchstart="bindResize($event, i)"></div>
         </div>
     </div>
-    <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :map="map" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" :virtual="virtual" :mode="mode !== 'view' ? mode : (slots['bottom'] ? 'iview' : mode)" content-width="max" @update:scroll-left="updateScrollLeft" @scrollwidth="scrollWidth = $event" @clientwidth="clientWidth = $event">
+    <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :map="map" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" @itemclicked="emit('itemclicked', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" :virtual="virtual" :mode="mode !== 'view' ? mode : (slots['bottom'] ? 'iview' : mode)" content-width="max" @update:scroll-left="updateScrollLeft" @scrollwidth="scrollWidth = $event" @clientwidth="clientWidth = $event">
         <template v-slot="data">
             <div class="gitem">
                 <div class="top">

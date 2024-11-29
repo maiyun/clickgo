@@ -30,6 +30,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'sort': null,
             'select': null,
+            'itemclicked': null,
             'gesture': null,
             'update:modelValue': null
         };

@@ -3,11 +3,23 @@ import imgFrm from '../arteditor/img';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public list: string[] = [];
+    public list: Array<string | {
+        'title'?: string;
+        'src': string;
+    }> = [
+            {
+                'title': 'main',
+                'src': 'res/img.jpg'
+            }
+        ];
 
     public disabled = false;
 
     public multi: boolean = false;
+
+    public drag: boolean = false;
+
+    public length: string[] = ['7'];
 
     /** --- 上传进度 --- */
     public progress?: number = undefined;
@@ -24,7 +36,7 @@ export default class extends clickgo.form.AbstractForm {
                 clickgo.task.removeTimer(timer);
                 return;
             }
-            this.progress += clickgo.tool.rand(0, 20);
+            this.progress += clickgo.tool.rand(0, 70);
             if (this.progress < 100) {
                 return;
             }

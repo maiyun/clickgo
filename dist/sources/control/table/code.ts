@@ -6,6 +6,7 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'sort': null,
         'select': null,
+        'itemclicked': null,
         'gesture': null,
 
         'update:modelValue': null

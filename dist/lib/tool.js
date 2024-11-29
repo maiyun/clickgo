@@ -646,7 +646,7 @@ function hex2rgb(hex) {
     rgb.rgb = `${alpha ? 'a' : ''}(${rgb.r},${rgb.g},${rgb.b}${alpha ? ',' + rgb.a : ''})`;
     return rgb;
 }
-function rgb2hsl(r, g, b, a = 1) {
+function rgb2hsl(r, g, b, a = 1, decimal = false) {
     var _a;
     const hsl = {
         'h': 0,
@@ -660,20 +660,20 @@ function rgb2hsl(r, g, b, a = 1) {
             return hsl;
         }
         const rgb = formatColor(r);
-        r = Math.round(rgb[0]);
-        g = Math.round(rgb[1]);
-        b = Math.round(rgb[2]);
+        r = rgb[0];
+        g = rgb[1];
+        b = rgb[2];
         a = (_a = rgb[3]) !== null && _a !== void 0 ? _a : 1;
     }
     else {
         if (typeof r === 'string') {
-            r = Math.round(parseFloat(r));
+            r = parseFloat(r);
         }
         if (typeof g === 'string') {
-            g = Math.round(parseFloat(g));
+            g = parseFloat(g);
         }
         if (typeof b === 'string') {
-            b = Math.round(parseFloat(b));
+            b = parseFloat(b);
         }
         if (typeof a === 'string') {
             a = parseFloat(a);
@@ -682,23 +682,41 @@ function rgb2hsl(r, g, b, a = 1) {
     r /= 255;
     g /= 255;
     b /= 255;
-    const l = Math.max(r, g, b);
-    const s = l - Math.min(r, g, b);
-    const h = s
-        ? l === r
-            ? (g - b) / s
-            : l === g
-                ? 2 + (b - r) / s
-                : 4 + (r - g) / s
-        : 0;
-    hsl.h = Math.round(60 * h < 0 ? 60 * h + 360 : 60 * h);
-    hsl.s = Math.round(100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0));
-    hsl.l = Math.round((100 * (2 * l - s)) / 2);
+    const cmin = Math.min(r, g, b), cmax = Math.max(r, g, b), delta = cmax - cmin;
+    let h = 0, s = 0, l = 0;
+    if (delta == 0) {
+        h = 0;
+    }
+    else if (cmax == r) {
+        h = ((g - b) / delta) % 6;
+    }
+    else if (cmax == g) {
+        h = (b - r) / delta + 2;
+    }
+    else {
+        h = (r - g) / delta + 4;
+    }
+    h = Math.round(h * 60);
+    if (h < 0) {
+        h += 360;
+    }
+    l = (cmax + cmin) / 2;
+    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    s = s * 100;
+    l = l * 100;
+    hsl.h = h;
+    hsl.s = s;
+    hsl.l = l;
     hsl.a = a;
+    if (!decimal) {
+        hsl.h = Math.round(hsl.h);
+        hsl.s = Math.round(hsl.s);
+        hsl.l = Math.round(hsl.l);
+    }
     hsl.hsl += (hsl.a === 1 ? '' : 'a') + `(${hsl.h},${hsl.s}%,${hsl.l}%${hsl.a === 1 ? '' : ',' + hsl.a})`;
     return hsl;
 }
-function hsl2rgb(h, s, l, a = 1) {
+function hsl2rgb(h, s, l, a = 1, decimal = false) {
     var _a;
     const rgb = {
         'r': 0,
@@ -712,20 +730,20 @@ function hsl2rgb(h, s, l, a = 1) {
             return rgb;
         }
         const hsl = formatColor(h);
-        h = Math.round(hsl[0]);
-        s = Math.round(hsl[1]);
-        l = Math.round(hsl[2]);
+        h = hsl[0];
+        s = hsl[1];
+        l = hsl[2];
         a = (_a = hsl[3]) !== null && _a !== void 0 ? _a : 1;
     }
     else {
         if (typeof h === 'string') {
-            h = Math.round(parseFloat(h));
+            h = parseFloat(h);
         }
         if (typeof s === 'string') {
-            s = Math.round(parseFloat(s));
+            s = parseFloat(s);
         }
         if (typeof l === 'string') {
-            l = Math.round(parseFloat(l));
+            l = parseFloat(l);
         }
         if (typeof a === 'string') {
             a = parseFloat(a);
@@ -736,10 +754,15 @@ function hsl2rgb(h, s, l, a = 1) {
     const k = (n) => (n + h / 30) % 12;
     const aa = s * Math.min(l, 1 - l);
     const f = (n) => l - aa * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-    rgb.r = Math.round(255 * f(0));
-    rgb.g = Math.round(255 * f(8));
-    rgb.b = Math.round(255 * f(4));
+    rgb.r = 255 * f(0);
+    rgb.g = 255 * f(8);
+    rgb.b = 255 * f(4);
     rgb.a = a;
+    if (!decimal) {
+        rgb.r = Math.round(rgb.r);
+        rgb.g = Math.round(rgb.g);
+        rgb.b = Math.round(rgb.b);
+    }
     rgb.rgb += (rgb.a === 1 ? '' : 'a') + `(${rgb.r},${rgb.g},${rgb.b}${rgb.a === 1 ? '' : ',' + rgb.a})`;
     return rgb;
 }

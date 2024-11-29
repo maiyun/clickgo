@@ -1,4 +1,4 @@
-<div class="wrap" :style="{'justify-content': alignComp}" :class="[mode, propBoolean('copy') && 'copy', propBoolean('thru') && 'thru', 'size-' + size]" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
+<div class="wrap" :style="{'justify-content': alignComp}" :class="[mode, propBoolean('copy') && 'copy', propBoolean('thru') && 'thru', 'size-' + size, propBoolean('nowrap') && 'nowrap']" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
     <template v-if="content">{{contentComp}}</template>
     <slot v-else></slot>
     <teleport v-if="propBoolean('copy')" to="system">

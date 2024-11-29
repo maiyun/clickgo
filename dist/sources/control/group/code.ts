@@ -10,6 +10,8 @@ export default class extends clickgo.control.AbstractControl {
         'gutter': number | string;
         'alignH': string | undefined;
         'alignV': string | undefined;
+        'padding': boolean | string;
+        'position': 'top' | 'right' | 'bottom' | 'left';
     } = {
             'title': '',
             'plain': false,
@@ -17,7 +19,9 @@ export default class extends clickgo.control.AbstractControl {
             'direction': 'h',
             'gutter': '',
             'alignH': undefined,
-            'alignV': undefined
+            'alignV': undefined,
+            'padding': true,
+            'position': 'top',
         };
 
 }

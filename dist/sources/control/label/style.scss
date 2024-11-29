@@ -1,6 +1,9 @@
 .wrap {
-    display: inline-block; transition: var(--g-transition); position: relative; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding-bottom: 0.2em; margin-bottom: -0.2em;
+    display: inline-block; transition: var(--g-transition); position: relative; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding: 0.2em 0; margin: -0.2em 0;
 
+    &.nowrap {
+        white-space: nowrap;
+    }
     // --- mode ---
     &.tip {
         color: var(--g-color-disabled);

@@ -1220,23 +1220,29 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             } {
                 return tool.hex2rgb(hex);
             },
-            rgb2hsl: function(r: string | number, g?: string | number, b?: string | number, a: string | number = 1): {
-                'h': number;
-                's': number;
-                'l': number;
-                'a': number;
-                'hsl': string;
-            } {
-                return tool.rgb2hsl(r, g, b, a);
+            rgb2hsl: function(
+                r: string | number, g?: string | number, b?: string | number, a: string | number = 1,
+                decimal: boolean = false
+            ): {
+                    'h': number;
+                    's': number;
+                    'l': number;
+                    'a': number;
+                    'hsl': string;
+                } {
+                return tool.rgb2hsl(r, g, b, a, decimal);
             },
-            hsl2rgb: function(h: string | number, s?: string | number, l?: string | number, a: string | number = 1): {
-                'r': number;
-                'g': number;
-                'b': number;
-                'a': number;
-                'rgb': string;
-            } {
-                return tool.hsl2rgb(h, s, l, a);
+            hsl2rgb: function(
+                h: string | number, s?: string | number, l?: string | number, a: string | number = 1,
+                decimal: boolean = false
+            ): {
+                    'r': number;
+                    'g': number;
+                    'b': number;
+                    'a': number;
+                    'rgb': string;
+                } {
+                return tool.hsl2rgb(h, s, l, a, decimal);
             },
             request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
                 return tool.request(url, opt);

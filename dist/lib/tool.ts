@@ -818,13 +818,15 @@ export function hex2rgb(hex: string): {
  * --- rgb 字符串转 hsl 数组 ---
  * @param rgb rgb(x, x, x) 或直接 x,x,x
  */
-export function rgb2hsl(r: string | number, g?: string | number, b?: string | number, a: string | number = 1): {
-    'h': number;
-    's': number;
-    'l': number;
-    'a': number;
-    'hsl': string;
-} {
+export function rgb2hsl(
+    r: string | number, g?: string | number, b?: string | number, a: string | number = 1, decimal: boolean = false
+): {
+        'h': number;
+        's': number;
+        'l': number;
+        'a': number;
+        'hsl': string;
+    } {
     const hsl = {
         'h': 0,
         's': 0,
@@ -837,20 +839,20 @@ export function rgb2hsl(r: string | number, g?: string | number, b?: string | nu
             return hsl;
         }
         const rgb = formatColor(r);
-        r = Math.round(rgb[0]);
-        g = Math.round(rgb[1]);
-        b = Math.round(rgb[2]);
+        r = rgb[0];
+        g = rgb[1];
+        b = rgb[2];
         a = rgb[3] ?? 1;
     }
     else {
         if (typeof r === 'string') {
-            r = Math.round(parseFloat(r));
+            r = parseFloat(r);
         }
         if (typeof g === 'string') {
-            g = Math.round(parseFloat(g));
+            g = parseFloat(g);
         }
         if (typeof b === 'string') {
-            b = Math.round(parseFloat(b));
+            b = parseFloat(b);
         }
         if (typeof a === 'string') {
             a = parseFloat(a);
@@ -860,34 +862,70 @@ export function rgb2hsl(r: string | number, g?: string | number, b?: string | nu
     r /= 255;
     g /= 255;
     b /= 255;
-    const l = Math.max(r, g, b);
-    const s = l - Math.min(r, g, b);
-    const h = s
-        ? l === r
-            ? (g - b) / s
-            : l === g
-                ? 2 + (b - r) / s
-                : 4 + (r - g) / s
-        : 0;
-    hsl.h = Math.round(60 * h < 0 ? 60 * h + 360 : 60 * h);
-    hsl.s = Math.round(100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0));
-    hsl.l = Math.round((100 * (2 * l - s)) / 2);
+    const cmin = Math.min(r, g, b),
+        cmax = Math.max(r, g, b),
+        delta = cmax - cmin;
+    let h = 0,
+        s = 0,
+        l = 0;
+    if (delta == 0) {
+        h = 0;
+    }
+    // --- Red is max ---
+    else if (cmax == r) {
+        h = ((g - b) / delta) % 6;
+    }
+    // --- Green is max ---
+    else if (cmax == g) {
+        h = (b - r) / delta + 2;
+    }
+    // --- Blue is max ---
+    else {
+        h = (r - g) / delta + 4;
+    }
+
+    h = Math.round(h * 60);
+
+    // --- Make negative hues positive behind 360° ---
+    if (h < 0) {
+        h += 360;
+    }
+    // --- Calculate lightness ---
+    l = (cmax + cmin) / 2;
+
+    // --- Calculate saturation ---
+    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+
+    // --- Multiply l and s by 100 ---
+    s = s * 100;
+    l = l * 100;
+
+    hsl.h = h;
+    hsl.s = s;
+    hsl.l = l;
     hsl.a = a;
+    if (!decimal) {
+        hsl.h = Math.round(hsl.h);
+        hsl.s = Math.round(hsl.s);
+        hsl.l = Math.round(hsl.l);
+    }
     hsl.hsl += (hsl.a === 1 ? '' : 'a') + `(${hsl.h},${hsl.s}%,${hsl.l}%${hsl.a === 1 ? '' : ',' + hsl.a})`;
     return hsl;
 }
 
 /**
  * --- hsl 字符串转 rgb 数组 ---
- * @param rgb rgb(x, x, x) 或直接 x,x,x
+ * @param hsl hsl(x, x, x) 或直接 x,x,x
  */
-export function hsl2rgb(h: string | number, s?: string | number, l?: string | number, a: string | number = 1): {
-    'r': number;
-    'g': number;
-    'b': number;
-    'a': number;
-    'rgb': string;
-} {
+export function hsl2rgb(
+    h: string | number, s?: string | number, l?: string | number, a: string | number = 1, decimal: boolean = false
+): {
+        'r': number;
+        'g': number;
+        'b': number;
+        'a': number;
+        'rgb': string;
+    } {
     const rgb = {
         'r': 0,
         'g': 0,
@@ -900,20 +938,20 @@ export function hsl2rgb(h: string | number, s?: string | number, l?: string | nu
             return rgb;
         }
         const hsl = formatColor(h);
-        h = Math.round(hsl[0]);
-        s = Math.round(hsl[1]);
-        l = Math.round(hsl[2]);
+        h = hsl[0];
+        s = hsl[1];
+        l = hsl[2];
         a = hsl[3] ?? 1;
     }
     else {
         if (typeof h === 'string') {
-            h = Math.round(parseFloat(h));
+            h = parseFloat(h);
         }
         if (typeof s === 'string') {
-            s = Math.round(parseFloat(s));
+            s = parseFloat(s);
         }
         if (typeof l === 'string') {
-            l = Math.round(parseFloat(l));
+            l = parseFloat(l);
         }
         if (typeof a === 'string') {
             a = parseFloat(a);
@@ -926,10 +964,15 @@ export function hsl2rgb(h: string | number, s?: string | number, l?: string | nu
     const aa = s * Math.min(l, 1 - l);
     const f = (n: number): number =>
         l - aa * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-    rgb.r = Math.round(255 * f(0));
-    rgb.g = Math.round(255 * f(8));
-    rgb.b = Math.round(255 * f(4));
+    rgb.r = 255 * f(0);
+    rgb.g = 255 * f(8);
+    rgb.b = 255 * f(4);
     rgb.a = a;
+    if (!decimal) {
+        rgb.r = Math.round(rgb.r);
+        rgb.g = Math.round(rgb.g);
+        rgb.b = Math.round(rgb.b);
+    }
     rgb.rgb += (rgb.a === 1 ? '' : 'a') + `(${rgb.r},${rgb.g},${rgb.b}${rgb.a === 1 ? '' : ',' + rgb.a})`;
     return rgb;
 }

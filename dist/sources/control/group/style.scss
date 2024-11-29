@@ -1,11 +1,14 @@
 .wrap {
-    padding: var(--g-bpadding); background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; flex-direction: column;
+    background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; overflow: hidden;
     &.plain {
         border: none;
     }
+    &.padding {
+        padding: var(--g-bpadding);
+    }
 
     .title {
-        margin-bottom: var(--g-bpadding); display: flex; align-items: center;
+        display: flex; align-items: center;
         .text {
             flex: 1; font-size: var(--g-size-m);
         }
@@ -13,15 +16,60 @@
             display: flex; align-items: center;
         }
     }
+    &:not(.padding) {
+        .title {
+            padding: var(--g-bpadding);
+        }
+    }
+
     .content {
-        display: flex; flex: 1; height: 0;
+        display: flex; flex: 1;
     }
     &.v {
         .content {
             flex-direction: column;
         }
     }
+
     .footer {
         display: flex; margin-top: var(--g-bpadding);
+    }
+
+    // --- position ---
+
+    &.top {
+        flex-direction: column;
+        .title {
+            margin-bottom: var(--g-bpadding); padding-bottom: 0;
+        }
+        .content {
+            height: 0;
+        }
+    }
+    &.bottom {
+        flex-direction: column-reverse;
+        .title {
+            margin-top: var(--g-bpadding); padding-top: 0;
+        }
+        .content {
+            height: 0;
+        }
+    }
+    &.left {
+        .title {
+            margin-right: var(--g-bpadding); padding-right: 0;
+        }
+        .content {
+            width: 0;
+        }
+    }
+    &.right {
+        flex-direction: row-reverse;
+        .title {
+            margin-left: var(--g-bpadding); padding-left: 0;
+        }
+        .content {
+            width: 0;
+        }
     }
 }

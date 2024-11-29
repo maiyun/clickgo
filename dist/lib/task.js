@@ -1089,11 +1089,11 @@ function run(url_1) {
                 hex2rgb: function (hex) {
                     return tool.hex2rgb(hex);
                 },
-                rgb2hsl: function (r, g, b, a = 1) {
-                    return tool.rgb2hsl(r, g, b, a);
+                rgb2hsl: function (r, g, b, a = 1, decimal = false) {
+                    return tool.rgb2hsl(r, g, b, a, decimal);
                 },
-                hsl2rgb: function (h, s, l, a = 1) {
-                    return tool.hsl2rgb(h, s, l, a);
+                hsl2rgb: function (h, s, l, a = 1, decimal = false) {
+                    return tool.hsl2rgb(h, s, l, a, decimal);
                 },
                 request: function (url, opt) {
                     return tool.request(url, opt);

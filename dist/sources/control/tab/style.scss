@@ -137,6 +137,9 @@
                 border-right-width: .5px;
             }
         }
+        .panel {
+            height: 0;
+        }
     }
     &.top {
         .tabs {
@@ -184,6 +187,9 @@
                 border-bottom-width: .5px;
             }
         }
+        .panel {
+            width: 0;
+        }
     }
     &.left {
         .tabs {
@@ -217,6 +223,6 @@
     }
 
     .panel {
-        background: var(--g-plain-background); display: flex; flex: 1; border: solid .5px var(--g-plain-border-color); height: 0;
+        background: var(--g-plain-background); display: flex; flex: 1; border: solid .5px var(--g-plain-border-color);
     }    
 }

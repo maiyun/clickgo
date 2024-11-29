@@ -195,24 +195,24 @@ export default class extends clickgo.control.AbstractControl {
         event.detail.value = '';
         switch (this.props.mode) {
             case 'hsl': {
-                event.detail.value = `hsl${this.hsl.a === 1 ? '' : 'a'}(${this.hsl.h},${this.hsl.s}%,${this.hsl.l}%${this.hsl.a === 1 ? '' : ',' + this.hsl.a})`;
                 event.detail.hsl = {
-                    'h': this.hsl.h,
-                    's': this.hsl.s,
-                    'l': this.hsl.l,
+                    'h': Math.round(this.hsl.h),
+                    's': Math.round(this.hsl.s),
+                    'l': Math.round(this.hsl.l),
                     'a': this.hsl.a
                 };
+                event.detail.value = `hsl${this.hsl.a === 1 ? '' : 'a'}(${event.detail.hsl.h},${event.detail.hsl.s}%,${event.detail.hsl.l}%${event.detail.hsl.a === 1 ? '' : ',' + event.detail.hsl.a})`;
                 break;
             }
             case 'rgb': {
                 const rgb = clickgo.tool.hsl2rgb(this.hsl.h, this.hsl.s, this.hsl.l, this.hsl.a);
-                event.detail.value = rgb.rgb;
                 event.detail.rgb = {
-                    'r': rgb.r,
-                    'g': rgb.g,
-                    'b': rgb.b,
+                    'r': Math.round(rgb.r),
+                    'g': Math.round(rgb.g),
+                    'b': Math.round(rgb.b),
                     'a': rgb.a
                 };
+                event.detail.value = rgb.rgb;
                 break;
             }
             default: {
@@ -257,7 +257,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         else if (v.startsWith('rgb')) {
             const f = clickgo.tool.formatColor(v);
-            const hsl = clickgo.tool.rgb2hsl(f[0], f[1], f[2], f[3]);
+            const hsl = clickgo.tool.rgb2hsl(f[0], f[1], f[2], f[3], true);
             this.hsl.h = hsl.h;
             this.hsl.s = hsl.s;
             this.hsl.l = hsl.l;
@@ -266,7 +266,7 @@ export default class extends clickgo.control.AbstractControl {
         else {
             // --- hex ---
             const rgb = clickgo.tool.hex2rgb(v);
-            const hsl = clickgo.tool.rgb2hsl(rgb.r, rgb.g, rgb.b, rgb.a);
+            const hsl = clickgo.tool.rgb2hsl(rgb.r, rgb.g, rgb.b, rgb.a, true);
             this.hsl.h = hsl.h;
             this.hsl.s = hsl.s;
             this.hsl.l = hsl.l;

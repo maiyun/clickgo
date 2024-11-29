@@ -41,6 +41,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'content': '',
             'size': 's',
             'align': 'left',
+            'nowrap': false,
             'copy': false,
             'thru': false,
             'time': true,

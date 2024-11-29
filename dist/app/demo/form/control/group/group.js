@@ -28,10 +28,12 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.plain = false;
+        this.padding = true;
         this.title = 'The title';
         this.slotTitle = false;
         this.slotRight = false;
         this.slotFooter = false;
+        this.position = ['top'];
     }
 }
 exports.default = default_1;

@@ -64,14 +64,20 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void {
-        this.watch('modelValue', () => {
+        this.watch('modelValue', async () => {
             if (this.props.modelValue === this.value) {
                 return;
             }
             this.value = this.props.modelValue;
             this.color = this.props.modelValue;
+            await this.nextTick();
+            this.ok();
         }, {
             'immediate': true
+        });
+        this.watch('mode', async () => {
+            await this.nextTick();
+            this.ok();
         });
     }
 

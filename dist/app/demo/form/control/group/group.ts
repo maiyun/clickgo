@@ -4,6 +4,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public plain = false;
 
+    public padding = true;
+
     public title = 'The title';
 
     public slotTitle = false;
@@ -11,5 +13,7 @@ export default class extends clickgo.form.AbstractForm {
     public slotRight = false;
 
     public slotFooter = false;
+
+    public position = ['top'];
 
 }

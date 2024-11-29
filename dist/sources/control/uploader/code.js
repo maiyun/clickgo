@@ -29,21 +29,49 @@ class default_1 extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'select': null,
+            'changed': null,
             'update:modelValue': null
         };
         this.props = {
             'disabled': false,
+            'length': 6,
+            'drag': false,
             'pre': '',
             'multi': false,
             'progress': undefined,
             'modelValue': []
         };
+        this.rand = '';
     }
     select() {
         if (this.props.progress !== undefined) {
             return;
         }
         this.emit('select');
+    }
+    down(e, index) {
+        var _a;
+        clickgo.dom.bindDrag(e, {
+            'el': (_a = e.currentTarget.parentNode) === null || _a === void 0 ? void 0 : _a.parentNode,
+            'data': {
+                'index': index,
+                'tab': this.rand
+            }
+        });
+    }
+    drop(e, index) {
+        if (typeof e.detail.value !== 'object') {
+            return;
+        }
+        if (e.detail.value.tab !== this.rand) {
+            return;
+        }
+        this.props.modelValue.splice(index, 0, this.props.modelValue.splice(e.detail.value.index, 1)[0]);
+        this.emit('update:modelValue', this.props.modelValue);
+        this.emit('changed');
+    }
+    onMounted() {
+        this.rand = clickgo.tool.random(16);
     }
 }
 exports.default = default_1;

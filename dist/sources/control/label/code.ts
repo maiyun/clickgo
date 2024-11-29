@@ -8,6 +8,7 @@ export default class extends clickgo.control.AbstractControl {
         'size': 's' | 'm' | 'l' | 'xl';
         'align': 'left' | 'start' | 'center' | 'right' | 'end';
 
+        'nowrap': boolean | string;
         'copy': boolean | string;
         'thru': boolean | string;
         'time': boolean | string;
@@ -21,6 +22,7 @@ export default class extends clickgo.control.AbstractControl {
             'size': 's',
             'align': 'left',
 
+            'nowrap': false,
             'copy': false,
             'thru': false,
             'time': true,

@@ -40,9 +40,16 @@ const img_1 = __importDefault(require("../arteditor/img"));
 class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
-        this.list = [];
+        this.list = [
+            {
+                'title': 'main',
+                'src': 'res/img.jpg'
+            }
+        ];
         this.disabled = false;
         this.multi = false;
+        this.drag = false;
+        this.length = ['7'];
         this.progress = undefined;
     }
     select() {
@@ -58,7 +65,7 @@ class default_1 extends clickgo.form.AbstractForm {
                     clickgo.task.removeTimer(timer);
                     return;
                 }
-                this.progress += clickgo.tool.rand(0, 20);
+                this.progress += clickgo.tool.rand(0, 70);
                 if (this.progress < 100) {
                     return;
                 }
