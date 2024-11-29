@@ -1,0 +1,28 @@
+<form width="300" height="400" title="Icon" padding="10">
+    <layout gutter="20" direction="v" style="flex: 1">
+        <label>id</label>
+        <layout gutter="20" align-v="center">
+            <icon name="id" size="s"></icon>
+            <icon name="id" size="m"></icon>
+            <icon name="id" size="l"></icon>
+            <icon name="id" size="xl"></icon>
+            <icon name="id" size="xxl"></icon>
+        </layout>
+        <label>de</label>
+        <layout gutter="20" align-v="center">
+            <icon name="de" size="s"></icon>
+            <icon name="de" size="m"></icon>
+            <icon name="de" size="l"></icon>
+            <icon name="de" size="xl"></icon>
+            <icon name="de" size="xxl"></icon>
+        </layout>
+        <layout gutter="20" align-v="center">
+            <icon name="question"></icon>
+            <icon name="question" size="m"></icon>
+            <label>question</label>
+            <icon name="info"></icon>
+            <icon name="info" size="m"></icon>
+            <label>info</label>
+        </layout>
+    </layout>
+</form>

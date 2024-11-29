@@ -1,0 +1,28 @@
+.wrap {
+    display: inline-block; background-size: cover; background-position: center;
+    
+    &.s {
+        width: var(--g-size); height: var(--g-size);
+    }
+    &.m {
+        width: var(--g-size-m); height: var(--g-size-m);
+    }
+    &.l {
+        width: var(--g-size-l); height: var(--g-size-l);
+    }
+    &.xl {
+        width: var(--g-size-xl); height: var(--g-size-xl);
+    }
+    &.xxl {
+        width: var(--g-size-xxl); height: var(--g-size-xxl);
+    }
+
+    // --- name ---
+
+    &.de {
+        background-image: url(./res/de.png);
+    }
+    &.id {
+        background-image: url(./res/id.png);
+    }
+}

@@ -80,6 +80,11 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 <a href="https://www.flaticon.com/free-icons/no-photo" title="no photo icons">No photo icons created by kerismaker - Flaticon</a>
 
+#### Icon
+
+<a href="https://www.flaticon.com/free-icons/identity" title="identity icons">Identity icons created by Ghozi Muhtarom - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/truck" title="truck icons">Truck icons created by Freepik - Flaticon</a>
+
 ### **LICENSE:** MIT License **AUTHOR:** sigurdarson
 
 #### Delete
@@ -165,6 +170,11 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Sort By Alphabet SVG Vector](https://www.svgrepo.com/svg/529901/sort-by-alphabet)  
 [Notification Unread Lines SVG](https://www.svgrepo.com/svg/529113/notification-unread-lines)  
 [Bolt SVG Vector](https://www.svgrepo.com/svg/528871/bolt)
+
+### Icon
+
+[Question Circle SVG Vector](https://www.svgrepo.com/svg/522997/question-circle)  
+[Info Circle SVG Vector](https://www.svgrepo.com/svg/522904/info-circle)
 
 ### **LICENSE:** CC0 License **UPLOADER:** SVG Repo
 

@@ -83,7 +83,7 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number'].includes(item.name)) {
+            if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web'].includes(item.name)) {
                 continue;
             }
             if (item.name.startsWith('.')) {
@@ -120,6 +120,7 @@ function run() {
                 yield addFile(zipo, base + 'label', 'label');
                 yield addFile(zipo, base + 'layout', 'layout');
                 yield addFile(zipo, base + 'hske', 'hske');
+                yield addFile(zipo, base + 'icon', 'icon');
                 yield addFile(zipo, base + 'levelselect', 'levelselect');
                 yield addFile(zipo, base + 'list', 'list');
                 yield addFile(zipo, base + 'loading', 'loading');
@@ -159,6 +160,7 @@ function run() {
                 yield addFile(zipo, base + 'timeline', 'timeline');
                 yield addFile(zipo, base + 'timeline-item', 'timeline-item');
                 yield addFile(zipo, base + 'number', 'number');
+                yield addFile(zipo, base + 'web', 'web');
             }
             else if (item.name === 'task') {
                 yield addFile(zipo, base + 'task-item', 'task-item');

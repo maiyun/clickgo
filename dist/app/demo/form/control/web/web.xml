@@ -1,0 +1,4 @@
+<form title="Web" width="700" height="600" direction="v">
+    <text v-model="src" />
+    <web :src="src" style="flex: 1" />
+</form>

@@ -60,6 +60,7 @@ import carteditorFrm from './control/arteditor/arteditor';
 import ccontentFrm from './control/content/content';
 import cdeleteFrm from './control/delete/delete';
 import cpdfFrm from './control/pdf/pdf';
+import cwebFrm from './control/web/web';
 
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
@@ -260,6 +261,12 @@ export default class extends clickgo.form.AbstractForm {
                 });
                 break;
             }
+            case 'cicon': {
+                frm = await clickgo.form.create('control/icon/icon', undefined, {
+                    'path': this.filename
+                });
+                break;
+            }
             case 'cmap': {
                 frm = await clickgo.form.create(cmapFrm);
                 break;
@@ -358,6 +365,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cpdf': {
                 frm = await clickgo.form.create(cpdfFrm);
+                break;
+            }
+            case 'cweb': {
+                frm = await clickgo.form.create(cwebFrm);
                 break;
             }
 

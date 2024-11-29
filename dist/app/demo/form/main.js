@@ -95,6 +95,7 @@ const arteditor_1 = __importDefault(require("./control/arteditor/arteditor"));
 const content_1 = __importDefault(require("./control/content/content"));
 const delete_1 = __importDefault(require("./control/delete/delete"));
 const pdf_1 = __importDefault(require("./control/pdf/pdf"));
+const web_1 = __importDefault(require("./control/web/web"));
 const form_2 = __importDefault(require("./event/form/form"));
 const other_1 = __importDefault(require("./event/other/other"));
 const screen_1 = __importDefault(require("./event/screen/screen"));
@@ -292,6 +293,12 @@ class default_1 extends clickgo.form.AbstractForm {
                     });
                     break;
                 }
+                case 'cicon': {
+                    frm = yield clickgo.form.create('control/icon/icon', undefined, {
+                        'path': this.filename
+                    });
+                    break;
+                }
                 case 'cmap': {
                     frm = yield clickgo.form.create(map_1.default);
                     break;
@@ -390,6 +397,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cpdf': {
                     frm = yield clickgo.form.create(pdf_1.default);
+                    break;
+                }
+                case 'cweb': {
+                    frm = yield clickgo.form.create(web_1.default);
                     break;
                 }
                 case 'eform': {
