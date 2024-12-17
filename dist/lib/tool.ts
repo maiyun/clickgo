@@ -733,11 +733,11 @@ export function escapeHTML(html: string): string {
  * @param color 颜色字符串
  */
 export function formatColor(color: string): number[] {
-    const match = /[0-9.%, ]+/.exec(color);
-    if (!match) {
+    const matc = /[0-9.%, ]+/.exec(color);
+    if (!matc) {
         return [];
     }
-    const arr = match[0].split(',');
+    const arr = matc[0].split(',');
     return arr.map((v: string) => {
         return parseFloat(v);
     });
@@ -991,16 +991,16 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
         xhr.upload.onloadstart = function(e: ProgressEvent): void {
             const r = opt.uploadStart?.(e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
+                r.catch(function(e1) {
+                    console.log(e1);
                 });
             }
         };
         xhr.upload.onprogress = function(e: ProgressEvent): void {
             const r = opt.uploadProgress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
+                r.catch(function(e1) {
+                    console.log(e1);
                 });
             }
         };
@@ -1015,16 +1015,16 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
         xhr.onloadstart = function(e: ProgressEvent): void {
             const r = opt.start?.(e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
+                r.catch(function(e1) {
+                    console.log(e1);
                 });
             }
         };
         xhr.onprogress = function(e: ProgressEvent): void {
             const r = opt.progress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
+                r.catch(function(e1) {
+                    console.log(e1);
                 });
             }
         };
