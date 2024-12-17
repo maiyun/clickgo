@@ -404,6 +404,20 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'qrcode': {
+        func: async function() {
+            await loader.loadScripts([
+                loader.cdn + '/npm/qrcode@1.5.1/build/qrcode.js'
+            ]);
+            if (!(window as any).QRCode) {
+                throw Error('QRCode load failed.');
+            }
+            return (window as any).QRCode;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 

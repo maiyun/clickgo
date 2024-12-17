@@ -81,6 +81,7 @@ const tip_1 = __importDefault(require("./control/tip/tip"));
 const panel_1 = __importDefault(require("./control/panel/panel"));
 const flow_1 = __importDefault(require("./control/flow/flow"));
 const property_1 = __importDefault(require("./control/property/property"));
+const qrcode_1 = __importDefault(require("./control/qrcode/qrcode"));
 const radio_1 = __importDefault(require("./control/radio/radio"));
 const switch_1 = __importDefault(require("./control/switch/switch"));
 const scroll_1 = __importDefault(require("./control/scroll/scroll"));
@@ -343,6 +344,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cproperty': {
                     frm = yield clickgo.form.create(property_1.default);
+                    break;
+                }
+                case 'cqrcode': {
+                    frm = yield clickgo.form.create(qrcode_1.default);
                     break;
                 }
                 case 'cradio': {

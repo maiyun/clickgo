@@ -358,6 +358,22 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'qrcode': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    loader.cdn + '/npm/qrcode@1.5.1/build/qrcode.js'
+                ]);
+                if (!window.QRCode) {
+                    throw Error('QRCode load failed.');
+                }
+                return window.QRCode;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 function regModule(name, func) {

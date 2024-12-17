@@ -1,0 +1,13 @@
+<form title="Qrcode" width="400" height="400" direction="v" padding="10">
+    <layout align-h="center" align-v="center" style="flex: 1">
+        <qrcode :text="text" :options="{'width':width[0],'margin':margin[0]}"></qrcode>
+    </layout>
+    <layout align-v="center" gutter="10">
+        <label>text</label>
+        <text style="flex: 1" v-model="text"></text>
+        <label>width</label>
+        <select :data="[100,200,300]" v-model="width" style="flex: 1"></select>
+        <label>margin</label>
+        <select :data="[1,2,3,4,5,6,7]" v-model="margin" style="flex: 1"></select>
+    </layout>
+</form>

@@ -1,0 +1,7 @@
+<div class="wrap">
+    <div v-if="notInit" class="notInit">QRCode module not found.</div>
+    <canvas v-else class="content" ref="content"></canvas>
+    <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
+        <cg-loading></cg-loading>
+    </div>
+</div>

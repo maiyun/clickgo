@@ -100,6 +100,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cicon')">Icon</button>
                     <button @click="openForm('cweb')">Web</button>
+                    <button @click="openForm('cqrcode')">Qrcode</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cmonaco')">Monaco</button>

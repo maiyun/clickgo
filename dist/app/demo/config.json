@@ -24,7 +24,8 @@
         "/clickgo/control/tuieditor",
         "/clickgo/control/tuiviewer",
         "/clickgo/control/arteditor",
-        "/clickgo/control/jodit"
+        "/clickgo/control/jodit",
+        "/clickgo/control/qrcode"
     ],
     "style": "/package/global",
 
@@ -127,6 +128,8 @@
         "/form/control/progress/progress.xml",
         "/form/control/property/property.js",
         "/form/control/property/property.xml",
+        "/form/control/qrcode/qrcode.js",
+        "/form/control/qrcode/qrcode.xml",
         "/form/control/radio/radio.js",
         "/form/control/radio/radio.xml",
         "/form/control/scroll/scroll.js",

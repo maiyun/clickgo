@@ -36,6 +36,7 @@ import ctipFrm from './control/tip/tip';
 import cpanelFrm from './control/panel/panel';
 import cflowFrm from './control/flow/flow';
 import cpropertyFrm from './control/property/property';
+import cqrcodeFrm from './control/qrcode/qrcode';
 import cradioFrm from './control/radio/radio';
 import cswitchFrm from './control/switch/switch';
 import cscrollFrm from './control/scroll/scroll';
@@ -301,6 +302,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cproperty': {
                 frm = await clickgo.form.create(cpropertyFrm);
+                break;
+            }
+            case 'cqrcode': {
+                frm = await clickgo.form.create(cqrcodeFrm);
                 break;
             }
             case 'cradio': {
