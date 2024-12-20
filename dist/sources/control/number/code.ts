@@ -9,6 +9,7 @@ export default class extends clickgo.control.AbstractControl {
         'enter': null,
         'beforechange': null,
         'minmaxchange': null,
+        'changed': null,
 
         'update:modelValue': null,
     };
@@ -171,6 +172,8 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     this.value = target.value;
                     this.emit('update:modelValue', this.value);
+                    // --- changed ---
+                    this.emit('changed');
                 }
                 else {
                     // --- 禁止 ---
@@ -211,6 +214,8 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.value = target.value;
         this.emit('update:modelValue', this.value);
+        // --- changed ---
+        this.emit('changed');
     }
 
     /** --- 检测 value 值是否符合 max 和 min --- */
@@ -286,6 +291,8 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.value = event.detail.change ?? n;
         this.emit('update:modelValue', this.value);
+        // --- changed ---
+        this.emit('changed');
     }
 
     /** --- 执行复制粘贴剪切等操作 --- */
@@ -313,6 +320,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.value = event.detail.change ?? str;
             this.emit('update:modelValue', this.value);
+            // --- changed ---
+            this.emit('changed');
         }
         else {
             // --- 复制、剪切 ---
@@ -374,6 +383,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.value = event.detail.change ?? this.refs.text.value;
             this.emit('update:modelValue', this.value);
+            // --- changed ---
+            this.emit('changed');
             this.check();
         }, {
             'immediate': true
@@ -413,6 +424,8 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                // --- changed ---
+                this.emit('changed');
             }
         });
         this.watch('min', async () => {
@@ -450,6 +463,8 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                // --- changed ---
+                this.emit('changed');
             }
         });
         const content = this.parentByName('content');

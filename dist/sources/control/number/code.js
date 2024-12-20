@@ -52,6 +52,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'enter': null,
             'beforechange': null,
             'minmaxchange': null,
+            'changed': null,
             'update:modelValue': null,
         };
         this.props = {
@@ -181,6 +182,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     this.value = target.value;
                     this.emit('update:modelValue', this.value);
+                    this.emit('changed');
                 }
                 else {
                     target.value = this.value;
@@ -216,6 +218,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value = target.value;
         this.emit('update:modelValue', this.value);
+        this.emit('changed');
     }
     checkNumber(target) {
         if (!target) {
@@ -280,6 +283,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : n;
         this.emit('update:modelValue', this.value);
+        this.emit('changed');
     }
     execCmd(ac) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -306,6 +310,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : str;
                 this.emit('update:modelValue', this.value);
+                this.emit('changed');
             }
             else {
                 clickgo.tool.execCommand(ac);
@@ -360,6 +365,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
             this.emit('update:modelValue', this.value);
+            this.emit('changed');
             this.check();
         }), {
             'immediate': true
@@ -400,6 +406,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                this.emit('changed');
             }
         }));
         this.watch('min', () => __awaiter(this, void 0, void 0, function* () {
@@ -438,6 +445,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                this.emit('changed');
             }
         }));
         const content = this.parentByName('content');

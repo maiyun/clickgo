@@ -226,6 +226,8 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     this.value = target.value;
                     this.emit('update:modelValue', this.value);
+                    // --- changed ---
+                    this.emit('changed');
                 }
                 else {
                     // --- 禁止 ---
@@ -267,6 +269,8 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.value = target.value;
         this.emit('update:modelValue', this.value);
+        // --- changed ---
+        this.emit('changed');
         this.emit('input');
     }
 
@@ -476,6 +480,8 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.value = event.detail.change ?? n;
         this.emit('update:modelValue', this.value);
+        // --- changed ---
+        this.emit('changed');
     }
 
     /** --- 执行复制粘贴剪切等操作 --- */
@@ -508,6 +514,8 @@ export default class extends clickgo.control.AbstractControl {
                 + str
                 + this.value.slice(this.refs.text.selectionEnd);
             this.emit('update:modelValue', this.value);
+            // --- changed ---
+            this.emit('changed');
             this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
             this.refs.text.selectionEnd = this.refs.text.selectionStart;
         }
@@ -631,6 +639,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.value = event.detail.change ?? this.refs.text.value;
             this.emit('update:modelValue', this.value);
+            // --- changed ---
+            this.emit('changed');
             this.check();
         }, {
             'immediate': true
@@ -666,6 +676,8 @@ export default class extends clickgo.control.AbstractControl {
                         // --- 允许 ---
                         this.value = event.detail.change ?? this.refs.text.value;
                         this.emit('update:modelValue', this.value);
+                        // --- changed ---
+                        this.emit('changed');
                     }
                     else {
                         // --- 禁止 ---
@@ -711,6 +723,8 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                // --- changed ---
+                this.emit('changed');
             }
         });
         this.watch('min', async () => {
@@ -748,6 +762,8 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                // --- changed ---
+                this.emit('changed');
             }
         });
         this.watch('maxlength', () => {
@@ -774,6 +790,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.value = event.detail.change ?? value;
             this.emit('update:modelValue', this.value);
+            // --- changed ---
+            this.emit('changed');
         });
         this.watch('scrollLeft', (): void => {
             const prop = this.propInt('scrollLeft');
