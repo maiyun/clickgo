@@ -19,8 +19,8 @@
                 <label>123</label>
                 <title type="info">Info title</title>
                 <label>123</label>
-                <title type="warning">Warning title</title>
-                <label>123</label>
+                <title type="warning" v-model:arrow="warrow">Warning title</title>
+                <label v-if="warrow">123</label>
                 <title type="danger">Danger title</title>
                 <label>123</label>
             </flow>

@@ -11,6 +11,7 @@ export default class extends clickgo.control.AbstractControl {
 
         'area': 'all' | 'mark' | 'split';
         'size': 'm' | 'l' | 'xl';
+        'sizeh': boolean | string;
         'gutter': number | string;
     } = {
             'disabled': false,
@@ -21,6 +22,7 @@ export default class extends clickgo.control.AbstractControl {
 
             'area': 'all',
             'size': 'm',
+            'sizeh': false,
             'gutter': 0
         };
 

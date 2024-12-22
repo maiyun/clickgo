@@ -23,14 +23,29 @@
             content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1;
         }
     }
+    &.sizeh {
+        .inner {
+            padding-left: calc(var(--g-padding) * 2); padding-right: calc(var(--g-padding) * 2);
+        }
+    }
     &.size-l {
         .inner {
             padding: var(--g-padding-l);
+        }
+        &.sizeh {
+            .inner {
+                padding-left: calc(var(--g-padding-l) * 2); padding-right: calc(var(--g-padding-l) * 2);
+            }
         }
     }
     &.size-xl {
         .inner {
             padding: var(--g-padding-xl);
+        }
+        &.sizeh {
+            .inner {
+                padding-left: calc(var(--g-padding-xl) * 2); padding-right: calc(var(--g-padding-xl) * 2);
+            }
         }
     }
     .arrow {

@@ -5,7 +5,12 @@
     }
 
     .content {
-        background: var(--g-plain-background); padding: var(--g-padding-l); flex: 1;
+        background: var(--g-plain-background); flex: 1;
+    }
+    &.padding {
+        .content {
+            padding: var(--g-padding-l);
+        }
     }
     
     .controls {

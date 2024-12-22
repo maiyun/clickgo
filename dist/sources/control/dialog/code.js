@@ -45,6 +45,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'gutter': '',
             'width': undefined,
             'height': undefined,
+            'padding': true,
             'buttons': ['OK']
         };
     }

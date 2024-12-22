@@ -1,5 +1,5 @@
 .wrap {
-    width: 100%; height: 100%; display: flex; background: rgba(0, 0, 0, .5); -webkit-backdrop-filter: blur(30px) saturate(2); backdrop-filter: blur(30px) saturate(2);
+    width: 100%; height: 100%; display: flex; background: rgba(0, 0, 0, .5); -webkit-backdrop-filter: blur(5px) saturate(2); backdrop-filter: blur(5px) saturate(2);
     &.left, &.right {
         flex-direction: column;
     }

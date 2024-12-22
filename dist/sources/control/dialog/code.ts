@@ -11,6 +11,7 @@ export default class extends clickgo.control.AbstractControl {
         'gutter': string;
         'width'?: number | string;
         'height'?: number | string;
+        'padding': boolean | string;
 
         'buttons': string[];
     } = {
@@ -18,6 +19,7 @@ export default class extends clickgo.control.AbstractControl {
             'gutter': '',
             'width': undefined,
             'height': undefined,
+            'padding': true,
 
             'buttons': ['OK']
         };

@@ -23,6 +23,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public bottom = false;
 
+    public top = false;
+
     public selection = false;
 
     public gesture = false;

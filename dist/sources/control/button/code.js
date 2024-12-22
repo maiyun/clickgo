@@ -44,6 +44,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'type': 'default',
             'area': 'all',
             'size': 'm',
+            'sizeh': false,
             'gutter': 0
         };
         this.isSpaceDown = false;

@@ -51,6 +51,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.type = ['default'];
         this.area = ['all'];
         this.plain = ['not'];
+        this.sizeh = false;
     }
     dialog(text) {
         return __awaiter(this, void 0, void 0, function* () {

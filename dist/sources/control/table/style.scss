@@ -11,7 +11,7 @@
     }
 
     .header {
-        position: sticky; top: 0; z-index: 2; display: flex; border-bottom: solid .5px var(--g-plain-border-color); overflow: hidden; background: var(--face); padding: 0 2px; /* list 的边框和间距 */
+        position: sticky; top: 0; z-index: 2; display: flex; border-bottom: solid .5px var(--g-plain-border-color); overflow: hidden; border-radius: var(--g-radius) var(--g-radius) 0 0; background: var(--face); padding: 0 2px; /* list 的边框和间距 */
         > :not(:last-child) {
             border-right: solid .5px var(--g-plain-border-color);
         }
@@ -93,6 +93,9 @@
             margin: calc(-1 * var(--g-padding));
 
             .top {
+                border-bottom: solid .5px var(--g-plain-border-color); padding: var(--g-padding); display: flex;
+            }
+            .content {
                 display: flex;
             }
             .bottom {

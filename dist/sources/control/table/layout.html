@@ -11,7 +11,10 @@
     <cg-greatlist ref="gl" :model-value="modelValue" @update:model-value="emit('update:modelValue', $event)" :data="data" :map="map" :sizes="sizes" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" @select="emit('select', $event)" @itemclicked="emit('itemclicked', $event)" :gesture="gesture" @gesture="emit('gesture', $event)" :scroll="scroll" :virtual="virtual" :mode="mode !== 'view' ? mode : (slots['bottom'] ? 'iview' : mode)" content-width="max" @update:scroll-left="updateScrollLeft" @scrollwidth="scrollWidth = $event" @clientwidth="clientWidth = $event">
         <template v-slot="data">
             <div class="gitem">
-                <div class="top">
+                <div class="top" v-if="slots['top']">
+                    <slot name="top" :row="data.row" :index="data.index"></slot>
+                </div>
+                <div class="content">
                     <slot :row="data.row" :index="data.index"></slot>
                 </div>
                 <div class="bottom" v-if="slots['bottom'] && data.row.bottom" :style="{'--bottom-width': clientWidth + 'px'}">

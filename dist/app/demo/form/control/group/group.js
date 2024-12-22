@@ -44,6 +44,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.slotRight = false;
         this.slotFooter = false;
         this.position = ['top'];
+        this.warrow = true;
     }
 }
 exports.default = default_1;

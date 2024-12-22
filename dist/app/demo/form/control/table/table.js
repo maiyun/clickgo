@@ -55,6 +55,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.multi = false;
         this.ctrl = true;
         this.bottom = false;
+        this.top = false;
         this.selection = false;
         this.gesture = false;
         this.selectionArea = {};

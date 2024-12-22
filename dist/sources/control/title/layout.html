@@ -1,6 +1,7 @@
-<div class="wrap" :class="[type]">
+<div class="wrap" :class="[type, (arrow !== undefined) && 'arrow']">
     <div class="left"></div>
     <div class="content">
         <slot></slot>
     </div>
+    <cg-arrow v-if="arrow !== undefined" :modelValue="propBoolean('arrow')" @update:modelValue="emit('update:arrow', $event)"></cg-arrow>
 </div>

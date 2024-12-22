@@ -12,6 +12,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public plain = ['not'];
 
+    public sizeh = false;
+
     public async dialog(text: string): Promise<void> {
         await clickgo.form.dialog(text);
     }

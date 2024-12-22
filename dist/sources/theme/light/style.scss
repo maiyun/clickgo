@@ -26,10 +26,10 @@ global {
     --face:hsl(210, 20%, 98%);
     --face-hover:hsl(210, 20%, 96%);
     --face-selected:hsl(210, 20%, 94%);
-    --g-pop-background:rgba(255, 255, 255, .8);
-    --g-pop-backdrop:blur(30px) saturate(2);
+    --g-pop-background:rgba(255, 255, 255, .5);
+    --g-pop-backdrop:blur(5px) saturate(2);
     --g-pop-border:solid .5px var(--g-border-color);
-    --g-shadow:0 1px 2px hsla(220,45%,10%,0.05);
+    --g-shadow:0 1px 6px hsla(220,45%,10%,0.05);
     --g-outline-shadow:0 0 0 4px hsl(220,20%,95%); 
 
     // --- 组件默认颜色（如按钮） ---
@@ -268,5 +268,14 @@ global {
 // -- CONTROL -- task --
 
 .task_wrap {
-    background: var(--pop-background);
+    background: var(--g-pop-background);
+    .task_date {
+        color: var(--g-color)
+    }
+}
+
+// --- CONTROL -- menulist ---
+
+.menulist_wrap {
+    background: transparent;
 }

@@ -1,5 +1,5 @@
 .wrap {
-    background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; overflow: hidden;
+    background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; /* overflow: hidden; --- 不能加，否则若有 table 的 scroll 和 header 不固定了 --- */
     &.plain {
         border: none;
     }

@@ -27,6 +27,8 @@
                     <check :modelValue="checkinfo.selected > 0" @change="onHeaderCheck" :indeterminate="checkinfo.selected > 0 && checkinfo.selected < checkinfo.total">index</check>
                 </layout>
             </template>
+            <!-- top -->
+            <template v-if="top" v-slot:top="d">index: {{d.index}}</template>
             <!-- bottom -->
             <template v-if="bottom" v-slot:bottom="d">
                 <desc v-if="d.index !== 1" style="flex: 1;">
@@ -87,6 +89,7 @@
                 <select v-model="fixed" :data="['undefined', 'left', 'right', 'both']" style="flex: 1;"></select>
                 <label>mode</label>
                 <select v-model="mode" :data="['default','view', 'iview']" style="flex: 1;"></select>
+                <button style="flex: 1;" @click="top = !top">{{top ? '' : '!'}}top</button>
             </layout>
         </template>
         <button v-else @click="load">Load</button>

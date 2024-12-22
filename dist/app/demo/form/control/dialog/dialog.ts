@@ -10,4 +10,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public width = false;
 
+    public padding = true;
+
 }

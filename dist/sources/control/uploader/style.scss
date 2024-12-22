@@ -1,8 +1,8 @@
 .wrap {
-    display: flex; gap: var(--g-padding); height: 90px;
+    display: flex; gap: var(--g-padding); flex-wrap: wrap;
 
     > div {
-        width: 90px; border: solid .5px transparent; display: flex; transition: var(--g-transition); border-radius: var(--g-radius);
+        width: 90px; height: 90px; border: solid .5px transparent; display: flex; transition: var(--g-transition); border-radius: var(--g-radius);
     }
 
     .item {

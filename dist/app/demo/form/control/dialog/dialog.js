@@ -41,6 +41,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.buttons = ['OK'];
         this.btn = 'none';
         this.width = false;
+        this.padding = true;
     }
 }
 exports.default = default_1;

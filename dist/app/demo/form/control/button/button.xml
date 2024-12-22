@@ -111,8 +111,8 @@
             </layout>
             <label>Other:</label>
             <layout gutter="10" align-v="center">
-                <button size="xl">Size xl</button>
-                <button size="l" area="split">
+                <button size="xl" :sizeh="sizeh">Size xl</button>
+                <button size="l" area="split" :sizeh="sizeh">
                     Size l with pop
                     <template v-slot:pop>
                         <menulist>
@@ -120,6 +120,7 @@
                         </menulist>
                     </template>
                 </button>
+                <button @click="sizeh = !sizeh">{{sizeh ? '' : '!'}}sizeh</button>
             </layout>
             <label>Bgroup:</label>
             <bgroup plain>
