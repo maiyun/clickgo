@@ -1,4 +1,4 @@
-<form width="350" height="500" title="Video" padding="10">
+<form width="450" height="500" title="Video" padding="10">
     <layout direction="v" gutter="10" style="flex: 1;">
         <label>volume: {{volume}}</label>
         <video src="/package/res/video.mp4" :controls="controls" :loop="loop" :muted="muted" v-model:volume="volume" v-model:play="play" style="flex: 1; height: 0;"></video>

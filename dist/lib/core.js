@@ -374,6 +374,23 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'mpegts': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    loader.cdn + '/npm/mpegts.js@1.7.3/dist/mpegts.min.js'
+                ]);
+                if (!window.mpegts) {
+                    throw Error('mpegts load failed.');
+                }
+                window.mpegts.LoggingControl.enableAll = false;
+                return window.mpegts;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 function regModule(name, func) {
@@ -391,7 +408,8 @@ function regModule(name, func) {
 function getModule(name) {
     return new Promise((resolve) => {
         if (!modules[name]) {
-            return null;
+            resolve(null);
+            return;
         }
         if (!modules[name].obj) {
             if (modules[name].loading) {

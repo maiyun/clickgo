@@ -94,6 +94,7 @@ const text_1 = __importDefault(require("./control/text/text"));
 const timeline_1 = __importDefault(require("./control/timeline/timeline"));
 const vflow_1 = __importDefault(require("./control/vflow/vflow"));
 const video_1 = __importDefault(require("./control/video/video"));
+const mpegts_1 = __importDefault(require("./control/mpegts/mpegts"));
 const imgviewer_1 = __importDefault(require("./control/imgviewer/imgviewer"));
 const step_1 = __importDefault(require("./control/step/step"));
 const xterm_1 = __importDefault(require("./control/xterm/xterm"));
@@ -228,6 +229,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cvideo': {
                     frm = yield clickgo.form.create(video_1.default);
+                    break;
+                }
+                case 'cmpegts': {
+                    frm = yield clickgo.form.create(mpegts_1.default);
                     break;
                 }
                 case 'cstep': {

@@ -26,8 +26,8 @@ global {
     --face:hsl(210, 20%, 98%);
     --face-hover:hsl(210, 20%, 96%);
     --face-selected:hsl(210, 20%, 94%);
-    --g-pop-background:rgba(255, 255, 255, .5);
-    --g-pop-backdrop:blur(5px) saturate(2);
+    --g-pop-background:rgba(255, 255, 255, .6);
+    --g-pop-backdrop:blur(10px) saturate(2);
     --g-pop-border:solid .5px var(--g-border-color);
     --g-shadow:0 1px 6px hsla(220,45%,10%,0.05);
     --g-outline-shadow:0 0 0 4px hsl(220,20%,95%); 

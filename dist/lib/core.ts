@@ -418,6 +418,21 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'mpegts': {
+        func: async function() {
+            await loader.loadScripts([
+                loader.cdn + '/npm/mpegts.js@1.7.3/dist/mpegts.min.js'
+            ]);
+            if (!(window as any).mpegts) {
+                throw Error('mpegts load failed.');
+            }
+            (window as any).mpegts.LoggingControl.enableAll = false;
+            return (window as any).mpegts;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': []
     }
 };
 
@@ -446,7 +461,8 @@ export function regModule(name: string, func: () => any | Promise<any>): boolean
 export function getModule(name: string): Promise<null | any> {
     return new Promise((resolve) => {
         if (!modules[name]) {
-            return null;
+            resolve(null);
+            return;
         }
         if (!modules[name].obj) {
             // --- obj 是 null 判断是否要初始化 ---

@@ -73,7 +73,6 @@ class default_1 extends clickgo.control.AbstractControl {
             'controls': false,
             'loop': false,
             'muted': false,
-            'mode': 'default',
             'volume': 50,
             'play': false,
             'current': 0

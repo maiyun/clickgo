@@ -96,6 +96,7 @@
                 <layout gutter="10">
                     <button @click="openForm('ctip')">Tip</button>
                     <button @click="openForm('cgroup')">Group + Title</button>
+                    <button @click="openForm('cmpegts')">Mpegts</button>
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cicon')">Icon</button>

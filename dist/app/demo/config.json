@@ -25,7 +25,8 @@
         "/clickgo/control/tuiviewer",
         "/clickgo/control/arteditor",
         "/clickgo/control/jodit",
-        "/clickgo/control/qrcode"
+        "/clickgo/control/qrcode",
+        "/clickgo/control/mpegts"
     ],
     "style": "/package/global",
 
@@ -110,6 +111,8 @@
         "/form/control/menu/menu.xml",
         "/form/control/monaco/monaco.js",
         "/form/control/monaco/monaco.xml",
+        "/form/control/mpegts/mpegts.js",
+        "/form/control/mpegts/mpegts.xml",
         "/form/control/nav/nav.js",
         "/form/control/nav/nav.xml",
         "/form/control/page/page.js",

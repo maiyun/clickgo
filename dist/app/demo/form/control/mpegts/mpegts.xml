@@ -1,0 +1,11 @@
+<form width="450" height="500" title="Mpegts" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <label>volume: {{volume}}</label>
+        <mpegts :src="src[0]" :controls="controls" v-model:volume="volume" v-model:play="play" text="TEST RTSP" style="flex: 1; height: 0;"></mpegts>
+        <layout gutter="10">
+            <button @click="controls = !controls" style="flex: 1;">{{controls ? '' : '!'}}controls</button>
+            <button @click="play = !play" style="flex: 1;">{{play ? '' : '!'}}play</button>
+            <select :data="list" v-model="src" style="flex: 1;"></select>
+        </layout>
+    </layout>
+</form>
