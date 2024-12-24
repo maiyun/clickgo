@@ -163,29 +163,6 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.access.mpegts = mpegts;
 
-        this.watch('src', async (n, o) => {
-            if (n === o) {
-                return;
-            }
-            if (!this.props.src) {
-                if (!this.access.instance) {
-                    return;
-                }
-                this.access.instance.destroy();
-                this.access.instance = undefined;
-                return;
-            }
-            // --- 本次不为空，看看是不是还有上次的 ---
-            if (this.access.instance) {
-                this.access.instance.destroy();
-            }
-            if (this.playData) {
-                this.toPlay();
-            }
-        }, {
-            'immediate': true
-        });
-
         // --- 设置音量 ---
         this.watch('volume', () => {
             this.refs.video.volume = this.propInt('volume') / 100;
@@ -226,6 +203,30 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
         this.playData = this.propBoolean('play');
+
+        // --- src 变更和初始化 ---
+        this.watch('src', async (n, o) => {
+            if (n === o) {
+                return;
+            }
+            if (!this.props.src) {
+                if (!this.access.instance) {
+                    return;
+                }
+                this.access.instance.destroy();
+                this.access.instance = undefined;
+                return;
+            }
+            // --- 本次不为空，看看是不是还有上次的 ---
+            if (this.access.instance) {
+                this.access.instance.destroy();
+            }
+            if (this.playData) {
+                this.toPlay();
+            }
+        }, {
+            'immediate': true
+        });
 
         // --- 初始化成功 ---
         this.isLoading = false;

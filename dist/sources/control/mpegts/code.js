@@ -172,27 +172,6 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.access.mpegts = mpegts;
-            this.watch('src', (n, o) => __awaiter(this, void 0, void 0, function* () {
-                if (n === o) {
-                    return;
-                }
-                if (!this.props.src) {
-                    if (!this.access.instance) {
-                        return;
-                    }
-                    this.access.instance.destroy();
-                    this.access.instance = undefined;
-                    return;
-                }
-                if (this.access.instance) {
-                    this.access.instance.destroy();
-                }
-                if (this.playData) {
-                    this.toPlay();
-                }
-            }), {
-                'immediate': true
-            });
             this.watch('volume', () => {
                 this.refs.video.volume = this.propInt('volume') / 100;
             }, {
@@ -228,6 +207,27 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             });
             this.playData = this.propBoolean('play');
+            this.watch('src', (n, o) => __awaiter(this, void 0, void 0, function* () {
+                if (n === o) {
+                    return;
+                }
+                if (!this.props.src) {
+                    if (!this.access.instance) {
+                        return;
+                    }
+                    this.access.instance.destroy();
+                    this.access.instance = undefined;
+                    return;
+                }
+                if (this.access.instance) {
+                    this.access.instance.destroy();
+                }
+                if (this.playData) {
+                    this.toPlay();
+                }
+            }), {
+                'immediate': true
+            });
             this.isLoading = false;
             this.emit('init', {
                 'mpegts': this.access.mpegts,
