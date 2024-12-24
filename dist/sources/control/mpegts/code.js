@@ -227,6 +227,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.access.instance = undefined;
                 }
             });
+            this.playData = this.propBoolean('play');
             this.isLoading = false;
             this.emit('init', {
                 'mpegts': this.access.mpegts,

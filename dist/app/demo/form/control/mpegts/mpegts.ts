@@ -4,7 +4,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public controls = false;
 
-    public play = false;
+    public play = true;
 
     public volume = 80;
 

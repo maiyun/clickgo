@@ -38,7 +38,7 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.controls = false;
-        this.play = false;
+        this.play = true;
         this.volume = 80;
         this.list = [
             {

@@ -225,6 +225,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.access.instance = undefined;
             }
         });
+        this.playData = this.propBoolean('play');
 
         // --- 初始化成功 ---
         this.isLoading = false;
