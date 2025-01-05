@@ -5,7 +5,8 @@ export default class extends clickgo.control.AbstractControl {
     public emits = {
         'canplay': null,
         'init': null,
-        'update:play': null
+        'update:play': null,
+        'update:volume': null,
     };
 
     public props: {
@@ -31,7 +32,7 @@ export default class extends clickgo.control.AbstractControl {
         'mpegts': any;
     } = {
             'instance': undefined,
-            'mpegts': undefined
+            'mpegts': undefined,
         };
 
     public notInit = false;
@@ -44,6 +45,12 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 将在多久后隐藏 (controls) --- */
     public hideTimer = 0;
 
+    /** --- 存储的音量大小 --- */
+    public volumeSave = 0;
+
+    /** --- 当前的声量 --- */
+    public volumeData = 0;
+
     // --- 播放状态相关事件 ---
 
     /** --- 正式开始播放 --- */
@@ -55,16 +62,23 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'enableStashBuffer': false,
             'stashInitialSize': 128,
+            'enableWorkerForMSE': true,
             'lazyLoad': false,
             'lazyLoadMaxDuration': 0.2,
             'liveBufferLatencyChasing': true,
             'liveBufferLatencyMinRemain': 0.2,
             'autoCleanupSourceBuffer': true,
-            'autoCleanupMaxBackwardDuration': 5,
-            'autoCleanupMinBackwardDuration': 5
+            'autoCleanupMaxBackwardDuration': 10,
+            'autoCleanupMinBackwardDuration': 10
         });
         this.access.instance.attachMediaElement(this.refs.video);
         this.access.instance.load();
+        this.access.instance.on(this.access.mpegts.Events.ERROR, (e: any, e2: any, e3: any) => {
+            // --- 会是啥错误呢 ---
+            console.log('[ERROR][CONTROL][MPEGTS]', 'ERROR', e, e2, e3);
+            this.access.instance.destroy();
+            this.toPlay();
+        });
         this.access.instance.play();
     }
 
@@ -153,6 +167,21 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('canplay');
     }
 
+    /** --- 喇叭事件 --- */
+    public volumeClick() {
+        if (this.volumeData) {
+            // --- 有声音变没声音 ---
+            this.refs.video.volume = 0;
+            this.volumeData = 0;
+            this.emit('update:volume', 0);
+            return;
+        }
+        // --- 没声音变有声音 ---
+        this.refs.video.volume = this.volumeSave / 100;
+        this.volumeData = this.volumeSave;
+        this.emit('update:volume', this.volumeData);
+    }
+
     public async onMounted(): Promise<void> {
         const mpegts = await clickgo.core.getModule('mpegts');
         if (!mpegts) {
@@ -165,7 +194,15 @@ export default class extends clickgo.control.AbstractControl {
 
         // --- 设置音量 ---
         this.watch('volume', () => {
+            if (this.volumeData === this.propInt('volume')) {
+                return;
+            }
             this.refs.video.volume = this.propInt('volume') / 100;
+            this.volumeData = this.propInt('volume');
+            if (!this.propInt('volume')) {
+                return;
+            }
+            this.volumeSave = this.propInt('volume');
         }, {
             'immediate': true
         });
@@ -227,6 +264,10 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+
+        /** --- 先存储到历史里面 --- */
+        this.volumeSave = this.propInt('volume');
+        this.volumeData = this.propInt('volume');
 
         // --- 初始化成功 ---
         this.isLoading = false;

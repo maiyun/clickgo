@@ -49,7 +49,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emits = {
             'canplay': null,
             'init': null,
-            'update:play': null
+            'update:play': null,
+            'update:volume': null,
         };
         this.props = {
             'src': '',
@@ -60,12 +61,14 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.access = {
             'instance': undefined,
-            'mpegts': undefined
+            'mpegts': undefined,
         };
         this.notInit = false;
         this.isLoading = true;
         this.isShow = false;
         this.hideTimer = 0;
+        this.volumeSave = 0;
+        this.volumeData = 0;
         this.playData = false;
     }
     toPlay() {
@@ -76,16 +79,22 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'enableStashBuffer': false,
             'stashInitialSize': 128,
+            'enableWorkerForMSE': true,
             'lazyLoad': false,
             'lazyLoadMaxDuration': 0.2,
             'liveBufferLatencyChasing': true,
             'liveBufferLatencyMinRemain': 0.2,
             'autoCleanupSourceBuffer': true,
-            'autoCleanupMaxBackwardDuration': 5,
-            'autoCleanupMinBackwardDuration': 5
+            'autoCleanupMaxBackwardDuration': 10,
+            'autoCleanupMinBackwardDuration': 10
         });
         this.access.instance.attachMediaElement(this.refs.video);
         this.access.instance.load();
+        this.access.instance.on(this.access.mpegts.Events.ERROR, (e, e2, e3) => {
+            console.log('[ERROR][CONTROL][MPEGTS]', 'ERROR', e, e2, e3);
+            this.access.instance.destroy();
+            this.toPlay();
+        });
         this.access.instance.play();
     }
     playClick() {
@@ -163,6 +172,17 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.emit('canplay');
     }
+    volumeClick() {
+        if (this.volumeData) {
+            this.refs.video.volume = 0;
+            this.volumeData = 0;
+            this.emit('update:volume', 0);
+            return;
+        }
+        this.refs.video.volume = this.volumeSave / 100;
+        this.volumeData = this.volumeSave;
+        this.emit('update:volume', this.volumeData);
+    }
     onMounted() {
         return __awaiter(this, void 0, void 0, function* () {
             const mpegts = yield clickgo.core.getModule('mpegts');
@@ -173,7 +193,15 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.access.mpegts = mpegts;
             this.watch('volume', () => {
+                if (this.volumeData === this.propInt('volume')) {
+                    return;
+                }
                 this.refs.video.volume = this.propInt('volume') / 100;
+                this.volumeData = this.propInt('volume');
+                if (!this.propInt('volume')) {
+                    return;
+                }
+                this.volumeSave = this.propInt('volume');
             }, {
                 'immediate': true
             });
@@ -228,6 +256,8 @@ class default_1 extends clickgo.control.AbstractControl {
             }), {
                 'immediate': true
             });
+            this.volumeSave = this.propInt('volume');
+            this.volumeData = this.propInt('volume');
             this.isLoading = false;
             this.emit('init', {
                 'mpegts': this.access.mpegts,

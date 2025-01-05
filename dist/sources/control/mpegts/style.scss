@@ -12,23 +12,24 @@
     
     .controls {
         position: absolute; left: 0; bottom: 0; width: 100%; transition: opacity .3s var(--g-cubic);
-        display: flex; padding: var(--g-padding); background: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)); color: #FFF; fill: rgba(255, 255, 255, .7);
-        .left {
-            flex: 1; display: flex; align-items: center;
-        }
-
+        display: flex; padding: var(--g-padding); background: linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .6)); color: #FFF; stroke: rgba(255, 255, 255, .7); fill: rgba(255, 255, 255, .7);
         .left, .right {
+            display: flex; align-items: center;
             .button {
                 width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: var(--g-transition);
                 &:hover {
-                    fill: rgba(255, 255, 255, 1);
+                    stroke: rgba(255, 255, 255, 1); fill: rgba(255, 255, 255, 1);
                 }
             }
         }
         .left {
+            flex: 1;
             svg {
                 margin-right: var(--g-padding);
             }
+        }
+        .right {
+            gap: var(--g-padding);
         }
     }
 

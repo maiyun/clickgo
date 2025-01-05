@@ -14,6 +14,7 @@ export default class extends clickgo.control.AbstractControl {
         'scrollwidth': null,
         'scrollheight': null,
         'beforechange': null,
+        'changed': null,
         'minmaxchange': null,
 
         'update:modelValue': null,

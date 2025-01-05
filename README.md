@@ -146,6 +146,15 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Border Radius SVG Vector](https://www.svgrepo.com/svg/446973/border-radius)  
 [Copy SVG Vector](https://www.svgrepo.com/svg/446994/copy)
 
+#### Mpegts
+
+[Play SVG Vector](https://www.svgrepo.com/svg/447035/play)  
+[Pause SVG Vector](https://www.svgrepo.com/svg/447033/pause)  
+[Border Radius SVG Vector](https://www.svgrepo.com/svg/446973/border-radius)  
+[Copy SVG Vector](https://www.svgrepo.com/svg/446994/copy)  
+[Speaker 2 SVG Vector](https://www.svgrepo.com/svg/506329/speaker-2)  
+[Speaker Cross SVG Vector](https://www.svgrepo.com/show/506328/speaker-cross.svg)
+
 #### Select
 
 [Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
