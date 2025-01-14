@@ -132,7 +132,8 @@ export default class extends clickgo.control.AbstractControl {
     public async fullClick(): Promise<void> {
         if (clickgo.dom.is.full) {
             await clickgo.dom.exitFullscreen();
-            await clickgo.tool.sleep(100);
+            // --- 等待全屏事件响应 ---
+            await clickgo.tool.sleep(150);
             if (this.props.fsrc) {
                 this.capture();
                 this.access.instance.destroy();
@@ -141,7 +142,8 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         await this.element.requestFullscreen();
-        await clickgo.tool.sleep(100);
+        // --- 等待全屏事件响应 ---
+        await clickgo.tool.sleep(150);
         if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
             this.capture();
             this.access.instance.destroy();

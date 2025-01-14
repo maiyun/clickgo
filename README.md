@@ -25,7 +25,7 @@ Load the module loader first, and then load it using the module loader.
 **index.html**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.8/dist/loader.min.js?path=index&npm={'clickgo':'3.16.7'}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.8/dist/loader.min.js?path=index&npm={'clickgo':'3.16.8'}"></script>
 ```
 
 **index.js**
@@ -82,7 +82,7 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 #### Icon
 
-<a href="https://www.flaticon.com/free-icons/identity" title="identity icons">Identity icons created by Ghozi Muhtarom - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/identity" title="identity icons">Identity icons created by Ghozi Muhtarom - Flaticon</a>  
 <a href="https://www.flaticon.com/free-icons/truck" title="truck icons">Truck icons created by Freepik - Flaticon</a>
 
 ### **LICENSE:** MIT License **AUTHOR:** sigurdarson

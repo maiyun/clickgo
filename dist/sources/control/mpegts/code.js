@@ -131,7 +131,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return __awaiter(this, void 0, void 0, function* () {
             if (clickgo.dom.is.full) {
                 yield clickgo.dom.exitFullscreen();
-                yield clickgo.tool.sleep(100);
+                yield clickgo.tool.sleep(150);
                 if (this.props.fsrc) {
                     this.capture();
                     this.access.instance.destroy();
@@ -140,7 +140,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             yield this.element.requestFullscreen();
-            yield clickgo.tool.sleep(100);
+            yield clickgo.tool.sleep(150);
             if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
                 this.capture();
                 this.access.instance.destroy();
