@@ -11,6 +11,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'src': string;
+        'fsrc': string;
         'text': string;
 
         'controls': boolean | string;
@@ -19,6 +20,7 @@ export default class extends clickgo.control.AbstractControl {
         'play': boolean | string;
     } = {
             'src': '',
+            'fsrc': '',
             'text': '',
 
             'controls': false,
@@ -30,9 +32,11 @@ export default class extends clickgo.control.AbstractControl {
     public access: {
         'instance': any;
         'mpegts': any;
+        'ctx': any;
     } = {
             'instance': undefined,
             'mpegts': undefined,
+            'ctx': undefined
         };
 
     public notInit = false;
@@ -55,10 +59,12 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 正式开始播放 --- */
     public toPlay() {
+        /** --- 要加载的 url --- */
+        const url = this.isFull ? (this.props.fsrc || this.props.src) : this.props.src;
         this.access.instance = this.access.mpegts.createPlayer({
             'type': 'mse',
             'isLive': true,
-            'url': this.props.src
+            'url': url
         }, {
             'enableStashBuffer': false,
             'stashInitialSize': 128,
@@ -76,34 +82,71 @@ export default class extends clickgo.control.AbstractControl {
         this.access.instance.on(this.access.mpegts.Events.ERROR, (e: any, e2: any, e3: any) => {
             // --- 会是啥错误呢 ---
             console.log('[ERROR][CONTROL][MPEGTS]', 'ERROR', e, e2, e3);
+            this.capture();
             this.access.instance.destroy();
             this.toPlay();
         });
         this.access.instance.play();
     }
 
+    /** --- 播放状态 --- */
     public playData: boolean = false;
 
     public playClick(): void {
         if (this.playData) {
+            // --- 变暂停 ---
             if (this.access.instance) {
+                this.capture();
                 this.access.instance.destroy();
                 this.access.instance = undefined;
             }
         }
         else {
+            // --- 变播放 ---
             this.toPlay();
         }
         this.playData = !this.playData;
         this.emit('update:play', this.playData);
     }
 
+    /** --- 捕获一帧 --- */
+    public capture() {
+        if (!this.access.instance) {
+            return;
+        }
+        this.refs.canvas.width = this.refs.video.videoWidth;
+        this.refs.canvas.height = this.refs.video.videoHeight;
+        this.refs.canvas.style.aspectRatio = this.refs.video.videoWidth + ' / ' + this.refs.video.videoHeight;
+        this.access.ctx.drawImage(
+            this.refs.video,
+            0, 0, this.refs.video.videoWidth, this.refs.video.videoHeight,
+            0, 0, this.refs.canvas.width, this.refs.canvas.height
+        );
+    }
+
+    /** --- 清除画布 --- */
+    public clear() {
+        this.access.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
+    }
+
     public async fullClick(): Promise<void> {
         if (clickgo.dom.is.full) {
             await clickgo.dom.exitFullscreen();
+            await clickgo.tool.sleep(100);
+            if (this.props.fsrc) {
+                this.capture();
+                this.access.instance.destroy();
+                this.toPlay();
+            }
             return;
         }
         await this.element.requestFullscreen();
+        await clickgo.tool.sleep(100);
+        if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
+            this.capture();
+            this.access.instance.destroy();
+            this.toPlay();
+        }
     }
 
     /** --- 当前是否是全屏 --- */
@@ -167,6 +210,10 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('canplay');
     }
 
+    public onPlaying(): void{
+        this.clear();
+    }
+
     /** --- 喇叭事件 --- */
     public volumeClick() {
         if (this.volumeData) {
@@ -191,6 +238,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.access.mpegts = mpegts;
+        this.access.ctx = this.refs.canvas.getContext('2d');
 
         // --- 设置音量 ---
         this.watch('volume', () => {
@@ -235,6 +283,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.toPlay();
             }
             else {
+                this.capture();
                 this.access.instance.destroy();
                 this.access.instance = undefined;
             }

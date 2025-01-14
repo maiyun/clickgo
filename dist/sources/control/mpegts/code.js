@@ -54,6 +54,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'src': '',
+            'fsrc': '',
             'text': '',
             'controls': false,
             'volume': 80,
@@ -62,6 +63,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access = {
             'instance': undefined,
             'mpegts': undefined,
+            'ctx': undefined
         };
         this.notInit = false;
         this.isLoading = true;
@@ -72,10 +74,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.playData = false;
     }
     toPlay() {
+        const url = this.isFull ? (this.props.fsrc || this.props.src) : this.props.src;
         this.access.instance = this.access.mpegts.createPlayer({
             'type': 'mse',
             'isLive': true,
-            'url': this.props.src
+            'url': url
         }, {
             'enableStashBuffer': false,
             'stashInitialSize': 128,
@@ -92,6 +95,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access.instance.load();
         this.access.instance.on(this.access.mpegts.Events.ERROR, (e, e2, e3) => {
             console.log('[ERROR][CONTROL][MPEGTS]', 'ERROR', e, e2, e3);
+            this.capture();
             this.access.instance.destroy();
             this.toPlay();
         });
@@ -100,6 +104,7 @@ class default_1 extends clickgo.control.AbstractControl {
     playClick() {
         if (this.playData) {
             if (this.access.instance) {
+                this.capture();
                 this.access.instance.destroy();
                 this.access.instance = undefined;
             }
@@ -110,13 +115,37 @@ class default_1 extends clickgo.control.AbstractControl {
         this.playData = !this.playData;
         this.emit('update:play', this.playData);
     }
+    capture() {
+        if (!this.access.instance) {
+            return;
+        }
+        this.refs.canvas.width = this.refs.video.videoWidth;
+        this.refs.canvas.height = this.refs.video.videoHeight;
+        this.refs.canvas.style.aspectRatio = this.refs.video.videoWidth + ' / ' + this.refs.video.videoHeight;
+        this.access.ctx.drawImage(this.refs.video, 0, 0, this.refs.video.videoWidth, this.refs.video.videoHeight, 0, 0, this.refs.canvas.width, this.refs.canvas.height);
+    }
+    clear() {
+        this.access.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
+    }
     fullClick() {
         return __awaiter(this, void 0, void 0, function* () {
             if (clickgo.dom.is.full) {
                 yield clickgo.dom.exitFullscreen();
+                yield clickgo.tool.sleep(100);
+                if (this.props.fsrc) {
+                    this.capture();
+                    this.access.instance.destroy();
+                    this.toPlay();
+                }
                 return;
             }
             yield this.element.requestFullscreen();
+            yield clickgo.tool.sleep(100);
+            if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
+                this.capture();
+                this.access.instance.destroy();
+                this.toPlay();
+            }
         });
     }
     get isFull() {
@@ -172,6 +201,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.emit('canplay');
     }
+    onPlaying() {
+        this.clear();
+    }
     volumeClick() {
         if (this.volumeData) {
             this.refs.video.volume = 0;
@@ -192,6 +224,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.access.mpegts = mpegts;
+            this.access.ctx = this.refs.canvas.getContext('2d');
             this.watch('volume', () => {
                 if (this.volumeData === this.propInt('volume')) {
                     return;
@@ -230,6 +263,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.toPlay();
                 }
                 else {
+                    this.capture();
                     this.access.instance.destroy();
                     this.access.instance = undefined;
                 }
