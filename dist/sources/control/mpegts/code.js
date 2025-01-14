@@ -125,7 +125,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access.ctx.drawImage(this.refs.video, 0, 0, this.refs.video.videoWidth, this.refs.video.videoHeight, 0, 0, this.refs.canvas.width, this.refs.canvas.height);
     }
     clear() {
-        this.access.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
+        this.access.ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
     }
     fullClick() {
         return __awaiter(this, void 0, void 0, function* () {

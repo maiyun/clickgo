@@ -126,7 +126,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 清除画布 --- */
     public clear() {
-        this.access.ctx.clearRect(0, 0, this.refs.canvas.offsetWidth, this.refs.canvas.offsetHeight);
+        this.access.ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
     }
 
     public async fullClick(): Promise<void> {
