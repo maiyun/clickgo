@@ -18,6 +18,8 @@ export default class extends clickgo.control.AbstractControl {
 
         'volume': number | string;
         'play': boolean | string;
+        /** --- 自动销毁重置时间，0 为不自动重置，毫秒 --- */
+        'reset': number;
     } = {
             'src': '',
             'fsrc': '',
@@ -27,6 +29,7 @@ export default class extends clickgo.control.AbstractControl {
 
             'volume': 80,
             'play': false,
+            'reset': 0,
         };
 
     public access: {
@@ -86,6 +89,9 @@ export default class extends clickgo.control.AbstractControl {
             this.access.instance.destroy();
             this.toPlay();
         });
+        this.access.instance.on(this.access.mpegts.Events.STATISTICS_INFO, () => {
+            // --- 如果有连接，这里将一直正常 ---
+        });
         this.access.instance.play();
     }
 
@@ -132,6 +138,9 @@ export default class extends clickgo.control.AbstractControl {
     public async fullClick(): Promise<void> {
         if (clickgo.dom.is.full) {
             await clickgo.dom.exitFullscreen();
+            if (!this.access.instance) {
+                return;
+            }
             // --- 等待全屏事件响应 ---
             await clickgo.tool.sleep(150);
             if (this.props.fsrc) {
@@ -142,6 +151,9 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         await this.element.requestFullscreen();
+        if (!this.access.instance) {
+            return;
+        }
         // --- 等待全屏事件响应 ---
         await clickgo.tool.sleep(150);
         if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
@@ -212,8 +224,50 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('canplay');
     }
 
+    /** --- 等待超过 5 秒就重建 --- */
+    private _waitingTimer = 0;
+
     public onPlaying(): void{
         this.clear();
+        if (!this._waitingTimer) {
+            return;
+        }
+        clickgo.task.removeTimer(this._waitingTimer);
+        this._waitingTimer = 0;
+    }
+
+    public onPause(): void {
+        if (this._waitingTimer) {
+            clickgo.task.removeTimer(this._waitingTimer);
+        }
+        this._waitingTimer = clickgo.task.createTimer(() => {
+            this._waitingTimer = 0;
+            if (!this.access.instance) {
+                return;
+            }
+            this.capture();
+            this.access.instance.destroy();
+            this.toPlay();
+        }, 5_000, {
+            'count': 1,
+        })
+    }
+
+    public onWaiting(): void {
+        if (this._waitingTimer) {
+            clickgo.task.removeTimer(this._waitingTimer);
+        }
+        this._waitingTimer = clickgo.task.createTimer(() => {
+            this._waitingTimer = 0;
+            if (!this.access.instance) {
+                return;
+            }
+            this.capture();
+            this.access.instance.destroy();
+            this.toPlay();
+        }, 5_000, {
+            'count': 1,
+        })
     }
 
     /** --- 喇叭事件 --- */
@@ -312,6 +366,36 @@ export default class extends clickgo.control.AbstractControl {
             if (this.playData) {
                 this.toPlay();
             }
+        }, {
+            'immediate': true
+        });
+
+        /** --- 自动重置的 timer --- */
+        let resetTimer: number = 0;
+        this.watch('reset', () => {
+            if (!this.propInt('reset')) {
+                // --- 关闭 ---
+                if (!resetTimer) {
+                    // --- 本来就关闭 ---
+                    return;
+                }
+                clickgo.task.removeTimer(resetTimer);
+                resetTimer = 0;
+                return;
+            }
+            // --- 打开 ---
+            if (resetTimer) {
+                clickgo.task.removeTimer(resetTimer);
+            }
+            resetTimer = clickgo.task.createTimer(() => {
+                if (!this.access.instance) {
+                    return;
+                }
+                // --- 存在必然在播放状态 ---
+                this.capture();
+                this.access.instance.destroy();
+                this.toPlay();
+            }, this.propInt('reset'))
         }, {
             'immediate': true
         });

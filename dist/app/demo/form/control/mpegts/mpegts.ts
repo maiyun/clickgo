@@ -16,12 +16,12 @@ export default class extends clickgo.form.AbstractForm {
         },
         {
             'label': 'rtsp1',
-            'value': 'ws://ocs.brctest.com:8080/camera?_auth=Basic%20dG9rZW46ek1pNFFkZmMyMWxCOG95Ng==&lang=sc&shop_uid=j5CJlpt0fAOq2DCo&uid=cASOapX4ftbiuSY0uIhKPFID&channel=sub'
+            'value': 'ws://media.z7test.com:8080/media?uid=cASOapX4ftbiuSY0uIhKPFID&auth=x&channel=sub'
         },
         {
             'label': 'rtsp2',
-            'value': 'ws://ocs.brctest.com:8080/camera?_auth=Basic%20dG9rZW46ek1pNFFkZmMyMWxCOG95Ng==&lang=sc&shop_uid=j5CJlpt0fAOq2DCo&uid=jv6Rk0FdCYHGnu02xjKxz9Pe&channel=sub',
-            'fval': 'ws://ocs.brctest.com:8080/camera?_auth=Basic%20dG9rZW46ek1pNFFkZmMyMWxCOG95Ng==&lang=sc&shop_uid=j5CJlpt0fAOq2DCo&uid=jv6Rk0FdCYHGnu02xjKxz9Pe&channel=main'
+            'value': 'ws://media.z7test.com:8080/media?uid=jv6Rk0FdCYHGnu02xjKxz9Pe&auth=x&channel=sub',
+            'fval': 'ws://media.z7test.com:8080/media?uid=jv6Rk0FdCYHGnu02xjKxz9Pe&auth=x&channel=main'
         }
     ];
 

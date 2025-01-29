@@ -1927,8 +1927,8 @@ export function clearLocaleLang(taskId?: number): void {
 /**
  * --- 创建 timer ---
  * @param fun 执行函数
- * @param delay 延迟/间隔
- * @param opt 选项, taskId: App 模式下无效, formId: 可省略，App 模式下省略代表生命周期为当前整个任务，否则只是当前窗体，immediate: 立即执行，默认 false
+ * @param delay 延迟/间隔，毫秒
+ * @param opt 选项, taskId: App 模式下无效, formId: 可省略，App 模式下省略代表生命周期为当前整个任务，否则只是当前窗体，immediate: 立即执行，默认 false，count: 执行次数，0 为无限次，默认 0
  */
 export function createTimer(
     fun: () => void | Promise<void>,

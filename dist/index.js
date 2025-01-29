@@ -152,7 +152,12 @@ function launcher(boot) {
                 'map': map
             })[0];
             try {
-                const style = yield (yield fetch(__dirname + '/global.css' + (__dirname.startsWith(loader.cdn) ? '' : '?' + Math.random().toString()))).text();
+                let style = yield (yield fetch(__dirname + '/global.css' + (__dirname.startsWith(loader.cdn) ? '' : '?' + Math.random().toString()))).text();
+                const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
+                let match = null;
+                while ((match = reg.exec(style))) {
+                    style = style.replace(match[0], `url('${__dirname}/${match[1]}')`);
+                }
                 (_a = document.getElementById('cg-global')) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML('afterbegin', style);
             }
             catch (_b) {

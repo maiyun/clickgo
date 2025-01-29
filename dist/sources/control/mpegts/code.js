@@ -59,6 +59,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'controls': false,
             'volume': 80,
             'play': false,
+            'reset': 0,
         };
         this.access = {
             'instance': undefined,
@@ -72,6 +73,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.volumeSave = 0;
         this.volumeData = 0;
         this.playData = false;
+        this._waitingTimer = 0;
     }
     toPlay() {
         const url = this.isFull ? (this.props.fsrc || this.props.src) : this.props.src;
@@ -98,6 +100,8 @@ class default_1 extends clickgo.control.AbstractControl {
             this.capture();
             this.access.instance.destroy();
             this.toPlay();
+        });
+        this.access.instance.on(this.access.mpegts.Events.STATISTICS_INFO, () => {
         });
         this.access.instance.play();
     }
@@ -131,6 +135,9 @@ class default_1 extends clickgo.control.AbstractControl {
         return __awaiter(this, void 0, void 0, function* () {
             if (clickgo.dom.is.full) {
                 yield clickgo.dom.exitFullscreen();
+                if (!this.access.instance) {
+                    return;
+                }
                 yield clickgo.tool.sleep(150);
                 if (this.props.fsrc) {
                     this.capture();
@@ -140,6 +147,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             yield this.element.requestFullscreen();
+            if (!this.access.instance) {
+                return;
+            }
             yield clickgo.tool.sleep(150);
             if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
                 this.capture();
@@ -203,6 +213,43 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onPlaying() {
         this.clear();
+        if (!this._waitingTimer) {
+            return;
+        }
+        clickgo.task.removeTimer(this._waitingTimer);
+        this._waitingTimer = 0;
+    }
+    onPause() {
+        if (this._waitingTimer) {
+            clickgo.task.removeTimer(this._waitingTimer);
+        }
+        this._waitingTimer = clickgo.task.createTimer(() => {
+            this._waitingTimer = 0;
+            if (!this.access.instance) {
+                return;
+            }
+            this.capture();
+            this.access.instance.destroy();
+            this.toPlay();
+        }, 5000, {
+            'count': 1,
+        });
+    }
+    onWaiting() {
+        if (this._waitingTimer) {
+            clickgo.task.removeTimer(this._waitingTimer);
+        }
+        this._waitingTimer = clickgo.task.createTimer(() => {
+            this._waitingTimer = 0;
+            if (!this.access.instance) {
+                return;
+            }
+            this.capture();
+            this.access.instance.destroy();
+            this.toPlay();
+        }, 5000, {
+            'count': 1,
+        });
     }
     volumeClick() {
         if (this.volumeData) {
@@ -288,6 +335,30 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.toPlay();
                 }
             }), {
+                'immediate': true
+            });
+            let resetTimer = 0;
+            this.watch('reset', () => {
+                if (!this.propInt('reset')) {
+                    if (!resetTimer) {
+                        return;
+                    }
+                    clickgo.task.removeTimer(resetTimer);
+                    resetTimer = 0;
+                    return;
+                }
+                if (resetTimer) {
+                    clickgo.task.removeTimer(resetTimer);
+                }
+                resetTimer = clickgo.task.createTimer(() => {
+                    if (!this.access.instance) {
+                        return;
+                    }
+                    this.capture();
+                    this.access.instance.destroy();
+                    this.toPlay();
+                }, this.propInt('reset'));
+            }, {
                 'immediate': true
             });
             this.volumeSave = this.propInt('volume');

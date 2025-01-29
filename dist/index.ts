@@ -249,7 +249,13 @@ export function launcher(boot: AbstractBoot): void {
         })[0] as typeof import('../dist/clickgo');
         // --- 加载 clickgo 的 global css ---
         try {
-            const style = await (await fetch(__dirname + '/global.css' + (__dirname.startsWith(loader.cdn) ? '' : '?' + Math.random().toString()))).text();
+            let style = await (await fetch(__dirname + '/global.css' + (__dirname.startsWith(loader.cdn) ? '' : '?' + Math.random().toString()))).text();
+            // --- 将 style 里的 url 转换一下路径 ---
+            const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
+            let match: RegExpExecArray | null = null;
+            while ((match = reg.exec(style))) {
+                style = style.replace(match[0], `url('${__dirname}/${match[1]}')`);
+            }
             document.getElementById('cg-global')?.insertAdjacentHTML('afterbegin', style);
         }
         catch {
