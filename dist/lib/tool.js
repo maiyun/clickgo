@@ -88,6 +88,7 @@ exports.execCommand = execCommand;
 exports.compar = compar;
 exports.formatSecond = formatSecond;
 exports.formatTime = formatTime;
+exports.isMs = isMs;
 exports.queryStringify = queryStringify;
 exports.queryParse = queryParse;
 const core = __importStar(require("./core"));
@@ -970,6 +971,9 @@ function formatTime(ts, tz) {
     rtn.time = ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0');
     rtn.zone = 'UTC' + (ntz >= 0 ? '+' : '') + ntz.toString();
     return rtn;
+}
+function isMs(time) {
+    return time > 1000000000000 ? true : false;
 }
 function queryStringify(query) {
     return Object.entries(query).map(([k, v]) => {

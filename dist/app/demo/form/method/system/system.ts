@@ -22,10 +22,6 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('hasFrame: ' + (clickgo.hasFrame() ? 'true' : 'false'));
     }
 
-    public async unblock(): Promise<void> {
-        await clickgo.form.dialog('typeof sessionStorage: ' + typeof sessionStorage);
-    }
-
     public async ls(): Promise<void> {
         await clickgo.form.dialog('typeof localStorage: ' + typeof localStorage);
     }

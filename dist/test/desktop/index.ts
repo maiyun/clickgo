@@ -18,7 +18,6 @@ class Boot extends clickgo.AbstractBoot {
         }
         const taskId = await clickgo.task.run('/clickgo/app/demo/', {
             'notify': window.location.href.includes('?single') ? false : undefined,
-            'unblock': ['sessionStorage'],
             'permissions': ['native.form'],
             'data': {
                 'param': 'abc'

@@ -63,6 +63,7 @@ import ccontentFrm from './control/content/content';
 import cdeleteFrm from './control/delete/delete';
 import cpdfFrm from './control/pdf/pdf';
 import cwebFrm from './control/web/web';
+import ctplinkFrm from './control/tplink/tplink';
 
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
@@ -379,6 +380,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cweb': {
                 frm = await clickgo.form.create(cwebFrm);
+                break;
+            }
+            case 'ctplink': {
+                frm = await clickgo.form.create(ctplinkFrm);
                 break;
             }
 

@@ -5,7 +5,6 @@
         <button @click="getPlatform">clickgo.getPlatform()</button>
         <button @click="isImmersion">clickgo.isImmersion()</button>
         <button @click="hasFrame">clickgo.hasFrame()</button>
-        <button @click="unblock">unblock: ['sessionStorage']</button>
         <layout gutter="10">
             <button @click="ls" style="flex: 1;">typeof localStorage</button>
             <button @click="map" style="flex: 1;">Map</button>

@@ -433,6 +433,20 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'tplink': {
+        func: async function() {
+            await loader.loadScripts([
+                __dirname + '/../ext/tplinkhd.min.js'
+            ]);
+            if (!(window as any).HDPluginControl) {
+                throw Error('Tplink load failed.');
+            }
+            return (window as any).HDPluginControl;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
     }
 };
 

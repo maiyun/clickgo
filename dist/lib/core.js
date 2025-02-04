@@ -391,6 +391,22 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': []
+    },
+    'tplink': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    __dirname + '/../ext/tplinkhd.min.js'
+                ]);
+                if (!window.HDPluginControl) {
+                    throw Error('Tplink load failed.');
+                }
+                return window.HDPluginControl;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
     }
 };
 function regModule(name, func) {

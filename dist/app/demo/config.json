@@ -26,7 +26,8 @@
         "/clickgo/control/arteditor",
         "/clickgo/control/jodit",
         "/clickgo/control/qrcode",
-        "/clickgo/control/mpegts"
+        "/clickgo/control/mpegts",
+        "/clickgo/control/tplink"
     ],
     "style": "/package/global",
 
@@ -159,6 +160,8 @@
         "/form/control/timeline/timeline.xml",
         "/form/control/tip/tip.js",
         "/form/control/tip/tip.xml",
+        "/form/control/tplink/tplink.js",
+        "/form/control/tplink/tplink.xml",
         "/form/control/tuieditor/tuieditor.js",
         "/form/control/tuieditor/tuieditor.xml",
         "/form/control/tuiviewer/tuiviewer.js",

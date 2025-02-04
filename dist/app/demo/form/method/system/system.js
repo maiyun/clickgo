@@ -69,11 +69,6 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('hasFrame: ' + (clickgo.hasFrame() ? 'true' : 'false'));
         });
     }
-    unblock() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('typeof sessionStorage: ' + typeof sessionStorage);
-        });
-    }
     ls() {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog('typeof localStorage: ' + typeof localStorage);

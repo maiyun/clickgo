@@ -1226,6 +1226,14 @@ export function formatTime(ts: number | Date, tz?: number): {
 }
 
 /**
+ * --- 是否是毫秒 ---
+ * @param time 要判断的时间戳
+ */
+export function isMs(time: number): boolean {
+    return time > 1000000000000 ? true : false;
+}
+
+/**
  * --- 将对象转换为 query string ---
  * @param query 要转换的对象
  */

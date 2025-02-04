@@ -451,8 +451,6 @@ export interface ITaskRunOptions {
     'initProgress'?: (state: string) => void | Promise<void>;
     /** --- 显示 notify 窗口 --- */
     'notify'?: boolean;
-    /** --- 不禁止某些浏览器对象，App 模式下仅能设置基任务中已经 unblock 的值 --- */
-    'unblock'?: string[];
     /** --- 直接赋予此任务相应权限，App 模式下有 "root" 权限的应用才能设置 --- */
     'permissions'?: string[];
     /** --- 给 task 传值 --- */

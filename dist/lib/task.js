@@ -292,46 +292,18 @@ function run(url_1) {
             return -1;
         }
         const taskId = ++exports.lastId;
-        const unblock = opt.unblock ? tool.clone(opt.unblock) : [];
-        const unblockSys = [
-            'require',
-            '__awaiter', 'eval', 'Math', 'Array', 'Blob', 'Error', 'Infinity', 'getComputedStyle', 'parseInt', 'parseFloat', 'Promise', 'Date', 'JSON', 'fetch', 'Number', 'String', 'Object', 'encodeURIComponent', 'decodeURIComponent', 'FormData', 'WebSocket',
-            'Map', 'Set', 'WeakMap', 'WeakSet', 'RegExp', 'Function', 'Boolean', 'Symbol', 'Proxy', 'Reflect', 'Intl', 'NaN', 'navigator', 'Image', 'Audio', 'CanvasRenderingContext2D', 'WebGLRenderingContext', 'NodeList', 'HTMLCollection', 'Event', 'MouseEvent', 'KeyboardEvent', 'TouchEvent', 'File', 'FileList', 'URL', 'Navigator', 'Performance', 'Crypto', 'Worker', 'SharedWorker', 'ServiceWorker', 'WebAssembly', 'IntersectionObserver', 'MutationObserver', 'AudioContext', 'WebGL2RenderingContext', 'WebGLVertexArrayObject', 'WebGLBuffer', 'WebGLShader', 'WebGLProgram', 'WebGLTexture', 'WebGLRenderbuffer', 'WebGLFramebuffer', 'WebGLUniformLocation', 'WebGLActiveInfo', 'WebGLShaderPrecisionFormat', 'PerformanceObserver', 'PerformanceEntry', 'performance', 'ResizeObserver', 'requestIdleCallback', 'cancelIdleCallback', 'AbortController', 'AbortSignal', 'TextDecoder', 'TextEncoder', 'StorageEvent', 'BeforeUnloadEvent', 'PointerEvent', 'CompositionEvent', 'WheelEvent', 'InputEvent', 'HashChangeEvent', 'PopStateEvent', 'MessageEvent', 'Notification', 'BatteryManager', 'DeviceOrientationEvent', 'DeviceMotionEvent', 'ScreenOrientation', 'MediaQueryList', 'SpeechSynthesisUtterance', 'BroadcastChannel', 'Worklet', 'CustomEvent', 'TransitionEvent', 'AnimationEvent', 'Response', 'Request', 'Headers', 'ReadableStream', 'WritableStream', 'TransformStream', 'URLSearchParams', 'History', 'location', 'crypto', 'indexedDB', 'IDBFactory', 'IDBDatabase', 'IDBTransaction', 'IDBObjectStore', 'IDBIndex', 'IDBCursor', 'IDBKeyRange', 'IDBRequest', 'FileReader', 'Atomics', 'CanvasGradient', 'CanvasPattern', 'TextMetrics', 'ImageData', 'Path2D', 'TextTrack', 'VTTCue', 'TrackEvent', 'OfflineAudioContext', 'AnalyserNode', 'AudioBuffer', 'AudioBufferSourceNode', 'AudioDestinationNode', 'AudioListener', 'AudioNode', 'AudioParam', 'AudioScheduledSourceNode', 'AudioWorklet', 'BaseAudioContext', 'BiquadFilterNode', 'ChannelMergerNode', 'ChannelSplitterNode', 'ConstantSourceNode', 'ConvolverNode', 'DelayNode', 'DynamicsCompressorNode', 'GainNode', 'IIRFilterNode', 'MediaElementAudioSourceNode', 'MediaStreamAudioSourceNode', 'MediaStreamAudioDestinationNode', 'OscillatorNode', 'PannerNode', 'PeriodicWave', 'ScriptProcessorNode', 'StereoPannerNode', 'WaveShaperNode', 'UIEvent', 'FocusEvent', 'ClipboardEvent', 'GamepadEvent', 'MediaKeyMessageEvent', 'PageTransitionEvent', 'ProgressEvent', 'Touch', 'ErrorEvent', 'MediaStreamEvent', 'IDBVersionChangeEvent', 'SpeechSynthesisEvent', 'AudioProcessingEvent', 'OfflineAudioCompletionEvent', 'ClipboardItem', 'PresentationConnection', 'PresentationConnectionAvailableEvent', 'PresentationConnectionCloseEvent', 'PresentationConnectionList', 'PresentationReceiver', 'PresentationRequest', 'PushManager', 'PushSubscription', 'PushSubscriptionOptions', 'ServiceWorkerContainer', 'PaymentRequest', 'PaymentAddress', 'PaymentRequestUpdateEvent', 'PaymentResponse', 'PresentationAvailability', 'Bluetooth', 'BluetoothDevice', 'BluetoothRemoteGATTServer', 'BluetoothRemoteGATTService', 'BluetoothRemoteGATTCharacteristic', 'BluetoothRemoteGATTDescriptor', 'MediaRecorder', 'MessageChannel', 'MessagePort', 'atob', 'btoa'
-        ];
-        for (const name of unblockSys) {
-            if (unblock.includes(name)) {
-                continue;
-            }
-            unblock.push(name);
-        }
+        const blocks = ['document', 'localStorage'];
         const invoke = {};
-        if (!unblock.includes('window')) {
-            invoke.window = {};
-            for (const name of unblock) {
-                if (window[name] === undefined) {
-                    continue;
-                }
-                invoke.window[name] = window[name];
-            }
-        }
         const ks = Object.getOwnPropertyNames(window);
+        invoke.window = {};
         for (const k of ks) {
-            if (k.includes('window')) {
+            if (blocks.includes(k)) {
                 continue;
             }
-            if (k.includes('Event')) {
-                continue;
-            }
-            if (k.includes('-')) {
-                continue;
-            }
-            if (/^[0-9]+$/.test(k)) {
-                continue;
-            }
-            if (unblock.includes(k)) {
-                continue;
-            }
-            invoke[k] = undefined;
+            invoke.window[k] = window[k];
+        }
+        for (const block of blocks) {
+            invoke[block] = undefined;
         }
         invoke.console = {
             assert: function (condition, ...data) {
@@ -400,22 +372,6 @@ function run(url_1) {
                 return loader.require(paths, files, opt);
             }
         };
-        if (!unblock.includes('Object')) {
-            invoke.Object = {
-                defineProperty: function () {
-                    return;
-                },
-                keys: function (o) {
-                    return Object.keys(o);
-                },
-                assign: function (o, o2) {
-                    if (o.controlName !== undefined) {
-                        return o;
-                    }
-                    return Object.assign(o, o2);
-                }
-            };
-        }
         invoke.invokeClickgo = {
             getVersion: function () {
                 return clickgo.getVersion();
@@ -939,16 +895,6 @@ function run(url_1) {
                 },
                 run: function (url, opt = {}) {
                     var _a;
-                    if (opt.unblock) {
-                        const inUnblock = [];
-                        for (const item of opt.unblock) {
-                            if (!unblock.includes(item)) {
-                                continue;
-                            }
-                            inUnblock.push(item);
-                        }
-                        opt.unblock = inUnblock;
-                    }
                     if (opt.permissions) {
                         if (!((_a = exports.list[taskId]) === null || _a === void 0 ? void 0 : _a.runtime.permissions.includes('root'))) {
                             opt.permissions = undefined;
@@ -1149,6 +1095,9 @@ function run(url_1) {
                 },
                 formatTime: function (ts, tz) {
                     return tool.formatTime(ts, tz);
+                },
+                isMs: function (time) {
+                    return tool.isMs(time);
                 },
                 queryStringify: function (query) {
                     return tool.queryStringify(query);
