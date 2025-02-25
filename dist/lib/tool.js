@@ -241,7 +241,7 @@ function clone(obj) {
 }
 function sleep(ms = 0) {
     return new Promise(function (resolve) {
-        if (ms > 1000 * 3) {
+        if (ms > 30000) {
             resolve(false);
             return;
         }

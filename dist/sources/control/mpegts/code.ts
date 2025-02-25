@@ -117,7 +117,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 捕获一帧 --- */
     public capture() {
-        if (!this.access.instance) {
+        if (!this.access.instance || !this.refs.video) {
             return;
         }
         this.refs.canvas.width = this.refs.video.videoWidth;

@@ -120,7 +120,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:play', this.playData);
     }
     capture() {
-        if (!this.access.instance) {
+        if (!this.access.instance || !this.refs.video) {
             return;
         }
         this.refs.canvas.width = this.refs.video.videoWidth;
