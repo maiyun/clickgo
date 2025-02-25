@@ -56,7 +56,10 @@ export async function getContent(
                 'end': end
             });
             const data: Buffer[] = [];
-            rs.on('data', function(chunk: Buffer) {
+            rs.on('data', function(chunk) {
+                if (!(chunk instanceof Buffer)) {
+                    return;
+                }
                 data.push(chunk);
             }).on('end', function() {
                 const buf = Buffer.concat(data);
