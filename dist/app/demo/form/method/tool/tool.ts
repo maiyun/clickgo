@@ -60,10 +60,14 @@ export default class extends clickgo.form.AbstractForm {
         ).catch((e) => { throw e; });
     }
 
-    public random(): void {
-        clickgo.form.dialog(
-            clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LN, this.block)
-        ).catch((e) => { throw e; });
+    public async random(): Promise<void> {
+        await clickgo.form.dialog({
+            'direction': 'v',
+            'content': '<text modelValue="' + clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LUN, this.block) + '" readonly />',
+            'data': {
+                'txt': 'Text\nLine 2.'
+            }
+        });
     }
 
     public escapeHTML(): void {
