@@ -34,6 +34,7 @@ export default class extends clickgo.control.AbstractControl {
         }>;
         /** --- 不为 null 则为回放模式，秒/毫秒均可，仅当天 --- */
         'range': [number, number] | null;
+        'volume': number,
     } = {
             'init': {
                 'sid': '',
@@ -55,6 +56,7 @@ export default class extends clickgo.control.AbstractControl {
             ],
             'list': [],
             'range': null,
+            'volume': 10,
         };
 
     public access: {
@@ -172,12 +174,12 @@ export default class extends clickgo.control.AbstractControl {
                     item.index,
                     clickgo.tool.isMs(this.props.range[0]) ? this.props.range[0] : this.props.range[0] * 1000,
                 );
-                
                 this.indexs.push({
                     'index': item.index,
                     'range': true
                 });
             }
+            this.access.instance.SetVolume(item.index, this.propInt('volume'));
         }
     }
 
@@ -256,6 +258,13 @@ export default class extends clickgo.control.AbstractControl {
             this.refresh();
         }, {
             'deep': true,
+        });
+
+        // --- 音量设置变动 ---
+        this.watch('volume', () => {
+            for (const item of this.indexs) {
+                this.access.instance.SetVolume(item.index, this.propInt('volume'));
+            }
         });
 
         // --- 初始化成功 ---

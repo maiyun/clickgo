@@ -70,6 +70,7 @@ class default_1 extends clickgo.control.AbstractControl {
             ],
             'list': [],
             'range': null,
+            'volume': 10,
         };
         this.access = {
             'tplink': undefined,
@@ -161,6 +162,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     'range': true
                 });
             }
+            this.access.instance.SetVolume(item.index, this.propInt('volume'));
         }
     }
     refresh() {
@@ -222,6 +224,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.refresh();
             }, {
                 'deep': true,
+            });
+            this.watch('volume', () => {
+                for (const item of this.indexs) {
+                    this.access.instance.SetVolume(item.index, this.propInt('volume'));
+                }
             });
             this.isLoading = false;
             this.emit('init', {
