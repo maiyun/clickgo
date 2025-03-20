@@ -97,7 +97,15 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.dialog(clickgo.tool.rand(parseInt(this.min), parseInt(this.max)).toString()).catch((e) => { throw e; });
     }
     random() {
-        clickgo.form.dialog(clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LN, this.block)).catch((e) => { throw e; });
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog({
+                'direction': 'v',
+                'content': '<text modelValue="' + clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LUN, this.block) + '" readonly />',
+                'data': {
+                    'txt': 'Text\nLine 2.'
+                }
+            });
+        });
     }
     escapeHTML() {
         clickgo.form.dialog(clickgo.tool.escapeHTML(this.purifyTxt)).catch((e) => { throw e; });
