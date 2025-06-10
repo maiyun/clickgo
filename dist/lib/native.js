@@ -49,10 +49,13 @@ exports.off = off;
 exports.clear = clear;
 exports.getListenerList = getListenerList;
 exports.invoke = invoke;
+exports.quit = quit;
+exports.size = size;
 exports.max = max;
 exports.min = min;
 exports.restore = restore;
-exports.size = size;
+exports.activate = activate;
+exports.close = close;
 exports.maximizable = maximizable;
 exports.ping = ping;
 exports.isMax = isMax;
@@ -161,6 +164,16 @@ function invoke(name, ...param) {
     });
 }
 invoke('cg-init', token);
+function quit() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield invoke('cg-quit', token);
+    });
+}
+function size(width, height) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield invoke('cg-set-size', token, width, height);
+    });
+}
 function max() {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-set-state', token, 'max');
@@ -176,9 +189,14 @@ function restore() {
         yield invoke('cg-set-state', token, 'restore');
     });
 }
-function size(width, height) {
+function activate() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-set-size', token, width, height);
+        yield invoke('cg-activate', token);
+    });
+}
+function close() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield invoke('cg-close', token);
     });
 }
 function maximizable(val) {

@@ -22,7 +22,7 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
                 continue;
             }
             const buf = await fs.promises.readFile(base + '/' + item);
-            if (item.endsWith('.html')) {
+            if (item.endsWith('.html') || item.endsWith('.xml')) {
                 // --- 为了去除 html 中的空白和注释 ---
                 zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
             }
@@ -56,6 +56,7 @@ function purify(text: string): string {
 // --- node ./dist/compcga ./dist/test/cga/app ./dist/test/cga/icon.png ---
 
 (async function() {
+    /** --- 0-app源代码路径,1-图标路径 --- */
     const args = process.argv.slice(2);
     if (!args[0]) {
         console.log('DIR MUST.');

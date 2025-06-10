@@ -193,6 +193,14 @@ invoke('cg-init', token) as any;
 
 // --- 常见向 native 发送的操作 ---
 
+export async function quit(): Promise<void> {
+    await invoke('cg-quit', token);
+}
+
+export async function size(width: number, height: number): Promise<void> {
+    await invoke('cg-set-size', token, width, height);
+}
+
 export async function max(): Promise<void> {
     await invoke('cg-set-state', token, 'max');
 }
@@ -205,8 +213,12 @@ export async function restore(): Promise<void> {
     await invoke('cg-set-state', token, 'restore');
 }
 
-export async function size(width: number, height: number): Promise<void> {
-    await invoke('cg-set-size', token, width, height);
+export async function activate(): Promise<void> {
+    await invoke('cg-activate', token);
+}
+
+export async function close(): Promise<void> {
+    await invoke('cg-close', token);
 }
 
 export async function maximizable(val: boolean): Promise<void> {

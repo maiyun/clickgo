@@ -47,6 +47,7 @@ class default_1 extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.val = 'test';
+        this.activating = false;
     }
     getListenerList() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -63,9 +64,15 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.native.min();
         });
     }
-    restore() {
+    activate() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.native.restore();
+            if (this.activating) {
+                return;
+            }
+            this.activating = true;
+            yield clickgo.tool.sleep(2000);
+            yield clickgo.native.activate();
+            this.activating = false;
         });
     }
     ping() {

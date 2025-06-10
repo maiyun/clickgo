@@ -150,7 +150,7 @@ global {
     }
     &.nav-item_selected {
         > .nav-item_text {
-            background: initial; color: #FFF;
+            background: initial; color: #FFF; fill: #FFF; stroke: #FFF;
             &::before {
                 background: var(--info); box-shadow: 0 1px 3px hsla(210, 100%, 50%, 0.3);
             }

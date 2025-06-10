@@ -120,6 +120,7 @@
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('ctplink')">Tplink</button>
+                    <button @click="openForm('ccaptcha')">Captcha</button>
                 </layout>
             </layout>
         </flow>

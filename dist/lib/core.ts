@@ -447,7 +447,37 @@ const modules: Record<string, {
         'obj': null,
         'loading': false,
         'resolve': [],
-    }
+    },
+    // --- 腾讯云验证码 ---
+    'tcc': {
+        func: async function() {
+            await loader.loadScripts([
+                'https://turing.captcha.qcloud.com/TJCaptcha.js'
+            ]);
+            if (!(window as any).TencentCaptcha) {
+                throw Error('tcc load failed.');
+            }
+            return (window as any).TencentCaptcha;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
+    },
+    // --- cf 验证码 ---
+    'cft': {
+        func: async function() {
+            await loader.loadScripts([
+                'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+            ]);
+            if (!(window as any).turnstile) {
+                throw Error('cft load failed.');
+            }
+            return (window as any).turnstile;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
+    },
 };
 
 /**

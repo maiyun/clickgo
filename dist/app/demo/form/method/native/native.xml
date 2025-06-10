@@ -3,6 +3,7 @@
         <button @click="getListenerList">getListenerList</button>
         <button @click="max">max</button>
         <button @click="min">min</button>
+        <button @click="activate">{{activating ? 'running...' : 'sleep 2 activate'}}</button>
         <layout gutter="10" align-v="center">
             <text style="flex: 1;" v-model="val"></text>
             <button @click="ping">ping("{{val}}")</button>

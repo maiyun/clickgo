@@ -4,6 +4,7 @@ import * as types from '~/types/index';
 import calayout2Frm from './control/alayout2/alayout2';
 import cgridFrm from './control/grid/grid';
 import cboxFrm from './control/box/box';
+import ccaptchaFrm from './control/captcha/captcha';
 import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
 import cdatepanelFrm from './control/datepanel/datepanel';
@@ -384,6 +385,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ctplink': {
                 frm = await clickgo.form.create(ctplinkFrm);
+                break;
+            }
+            case 'ccaptcha': {
+                frm = await clickgo.form.create(ccaptchaFrm);
                 break;
             }
 

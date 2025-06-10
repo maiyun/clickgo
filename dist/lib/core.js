@@ -407,7 +407,39 @@ const modules = {
         'obj': null,
         'loading': false,
         'resolve': [],
-    }
+    },
+    'tcc': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    'https://turing.captcha.qcloud.com/TJCaptcha.js'
+                ]);
+                if (!window.TencentCaptcha) {
+                    throw Error('tcc load failed.');
+                }
+                return window.TencentCaptcha;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
+    },
+    'cft': {
+        func: function () {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield loader.loadScripts([
+                    'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+                ]);
+                if (!window.turnstile) {
+                    throw Error('cft load failed.');
+                }
+                return window.turnstile;
+            });
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
+    },
 };
 function regModule(name, func) {
     if (modules[name]) {

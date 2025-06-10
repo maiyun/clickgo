@@ -4,6 +4,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public val = 'test';
 
+    public activating = false;
+
     public async getListenerList(): Promise<void> {
         await clickgo.form.dialog(JSON.stringify(clickgo.native.getListenerList()));
     }
@@ -16,8 +18,14 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.native.min();
     }
 
-    public async restore(): Promise<void> {
-        await clickgo.native.restore();
+    public async activate(): Promise<void> {
+        if (this.activating) {
+            return;
+        }
+        this.activating = true;
+        await clickgo.tool.sleep(2_000);
+        await clickgo.native.activate();
+        this.activating = false;
     }
 
     public async ping(): Promise<void> {

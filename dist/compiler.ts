@@ -37,7 +37,7 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
                 continue;
             }
             const buf = await fs.promises.readFile(base + '/' + item);
-            if (item.endsWith('.html')) {
+            if (item.endsWith('.html') || item.endsWith('.xml')) {
                 // --- 为了去除 html 中的空白和注释 ---
                 zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
             }

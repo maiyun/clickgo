@@ -906,6 +906,13 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             invoke: function(name: string, ...param: any[]): Promise<any> {
                 return native.invoke(name, ...param);
             },
+            size: async function(width: number, height: number): Promise<void> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.size(width, height);
+            },
             max: async function(): Promise<void> {
                 const rtn = await checkPermission('native.form', false, undefined, taskId);
                 if (!rtn[0]) {
@@ -927,12 +934,12 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 }
                 await native.restore();
             },
-            size: async function(width: number, height: number): Promise<void> {
+            activate: async function(): Promise<void> {
                 const rtn = await checkPermission('native.form', false, undefined, taskId);
                 if (!rtn[0]) {
                     return;
                 }
-                await native.size(width, height);
+                await native.activate();
             },
             maximizable: async function(val: boolean): Promise<void> {
                 const rtn = await checkPermission('native.form', false, undefined, taskId);

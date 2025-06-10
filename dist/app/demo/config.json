@@ -7,6 +7,7 @@
     "controls": [
         "/package/res/custombtn",
         "/clickgo/control/box",
+        "/clickgo/control/captcha",
         "/clickgo/control/common",
         "/clickgo/control/drawer",
         "/clickgo/control/form",
@@ -47,6 +48,8 @@
         "/form/control/button/button.css",
         "/form/control/button/button.js",
         "/form/control/button/button.xml",
+        "/form/control/captcha/captcha.js",
+        "/form/control/captcha/captcha.xml",
         "/form/control/check/check.js",
         "/form/control/check/check.xml",
         "/form/control/circle/circle.xml",

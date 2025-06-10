@@ -1,0 +1,7 @@
+<div class="wrap">
+    <div v-if="notInit" class="notInit">Captcha module not found.</div>
+    <div v-else class="content" :class="[state, factory]" ref="content" @click="click"></div>
+    <div class="mask" :class="[isLoading && 'loading']" v-show="showMask">
+        <cg-loading v-if="isLoading"></cg-loading>
+    </div>
+</div>

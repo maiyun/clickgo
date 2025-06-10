@@ -49,6 +49,7 @@ const clickgo = __importStar(require("clickgo"));
 const alayout2_1 = __importDefault(require("./control/alayout2/alayout2"));
 const grid_1 = __importDefault(require("./control/grid/grid"));
 const box_1 = __importDefault(require("./control/box/box"));
+const captcha_1 = __importDefault(require("./control/captcha/captcha"));
 const button_1 = __importDefault(require("~c/button/button"));
 const check_1 = __importDefault(require("./control/check/check"));
 const datepanel_1 = __importDefault(require("./control/datepanel/datepanel"));
@@ -426,6 +427,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'ctplink': {
                     frm = yield clickgo.form.create(tplink_1.default);
+                    break;
+                }
+                case 'ccaptcha': {
+                    frm = yield clickgo.form.create(captcha_1.default);
                     break;
                 }
                 case 'eform': {

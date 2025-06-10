@@ -70,7 +70,7 @@ function addFile(zipo_1) {
                     continue;
                 }
                 const buf = yield fs.promises.readFile(base + '/' + item);
-                if (item.endsWith('.html')) {
+                if (item.endsWith('.html') || item.endsWith('.xml')) {
                     zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
                 }
                 else if (item.endsWith('.js')) {

@@ -76,7 +76,7 @@ const methods: Record<string, {
     'cg-set-state': {
         'once': false,
         handler: function(t: string, state: string): void {
-            if (hasFrame || !form || !state) {
+            if (!hasFrame || !form || !state) {
                 return;
             }
             if (!verifyToken(t)) {
@@ -96,6 +96,25 @@ const methods: Record<string, {
                 }
             }
         }
+    },
+    // --- 激活窗体 ---
+    'cg-activate': {
+        'once': false,
+        handler: function(t: string): void {
+            if (!form) {
+                return;
+            }
+            if (!verifyToken(t)) {
+                return;
+            }
+            if (form.isMinimized()) {
+                form.restore();
+            }
+            form.setAlwaysOnTop(true);
+            form.show();
+            form.focus();
+            form.setAlwaysOnTop(false);
+        },
     },
     // --- 关闭窗体（可能软件进程不会被退出） ---
     'cg-close': {
@@ -461,7 +480,7 @@ function createForm(p: string): void {
             'preload': path.join(__dirname, '/pre.js')
         },
         'width': hasFrame ? 800 : 500,
-        'height': hasFrame ? 600 : 300,
+        'height': hasFrame ? 700 : 300,
         'frame': hasFrame,
         'resizable': false,
         'show': false,

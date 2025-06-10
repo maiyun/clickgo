@@ -162,7 +162,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     'range': true
                 });
             }
-            this.access.instance.SetVolume(item.index, this.propInt('volume'));
+            this.access.instance.SetVolume(item.index, item.volume === false ? 0 : this.propInt('volume'));
         }
     }
     refresh() {

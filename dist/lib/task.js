@@ -800,6 +800,15 @@ function run(url_1) {
                 invoke: function (name, ...param) {
                     return native.invoke(name, ...param);
                 },
+                size: function (width, height) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return;
+                        }
+                        yield native.size(width, height);
+                    });
+                },
                 max: function () {
                     return __awaiter(this, void 0, void 0, function* () {
                         const rtn = yield checkPermission('native.form', false, undefined, taskId);
@@ -827,13 +836,13 @@ function run(url_1) {
                         yield native.restore();
                     });
                 },
-                size: function (width, height) {
+                activate: function () {
                     return __awaiter(this, void 0, void 0, function* () {
                         const rtn = yield checkPermission('native.form', false, undefined, taskId);
                         if (!rtn[0]) {
                             return;
                         }
-                        yield native.size(width, height);
+                        yield native.activate();
                     });
                 },
                 maximizable: function (val) {

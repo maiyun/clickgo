@@ -31,9 +31,12 @@ export default class extends clickgo.control.AbstractControl {
             'index': number;
             /** --- 清晰度，0：VGA，流畅，1：QVGA，清晰，2：HD，高清，3：THIRD，超高清 --- */
             'mode': number;
+            /** --- 是否发出声音，默认发出 --- */
+            'volume'?: boolean;
         }>;
         /** --- 不为 null 则为回放模式，秒/毫秒均可，仅当天 --- */
         'range': [number, number] | null;
+        /** --- 最大 10 --- */
         'volume': number,
     } = {
             'init': {
@@ -179,7 +182,7 @@ export default class extends clickgo.control.AbstractControl {
                     'range': true
                 });
             }
-            this.access.instance.SetVolume(item.index, this.propInt('volume'));
+            this.access.instance.SetVolume(item.index, item.volume === false ? 0 : this.propInt('volume'));
         }
     }
 

@@ -126,6 +126,7 @@ class default_1 extends clickgo.form.AbstractForm {
             '2': ['11', '12', '13', '14', 'gDa', { 'label': 'Other', 'value': 'o' }],
             '3': []
         };
+        this.noValue = [];
         this.disabledList = [];
         this.unavailableList = [];
         this.padding = false;
