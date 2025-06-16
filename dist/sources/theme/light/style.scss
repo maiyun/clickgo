@@ -130,33 +130,14 @@ global {
 // -- CONTROL -- nav-item --
 
 .nav-item_wrap {
-    > .nav-item_text {
-        padding: 18px 21px; z-index: 1;
-        &.nav-item_hasChild::after {
-            right: 16px;
-        }
-        &::before {
-            content: ''; position: absolute; left: 6px; top: 3px; width: calc(100% - 12px); height: calc(100% - 6px); transition: var(--g-transition); border-radius: var(--g-radius); z-index: -1;
-        }
-
-        .nav-item_tag-cg-img, .nav-item_tag-cg-svg {
-            width: 20px; height: 20px; margin-right: 8px;
-        }
-    }
     &:not(.nav-item_selected) {
         > .nav-item_text:hover {
-            background: initial;
-            &::before {
-                background: var(--face-hover);
-            }
+            color: var(--g-color-hover); stroke: var(--g-color-hover); fill: var(--g-color-hover);
         }
     }
     &.nav-item_selected {
         > .nav-item_text {
-            background: initial; color: #FFF; fill: #FFF; stroke: #FFF;
-            &::before {
-                background: var(--info); box-shadow: 0 1px 6px hsla(210, 100%, 50%, 0.3);
-            }
+            font-weight: bold; color: var(--g-color-focus); stroke: var(--g-color-focus); fill: var(--g-color-focus);
         }
     }
 }

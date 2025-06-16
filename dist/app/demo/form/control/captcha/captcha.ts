@@ -8,7 +8,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public tcKey = '';
 
-    public cfKey = '0x4AAAAAAACNCDkepbmx3JSN';
+    public cfKey = '';
 
     public tcOnResult(res: any): void {
         this.tcResult = res;
