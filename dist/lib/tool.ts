@@ -1069,7 +1069,7 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
         if (opt.timeout) {
             xhr.timeout = opt.timeout;
         }
-        if (opt.headers) {
+        if (opt.headers && !Array.isArray(opt.headers)) {
             for (const k in opt.headers) {
                 xhr.setRequestHeader(k, (opt.headers as any)[k]);
             }
@@ -1137,7 +1137,7 @@ export function execCommand(ac: string): void {
     if (!['copy', 'cut'].includes(ac)) {
         return;
     }
-    // eslint-disable-next-line deprecation/deprecation
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     document.execCommand(ac);
 }
 

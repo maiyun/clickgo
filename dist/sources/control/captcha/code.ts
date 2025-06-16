@@ -146,10 +146,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     this.emit('result', {
                         'result': res.ret === 0 ? 1 : 0,
-                        'data': {
-                            'ticket': res.ticket,
-                            'randstr': res.randstr
-                        }
+                        'token': res.ticket + '|' + res.randstr,
                     });
                 }, {
                     'needFeedBack': false,
@@ -178,9 +175,7 @@ export default class extends clickgo.control.AbstractControl {
             callback: (token: string) => {
                 this.emit('result', {
                     'result': 1,
-                    'data': {
-                        'token': token,
-                    }
+                    'token': token,
                 });
             },
         });

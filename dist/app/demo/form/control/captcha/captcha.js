@@ -40,7 +40,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.tcResult = 'waiting...';
         this.cfResult = 'waiting...';
         this.tcKey = '';
-        this.cfKey = '';
+        this.cfKey = '0x4AAAAAAACNCDkepbmx3JSN';
     }
     tcOnResult(res) {
         this.tcResult = res;

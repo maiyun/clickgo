@@ -18,12 +18,12 @@
     "native4": "electron ./dist/test/native/index4"
   },
   "devDependencies": {
-    "@litert/eslint-plugin-rules": "^0.2.5",
+    "@litert/eslint-plugin-rules": "^0.3.1",
     "@litert/loader": "^3.5.8",
-    "@types/node": "^22.13.5",
-    "electron": "^34.2.0",
+    "@types/node": "^24.0.1",
+    "electron": "^36.4.0",
     "jszip": "^3.10.1",
-    "terser": "^5.39.0",
-    "typescript": "^5.7.3"
+    "terser": "^5.42.0",
+    "typescript": "^5.8.3"
   }
 }

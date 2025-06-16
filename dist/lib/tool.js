@@ -873,7 +873,7 @@ function request(url, opt) {
         if (opt.timeout) {
             xhr.timeout = opt.timeout;
         }
-        if (opt.headers) {
+        if (opt.headers && !Array.isArray(opt.headers)) {
             for (const k in opt.headers) {
                 xhr.setRequestHeader(k, opt.headers[k]);
             }

@@ -8,22 +8,22 @@ export default class extends clickgo.form.AbstractForm {
 
     public tcKey = '';
 
-    public cfKey = '';
+    public cfKey = '0x4AAAAAAACNCDkepbmx3JSN';
 
-    public tcOnResult(res: any) {
+    public tcOnResult(res: any): void {
         this.tcResult = res;
     }
 
-    public tcOnReset() {
+    public tcOnReset(): void {
         this.tcResult = 'waiting...';
         this.refs.tc.reset();
     }
 
-    public cfOnResult(res: any) {
+    public cfOnResult(res: any): void {
         this.cfResult = res;
     }
 
-    public cfOnReset() {
+    public cfOnReset(): void {
         this.cfResult = 'waiting...';
         this.refs.cf.reset();
     }
