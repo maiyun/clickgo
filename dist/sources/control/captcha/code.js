@@ -46,7 +46,7 @@ const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.emtis = {
+        this.emits = {
             'result': null,
         };
         this.props = {
@@ -164,10 +164,13 @@ class default_1 extends clickgo.control.AbstractControl {
                             this.state = 'failed';
                             this.refs.content.innerHTML = this.l('failed');
                         }
-                        this.emit('result', {
-                            'result': res.ret === 0 ? 1 : 0,
-                            'token': res.ticket + '|' + res.randstr,
-                        });
+                        const event = {
+                            'detail': {
+                                'result': res.ret === 0 ? 1 : 0,
+                                'token': res.ticket + '|' + res.randstr,
+                            },
+                        };
+                        this.emit('result', event);
                     }, {
                         'needFeedBack': false,
                     });
@@ -190,10 +193,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 'sitekey': this.props.akey,
                 'size': 'flexible',
                 callback: (token) => {
-                    this.emit('result', {
-                        'result': 1,
-                        'token': token,
-                    });
+                    const event = {
+                        'detail': {
+                            'result': 1,
+                            'token': token,
+                        },
+                    };
+                    this.emit('result', event);
                 },
             });
             this.access.instance = captcha;

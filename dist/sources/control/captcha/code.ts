@@ -1,8 +1,9 @@
 import * as clickgo from 'clickgo';
+import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public emtis = {
+    public emits = {
         'result': null,
     };
 
@@ -144,10 +145,13 @@ export default class extends clickgo.control.AbstractControl {
                         this.state = 'failed';
                         this.refs.content.innerHTML = this.l('failed');
                     }
-                    this.emit('result', {
-                        'result': res.ret === 0 ? 1 : 0,
-                        'token': res.ticket + '|' + res.randstr,
-                    });
+                    const event: types.ICaptchaResultEvent = {
+                        'detail': {
+                            'result': res.ret === 0 ? 1 : 0,
+                            'token': res.ticket + '|' + res.randstr,
+                        },
+                    };
+                    this.emit('result', event);
                 }, {
                     'needFeedBack': false,
                 });
@@ -173,10 +177,13 @@ export default class extends clickgo.control.AbstractControl {
             'sitekey': this.props.akey,
             'size': 'flexible',
             callback: (token: string) => {
-                this.emit('result', {
-                    'result': 1,
-                    'token': token,
-                });
+                const event: types.ICaptchaResultEvent = {
+                    'detail': {
+                        'result': 1,
+                        'token': token,
+                    },
+                };
+                this.emit('result', event);
             },
         });
         this.access.instance = captcha;

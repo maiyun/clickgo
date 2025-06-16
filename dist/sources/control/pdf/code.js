@@ -82,18 +82,18 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     go() {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            var _b;
             this.isLoading = true;
             let page = null;
             try {
                 page = yield this.access.pdf.getPage(this.propInt('page'));
             }
-            catch (_a) {
+            catch (_c) {
                 this.isLoading = false;
                 return false;
             }
-            if (!this.access.context) {
-                this.access.context = this.refs.content.getContext('2d');
-            }
+            (_a = (_b = this.access).context) !== null && _a !== void 0 ? _a : (_b.context = this.refs.content.getContext('2d'));
             const viewport = page.getViewport({
                 'scale': 1
             });

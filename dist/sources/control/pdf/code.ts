@@ -65,9 +65,7 @@ export default class extends clickgo.control.AbstractControl {
             this.isLoading = false;
             return false;
         }
-        if (!this.access.context) {
-            this.access.context = this.refs.content.getContext('2d');
-        }
+        this.access.context ??= this.refs.content.getContext('2d');
         const viewport = page.getViewport({
             'scale': 1
         });

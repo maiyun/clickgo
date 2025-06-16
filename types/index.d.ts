@@ -926,6 +926,15 @@ export interface IGreatselectAddEvent extends ICustomEvent {
     };
 }
 
+// --- Captcha Control ---
+
+export interface ICaptchaResultEvent {
+    'detail': {
+        'result': number;
+        'token': string;
+    };
+}
+
 // --- Pdf Control ---
 
 export interface IPdfViewEvent {
