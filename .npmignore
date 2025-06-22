@@ -15,3 +15,4 @@ tsconfig.json
 /dist/comp*
 /dist/global.scss
 /types/dev.d.ts
+/types/loader.d.ts
