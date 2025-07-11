@@ -137,7 +137,7 @@ export default class extends clickgo.control.AbstractControl {
             this.refs.content.innerHTML = this.l('click');
             try {
                 const captcha = new tcc(this.props.akey, (res: any) => {
-                    if (res.ret === 0) {
+                    if (res.ret === 0 && !res.errorCode) {
                         this.state = 'successful';
                         this.refs.content.innerHTML = this.l('successful');
                     }
@@ -147,7 +147,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     const event: types.ICaptchaResultEvent = {
                         'detail': {
-                            'result': res.ret === 0 ? 1 : 0,
+                            'result': (res.ret === 0 && !res.errorCode) ? 1 : 0,
                             'token': res.ticket + '|' + res.randstr,
                         },
                     };

@@ -67,11 +67,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.zdecs = ['00', '15', '30', '45'];
         this.localeData = {
             'en': {
-                'minute': 'Minute',
-                'zone': 'Time Zone',
+                'minute': 'Min',
+                'zone': 'Zone',
                 'cancel': 'Cancel',
                 'ok': 'OK',
-                'please click select': 'Please click select'
+                'please click select': 'Click to select'
             },
             'sc': {
                 'minute': '分',
@@ -89,66 +89,66 @@ class default_1 extends clickgo.control.AbstractControl {
             },
             'ja': {
                 'minute': '分',
-                'zone': 'タイムゾーン',
-                'cancel': 'キャンセル',
-                'ok': 'OK',
-                'please click select': '選択をクリックしてください'
+                'zone': '時區',
+                'cancel': '取消',
+                'ok': '確定',
+                'please click select': '選択して下さい'
             },
             'ko': {
                 'minute': '분',
-                'zone': '시간대',
+                'zone': '時區',
                 'cancel': '취소',
                 'ok': '확인',
-                'please click select': '선택을 클릭하십시오'
+                'please click select': '선택 클릭'
             },
             'th': {
-                'minute': 'นาที',
-                'zone': 'เขตเวลา',
+                'minute': 'น.',
+                'zone': 'เขต',
                 'cancel': 'ยกเลิก',
                 'ok': 'ตกลง',
-                'please click select': 'โปรดคลิกเลือก'
+                'please click select': 'คลิกเลือก'
             },
             'es': {
-                'minute': 'Minuto',
+                'minute': 'Min',
                 'zone': 'Zona',
                 'cancel': 'Cancelar',
-                'ok': 'Aceptar',
-                'please click select': 'Por favor haga clic en seleccionar'
+                'ok': 'OK',
+                'please click select': 'Clic para elegir'
             },
             'de': {
-                'minute': 'Minute',
+                'minute': 'Min',
                 'zone': 'Zone',
-                'cancel': 'Abbrechen',
+                'cancel': 'Abbr.',
                 'ok': 'OK',
-                'please click select': 'Bitte klicken Sie auf Auswahl'
+                'please click select': 'Klicken Sie wählen'
             },
             'fr': {
-                'minute': 'Minute',
+                'minute': 'Min',
                 'zone': 'Zone',
-                'cancel': 'Annuler',
-                'ok': 'Valider',
-                'please click select': 'Veuillez cliquer sur sélectionner'
+                'cancel': 'Annul.',
+                'ok': 'OK',
+                'please click select': 'Cliquer choisir'
             },
             'pt': {
-                'minute': 'Minuto',
-                'zone': 'Fuso Horário',
+                'minute': 'Min',
+                'zone': 'Fuso',
                 'cancel': 'Cancelar',
                 'ok': 'OK',
-                'please click select': 'Por favor clique em selecionar'
+                'please click select': 'Clique para sel.'
             },
             'ru': {
-                'minute': 'Минута',
-                'zone': 'Часовой пояс',
+                'minute': 'Мин',
+                'zone': 'Зона',
                 'cancel': 'Отмена',
                 'ok': 'ОК',
-                'please click select': 'Пожалуйста, нажмите выбрать'
+                'please click select': 'Нажмите выбрать'
             },
             'vi': {
                 'minute': 'Phút',
-                'zone': 'Múi giờ',
+                'zone': 'Múi',
                 'cancel': 'Hủy',
                 'ok': 'OK',
-                'please click select': 'Vui lòng nhấp chọn'
+                'please click select': 'Nhấn chọn'
             }
         };
         this.showTwoDatePanel = false;

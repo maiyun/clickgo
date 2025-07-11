@@ -154,7 +154,7 @@ function hasTouchButMouse(e) {
         return true;
     }
     const now = Date.now();
-    if (now - lastTouchTime < 1000 * 60) {
+    if (now - lastTouchTime < 60000) {
         return true;
     }
     return false;
@@ -1650,7 +1650,7 @@ window.addEventListener('keyup', function (e) {
     core.trigger('keyup', e);
 });
 function bindMove(e, opt) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     if (hasTouchButMouse(e)) {
         return {
             'left': 0,
@@ -1660,7 +1660,7 @@ function bindMove(e, opt) {
         };
     }
     exports.is.move = true;
-    setGlobalCursor(opt.cursor ? opt.cursor : getComputedStyle(e.target).cursor);
+    setGlobalCursor((_a = opt.cursor) !== null && _a !== void 0 ? _a : getComputedStyle(e.target).cursor);
     let tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     let ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let left, top, right, bottom;
@@ -1679,10 +1679,10 @@ function bindMove(e, opt) {
     }
     else {
         const area = core.getAvailArea();
-        left = (_a = opt.left) !== null && _a !== void 0 ? _a : area.left;
-        top = (_b = opt.top) !== null && _b !== void 0 ? _b : area.top;
-        right = (_c = opt.right) !== null && _c !== void 0 ? _c : area.width;
-        bottom = (_d = opt.bottom) !== null && _d !== void 0 ? _d : area.height;
+        left = (_b = opt.left) !== null && _b !== void 0 ? _b : area.left;
+        top = (_c = opt.top) !== null && _c !== void 0 ? _c : area.top;
+        right = (_d = opt.right) !== null && _d !== void 0 ? _d : area.width;
+        bottom = (_e = opt.bottom) !== null && _e !== void 0 ? _e : area.height;
     }
     if (opt.offsetLeft) {
         left += opt.offsetLeft;

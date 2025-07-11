@@ -21,7 +21,7 @@ export default class extends clickgo.control.AbstractControl {
             'columns': number;
             /** --- 坐标合并布局 --- */
             'cellList': Array<[number, number]>;
-        }>,
+        }>;
         'list': Array<{
             /** --- qrCode 或 mac --- */
             'device': string;
@@ -37,7 +37,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 不为 null 则为回放模式，秒/毫秒均可，仅当天 --- */
         'range': [number, number] | null;
         /** --- 最大 10 --- */
-        'volume': number,
+        'volume': number;
     } = {
             'init': {
                 'sid': '',
@@ -87,7 +87,7 @@ export default class extends clickgo.control.AbstractControl {
     }> = [];
 
     /** --- 初始化控件 --- */
-    private _init() {
+    private _init(): void {
         this.access.instance = new this.access.tplink({
             'szPluginContainer': 'cg-control-tplink-' + this.rand,
             'iServicePortStart': 15410,
@@ -111,7 +111,7 @@ export default class extends clickgo.control.AbstractControl {
             cbConnectError: async () => {
                 // --- 程序未启动时执行 error 函数，采用 wakeup 来启动程序 ---
                 this.access.instance = null;
-                this.access.tplink.WakeUpPlugin("SMBCloudHDPlugin://");
+                this.access.tplink.WakeUpPlugin('SMBCloudHDPlugin://');
                 ++this.initCount;
                 if (this.initCount > 3) {
                     clickgo.form.alert('Tplink error', 'danger');
@@ -122,7 +122,7 @@ export default class extends clickgo.control.AbstractControl {
             },
             cbConnectClose: async () => {
                 this.access.instance = null;
-                this.access.tplink.WakeUpPlugin("SMBCloudHDPlugin://");
+                this.access.tplink.WakeUpPlugin('SMBCloudHDPlugin://');
                 ++this.initCount;
                 if (this.initCount > 3) {
                     clickgo.form.alert('Tplink error', 'danger');
@@ -135,7 +135,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 清除所有正在播放的 --- */
-    private _clear() {
+    private _clear(): void {
         for (const item of this.indexs) {
             if (item.range) {
                 this.access.instance.StopPlayback(item.index);
@@ -148,7 +148,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 播放所有 list 里的 --- */
-    private _play() {
+    private _play(): void {
         for (const item of this.props.list) {
             let qrCode = '';
             let mac = '';
@@ -187,7 +187,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 可供外部调用，刷新当前画面，应对可能得网络问题 --- */
-    public refresh() {
+    public refresh(): void {
         if (!this.access.instance) {
             return;
         }
@@ -196,12 +196,12 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 可供外部调用，开始对讲 --- */
-    public startTalk(index: number) {
+    public startTalk(index: number): void {
         this.access.instance.StartTalk(index);
     }
 
     /** --- 可供外部调用，停止对讲 --- */
-    public stopTalk(index: number) {
+    public stopTalk(index: number): void {
         this.access.instance.StopTalk(index);
     }
 
@@ -227,7 +227,7 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         // --- layout 变更 ---
-        this.watch('layout', async () => {
+        this.watch('layout', () => {
             if (!this.access.instance) {
                 return;
             }

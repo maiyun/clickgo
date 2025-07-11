@@ -85,13 +85,13 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 语言包 --- */
     public localeData = {
         'en': {
-            'hour': 'Hour',
-            'minute': 'Minute',
-            'second': 'Second',
-            'zone': 'Time Zone',
+            'hour': 'Hr',
+            'minute': 'Min',
+            'second': 'Sec',
+            'zone': 'Zone',
             'cancel': 'Cancel',
             'ok': 'OK',
-            'please click select': 'Please click select'
+            'please click select': 'Click to select'
         },
         'sc': {
             'hour': '时',
@@ -115,83 +115,83 @@ export default class extends clickgo.control.AbstractControl {
             'hour': '時',
             'minute': '分',
             'second': '秒',
-            'zone': 'タイムゾーン',
-            'cancel': 'キャンセル',
-            'ok': 'OK',
-            'please click select': '選択をクリックしてください'
+            'zone': '時區', // --- タイムゾーン ---
+            'cancel': '取消',
+            'ok': '確定',
+            'please click select': '選択して下さい'
         },
         'ko': {
             'hour': '시',
             'minute': '분',
             'second': '초',
-            'zone': '시간대',
+            'zone': '時區', // --- 시간대 ---
             'cancel': '취소',
             'ok': '확인',
-            'please click select': '선택을 클릭하십시오'
+            'please click select': '선택 클릭'
         },
         'th': {
-            'hour': 'ชั่วโมง',
-            'minute': 'นาที',
-            'second': 'วินาที',
-            'zone': 'เขตเวลา',
+            'hour': 'ชม.',
+            'minute': 'น.',
+            'second': 'วิ',
+            'zone': 'เขต',
             'cancel': 'ยกเลิก',
             'ok': 'ตกลง',
-            'please click select': 'โปรดคลิกเลือก'
+            'please click select': 'คลิกเลือก'
         },
         'es': {
-            'hour': 'Hora',
-            'minute': 'Minuto',
-            'second': 'Segundo',
+            'hour': 'Hr',
+            'minute': 'Min',
+            'second': 'Seg',
             'zone': 'Zona',
             'cancel': 'Cancelar',
-            'ok': 'Aceptar',
-            'please click select': 'Por favor haga clic en seleccionar'
+            'ok': 'OK',
+            'please click select': 'Clic para elegir'
         },
         'de': {
-            'hour': 'Stunde',
-            'minute': 'Minute',
-            'second': 'Sekunde',
+            'hour': 'Std',
+            'minute': 'Min',
+            'second': 'Sek',
             'zone': 'Zone',
-            'cancel': 'Abbrechen',
+            'cancel': 'Abbr.',
             'ok': 'OK',
-            'please click select': 'Bitte klicken Sie auf Auswahl'
+            'please click select': 'Klicken Sie wählen'
         },
         'fr': {
-            'hour': 'Heure',
-            'minute': 'Minute',
-            'second': 'Seconde',
+            'hour': 'Hr',   // 或 'H'
+            'minute': 'Min',
+            'second': 'Sec',
             'zone': 'Zone',
-            'cancel': 'Annuler',
-            'ok': 'Valider',
-            'please click select': 'Veuillez cliquer sur sélectionner'
+            'cancel': 'Annul.',
+            'ok': 'OK',
+            'please click select': 'Cliquer choisir'
         },
         'pt': {
-            'hour': 'Hora',
-            'minute': 'Minuto',
-            'second': 'Segundo',
-            'zone': 'Fuso Horário',
+            'hour': 'Hr',
+            'minute': 'Min',
+            'second': 'Seg',
+            'zone': 'Fuso',
             'cancel': 'Cancelar',
             'ok': 'OK',
-            'please click select': 'Por favor clique em selecionar'
+            'please click select': 'Clique para sel.'
         },
         'ru': {
             'hour': 'Час',
-            'minute': 'Минута',
-            'second': 'Секунда',
-            'zone': 'Часовой пояс',
+            'minute': 'Мин',
+            'second': 'Сек',
+            'zone': 'Зона',
             'cancel': 'Отмена',
             'ok': 'ОК',
-            'please click select': 'Пожалуйста, нажмите выбрать'
+            'please click select': 'Нажмите выбрать'
         },
         'vi': {
             'hour': 'Giờ',
             'minute': 'Phút',
             'second': 'Giây',
-            'zone': 'Múi giờ',
+            'zone': 'Múi',
             'cancel': 'Hủy',
             'ok': 'OK',
-            'please click select': 'Vui lòng nhấp chọn'
-        }
+            'please click select': 'Nhấn chọn'
+        },
     };
 
     // --- 单击事件 ---

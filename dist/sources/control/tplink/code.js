@@ -105,7 +105,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }),
             cbConnectError: () => __awaiter(this, void 0, void 0, function* () {
                 this.access.instance = null;
-                this.access.tplink.WakeUpPlugin("SMBCloudHDPlugin://");
+                this.access.tplink.WakeUpPlugin('SMBCloudHDPlugin://');
                 ++this.initCount;
                 if (this.initCount > 3) {
                     clickgo.form.alert('Tplink error', 'danger');
@@ -116,7 +116,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }),
             cbConnectClose: () => __awaiter(this, void 0, void 0, function* () {
                 this.access.instance = null;
-                this.access.tplink.WakeUpPlugin("SMBCloudHDPlugin://");
+                this.access.tplink.WakeUpPlugin('SMBCloudHDPlugin://');
                 ++this.initCount;
                 if (this.initCount > 3) {
                     clickgo.form.alert('Tplink error', 'danger');
@@ -196,12 +196,12 @@ class default_1 extends clickgo.control.AbstractControl {
                 const bcr = this.refs.content.getBoundingClientRect();
                 this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
             });
-            this.watch('layout', () => __awaiter(this, void 0, void 0, function* () {
+            this.watch('layout', () => {
                 if (!this.access.instance) {
                     return;
                 }
                 this.access.instance.SetCustomLayout(JSON.stringify(this.props.layout));
-            }), {
+            }, {
                 'deep': true,
             });
             this.watch('controls', () => {
