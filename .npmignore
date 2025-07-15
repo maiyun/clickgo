@@ -1,12 +1,14 @@
 .git/
 node_modules/
-.eslintrc
+eslint.config.js
 .gitignore
 .npmrc
 .npmignore
-tsconfig.json
 .DS_Store
 /doc/
+*.ts
+!*.d.ts
+tsconfig.json
 
 /dist/app/**/*.ts
 /dist/sources/
