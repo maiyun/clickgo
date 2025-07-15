@@ -9,5 +9,7 @@
             <button @click="ping">ping("{{val}}")</button>
         </layout>
         <button @click="isMax">isMax</button>
+        <button @click="open">open</button>
+        <button @click="save">save</button>
     </layout>
 </form>

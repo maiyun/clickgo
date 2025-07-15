@@ -57,6 +57,8 @@ exports.restore = restore;
 exports.activate = activate;
 exports.close = close;
 exports.maximizable = maximizable;
+exports.open = open;
+exports.save = save;
 exports.ping = ping;
 exports.isMax = isMax;
 const clickgo = __importStar(require("../clickgo"));
@@ -203,6 +205,12 @@ function maximizable(val) {
     return __awaiter(this, void 0, void 0, function* () {
         yield invoke('cg-maximizable', token, val);
     });
+}
+function open(options = {}) {
+    return invoke('cg-form-open', token, options);
+}
+function save(options = {}) {
+    return invoke('cg-form-save', token, options);
 }
 function ping(val) {
     return __awaiter(this, void 0, void 0, function* () {

@@ -4,17 +4,6 @@ import * as tool from './tool';
 /** --- 当前系统平台 --- */
 const platform: NodeJS.Platform = process.platform;
 
-/** --- path 要额外处理一下，因为 windows 下可能有点不一样 --- */
-function formatPath(path: string): string {
-    if (platform !== 'win32') {
-        return path;
-    }
-    if (path === '/') {
-        return path;
-    }
-    return path[1] + ':' + path.slice(2);
-}
-
 /** --- windows 下驱动器列表 --- */
 const drives: string[] = [];
 
@@ -44,7 +33,7 @@ export async function getContent(
         'end'?: number;
     }
 ): Promise<string | Buffer | null> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     const encoding = options.encoding;
     const start = options.start;
     const end = options.end;
@@ -96,7 +85,7 @@ export async function putContent(path: string, data: string | Buffer, options: {
     'mode'?: number;
     'flag'?: string;
 }): Promise<boolean> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     try {
         await fs.promises.writeFile(path, data, options);
         return true;
@@ -107,7 +96,7 @@ export async function putContent(path: string, data: string | Buffer, options: {
 }
 
 export async function readLink(path: string, encoding?: BufferEncoding): Promise<string | null> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     try {
         return await fs.promises.readlink(path, {
             'encoding': encoding
@@ -119,8 +108,8 @@ export async function readLink(path: string, encoding?: BufferEncoding): Promise
 }
 
 export async function symlink(filePath: string, linkPath: string, type?: 'dir' | 'file' | 'junction'): Promise<boolean> {
-    filePath = formatPath(filePath);
-    linkPath = formatPath(linkPath);
+    filePath = tool.formatPath(filePath);
+    linkPath = tool.formatPath(linkPath);
     try {
         await fs.promises.symlink(filePath, linkPath, type);
         return true;
@@ -131,7 +120,7 @@ export async function symlink(filePath: string, linkPath: string, type?: 'dir' |
 }
 
 export async function unlink(path: string): Promise<boolean> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     for (let i = 0; i <= 2; ++i) {
         try {
             await fs.promises.unlink(path);
@@ -151,7 +140,7 @@ export async function unlink(path: string): Promise<boolean> {
 }
 
 export async function stats(path: string): Promise<Record<string, any> | null> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     try {
         const item = await fs.promises.lstat(path);
         return {
@@ -176,7 +165,7 @@ export async function stats(path: string): Promise<Record<string, any> | null> {
 }
 
 export async function mkdir(path: string, mode: number): Promise<boolean> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     const stats = await fs.promises.lstat(path);
     if (stats.isDirectory()) {
         return true;
@@ -195,7 +184,7 @@ export async function mkdir(path: string, mode: number): Promise<boolean> {
 }
 
 export async function rmdir(path: string): Promise<boolean> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     const stats = await fs.promises.lstat(path);
     if (!stats.isDirectory()) {
         return true;
@@ -210,7 +199,7 @@ export async function rmdir(path: string): Promise<boolean> {
 }
 
 export async function chmod(path: string, mod: string | number): Promise<boolean> {
-    path = formatPath(path);
+    path = tool.formatPath(path);
     try {
         await fs.promises.chmod(path, mod);
         return true;
@@ -221,8 +210,8 @@ export async function chmod(path: string, mod: string | number): Promise<boolean
 }
 
 export async function rename(oldPath: string, newPath: string): Promise<boolean> {
-    oldPath = formatPath(oldPath);
-    newPath = formatPath(newPath);
+    oldPath = tool.formatPath(oldPath);
+    newPath = tool.formatPath(newPath);
     try {
         await fs.promises.rename(oldPath, newPath);
         return true;
@@ -275,8 +264,8 @@ export async function readDir(path: string, encoding?: BufferEncoding): Promise<
 }
 
 export async function copyFile(src: string, dest: string): Promise<boolean> {
-    src = formatPath(src);
-    dest = formatPath(dest);
+    src = tool.formatPath(src);
+    dest = tool.formatPath(dest);
     try {
         await fs.promises.copyFile(src, dest);
         return true;

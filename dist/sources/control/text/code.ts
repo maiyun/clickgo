@@ -277,9 +277,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 检测 value 值是否符合 max 和 min --- */
     public checkNumber(target?: HTMLInputElement | HTMLTextAreaElement): boolean {
-        if (!target) {
-            target = this.refs.text as unknown as HTMLInputElement | HTMLTextAreaElement;
-        }
+        target ??= this.refs.text as unknown as HTMLInputElement | HTMLTextAreaElement;
         if (this.props.type !== 'number') {
             return false;
         }

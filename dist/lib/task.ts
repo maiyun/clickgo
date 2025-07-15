@@ -953,7 +953,13 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             },
             isMax: function(): Promise<boolean> {
                 return native.isMax();
-            }
+            },
+            open: function(options: any): Promise<string[] | null> {
+                return native.open(options);
+            },
+            save: function(options: any): Promise<string | null> {
+                return native.save(options);
+            },
         },
         'storage': {
             get: function(key: string): any {

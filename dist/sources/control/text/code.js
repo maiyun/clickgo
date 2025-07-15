@@ -258,9 +258,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('input');
     }
     checkNumber(target) {
-        if (!target) {
-            target = this.refs.text;
-        }
+        target !== null && target !== void 0 ? target : (target = this.refs.text);
         if (this.props.type !== 'number') {
             return false;
         }

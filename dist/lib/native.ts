@@ -225,6 +225,52 @@ export async function maximizable(val: boolean): Promise<void> {
     await invoke('cg-maximizable', token, val);
 }
 
+// --- form ---
+
+/**
+ * --- 弹出文件选择框 ---
+ * @param options 选项
+ * @returns 选择的文件路径列表，不含 /storage/
+ */
+export function open(options: {
+    /** --- 默认路径，不含 /storage/，如 /d/ --- */
+    'path'?: string;
+    /** --- 筛选的文件类型 --- */
+    'filters'?: Array<{
+        'name': string;
+        /** --- 如 jpg --- */
+        'accept': string[];
+    }>;
+    'props'?: {
+        /** --- 允许选择文件，默认 true --- */
+        'file'?: boolean;
+        /** --- 允许选择文件夹，默认 false --- */
+        'directory'?: boolean;
+        /** --- 允许多选，默认 false --- */
+        'multi'?: boolean;
+    },
+} = {}): Promise<string[] | null> {
+    return invoke('cg-form-open', token, options);
+}
+
+/**
+ * --- 弹出文件保存框 ---
+ * @param options 选项
+ * @returns 选择的保存路径，不含 /storage/
+ */
+export function save(options: {
+    /** --- 默认路径，不含 /storage/，如 /d/ --- */
+    'path'?: string;
+    /** --- 筛选的文件类型 --- */
+    'filters'?: Array<{
+        'name': string;
+        /** --- 如 jpg --- */
+        'accept': string[];
+    }>;
+} = {}): Promise<string | null> {
+    return invoke('cg-form-save', token, options);
+}
+
 // --- 以下无需 token ---
 
 export async function ping(val: string): Promise<string> {

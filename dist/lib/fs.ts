@@ -142,8 +142,8 @@ export async function getContent(path: string, options?: BufferEncoding | {
             'encoding': options
         };
     }
-    else if (!options) {
-        options = {};
+    else {
+        options ??= {};
     }
     const encoding = options.encoding;
     const start = options.start;

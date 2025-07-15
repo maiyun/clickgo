@@ -86,5 +86,31 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog((yield clickgo.native.isMax()) ? 'true' : 'false');
         });
     }
+    open() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rtn = yield clickgo.native.open({
+                'filters': [
+                    {
+                        'name': 'Image',
+                        'accept': ['jpg', 'png'],
+                    },
+                ],
+            });
+            yield clickgo.form.dialog(JSON.stringify(rtn));
+        });
+    }
+    save() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rtn = yield clickgo.native.save({
+                'filters': [
+                    {
+                        'name': 'Image',
+                        'accept': ['jpg', 'png'],
+                    },
+                ],
+            });
+            yield clickgo.form.dialog(JSON.stringify(rtn));
+        });
+    }
 }
 exports.default = default_1;

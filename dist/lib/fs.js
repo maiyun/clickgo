@@ -153,8 +153,8 @@ function getContent(path, options, taskId) {
                 'encoding': options
             };
         }
-        else if (!options) {
-            options = {};
+        else {
+            options !== null && options !== void 0 ? options : (options = {});
         }
         const encoding = options.encoding;
         const start = options.start;

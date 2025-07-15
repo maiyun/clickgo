@@ -278,6 +278,95 @@ const methods: Record<string, {
         }
     },
 
+    // --- form ---
+
+    'cg-form-open': {
+        'once': false,
+        handler: function(t: string, options: {
+            /** --- 默认路径 --- */
+            'path'?: string;
+            /** --- 筛选的文件类型 --- */
+            'filters'?: Array<{
+                'name': string;
+                /** --- 如 jpg --- */
+                'accept': string[];
+            }>;
+            'props'?: {
+                /** --- 允许选择文件，默认 true --- */
+                'file'?: boolean;
+                /** --- 允许选择文件夹，默认 false --- */
+                'directory'?: boolean;
+                /** --- 允许多选，默认 false --- */
+                'multi'?: boolean;
+            };
+        } = {}): string[] | null {
+            if (!t || !form) {
+                return null;
+            }
+            if (!verifyToken(t)) {
+                return null;
+            }
+            options.filters ??= [];
+            options.props ??= {};
+            options.props.file ??= true;
+            options.props.directory ??= false;
+            options.props.multi ??= false;
+            const paths = electron.dialog.showOpenDialogSync(form, {
+                'defaultPath': options.path ? tool.formatPath(options.path) : undefined,
+                'filters': options.filters.map((item) => {
+                    return {
+                        'name': item.name,
+                        'extensions': item.accept,
+                    };
+                }),
+                'properties': [
+                    options.props.file ? 'openFile' : '',
+                    options.props.directory ? 'openDirectory' : '',
+                    options.props.multi ? 'multiSelections' : '',
+                ].filter(item => item) as any,
+            });
+            if (!paths) {
+                return null;
+            }
+            return paths.map(item => tool.parsePath(item));
+        }
+    },
+
+    'cg-form-save': {
+        'once': false,
+        handler: function(t: string, options: {
+            /** --- 默认路径 --- */
+            'path'?: string;
+            /** --- 筛选的文件类型 --- */
+            'filters'?: Array<{
+                'name': string;
+                /** --- 如 jpg --- */
+                'accept': string[];
+            }>;
+        } = {}): string | null {
+            if (!t || !form) {
+                return null;
+            }
+            if (!verifyToken(t)) {
+                return null;
+            }
+            options.filters ??= [];
+            const path = electron.dialog.showSaveDialogSync(form, {
+                'defaultPath': options.path ? tool.formatPath(options.path) : undefined,
+                'filters': options.filters.map((item) => {
+                    return {
+                        'name': item.name,
+                        'extensions': item.accept,
+                    };
+                }),
+            });
+            if (!path) {
+                return null;
+            }
+            return tool.parsePath(path);
+        }
+    },
+
     // --- 无需校验码 ---
 
     // --- 测试与 native 的连通性 ---

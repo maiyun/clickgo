@@ -859,7 +859,13 @@ function run(url_1) {
                 },
                 isMax: function () {
                     return native.isMax();
-                }
+                },
+                open: function (options) {
+                    return native.open(options);
+                },
+                save: function (options) {
+                    return native.save(options);
+                },
             },
             'storage': {
                 get: function (key) {

@@ -36,4 +36,28 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(await clickgo.native.isMax() ? 'true' : 'false');
     }
 
+    public async open(): Promise<void> {
+        const rtn = await clickgo.native.open({
+            'filters': [
+                {
+                    'name': 'Image',
+                    'accept': ['jpg', 'png'],
+                },
+            ],
+        });
+        await clickgo.form.dialog(JSON.stringify(rtn));
+    }
+
+    public async save(): Promise<void> {
+        const rtn = await clickgo.native.save({
+            'filters': [
+                {
+                    'name': 'Image',
+                    'accept': ['jpg', 'png'],
+                },
+            ],
+        });
+        await clickgo.form.dialog(JSON.stringify(rtn));
+    }
+
 }

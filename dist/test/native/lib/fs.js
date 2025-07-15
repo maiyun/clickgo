@@ -58,15 +58,6 @@ exports.copyFile = copyFile;
 const fs = __importStar(require("fs"));
 const tool = __importStar(require("./tool"));
 const platform = process.platform;
-function formatPath(path) {
-    if (platform !== 'win32') {
-        return path;
-    }
-    if (path === '/') {
-        return path;
-    }
-    return path[1] + ':' + path.slice(2);
-}
 const drives = [];
 function refreshDrives() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -87,7 +78,7 @@ function refreshDrives() {
 }
 function getContent(path, options) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         const encoding = options.encoding;
         const start = options.start;
         const end = options.end;
@@ -136,7 +127,7 @@ function getContent(path, options) {
 }
 function putContent(path, data, options) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         try {
             yield fs.promises.writeFile(path, data, options);
             return true;
@@ -148,7 +139,7 @@ function putContent(path, data, options) {
 }
 function readLink(path, encoding) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         try {
             return yield fs.promises.readlink(path, {
                 'encoding': encoding
@@ -161,8 +152,8 @@ function readLink(path, encoding) {
 }
 function symlink(filePath, linkPath, type) {
     return __awaiter(this, void 0, void 0, function* () {
-        filePath = formatPath(filePath);
-        linkPath = formatPath(linkPath);
+        filePath = tool.formatPath(filePath);
+        linkPath = tool.formatPath(linkPath);
         try {
             yield fs.promises.symlink(filePath, linkPath, type);
             return true;
@@ -174,7 +165,7 @@ function symlink(filePath, linkPath, type) {
 }
 function unlink(path) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         for (let i = 0; i <= 2; ++i) {
             try {
                 yield fs.promises.unlink(path);
@@ -195,7 +186,7 @@ function unlink(path) {
 }
 function stats(path) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         try {
             const item = yield fs.promises.lstat(path);
             return {
@@ -221,7 +212,7 @@ function stats(path) {
 }
 function mkdir(path, mode) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         const stats = yield fs.promises.lstat(path);
         if (stats.isDirectory()) {
             return true;
@@ -240,7 +231,7 @@ function mkdir(path, mode) {
 }
 function rmdir(path) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         const stats = yield fs.promises.lstat(path);
         if (!stats.isDirectory()) {
             return true;
@@ -256,7 +247,7 @@ function rmdir(path) {
 }
 function chmod(path, mod) {
     return __awaiter(this, void 0, void 0, function* () {
-        path = formatPath(path);
+        path = tool.formatPath(path);
         try {
             yield fs.promises.chmod(path, mod);
             return true;
@@ -268,8 +259,8 @@ function chmod(path, mod) {
 }
 function rename(oldPath, newPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        oldPath = formatPath(oldPath);
-        newPath = formatPath(newPath);
+        oldPath = tool.formatPath(oldPath);
+        newPath = tool.formatPath(newPath);
         try {
             yield fs.promises.rename(oldPath, newPath);
             return true;
@@ -323,8 +314,8 @@ function readDir(path, encoding) {
 }
 function copyFile(src, dest) {
     return __awaiter(this, void 0, void 0, function* () {
-        src = formatPath(src);
-        dest = formatPath(dest);
+        src = tool.formatPath(src);
+        dest = tool.formatPath(dest);
         try {
             yield fs.promises.copyFile(src, dest);
             return true;
