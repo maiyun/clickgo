@@ -11,5 +11,12 @@
         <button @click="isMax">isMax</button>
         <button @click="open">open</button>
         <button @click="save">save</button>
+        <label>dialog:</label>
+        <layout gutter="10">
+            <button @click="dialog({'message':'test'})" style="flex: 1">default</button>
+            <button @click="dialog({'message':'info','type':'info'})" style="flex: 1">info</button>
+            <button @click="dialog({'message':'question','type':'question','detail':'detail'})" style="flex: 1">question</button>
+            <button @click="dialog({'message':'warning','type':'warning','title':'custom','buttons':['Yes','No']})" style="flex: 1">warning</button>
+        </layout>
     </layout>
 </form>

@@ -366,6 +366,37 @@ const methods: Record<string, {
             return tool.parsePath(path);
         }
     },
+    'cg-form-dialog': {
+        'once': false,
+        handler: function(t: string, options: string | {
+            'type'?: 'info' | 'error' | 'question' | 'warning';
+            'title'?: string;
+            'message'?: string;
+            'detail'?: string;
+            'buttons'?: string[];
+        } = {}): number {
+            if (!t || !form) {
+                return -1;
+            }
+            if (!verifyToken(t)) {
+                return -1;
+            }
+            if (typeof options === 'string') {
+                options = {
+                    'message': options
+                };
+            }
+            options.title ??= 'ClickGo';
+            options.message ??= '';
+            return electron.dialog.showMessageBoxSync(form, {
+                'type': options.type,
+                'title': options.title,
+                'message': options.message,
+                'detail': options.detail,
+                'buttons': options.buttons,
+            });
+        }
+    },
 
     // --- 无需校验码 ---
 
@@ -513,6 +544,36 @@ export abstract class AbstractBoot {
             return;
         }
         delete methods[name];
+    }
+
+    /**
+     * --- 显示一个 dialog ---
+     * @param opt 选项或者一段文字
+     */
+    public dialog(options: string | {
+        'type'?: 'info' | 'error' | 'question' | 'warning';
+        'title'?: string;
+        'message'?: string;
+        'detail'?: string;
+        'buttons'?: string[];
+    } = {}): number {
+        if (!form) {
+            return -1;
+        }
+        if (typeof options === 'string') {
+            options = {
+                'message': options
+            };
+        }
+        options.title ??= 'ClickGo';
+        options.message ??= '';
+        return electron.dialog.showMessageBoxSync(form, {
+            'type': options.type,
+            'title': options.title,
+            'message': options.message,
+            'detail': options.detail,
+            'buttons': options.buttons,
+        });
     }
 
 }

@@ -948,17 +948,32 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                 }
                 await native.maximizable(val);
             },
+            open: async function(options: any): Promise<string[] | null> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return null;
+                }
+                return native.open(options);
+            },
+            save: async function(options: any): Promise<string | null> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return null;
+                }
+                return native.save(options);
+            },
+            dialog: async function(options: any): Promise<number> {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return -1;
+                }
+                return native.dialog(options);
+            },
             ping: function(val: string): Promise<string> {
                 return native.ping(val);
             },
             isMax: function(): Promise<boolean> {
                 return native.isMax();
-            },
-            open: function(options: any): Promise<string[] | null> {
-                return native.open(options);
-            },
-            save: function(options: any): Promise<string | null> {
-                return native.save(options);
             },
         },
         'storage': {

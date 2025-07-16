@@ -271,12 +271,35 @@ export function save(options: {
     return invoke('cg-form-save', token, options);
 }
 
+/**
+ * --- 弹出消息框 ---
+ * @param options 选项
+ * @returns 点击的按钮索引
+ */
+export function dialog(options: string | {
+    'type'?: 'info' | 'error' | 'question' | 'warning';
+    'title'?: string;
+    'message'?: string;
+    'detail'?: string;
+    'buttons'?: string[];
+} = {}): Promise<number> {
+    return invoke('cg-form-dialog', token, options);
+}
+
 // --- 以下无需 token ---
 
+/**
+ * --- 测试与 native 的连通性 ---
+ * @param val 测试字符串
+ * @returns 测试字符串
+ */
 export async function ping(val: string): Promise<string> {
     return invoke('cg-ping', val);
 }
 
+/**
+ * --- 判断窗体是否是最大化状态 ---
+ */
 export async function isMax(): Promise<boolean> {
     return invoke('cg-is-max');
 }

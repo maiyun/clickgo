@@ -112,5 +112,17 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog(JSON.stringify(rtn));
         });
     }
+    dialog(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const rtn = yield clickgo.native.dialog({
+                'title': opts.title,
+                'message': opts.message,
+                'type': opts.type,
+                'detail': opts.detail,
+                'buttons': opts.buttons,
+            });
+            yield clickgo.form.dialog(JSON.stringify(rtn));
+        });
+    }
 }
 exports.default = default_1;

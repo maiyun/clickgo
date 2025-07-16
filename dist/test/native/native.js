@@ -370,6 +370,32 @@ const methods = {
             return exports.tool.parsePath(path);
         }
     },
+    'cg-form-dialog': {
+        'once': false,
+        handler: function (t, options = {}) {
+            var _a, _b;
+            if (!t || !form) {
+                return -1;
+            }
+            if (!verifyToken(t)) {
+                return -1;
+            }
+            if (typeof options === 'string') {
+                options = {
+                    'message': options
+                };
+            }
+            (_a = options.title) !== null && _a !== void 0 ? _a : (options.title = 'ClickGo');
+            (_b = options.message) !== null && _b !== void 0 ? _b : (options.message = '');
+            return electron.dialog.showMessageBoxSync(form, {
+                'type': options.type,
+                'title': options.title,
+                'message': options.message,
+                'detail': options.detail,
+                'buttons': options.buttons,
+            });
+        }
+    },
     'cg-ping': {
         'once': false,
         handler: function (t) {
@@ -448,6 +474,26 @@ class AbstractBoot {
             return;
         }
         delete methods[name];
+    }
+    dialog(options = {}) {
+        var _a, _b;
+        if (!form) {
+            return -1;
+        }
+        if (typeof options === 'string') {
+            options = {
+                'message': options
+            };
+        }
+        (_a = options.title) !== null && _a !== void 0 ? _a : (options.title = 'ClickGo');
+        (_b = options.message) !== null && _b !== void 0 ? _b : (options.message = '');
+        return electron.dialog.showMessageBoxSync(form, {
+            'type': options.type,
+            'title': options.title,
+            'message': options.message,
+            'detail': options.detail,
+            'buttons': options.buttons,
+        });
     }
 }
 exports.AbstractBoot = AbstractBoot;

@@ -854,17 +854,38 @@ function run(url_1) {
                         yield native.maximizable(val);
                     });
                 },
+                open: function (options) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return null;
+                        }
+                        return native.open(options);
+                    });
+                },
+                save: function (options) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return null;
+                        }
+                        return native.save(options);
+                    });
+                },
+                dialog: function (options) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
+                        if (!rtn[0]) {
+                            return -1;
+                        }
+                        return native.dialog(options);
+                    });
+                },
                 ping: function (val) {
                     return native.ping(val);
                 },
                 isMax: function () {
                     return native.isMax();
-                },
-                open: function (options) {
-                    return native.open(options);
-                },
-                save: function (options) {
-                    return native.save(options);
                 },
             },
             'storage': {

@@ -60,4 +60,21 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(JSON.stringify(rtn));
     }
 
+    public async dialog(opts: {
+        'title'?: string,
+        'message'?: string,
+        'type'?: 'info' | 'error' | 'question' | 'warning',
+        'detail'?: string,
+        'buttons'?: string[],
+    }): Promise<void> {
+        const rtn = await clickgo.native.dialog({
+            'title': opts.title,
+            'message': opts.message,
+            'type': opts.type,
+            'detail': opts.detail,
+            'buttons': opts.buttons,
+        });
+        await clickgo.form.dialog(JSON.stringify(rtn));
+    }
+
 }
