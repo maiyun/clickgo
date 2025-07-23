@@ -81,6 +81,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.min = undefined;
         this.plain = false;
         this.require = false;
+        this.padding = ['m'];
         this.beforechange = false;
     }
     get textBorder() {

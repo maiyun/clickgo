@@ -24,6 +24,8 @@ export default class extends clickgo.control.AbstractControl {
             'value'?: string;
             'children'?: string;
         };
+        /** --- 0, xs, s, m, l, xl --- */
+        'padding'?: string;
 
         'modelValue': string;
         'placeholder': string;
@@ -34,6 +36,7 @@ export default class extends clickgo.control.AbstractControl {
             'plain': false,
             'virtual': false,
             'map': {},
+            'padding': undefined,
 
             'modelValue': '',
             'placeholder': '',
@@ -130,7 +133,7 @@ export default class extends clickgo.control.AbstractControl {
         const inputValue = this.inputValue.toLowerCase();
         const isArray = Array.isArray(this.nowlist);
         const searchData = isArray ? [] : {};
-        for (const key in this.nowlist) {
+        for (const key in this.nowlist as Record<string, any>) {
             const item = (this.nowlist as any)[key];
             const val = (isArray ?
                 (typeof item === 'object' ? item.value ?? '' : item) :
@@ -303,7 +306,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 已选 item 的下一层 list --- */
         let nextChildren: any[] | Record<string, string> | null = null;
         const isArray = Array.isArray(data);
-        for (const key in data) {
+        for (const key in data as Record<string, any>) {
             const item = (data as any)[key];
             const val = (isArray ?
                 (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
@@ -411,7 +414,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 将一个对象克隆，并设置到 nowlist --- */
     public setNowList(list: any[] | Record<string, any>): void {
         this.nowlist = clickgo.tool.clone(list);
-        for (const key in this.nowlist) {
+        for (const key in this.nowlist as Record<string, any>) {
             if ((this.nowlist as any)[key].children === undefined) {
                 continue;
             }

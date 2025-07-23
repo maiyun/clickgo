@@ -83,6 +83,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前占用的 index --- */
     public indexs: Array<{
         'index': number;
+        'volume': boolean;
         'range': boolean;
     }> = [];
 
@@ -167,7 +168,8 @@ export default class extends clickgo.control.AbstractControl {
                 );
                 this.indexs.push({
                     'index': item.index,
-                    'range': false
+                    'range': false,
+                    'volume': item.volume ?? true,
                 });
             }
             else {
@@ -179,7 +181,8 @@ export default class extends clickgo.control.AbstractControl {
                 );
                 this.indexs.push({
                     'index': item.index,
-                    'range': true
+                    'range': true,
+                    'volume': item.volume ?? true,
                 });
             }
             this.access.instance.SetVolume(item.index, item.volume === false ? 0 : this.propInt('volume'));
@@ -218,11 +221,15 @@ export default class extends clickgo.control.AbstractControl {
         this._init();
 
         // --- 如果窗口大小、位置改变 ---
-        clickgo.dom.watchPosition(this.element, () => {
+        clickgo.dom.watchPosition(this.element, async () => {
             if (!this.access.instance) {
                 return;
             }
             const bcr = this.refs.content.getBoundingClientRect();
+            await clickgo.tool.sleep(300);
+            this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
+            await clickgo.tool.sleep(600);
+            // --- 再执行一次 ---
             this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
         });
 
@@ -266,7 +273,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- 音量设置变动 ---
         this.watch('volume', () => {
             for (const item of this.indexs) {
-                this.access.instance.SetVolume(item.index, this.propInt('volume'));
+                this.access.instance.SetVolume(item.index, item.volume ? this.propInt('volume') : 0);
             }
         });
 

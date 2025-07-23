@@ -35,6 +35,8 @@ export default class extends clickgo.control.AbstractControl {
         'plain': boolean | string;
         'require': boolean | string;
         'rule': string | RegExp;
+        /** --- 0, xs, s, m, l, xl --- */
+        'padding': string;
 
         'modelValue': string;
         'placeholder': string;
@@ -56,6 +58,7 @@ export default class extends clickgo.control.AbstractControl {
             'plain': false,
             'require': false,
             'rule': '',
+            'padding': 'm',
 
             'modelValue': '',
             'placeholder': '',

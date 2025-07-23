@@ -446,13 +446,14 @@ function layoutClassPrependObject(object: string): string {
         return t1 + t2;
     }) + '}';
 }
+
 /**
  * --- 给 class 增加 scope 的随机前缀，给 id 新增前缀 ---
  * @param layout layout
  * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
  */
 export function layoutClassPrepend(layout: string, preps: string[]): string {
-    return layout.replace(/ class=["'](.+?)["']/gi, function(t, t1: string) {
+    const rtn = layout.replace(/ class=["'](.+?)["']/gi, function(t, t1: string) {
         // --- t1 为 xxx yyy zzz 这样的 ----
         t1 = t1.trim();
         const classList = t1.split(' ');
@@ -469,10 +470,9 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
             // --- t1 为 [] 或 {} ---
             t1 = t1.trim();
             if (t1.startsWith('[')) {
-                // --- ['xxx', yyy && 'yyy'] ---
-                t1 = t1.slice(1, -1);
-                /** --- 'xxx', yyy && 'yyy' 的数组 --- */
-                const t1a = t1.split(',');
+                // --- ['xxx', yyy && 'yyy', {'zzz': zzz}] ---
+                /** --- 'xxx', yyy && 'yyy', {'zzz': zzz} 的数组 --- */
+                const t1a = parseArrayString(t1);
                 for (let i = 0; i < t1a.length; ++i) {
                     t1a[i] = t1a[i].trim();
                     if (t1a[i].startsWith('{')) {
@@ -490,6 +490,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
             return ` :class="${t1}"${t2}`;
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
+    return rtn;
 }
 
 /**
@@ -1275,4 +1276,76 @@ export function queryParse(query: string): Record<string, string | string[]> {
         }
     }
     return ret;
+}
+
+/**
+ * --- 转义字符检查 ---
+ * 检查指定位置的字符是否被转义
+ * @param str 字符串
+ * @param pos 检查位置
+ * @returns 是否被转义
+ */
+export function isEscaped(str: string, pos: number): boolean {
+    let count = 0;
+    // --- 向前计算反斜杠数量 ---
+    for (let i = pos - 1; i >= 0 && str[i] === '\\'; i--) {
+        count++;
+    }
+    return count % 2 !== 0;
+}
+
+/**
+ * --- 数组字符串解析器 ---
+ * 解析数组字符串为各元素组成的字符串数组
+ * @param arrayStr 数组字符串
+ * @returns 解析后的字符串数组
+ */
+export function parseArrayString(arrayStr: string): string[] {
+    // --- 移除首尾括号，获取内容 ---
+    const content = arrayStr.trim().slice(1, -1);
+
+    const result: string[] = [];
+    let current = '';
+    let depth = 0;
+    let inString = false;
+    let quote = '';
+
+    // --- 遍历字符串 ---
+    for (let i = 0; i < content.length; i++) {
+        const char = content[i];
+
+        // --- 处理引号状态 ---
+        if ((char === '"' || char === "'") && !inString) {
+            inString = true;
+            quote = char;
+        }
+        else if (char === quote && inString && !isEscaped(content, i)) {
+            inString = false;
+            quote = '';
+        }
+
+        // --- 处理括号层级 ---
+        if (!inString) {
+            if (char === '{' || char === '[' || char === '(') {
+                depth++;
+            }
+            else if (char === '}' || char === ']' || char === ')') {
+                depth--;
+            }
+            else if (char === ',' && depth === 0) {
+                // --- 最外层逗号分割 ---
+                if (current.trim()) result.push(current.trim());
+                current = '';
+                continue;
+            }
+        }
+        current += char;
+    }
+
+    // --- 添加最后元素 ---
+    if (current.trim()) {
+        result.push(current.trim());
+    }
+
+    return result;
 }

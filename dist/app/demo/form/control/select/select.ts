@@ -110,7 +110,7 @@ export default class extends clickgo.form.AbstractForm {
 
     // --- 操作 ---
 
-    public padding = false;
+    public padding = ['m'];
 
     public fontSize = false;
 

@@ -2,7 +2,7 @@
     display: flex; outline: none; border-radius: var(--g-radius); border: solid .5px var(--g-border-color); overflow: hidden; box-shadow: var(--g-shadow); transition: var(--g-transition);
 
     .content {
-        display: flex; flex: 1; padding: var(--g-padding);
+        display: flex; flex: 1; padding: var(--padding);
         &.v {
             flex-direction: column;
         }

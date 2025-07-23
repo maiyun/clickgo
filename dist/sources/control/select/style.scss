@@ -3,7 +3,7 @@ cg-greatselect {
         display: flex; align-items: center;
     }
     .tags {
-        display: flex; align-items: center; max-width: 100%; overflow-y: auto; position: relative; padding: var(--g-padding); padding-right: 0;
+        display: flex; align-items: center; max-width: 100%; overflow-y: auto; position: relative; padding: var(--select-padding); padding-right: 0;
         &.editable {
             max-width: 80%;
         }
@@ -43,7 +43,7 @@ cg-greatselect {
     }
 
     .leftlabel {
-        background: var(--face); align-items: center; display: flex; padding: var(--g-padding); transition: var(--g-transition);
+        background: var(--face); align-items: center; display: flex; padding: var(--select-padding); transition: var(--g-transition);
     }
 
     cg-text {

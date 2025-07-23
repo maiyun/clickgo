@@ -75,6 +75,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'icon': false,
             'iconDefault': '',
             'map': {},
+            'padding': undefined,
             'modelValue': [],
             'placeholder': '',
             'data': [],
@@ -500,30 +501,42 @@ class default_1 extends clickgo.control.AbstractControl {
                     yield (success === null || success === void 0 ? void 0 : success());
                     return;
                 }
-                const isArray = Array.isArray(this.props.data);
-                this.searchData = isArray ? [] : {};
-                for (const key in this.props.data) {
-                    const item = this.props.data[key];
-                    const val = (isArray ?
-                        (typeof item === 'object' ? (_a = item.value) !== null && _a !== void 0 ? _a : '' : item) :
-                        key).toString().toLowerCase();
-                    const lab = (isArray ?
-                        (typeof item === 'object' ? (_b = item.label) !== null && _b !== void 0 ? _b : '' : '') : '').toLowerCase();
-                    let include = true;
-                    for (const char of searchValue) {
-                        if (val.includes(char) || lab.includes(char)) {
+                if (Array.isArray(this.props.data)) {
+                    this.searchData = [];
+                    for (const item of this.props.data) {
+                        const val = (typeof item === 'object' ? (_a = item.value) !== null && _a !== void 0 ? _a : '' : item).toString().toLowerCase();
+                        const lab = (typeof item === 'object' ? (_b = item.label) !== null && _b !== void 0 ? _b : '' : '').toLowerCase();
+                        let include = true;
+                        for (const char of searchValue) {
+                            if (val.includes(char) || lab.includes(char)) {
+                                continue;
+                            }
+                            include = false;
+                            break;
+                        }
+                        if (!include) {
                             continue;
                         }
-                        include = false;
-                        break;
-                    }
-                    if (!include) {
-                        continue;
-                    }
-                    if (isArray) {
                         this.searchData.push(item);
                     }
-                    else {
+                }
+                else {
+                    this.searchData = {};
+                    for (const key in this.props.data) {
+                        const item = this.props.data[key];
+                        const val = key.toLowerCase();
+                        const lab = '';
+                        let include = true;
+                        for (const char of searchValue) {
+                            if (val.includes(char) || lab.includes(char)) {
+                                continue;
+                            }
+                            include = false;
+                            break;
+                        }
+                        if (!include) {
+                            continue;
+                        }
                         this.searchData[key] = item;
                     }
                 }

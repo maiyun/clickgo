@@ -93,7 +93,7 @@ function run() {
             'withFileTypes': true
         });
         for (const item of list) {
-            if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web'].includes(item.name)) {
+            if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'calendar', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web'].includes(item.name)) {
                 continue;
             }
             if (item.name.startsWith('.')) {
@@ -160,6 +160,7 @@ function run() {
                 yield addFile(zipo, base + 'daterange', 'daterange');
                 yield addFile(zipo, base + 'progress', 'progress');
                 yield addFile(zipo, base + 'datepanel', 'datepanel');
+                yield addFile(zipo, base + 'calendar', 'calendar');
                 yield addFile(zipo, base + 'empty', 'empty');
                 yield addFile(zipo, base + 'palette', 'palette');
                 yield addFile(zipo, base + 'colorist', 'colorist');
@@ -207,10 +208,10 @@ function run() {
             const base = 'dist/sources/theme/' + item.name;
             yield addFile(zipo, base);
             const buf = yield zipo.generateAsync({
-                type: 'nodebuffer',
-                compression: 'DEFLATE',
-                compressionOptions: {
-                    level: 9
+                'type': 'nodebuffer',
+                'compression': 'DEFLATE',
+                'compressionOptions': {
+                    'level': 9,
                 }
             });
             yield fs.promises.writeFile('dist/theme/' + item.name + '.cgt', buf);

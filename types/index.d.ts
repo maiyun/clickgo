@@ -789,6 +789,17 @@ export interface IDateChangedEvent {
     };
 }
 
+// --- Calendar Control ---
+
+export interface ICalendarSelectedEvent {
+    'detail': {
+        'year': string;
+        'month': string;
+        'date': string;
+        'value': string;
+    };
+}
+
 // --- Datepanel Control ---
 
 export interface IDatepanelRangeEvent extends ICustomEvent {

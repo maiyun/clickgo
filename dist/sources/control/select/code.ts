@@ -47,6 +47,8 @@ export default class extends clickgo.control.AbstractControl {
             'value'?: string;
             'children'?: string;
         };
+        /** --- 0, xs, s, m, l, xl --- */
+        'padding'?: string;
 
         'modelValue': Array<string | number>;
         'placeholder': string;
@@ -69,6 +71,7 @@ export default class extends clickgo.control.AbstractControl {
             'icon': false,
             'iconDefault': '',
             'map': {},
+            'padding': undefined,
 
             'modelValue': [],
             'placeholder': '',
@@ -561,32 +564,46 @@ export default class extends clickgo.control.AbstractControl {
                 await success?.();
                 return;
             }
-            /** --- 当前 data 是否是 array --- */
-            const isArray = Array.isArray(this.props.data);
-            this.searchData = isArray ? [] : {};
-            for (const key in this.props.data) {
-                const item = (this.props.data as any)[key];
-                const val = (isArray ?
-                    (typeof item === 'object' ? item.value ?? '' : item) :
-                    key).toString().toLowerCase();
-                const lab = (isArray ?
-                    (typeof item === 'object' ? item.label ?? '' : '') : '').toLowerCase();
-                let include = true;
-                for (const char of searchValue) {
-                    if (val.includes(char) || lab.includes(char)) {
+            if (Array.isArray(this.props.data)) {
+                // --- Array ---
+                this.searchData = [];
+                for (const item of this.props.data) {
+                    const val = (typeof item === 'object' ? item.value ?? '' : item).toString().toLowerCase();
+                    const lab = (typeof item === 'object' ? item.label ?? '' : '').toLowerCase();
+                    let include = true;
+                    for (const char of searchValue) {
+                        if (val.includes(char) || lab.includes(char)) {
+                            continue;
+                        }
+                        // --- 没包含 ---
+                        include = false;
+                        break;
+                    }
+                    if (!include) {
                         continue;
                     }
-                    // --- 没包含 ---
-                    include = false;
-                    break;
+                    this.searchData.push(item);
                 }
-                if (!include) {
-                    continue;
-                }
-                if (isArray) {
-                    (this.searchData as any).push(item);
-                }
-                else {
+            }
+            else {
+                // --- 普通对象 ---
+                this.searchData = {};
+                for (const key in this.props.data) {
+                    const item = (this.props.data as any)[key];
+                    const val = key.toLowerCase();
+                    const lab = '';
+                    let include = true;
+                    for (const char of searchValue) {
+                        if (val.includes(char) || lab.includes(char)) {
+                            continue;
+                        }
+                        // --- 没包含 ---
+                        include = false;
+                        break;
+                    }
+                    if (!include) {
+                        continue;
+                    }
                     (this.searchData as any)[key] = item;
                 }
             }

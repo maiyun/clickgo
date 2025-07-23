@@ -79,6 +79,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public require = false;
 
+    public padding = ['m'];
+
     public get textBorder(): any {
         switch (this.border) {
             case 'underline': {

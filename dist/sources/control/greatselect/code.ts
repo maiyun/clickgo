@@ -20,6 +20,7 @@ export default class extends clickgo.control.AbstractControl {
         'pop': 'greatlist' | 'custom';
         'plain': boolean | string;
         'virtual': boolean | string;
+        /** --- 0, xs, s, m, l, xl --- */
         'padding'?: string;
 
         /** --- 映射 disabled、control 的 key --- */
@@ -42,7 +43,7 @@ export default class extends clickgo.control.AbstractControl {
             'pop': 'greatlist',
             'plain': false,
             'virtual': false,
-            'padding': undefined,
+            'padding': 'm',
 
             'map': {},
             'data': [],

@@ -18,7 +18,6 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
-        'readonly': boolean | string;
         'plain': boolean | string;
         'disabledList': string[] | string;
 
@@ -50,7 +49,6 @@ export default class extends clickgo.control.AbstractControl {
         'backbtn': boolean | string;
     } = {
             'disabled': false,
-            'readonly': false,
             'plain': false,
             'disabledList': [],
 
@@ -933,8 +931,8 @@ export default class extends clickgo.control.AbstractControl {
                 this.timestamp = undefined;
                 if (mvfirst) {
                     const date = new Date();
-                    this.vyear[0] = date.getUTCFullYear().toString();
-                    this.vmonth[0] = (date.getUTCMonth() + 1).toString();
+                    this.vyear[0] = date.getFullYear().toString();
+                    this.vmonth[0] = (date.getMonth() + 1).toString();
                     this.vhour[0] = '00';
                     this.vminute[0] = '00';
                     this.vseconds[0] = '00';

@@ -1,5 +1,5 @@
 .wrap {
-    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); box-shadow: var(--g-shadow);
     &.size-s {
         width: var(--g-padding-s); height: var(--g-padding-s);
     }
@@ -13,41 +13,41 @@
         width: var(--g-padding-xl); height: var(--g-padding-xl);
     }
     &:not(.plain) {
-        background: var(--g-plain-border-color); color: #FFF; fill: #FFF; stroke: #FFF; border: solid .5px transparent;
+        background-color: var(--g-plain-border-color); color: #FFF; fill: #FFF; stroke: #FFF; border: solid .5px transparent;
         &.primary {
-            background: var(--success); border-color: var(--success);
+            background-color: var(--success); border-color: var(--success);
         }
         &.info {
-            background: var(--info); border-color: var(--info);
+            background-color: var(--info); border-color: var(--info);
         }
         &.warning {
-            background: var(--warning); border-color: var(--warning);
+            background-color: var(--warning); border-color: var(--warning);
         }
         &.danger {
-            background: var(--danger); border-color: var(--danger);
+            background-color: var(--danger); border-color: var(--danger);
         }
         &.cg {
-            background: var(--cg); border-color: var(--cg);
+            background-color: var(--cg); border-color: var(--cg);
         }
     }
     &.plain {
-        border: solid .5px var(--g-plain-border-color); background: var(--g-plain-background);
+        border: solid .5px var(--g-plain-border-color); background-color: var(--g-plain-background);
 
         &:not(.cg) {
             // --- default ---
             color: var(--g-plain-border-color); fill: var(--g-plain-border-color); stroke: var(--g-plain-border-color);
         }
         &.primary {
-            border-color: var(--success); color: var(--success); fill: var(--success); stroke: var(--success); background: var(--success-bg);
+            border-color: var(--success); color: var(--success); fill: var(--success); stroke: var(--success); background-color: var(--success-bg);
         }
         &.info {
-            border-color: var(--info); color: var(--info); fill: var(--info); stroke: var(--info); background: var(--info-bg);
+            border-color: var(--info); color: var(--info); fill: var(--info); stroke: var(--info); background-color: var(--info-bg);
         }
         &.warning {
-            border-color: var(--warning); color: var(--warning); fill: var(--warning); stroke: var(--warning); background: var(--warning-bg);
+            border-color: var(--warning); color: var(--warning); fill: var(--warning); stroke: var(--warning); background-color: var(--warning-bg);
         }
         &.danger {
-            border-color: var(--danger); color: var(--danger); fill: var(--danger); stroke: var(--danger); background: var(--danger-bg);
+            border-color: var(--danger); color: var(--danger); fill: var(--danger); stroke: var(--danger); background-color: var(--danger-bg);
         }
     }
 }

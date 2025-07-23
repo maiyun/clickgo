@@ -463,7 +463,15 @@ export abstract class AbstractBoot {
      * @param path 实体窗体网页路径
      * @param opt 参数
      */
-    public run(path: string, opt: { 'frame'?: boolean; 'quit'?: boolean; } = {}): void {
+    public run(path: string, opt: {
+        /** --- 是否显示实体窗体边框和标题，默认 false --- */
+        'frame'?: boolean;
+        /** --- 没有实体窗体时整个实体进程是不是会被结束，默认 true --- */
+        'quit'?: boolean;
+        /** --- 是否是开发模式，默认 false --- */
+        'dev'?: boolean;
+    } = {}
+    ): void {
         if (opt.frame !== undefined) {
             // --- 默认 false ---
             hasFrame = opt.frame;
@@ -482,6 +490,10 @@ export abstract class AbstractBoot {
         }
         // --- 创建实体窗体 ---
         createForm(path);
+        if (form && opt.dev) {
+            // --- 开发模式 ---
+            form.webContents.openDevTools();
+        }
         // --- 监听所有实体窗体关闭事件 ---
         electron.app.on('window-all-closed', function(): void {
             if (isNoFormQuit) {
@@ -494,6 +506,10 @@ export abstract class AbstractBoot {
                 return;
             }
             createForm(path);
+            if (form && opt.dev) {
+                // --- 开发模式 ---
+                form.webContents.openDevTools();
+            }
             // --- 成功运行一个 task 后再次添加 init ---
             methods['cg-init'] = {
                 'once': true,
@@ -627,7 +643,7 @@ function createForm(p: string): void {
         'webPreferences': {
             'nodeIntegration': false,
             'contextIsolation': true,
-            'preload': path.join(__dirname, '/pre.js')
+            'preload': path.join(__dirname, '/pre.js'),
         },
         'width': hasFrame ? 800 : 500,
         'height': hasFrame ? 700 : 300,
@@ -639,7 +655,6 @@ function createForm(p: string): void {
     };
     form = new electron.BrowserWindow(op);
     form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' immersion/' + (isImmersion ? '1' : '0') + ' frame/' + (hasFrame ? '1' : '0');
-    // form.webContents.openDevTools();
     form.once('ready-to-show', function(): void {
         if (!form) {
             return;

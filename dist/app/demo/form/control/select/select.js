@@ -129,7 +129,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.noValue = [];
         this.disabledList = [];
         this.unavailableList = [];
-        this.padding = false;
+        this.padding = ['m'];
         this.fontSize = false;
         this.background = false;
         this.disabled = false;

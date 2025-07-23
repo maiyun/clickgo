@@ -1,4 +1,4 @@
-<div class="wrap" :class="[isFocus&&'focus',propBoolean('plain')&&'plain',propBoolean('require')&&!value&&'require',dangerBorder&&'dangerBorder']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @mousedown="down" @touchstart="down">
+<div class="wrap" :class="[isFocus&&'focus',propBoolean('plain')&&'plain',propBoolean('require')&&!value&&'require',dangerBorder&&'dangerBorder']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @mousedown="down" @touchstart="down" :style="{'--padding':padding==='0'?'0':`var(--g-padding${padding==='m'?'':('-'+padding)})`}">
     <template v-if="type === 'multi'">
         <div class="multi-t">
             <div v-if="slots['before']" class="before"><slot name="before"></slot></div>

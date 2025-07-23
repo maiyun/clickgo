@@ -139,6 +139,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.indexs.length = 0;
     }
     _play() {
+        var _a, _b;
         for (const item of this.props.list) {
             let qrCode = '';
             let mac = '';
@@ -152,14 +153,16 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.access.instance.StartPreview(qrCode, mac, item.channel, item.index, item.mode);
                 this.indexs.push({
                     'index': item.index,
-                    'range': false
+                    'range': false,
+                    'volume': (_a = item.volume) !== null && _a !== void 0 ? _a : true,
                 });
             }
             else {
                 this.access.instance.StartPlayback(qrCode, mac, item.channel, item.index, clickgo.tool.isMs(this.props.range[0]) ? this.props.range[0] : this.props.range[0] * 1000);
                 this.indexs.push({
                     'index': item.index,
-                    'range': true
+                    'range': true,
+                    'volume': (_b = item.volume) !== null && _b !== void 0 ? _b : true,
                 });
             }
             this.access.instance.SetVolume(item.index, item.volume === false ? 0 : this.propInt('volume'));
@@ -189,13 +192,16 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.access.tplink = tplink;
             this._init();
-            clickgo.dom.watchPosition(this.element, () => {
+            clickgo.dom.watchPosition(this.element, () => __awaiter(this, void 0, void 0, function* () {
                 if (!this.access.instance) {
                     return;
                 }
                 const bcr = this.refs.content.getBoundingClientRect();
+                yield clickgo.tool.sleep(300);
                 this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
-            });
+                yield clickgo.tool.sleep(600);
+                this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
+            }));
             this.watch('layout', () => {
                 if (!this.access.instance) {
                     return;
@@ -227,7 +233,7 @@ class default_1 extends clickgo.control.AbstractControl {
             });
             this.watch('volume', () => {
                 for (const item of this.indexs) {
-                    this.access.instance.SetVolume(item.index, this.propInt('volume'));
+                    this.access.instance.SetVolume(item.index, item.volume ? this.propInt('volume') : 0);
                 }
             });
             this.isLoading = false;

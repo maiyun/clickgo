@@ -76,6 +76,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'plain': false,
             'require': false,
             'rule': '',
+            'padding': 'm',
             'modelValue': '',
             'placeholder': '',
             'selectionStart': 0,

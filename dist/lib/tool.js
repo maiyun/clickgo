@@ -91,6 +91,8 @@ exports.formatTime = formatTime;
 exports.isMs = isMs;
 exports.queryStringify = queryStringify;
 exports.queryParse = queryParse;
+exports.isEscaped = isEscaped;
+exports.parseArrayString = parseArrayString;
 const core = __importStar(require("./core"));
 let compressorjs = null;
 function compressor(file_1) {
@@ -395,7 +397,7 @@ function layoutClassPrependObject(object) {
     }) + '}';
 }
 function layoutClassPrepend(layout, preps) {
-    return layout.replace(/ class=["'](.+?)["']/gi, function (t, t1) {
+    const rtn = layout.replace(/ class=["'](.+?)["']/gi, function (t, t1) {
         t1 = t1.trim();
         const classList = t1.split(' ');
         const resultList = [];
@@ -409,8 +411,7 @@ function layoutClassPrepend(layout, preps) {
         return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function (t, t1, t2) {
             t1 = t1.trim();
             if (t1.startsWith('[')) {
-                t1 = t1.slice(1, -1);
-                const t1a = t1.split(',');
+                const t1a = parseArrayString(t1);
                 for (let i = 0; i < t1a.length; ++i) {
                     t1a[i] = t1a[i].trim();
                     if (t1a[i].startsWith('{')) {
@@ -428,6 +429,7 @@ function layoutClassPrepend(layout, preps) {
             return ` :class="${t1}"${t2}`;
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
+    return rtn;
 }
 function eventsAttrWrap(layout) {
     const events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
@@ -1005,4 +1007,49 @@ function queryParse(query) {
         }
     }
     return ret;
+}
+function isEscaped(str, pos) {
+    let count = 0;
+    for (let i = pos - 1; i >= 0 && str[i] === '\\'; i--) {
+        count++;
+    }
+    return count % 2 !== 0;
+}
+function parseArrayString(arrayStr) {
+    const content = arrayStr.trim().slice(1, -1);
+    const result = [];
+    let current = '';
+    let depth = 0;
+    let inString = false;
+    let quote = '';
+    for (let i = 0; i < content.length; i++) {
+        const char = content[i];
+        if ((char === '"' || char === "'") && !inString) {
+            inString = true;
+            quote = char;
+        }
+        else if (char === quote && inString && !isEscaped(content, i)) {
+            inString = false;
+            quote = '';
+        }
+        if (!inString) {
+            if (char === '{' || char === '[' || char === '(') {
+                depth++;
+            }
+            else if (char === '}' || char === ']' || char === ')') {
+                depth--;
+            }
+            else if (char === ',' && depth === 0) {
+                if (current.trim())
+                    result.push(current.trim());
+                current = '';
+                continue;
+            }
+        }
+        current += char;
+    }
+    if (current.trim()) {
+        result.push(current.trim());
+    }
+    return result;
 }

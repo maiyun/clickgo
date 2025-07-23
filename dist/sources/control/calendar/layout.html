@@ -1,0 +1,38 @@
+<div class="wrap" :class="[propBoolean('plain')&&'plain']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div class="header">
+        <div class="left">
+            <cg-select :data="years" v-model="vyear" virtual></cg-select>
+            <cg-button class="monthleft" :disabled="prevYm < startYm" @click="prev">
+                <div class="arrow"></div>
+            </cg-button>
+            <cg-select :data="months" v-model="vmonth" virtual></cg-select>
+            <cg-button class="monthright" :disabled="nextYm > endYm" @click="next">
+                <div class="arrow"></div>
+            </cg-button>
+        </div>
+        <div class="right">
+            <cg-check :modelValue="monthMaps.some(item => values.includes(item))" :indeterminate="monthMaps.some(item => values.includes(item)) && !monthMaps.every(item => values.includes(item))" @changed="monthCheckChanged">{{l('whole month')}}</cg-check>
+            <cg-button v-if="propBoolean('clearbtn') && values.length" @click="clear">{{l('clear')}}</cg-button>
+            <cg-button v-if="propBoolean('backbtn') && (dateValue.year !== '0') && ((dateValue.year !== vyear[0]) || (dateValue.month !== vmonth[0]))" @click="back">{{l('back')}}</cg-button>
+            <cg-button @click="today">{{l('today')}}</cg-button>
+        </div>
+    </div>
+    <div class="week">
+        <div v-if="slots['left']"></div>
+        <div v-for="col of 7">
+            <cg-check :modelValue="weekMaps[col - 1] && weekMaps[col - 1].some(item => values.includes(item))" :indeterminate="weekMaps[col - 1] && weekMaps[col - 1].some(item => values.includes(item)) && !weekMaps[col - 1].every(item => values.includes(item))" @changed="weekCheckChanged($event, col - 1)">{{l('w' + (col - 1))}}</cg-check>
+        </div>
+    </div>
+    <div class="row" v-for="row, index of maps">
+        <div v-if="slots['left']" class="col-left">
+            <slot name="left" :row="row" :index="index"></slot>
+        </div>
+        <div class="col" v-for="col of row" :style="{'color': col.month !== vmonth[0] ? 'var(--g-color-disabled)' : undefined}" :class="[{'selected': (dateValue.year !== '0') && (dateValue.year === col.year) && (dateValue.month === col.month) && (dateValue.date === col.date), 'mselected': values.includes(col.value)}]" @click="colClick(col)" :data-cg-disabled="isDisabled(col)">
+            <cg-check v-if="col.month === vmonth[0]" :modelValue="values.includes(col.value)" @changed="checkChanged(col)" @click="checkClick"></cg-check>
+            <div class="colh">{{col.date}}</div>
+            <div class="colb" v-if="slots['default']">
+                <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :value="col.value"></slot>
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,7 @@ import ccaptchaFrm from './control/captcha/captcha';
 import cbuttonFrm from '~c/button/button';
 import ccheckFrm from './control/check/check';
 import cdatepanelFrm from './control/datepanel/datepanel';
+import ccalendarFrm from './control/calendar/calendar';
 import cdateFrm from './control/date/date';
 import cdaterangeFrm from './control/daterange/daterange';
 import cdialogFrm from './control/dialog/dialog';
@@ -125,6 +126,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdatepanel': {
                 frm = await clickgo.form.create(cdatepanelFrm);
+                break;
+            }
+            case 'ccalendar': {
+                frm = await clickgo.form.create(ccalendarFrm);
                 break;
             }
             case 'cdate': {

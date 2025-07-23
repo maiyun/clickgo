@@ -53,6 +53,7 @@ const captcha_1 = __importDefault(require("./control/captcha/captcha"));
 const button_1 = __importDefault(require("~c/button/button"));
 const check_1 = __importDefault(require("./control/check/check"));
 const datepanel_1 = __importDefault(require("./control/datepanel/datepanel"));
+const calendar_1 = __importDefault(require("./control/calendar/calendar"));
 const date_1 = __importDefault(require("./control/date/date"));
 const daterange_1 = __importDefault(require("./control/daterange/daterange"));
 const dialog_1 = __importDefault(require("./control/dialog/dialog"));
@@ -167,6 +168,10 @@ class default_1 extends clickgo.form.AbstractForm {
                 }
                 case 'cdatepanel': {
                     frm = yield clickgo.form.create(datepanel_1.default);
+                    break;
+                }
+                case 'ccalendar': {
+                    frm = yield clickgo.form.create(calendar_1.default);
                     break;
                 }
                 case 'cdate': {

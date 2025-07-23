@@ -62,7 +62,7 @@ async function run(): Promise<void> {
         'withFileTypes': true
     });
     for (const item of list) {
-        if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web'].includes(item.name)) {
+        if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'radio', 'scroll', 'select', 'sgroup', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-cell', 'desc-head', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'calendar', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web'].includes(item.name)) {
             continue;
         }
         if (item.name.startsWith('.')) {
@@ -131,6 +131,7 @@ async function run(): Promise<void> {
             await addFile(zipo, base + 'daterange', 'daterange');
             await addFile(zipo, base + 'progress', 'progress');
             await addFile(zipo, base + 'datepanel', 'datepanel');
+            await addFile(zipo, base + 'calendar', 'calendar');
             await addFile(zipo, base + 'empty', 'empty');
             await addFile(zipo, base + 'palette', 'palette');
             await addFile(zipo, base + 'colorist', 'colorist');
@@ -183,10 +184,10 @@ async function run(): Promise<void> {
         await addFile(zipo, base);
 
         const buf = await zipo.generateAsync({
-            type: 'nodebuffer',
-            compression: 'DEFLATE',
-            compressionOptions: {
-                level: 9
+            'type': 'nodebuffer',
+            'compression': 'DEFLATE',
+            'compressionOptions': {
+                'level': 9,
             }
         });
         // const sha256 = Buffer.from(crypto.createHash('sha256').update(buf).digest('hex'));

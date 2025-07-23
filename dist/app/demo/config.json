@@ -48,6 +48,8 @@
         "/form/control/button/button.css",
         "/form/control/button/button.js",
         "/form/control/button/button.xml",
+        "/form/control/calendar/calendar.js",
+        "/form/control/calendar/calendar.xml",
         "/form/control/captcha/captcha.js",
         "/form/control/captcha/captcha.xml",
         "/form/control/check/check.js",

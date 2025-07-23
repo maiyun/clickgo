@@ -52,7 +52,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'pop': 'greatlist',
             'plain': false,
             'virtual': false,
-            'padding': undefined,
+            'padding': 'm',
             'map': {},
             'data': [],
             'sizes': {},

@@ -5,6 +5,7 @@
 
 #cg-wrap {
     position: fixed; left: 0; top: 0;
+    --g-padding-xs:2px;
     --g-padding-s:4px;
     --g-padding:7px;
     --g-padding-h:4px var(--g-padding);
