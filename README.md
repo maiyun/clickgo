@@ -1,6 +1,6 @@
 # ClickGo
 
-<p align="center"><img src="dist/icon.png" width="68" height="68" alt="ClickGo"></p>
+<p align="center"><img src="./dist/icon.png" width="68" height="68" alt="ClickGo"></p>
 <p align="center">
     <a href="https://github.com/maiyun/clickgo/blob/master/LICENSE">
         <img alt="License" src="https://img.shields.io/github/license/maiyun/clickgo?color=blue" />
@@ -16,11 +16,21 @@
     </a>
 </p>
 
-Quickly and easily create a beautiful console interface.
+[简体中文](./doc/README.sc.md)
 
-## Installation
+Build web and native apps using HTML + CSS.
 
-Load the module loader first, and then load it using the module loader.
+Apps compile into a single `.cga` file — run it in the browser or locally via `ClickGo Native`. Great for image editors, DB tools, file managers, admin panels, and more.
+
+<p align="center">
+    <img src="./doc/pic3.jpg" alt="ClickGo">
+    <img src="./doc/pic.jpg" alt="ClickGo">
+    <img src="./doc/pic2.jpg" alt="ClickGo">
+</p>
+
+## Usage
+
+First, load the module loader, then load your app with it.
 
 **index.html**
 
@@ -42,25 +52,24 @@ clickgo.launcher(new Boot());
 
 ### NPM
 
-After installing with NPM, you'll get code hints.
+Use TypeScript? Install via NPM for full IntelliSense support.
 
 ```sh
 $ npm i clickgo --save-dev
+$ npm i @litert/loader --save-dev
+$ npm i jszip --save-dev
 ```
 
-## Note
+## Notes
 
-ClickGo demand loading Vue, jszip, resize-observer, but **DO NOT** reference these JS and CSS files. ClickGo will automatically reference. You only need to import "clickgo" module.
+ClickGo auto-loads Vue, jszip, and resize-observer.
+**Don't** include them manually — just import the `ClickGo` module.
 
 ## Demo
 
 Clone and visit "dist/test/index.html".
 
 [Click here to visit online.](https://maiyun.github.io/clickgo/dist/test/)
-
-## Changelog
-
-[Changelog](doc/CHANGELOG.md)
 
 ## License
 

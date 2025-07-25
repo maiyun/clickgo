@@ -1,14 +1,14 @@
 .wrap {
-    outline: none; width: calc(var(--g-control-m) * 2); height: var(--g-control-m); border-radius: var(--g-control-m); position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow) inset; border: solid 1px var(--g-plain-border-color);
+    outline: none; width: calc(var(--switch-size) * 2); height: var(--switch-size); border-radius: var(--switch-size); position: relative; transition: var(--g-transition); box-shadow: var(--g-shadow) inset; border: solid 1px var(--g-plain-border-color);
     &::after {
-        content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; z-index: 1; border-radius: calc(var(--g-control-m) - 6px); border: dotted 1px var(--g-plain-border-color); transition: var(--g-transition);
+        content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; z-index: 1; border-radius: calc(var(--switch-size) - 6px); border: dotted 1px var(--g-plain-border-color); transition: var(--g-transition);
     }
     // --- 获取焦点时自动显示焦点框 ---
     &:focus::after {
         display: block;
     }
     .block {
-        left: 3px; top: 3px; width: calc(var(--g-control-m) - 8px); height: calc(100% - 6px); background: var(--g-plain-background); position: absolute; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow); border: solid 1px var(--g-plain-border-color); border-radius: calc(var(--g-control-m) - 6px);
+        left: 3px; top: 3px; width: calc(var(--switch-size) - 8px); height: calc(100% - 6px); background: var(--g-plain-background); position: absolute; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow); border: solid 1px var(--g-plain-border-color); border-radius: calc(var(--switch-size) - 6px);
         &:hover {
             background: var(--g-plain-background-hover);
         }
@@ -16,7 +16,7 @@
     // --- 选中模式 ---
     &.checked {
         .block {
-            left: calc(var(--g-control-m) + 3px);
+            left: calc(var(--switch-size) + 3px);
         }
     }
     &:not([data-cg-disabled]) {

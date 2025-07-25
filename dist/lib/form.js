@@ -1784,7 +1784,7 @@ function refreshPopPosition(el, pop, direction, size = {}) {
 }
 let lastShowPopTime = 0;
 function showPop(el, pop, direction, opt = {}) {
-    var _a;
+    var _a, _b, _c, _d;
     if (!(el instanceof Element)) {
         if (!el.$el) {
             return;
@@ -1797,15 +1797,9 @@ function showPop(el, pop, direction, opt = {}) {
         }
         pop = pop.$el;
     }
-    if (opt.null === undefined) {
-        opt.null = false;
-    }
-    if (opt.size === undefined) {
-        opt.size = {};
-    }
-    if (opt.flow === undefined) {
-        opt.flow = true;
-    }
+    (_a = opt.null) !== null && _a !== void 0 ? _a : (opt.null = false);
+    (_b = opt.size) !== null && _b !== void 0 ? _b : (opt.size = {});
+    (_c = opt.flow) !== null && _c !== void 0 ? _c : (opt.flow = true);
     if (!pop && !opt.null) {
         return;
     }
@@ -1855,7 +1849,7 @@ function showPop(el, pop, direction, opt = {}) {
     pop.removeAttribute('data-cg-pop-none');
     popInfo.list.push(pop);
     popInfo.elList.push(el);
-    popInfo.wayList.push((_a = opt.way) !== null && _a !== void 0 ? _a : 'normal');
+    popInfo.wayList.push((_d = opt.way) !== null && _d !== void 0 ? _d : 'normal');
     popInfo.time.push(Date.now());
     pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
     el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
@@ -2828,7 +2822,7 @@ function create(cls_1, data_1) {
 }
 function dialog(opt) {
     return new Promise(function (resolve) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         if (typeof opt === 'string') {
             opt = {
                 'content': opt
@@ -2847,9 +2841,7 @@ function dialog(opt) {
             return;
         }
         const locale = t.locale.lang || core.config.locale;
-        if (nopt.buttons === undefined) {
-            nopt.buttons = [(_c = (_b = info.locale[locale]) === null || _b === void 0 ? void 0 : _b.ok) !== null && _c !== void 0 ? _c : info.locale['en'].ok];
-        }
+        (_b = nopt.buttons) !== null && _b !== void 0 ? _b : (nopt.buttons = [(_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.ok) !== null && _d !== void 0 ? _d : info.locale['en'].ok]);
         const cls = class extends AbstractForm {
             constructor() {
                 var _a, _b;
@@ -2886,7 +2878,7 @@ function dialog(opt) {
             }
         };
         create(cls, undefined, {
-            'layout': `<form title="${(_d = nopt.title) !== null && _d !== void 0 ? _d : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
+            'layout': `<form title="${(_e = nopt.title) !== null && _e !== void 0 ? _e : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
         }, t.id).then((frm) => {
             if (typeof frm === 'number') {

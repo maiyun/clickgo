@@ -43,6 +43,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.props = {
             'disabled': false,
+            'size': 'm',
             'map': {},
             'modelValue': false
         };

@@ -13,6 +13,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled = false;
 
+    public size = ['m'];
+
     public async onChange(e: types.ISwitchChangeEvent): Promise<void> {
         e.preventDefault();
         await clickgo.form.dialog('v: ' + (e.detail.value ? 'true' : 'false'));

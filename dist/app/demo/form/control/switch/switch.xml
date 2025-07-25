@@ -2,21 +2,24 @@
     <layout direction="v" gutter="10" style="flex: 1; width: 0;">
         <label>Checked: {{checked1}}, {{checked2}}, {{checked3}}</label>
         <layout gutter="10" align-v="center">
-            <switch v-model="checked1" :disabled="disabled"></switch>
+            <switch v-model="checked1" :disabled="disabled" :size="size[0]"></switch>
             <label style="flex: 1;">{{checked1 ? 'on' : 'off'}}</label>
-            <switch v-model="checked2" :disabled="disabled"></switch>
+            <switch v-model="checked2" :disabled="disabled" :size="size[0]"></switch>
             <label style="flex: 1;">{{checked2 ? 'true' : 'false'}}</label>
         </layout>
         <layout gutter="10" align-v="center">
-            <switch v-model="checked3" :disabled="disabled"></switch>
+            <switch v-model="checked3" :disabled="disabled" :size="size[0]"></switch>
             <label style="flex: 1;">{{checked3 ? 'ok' : 'no'}}</label>
-            <switch :disabled="disabled" @change="onChange" />
+            <switch :disabled="disabled" @change="onChange" :size="size[0]"></switch>
             <label style="flex: 1;">not</label>
         </layout>
         <layout gutter="10" align-v="center">
-            <switch v-model="checked4" :disabled="disabled" :map="{'true':0,'false':1}"></switch>
+            <switch v-model="checked4" :disabled="disabled" :map="{'true':0,'false':1}" :size="size[0]"></switch>
             <label style="flex: 1;">{{checked4}}</label>
         </layout>
-        <button @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+        <layout gutter="10" align-v="center">
+            <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+            <select v-model="size" :data="['s', 'm']" style="flex: 1;"></select>
+        </layout>
     </layout>
 </form>

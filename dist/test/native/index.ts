@@ -14,6 +14,7 @@ class Boot extends native.AbstractBoot {
         this.run('../desktop/index.html', {
             'frame': this.platform === 'win32' ? false : true
         });
+        //*/
     }
 
 }

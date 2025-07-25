@@ -15,10 +15,6 @@
             "~c/*": ["./dist/app/demo/form/control/*"]
         },
         "resolveJsonModule": true,
-        "typeRoots": [
-            "./node_modules/@types",
-            "./node_modules/@litert/loader"
-        ],
         "esModuleInterop": true
     },
     "include": [

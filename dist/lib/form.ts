@@ -2349,15 +2349,9 @@ export function showPop(el: HTMLElement | types.IVue, pop: HTMLElement | types.I
         pop = pop.$el;
     }
     // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
-    if (opt.null === undefined) {
-        opt.null = false;
-    }
-    if (opt.size === undefined) {
-        opt.size = {};
-    }
-    if (opt.flow === undefined) {
-        opt.flow = true;
-    }
+    opt.null ??= false;
+    opt.size ??= {};
+    opt.flow ??= true;
     // --- 也可能不执行本次显示 ---
     if (!pop && !opt.null) {
         return;
@@ -2761,10 +2755,10 @@ export async function createPanel<T extends AbstractPanel>(
     } = {},
     taskId?: number
 ): Promise<{
-    'id': number;
-    'vapp': types.IVApp;
-    'vroot': T;
-}> {
+        'id': number;
+        'vapp': types.IVApp;
+        'vroot': T;
+    }> {
     if (rootPanel.element.dataset.cgControl !== 'panel') {
         const err = new Error('form.createPanel: -0');
         core.trigger('error', 0, 0, err, err.message);
@@ -3611,9 +3605,7 @@ export function dialog(opt: string | types.IFormDialogOptions): Promise<string> 
             return;
         }
         const locale = t.locale.lang || core.config.locale;
-        if (nopt.buttons === undefined) {
-            nopt.buttons = [info.locale[locale]?.ok ?? info.locale['en'].ok];
-        }
+        nopt.buttons ??= [info.locale[locale]?.ok ?? info.locale['en'].ok];
         const cls = class extends AbstractForm {
             public buttons = nopt.buttons;
 

@@ -192,14 +192,18 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.access.tplink = tplink;
             this._init();
+            let count = 0;
             clickgo.dom.watchPosition(this.element, () => __awaiter(this, void 0, void 0, function* () {
                 if (!this.access.instance) {
                     return;
                 }
+                const now = ++count;
                 const bcr = this.refs.content.getBoundingClientRect();
-                yield clickgo.tool.sleep(300);
                 this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
                 yield clickgo.tool.sleep(600);
+                if (now < count) {
+                    return;
+                }
                 this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
             }));
             this.watch('layout', () => {

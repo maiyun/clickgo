@@ -24,55 +24,55 @@ global {
 
     // --- 基础颜色 ---
 
-    --face:hsl(210, 20%, 98%);
-    --face-hover:hsl(210, 20%, 96%);
-    --face-selected:hsl(210, 20%, 94%);
-    --g-pop-background:rgba(255, 255, 255, .6);
+    --face:oklch(.99 .01 265);
+    --face-hover:oklch(.97 .01 265);
+    --face-selected:oklch(.95 .01 265);
+    --g-pop-background:oklch(.95 .01 265 / .6);
     --g-pop-backdrop:blur(10px) saturate(2);
     --g-pop-border:solid .5px var(--g-border-color);
-    --g-shadow:0 1px 6px hsla(220,45%,10%,0.05);
-    --g-outline-shadow:0 0 0 4px hsl(220,20%,95%); 
+    --g-shadow:0 1px 6px oklch(.2 .03 260 / 0.05);
+    --g-outline-shadow:0 0 0 4px oklch(.97 .01 265); 
 
     // --- 组件默认颜色（如按钮） ---
 
-    --g-background:hsl(0,0%,100%);
-    --g-background-hover:hsl(210,20%,98%);
-    --g-background-active:hsl(0,0%,100%);
-    --g-background-opacity:hsla(210,20%,98%,.2);
-    --g-background-focus:hsl(0,0%,100%);
-    --g-background-disabled:hsl(0,0%,100%);
+    --g-background:oklch(1 .02 265);
+    --g-background-hover:oklch(.98 .02 265);
+    --g-background-active:oklch(1 .02 265);
+    --g-background-opacity:oklch(.98 .02 265 / .2);
+    --g-background-focus:oklch(1 .02 265);
+    --g-background-disabled:oklch(1 .02 265);
 
-    --g-border-color:hsl(220,15%,85%);
-    --g-border-color-hover:hsl(220,15%,85%);
-    --g-border-color-active:hsl(220,15%,85%);
-    --g-border-color-focus:hsl(220,15%,85%);
-    --g-border-color-disabled:hsl(220,15%,85%);
+    --g-border-color:oklch(.9 .01 265);
+    --g-border-color-hover:oklch(.9 .01 265);
+    --g-border-color-active:oklch(.9 .01 265);
+    --g-border-color-focus:oklch(.9 .01 265);
+    --g-border-color-disabled:oklch(.9 .01 265);
     
     // --- 组件轻量颜色（如文本框） ---
 
-    --g-plain-background:hsl(210,20%,99.5%);
-    --g-plain-background-hover:hsl(210,20%,97%);
-    --g-plain-background-active:hsl(210,20%,99.5%);
-    --g-plain-background-focus:hsl(210,20%,99.5%);
-    --g-plain-background-disabled:hsl(210,20%,99.5%);
-    --g-plain-background-selected:hsl(210,20%,95%);
+    --g-plain-background:oklch(.995 .01 265);
+    --g-plain-background-hover:oklch(.97 .01 265);
+    --g-plain-background-active:oklch(.995 .01 265);
+    --g-plain-background-focus:oklch(.995 .01 265);
+    --g-plain-background-disabled:oklch(.995 .01 265);
+    --g-plain-background-selected:oklch(.95 .01 265);
 
-    --g-plain-border-color:hsl(220,15%,85%);
-    --g-plain-border-color-hover:hsl(220,15%,85%);
-    --g-plain-border-color-active:hsl(220,15%,85%);
-    --g-plain-border-color-focus:hsl(220,15%,85%);
-    --g-plain-border-color-disabled:hsl(220,15%,85%);
-    --g-plain-border-color-plain:hsl(220,15%,92%);
+    --g-plain-border-color:oklch(.9 .01 265);
+    --g-plain-border-color-hover:oklch(.85 .01 265);
+    --g-plain-border-color-active:oklch(.85 .01 265);
+    --g-plain-border-color-focus:oklch(.85 .01 265);
+    --g-plain-border-color-disabled:oklch(.85 .01 265);
+    --g-plain-border-color-plain:oklch(.92 .01 265);
 
     // --- 特殊组件颜色 ---
 
-    --g-block-background:hsl(210, 20%, 96%);
-    --g-block-background-hover:hsl(210, 20%, 94%);
-    --g-block-dark-background:hsl(210, 20%, 4%);
-    --g-block-dark-background-hover:hsl(210, 20%, 6%);
+    --g-block-background:oklch(.96 .01 265);
+    --g-block-background-hover:oklch(.94 .01 265);
+    --g-block-dark-background:oklch(.04 .01 265);
+    --g-block-dark-background-hover:oklch(.06 .01 265);
 
     ::selection {
-        background-color: rgba(0, 0, 0, .1);
+        background-color: oklch(0 0 0 / 0.1);
     }
 }
 
@@ -95,7 +95,7 @@ global {
         // --- 主体内容 ---
         .form_content {
             .form_loading {
-                background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+                background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
                 &:not(.form_show) {
                     transform: scale(1.3);
                 }
@@ -107,9 +107,9 @@ global {
 // -- CONTROL -- group --
 
 .group_wrap {
-    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px rgba(0, 0, 0, .08), 0 4px 6px -2px hsla(220, 43%, 10%, 0.03);
+    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px oklch(.2 .03 265 / .08), 0 4px 6px -2px oklch(.2 .03 265 / 0.03);
     &.group_plain {
-        box-shadow: 0px 0px 0px 1px hsl(0, 0%, 0%, .04), 0px 3px 16px 0px hsl(220, 43%, 10%, 0.06)
+        box-shadow: 0px 0px 0px 1px oklch(.2 .03 265 / .04), 0px 3px 16px 0px oklch(.2 .03 265 / .06);
     }
 }
 
@@ -118,13 +118,13 @@ global {
 .levelselect_tag-cg-greatselect {
     .levelselect_op {
         .levelselect_oploading {
-            background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+            background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
         }
     }
 }
 .levelselect_pop {
     .levelselect_loading {
-        background: radial-gradient(circle, rgba(255, 255, 255, .9) 10%, rgba(255, 255, 255, .4) 80%);
+        background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
     }
 }
 

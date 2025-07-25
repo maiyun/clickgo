@@ -32,49 +32,49 @@
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
-    --cg:hsl(20, 100%, 65%);
+    --cg:oklch(.7 0.23 45);
 
-    --success:hsl(150, 100%, 40%);
-    --success-hover:hsl(150, 100%, 45%);
-    --success-active:hsl(150, 100%, 30%);
-    --success-focus:hsl(150, 100%, 35%);
-    --success-disabled:hsl(150, 0%, 40%);
-    --success-bg:hsl(150, 100%, 98%);
+    --success:oklch(.7 .23 150);
+    --success-hover:oklch(.75 .23 150);
+    --success-active:oklch(.6 .23 150);
+    --success-focus:oklch(.65 .23 150);
+    --success-disabled:oklch(.7 0 150);
+    --success-bg:oklch(.98 .23 150);
 
-    --info:hsl(210, 100%, 50%);
-    --info-hover:hsl(210, 100%, 60%);
-    --info-active:hsl(210, 100%, 40%);
-    --info-focus:hsl(210, 100%, 45%);
-    --info-disabled:hsl(210, 0%, 50%);
-    --info-bg:hsl(210, 100%, 98%);
+    --info:oklch(.7 .23 255);
+    --info-hover:oklch(.75 .23 255);
+    --info-active:oklch(.6 .23 255);
+    --info-focus:oklch(.65 .23 255);
+    --info-disabled:oklch(.7 0 255);
+    --info-bg:oklch(.98 .23 255);
 
-    --warning:hsl(20, 100%, 70%);
-    --warning-hover:hsl(20, 100%, 80%);
-    --warning-active:hsl(20, 100%, 60%);
-    --warning-focus:hsl(20, 100%, 65%);
-    --warning-disabled:hsl(20, 0%, 70%);
-    --warning-bg:hsl(20, 100%, 98%);
+    --warning:oklch(.7 .23 45);
+    --warning-hover:oklch(.75 .23 45);
+    --warning-active:oklch(.6 .23 45);
+    --warning-focus:oklch(.65 .23 45);
+    --warning-disabled:oklch(.7 0 45);
+    --warning-bg:oklch(.98 .23 45);
 
-    --danger:hsl(350, 100%, 50%);
-    --danger-hover:hsl(350, 100%, 70%);
-    --danger-active:hsl(350, 100%, 40%);
-    --danger-focus:hsl(350, 100%, 45%);
-    --danger-disabled:hsl(350, 0%, 50%);
-    --danger-bg:hsl(350, 100%, 98%);
+    --danger:oklch(.7 .23 25);
+    --danger-hover:oklch(.75 .23 25);
+    --danger-active:oklch(.6 .23 25);
+    --danger-focus:oklch(.65 .23 25);
+    --danger-disabled:oklch(.7 0 25);
+    --danger-bg:oklch(.98 .23 25);
 
-    --system-color:hsl(0, 0%, 95%);
-    --system-background:hsla(0, 0%, 0%, .35);
-    --system-control-background:hsla(0, 0%, 100%, .03);
-    --system-background-hover:hsla(0, 0%, 100%, .06);
-    --system-background-active:hsla(0, 0%, 100%, .1);
-    --system-border-color:hsla(0, 0%, 100%, .03);
-    --system-border-color-hover:hsla(0, 0%, 100%, .06);
-    --system-placeholder-color: hsla(0, 0%, 100%, .2);
+    --system-color:oklch(.96 0 0);
+    --system-background:oklch(0 0 0 / .35);
+    --system-background-hover:oklch(1 0 0 / .06);
+    --system-background-active:oklch(1 0 0 / .1);
+    --system-control-background:oklch(1 0 0 / .03);
+    --system-border-color:oklch(1 0 0 / .03);
+    --system-border-color-hover:oklch(1 0 0 / .06);
+    --system-placeholder-color:oklch(1 0 0 / .2);
 
-    --face:hsl(0, 0%, 95%);
-    --face-hover:hsl(0, 0%, 90%);
-    --face-selected:hsl(0, 0%, 85%);
-    --g-pop-background:#FFF;
+    --face:oklch(.95 0 0);
+    --face-hover:oklch(.9 0 0);
+    --face-selected:oklch(.85 0 0);
+    --g-pop-background:oklch(1 0 0);
     --g-pop-backdrop:none;
     --g-pop-border:solid .5px var(--g-border-color);
     --g-shadow:none;
@@ -82,24 +82,24 @@
 
     // --- 组件默认颜色（如按钮） ---
 
-    --g-color:hsl(0, 0%, 35%);
-    --g-color-hover:hsl(0, 0%, 45%);
-    --g-color-active:hsl(0, 0%, 25%);
-    --g-color-focus:hsl(0, 0%, 30%);
-    --g-color-disabled:hsl(0, 0%, 60%);
+    --g-color:oklch(.45 0 0);
+    --g-color-hover:oklch(.55 0 0);
+    --g-color-active:oklch(.35 0 0);
+    --g-color-focus:oklch(.4 0 0);
+    --g-color-disabled:oklch(.6 0 0);
 
-    --g-background:hsl(0, 0%, 95%);
-    --g-background-hover:hsl(0, 0%, 100%);
-    --g-background-active:hsl(0, 0%, 85%);
-    --g-background-opacity:hsl(0, 0%, 50%, .2);
-    --g-background-focus:hsl(0, 0%, 97.5%);
-    --g-background-disabled:hsl(0, 0%, 75%);
+    --g-background:oklch(.95 0 0);
+    --g-background-hover:oklch(1 0 0);
+    --g-background-active:oklch(.85 0 0);
+    --g-background-opacity:oklch(.5 0 0 / .2);
+    --g-background-focus:oklch(.97 0 0);
+    --g-background-disabled:oklch(.8 0 0);
 
-    --g-border-color:hsl(0, 0%, 40%);
-    --g-border-color-hover:hsl(0, 0%, 50%);
-    --g-border-color-active:hsl(0, 0%, 30%);
-    --g-border-color-focus:hsl(0, 0%, 35%);
-    --g-border-color-disabled:hsl(0, 0%, 60%);
+    --g-border-color:oklch(.5 0 0);
+    --g-border-color-hover:oklch(.55 0 0);
+    --g-border-color-active:oklch(.4 0 0);
+    --g-border-color-focus:oklch(.45 0 0);
+    --g-border-color-disabled:oklch(.7 0 0);
 
     --g-focusbox-border-color:var(--g-plain-border-color);
     
@@ -111,26 +111,26 @@
     --g-plain-color-focus:var(--g-color-focus);
     --g-plain-color-disabled:var(--g-color-disabled);
 
-    --g-plain-background:hsl(0, 0%, 100%);
-    --g-plain-background-hover:hsl(0, 0%, 98%);
-    --g-plain-background-active:hsl(0, 0%, 95%);
+    --g-plain-background:oklch(1 0 0);
+    --g-plain-background-hover:oklch(.98 0 0);
+    --g-plain-background-active:oklch(.95 0 0);
     --g-plain-background-focus:var(--g-plain-background);
-    --g-plain-background-disabled:hsl(0, 0%, 95%);
-    --g-plain-background-selected:hsl(0, 0%, 95%);
+    --g-plain-background-disabled:oklch(.95 0 0);
+    --g-plain-background-selected:oklch(.95 0 0);
 
-    --g-plain-border-color:hsl(0, 0%, 70%);
-    --g-plain-border-color-hover:hsl(0, 0%, 80%);
-    --g-plain-border-color-active:hsl(0, 0%, 60%);
-    --g-plain-border-color-focus:hsl(0, 0%, 65%);
-    --g-plain-border-color-disabled:hsl(0, 0%, 60%);
-    --g-plain-border-color-plain:hsl(0, 0%, 85%);
+    --g-plain-border-color:oklch(.8 0 0);
+    --g-plain-border-color-hover:oklch(.9 0 0);
+    --g-plain-border-color-active:oklch(.7 0 0);
+    --g-plain-border-color-focus:oklch(.75 0 0);
+    --g-plain-border-color-disabled:oklch(.7 0 0);
+    --g-plain-border-color-plain:oklch(.95 0 0);
 
     // --- 特殊组件颜色 ---
 
-    --g-block-background:hsl(0, 0%, 85%);
-    --g-block-background-hover:hsl(0, 0%, 75%);
-    --g-block-dark-background:hsl(0, 0%, 15%);
-    --g-block-dark-background-hover:hsl(0, 0%, 25%);
+    --g-block-background:oklch(.9 0 0);
+    --g-block-background-hover:oklch(.8 0 0);
+    --g-block-dark-background:oklch(.3 0 0);
+    --g-block-dark-background-hover:oklch(.4 0 0);
 }
 [data-cg-disabled] {
     cursor: not-allowed;
@@ -396,12 +396,12 @@
     }
 }
 .cg-simpletask-item {
-    background: hsla(0, 0%, 0%, .05); border-radius: 3px; padding: 10px; display: flex; align-items: center; margin-right: 5px;
+    background: oklch(0 0 0 / .05); border-radius: 3px; padding: 10px; display: flex; align-items: center; margin-right: 5px;
     &:hover {
-        background: hsla(0, 0%, 0%, .1);
+        background: oklch(0 0 0 / .1);
     }
     &:active {
-        background: hsla(0, 0%, 0%, .2);
+        background: oklch(0 0 0 / .2);
     }
 }
 .cg-simpletask-icon {
