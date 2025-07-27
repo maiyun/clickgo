@@ -8,9 +8,18 @@
         <div ref="pop" class="pop">
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="T" @click="execCmd('cut')">{{l('cut')}}</cg-menulist-item>
-                    <cg-menulist-item alt="C" @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
-                    <cg-menulist-item alt="P" @click="execCmd('paste')">{{l('paste')}}</cg-menulist-item>
+                    <cg-menulist-item alt="T" @click="execCmd('cut')">
+                        <cg-icon name="cut" size="m"></cg-icon>
+                        <cg-label>{{l('cut')}}</cg-label>
+                    </cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('copy')">
+                        <cg-icon name="copy" size="m"></cg-icon>
+                        <cg-label>{{l('copy')}}</cg-label>
+                    </cg-menulist-item>
+                    <cg-menulist-item alt="P" @click="execCmd('paste')">
+                        <cg-icon name="paste" size="m"></cg-icon>
+                        <cg-label>{{l('paste')}}</cg-label>
+                    </cg-menulist-item>
                 </cg-menulist>
             </slot>
         </div>

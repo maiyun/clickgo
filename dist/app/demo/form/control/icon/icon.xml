@@ -24,5 +24,17 @@
             <icon name="info" size="m"></icon>
             <label>info</label>
         </layout>
+        <layout gutter="20" align-v="center">
+            <icon name="copy"></icon>
+            <icon name="copy" size="m"></icon>
+            <label>copy</label>
+            <icon name="cut"></icon>
+            <icon name="cut" size="m"></icon>
+            <label>cut</label>
+        </layout>
+        <layout gutter="20" align-v="center">
+            <icon name="paste"></icon>
+            <icon name="paste" size="m"></icon>
+        </layout>
     </layout>
 </form>

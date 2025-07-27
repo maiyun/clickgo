@@ -12,15 +12,12 @@
     &:focus::after, .inner:focus::after, .arrow:focus::after {
         display: block;
     }
-    &[data-cg-disabled] {
-        filter: grayscale(1);
-    }
 
     .inner {
-        flex: 1; display: flex; align-items: center; justify-content: center; outline: none; position: relative; padding: var(--g-padding);
+        flex: 1; display: flex; align-items: center; justify-content: center; outline: none; position: relative; padding: var(--g-padding); transition: var(--g-transition);
         // --- inner 右边框 ---
         &::before {
-            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1;
+            content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; transition: var(--g-transition);
         }
     }
     &.sizeh {
@@ -335,7 +332,7 @@
     box-shadow: var(--shadow);
     &.area-split {
         .inner::before {
-            border-right: var(--border); transition: var(--g-transition);
+            border-right: var(--border);
         }
     }
     &:not([data-cg-disabled]) {
@@ -349,7 +346,6 @@
                 color: var(--color-focus);
                 fill: var(--color-focus);
                 stroke: var(--color-focus);
-
                 background: var(--background-focus);
             }
             &.area-split {
@@ -404,7 +400,6 @@
 
         &.area-split {
             .inner, .arrow {
-                transition: var(--g-transition);
                 &:focus {                       // --- 焦点 ---
                     color: var(--color-focus);
                     fill: var(--color-focus);

@@ -52,7 +52,7 @@ class default_1 extends clickgo.core.AbstractApp {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             this.run(yield clickgo.form.create(main_1.default, {
-                'param': (_a = data.param) !== null && _a !== void 0 ? _a : 'none'
+                'param': (_a = data.param) !== null && _a !== void 0 ? _a : 'none',
             }));
         });
     }

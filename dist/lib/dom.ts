@@ -2041,7 +2041,8 @@ export const is = clickgo.vue.reactive({
     'shift': false,
     'ctrl': false,
     'meta': false,
-    'full': false
+    'full': false,
+    'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
 });
 
 window.addEventListener('keydown', function(e: KeyboardEvent) {
@@ -2725,4 +2726,9 @@ document.addEventListener('fullscreenchange', function() {
         return;
     }
     is.full = false;
+});
+
+// --- 监测暗/亮模式 ---
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    is.dark = e.matches;
 });

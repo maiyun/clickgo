@@ -186,6 +186,11 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.gl.select(index);
     }
 
+    /** --- 更新定位，可用于 display：none 显示出来时调用 --- */
+    public refreshOffset(): void {
+        this.refs.gl.refreshOffset();
+    }
+
     /**
      * --- 在 dataFormat 找 .value 值等于 value 的 item，包含子项，如果是 tree 没展开的将自动展开，用户可调用 ---
      */
@@ -196,9 +201,7 @@ export default class extends clickgo.control.AbstractControl {
         level?: number
     ): Record<string, any> | null {
         const rtn: Record<string, any> = {};
-        if (level === undefined) {
-            level = 0;
-        }
+        level ??= 0;
         if (!Array.isArray(value)) {
             value = [value];
         }
@@ -208,9 +211,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             value[i] = value[i].toString();
         }
-        if (!data) {
-            data = this.dataFormat;
-        }
+        data ??= this.dataFormat;
         for (const item of data) {
             if (value.includes(item.value)) {
                 // --- 找到了 ---

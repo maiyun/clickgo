@@ -38,10 +38,11 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
-            'update:modelValue': null
+            'update:modelValue': null,
         };
         this.props = {
             'modelValue': 0,
+            'type': 'default',
         };
     }
 }

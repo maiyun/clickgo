@@ -34,9 +34,9 @@
                             <template v-slot>Icon</template>
                             <template v-slot:pop>
                                 <menulist>
-                                    <menulist-item alt="A"><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">Txt</label></menulist-item>
-                                    <menulist-item alt="B"><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">Sql</label></menulist-item>
-                                    <menulist-item alt="C"><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">Zip</label></menulist-item>
+                                    <menulist-item alt="A"><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label>Txt</label></menulist-item>
+                                    <menulist-item alt="B"><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label>Sql</label></menulist-item>
+                                    <menulist-item alt="C"><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label>Zip</label></menulist-item>
                                 </menulist>
                             </template>
                         </menulist-item>
@@ -45,13 +45,13 @@
                             <template v-slot:pop>
                                 <menulist>
                                     <menulist-item alt="A">
-                                        <button @click="$event.stopPropagation()" style="height: 30px; flex: 1; width: 0;">Button</button>
+                                        <button @click="$event.stopPropagation()" style="flex: 1; width: 0;">Button</button>
                                     </menulist-item>
                                     <menulist-item alt="B">
-                                        <scroll direction="h" @click="$event.stopPropagation()" style="height: 30px; width: 150px;"></scroll>
+                                        <scroll direction="h" @click="$event.stopPropagation()" style="width: 150px; height: 30px;"></scroll>
                                     </menulist-item>
                                     <menulist-item alt="C">
-                                        <text @click="$event.stopPropagation()" style="height: 30px; flex: 1; width: 0;"></text>
+                                        <text @click="$event.stopPropagation()" style="flex: 1; width: 0;"></text>
                                     </menulist-item>
                                 </menulist>
                             </template>

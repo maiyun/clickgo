@@ -219,6 +219,47 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
+    /** --- 重复调用刷新 Offset，只会最后一次生效 --- */
+    public refreshOffsetCount: number = 0;
+
+    /** --- 更新定位，可用于 display：none 显示出来时调用 --- */
+    public refreshOffset(): void {
+        /** --- 当前 shiftStart 是第几次 --- */
+        const count = ++this.refreshOffsetCount;
+        const cb = (c: number = 0): void => {
+            if (count < this.refreshOffsetCount) {
+                // --- 已经是下一次的了，不管 ---
+                return;
+            }
+            if (c > 3) {
+                // --- 重试次数太多 ---
+                return;
+            }
+            if (!this.element.offsetParent || !this.client) {
+                // --- 隐藏状态，要等等 ---
+                clickgo.task.sleep(() => {
+                    cb(c + 1);
+                }, 100);
+                return;
+            }
+            const pos = this.refs.flow.getPos(this.shiftStart);
+            if (!pos) {
+                clickgo.task.sleep(() => {
+                    cb(c + 1);
+                }, 100);
+                return;
+            }
+            if (pos.start < this.offset) {
+                this.offset = pos.start;
+                return;
+            }
+            if (pos.end > this.offset + this.client) {
+                this.offset = pos.end - this.client;
+            }
+        };
+        cb();
+    }
+
     // --- method ---
 
     /** --- 当前队列中的需要 checkValue 的次数 --- */
@@ -320,13 +361,13 @@ export default class extends clickgo.control.AbstractControl {
                         this.go = false;
                     },
                     'detail': {
-                        'value': this.valueData
+                        'value': this.valueData,
                     }
                 };
                 this.emit('change', event);
                 const event2: types.IGreatlistChangedEvent = {
                     'detail': {
-                        'value': this.valueData
+                        'value': this.valueData,
                     }
                 };
                 this.emit('changed', event2);
@@ -1005,30 +1046,12 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 鼠标或者点击禁止区域后操作的，不管，不需要移动，例如点击了 tree 的控制按钮 ---
                 return;
             }
-            const cb = (count: number = 0): void => {
-                if (this.isSelectStart) {
-                    // --- 框选过程中变了，不管 ---
-                    return;
-                }
-                const pos = this.refs.flow.getPos(this.shiftStart);
-                if (!pos) {
-                    if (count === 0) {
-                        clickgo.task.sleep(() => {
-                            cb(count + 1);
-                        }, 50);
-                    }
-                    return;
-                }
-                if (pos.start < this.offset) {
-                    this.offset = pos.start;
-                    return;
-                }
-                if (pos.end > this.offset + this.client) {
-                    this.offset = pos.end - this.client;
-                }
-            };
-            cb();
-            // --- 有可能 shiftStart 是正常的，但是 data 数据还没有响应到 vflow 导致获取不到 pos，所以用了 timer 再尝试一次 ---
+            if (this.isSelectStart) {
+                // --- 框选过程中变了，不管 ---
+                return;
+            }
+            this.refreshOffset();
+            // --- 有可能 shiftStart 是正常的，但是 data 数据还没有响应到 vflow 导致获取不到 pos，所以循环尝试几次 ---
         });
 
         // --- 监听 data 变动 ---

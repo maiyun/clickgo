@@ -32,35 +32,36 @@
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
-    --cg:oklch(.7 0.23 45);
+    --cg:oklch(.7 .23 45);
+    --cg-bg:oklch(.98 .01 45);
 
     --success:oklch(.7 .23 150);
     --success-hover:oklch(.75 .23 150);
     --success-active:oklch(.6 .23 150);
     --success-focus:oklch(.65 .23 150);
-    --success-disabled:oklch(.7 0 150);
-    --success-bg:oklch(.98 .23 150);
+    --success-disabled:oklch(.85 0 150);
+    --success-bg:oklch(.98 .01 150);
 
     --info:oklch(.7 .23 255);
     --info-hover:oklch(.75 .23 255);
     --info-active:oklch(.6 .23 255);
     --info-focus:oklch(.65 .23 255);
-    --info-disabled:oklch(.7 0 255);
-    --info-bg:oklch(.98 .23 255);
+    --info-disabled:oklch(.85 0 255);
+    --info-bg:oklch(.98 .01 255);
 
     --warning:oklch(.7 .23 45);
     --warning-hover:oklch(.75 .23 45);
     --warning-active:oklch(.6 .23 45);
     --warning-focus:oklch(.65 .23 45);
-    --warning-disabled:oklch(.7 0 45);
-    --warning-bg:oklch(.98 .23 45);
+    --warning-disabled:oklch(.85 0 45);
+    --warning-bg:oklch(.98 .01 45);
 
     --danger:oklch(.7 .23 25);
     --danger-hover:oklch(.75 .23 25);
     --danger-active:oklch(.6 .23 25);
     --danger-focus:oklch(.65 .23 25);
-    --danger-disabled:oklch(.7 0 25);
-    --danger-bg:oklch(.98 .23 25);
+    --danger-disabled:oklch(.85 0 25);
+    --danger-bg:oklch(.98 .01 25);
 
     --system-color:oklch(.96 0 0);
     --system-background:oklch(0 0 0 / .35);
@@ -71,6 +72,7 @@
     --system-border-color-hover:oklch(1 0 0 / .06);
     --system-placeholder-color:oklch(1 0 0 / .2);
 
+    --g-pure:oklch(1 0 0);
     --face:oklch(.95 0 0);
     --face-hover:oklch(.9 0 0);
     --face-selected:oklch(.85 0 0);
@@ -86,14 +88,14 @@
     --g-color-hover:oklch(.55 0 0);
     --g-color-active:oklch(.35 0 0);
     --g-color-focus:oklch(.4 0 0);
-    --g-color-disabled:oklch(.6 0 0);
+    --g-color-disabled:oklch(.7 0 0);
 
     --g-background:oklch(.95 0 0);
     --g-background-hover:oklch(1 0 0);
-    --g-background-active:oklch(.85 0 0);
+    --g-background-active:oklch(.9 0 0);
     --g-background-opacity:oklch(.5 0 0 / .2);
     --g-background-focus:oklch(.97 0 0);
-    --g-background-disabled:oklch(.8 0 0);
+    --g-background-disabled:oklch(.85 0 0);
 
     --g-border-color:oklch(.5 0 0);
     --g-border-color-hover:oklch(.55 0 0);

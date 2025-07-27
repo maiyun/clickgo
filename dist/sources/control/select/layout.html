@@ -1,4 +1,4 @@
-<cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :area="propBoolean('editable') ? (propBoolean('search') ? 'text' : 'arrow') : 'all'" :plain="propBoolean('plain')" :virtual="virtual" pop="custom" :padding="!labelMode ? '0' : padding" :style="{'--select-padding':padding==='0'?'0':`var(--g-padding${padding==='m'?'':('-'+padding)})`}">
+<cg-greatselect ref="gs" :disabled="propBoolean('disabled')" :area="propBoolean('editable') ? (propBoolean('search') ? 'text' : 'arrow') : 'all'" :plain="propBoolean('plain')" :virtual="virtual" pop="custom" :padding="!labelMode ? '0' : padding" :style="{'--select-padding':padding==='0'?'0':`var(--g-padding${padding==='m'?'':('-'+padding)})`}" @pop="onPop">
     <div v-if="labelMode" class="labelmode" :style="{'color':listItem[0]?listItem[0].color:undefined}">{{label[0] || '　'}}</div>
     <template v-else>
         <div v-if="propBoolean('multi')" ref="tags" class="tags" :class="[propBoolean('editable') && 'editable']" v-show="!propBoolean('editable') || label.length" @wheel="tagsWheel">

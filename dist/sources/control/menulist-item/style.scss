@@ -29,7 +29,7 @@
     }
     
     .inner {
-        flex: 1; display: flex; align-items: center; padding: var(--g-padding) 35px var(--g-padding) 10px;
+        flex: 1; display: flex; align-items: center; padding: var(--g-padding) 35px var(--g-padding) 10px; gap: var(--g-padding);
     }
     
     .arrow {

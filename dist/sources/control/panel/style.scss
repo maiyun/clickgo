@@ -5,6 +5,6 @@
     }
 
     &:not(.plain) {
-        background: #FFF;
+        background: var(--g-pure);
     }
 }

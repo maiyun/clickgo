@@ -193,6 +193,9 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Question Circle SVG Vector](https://www.svgrepo.com/svg/522997/question-circle)  
 [Info Circle SVG Vector](https://www.svgrepo.com/svg/522904/info-circle)
+[Copy SVG Vector](https://www.svgrepo.com/svg/522803/copy)
+[Scissors SVG Vector](https://www.svgrepo.com/svg/523012/scissors)
+[Paste SVG Vector](https://www.svgrepo.com/svg/489767/paste)
 
 ### **LICENSE:** CC0 License **UPLOADER:** SVG Repo
 

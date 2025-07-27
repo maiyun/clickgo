@@ -42,10 +42,28 @@ export default class extends clickgo.form.AbstractForm {
         },
         {
             'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
         }
     ];
 
-    public select: number[] = [];
+    public select: number[] = [11];
 
     // --- list ---
 
@@ -374,6 +392,16 @@ export default class extends clickgo.form.AbstractForm {
         }
         await clickgo.tool.sleep(300);
         resolve();
+    }
+
+    public glNone: boolean = false;
+
+    public onMounted(): void {
+        /*
+        clickgo.task.sleep(() => {
+            this.glNone = false;
+        }, 1_000);
+        */
     }
 
 }

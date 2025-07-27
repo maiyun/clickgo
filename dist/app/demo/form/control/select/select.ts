@@ -104,6 +104,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public noValue: any[] = [];
 
+    public reward: string[] = ['z'];
+
     public disabledList: string[] = [];
 
     public unavailableList: string[] = [];

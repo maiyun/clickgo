@@ -49,6 +49,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.v = 0;
         this.v2 = 20;
         this.v3 = 60;
+        this.v4 = ['default'];
     }
     onMounted() {
         clickgo.tool.sleep(500).then(() => __awaiter(this, void 0, void 0, function* () {

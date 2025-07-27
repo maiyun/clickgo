@@ -9,7 +9,7 @@
             <radio v-model="value" :disabled="disabled" value="radio3" style="flex: 1; width: 0;">radio3</radio>
             <radio v-model="value" :disabled="disabled" value="radio4" @change="onChange" style="flex: 1; width: 0;">radio4 (r2n4)</radio>
         </layout>
-        <button @click="value = 'radio2'" style="height: 30px;">Set value to "radio2"</button>
-        <button @click="disabled = !disabled" style="height: 30px;">{{disabled ? 'Remove' : 'Set'}} disabled</button>
+        <button @click="value = 'radio2'">Set value to "radio2"</button>
+        <button @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
     </layout>
 </form>

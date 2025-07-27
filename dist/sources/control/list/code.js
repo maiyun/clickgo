@@ -133,11 +133,12 @@ class default_1 extends clickgo.control.AbstractControl {
     select(index) {
         this.refs.gl.select(index);
     }
+    refreshOffset() {
+        this.refs.gl.refreshOffset();
+    }
     findFormat(value, autoOpen = true, data, level) {
         const rtn = {};
-        if (level === undefined) {
-            level = 0;
-        }
+        level !== null && level !== void 0 ? level : (level = 0);
         if (!Array.isArray(value)) {
             value = [value];
         }
@@ -147,9 +148,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             value[i] = value[i].toString();
         }
-        if (!data) {
-            data = this.dataFormat;
-        }
+        data !== null && data !== void 0 ? data : (data = this.dataFormat);
         for (const item of data) {
             if (value.includes(item.value)) {
                 rtn[item.value] = item;

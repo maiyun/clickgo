@@ -70,6 +70,7 @@
             <label>clickgo.dom.is.ctrl: {{isCtrl ? 'true' : 'false'}}</label>
             <label>clickgo.dom.is.meta: {{isMeta ? 'true' : 'false'}}</label>
             <label>clickgo.dom.is.full: {{isFull ? 'true' : 'false'}}</label>
+            <label>clickgo.dom.is.dark: {{isDark ? 'true' : 'false'}}</label>
         </layout>
     </flow>
 </form>

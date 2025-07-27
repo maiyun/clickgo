@@ -82,9 +82,27 @@ class default_1 extends clickgo.form.AbstractForm {
             },
             {
                 'type': 1
+            },
+            {
+                'type': 1
+            },
+            {
+                'type': 1
+            },
+            {
+                'type': 1
+            },
+            {
+                'type': 1
+            },
+            {
+                'type': 1
+            },
+            {
+                'type': 1
             }
         ];
-        this.select = [];
+        this.select = [11];
         this.select2 = ['Appraise'];
         this.label2 = [''];
         this.listData5 = [
@@ -143,6 +161,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.check = false;
         this.mode = ['default'];
         this.listDataEmpty = false;
+        this.glNone = false;
     }
     get sizes() {
         const rtn = {};
@@ -361,6 +380,8 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.tool.sleep(300);
             resolve();
         });
+    }
+    onMounted() {
     }
 }
 exports.default = default_1;

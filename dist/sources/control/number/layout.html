@@ -10,9 +10,18 @@
         <div ref="pop" class="pop">
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="T" @click="execCmd('cut')" :disabled="propBoolean('readonly') || (propBoolean('password') && !showPassword)">{{l('cut')}}</cg-menulist-item>
-                    <cg-menulist-item alt="C" @click="execCmd('copy')" :disabled="propBoolean('password') && !showPassword">{{l('copy')}}</cg-menulist-item>
-                    <cg-menulist-item alt="P" @click="execCmd('paste')" :disabled="propBoolean('readonly')">{{l('paste')}}</cg-menulist-item>
+                    <cg-menulist-item alt="T" @click="execCmd('cut')" :disabled="propBoolean('readonly') || (propBoolean('password') && !showPassword)">
+                        <cg-icon name="cut" size="m"></cg-icon>
+                        <cg-label>{{l('cut')}}</cg-label>
+                    </cg-menulist-item>
+                    <cg-menulist-item alt="C" @click="execCmd('copy')" :disabled="propBoolean('password') && !showPassword">
+                        <cg-icon name="copy" size="m"></cg-icon>
+                        <cg-label>{{l('copy')}}</cg-label>
+                    </cg-menulist-item>
+                    <cg-menulist-item alt="P" @click="execCmd('paste')" :disabled="propBoolean('readonly')">
+                        <cg-icon name="paste" size="m"></cg-icon>
+                        <cg-label>{{l('paste')}}</cg-label>
+                    </cg-menulist-item>
                 </cg-menulist>
             </slot>
         </div>

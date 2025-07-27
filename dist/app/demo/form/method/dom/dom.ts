@@ -46,6 +46,10 @@ export default class extends clickgo.form.AbstractForm {
         return clickgo.dom.is.full;
     }
 
+    public get isDark(): boolean {
+        return clickgo.dom.is.dark;
+    }
+
     public setGlobalCursor(type?: string): void {
         clickgo.dom.setGlobalCursor(type);
     }

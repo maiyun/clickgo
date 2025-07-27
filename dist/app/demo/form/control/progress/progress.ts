@@ -8,6 +8,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public v3 = 60;
 
+    public v4 = ['default'];
+
     public onMounted(): void {
         clickgo.tool.sleep(500).then(async () => {
             this.v2 = 40;

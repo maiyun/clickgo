@@ -97,6 +97,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.beforeSelectValues = [];
         this.isSelectStart = false;
         this.scrollShow = true;
+        this.refreshOffsetCount = 0;
         this._needCheckValue = 0;
         this.lastGlno = 0;
     }
@@ -182,6 +183,38 @@ class default_1 extends clickgo.control.AbstractControl {
             break;
         }
     }
+    refreshOffset() {
+        const count = ++this.refreshOffsetCount;
+        const cb = (c = 0) => {
+            if (count < this.refreshOffsetCount) {
+                return;
+            }
+            if (c > 3) {
+                return;
+            }
+            if (!this.element.offsetParent || !this.client) {
+                clickgo.task.sleep(() => {
+                    cb(c + 1);
+                }, 100);
+                return;
+            }
+            const pos = this.refs.flow.getPos(this.shiftStart);
+            if (!pos) {
+                clickgo.task.sleep(() => {
+                    cb(c + 1);
+                }, 100);
+                return;
+            }
+            if (pos.start < this.offset) {
+                this.offset = pos.start;
+                return;
+            }
+            if (pos.end > this.offset + this.client) {
+                this.offset = pos.end - this.client;
+            }
+        };
+        cb();
+    }
     checkValue() {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c;
@@ -260,13 +293,13 @@ class default_1 extends clickgo.control.AbstractControl {
                             this.go = false;
                         },
                         'detail': {
-                            'value': this.valueData
+                            'value': this.valueData,
                         }
                     };
                     this.emit('change', event);
                     const event2 = {
                         'detail': {
-                            'value': this.valueData
+                            'value': this.valueData,
                         }
                     };
                     this.emit('changed', event2);
@@ -840,28 +873,10 @@ class default_1 extends clickgo.control.AbstractControl {
             if (Date.now() - this.lastGlno <= 300) {
                 return;
             }
-            const cb = (count = 0) => {
-                if (this.isSelectStart) {
-                    return;
-                }
-                const pos = this.refs.flow.getPos(this.shiftStart);
-                if (!pos) {
-                    if (count === 0) {
-                        clickgo.task.sleep(() => {
-                            cb(count + 1);
-                        }, 50);
-                    }
-                    return;
-                }
-                if (pos.start < this.offset) {
-                    this.offset = pos.start;
-                    return;
-                }
-                if (pos.end > this.offset + this.client) {
-                    this.offset = pos.end - this.client;
-                }
-            };
-            cb();
+            if (this.isSelectStart) {
+                return;
+            }
+            this.refreshOffset();
         });
         this.watch(() => JSON.stringify(this.props.data), () => __awaiter(this, void 0, void 0, function* () {
             yield this.checkValue();

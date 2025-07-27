@@ -42,6 +42,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'add': null,
             'change': null,
             'changed': null,
+            'pop': null,
             'update:modelValue': null
         };
         this.props = {
@@ -69,6 +70,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'autoScroll': true,
             'way': 'click'
         });
+        this.emit('pop');
     }
     hidePop() {
         clickgo.form.hidePop(this.element);

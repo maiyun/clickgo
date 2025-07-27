@@ -8,6 +8,8 @@ export default class extends clickgo.control.AbstractControl {
         'add': null,
         'change': null,
         'changed': null,
+        /** --- 无论是谁，只要 pop 显示就响应 --- */
+        'pop': null,
 
         'update:modelValue': null
     };
@@ -65,6 +67,7 @@ export default class extends clickgo.control.AbstractControl {
             'autoScroll': true,
             'way': 'click'
         });
+        this.emit('pop');
     }
 
     /**

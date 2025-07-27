@@ -23,56 +23,95 @@ global {
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
+    --cg:oklch(.55 0.15 45);
+    --cg-bg:oklch(.2 0.03 45);
 
-    --face:oklch(.98 .005 265);
-    --face-hover:oklch(.95 .005 265);
-    --face-selected:oklch(.92 .005 265);
-    --g-pop-background:oklch(.98 .005 265 / .6);
+    --success:oklch(.55 .15 150);
+    --success-hover:oklch(.6 .15 150);
+    --success-active:oklch(.45 .15 150);
+    --success-focus:oklch(.5 .15 150);
+    --success-disabled:oklch(.7 0 150);
+    --success-bg:oklch(.2 .03 150);
+
+    --info:oklch(.55 .15 255);
+    --info-hover:oklch(.6 .15 255);
+    --info-active:oklch(.45 .15 255);
+    --info-focus:oklch(.5 .15 255);
+    --info-disabled:oklch(.7 0 255);
+    --info-bg:oklch(.2 .03 255);
+
+    --warning:oklch(.55 .15 45);
+    --warning-hover:oklch(.6 .15 45);
+    --warning-active:oklch(.45 .15 45);
+    --warning-focus:oklch(.5 .15 45);
+    --warning-disabled:oklch(.7 0 45);
+    --warning-bg:oklch(.2 .03 45);
+
+    --danger:oklch(.55 .15 25);
+    --danger-hover:oklch(.6 .15 25);
+    --danger-active:oklch(.45 .15 25);
+    --danger-focus:oklch(.5 .15 25);
+    --danger-disabled:oklch(.7 0 25);
+    --danger-bg:oklch(.2 .03 25);
+
+    --g-pure:oklch(.15 .005 265);
+    --face:oklch(.15 .005 265);
+    --face-hover:oklch(.25 .005 265);
+    --face-selected:oklch(.35 .005 265);
+    --g-pop-background:oklch(.15 .005 265 / .6);
     --g-pop-backdrop:blur(10px) saturate(2);
     --g-pop-border:solid .5px var(--g-border-color);
-    --g-shadow:0 1px 6px oklch(.2 .03 265 / 0.05);
-    --g-outline-shadow:0 0 0 4px oklch(.97 .01 265); 
+    --g-shadow:0 1px 6px oklch(.9 .03 265 / 0.05);
+    --g-outline-shadow:0 0 0 4px oklch(.27 .01 265); 
 
     // --- 组件默认颜色（如按钮） ---
 
-    --g-background:oklch(1 .005 265);
-    --g-background-hover:oklch(.98 .005 265);
-    --g-background-active:oklch(1 .005 265);
-    --g-background-opacity:oklch(.98 .005 265 / .2);
-    --g-background-focus:oklch(1 .005 265);
-    --g-background-disabled:oklch(1 .005 265);
+    --g-color:oklch(.85 0 0);
+    --g-color-hover:oklch(.95 0 0);
+    --g-color-active:oklch(.75 0 0);
+    --g-color-focus:oklch(.8 0 0);
+    --g-color-disabled:oklch(.6 0 0);
 
-    --g-border-color:oklch(.9 .005 265);
-    --g-border-color-hover:oklch(.9 .005 265);
-    --g-border-color-active:oklch(.9 .005 265);
-    --g-border-color-focus:oklch(.9 .005 265);
-    --g-border-color-disabled:oklch(.9 .005 265);
+    --g-background:oklch(.2 .005 265);
+    --g-background-hover:oklch(.25 .005 265);
+    --g-background-active:oklch(.2 .005 265);
+    --g-background-opacity:oklch(.25 .005 265 / .2);
+    --g-background-focus:oklch(.2 .005 265);
+    --g-background-disabled:oklch(.2 .005 265);
+
+    --g-border-color:oklch(.35 .005 265);
+    --g-border-color-hover:oklch(.35 .005 265);
+    --g-border-color-active:oklch(.35 .005 265);
+    --g-border-color-focus:oklch(.35 .005 265);
+    --g-border-color-disabled:oklch(.35 .005 265);
     
     // --- 组件轻量颜色（如文本框） ---
 
-    --g-plain-background:oklch(.995 .005 265);
-    --g-plain-background-hover:oklch(.97 .005 265);
-    --g-plain-background-active:oklch(.995 .005 265);
-    --g-plain-background-focus:oklch(.995 .005 265);
-    --g-plain-background-disabled:oklch(.995 .005 265);
-    --g-plain-background-selected:oklch(.95 .005 265);
+    --g-plain-background:oklch(.18 .005 265);
+    --g-plain-background-hover:oklch(.22 .005 265);
+    --g-plain-background-active:oklch(.18 .005 265);
+    --g-plain-background-focus:oklch(.18 .005 265);
+    --g-plain-background-disabled:oklch(.18 .005 265);
+    --g-plain-background-selected:oklch(.25 .005 265);
 
-    --g-plain-border-color:oklch(.9 .005 265);
-    --g-plain-border-color-hover:oklch(.85 .005 265);
-    --g-plain-border-color-active:oklch(.85 .005 265);
-    --g-plain-border-color-focus:oklch(.85 .005 265);
-    --g-plain-border-color-disabled:oklch(.85 .005 265);
-    --g-plain-border-color-plain:oklch(.92 .005 265);
+    --g-plain-border-color:oklch(.3 .005 265);
+    --g-plain-border-color-hover:oklch(.35 .005 265);
+    --g-plain-border-color-active:oklch(.35 .005 265);
+    --g-plain-border-color-focus:oklch(.35 .005 265);
+    --g-plain-border-color-disabled:oklch(.35 .005 265);
+    --g-plain-border-color-plain:oklch(.32 .005 265);
 
     // --- 特殊组件颜色 ---
 
-    --g-block-background:oklch(.96 .005 265);
-    --g-block-background-hover:oklch(.94 .005 265);
+    --g-block-background:oklch(.36 .005 265);
+    --g-block-background-hover:oklch(.38 .005 265);
+    /*
     --g-block-dark-background:oklch(.04 .005 265);
     --g-block-dark-background-hover:oklch(.06 .005 265);
+    */
 
     ::selection {
-        background-color: oklch(0 0 0 / 0.1);
+        background-color: oklch(1 0 0 / 0.15);
     }
 }
 
@@ -92,10 +131,24 @@ global {
 .form_wrap {
     // --- 内部 ---
     .form_inner {
+        // --- 头部 ---
+        .form_header {
+            // --- 控制按钮 ---
+            .form_controls {
+                .form_min, .form_max {
+                    &:hover {
+                        background: oklch(1 0 0 / .15);
+                    }
+                    &:active {
+                        background: oklch(1 0 0 / .25);
+                    }
+                }
+            }
+        }
         // --- 主体内容 ---
         .form_content {
             .form_loading {
-                background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
+                background: radial-gradient(circle, oklch(0 0 0 / .9) 10%, oklch(0 0 0 / .4) 80%);
                 &:not(.form_show) {
                     transform: scale(1.3);
                 }
@@ -118,13 +171,13 @@ global {
 .levelselect_tag-cg-greatselect {
     .levelselect_op {
         .levelselect_oploading {
-            background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
+            background: radial-gradient(circle, oklch(0 0 0 / .9) 10%, oklch(0 0 0 / .4) 80%);
         }
     }
 }
 .levelselect_pop {
     .levelselect_loading {
-        background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
+        background: radial-gradient(circle, oklch(0 0 0 / .9) 10%, oklch(0 0 0 / .4) 80%);
     }
 }
 

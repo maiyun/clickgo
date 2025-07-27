@@ -1,8 +1,9 @@
 <form title="Progress" width="500" height="400" min-width="300" min-height="400" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-        <progress v-model="v"></progress>
-        <progress v-model="v2"></progress>
-        <progress v-model="v3" style="height: 10px;"></progress>
+        <progress v-model="v" :type="v4[0]"></progress>
+        <progress v-model="v2" :type="v4[0]"></progress>
+        <progress v-model="v3" style="height: 10px;" :type="v4[0]"></progress>
         <button @click="v3 = v3 === 20 ? 60 : 20">Set to {{v3 === 20 ? '60' : '20'}}</button>
+        <select v-model="v4" :data="['default', 'primary', 'info', 'warning', 'danger']"></select>
     </layout>
 </form>

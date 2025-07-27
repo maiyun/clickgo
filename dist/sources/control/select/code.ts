@@ -1031,6 +1031,11 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('load', value, resolve);
     }
 
+    /** --- 只要 pop 弹出，就要刷新一下 --- */
+    public onPop(): void {
+        this.refs.list.refreshOffset();
+    }
+
     public onMounted(): void {
         let mvimmediate = true;
         this.watch('modelValue', async (): Promise<void> => {

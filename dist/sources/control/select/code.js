@@ -914,6 +914,9 @@ class default_1 extends clickgo.control.AbstractControl {
     onLoad(value, resolve) {
         this.emit('load', value, resolve);
     }
+    onPop() {
+        this.refs.list.refreshOffset();
+    }
     onMounted() {
         let mvimmediate = true;
         this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {

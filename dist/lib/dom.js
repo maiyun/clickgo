@@ -1613,7 +1613,8 @@ exports.is = clickgo.vue.reactive({
     'shift': false,
     'ctrl': false,
     'meta': false,
-    'full': false
+    'full': false,
+    'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
 });
 window.addEventListener('keydown', function (e) {
     switch (e.key) {
@@ -2169,4 +2170,7 @@ document.addEventListener('fullscreenchange', function () {
         return;
     }
     exports.is.full = false;
+});
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    exports.is.dark = e.matches;
 });

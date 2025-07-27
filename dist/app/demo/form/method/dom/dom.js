@@ -80,6 +80,9 @@ class default_1 extends clickgo.form.AbstractForm {
     get isFull() {
         return clickgo.dom.is.full;
     }
+    get isDark() {
+        return clickgo.dom.is.dark;
+    }
     setGlobalCursor(type) {
         clickgo.dom.setGlobalCursor(type);
     }
