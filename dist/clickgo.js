@@ -37,6 +37,7 @@ exports.zip = exports.tool = exports.theme = exports.task = exports.storage = ex
 exports.getVersion = getVersion;
 exports.isNative = isNative;
 exports.getPlatform = getPlatform;
+exports.getDevice = getDevice;
 exports.isImmersion = isImmersion;
 exports.hasFrame = hasFrame;
 const version = '3.16.22';
@@ -60,6 +61,33 @@ if (native) {
 }
 function getPlatform() {
     return platform;
+}
+let device = {
+    'type': 'unknown',
+    'os': 'unknown',
+};
+function getDevice() {
+    if (device.type !== 'unknown') {
+        return device;
+    }
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.includes('android')) {
+        device.os = 'android';
+    }
+    else if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod')) {
+        device.os = 'ios';
+    }
+    else if (ua.includes('windows') || ua.includes('win32')) {
+        device.os = 'windows';
+    }
+    else if (ua.includes('mac os') || ua.includes('darwin')) {
+        device.os = 'macos';
+    }
+    else if (ua.includes('linux')) {
+        device.os = 'linux';
+    }
+    device.type = ['windows', 'macos', 'linux'].includes(device.os) ? 'desktop' : 'mobile';
+    return device;
 }
 function isImmersion() {
     return immersion;

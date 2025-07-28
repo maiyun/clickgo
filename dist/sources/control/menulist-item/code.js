@@ -49,6 +49,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': ''
         };
         this.value = '';
+        this.device = clickgo.getDevice();
     }
     enter(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -94,6 +95,12 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         clickgo.form.hidePop();
+    }
+    get skeys() {
+        if (!this.props.alt) {
+            return [];
+        }
+        return [this.device.os === 'macos' ? '⌘' : 'Ctrl', this.props.alt];
     }
     onBeforeUnmount() {
         const menulist = this.parentByName('menulist');

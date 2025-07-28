@@ -267,9 +267,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
         if (opt.icon) {
             icon = opt.icon;
         }
-        if (opt.notify === undefined) {
-            opt.notify = true;
-        }
+        opt.notify ??= true;
         const notifyId: number | undefined = opt.notify ? form.notify({
             'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
             'content': url,
@@ -404,19 +402,22 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
     };
     // --- ClickGo 相关 ---
     invoke.invokeClickgo = {
-        getVersion: function(): string {
+        getVersion: (): string => {
             return clickgo.getVersion();
         },
-        isNative(): boolean {
+        isNative: (): boolean => {
             return clickgo.isNative();
         },
-        getPlatform(): string {
+        getPlatform: (): string => {
             return clickgo.getPlatform();
         },
-        isImmersion(): boolean {
+        getDevice: () => {
+            return clickgo.getDevice();
+        },
+        isImmersion: (): boolean => {
             return clickgo.isImmersion();
         },
-        hasFrame(): boolean {
+        hasFrame: (): boolean => {
             return clickgo.hasFrame();
         },
         'control': {
@@ -766,9 +767,9 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
                     'path'?: string;
                 }
             ): Promise<{
-                'vapp': types.IVApp;
-                'vroot': T;
-            }> {
+                    'vapp': types.IVApp;
+                    'vroot': T;
+                }> {
                 return form.createPanel(rootPanel, cls, opt, taskId);
             },
             create: function<T extends form.AbstractForm>(
@@ -1120,7 +1121,7 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             weightFormat: function(weight: number, spliter: string = ' '): string {
                 return tool.weightFormat(weight, spliter);
             },
-            clone: function(obj: Record<string, any> | any[]): any[] | any {
+            clone: function<T>(obj: T): T {
                 return tool.clone(obj);
             },
             sleep: function(ms: number = 0): Promise<boolean> {

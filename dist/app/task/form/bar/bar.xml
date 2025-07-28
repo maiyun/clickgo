@@ -29,7 +29,7 @@
         </task-item>
         <template v-slot:pop>
             <menulist>
-                <menulist-item alt="P">
+                <menulist-item>
                     {{l('position')}}
                     <template v-slot:pop>
                         <menulist>

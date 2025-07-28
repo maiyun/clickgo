@@ -35,8 +35,47 @@ if (native) {
         frame = reg[5] === '0' ? false : true;
     }
 }
+
+/** --- 获取当前平台（web 则只返回 web） --- */
 export function getPlatform(): NodeJS.Platform | 'web' {
     return platform;
+}
+
+let device: {
+    'type': 'unknown' | 'mobile' | 'desktop';
+    'os': 'unknown' | 'android' | 'ios' | 'windows' | 'macos' | 'linux';
+} = {
+    'type': 'unknown',
+    'os': 'unknown',
+};
+
+/** --- 获取当前设备信息（支持 native 和 web） --- */
+export function getDevice(): typeof device {
+    if (device.type !== 'unknown') {
+        return device;
+    }
+    const ua = navigator.userAgent.toLowerCase();
+
+    // --- 先判断操作系统 ---
+    if (ua.includes('android')) {
+        device.os = 'android';
+    }
+    else if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod')) {
+        device.os = 'ios';
+    }
+    else if (ua.includes('windows') || ua.includes('win32')) {
+        device.os = 'windows';
+    }
+    else if (ua.includes('mac os') || ua.includes('darwin')) {
+        device.os = 'macos';
+    }
+    else if (ua.includes('linux')) {
+        device.os = 'linux';
+    }
+
+    device.type = ['windows', 'macos', 'linux'].includes(device.os) ? 'desktop' : 'mobile';
+
+    return device;
 }
 
 /**

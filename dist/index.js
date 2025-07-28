@@ -13,6 +13,7 @@ exports.AbstractBoot = exports.vue = exports.zip = exports.tool = exports.theme 
 exports.getVersion = getVersion;
 exports.isNative = isNative;
 exports.getPlatform = getPlatform;
+exports.getDevice = getDevice;
 exports.isImmersion = isImmersion;
 exports.hasFrame = hasFrame;
 exports.launcher = launcher;
@@ -24,6 +25,9 @@ function isNative() {
 }
 function getPlatform() {
     return exports.clickgo.getPlatform();
+}
+function getDevice() {
+    return exports.clickgo.getDevice();
 }
 function isImmersion() {
     return exports.clickgo.isImmersion();

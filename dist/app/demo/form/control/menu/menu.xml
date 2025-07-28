@@ -4,7 +4,7 @@
         <menulist>
             <menulist-item alt="A">Item1</menulist-item>
             <menulist-item alt="B">Item2</menulist-item>
-            <menulist-item alt="C">
+            <menulist-item>
                 <template v-slot>Radio</template>
                 <template v-slot:pop>
                     <menulist>
@@ -12,7 +12,7 @@
                         <menulist-item type="radio" alt="B" v-model="radio" label="radio2">Radio2</menulist-item>
                         <menulist-item type="radio" alt="C" v-model="radio" label="radio3" @check="onRadio">Radio3</menulist-item>
                         <menulist-split></menulist-split>
-                        <menulist-item alt="C">
+                        <menulist-item>
                             <template v-slot>Check</template>
                             <template v-slot:pop>
                                 <menulist>
@@ -26,11 +26,11 @@
                     </menulist>
                 </template>
             </menulist-item>
-            <menulist-item alt="D">
+            <menulist-item>
                 <template v-slot>Custom</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item alt="A">
+                        <menulist-item>
                             <template v-slot>Icon</template>
                             <template v-slot:pop>
                                 <menulist>
@@ -40,7 +40,7 @@
                                 </menulist>
                             </template>
                         </menulist-item>
-                        <menulist-item alt="B">
+                        <menulist-item>
                             <template v-slot>Control</template>
                             <template v-slot:pop>
                                 <menulist>
@@ -56,13 +56,13 @@
                                 </menulist>
                             </template>
                         </menulist-item>
-                        <menulist-item alt="C">
+                        <menulist-item>
                             <template v-slot>Free</template>
                             <template v-slot:pop>
                                 <menulist>
                                     <layout>
                                         <menulist-item alt="A">Box 1</menulist-item>
-                                        <menulist-item alt="B">
+                                        <menulist-item>
                                             <template v-slot>Box 2</template>
                                             <template v-slot:pop>
                                                 <menulist>
@@ -82,7 +82,7 @@
         <label>Basic:</label>
         <menulist>
             <menulist-item alt="E">Item1</menulist-item>
-            <menulist-item alt="F">
+            <menulist-item>
                 <template v-slot>Item2</template>
                 <template v-slot:pop>
                     <menulist>

@@ -134,15 +134,10 @@ class default_1 extends clickgo.control.AbstractControl {
             return this.nowlist;
         }
         const inputValue = this.inputValue.toLowerCase();
-        const isArray = Array.isArray(this.nowlist);
-        const searchData = isArray ? [] : {};
-        for (const key in this.nowlist) {
-            const item = this.nowlist[key];
-            const val = (isArray ?
-                (typeof item === 'object' ? (_a = item.value) !== null && _a !== void 0 ? _a : '' : item) :
-                key).toString().toLowerCase();
-            const lab = (isArray ?
-                (typeof item === 'object' ? (_b = item.label) !== null && _b !== void 0 ? _b : '' : '') : '').toLowerCase();
+        const searchData = [];
+        for (const item of this.nowlist) {
+            const val = (typeof item === 'object' ? (_a = item.value) !== null && _a !== void 0 ? _a : '' : item).toString().toLowerCase();
+            const lab = (typeof item === 'object' ? (_b = item.label) !== null && _b !== void 0 ? _b : '' : '').toLowerCase();
             let include = true;
             for (const char of inputValue) {
                 if (val.includes(char) || lab.includes(char)) {
@@ -154,12 +149,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!include) {
                 continue;
             }
-            if (isArray) {
-                searchData.push(item);
-            }
-            else {
-                searchData[key] = item;
-            }
+            searchData.push(item);
         }
         return searchData;
     }
@@ -377,12 +367,19 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     setNowList(list) {
-        this.nowlist = clickgo.tool.clone(list);
-        for (const key in this.nowlist) {
-            if (this.nowlist[key].children === undefined) {
-                continue;
+        this.nowlist.length = 0;
+        const nowlist = clickgo.tool.clone(list);
+        if (Array.isArray(nowlist)) {
+            this.nowlist = nowlist;
+        }
+        else {
+            for (const key in nowlist) {
+                nowlist[key].value = key;
+                this.nowlist.push(nowlist[key]);
             }
-            delete this.nowlist[key].children;
+        }
+        for (const item of this.nowlist) {
+            delete item.children;
         }
     }
     listItemClicked() {

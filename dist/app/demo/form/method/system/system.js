@@ -59,6 +59,11 @@ class default_1 extends clickgo.form.AbstractForm {
             yield clickgo.form.dialog('Platform: ' + clickgo.getPlatform());
         });
     }
+    getDevice() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.form.dialog('Device: ' + JSON.stringify(clickgo.getDevice()));
+        });
+    }
     isImmersion() {
         return __awaiter(this, void 0, void 0, function* () {
             yield clickgo.form.dialog('Immersion: ' + (clickgo.isImmersion() ? 'true' : 'false'));

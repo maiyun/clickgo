@@ -162,10 +162,10 @@ export function weightFormat(weight: number, spliter: string = ' '): string {
  * --- 完整的克隆一份数组/对象 ---
  * @param obj 要克隆的对象
  */
-export function clone(obj: Record<string, any> | any[]): any[] | any {
-    let newObj: any = {};
-    if (obj instanceof Array) {
-        newObj = [];
+export function clone<T>(obj: T): T {
+    if (Array.isArray(obj)) {
+        // --- 数组 ---
+        const newObj = [];
         for (let i = 0; i < obj.length; ++i) {
             if (obj[i] instanceof Date) {
                 newObj[i] = new Date(obj[i].getTime());
@@ -187,28 +187,29 @@ export function clone(obj: Record<string, any> | any[]): any[] | any {
                 newObj[i] = obj[i];
             }
         }
+        return newObj as T;
     }
-    else {
-        for (const key in obj) {
-            if (obj[key] instanceof Date) {
-                newObj[key] = new Date(obj[key].getTime());
+    // --- 对象 ---
+    const newObj: any = {};
+    for (const key in obj) {
+        if (obj[key] instanceof Date) {
+            newObj[key] = new Date(obj[key].getTime());
+        }
+        else if (obj[key] instanceof FormData) {
+            const fd = new FormData();
+            for (const item of obj[key]) {
+                fd.append(item[0], item[1]);
             }
-            else if (obj[key] instanceof FormData) {
-                const fd = new FormData();
-                for (const item of obj[key]) {
-                    fd.append(item[0], item[1]);
-                }
-                newObj[key] = fd;
-            }
-            else if (obj[key] === null) {
-                newObj[key] = null;
-            }
-            else if (typeof obj[key] === 'object') {
-                newObj[key] = clone(obj[key]);
-            }
-            else {
-                newObj[key] = obj[key];
-            }
+            newObj[key] = fd;
+        }
+        else if (obj[key] === null) {
+            newObj[key] = null;
+        }
+        else if (typeof obj[key] === 'object') {
+            newObj[key] = clone(obj[key]);
+        }
+        else {
+            newObj[key] = obj[key];
         }
     }
     return newObj;

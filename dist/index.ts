@@ -28,6 +28,13 @@ export function getPlatform(): NodeJS.Platform | 'web' {
     return clickgo.getPlatform();
 }
 
+export function getDevice(): {
+    'type': 'unknown' | 'mobile' | 'desktop';
+    'os': 'unknown' | 'android' | 'ios' | 'windows' | 'macos' | 'linux';
+} {
+    return clickgo.getDevice();
+}
+
 export function isImmersion(): boolean {
     return clickgo.isImmersion();
 }

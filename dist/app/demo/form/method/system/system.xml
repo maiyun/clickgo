@@ -3,6 +3,7 @@
         <button @click="getVersion">clickgo.getVersion()</button>
         <button @click="isNative">clickgo.isNative()</button>
         <button @click="getPlatform">clickgo.getPlatform()</button>
+        <button @click="getDevice">clickgo.getDevice()</button>
         <button @click="isImmersion">clickgo.isImmersion()</button>
         <button @click="hasFrame">clickgo.hasFrame()</button>
         <layout gutter="10">

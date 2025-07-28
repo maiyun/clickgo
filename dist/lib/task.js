@@ -243,7 +243,7 @@ function getList() {
 }
 function run(url_1) {
     return __awaiter(this, arguments, void 0, function* (url, opt = {}, ntid) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         let app = null;
         if (typeof url === 'string') {
             if (!url.endsWith('/') && !url.endsWith('.cga')) {
@@ -253,11 +253,9 @@ function run(url_1) {
             if (opt.icon) {
                 icon = opt.icon;
             }
-            if (opt.notify === undefined) {
-                opt.notify = true;
-            }
+            (_a = opt.notify) !== null && _a !== void 0 ? _a : (opt.notify = true);
             const notifyId = opt.notify ? form.notify({
-                'title': (_b = (_a = localeData[core.config.locale]) === null || _a === void 0 ? void 0 : _a.loading) !== null && _b !== void 0 ? _b : localeData['en'].loading,
+                'title': (_c = (_b = localeData[core.config.locale]) === null || _b === void 0 ? void 0 : _b.loading) !== null && _c !== void 0 ? _c : localeData['en'].loading,
                 'content': url,
                 'icon': icon,
                 'timeout': 0,
@@ -373,19 +371,22 @@ function run(url_1) {
             }
         };
         invoke.invokeClickgo = {
-            getVersion: function () {
+            getVersion: () => {
                 return clickgo.getVersion();
             },
-            isNative() {
+            isNative: () => {
                 return clickgo.isNative();
             },
-            getPlatform() {
+            getPlatform: () => {
                 return clickgo.getPlatform();
             },
-            isImmersion() {
+            getDevice: () => {
+                return clickgo.getDevice();
+            },
+            isImmersion: () => {
                 return clickgo.isImmersion();
             },
-            hasFrame() {
+            hasFrame: () => {
                 return clickgo.hasFrame();
             },
             'control': {
@@ -1164,7 +1165,7 @@ function run(url_1) {
             return code;
         };
         app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-        const path = (_c = opt.path) !== null && _c !== void 0 ? _c : ((typeof url === 'string') ? url : '/runtime/' + tool.random(8, tool.RANDOM_LUN) + '.cga');
+        const path = (_d = opt.path) !== null && _d !== void 0 ? _d : ((typeof url === 'string') ? url : '/runtime/' + tool.random(8, tool.RANDOM_LUN) + '.cga');
         const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
         const current = path.slice(0, lio);
         exports.list[taskId] = {
@@ -1179,7 +1180,7 @@ function run(url_1) {
             'current': current,
             'runtime': clickgo.vue.reactive({
                 'dialogFormIds': [],
-                'permissions': (_d = opt.permissions) !== null && _d !== void 0 ? _d : []
+                'permissions': (_e = opt.permissions) !== null && _e !== void 0 ? _e : []
             }),
             'forms': {},
             'controls': {},
@@ -1192,7 +1193,7 @@ function run(url_1) {
                 if (!path.endsWith('.json')) {
                     path += '.json';
                 }
-                yield ((_e = opt.initProgress) === null || _e === void 0 ? void 0 : _e.call(opt, 'Load local ' + path + ' ...'));
+                yield ((_f = opt.initProgress) === null || _f === void 0 ? void 0 : _f.call(opt, 'Load local ' + path + ' ...'));
                 const lcontent = yield fs.getContent(path, {
                     'encoding': 'utf8'
                 }, taskId);
@@ -1203,7 +1204,7 @@ function run(url_1) {
                     const data = JSON.parse(lcontent);
                     loadLocaleData(locale, data, '', taskId);
                 }
-                catch (_p) {
+                catch (_q) {
                 }
             }
         }
@@ -1232,18 +1233,18 @@ function run(url_1) {
             return -3;
         }
         dom.createToStyleList(taskId);
-        yield ((_f = opt.initProgress) === null || _f === void 0 ? void 0 : _f.call(opt, 'Control initialization ...'));
+        yield ((_g = opt.initProgress) === null || _g === void 0 ? void 0 : _g.call(opt, 'Control initialization ...'));
         const r = yield control.init(taskId, invoke, opt.cache);
         if (r < 0) {
             dom.removeFromStyleList(taskId);
             delete exports.list[taskId];
             return -400 + r;
         }
-        if ((_g = app.config.themes) === null || _g === void 0 ? void 0 : _g.length) {
+        if ((_h = app.config.themes) === null || _h === void 0 ? void 0 : _h.length) {
             for (let path of app.config.themes) {
                 path += '.cgt';
                 path = tool.urlResolve('/', path);
-                yield ((_h = opt.initProgress) === null || _h === void 0 ? void 0 : _h.call(opt, 'Load theme ' + path + ' ...'));
+                yield ((_j = opt.initProgress) === null || _j === void 0 ? void 0 : _j.call(opt, 'Load theme ' + path + ' ...'));
                 const file = yield fs.getContent(path, undefined, taskId);
                 if (file && typeof file !== 'string') {
                     const th = yield theme.read(file);
@@ -1255,7 +1256,7 @@ function run(url_1) {
         }
         else {
             if (theme.global) {
-                yield ((_j = opt.initProgress) === null || _j === void 0 ? void 0 : _j.call(opt, 'Load global theme ...'));
+                yield ((_k = opt.initProgress) === null || _k === void 0 ? void 0 : _k.call(opt, 'Load global theme ...'));
                 yield theme.load(undefined, taskId);
             }
         }
@@ -1265,19 +1266,19 @@ function run(url_1) {
             }, taskId);
             if (style) {
                 const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
-                yield ((_k = opt.initProgress) === null || _k === void 0 ? void 0 : _k.call(opt, 'Style initialization ...'));
+                yield ((_l = opt.initProgress) === null || _l === void 0 ? void 0 : _l.call(opt, 'Style initialization ...'));
                 dom.pushStyle(taskId, yield tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
             }
         }
         core.trigger('taskStarted', taskId);
         if (app.config.permissions) {
-            yield ((_l = opt.initProgress) === null || _l === void 0 ? void 0 : _l.call(opt, 'Style initialization ...'));
+            yield ((_m = opt.initProgress) === null || _m === void 0 ? void 0 : _m.call(opt, 'Style initialization ...'));
             yield checkPermission(app.config.permissions, true, undefined, taskId);
         }
         const appCls = new expo.default();
         exports.list[taskId].class = appCls;
-        yield ((_m = opt.initProgress) === null || _m === void 0 ? void 0 : _m.call(opt, 'Starting ...'));
-        yield appCls.main((_o = opt.data) !== null && _o !== void 0 ? _o : {});
+        yield ((_o = opt.initProgress) === null || _o === void 0 ? void 0 : _o.call(opt, 'Starting ...'));
+        yield appCls.main((_p = opt.data) !== null && _p !== void 0 ? _p : {});
         return taskId;
     });
 }

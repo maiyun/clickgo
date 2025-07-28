@@ -79,6 +79,14 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.form.hidePop();
     }
 
+    /** --- 显示右侧的快捷键 --- */
+    public get skeys(): string[] {
+        if (!this.props.alt) {
+            return [];
+        }
+        return [this.device.os === 'macos' ? '⌘' : 'Ctrl', this.props.alt];
+    }
+
     public onBeforeUnmount(): void | Promise<void> {
         const menulist = this.parentByName('menulist');
         if (!menulist) {
@@ -89,6 +97,9 @@ export default class extends clickgo.control.AbstractControl {
             --menulist.hasTypeItemsCount;
         }
     }
+
+    /** --- 设备信息 ---· */
+    public device = clickgo.getDevice();
 
     public onMounted(): void {
         this.watch('type', (): void => {

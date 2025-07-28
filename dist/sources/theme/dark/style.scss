@@ -12,6 +12,7 @@ global {
     --g-radius:5px;
     --g-radius-l:8px;
     --g-radius-xl:12px;
+    --g-size-xs:11px;
     --g-size:13px;
     --g-size-m:20px;
     --g-size-l:28px;
@@ -71,6 +72,7 @@ global {
     --g-color-active:oklch(.75 0 0);
     --g-color-focus:oklch(.8 0 0);
     --g-color-disabled:oklch(.6 0 0);
+    --g-color-tip:oklch(.7 0 0);
 
     --g-background:oklch(.2 .005 265);
     --g-background-hover:oklch(.25 .005 265);

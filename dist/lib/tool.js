@@ -191,9 +191,8 @@ function weightFormat(weight, spliter = ' ') {
     return (Math.round(weight * 100) / 100).toString() + spliter + units[i];
 }
 function clone(obj) {
-    let newObj = {};
-    if (obj instanceof Array) {
-        newObj = [];
+    if (Array.isArray(obj)) {
+        const newObj = [];
         for (let i = 0; i < obj.length; ++i) {
             if (obj[i] instanceof Date) {
                 newObj[i] = new Date(obj[i].getTime());
@@ -215,28 +214,28 @@ function clone(obj) {
                 newObj[i] = obj[i];
             }
         }
+        return newObj;
     }
-    else {
-        for (const key in obj) {
-            if (obj[key] instanceof Date) {
-                newObj[key] = new Date(obj[key].getTime());
+    const newObj = {};
+    for (const key in obj) {
+        if (obj[key] instanceof Date) {
+            newObj[key] = new Date(obj[key].getTime());
+        }
+        else if (obj[key] instanceof FormData) {
+            const fd = new FormData();
+            for (const item of obj[key]) {
+                fd.append(item[0], item[1]);
             }
-            else if (obj[key] instanceof FormData) {
-                const fd = new FormData();
-                for (const item of obj[key]) {
-                    fd.append(item[0], item[1]);
-                }
-                newObj[key] = fd;
-            }
-            else if (obj[key] === null) {
-                newObj[key] = null;
-            }
-            else if (typeof obj[key] === 'object') {
-                newObj[key] = clone(obj[key]);
-            }
-            else {
-                newObj[key] = obj[key];
-            }
+            newObj[key] = fd;
+        }
+        else if (obj[key] === null) {
+            newObj[key] = null;
+        }
+        else if (typeof obj[key] === 'object') {
+            newObj[key] = clone(obj[key]);
+        }
+        else {
+            newObj[key] = obj[key];
         }
     }
     return newObj;

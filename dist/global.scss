@@ -18,6 +18,7 @@
     --g-radius:0;
     --g-radius-l:4px;
     --g-radius-xl:8px;
+    --g-size-xs:10px;
     --g-size:12px;
     --g-size-m:16px;
     --g-size-l:20px;
@@ -72,6 +73,7 @@
     --system-border-color-hover:oklch(1 0 0 / .06);
     --system-placeholder-color:oklch(1 0 0 / .2);
 
+    /** --- 纯底色，如 panel --- */
     --g-pure:oklch(1 0 0);
     --face:oklch(.95 0 0);
     --face-hover:oklch(.9 0 0);
@@ -89,6 +91,7 @@
     --g-color-active:oklch(.35 0 0);
     --g-color-focus:oklch(.4 0 0);
     --g-color-disabled:oklch(.7 0 0);
+    --g-color-tip:oklch(.6 0 0);
 
     --g-background:oklch(.95 0 0);
     --g-background-hover:oklch(1 0 0);

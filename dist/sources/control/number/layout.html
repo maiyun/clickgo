@@ -10,7 +10,7 @@
         <div ref="pop" class="pop">
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="T" @click="execCmd('cut')" :disabled="propBoolean('readonly') || (propBoolean('password') && !showPassword)">
+                    <cg-menulist-item alt="X" @click="execCmd('cut')" :disabled="propBoolean('readonly') || (propBoolean('password') && !showPassword)">
                         <cg-icon name="cut" size="m"></cg-icon>
                         <cg-label>{{l('cut')}}</cg-label>
                     </cg-menulist-item>
@@ -18,7 +18,7 @@
                         <cg-icon name="copy" size="m"></cg-icon>
                         <cg-label>{{l('copy')}}</cg-label>
                     </cg-menulist-item>
-                    <cg-menulist-item alt="P" @click="execCmd('paste')" :disabled="propBoolean('readonly')">
+                    <cg-menulist-item alt="V" @click="execCmd('paste')" :disabled="propBoolean('readonly')">
                         <cg-icon name="paste" size="m"></cg-icon>
                         <cg-label>{{l('paste')}}</cg-label>
                     </cg-menulist-item>

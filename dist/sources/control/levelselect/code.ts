@@ -112,7 +112,7 @@ export default class extends clickgo.control.AbstractControl {
     ];
 
     /** --- 当前层级的 list，含 children --- */
-    public nowlist: any[] | Record<string, any> = [];
+    public nowlist: any[] = [];
 
     /** --- 要提交的 level data --- */
     public levelData: Array<{
@@ -131,15 +131,10 @@ export default class extends clickgo.control.AbstractControl {
             return this.nowlist;
         }
         const inputValue = this.inputValue.toLowerCase();
-        const isArray = Array.isArray(this.nowlist);
-        const searchData = isArray ? [] : {};
-        for (const key in this.nowlist as Record<string, any>) {
-            const item = (this.nowlist as any)[key];
-            const val = (isArray ?
-                (typeof item === 'object' ? item.value ?? '' : item) :
-                key).toString().toLowerCase();
-            const lab = (isArray ?
-                (typeof item === 'object' ? item.label ?? '' : '') : '').toLowerCase();
+        const searchData = [];
+        for (const item of this.nowlist) {
+            const val = (typeof item === 'object' ? item.value ?? '' : item).toString().toLowerCase();
+            const lab = (typeof item === 'object' ? item.label ?? '' : '').toLowerCase();
             let include = true;
             for (const char of inputValue) {
                 if (val.includes(char) || lab.includes(char)) {
@@ -152,12 +147,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!include) {
                 continue;
             }
-            if (isArray) {
-                (searchData as any).push(item);
-            }
-            else {
-                (searchData as any)[key] = item;
-            }
+            searchData.push(item);
         }
         return searchData;
     }
@@ -413,12 +403,19 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 将一个对象克隆，并设置到 nowlist --- */
     public setNowList(list: any[] | Record<string, any>): void {
-        this.nowlist = clickgo.tool.clone(list);
-        for (const key in this.nowlist as Record<string, any>) {
-            if ((this.nowlist as any)[key].children === undefined) {
-                continue;
+        this.nowlist.length = 0;
+        const nowlist = clickgo.tool.clone(list);
+        if (Array.isArray(nowlist)) {
+            this.nowlist = nowlist;
+        }
+        else {
+            for (const key in nowlist) {
+                nowlist[key].value = key;
+                this.nowlist.push(nowlist[key]);
             }
-            delete (this.nowlist as any)[key].children;
+        }
+        for (const item of this.nowlist) {
+            delete item.children;
         }
     }
 

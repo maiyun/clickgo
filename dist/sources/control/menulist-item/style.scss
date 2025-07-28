@@ -29,7 +29,15 @@
     }
     
     .inner {
-        flex: 1; display: flex; align-items: center; padding: var(--g-padding) 35px var(--g-padding) 10px; gap: var(--g-padding);
+        flex: 1; display: flex; align-items: center; padding: var(--g-padding) 0 var(--g-padding) 10px; gap: var(--g-padding);
+    }
+
+    .right {
+        padding: 0 10px 0 35px; color: var(--g-color-tip); font-size: var(--g-size-xs); display: flex; align-items: center; gap: 2px;
+
+        .btn {
+            border: solid .5px var(--g-color-tip); padding: 1px 2px; border-radius: var(--g-radius);
+        }
     }
     
     .arrow {

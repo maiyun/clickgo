@@ -14,6 +14,10 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog('Platform: ' + clickgo.getPlatform());
     }
 
+    public async getDevice(): Promise<void> {
+        await clickgo.form.dialog('Device: ' + JSON.stringify(clickgo.getDevice()));
+    }
+
     public async isImmersion(): Promise<void> {
         await clickgo.form.dialog('Immersion: ' + (clickgo.isImmersion() ? 'true' : 'false'));
     }

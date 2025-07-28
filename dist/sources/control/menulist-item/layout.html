@@ -5,6 +5,12 @@
     <div class="inner">
         <slot></slot>
     </div>
+    <div class="right">
+        <template v-if="device.type === 'desktop'" v-for="item, index of skeys">
+            <div class="btn">{{item}}</div>
+            <div v-if="index < skeys.length - 1">+</div>
+        </template>
+    </div>
     <div v-if="slots['pop']" class="arrow"></div>
     <teleport v-if="slots['pop']" to="system">
         <div ref="pop" class="pop">

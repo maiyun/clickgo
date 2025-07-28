@@ -13,6 +13,10 @@ export * as zip from '../dist/lib/zip';
 export function getVersion(): string;
 export function isNative(): boolean;
 export function getPlatform(): NodeJS.Platform | 'web';
+export function getDevice(): {
+    'type': 'unknown' | 'mobile' | 'desktop';
+    'os': 'unknown' | 'android' | 'ios' | 'windows' | 'macos' | 'linux';
+};
 export function isImmersion(): boolean;
 export function hasFrame(): boolean;
 // eslint-disable-next-line @typescript-eslint/naming-convention
