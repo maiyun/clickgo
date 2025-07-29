@@ -18,7 +18,7 @@
 
 使用 HTML + CSS 构建 Web、Native 应用。
 
-应用可编译为 cga 单文件，即可以在 Web 中运行，也可以借助 `ClickGo Native` 在本地系统运行。可编写图像编辑器、数据库管理工具、文件浏览器等应用软件，也可编写后台管理面板。
+应用可编译为 cga 单文件，即可以在 Web 中运行，也可以借助 [ClickGo Native](https://github.com/maiyun/clickgo-native) 在本地系统运行。可编写图像编辑器、数据库管理工具、文件浏览器等应用软件，也可编写后台管理面板。
 
 <p align="center">
     <img src="./pic3.jpg" alt="ClickGo">

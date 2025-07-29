@@ -20,7 +20,7 @@
 
 Build web and native apps using HTML + CSS.
 
-Apps compile into a single `.cga` file — run it in the browser or locally via `ClickGo Native`. Great for image editors, DB tools, file managers, admin panels, and more.
+Apps compile into a single `.cga` file — run it in the browser or locally via [ClickGo Native](https://github.com/maiyun/clickgo-native). Great for image editors, DB tools, file managers, admin panels, and more.
 
 <p align="center">
     <img src="./doc/pic3.jpg" alt="ClickGo">
