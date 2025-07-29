@@ -31,4 +31,8 @@ export default class extends clickgo.form.AbstractForm {
         this.selected = e.detail.value;
     }
 
+    public setmv(): void {
+        this.mv = ['20230101', '20230108'];
+    }
+
 }

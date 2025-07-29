@@ -54,5 +54,8 @@ class default_1 extends clickgo.form.AbstractForm {
     onSelected(e) {
         this.selected = e.detail.value;
     }
+    setmv() {
+        this.mv = ['20230101', '20230108'];
+    }
 }
 exports.default = default_1;

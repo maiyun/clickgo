@@ -723,6 +723,14 @@ export default class extends clickgo.control.AbstractControl {
         // --- 监听 modelValue 变动 ---
         let mvfirst = true;
         this.watch('modelValue', () => {
+            if (!mvfirst) {
+                if (
+                    (this.values.length === this.propArray('modelValue').length)
+                    && this.values.every((item: string) => this.propArray('modelValue').includes(item))
+                ) {
+                    return;
+                }
+            }
             if (this.propArray('modelValue').length) {
                 this.values = clickgo.tool.clone(this.propArray('modelValue'));
                 if (this.propBoolean('jump') && this.values[0]) {

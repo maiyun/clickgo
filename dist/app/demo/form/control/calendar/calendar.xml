@@ -18,7 +18,7 @@
             <button @click="bottom = !bottom" style="flex: 1;">{{bottom ? '' : '!'}}bottom</button>
         </layout>
         <layout gutter="10">
-            <button @click="settime" style="flex: 1;">Set time</button>
+            <button @click="setmv" style="flex: 1;">Set modelValue</button>
             <button @click="start = !start" style="flex: 1;">{{start ? '' : '!'}}start</button>
             <button @click="end = !end" style="flex: 1;">{{end ? '' : '!'}}end</button>
         </layout>
