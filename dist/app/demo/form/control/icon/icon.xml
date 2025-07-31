@@ -35,6 +35,15 @@
         <layout gutter="20" align-v="center">
             <icon name="paste"></icon>
             <icon name="paste" size="m"></icon>
+            <label>paste</label>
+            <icon name="sun"></icon>
+            <icon name="sun" size="m"></icon>
+            <label>sun</label>
+        </layout>
+        <layout gutter="20" align-v="center">
+            <icon name="moon"></icon>
+            <icon name="moon" size="m"></icon>
+            <label>moon</label>
         </layout>
     </layout>
 </form>

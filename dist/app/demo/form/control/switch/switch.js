@@ -50,6 +50,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.checked2 = false;
         this.checked3 = false;
         this.checked4 = 0;
+        this.checked5 = false;
         this.disabled = false;
         this.size = ['m'];
     }

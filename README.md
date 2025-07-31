@@ -196,6 +196,8 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Copy SVG Vector](https://www.svgrepo.com/svg/522803/copy)
 [Scissors SVG Vector](https://www.svgrepo.com/svg/523012/scissors)
 [Paste SVG Vector](https://www.svgrepo.com/svg/489767/paste)
+[Sun 2 SVG Vector](https://www.svgrepo.com/svg/529971/sun-2)
+[Moon SVG Vector](https://www.svgrepo.com/svg/529729/moon)
 
 ### **LICENSE:** CC0 License **UPLOADER:** SVG Repo
 

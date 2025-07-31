@@ -10,6 +10,7 @@ export default class extends clickgo.control.AbstractControl {
 
         'update:modelValue': null,
         'update:yearmonth': null,
+        'update:select': null,
     };
 
     public props: {
@@ -25,6 +26,8 @@ export default class extends clickgo.control.AbstractControl {
         'end'?: string;
         /** --- 年份月份的组合，如 200708，自动跳转到此页面但不选中 --- */
         'yearmonth': string;
+        /** --- 当前选中的日期 --- */
+        'select'?: string;
         /** --- 设置 value 时自动跳转到选中的月份，默认开启 --- */
         'jump': boolean | string;
 
@@ -41,6 +44,7 @@ export default class extends clickgo.control.AbstractControl {
             'start': undefined,
             'end': undefined,
             'yearmonth': '',
+            'select': undefined,
             'jump': true,
 
             'clearbtn': true,
@@ -569,15 +573,7 @@ export default class extends clickgo.control.AbstractControl {
         this.dateValue.month = col.month;
         this.dateValue.date = col.date;
         this.goSelected();
-        const event: types.ICalendarSelectedEvent = {
-            'detail': {
-                'year': col.year,
-                'month': col.month,
-                'date': col.date,
-                'value': col.value,
-            }
-        };
-        this.emit('selected', event);
+        this.updateSelect('click');
     }
 
     /** --- 周复选框 --- */
@@ -634,6 +630,21 @@ export default class extends clickgo.control.AbstractControl {
         e.stopPropagation();
     }
 
+    /** --- 将当前的 select 的日期的情况向上同步 --- */
+    public updateSelect(type: 'default' | 'click' = 'default'): void {
+        this.emit('update:select', this.dateValueStr === '000' ? undefined : this.dateValueStr);
+        const event: types.ICalendarSelectedEvent = {
+            'detail': {
+                'year': this.dateValue.year === '0' ? '' : this.dateValue.year,
+                'month': this.dateValue.month === '0' ? '' : this.dateValue.month,
+                'date': this.dateValue.date === '0' ? '' : this.dateValue.date,
+                'value': this.dateValueStr === '000' ? '' : this.dateValueStr,
+                'type': type,
+            }
+        };
+        this.emit('selected', event);
+    }
+
     /** --- 跳转到今天 --- */
     public today(): void {
         const now = new Date();
@@ -641,6 +652,7 @@ export default class extends clickgo.control.AbstractControl {
         this.dateValue.month = (now.getMonth() + 1).toString().padStart(2, '0');
         this.dateValue.date = now.getDate().toString().padStart(2, '0');
         this.goSelected();
+        this.updateSelect();
     }
 
     /** --- 返回选中年月 --- */
@@ -684,6 +696,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.dateValue.year = this.startYmd.slice(0, 4);
                 this.dateValue.month = this.startYmd.slice(4, 6);
                 this.dateValue.date = this.startYmd.slice(6);
+                this.updateSelect();
             }
         }, {
             'immediate': true
@@ -695,6 +708,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.dateValue.year = this.endYmd.slice(0, 4);
                 this.dateValue.month = this.endYmd.slice(4, 6);
                 this.dateValue.date = this.endYmd.slice(6);
+                this.updateSelect();
             }
         }, {
             'immediate': true
@@ -774,6 +788,26 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+
+        // --- 选中的日期 ---
+        this.watch('select', () => {
+            if (!this.props.select) {
+                // -- 清空 ---
+                this.dateValue.year = '0';
+                this.dateValue.month = '0';
+                this.dateValue.date = '0';
+                this.updateSelect();
+                return;
+            }
+            // --- 设置 ---
+            this.dateValue.year = this.props.select.slice(0, 4);
+            this.dateValue.month = this.props.select.slice(4, 6);
+            this.dateValue.date = this.props.select.slice(6);
+            this.goSelected();
+            this.updateSelect();
+        }, {
+            'immediate': true
+        });
     }
 
     // --- range ---
@@ -804,6 +838,7 @@ export default class extends clickgo.control.AbstractControl {
         this.dateValue.year = '0';
         this.dateValue.month = '0';
         this.dateValue.date = '0';
+        this.updateSelect();
         this.emit('changed');
     }
 

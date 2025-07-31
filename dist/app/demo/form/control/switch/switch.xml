@@ -16,10 +16,14 @@
         <layout gutter="10" align-v="center">
             <switch v-model="checked4" :disabled="disabled" :map="{'true':0,'false':1}" :size="size[0]"></switch>
             <label style="flex: 1;">{{checked4}}</label>
+            <switch v-model="checked5" :disabled="disabled" :size="size[0]">
+                <icon :name="checked5 ? 'sun' : 'moon'"></icon>
+            </switch>
+            <label style="flex: 1;">{{checked5 ? 'light' : 'dark'}}</label>
         </layout>
         <layout gutter="10" align-v="center">
             <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? 'Remove' : 'Set'}} disabled</button>
-            <select v-model="size" :data="['s', 'm']" style="flex: 1;"></select>
+            <select v-model="size" :data="['s', 'm', 'l']" style="flex: 1;"></select>
         </layout>
     </layout>
 </form>

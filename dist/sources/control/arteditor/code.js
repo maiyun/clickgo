@@ -149,17 +149,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     controlDown(e, index) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         this.controlIndex = index;
-        const el = e.currentTarget;
-        if (el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop();
-        }
-        clickgo.dom.bindClick(e, () => {
-            clickgo.form.showPop(el, this.refs.pop, e);
-        });
     }
     add(type) {
         switch (type) {

@@ -544,10 +544,10 @@ function createForm(p) {
         'resizable': false,
         'show': false,
         'center': true,
-        'transparent': isImmersion ? true : false
+        'transparent': isImmersion ? true : false,
     };
     form = new electron.BrowserWindow(op);
-    form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' immersion/' + (isImmersion ? '1' : '0') + ' frame/' + (hasFrame ? '1' : '0');
+    form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' immersion/' + (isImmersion ? '1' : '0') + ' frame/' + (hasFrame ? '1' : '0') + ' chrome/' + process.versions.chrome;
     form.once('ready-to-show', function () {
         if (!form) {
             return;

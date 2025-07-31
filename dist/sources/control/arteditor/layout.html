@@ -1,16 +1,16 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div class="controls">
         <div class="left">
-            <div class="button" :class="[value[focusIndex]&&value[focusIndex].b&&'selected',(!value[focusIndex]||(value[focusIndex].type!=='p'))&&'disabled']" @click="updateBool('b')">
+            <cg-button class="button" :disabled="!value[focusIndex]||(value[focusIndex].type!=='p')" :checked="value[focusIndex]&&value[focusIndex].b" type="tool" @click="updateBool('b')">
                 <svg viewBox="0 0 1920 1920">
                     <path d="M480.286 822.857h548.571c151.269 0 274.286-123.017 274.286-274.286 0-151.268-123.017-274.285-274.286-274.285H480.286v548.571Zm0 822.857H1166c151.269 0 274.286-123.017 274.286-274.285 0-151.269-123.017-274.286-274.286-274.286H480.286v548.571ZM1166 1920H206V0h822.857c302.537 0 548.572 246.034 548.572 548.571 0 134.263-48.549 257.418-128.778 352.732 159.223 96.137 265.92 270.994 265.92 470.126 0 302.537-246.034 548.571-548.571 548.571Z" />
                 </svg>
-            </div>
-            <div class="button" :class="[value[focusIndex]&&value[focusIndex].i&&'selected',(!value[focusIndex]||(value[focusIndex].type!=='p'))&&'disabled']" @click="updateBool('i')">
+            </cg-button>
+            <cg-button class="button" :disabled="!value[focusIndex]||(value[focusIndex].type!=='p')" :checked="value[focusIndex]&&value[focusIndex].i" type="tool" @click="updateBool('i')">
                 <svg viewBox="0 0 1920 1920">
                     <path d="M754.429 0v274.423h235.885L647.457 1645.85H343V1920h822.994v-274.149H930.11l342.857-1371.428h304.32V0z" />
                 </svg>
-            </div>
+            </cg-button>
         </div>
         <div class="right">
             <div class="write" :class="[!previewData&&'selected']" @click="changePreview('write')">{{l('write')}}</div>
@@ -30,9 +30,15 @@
         </div>
         <template v-else>
             <!-- 编辑模式 -->
-            <div class="add" :class="[propBoolean('readonly')&&'disabled']" @mousedown="controlDown($event, -1)" @touchstart="controlDown($event, -1)">
+            <cg-button class="add" @click="controlIndex = -1" :disabled="propBoolean('readonly')" type="tool">
                 <svg viewBox="0 0 24 24" stroke="none"><path d="m12.75 5c0-.41421-.3358-.75-.75-.75s-.75.33579-.75.75v6.25h-6.25c-.41421 0-.75.3358-.75.75s.33579.75.75.75h6.25v6.25c0 .4142.3358.75.75.75s.75-.3358.75-.75v-6.25h6.25c.4142 0 .75-.3358.75-.75s-.3358-.75-.75-.75h-6.25z" /></svg>
-            </div>
+                <template v-slot:pop>
+                    <cg-menulist>
+                        <cg-menulist-item alt="P" @click="add('passage')">{{l('passage')}}</cg-menulist-item>
+                        <cg-menulist-item alt="I" @click="add('image')">{{l('image')}}</cg-menulist-item>
+                    </cg-menulist>
+                </template>
+            </cg-button>
             <template v-for="item, index of value">
                 <div class="item">
                     <cg-text v-if="item.type==='p'" class="p" :class="[(focusIndex===index)&&'focus']" :modelValue="item.value" @update:modelValue="update('value', $event, index)" scroll="false" multi adaption :readonly="propBoolean('readonly')" @focus="focusIndex=index" :style="{'font-weight':item.b?'bold':undefined,'font-style':item.i?'italic':undefined}" />
@@ -42,24 +48,20 @@
                         </div>
                         <cg-text class="desc" :class="[(focusIndex===index)&&'focus']" :modelValue="item.desc" @update:modelValue="update('desc', $event, index)" :readonly="propBoolean('readonly')" @focus="focusIndex=index" />
                     </div>
-                    <div class="remove" :class="[propBoolean('readonly')&&'disabled']" @click="remove(index)">
+                    <cg-button class="remove" @click="remove(index)" :disabled="propBoolean('readonly')" type="tool">
                         <svg viewBox="0 0 24 24" stroke="none"><path d="m4.25 12c0-.4142.33579-.75.75-.75h14c.4142 0 .75.3358.75.75s-.3358.75-.75.75h-14c-.41421 0-.75-.3358-.75-.75z" /></svg>
-                    </div>
+                    </cg-button>
                 </div>
-                <div class="add" :class="[propBoolean('readonly')&&'disabled']" @mousedown="controlDown($event, index)" @touchstart="controlDown($event, index)">
+                <cg-button class="add" @click="controlIndex = index" :disabled="propBoolean('readonly')" type="tool">
                     <svg viewBox="0 0 24 24" stroke="none"><path d="m12.75 5c0-.41421-.3358-.75-.75-.75s-.75.33579-.75.75v6.25h-6.25c-.41421 0-.75.3358-.75.75s.33579.75.75.75h6.25v6.25c0 .4142.3358.75.75.75s.75-.3358.75-.75v-6.25h6.25c.4142 0 .75-.3358.75-.75s-.3358-.75-.75-.75h-6.25z" /></svg>
-                </div>
+                    <template v-slot:pop>
+                        <cg-menulist>
+                            <cg-menulist-item alt="P" @click="add('passage')">{{l('passage')}}</cg-menulist-item>
+                            <cg-menulist-item alt="I" @click="add('image')">{{l('image')}}</cg-menulist-item>
+                        </cg-menulist>
+                    </template>
+                </cg-button>
             </template>
         </template>
     </cg-flow>
-    <teleport to="system">
-        <div ref="pop" class="pop">
-            <slot>
-                <cg-menulist>
-                    <cg-menulist-item alt="P" @click="add('passage')">{{l('passage')}}</cg-menulist-item>
-                    <cg-menulist-item alt="I" @click="add('image')">{{l('image')}}</cg-menulist-item>
-                </cg-menulist>
-            </slot>
-        </div>
-    </teleport>
 </div>

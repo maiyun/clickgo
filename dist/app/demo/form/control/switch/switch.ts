@@ -11,6 +11,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public checked4 = 0;
 
+    public checked5 = false;
+
     public disabled = false;
 
     public size = ['m'];

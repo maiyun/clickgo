@@ -23,6 +23,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public selected: string = '';
 
+    public select: string = '';
+
     public onChanged(): void {
         console.log('onChanged', JSON.stringify(this.mv));
     }

@@ -801,6 +801,7 @@ export interface ICalendarSelectedEvent {
         'month': string;
         'date': string;
         'value': string;
+        'type': 'default' | 'click';
     };
 }
 

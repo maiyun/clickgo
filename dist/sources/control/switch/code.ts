@@ -11,7 +11,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
-        'size': 's' | 'm';
+        'size': 's' | 'm' | 'l';
         'map': {
             'true'?: any;
             'false'?: any;

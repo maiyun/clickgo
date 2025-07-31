@@ -47,6 +47,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.end = false;
         this.dlist = false;
         this.selected = '';
+        this.select = '';
     }
     onChanged() {
         console.log('onChanged', JSON.stringify(this.mv));

@@ -19,6 +19,7 @@ global {
     --g-size-xl:38px;
     --g-control:18px;   // --- 如 check、radio 等的宽度 ---
     --g-control-m:22px;
+    --g-control-l:26px;
     --g-transition:all .3s var(--g-cubic);
     --g-line:1.5;
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
@@ -32,7 +33,7 @@ global {
     --g-pop-backdrop:blur(10px) saturate(2);
     --g-pop-border:solid .5px var(--g-border-color);
     --g-shadow:0 1px 6px oklch(.2 .03 265 / 0.05);
-    --g-outline-shadow:0 0 0 4px oklch(.97 .01 265); 
+    --g-outline-shadow:0 0 0 4px oklch(.95 .01 265); 
 
     // --- 组件默认颜色（如按钮） ---
 

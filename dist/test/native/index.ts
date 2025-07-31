@@ -11,8 +11,13 @@ import * as native from './native';
 class Boot extends native.AbstractBoot {
 
     public main(): void {
+        /*
+        this.run('https://maiyun.github.io/clickgo/dist/test/desktop/', {
+            'frame': false,
+        });
+        //*/
         this.run('../desktop/index.html', {
-            'frame': this.platform === 'win32' ? false : true
+            'frame': this.platform === 'win32' ? false : true,
         });
         //*/
     }

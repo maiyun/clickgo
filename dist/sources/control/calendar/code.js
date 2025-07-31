@@ -43,6 +43,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'selected': null,
             'update:modelValue': null,
             'update:yearmonth': null,
+            'update:select': null,
         };
         this.props = {
             'disabled': false,
@@ -52,6 +53,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'start': undefined,
             'end': undefined,
             'yearmonth': '',
+            'select': undefined,
             'jump': true,
             'clearbtn': true,
             'backbtn': true,
@@ -510,15 +512,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.dateValue.month = col.month;
         this.dateValue.date = col.date;
         this.goSelected();
-        const event = {
-            'detail': {
-                'year': col.year,
-                'month': col.month,
-                'date': col.date,
-                'value': col.value,
-            }
-        };
-        this.emit('selected', event);
+        this.updateSelect('click');
     }
     weekCheckChanged(e, col) {
         if (e.detail.value) {
@@ -557,12 +551,26 @@ class default_1 extends clickgo.control.AbstractControl {
     checkClick(e) {
         e.stopPropagation();
     }
+    updateSelect(type = 'default') {
+        this.emit('update:select', this.dateValueStr === '000' ? undefined : this.dateValueStr);
+        const event = {
+            'detail': {
+                'year': this.dateValue.year === '0' ? '' : this.dateValue.year,
+                'month': this.dateValue.month === '0' ? '' : this.dateValue.month,
+                'date': this.dateValue.date === '0' ? '' : this.dateValue.date,
+                'value': this.dateValueStr === '000' ? '' : this.dateValueStr,
+                'type': type,
+            }
+        };
+        this.emit('selected', event);
+    }
     today() {
         const now = new Date();
         this.dateValue.year = now.getFullYear().toString();
         this.dateValue.month = (now.getMonth() + 1).toString().padStart(2, '0');
         this.dateValue.date = now.getDate().toString().padStart(2, '0');
         this.goSelected();
+        this.updateSelect();
     }
     back() {
         this.vyear[0] = this.dateValue.year;
@@ -597,6 +605,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.dateValue.year = this.startYmd.slice(0, 4);
                 this.dateValue.month = this.startYmd.slice(4, 6);
                 this.dateValue.date = this.startYmd.slice(6);
+                this.updateSelect();
             }
         }, {
             'immediate': true
@@ -607,6 +616,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.dateValue.year = this.endYmd.slice(0, 4);
                 this.dateValue.month = this.endYmd.slice(4, 6);
                 this.dateValue.date = this.endYmd.slice(6);
+                this.updateSelect();
             }
         }, {
             'immediate': true
@@ -677,6 +687,22 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        this.watch('select', () => {
+            if (!this.props.select) {
+                this.dateValue.year = '0';
+                this.dateValue.month = '0';
+                this.dateValue.date = '0';
+                this.updateSelect();
+                return;
+            }
+            this.dateValue.year = this.props.select.slice(0, 4);
+            this.dateValue.month = this.props.select.slice(4, 6);
+            this.dateValue.date = this.props.select.slice(6);
+            this.goSelected();
+            this.updateSelect();
+        }, {
+            'immediate': true
+        });
     }
     get isDisabled() {
         return (col) => {
@@ -694,6 +720,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.dateValue.year = '0';
         this.dateValue.month = '0';
         this.dateValue.date = '0';
+        this.updateSelect();
         this.emit('changed');
     }
 }

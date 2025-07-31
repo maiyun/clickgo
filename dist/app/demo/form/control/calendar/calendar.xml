@@ -1,10 +1,10 @@
-<form width="600" height="750" title="Calendar">
+<form width="600" height="780" title="Calendar">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>modelValue: {{mv}}</label>
         <label>yearmonth: {{ym}}</label>
-        <label>selected: {{selected}}</label>
+        <label>selected: {{selected}}, select: {{select}}</label>
         <label>dlist: {{dlist ? ['20240101'] : undefined}}</label>
-        <calendar v-model="mv" v-model:yearmonth="ym" :disabled="disabled" :plain="plain" :start="start ? '20240305' : undefined" :end="end ? '20280306' : undefined" :disabledList="dlist ? ['20240101'] : undefined" @changed="onChanged" @selected="onSelected" style="flex: 1;">
+        <calendar v-model="mv" v-model:yearmonth="ym" v-model:select="select" :disabled="disabled" :plain="plain" :start="start ? '20240305' : undefined" :end="end ? '20280306' : undefined" :disabledList="dlist ? ['20240101'] : undefined" @changed="onChanged" @selected="onSelected" style="flex: 1;">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>
@@ -26,6 +26,9 @@
             <button @click="ym = '200708'" style="flex: 1;">Set yearmonth</button>
             <button @click="dlist = !dlist" style="flex: 1;">{{dlist ? '' : '!'}}disabledList</button>
             <button @click="left = !left" style="flex: 1;">{{left ? '' : '!'}}left</button>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <button @click="select = '20200203'" style="flex: 1;">Set select</button>
         </layout>
     </layout>
 </form>

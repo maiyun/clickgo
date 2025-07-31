@@ -143,17 +143,7 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 点击添加按钮 ---
     public controlDown(e: MouseEvent | TouchEvent, index: number): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         this.controlIndex = index;
-        const el: HTMLElement = e.currentTarget as any;
-        if (el.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop();
-        }
-        clickgo.dom.bindClick(e, () => {
-            clickgo.form.showPop(el, this.refs.pop, e);
-        });
     }
 
     // --- 添加 ---
