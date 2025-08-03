@@ -40,7 +40,7 @@ exports.getPlatform = getPlatform;
 exports.getDevice = getDevice;
 exports.isImmersion = isImmersion;
 exports.hasFrame = hasFrame;
-const version = '3.16.25';
+const version = '3.16.26';
 function getVersion() {
     return version;
 }

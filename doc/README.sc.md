@@ -33,7 +33,7 @@
 **index.html**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.8/dist/loader.min.js?path=index&npm={'clickgo':'3.16.25'}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.8/dist/loader.min.js?path=index&npm={'clickgo':'3.16.26'}"></script>
 ```
 
 **index.js**
