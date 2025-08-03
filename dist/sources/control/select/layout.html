@@ -10,8 +10,8 @@
             </div>
             <div v-if="!label.length" class="tag placeholder">　</div>
         </div>
-        <div v-if="propBoolean('editable')&&!propBoolean('multi')&&label.length&&(label[0]!==value[0])" class="leftlabel">{{label[0]}}</div>
-        <cg-text v-if="propBoolean('editable')" :class="[!propBoolean('multi')&&label.length&&(label[0]!==value[0])&&'showleftlabel']" :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" @keydown="keydown" @blur="blur" plain :padding="padding"></cg-text>
+        <div v-if="propBoolean('leftlabel')&&propBoolean('editable')&&!propBoolean('multi')&&label.length&&(label[0]!==value[0])" class="leftlabel">{{label[0]}}</div>
+        <cg-text v-if="propBoolean('editable')" :class="[propBoolean('leftlabel')&&!propBoolean('multi')&&label.length&&(label[0]!==value[0])&&'showleftlabel']" :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" @keydown="keydown" @blur="blur" plain :padding="padding"></cg-text>
     </template>
     <template v-slot:pop>
         <div class="pop">

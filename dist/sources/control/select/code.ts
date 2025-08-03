@@ -49,6 +49,7 @@ export default class extends clickgo.control.AbstractControl {
         };
         /** --- 0, xs, s, m, l, xl --- */
         'padding'?: string;
+        'leftlabel'?: boolean | string;
 
         'modelValue': Array<string | number>;
         'placeholder': string;
@@ -72,6 +73,7 @@ export default class extends clickgo.control.AbstractControl {
             'iconDefault': '',
             'map': {},
             'padding': undefined,
+            'leftlabel': true,
 
             'modelValue': [],
             'placeholder': '',

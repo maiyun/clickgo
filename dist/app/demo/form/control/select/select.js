@@ -144,6 +144,7 @@ class default_1 extends clickgo.form.AbstractForm {
         this.remoteDelay = [0];
         this.plain = false;
         this.virtual = false;
+        this.leftlabel = true;
     }
     get sizes() {
         const rtn = {};
