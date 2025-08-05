@@ -98,6 +98,8 @@ export default class extends clickgo.form.AbstractForm {
         }
     ];
 
+    public listData6 = ['1', '2', '3', '4', '5'];
+
     public listMap5: any = undefined;
 
     public listData5Index = false;
@@ -297,6 +299,11 @@ export default class extends clickgo.form.AbstractForm {
         }
         await clickgo.tool.sleep(300);
         this.sub6children = ['Sub7', 'Sub8'];
+    }
+
+    public async onList6Load(value: string, resolve: (child?: any[]) => void): Promise<void> {
+        await clickgo.tool.sleep(300);
+        resolve();
     }
 
     public onSelect(area: Record<string, any>): void {

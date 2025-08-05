@@ -518,7 +518,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 私有搜索方法 --- */
     private async _search(success?: () => void | Promise<void>): Promise<void> {
         /** --- 当前要搜索的值 --- */
-        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim().toLowerCase();
+        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
         if (this.propBoolean('remote')) {
             // --- 远程搜索 ---
             const delay = this.propInt('remoteDelay');
@@ -574,7 +574,8 @@ export default class extends clickgo.control.AbstractControl {
                     const lab = (typeof item === 'object' ? item.label ?? '' : '').toLowerCase();
                     let include = true;
                     for (const char of searchValue) {
-                        if (val.includes(char) || lab.includes(char)) {
+                        const c = char.toLowerCase();
+                        if (val.includes(c) || lab.includes(c)) {
                             continue;
                         }
                         // --- 没包含 ---
@@ -596,7 +597,8 @@ export default class extends clickgo.control.AbstractControl {
                     const lab = '';
                     let include = true;
                     for (const char of searchValue) {
-                        if (val.includes(char) || lab.includes(char)) {
+                        const c = char.toLowerCase();
+                        if (val.includes(c) || lab.includes(c)) {
                             continue;
                         }
                         // --- 没包含 ---
@@ -633,7 +635,7 @@ export default class extends clickgo.control.AbstractControl {
                 },
                 'detail': {
                     'value': [value]
-                }
+                },
             };
             this.emit('change', event);
             if (!event.go) {

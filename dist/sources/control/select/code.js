@@ -456,7 +456,7 @@ class default_1 extends clickgo.control.AbstractControl {
     _search(success) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim().toLowerCase();
+            const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
             if (this.propBoolean('remote')) {
                 const delay = this.propInt('remoteDelay');
                 ++this._needSearch;
@@ -509,7 +509,8 @@ class default_1 extends clickgo.control.AbstractControl {
                         const lab = (typeof item === 'object' ? (_b = item.label) !== null && _b !== void 0 ? _b : '' : '').toLowerCase();
                         let include = true;
                         for (const char of searchValue) {
-                            if (val.includes(char) || lab.includes(char)) {
+                            const c = char.toLowerCase();
+                            if (val.includes(c) || lab.includes(c)) {
                                 continue;
                             }
                             include = false;
@@ -529,7 +530,8 @@ class default_1 extends clickgo.control.AbstractControl {
                         const lab = '';
                         let include = true;
                         for (const char of searchValue) {
-                            if (val.includes(char) || lab.includes(char)) {
+                            const c = char.toLowerCase();
+                            if (val.includes(c) || lab.includes(c)) {
                                 continue;
                             }
                             include = false;
@@ -564,7 +566,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     },
                     'detail': {
                         'value': [value]
-                    }
+                    },
                 };
                 this.emit('change', event);
                 if (!event.go) {

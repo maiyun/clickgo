@@ -10,7 +10,7 @@
                 <button @click="rand">rand({{min}}, {{max}})</button>
             </layout>
             <layout gutter="10">
-                <text v-model="length" style="width: 30px;"></text>
+                <text v-model="length" style="width: 60px;"></text>
                 <text v-model="block" style="flex: 1;"></text>
                 <button @click="random">random({{length}}, RANDOM_LUN, '{{block}}')</button>
             </layout>

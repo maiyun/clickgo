@@ -7,9 +7,31 @@
 
     .item {
         position: relative; overflow: hidden;
+        
+        .top {
+            pointer-events: none; background: rgba(0, 0, 0, .4); color: #FFF; fill: #FFF; stroke: #FFF; position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; padding: var(--g-padding-s);
+        }
 
         cg-img {
             flex: 1;
+        }
+        
+        .bottom {
+            pointer-events: none; background: rgba(0, 0, 0, .4); fill: #FFF; stroke: #FFF; position: absolute; bottom: 0; left: 0; width: 100%; display: flex; transition: var(--g-transition); opacity: 0; display: flex;
+
+            .bitem {
+                padding: var(--g-padding-s); display: flex; justify-content: center; transition: var(--g-transition);
+                &.drag {
+                    cursor: move;
+                }
+                &:not(.drag) {
+                    flex: 1;
+                }
+            }
+
+            svg {
+                width: 16px; height: 16px;
+            }
         }
 
         // --- drop ---
@@ -17,27 +39,8 @@
             &::after {
                 content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: .7; background: var(--g-color);
             }
-        }
-        &:not([data-cg-hover]) {
-            .top {
-                pointer-events: none; background: rgba(0, 0, 0, .4); color: #FFF; fill: #FFF; stroke: #FFF; position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; padding: var(--g-padding-s);
-            }
             .bottom {
-                pointer-events: none; background: rgba(0, 0, 0, .4); fill: #FFF; stroke: #FFF; position: absolute; bottom: 0; left: 0; width: 100%; display: flex; transition: var(--g-transition); opacity: 0; display: flex;
-    
-                .bitem {
-                    padding: var(--g-padding-s); display: flex; justify-content: center; transition: var(--g-transition);
-                    &.drag {
-                        cursor: move;
-                    }
-                    &:not(.drag) {
-                        flex: 1;
-                    }
-                }
-    
-                svg {
-                    width: 16px; height: 16px;
-                }
+                display: none;
             }
         }
     }

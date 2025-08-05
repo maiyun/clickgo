@@ -149,7 +149,8 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 传输给 greatlist 的 data --- */
     public get dataGl(): any[] {
-        return this.unpack(this.dataFormat);
+        const dg = this.unpack(this.dataFormat);
+        return dg;
     }
 
     /** --- 初始化后的 map 对象 --- */
@@ -405,7 +406,7 @@ export default class extends clickgo.control.AbstractControl {
                 'openicon': item.openicon ?? item.icon ?? this.props.iconDefault,
                 'level': level,
                 'format': item,
-                'data': item.data
+                'data': item.data,
             });
             if (!this.propBoolean('tree') || (tree === 1)) {
                 result.push(...this.unpack(item.children, level + 1));
@@ -743,6 +744,13 @@ export default class extends clickgo.control.AbstractControl {
         // --- 监听 data 变动 ---
         this.watch(() => JSON.stringify(this.props.data), (n, o): void => {
             if (n === o) {
+                // --- 仅仅刷新 tree 为 -1 的问题 ---
+                for (const item of this.dataGl) {
+                    if (item.format.tree !== -1) {
+                        continue;
+                    }
+                    item.format.tree = 0;
+                }
                 return;
             }
             this.dataFormat =

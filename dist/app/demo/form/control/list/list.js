@@ -131,6 +131,7 @@ class default_1 extends clickgo.form.AbstractForm {
                 ]
             }
         ];
+        this.listData6 = ['1', '2', '3', '4', '5'];
         this.listMap5 = undefined;
         this.listData5Index = false;
         this.disabledList = [];
@@ -291,6 +292,12 @@ class default_1 extends clickgo.form.AbstractForm {
             }
             yield clickgo.tool.sleep(300);
             this.sub6children = ['Sub7', 'Sub8'];
+        });
+    }
+    onList6Load(value, resolve) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield clickgo.tool.sleep(300);
+            resolve();
         });
     }
     onSelect(area) {

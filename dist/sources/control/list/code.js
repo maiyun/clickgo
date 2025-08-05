@@ -115,7 +115,8 @@ class default_1 extends clickgo.control.AbstractControl {
         return value;
     }
     get dataGl() {
-        return this.unpack(this.dataFormat);
+        const dg = this.unpack(this.dataFormat);
+        return dg;
     }
     get mapComp() {
         var _a, _b, _c, _d, _e, _f, _g, _h;
@@ -307,7 +308,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'openicon': (_c = (_b = item.openicon) !== null && _b !== void 0 ? _b : item.icon) !== null && _c !== void 0 ? _c : this.props.iconDefault,
                 'level': level,
                 'format': item,
-                'data': item.data
+                'data': item.data,
             });
             if (!this.propBoolean('tree') || (tree === 1)) {
                 result.push(...this.unpack(item.children, level + 1));
@@ -578,6 +579,12 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         this.watch(() => JSON.stringify(this.props.data), (n, o) => {
             if (n === o) {
+                for (const item of this.dataGl) {
+                    if (item.format.tree !== -1) {
+                        continue;
+                    }
+                    item.format.tree = 0;
+                }
                 return;
             }
             this.dataFormat =

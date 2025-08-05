@@ -43,8 +43,8 @@ export default class extends clickgo.form.AbstractForm {
             'label': 'tip',
             'color': 'tip'
         }, 'haha4', {
-            'value': 'ha5',
-            'label': 'The value is ha5'
+            'value': 'hA5',
+            'label': 'The value is hA5'
         }, {
             'value': 'ha6',
             'label': 'Can not be selected',
@@ -247,7 +247,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onChanged(e: types.ISelectChangedEvent): void {
-        console.log('onChanged', e);
+        console.log('onChanged', JSON.stringify(e, null, 4));
     }
 
     public onTagclick(e: types.ISelectTagclickEvent): void {

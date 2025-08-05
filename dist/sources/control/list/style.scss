@@ -6,12 +6,15 @@
             content: ''; position: absolute; left: 0; top: 2px; border: solid 1px var(--g-color-disabled); border-width: 1px 1px 0 0; width: 8px; height: 8px; transform: rotate(45deg);
         }
         &.tree2::before {
+            // --- 加载中隐藏 arrow ---
             border-width: 0;
         }
         &.tree1::before {
+            // --- 有 children 时 arrow 打开的状态 ---
             border-width: 0 1px 1px 0; left: 2px; top: 0;
         }
         &.tree-1 {
+            // --- 无 children 时隐藏 arrow ---
             visibility: hidden; pointer-events: none;
         }
 

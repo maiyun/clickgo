@@ -75,16 +75,26 @@
                     <label v-else>{{disabledList}}</label>
                 </layout>
                 <layout direction="v" gutter="10" style="flex: 1; width: 0;">
-                    <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual"  :mode="mode[0]" :data="listData5" :check="check" :map="listMap5" :tree="tree" :async="async" @load="onlist5Load" style="flex: 1;">
-                        <template v-slot:row="data">
-                            <layout gutter="10" align-v="center">
-                                <label style="flex: 1;">{{data.row.label}}</label>
-                                <button v-if="data.index === 1" @click="++data.row.data.count">abc({{data.row.data.count}})</button>
-                            </layout>
-                        </template>
-                    </list>
-                    <button v-if="listMap5===undefined" @click="listMap5={'label':'name','value':'id','children':'sub','disabled':'disabled1'}">Set map</button>
-                    <button v-if="listMap5!==undefined" @click="changelistData5Index">{{listData5Index ? '' : '!'}}index</button>
+                    <layout direction="v" gutter="10" style="flex: 1; height: 0;">
+                        <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual"  :mode="mode[0]" :data="listData5" :check="check" :map="listMap5" :tree="tree" :async="async" @load="onlist5Load" style="flex: 1;">
+                            <template v-slot:row="data">
+                                <layout gutter="10" align-v="center">
+                                    <label style="flex: 1;">{{data.row.label}}</label>
+                                    <button v-if="data.index === 1" @click="++data.row.data.count">abc({{data.row.data.count}})</button>
+                                </layout>
+                            </template>
+                        </list>
+                        <button v-if="listMap5===undefined" @click="listMap5={'label':'name','value':'id','children':'sub','disabled':'disabled1'}">Set map</button>
+                        <button v-if="listMap5!==undefined" @click="changelistData5Index">{{listData5Index ? '' : '!'}}index</button>
+                    </layout>
+                    <layout direction="v" gutter="10" style="flex: 1; height: 0;">
+                        <list :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :virtual="virtual"  :mode="mode[0]" :data="listData6" :check="check" :tree="tree" :async="async" @load="onList6Load" style="flex: 1; height: 0;">
+                            <template v-slot:row="data">
+                                <label>{{data.row.label}}</label>
+                            </template>
+                        </list>
+                        <button @click="listData6=['1','2','3','4','5']">Set data</button>
+                    </layout>
                 </layout>
             </layout>
             <label class="mtip">Right-click (computer) or press and hold (phone) to open the universal menu.</label>

@@ -82,8 +82,8 @@ class default_1 extends clickgo.form.AbstractForm {
                 'label': 'tip',
                 'color': 'tip'
             }, 'haha4', {
-                'value': 'ha5',
-                'label': 'The value is ha5'
+                'value': 'hA5',
+                'label': 'The value is hA5'
             }, {
                 'value': 'ha6',
                 'label': 'Can not be selected',
@@ -241,7 +241,7 @@ class default_1 extends clickgo.form.AbstractForm {
         }
     }
     onChanged(e) {
-        console.log('onChanged', e);
+        console.log('onChanged', JSON.stringify(e, null, 4));
     }
     onTagclick(e) {
         this.addRemoveList.unshift('@tagclick, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
