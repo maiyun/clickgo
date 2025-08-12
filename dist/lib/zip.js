@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -56,20 +47,18 @@ class Zip {
         this._zip = zip;
         this._refreshList();
     }
-    getContent(path_1) {
-        return __awaiter(this, arguments, void 0, function* (path, type = 'string') {
-            path = tool.urlResolve(this._path, path);
-            const f = this._zip.file(path.slice(1));
-            if (!f) {
-                return null;
-            }
-            if (type === 'string') {
-                return f.async('string');
-            }
-            else {
-                return f.async(type);
-            }
-        });
+    async getContent(path, type = 'string') {
+        path = tool.urlResolve(this._path, path);
+        const f = this._zip.file(path.slice(1));
+        if (!f) {
+            return null;
+        }
+        if (type === 'string') {
+            return f.async('string');
+        }
+        else {
+            return f.async(type);
+        }
     }
     putContent(path, data, options = {}) {
         path = tool.urlResolve(this._path, path);
@@ -137,14 +126,14 @@ class Zip {
     }
     isDir(path) {
         const pstats = this.stats(path);
-        if (!(pstats === null || pstats === void 0 ? void 0 : pstats.isDirectory)) {
+        if (!pstats?.isDirectory) {
             return false;
         }
         return pstats;
     }
     isFile(path) {
         const pstats = this.stats(path);
-        if (!(pstats === null || pstats === void 0 ? void 0 : pstats.isFile)) {
+        if (!pstats?.isFile) {
             return false;
         }
         return pstats;
@@ -261,7 +250,6 @@ class Zip {
     _refreshList() {
         const list = {};
         this._zip.forEach(function (relativePath, item) {
-            var _a, _b;
             if (relativePath.startsWith('/')) {
                 relativePath = relativePath.slice(1);
             }
@@ -289,8 +277,8 @@ class Zip {
             }
             list[parentPath][name] = {
                 'name': name,
-                'compressedSize': (_a = item._data.compressedSize) !== null && _a !== void 0 ? _a : 0,
-                'uncompressedSize': (_b = item._data.uncompressedSize) !== null && _b !== void 0 ? _b : 0,
+                'compressedSize': item._data.compressedSize ?? 0,
+                'uncompressedSize': item._data.uncompressedSize ?? 0,
                 'date': item.date,
                 'isFile': !item.dir,
                 'isDirectory': item.dir,
@@ -327,8 +315,7 @@ class Zip {
             opt.compression = 'DEFLATE';
         }
         return this._zip.generateAsync(opt, function (meta) {
-            var _a;
-            (_a = options.onUpdate) === null || _a === void 0 ? void 0 : _a.call(options, meta.percent, meta.currentFile);
+            options.onUpdate?.(meta.percent, meta.currentFile);
         });
     }
     getList() {
@@ -381,17 +368,15 @@ class Zip {
     }
 }
 exports.Zip = Zip;
-function get(data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const z = (0, jszip_1.default)();
-        try {
-            if (data) {
-                yield z.loadAsync(data);
-            }
-            return new Zip(z);
+async function get(data) {
+    const z = (0, jszip_1.default)();
+    try {
+        if (data) {
+            await z.loadAsync(data);
         }
-        catch (_a) {
-            return null;
-        }
-    });
+        return new Zip(z);
+    }
+    catch {
+        return null;
+    }
 }

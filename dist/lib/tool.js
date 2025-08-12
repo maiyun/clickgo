@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = void 0;
 exports.compressor = compressor;
@@ -95,33 +86,30 @@ exports.isEscaped = isEscaped;
 exports.parseArrayString = parseArrayString;
 const core = __importStar(require("./core"));
 let compressorjs = null;
-function compressor(file_1) {
-    return __awaiter(this, arguments, void 0, function* (file, options = {}) {
-        if (!compressorjs) {
-            try {
-                compressorjs = yield core.getModule('compressorjs');
-            }
-            catch (_a) {
-                return false;
-            }
+async function compressor(file, options = {}) {
+    if (!compressorjs) {
+        try {
+            compressorjs = await core.getModule('compressorjs');
         }
-        return new Promise((resolve) => {
-            new compressorjs(file, {
-                'quality': options.quality,
-                'maxWidth': options.maxWidth,
-                'maxHeight': options.maxHeight,
-                success: (result) => {
-                    resolve(result);
-                },
-                error: () => {
-                    resolve(false);
-                }
-            });
+        catch {
+            return false;
+        }
+    }
+    return new Promise((resolve) => {
+        new compressorjs(file, {
+            'quality': options.quality,
+            'maxWidth': options.maxWidth,
+            'maxHeight': options.maxHeight,
+            success: (result) => {
+                resolve(result);
+            },
+            error: () => {
+                resolve(false);
+            }
         });
     });
 }
 function getClassPrototype(obj, over = [], level = 0) {
-    var _a;
     if (level === 0) {
         return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
     }
@@ -148,7 +136,7 @@ function getClassPrototype(obj, over = [], level = 0) {
         if (des.value) {
             rtn.method[item] = des.value;
         }
-        else if ((_a = des.get) !== null && _a !== void 0 ? _a : des.set) {
+        else if (des.get ?? des.set) {
             if (!rtn.access[item]) {
                 rtn.access[item] = {};
             }
@@ -242,7 +230,7 @@ function clone(obj) {
 }
 function sleep(ms = 0) {
     return new Promise(function (resolve) {
-        if (ms > 30000) {
+        if (ms > 30_000) {
             resolve(false);
             return;
         }
@@ -258,15 +246,13 @@ function nextFrame() {
         });
     });
 }
-function sleepFrame(count) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (count > 10) {
-            count = 10;
-        }
-        for (let i = 0; i < count; ++i) {
-            yield nextFrame();
-        }
-    });
+async function sleepFrame(count) {
+    if (count > 10) {
+        count = 10;
+    }
+    for (let i = 0; i < count; ++i) {
+        await nextFrame();
+    }
 }
 function purify(text) {
     text = '>' + text + '<';
@@ -291,24 +277,22 @@ function match(str, regs) {
     }
     return false;
 }
-function styleUrl2DataUrl(path, style, files) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
-        let match = null;
-        while ((match = reg.exec(style))) {
-            let realPath = urlResolve(path, match[1]);
-            if (realPath.startsWith('/package/')) {
-                realPath = realPath.slice(8);
-            }
-            if (!files[realPath]) {
-                continue;
-            }
-            if (typeof files[realPath] !== 'string') {
-                style = style.replace(match[0], `url('${yield blob2DataUrl(files[realPath])}')`);
-            }
+async function styleUrl2DataUrl(path, style, files) {
+    const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
+    let match = null;
+    while ((match = reg.exec(style))) {
+        let realPath = urlResolve(path, match[1]);
+        if (realPath.startsWith('/package/')) {
+            realPath = realPath.slice(8);
         }
-        return style;
-    });
+        if (!files[realPath]) {
+            continue;
+        }
+        if (typeof files[realPath] !== 'string') {
+            style = style.replace(match[0], `url('${await blob2DataUrl(files[realPath])}')`);
+        }
+    }
+    return style;
 }
 function layoutAddTagClassAndReTagName(layout, retagname) {
     const list = [];
@@ -505,7 +489,6 @@ function stylePrepend(style, prep = '') {
     };
 }
 function getMimeByPath(path) {
-    var _a;
     const lio = path.lastIndexOf('.');
     const ext = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
     const exts = {
@@ -518,7 +501,7 @@ function getMimeByPath(path) {
         'gif': 'image/gif',
         'png': 'image/png'
     };
-    const mime = (_a = exts[ext]) !== null && _a !== void 0 ? _a : 'application/octet-stream';
+    const mime = exts[ext] ?? 'application/octet-stream';
     return {
         'mime': mime,
         'ext': ext
@@ -582,7 +565,7 @@ function getArray(param) {
         try {
             rtn = JSON.parse(param);
         }
-        catch (_a) {
+        catch {
             return [];
         }
     }
@@ -606,7 +589,6 @@ function formatColor(color) {
     });
 }
 function rgb2hex(r, g, b, a = 1) {
-    var _a;
     if (g === undefined || b === undefined) {
         if (typeof r !== 'string') {
             return '';
@@ -615,7 +597,7 @@ function rgb2hex(r, g, b, a = 1) {
         r = Math.round(rgb[0]);
         g = Math.round(rgb[1]);
         b = Math.round(rgb[2]);
-        a = (_a = rgb[3]) !== null && _a !== void 0 ? _a : 1;
+        a = rgb[3] ?? 1;
     }
     else {
         if (typeof r === 'string') {
@@ -659,7 +641,6 @@ function hex2rgb(hex) {
     return rgb;
 }
 function rgb2hsl(r, g, b, a = 1, decimal = false) {
-    var _a;
     const hsl = {
         'h': 0,
         's': 0,
@@ -675,7 +656,7 @@ function rgb2hsl(r, g, b, a = 1, decimal = false) {
         r = rgb[0];
         g = rgb[1];
         b = rgb[2];
-        a = (_a = rgb[3]) !== null && _a !== void 0 ? _a : 1;
+        a = rgb[3] ?? 1;
     }
     else {
         if (typeof r === 'string') {
@@ -729,7 +710,6 @@ function rgb2hsl(r, g, b, a = 1, decimal = false) {
     return hsl;
 }
 function hsl2rgb(h, s, l, a = 1, decimal = false) {
-    var _a;
     const rgb = {
         'r': 0,
         'g': 0,
@@ -745,7 +725,7 @@ function hsl2rgb(h, s, l, a = 1, decimal = false) {
         h = hsl[0];
         s = hsl[1];
         l = hsl[2];
-        a = (_a = hsl[3]) !== null && _a !== void 0 ? _a : 1;
+        a = hsl[3] ?? 1;
     }
     else {
         if (typeof h === 'string') {
@@ -780,14 +760,12 @@ function hsl2rgb(h, s, l, a = 1, decimal = false) {
 }
 function request(url, opt) {
     return new Promise(function (resove) {
-        var _a;
         const xhr = new XMLHttpRequest();
         if (opt.credentials === false) {
             xhr.withCredentials = false;
         }
         xhr.upload.onloadstart = function (e) {
-            var _a;
-            const r = (_a = opt.uploadStart) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+            const r = opt.uploadStart?.(e.total);
             if (r && (r instanceof Promise)) {
                 r.catch(function (e1) {
                     console.log(e1);
@@ -795,8 +773,7 @@ function request(url, opt) {
             }
         };
         xhr.upload.onprogress = function (e) {
-            var _a;
-            const r = (_a = opt.uploadProgress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+            const r = opt.uploadProgress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
                 r.catch(function (e1) {
                     console.log(e1);
@@ -804,8 +781,7 @@ function request(url, opt) {
             }
         };
         xhr.upload.onloadend = function () {
-            var _a;
-            const r = (_a = opt.uploadEnd) === null || _a === void 0 ? void 0 : _a.call(opt);
+            const r = opt.uploadEnd?.();
             if (r && (r instanceof Promise)) {
                 r.catch(function (e) {
                     console.log(e);
@@ -813,8 +789,7 @@ function request(url, opt) {
             }
         };
         xhr.onloadstart = function (e) {
-            var _a;
-            const r = (_a = opt.start) === null || _a === void 0 ? void 0 : _a.call(opt, e.total);
+            const r = opt.start?.(e.total);
             if (r && (r instanceof Promise)) {
                 r.catch(function (e1) {
                     console.log(e1);
@@ -822,8 +797,7 @@ function request(url, opt) {
             }
         };
         xhr.onprogress = function (e) {
-            var _a;
-            const r = (_a = opt.progress) === null || _a === void 0 ? void 0 : _a.call(opt, e.loaded, e.total);
+            const r = opt.progress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
                 r.catch(function (e1) {
                     console.log(e1);
@@ -831,8 +805,7 @@ function request(url, opt) {
             }
         };
         xhr.onloadend = function () {
-            var _a;
-            const r = (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt);
+            const r = opt.end?.();
             if (r && (r instanceof Promise)) {
                 r.catch(function (e) {
                     console.log(e);
@@ -840,17 +813,16 @@ function request(url, opt) {
             }
         };
         xhr.onload = function () {
-            var _a, _b;
             let res = this.response;
-            if ((_a = this.getResponseHeader('content-type')) === null || _a === void 0 ? void 0 : _a.includes('json')) {
+            if (this.getResponseHeader('content-type')?.includes('json')) {
                 try {
                     res = JSON.parse(res);
                 }
-                catch (_c) {
+                catch {
                     res = this.response;
                 }
             }
-            const r = (_b = opt.load) === null || _b === void 0 ? void 0 : _b.call(opt, res);
+            const r = opt.load?.(res);
             if (r && (r instanceof Promise)) {
                 r.catch(function (e) {
                     console.log(e);
@@ -859,8 +831,7 @@ function request(url, opt) {
             resove(res);
         };
         xhr.onerror = function () {
-            var _a;
-            const r = (_a = opt.error) === null || _a === void 0 ? void 0 : _a.call(opt);
+            const r = opt.error?.();
             if (r && (r instanceof Promise)) {
                 r.catch(function (e) {
                     console.log(e);
@@ -879,7 +850,7 @@ function request(url, opt) {
                 xhr.setRequestHeader(k, opt.headers[k]);
             }
         }
-        xhr.open((_a = opt.method) !== null && _a !== void 0 ? _a : 'GET', url, true);
+        xhr.open(opt.method ?? 'GET', url, true);
         xhr.send(opt.body);
     });
 }
@@ -892,15 +863,11 @@ function get(url, opt) {
 function post(url, data, opt) {
     return loader.post(url, data, opt);
 }
-function getResponseJson(url, opt) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return loader.getResponseJson(url, opt);
-    });
+async function getResponseJson(url, opt) {
+    return loader.getResponseJson(url, opt);
 }
-function postResponseJson(url, data, opt) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return loader.postResponseJson(url, data, opt);
-    });
+async function postResponseJson(url, data, opt) {
+    return loader.postResponseJson(url, data, opt);
 }
 function parseUrl(url) {
     return loader.parseUrl(url);
@@ -966,8 +933,8 @@ function formatTime(ts, tz) {
     if (typeof ts === 'number') {
         ts = new Date(ts);
     }
-    const ntz = tz !== null && tz !== void 0 ? tz : -(ts.getTimezoneOffset() / 60);
-    ts.setTime(ts.getTime() + ntz * 60 * 60000);
+    const ntz = tz ?? -(ts.getTimezoneOffset() / 60);
+    ts.setTime(ts.getTime() + ntz * 60 * 60_000);
     rtn.date = ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0');
     rtn.time = ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0');
     rtn.zone = 'UTC' + (ntz >= 0 ? '+' : '') + ntz.toString();

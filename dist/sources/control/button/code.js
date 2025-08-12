@@ -96,14 +96,13 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.innerFocus || this.arrowFocus;
     }
     keydown(e) {
-        var _a, _b;
         if (e.key === 'Enter') {
             e.preventDefault();
             if (this.canDoMain) {
                 this.innerClick(e);
                 if (!this.slots['pop'] || (this.props.area === 'mark')) {
                     this.element.click();
-                    if (((_a = this.refs.arrow) === null || _a === void 0 ? void 0 : _a.dataset.cgPopOpen) !== undefined) {
+                    if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                         clickgo.form.hidePop(this.refs.arrow);
                     }
                 }
@@ -125,7 +124,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.isSpaceDown = true;
             if (this.props.area === 'mark') {
-                if (((_b = this.refs.arrow) === null || _b === void 0 ? void 0 : _b.dataset.cgPopOpen) !== undefined) {
+                if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                     clickgo.form.hidePop(this.refs.arrow);
                 }
                 clickgo.tool.sleep(300).then(() => {
@@ -139,13 +138,12 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     keyup(e) {
-        var _a;
         if (!this.isSpaceDown) {
             return;
         }
         this.isSpaceDown = false;
         if (this.canDoMain) {
-            if (((_a = this.refs.arrow) === null || _a === void 0 ? void 0 : _a.dataset.cgPopOpen) !== undefined) {
+            if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                 return;
             }
             this.innerClick(e);
@@ -189,7 +187,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     arrowClick(e) {
-        var _a;
         e.stopPropagation();
         if (this.props.area === 'all') {
             if (this.element.dataset.cgPopOpen === undefined) {
@@ -202,7 +199,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else {
-            if (((_a = this.refs.arrow) === null || _a === void 0 ? void 0 : _a.dataset.cgPopOpen) === undefined) {
+            if (this.refs.arrow?.dataset.cgPopOpen === undefined) {
                 clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'split' ? 'v' : 'h', {
                     'autoScroll': true,
                     'way': 'click'

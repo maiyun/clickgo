@@ -478,6 +478,25 @@ const modules: Record<string, {
         'loading': false,
         'resolve': [],
     },
+    // --- noVNC ---
+    'novnc': {
+        func: async function() {
+            console.log('alpha, not use');
+            try {
+                console.log('xxx2');
+                const novnc = await import(loader.cdn + '/npm/@novnc/novnc@1.6.0/+esm');
+                console.log('xxx', novnc);
+                return novnc.default.default;
+            }
+            catch (e) {
+                console.log('xxx222', e);
+                throw Error('novnc load failed.');
+            }
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
+    },
 };
 
 /**
@@ -736,7 +755,7 @@ export function trigger(name: types.TGlobalEvent, taskId: number | string | bool
                 break;
             }
             if (typeof taskId !== 'string') {
-                taskId = taskId.toString();
+                break;
             }
             (boot as any)?.[eventName](taskId, formId);
             for (const tid in task.list) {

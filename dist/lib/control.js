@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractControl = void 0;
 exports.read = read;
@@ -91,8 +82,7 @@ class AbstractControl {
         return this._rootControl;
     }
     get formFocus() {
-        var _a, _b;
-        return (_b = (_a = this.rootForm) === null || _a === void 0 ? void 0 : _a.formFocus) !== null && _b !== void 0 ? _b : false;
+        return this.rootForm?.formFocus ?? false;
     }
     get path() {
         return '';
@@ -105,8 +95,7 @@ class AbstractControl {
     }
     get l() {
         return (key, data) => {
-            var _a, _b;
-            const loc = (_b = (_a = this.localeData) === null || _a === void 0 ? void 0 : _a[this.locale][key]) !== null && _b !== void 0 ? _b : '[LocaleError]' + key;
+            const loc = this.localeData?.[this.locale][key] ?? '[LocaleError]' + key;
             if (!data) {
                 return loc;
             }
@@ -284,227 +273,223 @@ class AbstractControl {
     }
 }
 exports.AbstractControl = AbstractControl;
-function read(blob) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const z = yield zip.get(blob);
-        if (!z) {
-            return false;
+async function read(blob) {
+    const z = await zip.get(blob);
+    if (!z) {
+        return false;
+    }
+    const controlPkg = {};
+    const list = z.readDir('/');
+    for (const sub of list) {
+        if (sub.isFile) {
+            continue;
         }
-        const controlPkg = {};
-        const list = z.readDir('/');
-        for (const sub of list) {
-            if (sub.isFile) {
-                continue;
+        const configContent = await z.getContent('/' + sub.name + '/config.json');
+        if (!configContent) {
+            form.notify({
+                'title': 'Error',
+                'content': `Control file not found.\nFile: "${'/' + sub.name + '/config.json'}".`,
+                'type': 'danger'
+            });
+            continue;
+        }
+        const config = JSON.parse(configContent);
+        controlPkg[config.name] = {
+            'type': 'control',
+            'config': config,
+            'files': {}
+        };
+        const list = z.readDir('/' + sub.name + '/', {
+            'hasChildren': true
+        });
+        for (const file of list) {
+            const pre = file.path.slice(config.name.length + 1);
+            const mime = tool.getMimeByPath(file.name);
+            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                const fab = await z.getContent(file.path + file.name, 'string');
+                if (!fab) {
+                    continue;
+                }
+                controlPkg[config.name].files[pre + file.name] = fab.replace(/^\ufeff/, '');
             }
-            const configContent = yield z.getContent('/' + sub.name + '/config.json');
-            if (!configContent) {
+            else {
+                const fab = await z.getContent(file.path + file.name, 'arraybuffer');
+                if (!fab) {
+                    continue;
+                }
+                controlPkg[config.name].files[pre + file.name] = new Blob([fab], {
+                    'type': mime.mime
+                });
+            }
+        }
+    }
+    return controlPkg;
+}
+async function init(taskId, invoke, cache) {
+    const t = task.list[taskId];
+    if (!t) {
+        return -1;
+    }
+    for (let path of t.app.config.controls) {
+        if (!path.endsWith('.cgc')) {
+            path += '.cgc';
+        }
+        path = tool.urlResolve('/', path);
+        const file = await fs.getContent(path, {
+            'cache': cache
+        }, taskId);
+        if (file && typeof file !== 'string') {
+            const c = await read(file);
+            if (c) {
+                for (const name in c) {
+                    const item = c[name];
+                    let prep = '';
+                    t.controls[name] = {
+                        'layout': '',
+                        'files': item.files,
+                        'props': {},
+                        'emits': {},
+                        'data': {},
+                        'access': {},
+                        'methods': {},
+                        'computed': {}
+                    };
+                    t.controls[name].layout = item.files[item.config.layout + '.html'];
+                    if (t.controls[name].layout === undefined) {
+                        return -2;
+                    }
+                    t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control="' + name + '"$2');
+                    const style = item.files[item.config.style + '.css'];
+                    if (style) {
+                        const r = tool.stylePrepend(style);
+                        prep = r.prep;
+                        dom.pushStyle(t.id, await tool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
+                    }
+                    const prepList = [
+                        'cg-theme-task' + t.id.toString() + '-' + name + '_'
+                    ];
+                    if (prep !== '') {
+                        prepList.push(prep);
+                    }
+                    t.controls[name].layout = tool.layoutAddTagClassAndReTagName(t.controls[name].layout, false);
+                    t.controls[name].layout = tool.layoutClassPrepend(t.controls[name].layout, prepList);
+                    t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
+                    if (t.controls[name].layout.includes('<teleport')) {
+                        t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
+                    }
+                    t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS, '"<>$');
+                    t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${t.controls[name].access['cgPCMap']}"`);
+                    let cls;
+                    if (item.files[item.config.code + '.js']) {
+                        item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
+                        let expo = [];
+                        try {
+                            expo = loader.require(item.config.code, item.files, {
+                                'dir': '/',
+                                'invoke': invoke,
+                                'preprocess': function (code, path) {
+                                    const exec = /eval\W/.exec(code);
+                                    if (exec) {
+                                        form.notify({
+                                            'title': 'Error',
+                                            'content': `The "eval" is prohibited.\nFile: "${path}".`,
+                                            'type': 'danger'
+                                        });
+                                        return '';
+                                    }
+                                    code = code.replace(/extends[\s\S]+?\.\s*AbstractControl\s*{/, (t) => {
+                                        return t + 'get filename() {return __filename;}';
+                                    });
+                                    return code;
+                                },
+                                'map': {
+                                    'clickgo': '/invoke/clickgo'
+                                }
+                            })[0];
+                        }
+                        catch (e) {
+                            core.trigger('error', taskId, 0, e, e.message + '(-4)');
+                            return -3;
+                        }
+                        if (!expo?.default) {
+                            const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
+                            core.trigger('error', taskId, 0, new Error(msg), msg);
+                            return -4;
+                        }
+                        cls = new expo.default();
+                    }
+                    else {
+                        cls = new (class extends AbstractControl {
+                            get taskId() {
+                                return taskId;
+                            }
+                        })();
+                    }
+                    if (cls.props) {
+                        for (const key in cls.props) {
+                            t.controls[name].props[key] = {
+                                'default': cls.props[key]
+                            };
+                        }
+                    }
+                    if (cls.emits) {
+                        for (const key in cls.emits) {
+                            t.controls[name].emits[key] = cls.emits[key];
+                        }
+                    }
+                    const cdata = Object.entries(cls);
+                    for (const item of cdata) {
+                        if (item[0] === 'files') {
+                            continue;
+                        }
+                        if (item[0] === 'access') {
+                            t.controls[name].access = item[1];
+                            continue;
+                        }
+                        t.controls[name].data[item[0]] = item[1];
+                    }
+                    const prot = tool.getClassPrototype(cls);
+                    t.controls[name].methods = prot.method;
+                    Object.assign(t.controls[name].computed, prot.access);
+                    t.controls[name].computed.controlName = {
+                        get: function () {
+                            return name;
+                        },
+                        set: function () {
+                            form.notify({
+                                'title': 'Error',
+                                'content': `The software tries to modify the system variable "controlName".\nControl: ${name}`,
+                                'type': 'danger'
+                            });
+                            return;
+                        }
+                    };
+                    t.controls[name].computed.prep = {
+                        get: function () {
+                            return prep;
+                        },
+                        set: function () {
+                            form.notify({
+                                'title': 'Error',
+                                'content': `The software tries to modify the system variable "prep".\nControl: ${name}`,
+                                'type': 'danger'
+                            });
+                            return;
+                        }
+                    };
+                }
+            }
+            else {
                 form.notify({
                     'title': 'Error',
-                    'content': `Control file not found.\nFile: "${'/' + sub.name + '/config.json'}".`,
+                    'content': 'Control failed to load.\nTask id: ' + t.id.toString() + '\nPath: ' + path,
                     'type': 'danger'
                 });
-                continue;
-            }
-            const config = JSON.parse(configContent);
-            controlPkg[config.name] = {
-                'type': 'control',
-                'config': config,
-                'files': {}
-            };
-            const list = z.readDir('/' + sub.name + '/', {
-                'hasChildren': true
-            });
-            for (const file of list) {
-                const pre = file.path.slice(config.name.length + 1);
-                const mime = tool.getMimeByPath(file.name);
-                if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                    const fab = yield z.getContent(file.path + file.name, 'string');
-                    if (!fab) {
-                        continue;
-                    }
-                    controlPkg[config.name].files[pre + file.name] = fab.replace(/^\ufeff/, '');
-                }
-                else {
-                    const fab = yield z.getContent(file.path + file.name, 'arraybuffer');
-                    if (!fab) {
-                        continue;
-                    }
-                    controlPkg[config.name].files[pre + file.name] = new Blob([fab], {
-                        'type': mime.mime
-                    });
-                }
+                return -5;
             }
         }
-        return controlPkg;
-    });
-}
-function init(taskId, invoke, cache) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const t = task.list[taskId];
-        if (!t) {
-            return -1;
-        }
-        for (let path of t.app.config.controls) {
-            if (!path.endsWith('.cgc')) {
-                path += '.cgc';
-            }
-            path = tool.urlResolve('/', path);
-            const file = yield fs.getContent(path, {
-                'cache': cache
-            }, taskId);
-            if (file && typeof file !== 'string') {
-                const c = yield read(file);
-                if (c) {
-                    for (const name in c) {
-                        const item = c[name];
-                        let prep = '';
-                        t.controls[name] = {
-                            'layout': '',
-                            'files': item.files,
-                            'props': {},
-                            'emits': {},
-                            'data': {},
-                            'access': {},
-                            'methods': {},
-                            'computed': {}
-                        };
-                        t.controls[name].layout = item.files[item.config.layout + '.html'];
-                        if (t.controls[name].layout === undefined) {
-                            return -2;
-                        }
-                        t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control="' + name + '"$2');
-                        const style = item.files[item.config.style + '.css'];
-                        if (style) {
-                            const r = tool.stylePrepend(style);
-                            prep = r.prep;
-                            dom.pushStyle(t.id, yield tool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
-                        }
-                        const prepList = [
-                            'cg-theme-task' + t.id.toString() + '-' + name + '_'
-                        ];
-                        if (prep !== '') {
-                            prepList.push(prep);
-                        }
-                        t.controls[name].layout = tool.layoutAddTagClassAndReTagName(t.controls[name].layout, false);
-                        t.controls[name].layout = tool.layoutClassPrepend(t.controls[name].layout, prepList);
-                        t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
-                        if (t.controls[name].layout.includes('<teleport')) {
-                            t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
-                        }
-                        t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS, '"<>$');
-                        t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${t.controls[name].access['cgPCMap']}"`);
-                        let cls;
-                        if (item.files[item.config.code + '.js']) {
-                            item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-                            let expo = [];
-                            try {
-                                expo = loader.require(item.config.code, item.files, {
-                                    'dir': '/',
-                                    'invoke': invoke,
-                                    'preprocess': function (code, path) {
-                                        const exec = /eval\W/.exec(code);
-                                        if (exec) {
-                                            form.notify({
-                                                'title': 'Error',
-                                                'content': `The "eval" is prohibited.\nFile: "${path}".`,
-                                                'type': 'danger'
-                                            });
-                                            return '';
-                                        }
-                                        code = code.replace(/extends[\s\S]+?\.\s*AbstractControl\s*{/, (t) => {
-                                            return t + 'get filename() {return __filename;}';
-                                        });
-                                        return code;
-                                    },
-                                    'map': {
-                                        'clickgo': '/invoke/clickgo'
-                                    }
-                                })[0];
-                            }
-                            catch (e) {
-                                core.trigger('error', taskId, 0, e, e.message + '(-4)');
-                                return -3;
-                            }
-                            if (!(expo === null || expo === void 0 ? void 0 : expo.default)) {
-                                const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
-                                core.trigger('error', taskId, 0, new Error(msg), msg);
-                                return -4;
-                            }
-                            cls = new expo.default();
-                        }
-                        else {
-                            cls = new (class extends AbstractControl {
-                                get taskId() {
-                                    return taskId;
-                                }
-                            })();
-                        }
-                        if (cls.props) {
-                            for (const key in cls.props) {
-                                t.controls[name].props[key] = {
-                                    'default': cls.props[key]
-                                };
-                            }
-                        }
-                        if (cls.emits) {
-                            for (const key in cls.emits) {
-                                t.controls[name].emits[key] = cls.emits[key];
-                            }
-                        }
-                        const cdata = Object.entries(cls);
-                        for (const item of cdata) {
-                            if (item[0] === 'files') {
-                                continue;
-                            }
-                            if (item[0] === 'access') {
-                                t.controls[name].access = item[1];
-                                continue;
-                            }
-                            t.controls[name].data[item[0]] = item[1];
-                        }
-                        const prot = tool.getClassPrototype(cls);
-                        t.controls[name].methods = prot.method;
-                        Object.assign(t.controls[name].computed, prot.access);
-                        t.controls[name].computed.controlName = {
-                            get: function () {
-                                return name;
-                            },
-                            set: function () {
-                                form.notify({
-                                    'title': 'Error',
-                                    'content': `The software tries to modify the system variable "controlName".\nControl: ${name}`,
-                                    'type': 'danger'
-                                });
-                                return;
-                            }
-                        };
-                        t.controls[name].computed.prep = {
-                            get: function () {
-                                return prep;
-                            },
-                            set: function () {
-                                form.notify({
-                                    'title': 'Error',
-                                    'content': `The software tries to modify the system variable "prep".\nControl: ${name}`,
-                                    'type': 'danger'
-                                });
-                                return;
-                            }
-                        };
-                    }
-                }
-                else {
-                    form.notify({
-                        'title': 'Error',
-                        'content': 'Control failed to load.\nTask id: ' + t.id.toString() + '\nPath: ' + path,
-                        'type': 'danger'
-                    });
-                    return -5;
-                }
-            }
-        }
-        return 1;
-    });
+    }
+    return 1;
 }
 function buildComponents(taskId, formId, path) {
     const t = task.list[taskId];
@@ -569,36 +554,29 @@ function buildComponents(taskId, formId, path) {
             beforeMount: function () {
                 this.onBeforeMount();
             },
-            mounted: function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    var _a;
-                    if (((_a = this.element.dataset) === null || _a === void 0 ? void 0 : _a.cgRootcontrol) !== undefined) {
-                        const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
-                        if (rc) {
-                            this._rootControl = rc;
-                        }
+            mounted: async function () {
+                if (this.element.dataset?.cgRootcontrol !== undefined) {
+                    const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
+                    if (rc) {
+                        this._rootControl = rc;
                     }
-                    yield this.$nextTick();
-                    this.onMounted();
-                });
+                }
+                await this.$nextTick();
+                this.onMounted();
             },
             beforeUpdate: function () {
                 this.onBeforeUpdate();
             },
-            updated: function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield this.$nextTick();
-                    this.onUpdated();
-                });
+            updated: async function () {
+                await this.$nextTick();
+                this.onUpdated();
             },
             beforeUnmount: function () {
                 this.onBeforeUnmount();
             },
-            unmounted: function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield this.$nextTick();
-                    this.onUnmounted();
-                });
+            unmounted: async function () {
+                await this.$nextTick();
+                this.onUnmounted();
             }
         };
     }

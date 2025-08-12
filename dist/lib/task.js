@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.systemTaskInfo = exports.lastId = exports.list = void 0;
 exports.setFocus = setFocus;
@@ -78,7 +69,7 @@ exports.list = {};
 exports.lastId = 0;
 let focusId = null;
 function setFocus(id) {
-    focusId = id !== null && id !== void 0 ? id : null;
+    focusId = id ?? null;
 }
 function getFocus() {
     return focusId;
@@ -124,7 +115,6 @@ const localeData = {
 let frameTimer = 0;
 const frameMaps = {};
 function onFrame(fun, opt = {}) {
-    var _a;
     const taskId = opt.taskId;
     const formId = opt.formId;
     if (!taskId) {
@@ -138,17 +128,17 @@ function onFrame(fun, opt = {}) {
         return 0;
     }
     const ft = ++frameTimer;
-    const count = (_a = opt.count) !== null && _a !== void 0 ? _a : 0;
+    const count = opt.count ?? 0;
     let c = 0;
     let timer;
-    const timerHandler = () => __awaiter(this, void 0, void 0, function* () {
+    const timerHandler = async () => {
         ++c;
         if (formId && task.forms[formId] === undefined) {
             delete task.timers['1x' + ft.toString()];
             delete frameMaps[ft];
             return;
         }
-        yield fun();
+        await fun();
         if (task.timers['1x' + ft.toString()] == undefined) {
             return;
         }
@@ -179,14 +169,14 @@ function onFrame(fun, opt = {}) {
             });
             frameMaps[ft] = timer;
         }
-    });
+    };
     timer = requestAnimationFrame(function () {
         timerHandler().catch(function (e) {
             console.log('task.onFrame: -1', e);
         });
     });
     frameMaps[ft] = timer;
-    task.timers['1x' + ft.toString()] = formId !== null && formId !== void 0 ? formId : 0;
+    task.timers['1x' + ft.toString()] = formId ?? 0;
     return ft;
 }
 function offFrame(ft, opt = {}) {
@@ -241,1046 +231,1020 @@ function getList() {
     }
     return rtn;
 }
-function run(url_1) {
-    return __awaiter(this, arguments, void 0, function* (url, opt = {}, ntid) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-        let app = null;
-        if (typeof url === 'string') {
-            if (!url.endsWith('/') && !url.endsWith('.cga')) {
-                return 0;
+async function run(url, opt = {}, ntid) {
+    let app = null;
+    if (typeof url === 'string') {
+        if (!url.endsWith('/') && !url.endsWith('.cga')) {
+            return 0;
+        }
+        let icon = __dirname + '/../icon.png';
+        if (opt.icon) {
+            icon = opt.icon;
+        }
+        opt.notify ??= true;
+        const notifyId = opt.notify ? form.notify({
+            'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
+            'content': url,
+            'icon': icon,
+            'timeout': 0,
+            'progress': true
+        }) : undefined;
+        if (!ntid &&
+            !url.startsWith('/clickgo/') &&
+            !url.startsWith('/storage/') &&
+            !url.startsWith('/mounted/') &&
+            !url.startsWith('/package/') &&
+            !url.startsWith('/current/')) {
+            url = tool.urlResolve(location.href, url);
+        }
+        app = await core.fetchApp(url, {
+            'notifyId': notifyId,
+            'progress': opt.progress,
+            'cache': opt.cache
+        }, ntid);
+        if (notifyId) {
+            setTimeout(function () {
+                form.hideNotify(notifyId);
+            }, 3000);
+        }
+    }
+    else if (url.type !== 'app') {
+        return -1;
+    }
+    else {
+        app = url;
+    }
+    if (!app) {
+        return -1;
+    }
+    const taskId = ++exports.lastId;
+    const blocks = ['document', 'localStorage'];
+    const invoke = {};
+    const ks = Object.getOwnPropertyNames(window);
+    invoke.window = {};
+    for (const k of ks) {
+        if (blocks.includes(k)) {
+            continue;
+        }
+        invoke.window[k] = window[k];
+    }
+    for (const block of blocks) {
+        invoke[block] = undefined;
+    }
+    invoke.console = {
+        assert: function (condition, ...data) {
+            console.assert(condition, ...data);
+        },
+        clear: function () {
+            console.clear();
+        },
+        count: function (label) {
+            console.count(label);
+        },
+        countReset: function (label) {
+            console.countReset(label);
+        },
+        debug: function (...data) {
+            console.debug(...data);
+        },
+        dir: function (item, options) {
+            console.dir(item, options);
+        },
+        dirxml: function (...data) {
+            console.dirxml(...data);
+        },
+        error: function (...data) {
+            console.error(...data);
+        },
+        group: function (...data) {
+            console.group(...data);
+        },
+        groupCollapsed: function (...data) {
+            console.groupCollapsed(...data);
+        },
+        groupEnd: function () {
+            console.groupEnd();
+        },
+        info: function (...data) {
+            console.info(...data);
+        },
+        log: function (...data) {
+            console.log(...data);
+        },
+        table: function (tabularData, properties) {
+            console.table(tabularData, properties);
+        },
+        time: function (label) {
+            console.time(label);
+        },
+        timeEnd: function (label) {
+            console.timeEnd(label);
+        },
+        timeLog: function (label, ...data) {
+            console.timeLog(label, ...data);
+        },
+        timeStamp: function (label) {
+            console.timeStamp(label);
+        },
+        trace: function (...data) {
+            console.trace(...data);
+        },
+        warn: function (...data) {
+            console.warn(...data);
+        }
+    };
+    invoke.loader = {
+        require: function (paths, files, opt) {
+            return loader.require(paths, files, opt);
+        }
+    };
+    invoke.invokeClickgo = {
+        getVersion: () => {
+            return clickgo.getVersion();
+        },
+        isNative: () => {
+            return clickgo.isNative();
+        },
+        getPlatform: () => {
+            return clickgo.getPlatform();
+        },
+        getDevice: () => {
+            return clickgo.getDevice();
+        },
+        isImmersion: () => {
+            return clickgo.isImmersion();
+        },
+        hasFrame: () => {
+            return clickgo.hasFrame();
+        },
+        'control': {
+            'AbstractControl': class extends control.AbstractControl {
+                get taskId() {
+                    return taskId;
+                }
+            },
+            read: function (blob) {
+                return control.read(blob);
             }
-            let icon = __dirname + '/../icon.png';
-            if (opt.icon) {
-                icon = opt.icon;
+        },
+        'core': {
+            'config': clickgo.core.config,
+            'global': clickgo.tool.clone(clickgo.core.global),
+            'AbstractApp': class extends core.AbstractApp {
+                async main() {
+                    return;
+                }
+                get taskId() {
+                    return taskId;
+                }
+            },
+            getCdn: function () {
+                return core.getCdn();
+            },
+            getModule: function (name) {
+                return core.getModule(name);
+            },
+            readApp: function (blob) {
+                return core.readApp(blob);
+            },
+            getAvailArea: function () {
+                return core.getAvailArea();
+            },
+            hash: function (hash) {
+                return core.hash(hash, taskId);
+            },
+            getHash: function () {
+                return core.getHash();
+            },
+            getHost: function () {
+                return core.getHost();
+            },
+            location: function (url) {
+                return core.location(url, taskId);
+            },
+            getLocation: function () {
+                return core.getLocation();
+            },
+            back: function () {
+                return core.back(taskId);
+            },
+            open: function (url) {
+                core.open(url);
             }
-            (_a = opt.notify) !== null && _a !== void 0 ? _a : (opt.notify = true);
-            const notifyId = opt.notify ? form.notify({
-                'title': (_c = (_b = localeData[core.config.locale]) === null || _b === void 0 ? void 0 : _b.loading) !== null && _c !== void 0 ? _c : localeData['en'].loading,
-                'content': url,
-                'icon': icon,
-                'timeout': 0,
-                'progress': true
-            }) : undefined;
-            if (!ntid &&
-                !url.startsWith('/clickgo/') &&
-                !url.startsWith('/storage/') &&
-                !url.startsWith('/mounted/') &&
-                !url.startsWith('/package/') &&
-                !url.startsWith('/current/')) {
-                url = tool.urlResolve(location.href, url);
+        },
+        'dom': {
+            inPage: function (el) {
+                return dom.inPage(el);
+            },
+            'dpi': dom.dpi,
+            setGlobalCursor: function (type) {
+                dom.setGlobalCursor(type);
+            },
+            hasTouchButMouse: function (e) {
+                return dom.hasTouchButMouse(e);
+            },
+            getStyleCount: function (taskId, type) {
+                return dom.getStyleCount(taskId, type);
+            },
+            watchPosition: function (el, cb, immediate = false) {
+                return dom.watchPosition(el, cb, immediate);
+            },
+            unwatchPosition: function (el) {
+                dom.unwatchPosition(el);
+            },
+            isWatchPosition: function (el) {
+                return dom.isWatchPosition(el);
+            },
+            getWatchSizeCount: function (taskId) {
+                return dom.getWatchSizeCount(taskId);
+            },
+            watchSize: function (el, cb, immediate = false) {
+                return dom.watchSize(el, cb, immediate, taskId);
+            },
+            unwatchSize: function (el) {
+                dom.unwatchSize(el, taskId);
+            },
+            isWatchSize: function (el) {
+                return dom.isWatchSize(el);
+            },
+            getWatchCount: function (taskId) {
+                return dom.getWatchCount(taskId);
+            },
+            watch: function (el, cb, mode = 'default', immediate = false) {
+                dom.watch(el, cb, mode, immediate, taskId);
+            },
+            unwatch: function (el) {
+                dom.unwatch(el, taskId);
+            },
+            isWatch(el) {
+                return dom.isWatch(el);
+            },
+            watchStyle: function (el, name, cb, immediate = false) {
+                dom.watchStyle(el, name, cb, immediate);
+            },
+            isWatchStyle: function (el) {
+                return dom.isWatchStyle(el);
+            },
+            watchProperty: function (el, name, cb, immediate = false) {
+                dom.watchProperty(el, name, cb, immediate);
+            },
+            isWatchProperty(el) {
+                return dom.isWatchProperty(el);
+            },
+            getWatchInfo: function () {
+                return dom.getWatchInfo();
+            },
+            bindClick: function (e, handler) {
+                dom.bindClick(e, handler);
+            },
+            bindDblClick: function (e, handler) {
+                dom.bindDblClick(e, handler);
+            },
+            bindDown: function (oe, opt) {
+                dom.bindDown(oe, opt);
+            },
+            bindScale: function (oe, handler) {
+                dom.bindScale(oe, handler);
+            },
+            bindGesture: function (oe, before, handler) {
+                dom.bindGesture(oe, before, handler);
+            },
+            bindLong: function (e, long) {
+                dom.bindLong(e, long);
+            },
+            setDragData(data) {
+                dom.setDragData(data);
+            },
+            bindDrag: function (e, opt) {
+                dom.bindDrag(e, opt);
+            },
+            'is': dom.is,
+            bindMove: function (e, opt) {
+                return dom.bindMove(e, opt);
+            },
+            bindResize: function (e, opt) {
+                dom.bindResize(e, opt);
+            },
+            findParentByData: function (el, name, value) {
+                return dom.findParentByData(el, name, value);
+            },
+            findParentByClass: function (el, name) {
+                return dom.findParentByClass(el, name);
+            },
+            findParentByTag: function (el, name) {
+                return dom.findParentByTag(el, name);
+            },
+            index: function (el) {
+                return dom.index(el);
+            },
+            siblings: function (el) {
+                return dom.siblings(el);
+            },
+            siblingsData: function (el, name) {
+                return dom.siblingsData(el, name);
+            },
+            fullscreen: function () {
+                return dom.fullscreen();
+            },
+            exitFullscreen: function () {
+                return dom.exitFullscreen();
+            },
+            createElement: function (tagName) {
+                return dom.createElement(tagName);
             }
-            app = yield core.fetchApp(url, {
-                'notifyId': notifyId,
-                'progress': opt.progress,
-                'cache': opt.cache
-            }, ntid);
-            if (notifyId) {
-                setTimeout(function () {
-                    form.hideNotify(notifyId);
-                }, 3000);
+        },
+        'form': {
+            'AbstractPanel': class extends form.AbstractPanel {
+                get taskId() {
+                    return taskId;
+                }
+            },
+            'AbstractForm': class extends form.AbstractForm {
+                get taskId() {
+                    return taskId;
+                }
+            },
+            min: function (fid) {
+                return form.min(fid);
+            },
+            max: function max(fid) {
+                return form.max(fid);
+            },
+            close: function (fid) {
+                return form.close(fid);
+            },
+            bindResize: function (e, border) {
+                form.bindResize(e, border);
+            },
+            bindDrag: function (e) {
+                form.bindDrag(e);
+            },
+            getTaskId: function (fid) {
+                return form.getTaskId(fid);
+            },
+            get: function (fid) {
+                return form.get(fid);
+            },
+            getList: function (tid) {
+                return form.getList(tid);
+            },
+            getFocus: function () {
+                return form.getFocus();
+            },
+            getActivePanel: function (formId) {
+                return form.getActivePanel(formId);
+            },
+            removeActivePanel: function (panelId, formId) {
+                return form.removeActivePanel(panelId, formId, taskId);
+            },
+            setActivePanel: function (panelId, formId) {
+                return form.setActivePanel(panelId, formId, taskId);
+            },
+            hash: function (hash, formId) {
+                return form.hash(hash, formId);
+            },
+            getHash: function (formId) {
+                return form.getHash(formId);
+            },
+            hashBack: function (formId) {
+                return form.hashBack(formId);
+            },
+            changeFocus: function (fid = 0) {
+                form.changeFocus(fid);
+            },
+            getMaxZIndexID: function (out) {
+                return form.getMaxZIndexID(out);
+            },
+            getRectByBorder: function (border) {
+                return form.getRectByBorder(border);
+            },
+            showCircular: function (x, y) {
+                form.showCircular(x, y);
+            },
+            moveRectangle: function (border) {
+                form.moveRectangle(border);
+            },
+            showRectangle: function (x, y, border) {
+                form.showRectangle(x, y, border);
+            },
+            hideRectangle: function () {
+                form.hideRectangle();
+            },
+            showDrag: function () {
+                form.showDrag();
+            },
+            moveDrag: function (opt) {
+                form.moveDrag(opt);
+            },
+            hideDrag: function () {
+                form.hideDrag();
+            },
+            alert: function (content, type) {
+                return form.alert(content, type);
+            },
+            notify: function (opt) {
+                return form.notify(opt);
+            },
+            notifyProgress: function (notifyId, per) {
+                form.notifyProgress(notifyId, per);
+            },
+            notifyContent: function (notifyId, opt) {
+                form.notifyContent(notifyId, opt);
+            },
+            hideNotify: function (notifyId) {
+                form.hideNotify(notifyId);
+            },
+            showPop: function (el, pop, direction, opt = {}) {
+                form.showPop(el, pop, direction, opt);
+            },
+            hidePop: function (pop) {
+                form.hidePop(pop);
+            },
+            isJustPop: function (el) {
+                return form.isJustPop(el);
+            },
+            doFocusAndPopEvent: function (e) {
+                form.doFocusAndPopEvent(e);
+            },
+            removePanel(id, vapp, el) {
+                return form.removePanel(id, vapp, el);
+            },
+            createPanel(rootPanel, cls, opt) {
+                return form.createPanel(rootPanel, cls, opt, taskId);
+            },
+            create: function (cls, data, opt) {
+                return form.create(cls, data, opt, taskId);
+            },
+            dialog: function (opt) {
+                if (typeof opt === 'string') {
+                    opt = {
+                        'content': opt
+                    };
+                }
+                opt.taskId = taskId;
+                return form.dialog(opt);
+            },
+            confirm: function (opt) {
+                if (typeof opt === 'string') {
+                    opt = {
+                        'content': opt
+                    };
+                }
+                opt.taskId = taskId;
+                return form.confirm(opt);
+            },
+            prompt: function (opt) {
+                if (typeof opt === 'string') {
+                    opt = {
+                        'content': opt
+                    };
+                }
+                opt.taskId = taskId;
+                return form.prompt(opt);
+            },
+            flash: function (fid) {
+                form.flash(fid, taskId);
+            },
+            showLauncher: function () {
+                form.showLauncher();
+            },
+            hideLauncher: function () {
+                form.hideLauncher();
             }
-        }
-        else if (url.type !== 'app') {
-            return -1;
-        }
-        else {
-            app = url;
-        }
-        if (!app) {
-            return -1;
-        }
-        const taskId = ++exports.lastId;
-        const blocks = ['document', 'localStorage'];
-        const invoke = {};
-        const ks = Object.getOwnPropertyNames(window);
-        invoke.window = {};
-        for (const k of ks) {
-            if (blocks.includes(k)) {
-                continue;
+        },
+        'fs': {
+            mount: function (name, handler) {
+                return clickgo.fs.mount(name, handler, taskId);
+            },
+            unmount: function (name) {
+                return clickgo.fs.unmount(name);
+            },
+            getContent: function (path, options = {}) {
+                return fs.getContent(path, options, taskId);
+            },
+            putContent: function (path, data, options = {}) {
+                return fs.putContent(path, data, options, taskId);
+            },
+            readLink: function (path, options = {}) {
+                return fs.readLink(path, options, taskId);
+            },
+            symlink: function (fPath, linkPath, options = {}) {
+                return fs.symlink(fPath, linkPath, options, taskId);
+            },
+            unlink: function (path) {
+                return fs.unlink(path, taskId);
+            },
+            stats: function (path) {
+                return fs.stats(path, taskId);
+            },
+            isDir: function (path) {
+                return fs.isDir(path, taskId);
+            },
+            isFile: function (path) {
+                return fs.isFile(path, taskId);
+            },
+            mkdir: function (path, mode) {
+                return fs.mkdir(path, mode, taskId);
+            },
+            rmdir: function (path) {
+                return fs.rmdir(path, taskId);
+            },
+            rmdirDeep: function (path) {
+                return fs.rmdirDeep(path, taskId);
+            },
+            chmod: function (path, mod) {
+                return fs.chmod(path, mod, taskId);
+            },
+            rename(oldPath, newPath) {
+                return fs.rename(oldPath, newPath, taskId);
+            },
+            readDir(path, encoding) {
+                return fs.readDir(path, encoding, taskId);
+            },
+            copyFolder(from, to, options = {}) {
+                return fs.copyFolder(from, to, options, taskId);
+            },
+            copyFile(src, dest) {
+                return fs.copyFile(src, dest, taskId);
             }
-            invoke.window[k] = window[k];
-        }
-        for (const block of blocks) {
-            invoke[block] = undefined;
-        }
-        invoke.console = {
-            assert: function (condition, ...data) {
-                console.assert(condition, ...data);
+        },
+        'native': {
+            on(name, handler, once = false, formId) {
+                native.on(name, handler, once, formId, taskId);
+            },
+            once(name, handler, formId) {
+                native.once(name, handler, formId, taskId);
+            },
+            off(name, formId) {
+                native.off(name, formId, taskId);
+            },
+            clear(formId, taskId) {
+                native.clear(formId, taskId);
+            },
+            getListenerList(taskId) {
+                return native.getListenerList(taskId);
+            },
+            invoke: function (name, ...param) {
+                return native.invoke(name, ...param);
+            },
+            size: async function (width, height) {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.size(width, height);
+            },
+            max: async function () {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.max();
+            },
+            min: async function () {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.min();
+            },
+            restore: async function () {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.restore();
+            },
+            activate: async function () {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.activate();
+            },
+            maximizable: async function (val) {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return;
+                }
+                await native.maximizable(val);
+            },
+            open: async function (options) {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return null;
+                }
+                return native.open(options);
+            },
+            save: async function (options) {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return null;
+                }
+                return native.save(options);
+            },
+            dialog: async function (options) {
+                const rtn = await checkPermission('native.form', false, undefined, taskId);
+                if (!rtn[0]) {
+                    return -1;
+                }
+                return native.dialog(options);
+            },
+            ping: function (val) {
+                return native.ping(val);
+            },
+            isMax: function () {
+                return native.isMax();
+            },
+        },
+        'storage': {
+            get: function (key) {
+                return clickgo.storage.get(key, taskId);
+            },
+            set: function (key, val) {
+                return clickgo.storage.set(key, val, taskId);
+            },
+            remove: function (key) {
+                return clickgo.storage.remove(key, taskId);
+            },
+            list: function () {
+                return clickgo.storage.list(taskId);
+            },
+            all: function () {
+                return clickgo.storage.all();
+            },
+            clear: function (path) {
+                return clickgo.storage.clear(path);
+            }
+        },
+        'task': {
+            getFocus: function () {
+                return focusId;
+            },
+            onFrame: function (fun, opt = {}) {
+                opt.taskId = taskId;
+                return onFrame(fun, opt);
+            },
+            offFrame: function (ft, opt = {}) {
+                opt.taskId = taskId;
+                offFrame(ft, opt);
+            },
+            get: function (tid) {
+                return get(tid);
+            },
+            getPermissions: function (tid) {
+                return getPermissions(tid);
+            },
+            getList: function () {
+                return getList();
+            },
+            run: function (url, opt = {}) {
+                if (opt.permissions) {
+                    if (!exports.list[taskId]?.runtime.permissions.includes('root')) {
+                        opt.permissions = undefined;
+                    }
+                }
+                return run(url, opt, taskId);
+            },
+            checkPermission: function (vals, apply = false, applyHandler) {
+                return checkPermission(vals, apply, applyHandler, taskId);
+            },
+            end: function (tid) {
+                return end(tid ?? taskId);
+            },
+            loadLocaleData: function (lang, data, pre = '') {
+                loadLocaleData(lang, data, pre, taskId);
+            },
+            loadLocale: function (lang, path) {
+                return loadLocale(lang, path, taskId);
+            },
+            clearLocale: function () {
+                clearLocale(taskId);
+            },
+            setLocale: function (lang, path) {
+                return setLocale(lang, path, taskId);
+            },
+            setLocaleLang: function (lang) {
+                setLocaleLang(lang, taskId);
+            },
+            clearLocaleLang: function () {
+                clearLocaleLang(taskId);
+            },
+            createTimer: function (fun, delay, opt = {}) {
+                opt.taskId = taskId;
+                return createTimer(fun, delay, opt);
+            },
+            removeTimer: function (timer) {
+                removeTimer(timer, taskId);
+            },
+            sleep: function (fun, delay) {
+                return sleep(fun, delay, taskId);
+            },
+            'systemTaskInfo': clickgo.task.systemTaskInfo,
+            setSystem: function (fid) {
+                return setSystem(fid, taskId);
+            },
+            clearSystem: function () {
+                return clearSystem(taskId);
+            }
+        },
+        'theme': {
+            read: function (blob) {
+                return clickgo.theme.read(blob);
+            },
+            load: async function (theme) {
+                if (!theme) {
+                    return false;
+                }
+                return clickgo.theme.load(theme, taskId);
+            },
+            remove: function (name) {
+                return clickgo.theme.remove(name, taskId);
             },
             clear: function () {
-                console.clear();
+                return clickgo.theme.clear(taskId);
             },
-            count: function (label) {
-                console.count(label);
+            setGlobal: function (theme) {
+                return clickgo.theme.setGlobal(theme);
             },
-            countReset: function (label) {
-                console.countReset(label);
-            },
-            debug: function (...data) {
-                console.debug(...data);
-            },
-            dir: function (item, options) {
-                console.dir(item, options);
-            },
-            dirxml: function (...data) {
-                console.dirxml(...data);
-            },
-            error: function (...data) {
-                console.error(...data);
-            },
-            group: function (...data) {
-                console.group(...data);
-            },
-            groupCollapsed: function (...data) {
-                console.groupCollapsed(...data);
-            },
-            groupEnd: function () {
-                console.groupEnd();
-            },
-            info: function (...data) {
-                console.info(...data);
-            },
-            log: function (...data) {
-                console.log(...data);
-            },
-            table: function (tabularData, properties) {
-                console.table(tabularData, properties);
-            },
-            time: function (label) {
-                console.time(label);
-            },
-            timeEnd: function (label) {
-                console.timeEnd(label);
-            },
-            timeLog: function (label, ...data) {
-                console.timeLog(label, ...data);
-            },
-            timeStamp: function (label) {
-                console.timeStamp(label);
-            },
-            trace: function (...data) {
-                console.trace(...data);
-            },
-            warn: function (...data) {
-                console.warn(...data);
+            clearGlobal: function () {
+                clickgo.theme.clearGlobal();
             }
-        };
-        invoke.loader = {
-            require: function (paths, files, opt) {
-                return loader.require(paths, files, opt);
+        },
+        'tool': {
+            compressor: function (file, options = {}) {
+                return tool.compressor(file, options);
+            },
+            blob2ArrayBuffer: function (blob) {
+                return tool.blob2ArrayBuffer(blob);
+            },
+            sizeFormat: function (size, spliter = ' ') {
+                return tool.sizeFormat(size, spliter);
+            },
+            weightFormat: function (weight, spliter = ' ') {
+                return tool.weightFormat(weight, spliter);
+            },
+            clone: function (obj) {
+                return tool.clone(obj);
+            },
+            sleep: function (ms = 0) {
+                return tool.sleep(ms);
+            },
+            nextFrame() {
+                return tool.nextFrame();
+            },
+            sleepFrame(count) {
+                return tool.sleepFrame(count);
+            },
+            purify: function (text) {
+                return tool.purify(text);
+            },
+            match: function (str, regs) {
+                return tool.match(str, regs);
+            },
+            layoutAddTagClassAndReTagName: function (layout, retagname) {
+                return tool.layoutAddTagClassAndReTagName(layout, retagname);
+            },
+            layoutClassPrepend: function (layout, preps) {
+                return tool.layoutClassPrepend(layout, preps);
+            },
+            stylePrepend: function (style, prep = '') {
+                return tool.stylePrepend(style, prep);
+            },
+            rand: function (min, max) {
+                return tool.rand(min, max);
+            },
+            'RANDOM_N': tool.RANDOM_N,
+            'RANDOM_U': tool.RANDOM_U,
+            'RANDOM_L': tool.RANDOM_L,
+            'RANDOM_UN': tool.RANDOM_UN,
+            'RANDOM_LN': tool.RANDOM_LN,
+            'RANDOM_LU': tool.RANDOM_LU,
+            'RANDOM_LUN': tool.RANDOM_LUN,
+            'RANDOM_V': tool.RANDOM_V,
+            'RANDOM_LUNS': tool.RANDOM_LUNS,
+            random: function (length = 8, source = tool.RANDOM_LN, block = '') {
+                return tool.random(length, source, block);
+            },
+            getBoolean: function (param) {
+                return tool.getBoolean(param);
+            },
+            getNumber: function (param) {
+                return tool.getNumber(param);
+            },
+            getArray(param) {
+                return tool.getArray(param);
+            },
+            escapeHTML: function (html) {
+                return tool.escapeHTML(html);
+            },
+            formatColor: function (color) {
+                return tool.formatColor(color);
+            },
+            rgb2hex: function (r, g, b, a = 1) {
+                return tool.rgb2hex(r, g, b, a);
+            },
+            hex2rgb: function (hex) {
+                return tool.hex2rgb(hex);
+            },
+            rgb2hsl: function (r, g, b, a = 1, decimal = false) {
+                return tool.rgb2hsl(r, g, b, a, decimal);
+            },
+            hsl2rgb: function (h, s, l, a = 1, decimal = false) {
+                return tool.hsl2rgb(h, s, l, a, decimal);
+            },
+            request: function (url, opt) {
+                return tool.request(url, opt);
+            },
+            fetch: function (url, init) {
+                return tool.fetch(url, init);
+            },
+            get: function (url, opt) {
+                return tool.get(url, opt);
+            },
+            post: function (url, data, opt) {
+                return tool.post(url, data, opt);
+            },
+            getResponseJson: function (url, opt) {
+                return tool.getResponseJson(url, opt);
+            },
+            postResponseJson: function (url, data, opt) {
+                return tool.postResponseJson(url, data, opt);
+            },
+            parseUrl: function (url) {
+                return tool.parseUrl(url);
+            },
+            urlResolve: function (from, to) {
+                return tool.urlResolve(from, to);
+            },
+            urlAtom: function (url) {
+                return tool.urlAtom(url);
+            },
+            blob2Text: function (blob) {
+                return tool.blob2Text(blob);
+            },
+            blob2DataUrl: function (blob) {
+                return tool.blob2DataUrl(blob);
+            },
+            execCommand: function (ac) {
+                tool.execCommand(ac);
+            },
+            compar: function (before, after) {
+                return tool.compar(before, after);
+            },
+            formatSecond: function (second) {
+                return tool.formatSecond(second);
+            },
+            formatTime: function (ts, tz) {
+                return tool.formatTime(ts, tz);
+            },
+            isMs: function (time) {
+                return tool.isMs(time);
+            },
+            queryStringify: function (query) {
+                return tool.queryStringify(query);
+            },
+            queryParse: function (query) {
+                return tool.queryParse(query);
             }
-        };
-        invoke.invokeClickgo = {
-            getVersion: () => {
-                return clickgo.getVersion();
-            },
-            isNative: () => {
-                return clickgo.isNative();
-            },
-            getPlatform: () => {
-                return clickgo.getPlatform();
-            },
-            getDevice: () => {
-                return clickgo.getDevice();
-            },
-            isImmersion: () => {
-                return clickgo.isImmersion();
-            },
-            hasFrame: () => {
-                return clickgo.hasFrame();
-            },
-            'control': {
-                'AbstractControl': class extends control.AbstractControl {
-                    get taskId() {
-                        return taskId;
-                    }
-                },
-                read: function (blob) {
-                    return control.read(blob);
-                }
-            },
-            'core': {
-                'config': clickgo.core.config,
-                'global': clickgo.tool.clone(clickgo.core.global),
-                'AbstractApp': class extends core.AbstractApp {
-                    main() {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            return;
-                        });
-                    }
-                    get taskId() {
-                        return taskId;
-                    }
-                },
-                getCdn: function () {
-                    return core.getCdn();
-                },
-                getModule: function (name) {
-                    return core.getModule(name);
-                },
-                readApp: function (blob) {
-                    return core.readApp(blob);
-                },
-                getAvailArea: function () {
-                    return core.getAvailArea();
-                },
-                hash: function (hash) {
-                    return core.hash(hash, taskId);
-                },
-                getHash: function () {
-                    return core.getHash();
-                },
-                getHost: function () {
-                    return core.getHost();
-                },
-                location: function (url) {
-                    return core.location(url, taskId);
-                },
-                getLocation: function () {
-                    return core.getLocation();
-                },
-                back: function () {
-                    return core.back(taskId);
-                },
-                open: function (url) {
-                    core.open(url);
-                }
-            },
-            'dom': {
-                inPage: function (el) {
-                    return dom.inPage(el);
-                },
-                'dpi': dom.dpi,
-                setGlobalCursor: function (type) {
-                    dom.setGlobalCursor(type);
-                },
-                hasTouchButMouse: function (e) {
-                    return dom.hasTouchButMouse(e);
-                },
-                getStyleCount: function (taskId, type) {
-                    return dom.getStyleCount(taskId, type);
-                },
-                watchPosition: function (el, cb, immediate = false) {
-                    return dom.watchPosition(el, cb, immediate);
-                },
-                unwatchPosition: function (el) {
-                    dom.unwatchPosition(el);
-                },
-                isWatchPosition: function (el) {
-                    return dom.isWatchPosition(el);
-                },
-                getWatchSizeCount: function (taskId) {
-                    return dom.getWatchSizeCount(taskId);
-                },
-                watchSize: function (el, cb, immediate = false) {
-                    return dom.watchSize(el, cb, immediate, taskId);
-                },
-                unwatchSize: function (el) {
-                    dom.unwatchSize(el, taskId);
-                },
-                isWatchSize: function (el) {
-                    return dom.isWatchSize(el);
-                },
-                getWatchCount: function (taskId) {
-                    return dom.getWatchCount(taskId);
-                },
-                watch: function (el, cb, mode = 'default', immediate = false) {
-                    dom.watch(el, cb, mode, immediate, taskId);
-                },
-                unwatch: function (el) {
-                    dom.unwatch(el, taskId);
-                },
-                isWatch(el) {
-                    return dom.isWatch(el);
-                },
-                watchStyle: function (el, name, cb, immediate = false) {
-                    dom.watchStyle(el, name, cb, immediate);
-                },
-                isWatchStyle: function (el) {
-                    return dom.isWatchStyle(el);
-                },
-                watchProperty: function (el, name, cb, immediate = false) {
-                    dom.watchProperty(el, name, cb, immediate);
-                },
-                isWatchProperty(el) {
-                    return dom.isWatchProperty(el);
-                },
-                getWatchInfo: function () {
-                    return dom.getWatchInfo();
-                },
-                bindClick: function (e, handler) {
-                    dom.bindClick(e, handler);
-                },
-                bindDblClick: function (e, handler) {
-                    dom.bindDblClick(e, handler);
-                },
-                bindDown: function (oe, opt) {
-                    dom.bindDown(oe, opt);
-                },
-                bindScale: function (oe, handler) {
-                    dom.bindScale(oe, handler);
-                },
-                bindGesture: function (oe, before, handler) {
-                    dom.bindGesture(oe, before, handler);
-                },
-                bindLong: function (e, long) {
-                    dom.bindLong(e, long);
-                },
-                setDragData(data) {
-                    dom.setDragData(data);
-                },
-                bindDrag: function (e, opt) {
-                    dom.bindDrag(e, opt);
-                },
-                'is': dom.is,
-                bindMove: function (e, opt) {
-                    return dom.bindMove(e, opt);
-                },
-                bindResize: function (e, opt) {
-                    dom.bindResize(e, opt);
-                },
-                findParentByData: function (el, name, value) {
-                    return dom.findParentByData(el, name, value);
-                },
-                findParentByClass: function (el, name) {
-                    return dom.findParentByClass(el, name);
-                },
-                findParentByTag: function (el, name) {
-                    return dom.findParentByTag(el, name);
-                },
-                index: function (el) {
-                    return dom.index(el);
-                },
-                siblings: function (el) {
-                    return dom.siblings(el);
-                },
-                siblingsData: function (el, name) {
-                    return dom.siblingsData(el, name);
-                },
-                fullscreen: function () {
-                    return dom.fullscreen();
-                },
-                exitFullscreen: function () {
-                    return dom.exitFullscreen();
-                },
-                createElement: function (tagName) {
-                    return dom.createElement(tagName);
-                }
-            },
-            'form': {
-                'AbstractPanel': class extends form.AbstractPanel {
-                    get taskId() {
-                        return taskId;
-                    }
-                },
-                'AbstractForm': class extends form.AbstractForm {
-                    get taskId() {
-                        return taskId;
-                    }
-                },
-                min: function (fid) {
-                    return form.min(fid);
-                },
-                max: function max(fid) {
-                    return form.max(fid);
-                },
-                close: function (fid) {
-                    return form.close(fid);
-                },
-                bindResize: function (e, border) {
-                    form.bindResize(e, border);
-                },
-                bindDrag: function (e) {
-                    form.bindDrag(e);
-                },
-                getTaskId: function (fid) {
-                    return form.getTaskId(fid);
-                },
-                get: function (fid) {
-                    return form.get(fid);
-                },
-                getList: function (tid) {
-                    return form.getList(tid);
-                },
-                getFocus: function () {
-                    return form.getFocus();
-                },
-                getActivePanel: function (formId) {
-                    return form.getActivePanel(formId);
-                },
-                removeActivePanel: function (panelId, formId) {
-                    return form.removeActivePanel(panelId, formId, taskId);
-                },
-                setActivePanel: function (panelId, formId) {
-                    return form.setActivePanel(panelId, formId, taskId);
-                },
-                hash: function (hash, formId) {
-                    return form.hash(hash, formId);
-                },
-                getHash: function (formId) {
-                    return form.getHash(formId);
-                },
-                hashBack: function (formId) {
-                    return form.hashBack(formId);
-                },
-                changeFocus: function (fid = 0) {
-                    form.changeFocus(fid);
-                },
-                getMaxZIndexID: function (out) {
-                    return form.getMaxZIndexID(out);
-                },
-                getRectByBorder: function (border) {
-                    return form.getRectByBorder(border);
-                },
-                showCircular: function (x, y) {
-                    form.showCircular(x, y);
-                },
-                moveRectangle: function (border) {
-                    form.moveRectangle(border);
-                },
-                showRectangle: function (x, y, border) {
-                    form.showRectangle(x, y, border);
-                },
-                hideRectangle: function () {
-                    form.hideRectangle();
-                },
-                showDrag: function () {
-                    form.showDrag();
-                },
-                moveDrag: function (opt) {
-                    form.moveDrag(opt);
-                },
-                hideDrag: function () {
-                    form.hideDrag();
-                },
-                alert: function (content, type) {
-                    return form.alert(content, type);
-                },
-                notify: function (opt) {
-                    return form.notify(opt);
-                },
-                notifyProgress: function (notifyId, per) {
-                    form.notifyProgress(notifyId, per);
-                },
-                notifyContent: function (notifyId, opt) {
-                    form.notifyContent(notifyId, opt);
-                },
-                hideNotify: function (notifyId) {
-                    form.hideNotify(notifyId);
-                },
-                showPop: function (el, pop, direction, opt = {}) {
-                    form.showPop(el, pop, direction, opt);
-                },
-                hidePop: function (pop) {
-                    form.hidePop(pop);
-                },
-                isJustPop: function (el) {
-                    return form.isJustPop(el);
-                },
-                doFocusAndPopEvent: function (e) {
-                    form.doFocusAndPopEvent(e);
-                },
-                removePanel(id, vapp, el) {
-                    return form.removePanel(id, vapp, el);
-                },
-                createPanel(rootPanel, cls, opt) {
-                    return form.createPanel(rootPanel, cls, opt, taskId);
-                },
-                create: function (cls, data, opt) {
-                    return form.create(cls, data, opt, taskId);
-                },
-                dialog: function (opt) {
-                    if (typeof opt === 'string') {
-                        opt = {
-                            'content': opt
-                        };
-                    }
-                    opt.taskId = taskId;
-                    return form.dialog(opt);
-                },
-                confirm: function (opt) {
-                    if (typeof opt === 'string') {
-                        opt = {
-                            'content': opt
-                        };
-                    }
-                    opt.taskId = taskId;
-                    return form.confirm(opt);
-                },
-                prompt: function (opt) {
-                    if (typeof opt === 'string') {
-                        opt = {
-                            'content': opt
-                        };
-                    }
-                    opt.taskId = taskId;
-                    return form.prompt(opt);
-                },
-                flash: function (fid) {
-                    form.flash(fid, taskId);
-                },
-                showLauncher: function () {
-                    form.showLauncher();
-                },
-                hideLauncher: function () {
-                    form.hideLauncher();
-                }
-            },
-            'fs': {
-                mount: function (name, handler) {
-                    return clickgo.fs.mount(name, handler, taskId);
-                },
-                unmount: function (name) {
-                    return clickgo.fs.unmount(name);
-                },
-                getContent: function (path, options = {}) {
-                    return fs.getContent(path, options, taskId);
-                },
-                putContent: function (path, data, options = {}) {
-                    return fs.putContent(path, data, options, taskId);
-                },
-                readLink: function (path, options = {}) {
-                    return fs.readLink(path, options, taskId);
-                },
-                symlink: function (fPath, linkPath, options = {}) {
-                    return fs.symlink(fPath, linkPath, options, taskId);
-                },
-                unlink: function (path) {
-                    return fs.unlink(path, taskId);
-                },
-                stats: function (path) {
-                    return fs.stats(path, taskId);
-                },
-                isDir: function (path) {
-                    return fs.isDir(path, taskId);
-                },
-                isFile: function (path) {
-                    return fs.isFile(path, taskId);
-                },
-                mkdir: function (path, mode) {
-                    return fs.mkdir(path, mode, taskId);
-                },
-                rmdir: function (path) {
-                    return fs.rmdir(path, taskId);
-                },
-                rmdirDeep: function (path) {
-                    return fs.rmdirDeep(path, taskId);
-                },
-                chmod: function (path, mod) {
-                    return fs.chmod(path, mod, taskId);
-                },
-                rename(oldPath, newPath) {
-                    return fs.rename(oldPath, newPath, taskId);
-                },
-                readDir(path, encoding) {
-                    return fs.readDir(path, encoding, taskId);
-                },
-                copyFolder(from, to, options = {}) {
-                    return fs.copyFolder(from, to, options, taskId);
-                },
-                copyFile(src, dest) {
-                    return fs.copyFile(src, dest, taskId);
-                }
-            },
-            'native': {
-                on(name, handler, once = false, formId) {
-                    native.on(name, handler, once, formId, taskId);
-                },
-                once(name, handler, formId) {
-                    native.once(name, handler, formId, taskId);
-                },
-                off(name, formId) {
-                    native.off(name, formId, taskId);
-                },
-                clear(formId, taskId) {
-                    native.clear(formId, taskId);
-                },
-                getListenerList(taskId) {
-                    return native.getListenerList(taskId);
-                },
-                invoke: function (name, ...param) {
-                    return native.invoke(name, ...param);
-                },
-                size: function (width, height) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return;
-                        }
-                        yield native.size(width, height);
-                    });
-                },
-                max: function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return;
-                        }
-                        yield native.max();
-                    });
-                },
-                min: function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return;
-                        }
-                        yield native.min();
-                    });
-                },
-                restore: function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return;
-                        }
-                        yield native.restore();
-                    });
-                },
-                activate: function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return;
-                        }
-                        yield native.activate();
-                    });
-                },
-                maximizable: function (val) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return;
-                        }
-                        yield native.maximizable(val);
-                    });
-                },
-                open: function (options) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return null;
-                        }
-                        return native.open(options);
-                    });
-                },
-                save: function (options) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return null;
-                        }
-                        return native.save(options);
-                    });
-                },
-                dialog: function (options) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const rtn = yield checkPermission('native.form', false, undefined, taskId);
-                        if (!rtn[0]) {
-                            return -1;
-                        }
-                        return native.dialog(options);
-                    });
-                },
-                ping: function (val) {
-                    return native.ping(val);
-                },
-                isMax: function () {
-                    return native.isMax();
-                },
-            },
-            'storage': {
-                get: function (key) {
-                    return clickgo.storage.get(key, taskId);
-                },
-                set: function (key, val) {
-                    return clickgo.storage.set(key, val, taskId);
-                },
-                remove: function (key) {
-                    return clickgo.storage.remove(key, taskId);
-                },
-                list: function () {
-                    return clickgo.storage.list(taskId);
-                },
-                all: function () {
-                    return clickgo.storage.all();
-                },
-                clear: function (path) {
-                    return clickgo.storage.clear(path);
-                }
-            },
-            'task': {
-                getFocus: function () {
-                    return focusId;
-                },
-                onFrame: function (fun, opt = {}) {
-                    opt.taskId = taskId;
-                    return onFrame(fun, opt);
-                },
-                offFrame: function (ft, opt = {}) {
-                    opt.taskId = taskId;
-                    offFrame(ft, opt);
-                },
-                get: function (tid) {
-                    return get(tid);
-                },
-                getPermissions: function (tid) {
-                    return getPermissions(tid);
-                },
-                getList: function () {
-                    return getList();
-                },
-                run: function (url, opt = {}) {
-                    var _a;
-                    if (opt.permissions) {
-                        if (!((_a = exports.list[taskId]) === null || _a === void 0 ? void 0 : _a.runtime.permissions.includes('root'))) {
-                            opt.permissions = undefined;
-                        }
-                    }
-                    return run(url, opt, taskId);
-                },
-                checkPermission: function (vals, apply = false, applyHandler) {
-                    return checkPermission(vals, apply, applyHandler, taskId);
-                },
-                end: function (tid) {
-                    return end(tid !== null && tid !== void 0 ? tid : taskId);
-                },
-                loadLocaleData: function (lang, data, pre = '') {
-                    loadLocaleData(lang, data, pre, taskId);
-                },
-                loadLocale: function (lang, path) {
-                    return loadLocale(lang, path, taskId);
-                },
-                clearLocale: function () {
-                    clearLocale(taskId);
-                },
-                setLocale: function (lang, path) {
-                    return setLocale(lang, path, taskId);
-                },
-                setLocaleLang: function (lang) {
-                    setLocaleLang(lang, taskId);
-                },
-                clearLocaleLang: function () {
-                    clearLocaleLang(taskId);
-                },
-                createTimer: function (fun, delay, opt = {}) {
-                    opt.taskId = taskId;
-                    return createTimer(fun, delay, opt);
-                },
-                removeTimer: function (timer) {
-                    removeTimer(timer, taskId);
-                },
-                sleep: function (fun, delay) {
-                    return sleep(fun, delay, taskId);
-                },
-                'systemTaskInfo': clickgo.task.systemTaskInfo,
-                setSystem: function (fid) {
-                    return setSystem(fid, taskId);
-                },
-                clearSystem: function () {
-                    return clearSystem(taskId);
-                }
-            },
-            'theme': {
-                read: function (blob) {
-                    return clickgo.theme.read(blob);
-                },
-                load: function (theme) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        if (!theme) {
-                            return false;
-                        }
-                        return clickgo.theme.load(theme, taskId);
-                    });
-                },
-                remove: function (name) {
-                    return clickgo.theme.remove(name, taskId);
-                },
-                clear: function () {
-                    return clickgo.theme.clear(taskId);
-                },
-                setGlobal: function (theme) {
-                    return clickgo.theme.setGlobal(theme);
-                },
-                clearGlobal: function () {
-                    clickgo.theme.clearGlobal();
-                }
-            },
-            'tool': {
-                compressor: function (file, options = {}) {
-                    return tool.compressor(file, options);
-                },
-                blob2ArrayBuffer: function (blob) {
-                    return tool.blob2ArrayBuffer(blob);
-                },
-                sizeFormat: function (size, spliter = ' ') {
-                    return tool.sizeFormat(size, spliter);
-                },
-                weightFormat: function (weight, spliter = ' ') {
-                    return tool.weightFormat(weight, spliter);
-                },
-                clone: function (obj) {
-                    return tool.clone(obj);
-                },
-                sleep: function (ms = 0) {
-                    return tool.sleep(ms);
-                },
-                nextFrame() {
-                    return tool.nextFrame();
-                },
-                sleepFrame(count) {
-                    return tool.sleepFrame(count);
-                },
-                purify: function (text) {
-                    return tool.purify(text);
-                },
-                match: function (str, regs) {
-                    return tool.match(str, regs);
-                },
-                layoutAddTagClassAndReTagName: function (layout, retagname) {
-                    return tool.layoutAddTagClassAndReTagName(layout, retagname);
-                },
-                layoutClassPrepend: function (layout, preps) {
-                    return tool.layoutClassPrepend(layout, preps);
-                },
-                stylePrepend: function (style, prep = '') {
-                    return tool.stylePrepend(style, prep);
-                },
-                rand: function (min, max) {
-                    return tool.rand(min, max);
-                },
-                'RANDOM_N': tool.RANDOM_N,
-                'RANDOM_U': tool.RANDOM_U,
-                'RANDOM_L': tool.RANDOM_L,
-                'RANDOM_UN': tool.RANDOM_UN,
-                'RANDOM_LN': tool.RANDOM_LN,
-                'RANDOM_LU': tool.RANDOM_LU,
-                'RANDOM_LUN': tool.RANDOM_LUN,
-                'RANDOM_V': tool.RANDOM_V,
-                'RANDOM_LUNS': tool.RANDOM_LUNS,
-                random: function (length = 8, source = tool.RANDOM_LN, block = '') {
-                    return tool.random(length, source, block);
-                },
-                getBoolean: function (param) {
-                    return tool.getBoolean(param);
-                },
-                getNumber: function (param) {
-                    return tool.getNumber(param);
-                },
-                getArray(param) {
-                    return tool.getArray(param);
-                },
-                escapeHTML: function (html) {
-                    return tool.escapeHTML(html);
-                },
-                formatColor: function (color) {
-                    return tool.formatColor(color);
-                },
-                rgb2hex: function (r, g, b, a = 1) {
-                    return tool.rgb2hex(r, g, b, a);
-                },
-                hex2rgb: function (hex) {
-                    return tool.hex2rgb(hex);
-                },
-                rgb2hsl: function (r, g, b, a = 1, decimal = false) {
-                    return tool.rgb2hsl(r, g, b, a, decimal);
-                },
-                hsl2rgb: function (h, s, l, a = 1, decimal = false) {
-                    return tool.hsl2rgb(h, s, l, a, decimal);
-                },
-                request: function (url, opt) {
-                    return tool.request(url, opt);
-                },
-                fetch: function (url, init) {
-                    return tool.fetch(url, init);
-                },
-                get: function (url, opt) {
-                    return tool.get(url, opt);
-                },
-                post: function (url, data, opt) {
-                    return tool.post(url, data, opt);
-                },
-                getResponseJson: function (url, opt) {
-                    return tool.getResponseJson(url, opt);
-                },
-                postResponseJson: function (url, data, opt) {
-                    return tool.postResponseJson(url, data, opt);
-                },
-                parseUrl: function (url) {
-                    return tool.parseUrl(url);
-                },
-                urlResolve: function (from, to) {
-                    return tool.urlResolve(from, to);
-                },
-                urlAtom: function (url) {
-                    return tool.urlAtom(url);
-                },
-                blob2Text: function (blob) {
-                    return tool.blob2Text(blob);
-                },
-                blob2DataUrl: function (blob) {
-                    return tool.blob2DataUrl(blob);
-                },
-                execCommand: function (ac) {
-                    tool.execCommand(ac);
-                },
-                compar: function (before, after) {
-                    return tool.compar(before, after);
-                },
-                formatSecond: function (second) {
-                    return tool.formatSecond(second);
-                },
-                formatTime: function (ts, tz) {
-                    return tool.formatTime(ts, tz);
-                },
-                isMs: function (time) {
-                    return tool.isMs(time);
-                },
-                queryStringify: function (query) {
-                    return tool.queryStringify(query);
-                },
-                queryParse: function (query) {
-                    return tool.queryParse(query);
-                }
-            },
-            'zip': {
-                get: function (data) {
-                    return clickgo.zip.get(data);
-                }
+        },
+        'zip': {
+            get: function (data) {
+                return clickgo.zip.get(data);
             }
-        };
-        const preprocess = function (code, path) {
-            const exec = /eval\W/.exec(code);
-            if (exec) {
-                form.notify({
-                    'title': 'Error',
-                    'content': `The "eval" is prohibited.\nFile: "${path}".`,
-                    'type': 'danger'
-                });
-                return '';
-            }
-            code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm|AbstractPanel)\s*{/, (t) => {
-                return t + 'get filename() {return __filename;}';
+        }
+    };
+    const preprocess = function (code, path) {
+        const exec = /eval\W/.exec(code);
+        if (exec) {
+            form.notify({
+                'title': 'Error',
+                'content': `The "eval" is prohibited.\nFile: "${path}".`,
+                'type': 'danger'
             });
-            return code;
-        };
-        app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-        const path = (_d = opt.path) !== null && _d !== void 0 ? _d : ((typeof url === 'string') ? url : '/runtime/' + tool.random(8, tool.RANDOM_LUN) + '.cga');
-        const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
-        const current = path.slice(0, lio);
-        exports.list[taskId] = {
-            'id': taskId,
-            'app': app,
-            'customTheme': false,
-            'locale': clickgo.vue.reactive({
-                'lang': '',
-                'data': {}
-            }),
-            'path': path,
-            'current': current,
-            'runtime': clickgo.vue.reactive({
-                'dialogFormIds': [],
-                'permissions': (_e = opt.permissions) !== null && _e !== void 0 ? _e : []
-            }),
-            'forms': {},
-            'controls': {},
-            'timers': {},
-            'invoke': invoke
-        };
-        if (app.config.locales) {
-            for (let path in app.config.locales) {
-                const locale = app.config.locales[path];
-                if (!path.endsWith('.json')) {
-                    path += '.json';
-                }
-                yield ((_f = opt.initProgress) === null || _f === void 0 ? void 0 : _f.call(opt, 'Load local ' + path + ' ...'));
-                const lcontent = yield fs.getContent(path, {
-                    'encoding': 'utf8'
-                }, taskId);
-                if (!lcontent) {
-                    continue;
-                }
-                try {
-                    const data = JSON.parse(lcontent);
-                    loadLocaleData(locale, data, '', taskId);
-                }
-                catch (_q) {
-                }
+            return '';
+        }
+        code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm|AbstractPanel)\s*{/, (t) => {
+            return t + 'get filename() {return __filename;}';
+        });
+        return code;
+    };
+    app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
+    const path = opt.path ?? ((typeof url === 'string') ? url : '/runtime/' + tool.random(8, tool.RANDOM_LUN) + '.cga');
+    const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
+    const current = path.slice(0, lio);
+    exports.list[taskId] = {
+        'id': taskId,
+        'app': app,
+        'customTheme': false,
+        'locale': clickgo.vue.reactive({
+            'lang': '',
+            'data': {}
+        }),
+        'path': path,
+        'current': current,
+        'runtime': clickgo.vue.reactive({
+            'dialogFormIds': [],
+            'permissions': opt.permissions ?? []
+        }),
+        'forms': {},
+        'controls': {},
+        'timers': {},
+        'invoke': invoke
+    };
+    if (app.config.locales) {
+        for (let path in app.config.locales) {
+            const locale = app.config.locales[path];
+            if (!path.endsWith('.json')) {
+                path += '.json';
             }
-        }
-        let expo = [];
-        try {
-            const map = {
-                'clickgo': '/invoke/clickgo'
-            };
-            if (app.config.map) {
-                Object.assign(map, app.config.map);
-            }
-            expo = loader.require('/app.js', app.files, {
-                'dir': '/',
-                'invoke': invoke,
-                'preprocess': preprocess,
-                'map': map
-            })[0];
-        }
-        catch (e) {
-            delete exports.list[taskId];
-            core.trigger('error', taskId, 0, e, e.message + '(-1)');
-            return -2;
-        }
-        if (!(expo === null || expo === void 0 ? void 0 : expo.default)) {
-            delete exports.list[taskId];
-            return -3;
-        }
-        dom.createToStyleList(taskId);
-        yield ((_g = opt.initProgress) === null || _g === void 0 ? void 0 : _g.call(opt, 'Control initialization ...'));
-        const r = yield control.init(taskId, invoke, opt.cache);
-        if (r < 0) {
-            dom.removeFromStyleList(taskId);
-            delete exports.list[taskId];
-            return -400 + r;
-        }
-        if ((_h = app.config.themes) === null || _h === void 0 ? void 0 : _h.length) {
-            for (let path of app.config.themes) {
-                path += '.cgt';
-                path = tool.urlResolve('/', path);
-                yield ((_j = opt.initProgress) === null || _j === void 0 ? void 0 : _j.call(opt, 'Load theme ' + path + ' ...'));
-                const file = yield fs.getContent(path, undefined, taskId);
-                if (file && typeof file !== 'string') {
-                    const th = yield theme.read(file);
-                    if (th) {
-                        yield theme.load(th, taskId);
-                    }
-                }
-            }
-        }
-        else {
-            if (theme.global) {
-                yield ((_k = opt.initProgress) === null || _k === void 0 ? void 0 : _k.call(opt, 'Load global theme ...'));
-                yield theme.load(undefined, taskId);
-            }
-        }
-        if (app.config.style) {
-            const style = yield fs.getContent(app.config.style + '.css', {
+            await opt.initProgress?.('Load local ' + path + ' ...');
+            const lcontent = await fs.getContent(path, {
                 'encoding': 'utf8'
             }, taskId);
-            if (style) {
-                const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
-                yield ((_l = opt.initProgress) === null || _l === void 0 ? void 0 : _l.call(opt, 'Style initialization ...'));
-                dom.pushStyle(taskId, yield tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
+            if (!lcontent) {
+                continue;
+            }
+            try {
+                const data = JSON.parse(lcontent);
+                loadLocaleData(locale, data, '', taskId);
+            }
+            catch {
             }
         }
-        core.trigger('taskStarted', taskId);
-        if (app.config.permissions) {
-            yield ((_m = opt.initProgress) === null || _m === void 0 ? void 0 : _m.call(opt, 'Style initialization ...'));
-            yield checkPermission(app.config.permissions, true, undefined, taskId);
+    }
+    let expo = [];
+    try {
+        const map = {
+            'clickgo': '/invoke/clickgo'
+        };
+        if (app.config.map) {
+            Object.assign(map, app.config.map);
         }
-        const appCls = new expo.default();
-        exports.list[taskId].class = appCls;
-        yield ((_o = opt.initProgress) === null || _o === void 0 ? void 0 : _o.call(opt, 'Starting ...'));
-        yield appCls.main((_p = opt.data) !== null && _p !== void 0 ? _p : {});
-        return taskId;
-    });
+        expo = loader.require('/app.js', app.files, {
+            'dir': '/',
+            'invoke': invoke,
+            'preprocess': preprocess,
+            'map': map
+        })[0];
+    }
+    catch (e) {
+        delete exports.list[taskId];
+        core.trigger('error', taskId, 0, e, e.message + '(-1)');
+        return -2;
+    }
+    if (!expo?.default) {
+        delete exports.list[taskId];
+        return -3;
+    }
+    dom.createToStyleList(taskId);
+    await opt.initProgress?.('Control initialization ...');
+    const r = await control.init(taskId, invoke, opt.cache);
+    if (r < 0) {
+        dom.removeFromStyleList(taskId);
+        delete exports.list[taskId];
+        return -400 + r;
+    }
+    if (app.config.themes?.length) {
+        for (let path of app.config.themes) {
+            path += '.cgt';
+            path = tool.urlResolve('/', path);
+            await opt.initProgress?.('Load theme ' + path + ' ...');
+            const file = await fs.getContent(path, undefined, taskId);
+            if (file && typeof file !== 'string') {
+                const th = await theme.read(file);
+                if (th) {
+                    await theme.load(th, taskId);
+                }
+            }
+        }
+    }
+    else {
+        if (theme.global) {
+            await opt.initProgress?.('Load global theme ...');
+            await theme.load(undefined, taskId);
+        }
+    }
+    if (app.config.style) {
+        const style = await fs.getContent(app.config.style + '.css', {
+            'encoding': 'utf8'
+        }, taskId);
+        if (style) {
+            const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
+            await opt.initProgress?.('Style initialization ...');
+            dom.pushStyle(taskId, await tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
+        }
+    }
+    core.trigger('taskStarted', taskId);
+    if (app.config.permissions) {
+        await opt.initProgress?.('Style initialization ...');
+        await checkPermission(app.config.permissions, true, undefined, taskId);
+    }
+    const appCls = new expo.default();
+    exports.list[taskId].class = appCls;
+    await opt.initProgress?.('Starting ...');
+    await appCls.main(opt.data ?? {});
+    return taskId;
 }
 const locale = {
     'sc': {
@@ -1404,102 +1368,98 @@ const locale = {
         'read-write': 'Đọc/ghi'
     }
 };
-function checkPermission(vals_1) {
-    return __awaiter(this, arguments, void 0, function* (vals, apply = false, applyHandler, taskId) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-        if (!taskId) {
-            return [false];
+async function checkPermission(vals, apply = false, applyHandler, taskId) {
+    if (!taskId) {
+        return [false];
+    }
+    const task = exports.list[taskId];
+    if (!task) {
+        return [false];
+    }
+    if (typeof vals === 'string') {
+        vals = [vals];
+    }
+    const rtn = [];
+    const applyList = [];
+    for (const val of vals) {
+        if (task.runtime.permissions.includes('root')) {
+            rtn.push(true);
+            continue;
         }
-        const task = exports.list[taskId];
-        if (!task) {
-            return [false];
-        }
-        if (typeof vals === 'string') {
-            vals = [vals];
-        }
-        const rtn = [];
-        const applyList = [];
-        for (const val of vals) {
-            if (task.runtime.permissions.includes('root')) {
-                rtn.push(true);
-                continue;
-            }
-            if (val.startsWith('fs.')) {
-                let yes = false;
-                const path = val.slice(3, -1);
-                for (const v of task.runtime.permissions) {
-                    if (!v.startsWith('fs.')) {
-                        continue;
-                    }
-                    const pa = v.slice(3, -1);
-                    if (pa.endsWith('/')) {
-                        if (!path.startsWith(pa)) {
-                            continue;
-                        }
-                    }
-                    else if (pa !== path) {
-                        continue;
-                    }
-                    if (val.endsWith('w')) {
-                        if (v.endsWith('r')) {
-                            continue;
-                        }
-                    }
-                    yes = true;
-                    break;
-                }
-                rtn.push(yes);
-                if (!yes && apply) {
-                    applyList.push(val);
-                }
-                continue;
-            }
-            const result = task.runtime.permissions.includes(val);
-            if (!result && apply) {
-                applyList.push(val);
-            }
-            rtn.push(result);
-        }
-        if (applyList.length) {
-            let html = '<div>"' + tool.escapeHTML(task.app.config.name) + '" ' + (((_b = (_a = locale[core.config.locale]) === null || _a === void 0 ? void 0 : _a['apply-permission']) !== null && _b !== void 0 ? _b : locale['en']['apply-permission']) + ':') + '</div>';
-            for (const item of applyList) {
-                if (item.startsWith('fs.')) {
-                    const path = item.slice(3, -1);
-                    html += '<div style="margin-top: 10px;">' +
-                        ((_d = (_c = locale[core.config.locale]) === null || _c === void 0 ? void 0 : _c.fs) !== null && _d !== void 0 ? _d : locale['en'].fs) + ' ' + tool.escapeHTML(path) + ' ' + (item.endsWith('r') ? ((_f = (_e = locale[core.config.locale]) === null || _e === void 0 ? void 0 : _e.readonly) !== null && _f !== void 0 ? _f : locale['en'].readonly) : ((_h = (_g = locale[core.config.locale]) === null || _g === void 0 ? void 0 : _g['read-write']) !== null && _h !== void 0 ? _h : locale['en']['read-write'])) +
-                        '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
-                        '</div>';
+        if (val.startsWith('fs.')) {
+            let yes = false;
+            const path = val.slice(3, -1);
+            for (const v of task.runtime.permissions) {
+                if (!v.startsWith('fs.')) {
                     continue;
                 }
-                const lang = (_k = (_j = locale[core.config.locale]) === null || _j === void 0 ? void 0 : _j[item]) !== null && _k !== void 0 ? _k : locale['en'][item];
-                html += '<div style="margin-top: 10px;">' +
-                    ((_m = lang !== null && lang !== void 0 ? lang : (_l = locale[core.config.locale]) === null || _l === void 0 ? void 0 : _l.unknown) !== null && _m !== void 0 ? _m : locale['en'].unknown) +
-                    '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
-                    '</div>';
-            }
-            if (yield form.superConfirm(html)) {
-                for (let i = 0; i < rtn.length; ++i) {
-                    if (rtn[i]) {
+                const pa = v.slice(3, -1);
+                if (pa.endsWith('/')) {
+                    if (!path.startsWith(pa)) {
                         continue;
                     }
-                    rtn[i] = true;
                 }
-                for (const item of applyList) {
-                    task.runtime.permissions.push(item);
+                else if (pa !== path) {
+                    continue;
                 }
-                try {
-                    applyHandler === null || applyHandler === void 0 ? void 0 : applyHandler(applyList);
+                if (val.endsWith('w')) {
+                    if (v.endsWith('r')) {
+                        continue;
+                    }
                 }
-                catch (e) {
-                    console.log('task.checkPermission', e);
+                yes = true;
+                break;
+            }
+            rtn.push(yes);
+            if (!yes && apply) {
+                applyList.push(val);
+            }
+            continue;
+        }
+        const result = task.runtime.permissions.includes(val);
+        if (!result && apply) {
+            applyList.push(val);
+        }
+        rtn.push(result);
+    }
+    if (applyList.length) {
+        let html = '<div>"' + tool.escapeHTML(task.app.config.name) + '" ' + ((locale[core.config.locale]?.['apply-permission'] ?? locale['en']['apply-permission']) + ':') + '</div>';
+        for (const item of applyList) {
+            if (item.startsWith('fs.')) {
+                const path = item.slice(3, -1);
+                html += '<div style="margin-top: 10px;">' +
+                    (locale[core.config.locale]?.fs ?? locale['en'].fs) + ' ' + tool.escapeHTML(path) + ' ' + (item.endsWith('r') ? (locale[core.config.locale]?.readonly ?? locale['en'].readonly) : (locale[core.config.locale]?.['read-write'] ?? locale['en']['read-write'])) +
+                    '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
+                    '</div>';
+                continue;
+            }
+            const lang = locale[core.config.locale]?.[item] ?? locale['en'][item];
+            html += '<div style="margin-top: 10px;">' +
+                (lang ?? locale[core.config.locale]?.unknown ?? locale['en'].unknown) +
+                '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
+                '</div>';
+        }
+        if (await form.superConfirm(html)) {
+            for (let i = 0; i < rtn.length; ++i) {
+                if (rtn[i]) {
+                    continue;
                 }
+                rtn[i] = true;
+            }
+            for (const item of applyList) {
+                task.runtime.permissions.push(item);
+            }
+            try {
+                applyHandler?.(applyList);
+            }
+            catch (e) {
+                console.log('task.checkPermission', e);
             }
         }
-        return rtn;
-    });
+    }
+    return rtn;
 }
 function end(taskId) {
-    var _a;
     if (typeof taskId === 'string') {
         taskId = parseInt(taskId);
     }
@@ -1535,7 +1495,7 @@ function end(taskId) {
             console.log('Form Unmount Error', msg, err);
         }
         f.vapp._container.remove();
-        (_a = form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
+        form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
         dom.clearWatchStyle(fid);
         dom.clearWatchProperty(fid);
         dom.clearWatchPosition(fid);
@@ -1581,30 +1541,28 @@ function loadLocaleData(lang, data, pre = '', taskId) {
         }
     }
 }
-function loadLocale(lang, path, taskId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!taskId) {
-            return false;
-        }
-        const task = exports.list[taskId];
-        if (!task) {
-            return false;
-        }
-        const fcontent = yield fs.getContent(path + '.json', {
-            'encoding': 'utf8'
-        }, taskId);
-        if (!fcontent) {
-            return false;
-        }
-        try {
-            const data = JSON.parse(fcontent);
-            loadLocaleData(lang, data, '', task.id);
-            return true;
-        }
-        catch (_a) {
-            return false;
-        }
-    });
+async function loadLocale(lang, path, taskId) {
+    if (!taskId) {
+        return false;
+    }
+    const task = exports.list[taskId];
+    if (!task) {
+        return false;
+    }
+    const fcontent = await fs.getContent(path + '.json', {
+        'encoding': 'utf8'
+    }, taskId);
+    if (!fcontent) {
+        return false;
+    }
+    try {
+        const data = JSON.parse(fcontent);
+        loadLocaleData(lang, data, '', task.id);
+        return true;
+    }
+    catch {
+        return false;
+    }
 }
 function clearLocale(taskId) {
     if (!taskId) {
@@ -1641,7 +1599,6 @@ function clearLocaleLang(taskId) {
     task.locale.lang = '';
 }
 function createTimer(fun, delay, opt = {}) {
-    var _a;
     const taskId = opt.taskId;
     const formId = opt.formId;
     if (!taskId) {
@@ -1654,7 +1611,7 @@ function createTimer(fun, delay, opt = {}) {
     if (formId && !task.forms[formId]) {
         return 0;
     }
-    const count = (_a = opt.count) !== null && _a !== void 0 ? _a : 0;
+    const count = opt.count ?? 0;
     let c = 0;
     if (opt.immediate) {
         const r = fun();
@@ -1694,7 +1651,7 @@ function createTimer(fun, delay, opt = {}) {
     else {
         timer = window.setInterval(timerHandler, delay);
     }
-    task.timers[timer] = formId !== null && formId !== void 0 ? formId : 0;
+    task.timers[timer] = formId ?? 0;
     return timer;
 }
 function removeTimer(timer, taskId) {
@@ -1723,7 +1680,6 @@ exports.systemTaskInfo = clickgo.vue.reactive({
     'length': 0
 });
 clickgo.vue.watch(exports.systemTaskInfo, function (n, o) {
-    var _a, _b;
     const originKeys = ['taskId', 'formId', 'length'];
     for (const key of originKeys) {
         if (exports.systemTaskInfo[key] !== undefined) {
@@ -1734,7 +1690,7 @@ clickgo.vue.watch(exports.systemTaskInfo, function (n, o) {
             'content': 'There is a software that maliciously removed the system task info item.\nKey: ' + key,
             'type': 'warning'
         });
-        exports.systemTaskInfo[key] = (_a = o[key]) !== null && _a !== void 0 ? _a : 0;
+        exports.systemTaskInfo[key] = o[key] ?? 0;
     }
     for (const key in exports.systemTaskInfo) {
         if (!['taskId', 'formId', 'length'].includes(key)) {
@@ -1754,7 +1710,7 @@ clickgo.vue.watch(exports.systemTaskInfo, function (n, o) {
             'content': 'There is a software that maliciously modifies the system task info item.\nKey: ' + key,
             'type': 'warning'
         });
-        exports.systemTaskInfo[key] = (_b = o[key]) !== null && _b !== void 0 ? _b : 0;
+        exports.systemTaskInfo[key] = o[key] ?? 0;
     }
 }, {
     'deep': true

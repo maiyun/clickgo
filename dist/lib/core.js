@@ -32,16 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.boot = exports.AbstractApp = exports.global = exports.config = void 0;
 exports.getCdn = getCdn;
@@ -84,7 +74,7 @@ exports.config = clickgo.vue.reactive({
     'desktop.path': null,
     'launcher.list': []
 });
-exports.global = (_a = window.clickgoGlobal) !== null && _a !== void 0 ? _a : {};
+exports.global = window.clickgoGlobal ?? {};
 class AbstractApp {
     get filename() {
         return '';
@@ -220,18 +210,16 @@ clickgo.vue.watch(exports.config, function () {
 });
 const modules = {
     'monaco': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                return new Promise(function (resolve, reject) {
-                    fetch(loader.cdn + '/npm/monaco-editor@0.50.0/min/vs/loader.js').then(function (r) {
-                        return r.blob();
-                    }).then(function (b) {
-                        return tool.blob2DataUrl(b);
-                    }).then(function (d) {
-                        resolve(d);
-                    }).catch(function (e) {
-                        reject(e);
-                    });
+        func: async function () {
+            return new Promise(function (resolve, reject) {
+                fetch(loader.cdn + '/npm/monaco-editor@0.50.0/min/vs/loader.js').then(function (r) {
+                    return r.blob();
+                }).then(function (b) {
+                    return tool.blob2DataUrl(b);
+                }).then(function (d) {
+                    resolve(d);
+                }).catch(function (e) {
+                    reject(e);
                 });
             });
         },
@@ -240,201 +228,197 @@ const modules = {
         'resolve': []
     },
     'xterm': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    loader.cdn + '/npm/xterm@5.3.0/lib/xterm.js',
-                    loader.cdn + '/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js',
-                    loader.cdn + '/npm/xterm-addon-webgl@0.16.0/lib/xterm-addon-webgl.js'
-                ]);
-                if (!window.Terminal) {
-                    throw Error('Xterm load failed.');
-                }
-                yield loader.loadLinks([
-                    loader.cdn + '/npm/xterm@5.3.0/css/xterm.min.css'
-                ]);
-                loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
-                return [window.Terminal, window.FitAddon.FitAddon, window.WebglAddon.WebglAddon];
-            });
+        func: async function () {
+            await loader.loadScripts([
+                loader.cdn + '/npm/xterm@5.3.0/lib/xterm.js',
+                loader.cdn + '/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js',
+                loader.cdn + '/npm/xterm-addon-webgl@0.16.0/lib/xterm-addon-webgl.js'
+            ]);
+            if (!window.Terminal) {
+                throw Error('Xterm load failed.');
+            }
+            await loader.loadLinks([
+                loader.cdn + '/npm/xterm@5.3.0/css/xterm.min.css'
+            ]);
+            loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
+            return [window.Terminal, window.FitAddon.FitAddon, window.WebglAddon.WebglAddon];
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'echarts': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScript(loader.cdn + '/npm/echarts@5.4.2/dist/echarts.min.js');
-                if (!window.echarts) {
-                    throw Error('Echarts load failed.');
-                }
-                return window.echarts;
-            });
+        func: async function () {
+            await loader.loadScript(loader.cdn + '/npm/echarts@5.4.2/dist/echarts.min.js');
+            if (!window.echarts) {
+                throw Error('Echarts load failed.');
+            }
+            return window.echarts;
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'tuieditor': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    __dirname + '/../ext/toastui-editor-all.min.js'
-                ]);
-                if (!window.toastui.Editor) {
-                    throw Error('Tuieditor load failed.');
-                }
-                yield loader.loadScripts([
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-cn.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-tw.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ja-jp.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ko-kr.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/es-es.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/de-de.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/fr-fr.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/pt-br.min.js',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ru-ru.min.js'
-                ]);
-                yield loader.loadLinks([
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css',
-                    loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css'
-                ]);
-                loader.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}.jodit ::-webkit-scrollbar{width:6px;cursor:default;}.jodit ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px;}.jodit ::-webkit-scrollbar-thumb:hover{background: rgba(0,0,0,.2);}');
-                return window.toastui.Editor;
-            });
+        func: async function () {
+            await loader.loadScripts([
+                __dirname + '/../ext/toastui-editor-all.min.js'
+            ]);
+            if (!window.toastui.Editor) {
+                throw Error('Tuieditor load failed.');
+            }
+            await loader.loadScripts([
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-cn.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-tw.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ja-jp.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ko-kr.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/es-es.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/de-de.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/fr-fr.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/pt-br.min.js',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ru-ru.min.js'
+            ]);
+            await loader.loadLinks([
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css',
+                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css'
+            ]);
+            loader.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}.jodit ::-webkit-scrollbar{width:6px;cursor:default;}.jodit ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px;}.jodit ::-webkit-scrollbar-thumb:hover{background: rgba(0,0,0,.2);}');
+            return window.toastui.Editor;
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'jodit': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.js'
-                ]);
-                yield loader.loadLinks([
-                    loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.css'
-                ]);
-                loader.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}.jodit-wysiwyg a{color:unset;}');
-                return window.Jodit;
-            });
+        func: async function () {
+            await loader.loadScripts([
+                loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.js'
+            ]);
+            await loader.loadLinks([
+                loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.css'
+            ]);
+            loader.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}.jodit-wysiwyg a{color:unset;}');
+            return window.Jodit;
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'compressorjs': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    loader.cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js'
-                ]);
-                if (!window.Compressor) {
-                    throw Error('Compressor load failed.');
-                }
-                return [window.Compressor];
-            });
+        func: async function () {
+            await loader.loadScripts([
+                loader.cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js'
+            ]);
+            if (!window.Compressor) {
+                throw Error('Compressor load failed.');
+            }
+            return [window.Compressor];
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'pdfjs': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.min.mjs'
-                ], {
-                    'module': true
-                });
-                if (!window.pdfjsLib) {
-                    throw Error('pdf.js load failed.');
-                }
-                window.pdfjsLib.GlobalWorkerOptions.workerSrc = loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.mjs';
-                return window.pdfjsLib;
+        func: async function () {
+            await loader.loadScripts([
+                loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.min.mjs'
+            ], {
+                'module': true
             });
+            if (!window.pdfjsLib) {
+                throw Error('pdf.js load failed.');
+            }
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.mjs';
+            return window.pdfjsLib;
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'qrcode': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    loader.cdn + '/npm/qrcode@1.5.1/build/qrcode.js'
-                ]);
-                if (!window.QRCode) {
-                    throw Error('QRCode load failed.');
-                }
-                return window.QRCode;
-            });
+        func: async function () {
+            await loader.loadScripts([
+                loader.cdn + '/npm/qrcode@1.5.1/build/qrcode.js'
+            ]);
+            if (!window.QRCode) {
+                throw Error('QRCode load failed.');
+            }
+            return window.QRCode;
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'mpegts': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    loader.cdn + '/npm/mpegts.js@1.7.3/dist/mpegts.min.js'
-                ]);
-                if (!window.mpegts) {
-                    throw Error('mpegts load failed.');
-                }
-                window.mpegts.LoggingControl.enableAll = false;
-                return window.mpegts;
-            });
+        func: async function () {
+            await loader.loadScripts([
+                loader.cdn + '/npm/mpegts.js@1.7.3/dist/mpegts.min.js'
+            ]);
+            if (!window.mpegts) {
+                throw Error('mpegts load failed.');
+            }
+            window.mpegts.LoggingControl.enableAll = false;
+            return window.mpegts;
         },
         'obj': null,
         'loading': false,
         'resolve': []
     },
     'tplink': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    __dirname + '/../ext/tplinkhd.min.js'
-                ]);
-                if (!window.HDPluginControl) {
-                    throw Error('Tplink load failed.');
-                }
-                return window.HDPluginControl;
-            });
+        func: async function () {
+            await loader.loadScripts([
+                __dirname + '/../ext/tplinkhd.min.js'
+            ]);
+            if (!window.HDPluginControl) {
+                throw Error('Tplink load failed.');
+            }
+            return window.HDPluginControl;
         },
         'obj': null,
         'loading': false,
         'resolve': [],
     },
     'tcc': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    'https://turing.captcha.qcloud.com/TJCaptcha.js'
-                ]);
-                if (!window.TencentCaptcha) {
-                    throw Error('tcc load failed.');
-                }
-                return window.TencentCaptcha;
-            });
+        func: async function () {
+            await loader.loadScripts([
+                'https://turing.captcha.qcloud.com/TJCaptcha.js'
+            ]);
+            if (!window.TencentCaptcha) {
+                throw Error('tcc load failed.');
+            }
+            return window.TencentCaptcha;
         },
         'obj': null,
         'loading': false,
         'resolve': [],
     },
     'cft': {
-        func: function () {
-            return __awaiter(this, void 0, void 0, function* () {
-                yield loader.loadScripts([
-                    'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
-                ]);
-                if (!window.turnstile) {
-                    throw Error('cft load failed.');
-                }
-                return window.turnstile;
-            });
+        func: async function () {
+            await loader.loadScripts([
+                'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+            ]);
+            if (!window.turnstile) {
+                throw Error('cft load failed.');
+            }
+            return window.turnstile;
+        },
+        'obj': null,
+        'loading': false,
+        'resolve': [],
+    },
+    'novnc': {
+        func: async function () {
+            console.log('alpha, not use');
+            try {
+                console.log('xxx2');
+                const novnc = await Promise.resolve(`${loader.cdn + '/npm/@novnc/novnc@1.6.0/+esm'}`).then(s => __importStar(require(s)));
+                console.log('xxx', novnc);
+                return novnc.default.default;
+            }
+            catch (e) {
+                console.log('xxx222', e);
+                throw Error('novnc load failed.');
+            }
         },
         'obj': null,
         'loading': false,
@@ -540,31 +524,30 @@ const globalEvents = {
     }
 };
 function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 = true) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30;
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
             if (typeof taskId !== 'number' || typeof formId !== 'number') {
                 break;
             }
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2);
+            exports.boot?.[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_a = t.class) === null || _a === void 0 ? void 0 : _a[eventName](taskId, formId, param1, param2);
+                t.class?.[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    (_c = (_b = t.forms[fid].vroot)[eventName]) === null || _c === void 0 ? void 0 : _c.call(_b, taskId, formId, param1, param2);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
                 }
             }
             break;
         }
         case 'screenResize': {
             globalEvents.screenResize();
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName]();
+            exports.boot?.[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_d = t.class) === null || _d === void 0 ? void 0 : _d[eventName]();
+                t.class?.[eventName]();
                 for (const fid in t.forms) {
-                    (_f = (_e = t.forms[fid].vroot)[eventName]) === null || _f === void 0 ? void 0 : _f.call(_e);
+                    t.forms[fid].vroot[eventName]?.();
                 }
             }
             break;
@@ -573,38 +556,38 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
                 break;
             }
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName]();
+            exports.boot?.[eventName]();
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_g = t.class) === null || _g === void 0 ? void 0 : _g[eventName](taskId, formId);
+                t.class?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    (_j = (_h = t.forms[fid].vroot)[eventName]) === null || _j === void 0 ? void 0 : _j.call(_h, taskId, formId);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId);
                 }
             }
             break;
         }
         case 'formCreated':
         case 'formRemoved': {
-            (_l = (_k = globalEvents)[name]) === null || _l === void 0 ? void 0 : _l.call(_k, taskId, formId, param1, param2, param3);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2, param3);
+            globalEvents[name]?.(taskId, formId, param1, param2, param3);
+            exports.boot?.[eventName](taskId, formId, param1, param2, param3);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_m = t.class) === null || _m === void 0 ? void 0 : _m[eventName](taskId, formId, param1, param2, param3);
+                t.class?.[eventName](taskId, formId, param1, param2, param3);
                 for (const fid in t.forms) {
-                    (_p = (_o = t.forms[fid].vroot)[eventName]) === null || _p === void 0 ? void 0 : _p.call(_o, taskId, formId, param1, param2, param3);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2, param3);
                 }
             }
             break;
         }
         case 'formTitleChanged':
         case 'formIconChanged': {
-            (_r = (_q = globalEvents)[name]) === null || _r === void 0 ? void 0 : _r.call(_q, taskId, formId, param1);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
+            globalEvents[name]?.(taskId, formId, param1);
+            exports.boot?.[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_s = t.class) === null || _s === void 0 ? void 0 : _s[eventName](taskId, formId, param1);
+                t.class?.[eventName](taskId, formId, param1);
                 for (const fid in t.forms) {
-                    (_u = (_t = t.forms[fid].vroot)[eventName]) === null || _u === void 0 ? void 0 : _u.call(_t, taskId, formId, param1);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
                 }
             }
             break;
@@ -612,13 +595,13 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'formStateMinChanged':
         case 'formStateMaxChanged':
         case 'formShowChanged': {
-            (_w = (_v = globalEvents)[name]) === null || _w === void 0 ? void 0 : _w.call(_v, taskId, formId, param1);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
+            globalEvents[name]?.(taskId, formId, param1);
+            exports.boot?.[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_x = t.class) === null || _x === void 0 ? void 0 : _x[eventName](taskId, formId, param1);
+                t.class?.[eventName](taskId, formId, param1);
                 for (const fid in t.forms) {
-                    (_z = (_y = t.forms[fid].vroot)[eventName]) === null || _z === void 0 ? void 0 : _z.call(_y, taskId, formId, param1);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
                 }
             }
             break;
@@ -626,50 +609,50 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'formFocused':
         case 'formBlurred':
         case 'formFlash': {
-            (_1 = (_0 = globalEvents)[name]) === null || _1 === void 0 ? void 0 : _1.call(_0, taskId, formId);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
+            globalEvents[name]?.(taskId, formId);
+            exports.boot?.[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_2 = t.class) === null || _2 === void 0 ? void 0 : _2[eventName](taskId, formId);
+                t.class?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    (_4 = (_3 = t.forms[fid].vroot)[eventName]) === null || _4 === void 0 ? void 0 : _4.call(_3, taskId, formId);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId);
                 }
             }
             break;
         }
         case 'formShowInSystemTaskChange': {
-            (_6 = (_5 = globalEvents)[name]) === null || _6 === void 0 ? void 0 : _6.call(_5, taskId, formId, param1);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1);
+            globalEvents[name]?.(taskId, formId, param1);
+            exports.boot?.[eventName](taskId, formId, param1);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_7 = t.class) === null || _7 === void 0 ? void 0 : _7[eventName](taskId, formId, param1);
+                t.class?.[eventName](taskId, formId, param1);
                 for (const fid in t.forms) {
-                    (_9 = (_8 = t.forms[fid].vroot)[eventName]) === null || _9 === void 0 ? void 0 : _9.call(_8, taskId, formId, param1);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
                 }
             }
             break;
         }
         case 'formHashChange': {
-            (_11 = (_10 = globalEvents)[name]) === null || _11 === void 0 ? void 0 : _11.call(_10, taskId, formId, param1, param2);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId, param1, param2);
+            globalEvents[name]?.(taskId, formId, param1, param2);
+            exports.boot?.[eventName](taskId, formId, param1, param2);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_12 = t.class) === null || _12 === void 0 ? void 0 : _12[eventName](taskId, formId, param1, param2);
+                t.class?.[eventName](taskId, formId, param1, param2);
                 for (const fid in t.forms) {
-                    (_14 = (_13 = t.forms[fid].vroot)[eventName]) === null || _14 === void 0 ? void 0 : _14.call(_13, taskId, formId, param1, param2);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
                 }
             }
             break;
         }
         case 'taskStarted':
         case 'taskEnded': {
-            (_16 = (_15 = globalEvents)[name]) === null || _16 === void 0 ? void 0 : _16.call(_15, taskId, formId);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
+            globalEvents[name]?.(taskId, formId);
+            exports.boot?.[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_17 = t.class) === null || _17 === void 0 ? void 0 : _17[eventName](taskId);
+                t.class?.[eventName](taskId);
                 for (const fid in t.forms) {
-                    (_19 = (_18 = t.forms[fid].vroot)[eventName]) === null || _19 === void 0 ? void 0 : _19.call(_18, taskId);
+                    t.forms[fid].vroot[eventName]?.(taskId);
                 }
             }
             break;
@@ -679,14 +662,14 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
                 break;
             }
             if (typeof taskId !== 'string') {
-                taskId = taskId.toString();
+                break;
             }
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId, formId);
+            exports.boot?.[eventName](taskId, formId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_20 = t.class) === null || _20 === void 0 ? void 0 : _20[eventName](taskId, formId);
+                t.class?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
-                    (_22 = (_21 = t.forms[fid].vroot)[eventName]) === null || _22 === void 0 ? void 0 : _22.call(_21, taskId, formId);
+                    t.forms[fid].vroot[eventName]?.(taskId, formId);
                 }
             }
             break;
@@ -695,220 +678,214 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             if (typeof taskId !== 'string') {
                 break;
             }
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId);
+            exports.boot?.[eventName](taskId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_23 = t.class) === null || _23 === void 0 ? void 0 : _23[eventName](taskId);
+                t.class?.[eventName](taskId);
                 for (const fid in t.forms) {
-                    (_25 = (_24 = t.forms[fid].vroot)[eventName]) === null || _25 === void 0 ? void 0 : _25.call(_24, taskId);
+                    t.forms[fid].vroot[eventName]?.(taskId);
                 }
             }
             break;
         }
         case 'keydown':
         case 'keyup': {
-            (_27 = (_26 = globalEvents)[name]) === null || _27 === void 0 ? void 0 : _27.call(_26, taskId);
-            exports.boot === null || exports.boot === void 0 ? void 0 : exports.boot[eventName](taskId);
+            globalEvents[name]?.(taskId);
+            exports.boot?.[eventName](taskId);
             for (const tid in task.list) {
                 const t = task.list[tid];
-                (_28 = t.class) === null || _28 === void 0 ? void 0 : _28[eventName](taskId);
+                t.class?.[eventName](taskId);
                 for (const fid in t.forms) {
-                    (_30 = (_29 = t.forms[fid].vroot)[eventName]) === null || _30 === void 0 ? void 0 : _30.call(_29, taskId);
+                    t.forms[fid].vroot[eventName]?.(taskId);
                 }
             }
             break;
         }
     }
 }
-function readApp(blob) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const head = yield tool.blob2Text(blob.slice(0, 5));
-        if (head !== '-CGA-') {
-            return false;
-        }
-        const iconLength = parseInt(yield blob.slice(21, 28).text());
-        if (Number.isNaN(iconLength)) {
-            return false;
-        }
-        const icon = iconLength ? yield tool.blob2DataUrl(blob.slice(28, 28 + iconLength)) : '';
-        const nb = new Blob([blob.slice(5, 21), blob.slice(28 + iconLength)], {
-            'type': blob.type
-        });
-        const z = yield zip.get(nb);
-        if (!z) {
-            return false;
-        }
-        const files = {};
-        const configContent = yield z.getContent('/config.json');
-        if (!configContent) {
-            return false;
-        }
-        const config = JSON.parse(configContent);
-        const list = z.readDir('/', {
-            'hasChildren': true
-        });
-        for (const file of list) {
-            const mime = tool.getMimeByPath(file.name);
-            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                const fab = yield z.getContent(file.path + file.name, 'string');
-                if (!fab) {
-                    continue;
-                }
-                files[file.path + file.name] = fab.replace(/^\ufeff/, '');
-            }
-            else {
-                const fab = yield z.getContent(file.path + file.name, 'arraybuffer');
-                if (!fab) {
-                    continue;
-                }
-                files[file.path + file.name] = new Blob([fab], {
-                    'type': mime.mime
-                });
-            }
-        }
-        return {
-            'type': 'app',
-            'config': config,
-            'files': files,
-            'icon': icon
-        };
+async function readApp(blob) {
+    const head = await tool.blob2Text(blob.slice(0, 5));
+    if (head !== '-CGA-') {
+        return false;
+    }
+    const iconLength = parseInt(await blob.slice(21, 28).text());
+    if (Number.isNaN(iconLength)) {
+        return false;
+    }
+    const icon = iconLength ? await tool.blob2DataUrl(blob.slice(28, 28 + iconLength)) : '';
+    const nb = new Blob([blob.slice(5, 21), blob.slice(28 + iconLength)], {
+        'type': blob.type
     });
-}
-function fetchApp(url_1) {
-    return __awaiter(this, arguments, void 0, function* (url, opt = {}, taskId) {
-        let cga = '';
-        if (!url.endsWith('/')) {
-            const lio = url.lastIndexOf('/');
-            cga = lio === -1 ? url : url.slice(lio + 1);
-            if (!cga.endsWith('.cga')) {
-                return null;
+    const z = await zip.get(nb);
+    if (!z) {
+        return false;
+    }
+    const files = {};
+    const configContent = await z.getContent('/config.json');
+    if (!configContent) {
+        return false;
+    }
+    const config = JSON.parse(configContent);
+    const list = z.readDir('/', {
+        'hasChildren': true
+    });
+    for (const file of list) {
+        const mime = tool.getMimeByPath(file.name);
+        if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+            const fab = await z.getContent(file.path + file.name, 'string');
+            if (!fab) {
+                continue;
             }
+            files[file.path + file.name] = fab.replace(/^\ufeff/, '');
         }
-        if (!taskId &&
-            !url.startsWith('/clickgo/') &&
-            !url.startsWith('/storage/') &&
-            !url.startsWith('/mounted/') &&
-            !url.startsWith('/package/') &&
-            !url.startsWith('/current/') &&
-            !url.startsWith('http:') &&
-            !url.startsWith('https:') &&
-            !url.startsWith('file:')) {
-            url = tool.urlResolve(window.location.href, url);
-        }
-        if (cga) {
-            try {
-                const blob = yield fs.getContent(url, {
-                    'progress': (loaded, total) => {
-                        if (opt.notifyId) {
-                            form.notifyProgress(opt.notifyId, loaded / total);
-                        }
-                        if (opt.progress) {
-                            opt.progress(loaded, total);
-                        }
-                    },
-                    'cache': opt.cache
-                }, taskId);
-                if ((blob === null) || typeof blob === 'string') {
-                    return null;
-                }
-                if (opt.notifyId) {
-                    form.notifyProgress(opt.notifyId, 1);
-                }
-                return (yield readApp(blob)) || null;
+        else {
+            const fab = await z.getContent(file.path + file.name, 'arraybuffer');
+            if (!fab) {
+                continue;
             }
-            catch (_a) {
-                return null;
-            }
-        }
-        let config;
-        const files = {};
-        try {
-            const blob = yield fs.getContent(url + 'config.json', {
-                'cache': opt.cache
-            }, taskId);
-            if (blob === null || typeof blob === 'string') {
-                return null;
-            }
-            config = JSON.parse(yield tool.blob2Text(blob));
-            yield new Promise(function (resolve) {
-                if (!config.files) {
-                    return;
-                }
-                const total = config.files.length;
-                let loaded = 0;
-                if (opt.progress) {
-                    opt.progress(loaded + 1, total + 1);
-                }
-                for (const file of config.files) {
-                    fs.getContent(url + file.slice(1), {
-                        'cache': opt.cache
-                    }, taskId).then(function (blob) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (blob === null || typeof blob === 'string') {
-                                clickgo.form.notify({
-                                    'title': 'File not found',
-                                    'content': url + file.slice(1),
-                                    'type': 'danger'
-                                });
-                                return;
-                            }
-                            const mime = tool.getMimeByPath(file);
-                            if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                                files[file] = (yield tool.blob2Text(blob)).replace(/^\ufeff/, '');
-                            }
-                            else {
-                                files[file] = blob;
-                            }
-                            ++loaded;
-                            if (opt.notifyId) {
-                                form.notifyProgress(opt.notifyId, loaded / total);
-                            }
-                            if (opt.progress) {
-                                opt.progress(loaded + 1, total + 1);
-                            }
-                            if (loaded < total) {
-                                return;
-                            }
-                            resolve();
-                        });
-                    }).catch(function () {
-                        ++loaded;
-                        if (opt.notifyId) {
-                            form.notifyProgress(opt.notifyId, loaded / total);
-                        }
-                        if (opt.progress) {
-                            opt.progress(loaded + 1, total + 1);
-                        }
-                        if (loaded < total) {
-                            return;
-                        }
-                        resolve();
-                    });
-                }
+            files[file.path + file.name] = new Blob([fab], {
+                'type': mime.mime
             });
         }
-        catch (e) {
-            console.log('core.fetchApp', e);
-            trigger('error', 0, 0, e, e.message);
+    }
+    return {
+        'type': 'app',
+        'config': config,
+        'files': files,
+        'icon': icon
+    };
+}
+async function fetchApp(url, opt = {}, taskId) {
+    let cga = '';
+    if (!url.endsWith('/')) {
+        const lio = url.lastIndexOf('/');
+        cga = lio === -1 ? url : url.slice(lio + 1);
+        if (!cga.endsWith('.cga')) {
             return null;
         }
-        let icon = '';
-        if (config.icon && (files[config.icon] instanceof Blob)) {
-            icon = yield tool.blob2DataUrl(files[config.icon]);
-        }
-        if (icon === '') {
-            const iconBlob = yield fs.getContent('/clickgo/icon.png', undefined, taskId);
-            if (iconBlob instanceof Blob) {
-                icon = yield tool.blob2DataUrl(iconBlob);
+    }
+    if (!taskId &&
+        !url.startsWith('/clickgo/') &&
+        !url.startsWith('/storage/') &&
+        !url.startsWith('/mounted/') &&
+        !url.startsWith('/package/') &&
+        !url.startsWith('/current/') &&
+        !url.startsWith('http:') &&
+        !url.startsWith('https:') &&
+        !url.startsWith('file:')) {
+        url = tool.urlResolve(window.location.href, url);
+    }
+    if (cga) {
+        try {
+            const blob = await fs.getContent(url, {
+                'progress': (loaded, total) => {
+                    if (opt.notifyId) {
+                        form.notifyProgress(opt.notifyId, loaded / total);
+                    }
+                    if (opt.progress) {
+                        opt.progress(loaded, total);
+                    }
+                },
+                'cache': opt.cache
+            }, taskId);
+            if ((blob === null) || typeof blob === 'string') {
+                return null;
             }
+            if (opt.notifyId) {
+                form.notifyProgress(opt.notifyId, 1);
+            }
+            return await readApp(blob) || null;
         }
-        return {
-            'type': 'app',
-            'config': config,
-            'files': files,
-            'icon': icon
-        };
-    });
+        catch {
+            return null;
+        }
+    }
+    let config;
+    const files = {};
+    try {
+        const blob = await fs.getContent(url + 'config.json', {
+            'cache': opt.cache
+        }, taskId);
+        if (blob === null || typeof blob === 'string') {
+            return null;
+        }
+        config = JSON.parse(await tool.blob2Text(blob));
+        await new Promise(function (resolve) {
+            if (!config.files) {
+                return;
+            }
+            const total = config.files.length;
+            let loaded = 0;
+            if (opt.progress) {
+                opt.progress(loaded + 1, total + 1);
+            }
+            for (const file of config.files) {
+                fs.getContent(url + file.slice(1), {
+                    'cache': opt.cache
+                }, taskId).then(async function (blob) {
+                    if (blob === null || typeof blob === 'string') {
+                        clickgo.form.notify({
+                            'title': 'File not found',
+                            'content': url + file.slice(1),
+                            'type': 'danger'
+                        });
+                        return;
+                    }
+                    const mime = tool.getMimeByPath(file);
+                    if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
+                        files[file] = (await tool.blob2Text(blob)).replace(/^\ufeff/, '');
+                    }
+                    else {
+                        files[file] = blob;
+                    }
+                    ++loaded;
+                    if (opt.notifyId) {
+                        form.notifyProgress(opt.notifyId, loaded / total);
+                    }
+                    if (opt.progress) {
+                        opt.progress(loaded + 1, total + 1);
+                    }
+                    if (loaded < total) {
+                        return;
+                    }
+                    resolve();
+                }).catch(function () {
+                    ++loaded;
+                    if (opt.notifyId) {
+                        form.notifyProgress(opt.notifyId, loaded / total);
+                    }
+                    if (opt.progress) {
+                        opt.progress(loaded + 1, total + 1);
+                    }
+                    if (loaded < total) {
+                        return;
+                    }
+                    resolve();
+                });
+            }
+        });
+    }
+    catch (e) {
+        console.log('core.fetchApp', e);
+        trigger('error', 0, 0, e, e.message);
+        return null;
+    }
+    let icon = '';
+    if (config.icon && (files[config.icon] instanceof Blob)) {
+        icon = await tool.blob2DataUrl(files[config.icon]);
+    }
+    if (icon === '') {
+        const iconBlob = await fs.getContent('/clickgo/icon.png', undefined, taskId);
+        if (iconBlob instanceof Blob) {
+            icon = await tool.blob2DataUrl(iconBlob);
+        }
+    }
+    return {
+        'type': 'app',
+        'config': config,
+        'files': files,
+        'icon': icon
+    };
 }
 function getAvailArea() {
     if (Object.keys(form.simpleSystemTaskRoot.forms).length > 0) {

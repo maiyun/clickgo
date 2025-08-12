@@ -12,7 +12,7 @@
     }
 
     .label {
-        margin-left: 5px; position: relative;
+        margin-left: 5px; position: relative; flex: 1; display: flex;
         &::before {
             content: ''; pointer-events: none; position: absolute; left: -1px; top: -1px; width: calc(100% + 2px); height: calc(100% + 2px); display: none; transition: var(--g-transition);
         }

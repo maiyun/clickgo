@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -48,37 +39,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const jszip_1 = __importDefault(require("jszip"));
 const terser = __importStar(require("terser"));
-function addFile(zipo_1) {
-    return __awaiter(this, arguments, void 0, function* (zipo, base = '', path = '') {
-        var _a;
-        const list = yield fs.promises.readdir(base);
-        for (const item of list) {
-            try {
-                const stat = yield fs.promises.lstat(base + '/' + item);
-                if (stat.isDirectory()) {
-                    yield addFile(zipo, base + '/' + item, path + (path ? '/' : '') + item);
-                    continue;
-                }
-                if (item.endsWith('.ts') || item.endsWith('.scss')) {
-                    continue;
-                }
-                const buf = yield fs.promises.readFile(base + '/' + item);
-                if (item.endsWith('.html') || item.endsWith('.xml')) {
-                    zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
-                }
-                else if (item.endsWith('.js')) {
-                    const rtn = yield terser.minify(buf.toString());
-                    zipo.file(path + (path ? '/' : '') + item, (_a = rtn.code) !== null && _a !== void 0 ? _a : '');
-                }
-                else {
-                    zipo.file(path + (path ? '/' : '') + item, buf);
-                }
-            }
-            catch (_b) {
+async function addFile(zipo, base = '', path = '') {
+    const list = await fs.promises.readdir(base);
+    for (const item of list) {
+        try {
+            const stat = await fs.promises.lstat(base + '/' + item);
+            if (stat.isDirectory()) {
+                await addFile(zipo, base + '/' + item, path + (path ? '/' : '') + item);
                 continue;
             }
+            if (item.endsWith('.ts') || item.endsWith('.scss')) {
+                continue;
+            }
+            const buf = await fs.promises.readFile(base + '/' + item);
+            if (item.endsWith('.html') || item.endsWith('.xml')) {
+                zipo.file(path + (path ? '/' : '') + item, purify(buf.toString()));
+            }
+            else if (item.endsWith('.js')) {
+                const rtn = await terser.minify(buf.toString());
+                zipo.file(path + (path ? '/' : '') + item, rtn.code ?? '');
+            }
+            else {
+                zipo.file(path + (path ? '/' : '') + item, buf);
+            }
         }
-    });
+        catch {
+            continue;
+        }
+    }
 }
 function purify(text) {
     text = '>' + text + '<';
@@ -87,40 +75,38 @@ function purify(text) {
     });
     return text.slice(1, -1);
 }
-(function () {
-    return __awaiter(this, void 0, void 0, function* () {
-        const args = process.argv.slice(2);
-        if (!args[0]) {
-            console.log('DIR MUST.');
-            return;
+(async function () {
+    const args = process.argv.slice(2);
+    if (!args[0]) {
+        console.log('DIR MUST.');
+        return;
+    }
+    const lasts = args[0].lastIndexOf('/');
+    const bpath = args[0].slice(0, lasts + 1);
+    const name = args[0].slice(lasts + 1);
+    const zipo = new jszip_1.default();
+    await addFile(zipo, args[0], '');
+    let buf = await zipo.generateAsync({
+        'type': 'nodebuffer',
+        'compression': 'DEFLATE',
+        'compressionOptions': {
+            'level': 9
         }
-        const lasts = args[0].lastIndexOf('/');
-        const bpath = args[0].slice(0, lasts + 1);
-        const name = args[0].slice(lasts + 1);
-        const zipo = new jszip_1.default();
-        yield addFile(zipo, args[0], '');
-        let buf = yield zipo.generateAsync({
-            'type': 'nodebuffer',
-            'compression': 'DEFLATE',
-            'compressionOptions': {
-                'level': 9
-            }
-        });
-        let iconBuf;
-        if (args[1]) {
-            const icon = yield fs.promises.readFile(args[1]);
-            if (icon) {
-                const length = icon.length.toString().padStart(7, '0');
-                iconBuf = Buffer.concat([Buffer.from(length), icon]);
-            }
-            else {
-                iconBuf = Buffer.from('0000000');
-            }
+    });
+    let iconBuf;
+    if (args[1]) {
+        const icon = await fs.promises.readFile(args[1]);
+        if (icon) {
+            const length = icon.length.toString().padStart(7, '0');
+            iconBuf = Buffer.concat([Buffer.from(length), icon]);
         }
         else {
             iconBuf = Buffer.from('0000000');
         }
-        buf = Buffer.concat([Buffer.from('-CGA-'), buf.subarray(0, 16), iconBuf, buf.subarray(16)]);
-        yield fs.promises.writeFile(bpath + name + '.cga', buf);
-    });
+    }
+    else {
+        iconBuf = Buffer.from('0000000');
+    }
+    buf = Buffer.concat([Buffer.from('-CGA-'), buf.subarray(0, 16), iconBuf, buf.subarray(16)]);
+    await fs.promises.writeFile(bpath + name + '.cga', buf);
 })();

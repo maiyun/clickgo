@@ -122,13 +122,12 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     get value() {
-        var _a, _b, _c, _d, _e;
         const list = [];
         const bigList = {};
         const bigTitle = [];
         for (const item of this.props.modelValue) {
             const kind = this.sortData === 'letter' ? '' : item.kind;
-            const type = (_a = item.type) !== null && _a !== void 0 ? _a : 'property';
+            const type = item.type ?? 'property';
             if (type !== this.typeData) {
                 continue;
             }
@@ -142,11 +141,11 @@ class default_1 extends clickgo.control.AbstractControl {
             bigList[kind].list[item.title] = {
                 'kind': item.kind,
                 'title': item.title,
-                'desc': (_b = item.desc) !== null && _b !== void 0 ? _b : '',
+                'desc': item.desc ?? '',
                 'type': type,
-                'control': (_c = item.control) !== null && _c !== void 0 ? _c : 'text',
-                'default': (_d = item.default) !== null && _d !== void 0 ? _d : '',
-                'value': (_e = item.value) !== null && _e !== void 0 ? _e : '',
+                'control': item.control ?? 'text',
+                'default': item.default ?? '',
+                'value': item.value ?? '',
                 'data': item.data,
                 'sub': item.sub
             };
@@ -198,7 +197,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.selectedTitle = item2;
         this.selectedSub = item3;
-        this.title = item3 !== null && item3 !== void 0 ? item3 : item2;
+        this.title = item3 ?? item2;
         this.description = desc;
     }
     bigToggle(bigTitle) {

@@ -45,26 +45,23 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     get colWidth() {
-        var _a, _b, _c, _d;
-        const pcw = (_b = (_a = this.alayout) === null || _a === void 0 ? void 0 : _a.colWidth) !== null && _b !== void 0 ? _b : 100;
+        const pcw = this.alayout?.colWidth ?? 100;
         let cw = pcw * this.propInt('span');
         if (cw > 100) {
             cw = 100;
         }
-        const gutter = ((_c = this.alayout) === null || _c === void 0 ? void 0 : _c.propNumber) === undefined ? 0 : (_d = this.alayout) === null || _d === void 0 ? void 0 : _d.propNumber('gutter');
+        const gutter = this.alayout?.propNumber === undefined ? 0 : this.alayout?.propNumber('gutter');
         if (!gutter) {
             return cw.toString() + '%';
         }
         return 'calc(' + cw.toString() + '% - ' + gutter.toString() + 'px)';
     }
     get gutter() {
-        var _a, _b;
-        const gutter = ((_a = this.alayout) === null || _a === void 0 ? void 0 : _a.propNumber) === undefined ? 0 : (_b = this.alayout) === null || _b === void 0 ? void 0 : _b.propNumber('itemGutter');
+        const gutter = this.alayout?.propNumber === undefined ? 0 : this.alayout?.propNumber('itemGutter');
         return gutter.toString() + 'px';
     }
     get direction() {
-        var _a, _b;
-        return ((_b = (_a = this.alayout) === null || _a === void 0 ? void 0 : _a.props) === null || _b === void 0 ? void 0 : _b.direction) ? this.alayout.props.direction : 'h';
+        return this.alayout?.props?.direction ? this.alayout.props.direction : 'h';
     }
     onMounted() {
         this.alayout = this.parentByName('alayout');

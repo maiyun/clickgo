@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("../../index"));
 const state = document.getElementById('state');
@@ -49,14 +40,12 @@ const body = document.getElementsByTagName('body')[0];
 let app = null;
 class Boot extends clickgo.AbstractBoot {
     main() {
-        var _a;
         state.insertAdjacentHTML('afterbegin', '<div>Initialized.</div>');
-        (_a = document.getElementById('download')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
-            (() => __awaiter(this, void 0, void 0, function* () {
-                var _a;
-                (_a = document.getElementById('download')) === null || _a === void 0 ? void 0 : _a.remove();
+        document.getElementById('download')?.addEventListener('click', () => {
+            (async () => {
+                document.getElementById('download')?.remove();
                 state.insertAdjacentHTML('afterbegin', '<div>Starting download ...</div>');
-                app = yield clickgo.core.fetchApp('./app.cga', {
+                app = await clickgo.core.fetchApp('./app.cga', {
                     'progress': (l, t) => {
                         state.insertAdjacentHTML('afterbegin', '<div>Progress ' + l.toString() + ' / ' + t.toString() + ' (' + Math.round(l / t * 100).toString() + '%)</div>');
                     }
@@ -70,24 +59,22 @@ class Boot extends clickgo.AbstractBoot {
                 document.getElementById('icon').style.backgroundImage = 'url(' + app.icon + ')';
                 document.getElementById('mask').style.webkitMaskImage = 'url(' + app.icon + ')';
                 document.getElementById('mask').style.maskImage = 'url(' + app.icon + ')';
-            }))();
+            })();
         });
         iconwrap.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             iconwrap.classList.add('selected');
         });
         iconwrap.addEventListener('dblclick', () => {
-            (function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    body.style.cursor = 'progress';
-                    iconwrap.classList.remove('selected');
-                    yield clickgo.task.run(app, {
-                        initProgress: (s) => {
-                            state.insertAdjacentHTML('afterbegin', '<div> ' + s + '</div>');
-                        }
-                    });
-                    body.style.cursor = 'default';
+            (async function () {
+                body.style.cursor = 'progress';
+                iconwrap.classList.remove('selected');
+                await clickgo.task.run(app, {
+                    initProgress: (s) => {
+                        state.insertAdjacentHTML('afterbegin', '<div> ' + s + '</div>');
+                    }
                 });
+                body.style.cursor = 'default';
             })();
         });
         document.addEventListener('mousedown', () => {

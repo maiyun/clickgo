@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -155,109 +146,107 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return this.locale;
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const jodit = yield clickgo.core.getModule('jodit');
-            if (!jodit) {
-                this.isLoading = false;
-                this.notInit = true;
+    async onMounted() {
+        const jodit = await clickgo.core.getModule('jodit');
+        if (!jodit) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
+        this.access.editor = jodit.make(this.refs.editor, {
+            'height': '100%',
+            'removeButtons': ['ai-assistant', 'about', 'speechRecognize', 'ai-commands'],
+            'extraButtons': [{
+                    'image': 'bold',
+                    'icon': 'upload',
+                    'exec': () => {
+                        this.emit('imgselect', (url, alt) => {
+                            this.access.editor.selection.insertImage(url, alt);
+                        });
+                    }
+                }],
+            'statusbar': false,
+            'allowResizeY': false,
+            'addNewLine': false,
+            'language': this.getLanguage(),
+            'theme': this.props.theme === 'dark' ? 'dark' : undefined,
+            'toolbarAdaptive': false,
+            'beautifyHTMLCDNUrlsJS': [],
+            'sourceEditorCDNUrlsJS': []
+        });
+        this.access.editor.value = this.props.modelValue;
+        this.access.editor.events.on('change', () => {
+            this.emit('update:modelValue', this.access.editor.value);
+            this.emit('text', this.access.editor.text);
+        });
+        this.access.editor.events.on('focus', () => {
+            this.isFocus = true;
+        });
+        this.access.editor.events.on('blur', () => {
+            this.isFocus = false;
+        });
+        this.refs.content.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
             }
-            this.access.editor = jodit.make(this.refs.editor, {
-                'height': '100%',
-                'removeButtons': ['ai-assistant', 'about', 'speechRecognize', 'ai-commands'],
-                'extraButtons': [{
-                        'image': 'bold',
-                        'icon': 'upload',
-                        'exec': () => {
-                            this.emit('imgselect', (url, alt) => {
-                                this.access.editor.selection.insertImage(url, alt);
-                            });
-                        }
-                    }],
-                'statusbar': false,
-                'allowResizeY': false,
-                'addNewLine': false,
-                'language': this.getLanguage(),
-                'theme': this.props.theme === 'dark' ? 'dark' : undefined,
-                'toolbarAdaptive': false,
-                'beautifyHTMLCDNUrlsJS': [],
-                'sourceEditorCDNUrlsJS': []
-            });
-            this.access.editor.value = this.props.modelValue;
-            this.access.editor.events.on('change', () => {
-                this.emit('update:modelValue', this.access.editor.value);
-                this.emit('text', this.access.editor.text);
-            });
-            this.access.editor.events.on('focus', () => {
-                this.isFocus = true;
-            });
-            this.access.editor.events.on('blur', () => {
-                this.isFocus = false;
-            });
-            this.refs.content.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                if (clickgo.dom.hasTouchButMouse(e)) {
-                    return;
-                }
-                if (!e.target) {
-                    return;
-                }
-                const target = e.target;
-                if (!target.classList.contains('jodit-workplace') && !clickgo.dom.findParentByClass(target, 'jodit-workplace')) {
-                    return;
-                }
-                clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-            });
-            const down = (e) => {
-                if (clickgo.dom.hasTouchButMouse(e)) {
-                    return;
-                }
-                const target = e.target;
-                if (!target.classList.contains('jodit-workplace') && !clickgo.dom.findParentByClass(target, 'jodit-workplace')) {
-                    return;
-                }
-                if (this.refs.content.cgPopOpen !== undefined) {
-                    clickgo.form.hidePop(this.refs.content);
-                }
-                if (e instanceof TouchEvent) {
-                    clickgo.dom.bindLong(e, () => {
-                        clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-                    });
-                }
-            };
-            this.refs.content.addEventListener('mousedown', down);
-            this.refs.content.addEventListener('touchstart', down, {
-                'passive': true
-            });
-            this.watch('locale', () => {
-                if (!this.access.editor) {
-                    return;
-                }
-            });
-            this.watch('readonly', () => {
-                if (!this.access.editor) {
-                    return;
-                }
-                this.access.editor.setReadOnly(this.propBoolean('readonly') ? true : false);
-            }, {
-                'immediate': true
-            });
-            this.watch('modelValue', (v) => {
-                if (!this.access.editor) {
-                    return;
-                }
-                if (v === this.access.editor.value) {
-                    return;
-                }
-                this.access.editor.value = v;
-            });
-            this.isLoading = false;
-            this.emit('init', this.access.editor);
-            if (this.props.modelValue) {
-                this.emit('text', this.access.editor.text);
+            if (!e.target) {
+                return;
+            }
+            const target = e.target;
+            if (!target.classList.contains('jodit-workplace') && !clickgo.dom.findParentByClass(target, 'jodit-workplace')) {
+                return;
+            }
+            clickgo.form.showPop(this.refs.content, this.refs.pop, e);
+        });
+        const down = (e) => {
+            if (clickgo.dom.hasTouchButMouse(e)) {
+                return;
+            }
+            const target = e.target;
+            if (!target.classList.contains('jodit-workplace') && !clickgo.dom.findParentByClass(target, 'jodit-workplace')) {
+                return;
+            }
+            if (this.refs.content.cgPopOpen !== undefined) {
+                clickgo.form.hidePop(this.refs.content);
+            }
+            if (e instanceof TouchEvent) {
+                clickgo.dom.bindLong(e, () => {
+                    clickgo.form.showPop(this.refs.content, this.refs.pop, e);
+                });
+            }
+        };
+        this.refs.content.addEventListener('mousedown', down);
+        this.refs.content.addEventListener('touchstart', down, {
+            'passive': true
+        });
+        this.watch('locale', () => {
+            if (!this.access.editor) {
+                return;
             }
         });
+        this.watch('readonly', () => {
+            if (!this.access.editor) {
+                return;
+            }
+            this.access.editor.setReadOnly(this.propBoolean('readonly') ? true : false);
+        }, {
+            'immediate': true
+        });
+        this.watch('modelValue', (v) => {
+            if (!this.access.editor) {
+                return;
+            }
+            if (v === this.access.editor.value) {
+                return;
+            }
+            this.access.editor.value = v;
+        });
+        this.isLoading = false;
+        this.emit('init', this.access.editor);
+        if (this.props.modelValue) {
+            this.emit('text', this.access.editor.text);
+        }
     }
 }
 exports.default = default_1;

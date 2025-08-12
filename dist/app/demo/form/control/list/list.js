@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -179,19 +170,17 @@ class default_1 extends clickgo.form.AbstractForm {
         return rtn;
     }
     get adData() {
-        var _a;
         const data = [];
         for (let i = 0; i < this.slist.length; ++i) {
             const item = this.slist[i];
             data.push({
-                'type': (_a = item.type) !== null && _a !== void 0 ? _a : 'split',
+                'type': item.type ?? 'split',
                 'menu': i === 20 ? true : false
             });
         }
         return data;
     }
     get listData() {
-        var _a;
         const data = ['Item1', {
                 'label': 'Tip',
                 'color': 'tip',
@@ -223,7 +212,7 @@ class default_1 extends clickgo.form.AbstractForm {
         for (let k = 0; k < this.slist.length; ++k) {
             if (this.slist[k].name) {
                 data.push({
-                    'label': `index: ${k}, value: ${(_a = this.slist[k].name) !== null && _a !== void 0 ? _a : ''}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
+                    'label': `index: ${k}, value: ${this.slist[k].name ?? ''}${(k === 20 ? ' long test long test long test long test long test' : '')}`,
                     'value': this.slist[k].name,
                     'disabled': this.slist[k].disabled
                 });
@@ -278,27 +267,23 @@ class default_1 extends clickgo.form.AbstractForm {
     selectButtonList() {
         this.select2 = ['Sub3'];
     }
-    onSelectLoad(value, resolve) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (value !== 'Sub6') {
-                yield clickgo.tool.sleep(100);
-                if (value === 'Sub8') {
-                    resolve(['Sub9', 'Sub10']);
-                }
-                else {
-                    resolve();
-                }
-                return;
+    async onSelectLoad(value, resolve) {
+        if (value !== 'Sub6') {
+            await clickgo.tool.sleep(100);
+            if (value === 'Sub8') {
+                resolve(['Sub9', 'Sub10']);
             }
-            yield clickgo.tool.sleep(300);
-            this.sub6children = ['Sub7', 'Sub8'];
-        });
+            else {
+                resolve();
+            }
+            return;
+        }
+        await clickgo.tool.sleep(300);
+        this.sub6children = ['Sub7', 'Sub8'];
     }
-    onList6Load(value, resolve) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(300);
-            resolve();
-        });
+    async onList6Load(value, resolve) {
+        await clickgo.tool.sleep(300);
+        resolve();
     }
     onSelect(area) {
         this.selectionArea = area;
@@ -318,10 +303,8 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         }
     }
-    onGesture(dir) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('onGesture: ' + dir);
-        });
+    async onGesture(dir) {
+        await clickgo.form.dialog('onGesture: ' + dir);
     }
     onGAdd(e) {
         clickgo.form.notify({
@@ -366,27 +349,25 @@ class default_1 extends clickgo.form.AbstractForm {
             this.listMap5 = { 'label': 'name', 'value': 'id', 'children': 'sub', 'disabled': 'disabled1' };
         }
     }
-    onlist5Load(value, resolve) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (value === '4') {
-                yield clickgo.tool.sleep(100);
-                resolve([
-                    {
-                        'name': 'hi5',
-                        'name2': 'xhi5',
-                        'id': '5'
-                    },
-                    {
-                        'name': 'hi6',
-                        'name2': 'xhi6',
-                        'id': '6'
-                    }
-                ]);
-                return;
-            }
-            yield clickgo.tool.sleep(300);
-            resolve();
-        });
+    async onlist5Load(value, resolve) {
+        if (value === '4') {
+            await clickgo.tool.sleep(100);
+            resolve([
+                {
+                    'name': 'hi5',
+                    'name2': 'xhi5',
+                    'id': '5'
+                },
+                {
+                    'name': 'hi6',
+                    'name2': 'xhi6',
+                    'id': '6'
+                }
+            ]);
+            return;
+        }
+        await clickgo.tool.sleep(300);
+        resolve();
     }
     onMounted() {
     }

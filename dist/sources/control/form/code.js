@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -341,7 +332,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.stateMinData) {
             const event = {
                 'detail': {
-                    'event': e !== null && e !== void 0 ? e : null,
+                    'event': e ?? null,
                     'action': e ? 'click' : 'method',
                     'min': false,
                     'history': null
@@ -373,7 +364,7 @@ class default_1 extends clickgo.control.AbstractControl {
         else {
             const event = {
                 'detail': {
-                    'event': e !== null && e !== void 0 ? e : null,
+                    'event': e ?? null,
                     'action': e ? 'click' : 'method',
                     'min': true,
                     'history': {
@@ -437,7 +428,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.stateMaxData) {
             const event = {
                 'detail': {
-                    'event': e !== null && e !== void 0 ? e : null,
+                    'event': e ?? null,
                     'action': e ? 'click' : 'move',
                     'max': false,
                     'history': null
@@ -495,7 +486,7 @@ class default_1 extends clickgo.control.AbstractControl {
         else {
             const event = {
                 'detail': {
-                    'event': e !== null && e !== void 0 ? e : null,
+                    'event': e ?? null,
                     'action': e ? 'click' : 'move',
                     'max': true,
                     'history': {
@@ -765,12 +756,10 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refs.step.style.left = ((this.refs.content.offsetWidth - this.refs.step.offsetWidth) / 2).toString() + 'px';
         this.stepShowData = true;
     }
-    stepDone() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.stepValue = '#';
-            yield clickgo.tool.sleep(500);
-            this.stepShowData = false;
-        });
+    async stepDone() {
+        this.stepValue = '#';
+        await clickgo.tool.sleep(500);
+        this.stepShowData = false;
     }
     stepDown(e) {
         clickgo.dom.bindMove(e, {
@@ -783,16 +772,16 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     onMounted() {
-        this.watch('icon', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('icon', async () => {
             if (this.props.icon === '') {
                 this.iconDataUrl = '';
             }
             else {
-                const icon = yield clickgo.fs.getContent(this.props.icon);
-                this.iconDataUrl = (icon instanceof Blob) ? yield clickgo.tool.blob2DataUrl(icon) : '';
+                const icon = await clickgo.fs.getContent(this.props.icon);
+                this.iconDataUrl = (icon instanceof Blob) ? await clickgo.tool.blob2DataUrl(icon) : '';
             }
             this.trigger('formIconChanged', this.iconDataUrl);
-        }));
+        });
         this.watch('title', () => {
             this.trigger('formTitleChanged', this.props.title);
         });

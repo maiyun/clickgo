@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -49,80 +40,61 @@ class default_1 extends clickgo.form.AbstractForm {
         this.val = 'test';
         this.activating = false;
     }
-    getListenerList() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.native.getListenerList()));
-        });
+    async getListenerList() {
+        await clickgo.form.dialog(JSON.stringify(clickgo.native.getListenerList()));
     }
-    max() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.native.max();
-        });
+    async max() {
+        await clickgo.native.max();
     }
-    min() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.native.min();
-        });
+    async min() {
+        await clickgo.native.min();
     }
-    activate() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.activating) {
-                return;
-            }
-            this.activating = true;
-            yield clickgo.tool.sleep(2000);
-            yield clickgo.native.activate();
-            this.activating = false;
-        });
+    async activate() {
+        if (this.activating) {
+            return;
+        }
+        this.activating = true;
+        await clickgo.tool.sleep(2_000);
+        await clickgo.native.activate();
+        this.activating = false;
     }
-    ping() {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield clickgo.form.dialog((_a = yield clickgo.native.ping(this.val)) !== null && _a !== void 0 ? _a : 'undefined');
-        });
+    async ping() {
+        await clickgo.form.dialog(await clickgo.native.ping(this.val) ?? 'undefined');
     }
-    isMax() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog((yield clickgo.native.isMax()) ? 'true' : 'false');
-        });
+    async isMax() {
+        await clickgo.form.dialog(await clickgo.native.isMax() ? 'true' : 'false');
     }
-    open() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rtn = yield clickgo.native.open({
-                'filters': [
-                    {
-                        'name': 'Image',
-                        'accept': ['jpg', 'png'],
-                    },
-                ],
-            });
-            yield clickgo.form.dialog(JSON.stringify(rtn));
+    async open() {
+        const rtn = await clickgo.native.open({
+            'filters': [
+                {
+                    'name': 'Image',
+                    'accept': ['jpg', 'png'],
+                },
+            ],
         });
+        await clickgo.form.dialog(JSON.stringify(rtn));
     }
-    save() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rtn = yield clickgo.native.save({
-                'filters': [
-                    {
-                        'name': 'Image',
-                        'accept': ['jpg', 'png'],
-                    },
-                ],
-            });
-            yield clickgo.form.dialog(JSON.stringify(rtn));
+    async save() {
+        const rtn = await clickgo.native.save({
+            'filters': [
+                {
+                    'name': 'Image',
+                    'accept': ['jpg', 'png'],
+                },
+            ],
         });
+        await clickgo.form.dialog(JSON.stringify(rtn));
     }
-    dialog(opts) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rtn = yield clickgo.native.dialog({
-                'title': opts.title,
-                'message': opts.message,
-                'type': opts.type,
-                'detail': opts.detail,
-                'buttons': opts.buttons,
-            });
-            yield clickgo.form.dialog(JSON.stringify(rtn));
+    async dialog(opts) {
+        const rtn = await clickgo.native.dialog({
+            'title': opts.title,
+            'message': opts.message,
+            'type': opts.type,
+            'detail': opts.detail,
+            'buttons': opts.buttons,
         });
+        await clickgo.form.dialog(JSON.stringify(rtn));
     }
 }
 exports.default = default_1;

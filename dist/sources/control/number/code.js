@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -262,7 +253,6 @@ class default_1 extends clickgo.control.AbstractControl {
         e.stopPropagation();
     }
     numberClick(num) {
-        var _a;
         if (!this.value) {
             this.value = '0';
         }
@@ -281,41 +271,38 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             return;
         }
-        this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : n;
+        this.value = event.detail.change ?? n;
         this.emit('update:modelValue', this.value);
         this.emit('changed');
     }
-    execCmd(ac) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            this.refs.text.focus();
-            if (ac === 'paste') {
-                if (this.propBoolean('readonly')) {
-                    return;
-                }
-                const str = yield navigator.clipboard.readText();
-                const event = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'value': str,
-                        'change': undefined
-                    }
-                };
-                this.emit('beforechange', event);
-                if (!event.go) {
-                    return;
-                }
-                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : str;
-                this.emit('update:modelValue', this.value);
-                this.emit('changed');
+    async execCmd(ac) {
+        this.refs.text.focus();
+        if (ac === 'paste') {
+            if (this.propBoolean('readonly')) {
+                return;
             }
-            else {
-                clickgo.tool.execCommand(ac);
+            const str = await navigator.clipboard.readText();
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': str,
+                    'change': undefined
+                }
+            };
+            this.emit('beforechange', event);
+            if (!event.go) {
+                return;
             }
-        });
+            this.value = event.detail.change ?? str;
+            this.emit('update:modelValue', this.value);
+            this.emit('changed');
+        }
+        else {
+            clickgo.tool.execCommand(ac);
+        }
     }
     keydown(e) {
         if (e.key === 'Enter') {
@@ -332,8 +319,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return true;
     }
     onMounted() {
-        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+        this.watch('modelValue', async () => {
             if (this.value === this.props.modelValue) {
                 return;
             }
@@ -341,7 +327,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.dangerBorder = false;
             }
             this.value = this.props.modelValue;
-            yield this.nextTick();
+            await this.nextTick();
             this.checkNumber();
             if (this.refs.text.value === this.value) {
                 this.check();
@@ -363,16 +349,15 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.refs.text.value = this.value;
                 return;
             }
-            this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
+            this.value = event.detail.change ?? this.refs.text.value;
             this.emit('update:modelValue', this.value);
             this.emit('changed');
             this.check();
-        }), {
+        }, {
             'immediate': true
         });
-        this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield this.nextTick();
+        this.watch('max', async () => {
+            await this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
                     'go': true,
@@ -404,14 +389,13 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
+                this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
                 this.emit('changed');
             }
-        }));
-        this.watch('min', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield this.nextTick();
+        });
+        this.watch('min', async () => {
+            await this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
                     'go': true,
@@ -443,11 +427,11 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
+                this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
                 this.emit('changed');
             }
-        }));
+        });
         const content = this.parentByName('content');
         if (content) {
             this.watch('require', () => {

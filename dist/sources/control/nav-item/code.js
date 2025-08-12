@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -67,8 +58,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return this.props.name === '' ? this.props.label : this.props.name;
     }
     get selected() {
-        var _a;
-        return (_a = this.nav.selected) !== null && _a !== void 0 ? _a : '';
+        return this.nav.selected ?? '';
     }
     get isSelected() {
         if (this.selected === this.overName) {
@@ -123,21 +113,21 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
-        this.watch('showData', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('showData', async () => {
             if (!this.hasChild) {
                 return;
             }
             if (this.showData) {
                 this.refs.menu.style.height = this.refs.menu.children[0].offsetHeight.toString() + 'px';
-                yield clickgo.tool.sleep(300);
+                await clickgo.tool.sleep(300);
                 this.refs.menu.style.height = '';
             }
             else {
                 this.refs.menu.style.height = this.refs.menu.offsetHeight.toString() + 'px';
-                yield clickgo.tool.sleep(50);
+                await clickgo.tool.sleep(50);
                 this.refs.menu.style.height = '0';
             }
-        }));
+        });
         if (this.hasChild && !this.showData) {
             this.refs.menu.style.height = '0';
         }

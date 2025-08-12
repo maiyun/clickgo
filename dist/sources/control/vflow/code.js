@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -242,7 +233,6 @@ class default_1 extends clickgo.control.AbstractControl {
         return rtn;
     }
     refreshSize(force = false) {
-        var _a;
         let need = false;
         const el = this.element.querySelector('[data-cg-size="same"]');
         if (el) {
@@ -259,7 +249,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.length = 0;
         const padding = this.props.direction === 'h' ? this.padding.left : this.padding.top;
         for (let i = 0; i < this.dataFormat.length; ++i) {
-            const isize = (_a = this.props.sizes[i]) !== null && _a !== void 0 ? _a : this.size;
+            const isize = this.props.sizes[i] ?? this.size;
             this.pos.push({
                 'start': this.length + padding,
                 'end': this.length + isize + padding
@@ -342,16 +332,16 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('select', area);
     }
     onMounted() {
-        this.watch('dataFormat', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
+        this.watch('dataFormat', async () => {
+            await this.nextTick();
             this.refreshSize();
-        }), {
+        }, {
             'deep': true
         });
-        this.watch('direction', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
+        this.watch('direction', async () => {
+            await this.nextTick();
             this.refreshSize();
-        }));
+        });
         this.watch('scrollLeft', () => {
             if (this.props.direction === 'h' && this.scrollLeftData !== this.propInt('scrollLeft')) {
                 this.scrollLeftData = this.propInt('scrollLeft');

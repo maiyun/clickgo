@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -131,32 +122,30 @@ class default_1 extends clickgo.control.AbstractControl {
     clear() {
         this.access.ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
     }
-    fullClick() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.dom.is.full) {
-                yield clickgo.dom.exitFullscreen();
-                if (!this.access.instance) {
-                    return;
-                }
-                yield clickgo.tool.sleep(150);
-                if (this.props.fsrc) {
-                    this.capture();
-                    this.access.instance.destroy();
-                    this.toPlay();
-                }
-                return;
-            }
-            yield this.element.requestFullscreen();
+    async fullClick() {
+        if (clickgo.dom.is.full) {
+            await clickgo.dom.exitFullscreen();
             if (!this.access.instance) {
                 return;
             }
-            yield clickgo.tool.sleep(150);
-            if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
+            await clickgo.tool.sleep(150);
+            if (this.props.fsrc) {
                 this.capture();
                 this.access.instance.destroy();
                 this.toPlay();
             }
-        });
+            return;
+        }
+        await this.element.requestFullscreen();
+        if (!this.access.instance) {
+            return;
+        }
+        await clickgo.tool.sleep(150);
+        if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
+            this.capture();
+            this.access.instance.destroy();
+            this.toPlay();
+        }
     }
     get isFull() {
         return clickgo.dom.is.full;
@@ -231,7 +220,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.capture();
             this.access.instance.destroy();
             this.toPlay();
-        }, 5000, {
+        }, 5_000, {
             'count': 1,
         });
     }
@@ -247,7 +236,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.capture();
             this.access.instance.destroy();
             this.toPlay();
-        }, 5000, {
+        }, 5_000, {
             'count': 1,
         });
     }
@@ -262,112 +251,110 @@ class default_1 extends clickgo.control.AbstractControl {
         this.volumeData = this.volumeSave;
         this.emit('update:volume', this.volumeData);
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const mpegts = yield clickgo.core.getModule('mpegts');
-            if (!mpegts) {
-                this.isLoading = false;
-                this.notInit = true;
+    async onMounted() {
+        const mpegts = await clickgo.core.getModule('mpegts');
+        if (!mpegts) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
+        this.access.mpegts = mpegts;
+        this.access.ctx = this.refs.canvas.getContext('2d');
+        this.watch('volume', () => {
+            if (this.volumeData === this.propInt('volume')) {
                 return;
             }
-            this.access.mpegts = mpegts;
-            this.access.ctx = this.refs.canvas.getContext('2d');
-            this.watch('volume', () => {
-                if (this.volumeData === this.propInt('volume')) {
-                    return;
-                }
-                this.refs.video.volume = this.propInt('volume') / 100;
-                this.volumeData = this.propInt('volume');
-                if (!this.propInt('volume')) {
-                    return;
-                }
-                this.volumeSave = this.propInt('volume');
-            }, {
-                'immediate': true
-            });
-            this.watch('controls', () => {
-                if (this.propBoolean('controls')) {
-                    this.isShow = true;
-                    this.hideTimer = clickgo.task.sleep(() => {
-                        this.isShow = false;
-                    }, 800);
-                }
-                else {
-                    if (this.hideTimer) {
-                        clickgo.task.removeTimer(this.hideTimer);
-                        this.hideTimer = 0;
-                    }
-                }
-            }, {
-                'immediate': true
-            });
-            this.watch('play', () => {
-                if (this.playData === this.propBoolean('play')) {
-                    return;
-                }
-                this.playData = this.propBoolean('play');
-                if (this.playData) {
-                    this.toPlay();
-                }
-                else {
-                    this.capture();
-                    this.access.instance.destroy();
-                    this.access.instance = undefined;
-                }
-            });
-            this.playData = this.propBoolean('play');
-            this.watch('src', (n, o) => __awaiter(this, void 0, void 0, function* () {
-                if (n === o) {
-                    return;
-                }
-                if (!this.props.src) {
-                    if (!this.access.instance) {
-                        return;
-                    }
-                    this.access.instance.destroy();
-                    this.access.instance = undefined;
-                    return;
-                }
-                if (this.access.instance) {
-                    this.access.instance.destroy();
-                }
-                if (this.playData) {
-                    this.toPlay();
-                }
-            }), {
-                'immediate': true
-            });
-            let resetTimer = 0;
-            this.watch('reset', () => {
-                if (!this.propInt('reset')) {
-                    if (!resetTimer) {
-                        return;
-                    }
-                    clickgo.task.removeTimer(resetTimer);
-                    resetTimer = 0;
-                    return;
-                }
-                if (resetTimer) {
-                    clickgo.task.removeTimer(resetTimer);
-                }
-                resetTimer = clickgo.task.createTimer(() => {
-                    if (!this.access.instance) {
-                        return;
-                    }
-                    this.capture();
-                    this.access.instance.destroy();
-                    this.toPlay();
-                }, this.propInt('reset'));
-            }, {
-                'immediate': true
-            });
-            this.volumeSave = this.propInt('volume');
+            this.refs.video.volume = this.propInt('volume') / 100;
             this.volumeData = this.propInt('volume');
-            this.isLoading = false;
-            this.emit('init', {
-                'mpegts': this.access.mpegts,
-                'instance': this.access.instance
-            });
+            if (!this.propInt('volume')) {
+                return;
+            }
+            this.volumeSave = this.propInt('volume');
+        }, {
+            'immediate': true
+        });
+        this.watch('controls', () => {
+            if (this.propBoolean('controls')) {
+                this.isShow = true;
+                this.hideTimer = clickgo.task.sleep(() => {
+                    this.isShow = false;
+                }, 800);
+            }
+            else {
+                if (this.hideTimer) {
+                    clickgo.task.removeTimer(this.hideTimer);
+                    this.hideTimer = 0;
+                }
+            }
+        }, {
+            'immediate': true
+        });
+        this.watch('play', () => {
+            if (this.playData === this.propBoolean('play')) {
+                return;
+            }
+            this.playData = this.propBoolean('play');
+            if (this.playData) {
+                this.toPlay();
+            }
+            else {
+                this.capture();
+                this.access.instance.destroy();
+                this.access.instance = undefined;
+            }
+        });
+        this.playData = this.propBoolean('play');
+        this.watch('src', async (n, o) => {
+            if (n === o) {
+                return;
+            }
+            if (!this.props.src) {
+                if (!this.access.instance) {
+                    return;
+                }
+                this.access.instance.destroy();
+                this.access.instance = undefined;
+                return;
+            }
+            if (this.access.instance) {
+                this.access.instance.destroy();
+            }
+            if (this.playData) {
+                this.toPlay();
+            }
+        }, {
+            'immediate': true
+        });
+        let resetTimer = 0;
+        this.watch('reset', () => {
+            if (!this.propInt('reset')) {
+                if (!resetTimer) {
+                    return;
+                }
+                clickgo.task.removeTimer(resetTimer);
+                resetTimer = 0;
+                return;
+            }
+            if (resetTimer) {
+                clickgo.task.removeTimer(resetTimer);
+            }
+            resetTimer = clickgo.task.createTimer(() => {
+                if (!this.access.instance) {
+                    return;
+                }
+                this.capture();
+                this.access.instance.destroy();
+                this.toPlay();
+            }, this.propInt('reset'));
+        }, {
+            'immediate': true
+        });
+        this.volumeSave = this.propInt('volume');
+        this.volumeData = this.propInt('volume');
+        this.isLoading = false;
+        this.emit('init', {
+            'mpegts': this.access.mpegts,
+            'instance': this.access.instance
         });
     }
     onUnmounted() {

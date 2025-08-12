@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -132,7 +123,7 @@ class default_1 extends clickgo.control.AbstractControl {
             return '';
         }
         const rtn = [];
-        const content = this.props.content.toString().length >= 13 ? this.propNumber('content') : this.propNumber('content') * 1000;
+        const content = this.props.content.toString().length >= 13 ? this.propNumber('content') : this.propNumber('content') * 1_000;
         const res = clickgo.tool.formatTime(content, this.props.tz === undefined ? undefined : this.propNumber('tz'));
         if (this.propBoolean('date')) {
             rtn.push(res.date);
@@ -145,14 +136,12 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return rtn.join(' ');
     }
-    click() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.propBoolean('copy')) {
-                return;
-            }
-            yield navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
-            clickgo.form.alert(this.l('copied'));
-        });
+    async click() {
+        if (!this.propBoolean('copy')) {
+            return;
+        }
+        await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
+        clickgo.form.alert(this.l('copied'));
     }
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
@@ -161,10 +150,10 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('copy')) {
             return;
         }
-        clickgo.dom.bindClick(e, () => __awaiter(this, void 0, void 0, function* () {
-            yield navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
+        clickgo.dom.bindClick(e, async () => {
+            await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
             clickgo.form.alert(this.l('copied'));
-        }));
+        });
         if (!navigator.clipboard) {
             return;
         }

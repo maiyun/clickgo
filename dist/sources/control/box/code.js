@@ -49,8 +49,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.selectedData = [];
     }
     get modelValueComp() {
-        const arr = Object.keys(this.props.modelValue).map(key => (Object.assign({ 'id': key }, this.props.modelValue[key])));
-        arr.sort((a, b) => { var _a, _b; return ((_a = a.index) !== null && _a !== void 0 ? _a : 1) - ((_b = b.index) !== null && _b !== void 0 ? _b : 1); });
+        const arr = Object.keys(this.props.modelValue).map(key => ({ 'id': key, ...this.props.modelValue[key] }));
+        arr.sort((a, b) => (a.index ?? 1) - (b.index ?? 1));
         return arr;
     }
     wrapDown(e) {

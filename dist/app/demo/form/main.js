@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -111,6 +102,7 @@ const delete_1 = __importDefault(require("./control/delete/delete"));
 const pdf_1 = __importDefault(require("./control/pdf/pdf"));
 const web_1 = __importDefault(require("./control/web/web"));
 const tplink_1 = __importDefault(require("./control/tplink/tplink"));
+const novnc_1 = __importDefault(require("./control/novnc/novnc"));
 const form_2 = __importDefault(require("./event/form/form"));
 const other_1 = __importDefault(require("./event/other/other"));
 const screen_1 = __importDefault(require("./event/screen/screen"));
@@ -135,384 +127,386 @@ class default_1 extends clickgo.form.AbstractForm {
         this.ntab = '';
         this.adata = {};
     }
-    openForm(name, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.loading = true;
-            let frm;
-            switch (name) {
-                case 'cblock': {
-                    frm = yield clickgo.form.create('control/block/block', undefined, {
-                        'path': this.filename
-                    });
-                    break;
-                }
-                case 'calayout2': {
-                    frm = yield clickgo.form.create(alayout2_1.default);
-                    break;
-                }
-                case 'cgrid': {
-                    frm = yield clickgo.form.create(grid_1.default);
-                    break;
-                }
-                case 'cbox': {
-                    frm = yield clickgo.form.create(box_1.default);
-                    break;
-                }
-                case 'cbutton': {
-                    frm = yield clickgo.form.create(button_1.default);
-                    break;
-                }
-                case 'ccheck': {
-                    frm = yield clickgo.form.create(check_1.default);
-                    break;
-                }
-                case 'cdatepanel': {
-                    frm = yield clickgo.form.create(datepanel_1.default);
-                    break;
-                }
-                case 'ccalendar': {
-                    frm = yield clickgo.form.create(calendar_1.default);
-                    break;
-                }
-                case 'cdate': {
-                    frm = yield clickgo.form.create(date_1.default);
-                    break;
-                }
-                case 'cdaterange': {
-                    frm = yield clickgo.form.create(daterange_1.default);
-                    break;
-                }
-                case 'cdesc': {
-                    frm = yield clickgo.form.create(desc_1.default);
-                    break;
-                }
-                case 'cdialog': {
-                    frm = yield clickgo.form.create(dialog_1.default);
-                    break;
-                }
-                case 'cdrawer': {
-                    frm = yield clickgo.form.create(drawer_1.default);
-                    break;
-                }
-                case 'cecharts': {
-                    frm = yield clickgo.form.create(echarts_1.default);
-                    break;
-                }
-                case 'cempty': {
-                    frm = yield clickgo.form.create(empty_1.default);
-                    break;
-                }
-                case 'cfile': {
-                    frm = yield clickgo.form.create(file_1.default);
-                    break;
-                }
-                case 'cform': {
-                    frm = yield clickgo.form.create(form_1.default);
-                    break;
-                }
-                case 'cgroup': {
-                    frm = yield clickgo.form.create(group_1.default);
-                    break;
-                }
-                case 'chtml': {
-                    frm = yield clickgo.form.create(html_1.default);
-                    break;
-                }
-                case 'cprogress': {
-                    frm = yield clickgo.form.create(progress_1.default);
-                    break;
-                }
-                case 'ciconview': {
-                    frm = yield clickgo.form.create(iconview_1.default);
-                    break;
-                }
-                case 'cvflow': {
-                    frm = yield clickgo.form.create(vflow_1.default);
-                    break;
-                }
-                case 'cimgviewer': {
-                    frm = yield clickgo.form.create(imgviewer_1.default);
-                    break;
-                }
-                case 'cvideo': {
-                    frm = yield clickgo.form.create(video_1.default);
-                    break;
-                }
-                case 'cmpegts': {
-                    frm = yield clickgo.form.create(mpegts_1.default);
-                    break;
-                }
-                case 'cstep': {
-                    frm = yield clickgo.form.create(step_1.default);
-                    break;
-                }
-                case 'ctag': {
-                    frm = yield clickgo.form.create(tag_1.default);
-                    break;
-                }
-                case 'csgroup': {
-                    frm = yield clickgo.form.create('/form/control/sgroup/sgroup');
-                    break;
-                }
-                case 'csetting': {
-                    frm = yield clickgo.form.create('/form/control/setting/setting');
-                    break;
-                }
-                case 'ctip': {
-                    frm = yield clickgo.form.create(tip_1.default);
-                    break;
-                }
-                case 'cxterm': {
-                    frm = yield clickgo.form.create(xterm_1.default);
-                    break;
-                }
-                case 'cimg': {
-                    frm = yield clickgo.form.create('control/img/img', undefined, {
-                        'path': this.filename
-                    });
-                    break;
-                }
-                case 'ccircle': {
-                    frm = yield clickgo.form.create('control/circle/circle', undefined, {
-                        'path': this.filename
-                    });
-                    break;
-                }
-                case 'ccontent': {
-                    frm = yield clickgo.form.create(content_1.default);
-                    break;
-                }
-                case 'calert': {
-                    frm = yield clickgo.form.create(alert_1.default);
-                    break;
-                }
-                case 'clink': {
-                    frm = yield clickgo.form.create(link_1.default);
-                    break;
-                }
-                case 'clabel': {
-                    frm = yield clickgo.form.create(label_1.default);
-                    break;
-                }
-                case 'cpalette': {
-                    frm = yield clickgo.form.create(palette_1.default);
-                    break;
-                }
-                case 'clayout': {
-                    frm = yield clickgo.form.create(layout_1.default);
-                    break;
-                }
-                case 'chske': {
-                    frm = yield clickgo.form.create(hske_1.default);
-                    break;
-                }
-                case 'clist': {
-                    frm = yield clickgo.form.create(list_1.default);
-                    break;
-                }
-                case 'cloading': {
-                    frm = yield clickgo.form.create('control/loading/loading', undefined, {
-                        'path': this.filename
-                    });
-                    break;
-                }
-                case 'cicon': {
-                    frm = yield clickgo.form.create('control/icon/icon', undefined, {
-                        'path': this.filename
-                    });
-                    break;
-                }
-                case 'cmap': {
-                    frm = yield clickgo.form.create(map_1.default);
-                    break;
-                }
-                case 'cmarquee': {
-                    frm = yield clickgo.form.create(marquee_1.default);
-                    break;
-                }
-                case 'cmenu': {
-                    frm = yield clickgo.form.create(menu_1.default);
-                    break;
-                }
-                case 'cmonaco': {
-                    frm = yield clickgo.form.create(monaco_1.default);
-                    break;
-                }
-                case 'cnav': {
-                    frm = yield clickgo.form.create(nav_1.default);
-                    break;
-                }
-                case 'cpage': {
-                    frm = yield clickgo.form.create(page_1.default);
-                    break;
-                }
-                case 'cpanel': {
-                    frm = yield clickgo.form.create(panel_1.default);
-                    break;
-                }
-                case 'cflow': {
-                    frm = yield clickgo.form.create(flow_1.default);
-                    break;
-                }
-                case 'cproperty': {
-                    frm = yield clickgo.form.create(property_1.default);
-                    break;
-                }
-                case 'cqrcode': {
-                    frm = yield clickgo.form.create(qrcode_1.default);
-                    break;
-                }
-                case 'cradio': {
-                    frm = yield clickgo.form.create(radio_1.default);
-                    break;
-                }
-                case 'cswitch': {
-                    frm = yield clickgo.form.create(switch_1.default);
-                    break;
-                }
-                case 'cscroll': {
-                    frm = yield clickgo.form.create(scroll_1.default);
-                    break;
-                }
-                case 'cselect': {
-                    frm = yield clickgo.form.create(select_1.default);
-                    break;
-                }
-                case 'cuploader': {
-                    frm = yield clickgo.form.create(uploader_1.default);
-                    break;
-                }
-                case 'csvg': {
-                    frm = yield clickgo.form.create(svg_1.default);
-                    break;
-                }
-                case 'ctab': {
-                    frm = yield clickgo.form.create(tab_1.default);
-                    break;
-                }
-                case 'ctable': {
-                    frm = yield clickgo.form.create(table_1.default);
-                    break;
-                }
-                case 'ctext': {
-                    frm = yield clickgo.form.create(text_1.default);
-                    break;
-                }
-                case 'ctimeline': {
-                    frm = yield clickgo.form.create(timeline_1.default);
-                    break;
-                }
-                case 'cjodit': {
-                    frm = yield clickgo.form.create(jodit_1.default);
-                    break;
-                }
-                case 'ctuieditor': {
-                    frm = yield clickgo.form.create(tuieditor_1.default);
-                    break;
-                }
-                case 'ctuiviewer': {
-                    frm = yield clickgo.form.create(tuiviewer_1.default);
-                    break;
-                }
-                case 'carteditor': {
-                    frm = yield clickgo.form.create(arteditor_1.default);
-                    break;
-                }
-                case 'cdelete': {
-                    frm = yield clickgo.form.create(delete_1.default);
-                    break;
-                }
-                case 'cpdf': {
-                    frm = yield clickgo.form.create(pdf_1.default);
-                    break;
-                }
-                case 'cweb': {
-                    frm = yield clickgo.form.create(web_1.default);
-                    break;
-                }
-                case 'ctplink': {
-                    frm = yield clickgo.form.create(tplink_1.default);
-                    break;
-                }
-                case 'ccaptcha': {
-                    frm = yield clickgo.form.create(captcha_1.default);
-                    break;
-                }
-                case 'eform': {
-                    frm = yield clickgo.form.create(form_2.default);
-                    break;
-                }
-                case 'eother': {
-                    frm = yield clickgo.form.create(other_1.default);
-                    break;
-                }
-                case 'escreen': {
-                    frm = yield clickgo.form.create(screen_1.default);
-                    break;
-                }
-                case 'etask': {
-                    frm = yield clickgo.form.create(task_1.default);
-                    break;
-                }
-                case 'aform': {
-                    frm = yield clickgo.form.create(aform_1.default);
-                    break;
-                }
-                case 'acontrol': {
-                    frm = yield clickgo.form.create(acontrol_1.default);
-                    break;
-                }
-                case 'mcore': {
-                    frm = yield clickgo.form.create(core_1.default);
-                    break;
-                }
-                case 'mdom': {
-                    frm = yield clickgo.form.create(dom_1.default);
-                    break;
-                }
-                case 'mform': {
-                    frm = yield clickgo.form.create(form_3.default);
-                    break;
-                }
-                case 'mfs': {
-                    frm = yield clickgo.form.create(fs_1.default);
-                    break;
-                }
-                case 'mnative': {
-                    frm = yield clickgo.form.create(native_1.default);
-                    break;
-                }
-                case 'mstorage': {
-                    frm = yield clickgo.form.create(storage_1.default);
-                    break;
-                }
-                case 'msystem': {
-                    frm = yield clickgo.form.create(system_1.default);
-                    break;
-                }
-                case 'mtask': {
-                    frm = yield clickgo.form.create(task_2.default);
-                    break;
-                }
-                case 'mtheme': {
-                    frm = yield clickgo.form.create(theme_1.default);
-                    break;
-                }
-                case 'mtool': {
-                    frm = yield clickgo.form.create(tool_1.default);
-                    break;
-                }
-                case 'mzip': {
-                    frm = yield clickgo.form.create(zip_1.default);
-                    break;
-                }
-                default: {
-                    frm = yield clickgo.form.create(backpanel_1.default, data);
-                }
+    async openForm(name, data) {
+        this.loading = true;
+        let frm;
+        switch (name) {
+            case 'cblock': {
+                frm = await clickgo.form.create('control/block/block', undefined, {
+                    'path': this.filename
+                });
+                break;
             }
-            this.loading = false;
-            frm.show();
-        });
+            case 'calayout2': {
+                frm = await clickgo.form.create(alayout2_1.default);
+                break;
+            }
+            case 'cgrid': {
+                frm = await clickgo.form.create(grid_1.default);
+                break;
+            }
+            case 'cbox': {
+                frm = await clickgo.form.create(box_1.default);
+                break;
+            }
+            case 'cbutton': {
+                frm = await clickgo.form.create(button_1.default);
+                break;
+            }
+            case 'ccheck': {
+                frm = await clickgo.form.create(check_1.default);
+                break;
+            }
+            case 'cdatepanel': {
+                frm = await clickgo.form.create(datepanel_1.default);
+                break;
+            }
+            case 'ccalendar': {
+                frm = await clickgo.form.create(calendar_1.default);
+                break;
+            }
+            case 'cdate': {
+                frm = await clickgo.form.create(date_1.default);
+                break;
+            }
+            case 'cdaterange': {
+                frm = await clickgo.form.create(daterange_1.default);
+                break;
+            }
+            case 'cdesc': {
+                frm = await clickgo.form.create(desc_1.default);
+                break;
+            }
+            case 'cdialog': {
+                frm = await clickgo.form.create(dialog_1.default);
+                break;
+            }
+            case 'cdrawer': {
+                frm = await clickgo.form.create(drawer_1.default);
+                break;
+            }
+            case 'cecharts': {
+                frm = await clickgo.form.create(echarts_1.default);
+                break;
+            }
+            case 'cempty': {
+                frm = await clickgo.form.create(empty_1.default);
+                break;
+            }
+            case 'cfile': {
+                frm = await clickgo.form.create(file_1.default);
+                break;
+            }
+            case 'cform': {
+                frm = await clickgo.form.create(form_1.default);
+                break;
+            }
+            case 'cgroup': {
+                frm = await clickgo.form.create(group_1.default);
+                break;
+            }
+            case 'chtml': {
+                frm = await clickgo.form.create(html_1.default);
+                break;
+            }
+            case 'cprogress': {
+                frm = await clickgo.form.create(progress_1.default);
+                break;
+            }
+            case 'ciconview': {
+                frm = await clickgo.form.create(iconview_1.default);
+                break;
+            }
+            case 'cvflow': {
+                frm = await clickgo.form.create(vflow_1.default);
+                break;
+            }
+            case 'cimgviewer': {
+                frm = await clickgo.form.create(imgviewer_1.default);
+                break;
+            }
+            case 'cvideo': {
+                frm = await clickgo.form.create(video_1.default);
+                break;
+            }
+            case 'cmpegts': {
+                frm = await clickgo.form.create(mpegts_1.default);
+                break;
+            }
+            case 'cstep': {
+                frm = await clickgo.form.create(step_1.default);
+                break;
+            }
+            case 'ctag': {
+                frm = await clickgo.form.create(tag_1.default);
+                break;
+            }
+            case 'csgroup': {
+                frm = await clickgo.form.create('/form/control/sgroup/sgroup');
+                break;
+            }
+            case 'csetting': {
+                frm = await clickgo.form.create('/form/control/setting/setting');
+                break;
+            }
+            case 'ctip': {
+                frm = await clickgo.form.create(tip_1.default);
+                break;
+            }
+            case 'cxterm': {
+                frm = await clickgo.form.create(xterm_1.default);
+                break;
+            }
+            case 'cimg': {
+                frm = await clickgo.form.create('control/img/img', undefined, {
+                    'path': this.filename
+                });
+                break;
+            }
+            case 'ccircle': {
+                frm = await clickgo.form.create('control/circle/circle', undefined, {
+                    'path': this.filename
+                });
+                break;
+            }
+            case 'ccontent': {
+                frm = await clickgo.form.create(content_1.default);
+                break;
+            }
+            case 'calert': {
+                frm = await clickgo.form.create(alert_1.default);
+                break;
+            }
+            case 'clink': {
+                frm = await clickgo.form.create(link_1.default);
+                break;
+            }
+            case 'clabel': {
+                frm = await clickgo.form.create(label_1.default);
+                break;
+            }
+            case 'cpalette': {
+                frm = await clickgo.form.create(palette_1.default);
+                break;
+            }
+            case 'clayout': {
+                frm = await clickgo.form.create(layout_1.default);
+                break;
+            }
+            case 'chske': {
+                frm = await clickgo.form.create(hske_1.default);
+                break;
+            }
+            case 'clist': {
+                frm = await clickgo.form.create(list_1.default);
+                break;
+            }
+            case 'cloading': {
+                frm = await clickgo.form.create('control/loading/loading', undefined, {
+                    'path': this.filename
+                });
+                break;
+            }
+            case 'cicon': {
+                frm = await clickgo.form.create('control/icon/icon', undefined, {
+                    'path': this.filename
+                });
+                break;
+            }
+            case 'cmap': {
+                frm = await clickgo.form.create(map_1.default);
+                break;
+            }
+            case 'cmarquee': {
+                frm = await clickgo.form.create(marquee_1.default);
+                break;
+            }
+            case 'cmenu': {
+                frm = await clickgo.form.create(menu_1.default);
+                break;
+            }
+            case 'cmonaco': {
+                frm = await clickgo.form.create(monaco_1.default);
+                break;
+            }
+            case 'cnav': {
+                frm = await clickgo.form.create(nav_1.default);
+                break;
+            }
+            case 'cpage': {
+                frm = await clickgo.form.create(page_1.default);
+                break;
+            }
+            case 'cpanel': {
+                frm = await clickgo.form.create(panel_1.default);
+                break;
+            }
+            case 'cflow': {
+                frm = await clickgo.form.create(flow_1.default);
+                break;
+            }
+            case 'cproperty': {
+                frm = await clickgo.form.create(property_1.default);
+                break;
+            }
+            case 'cqrcode': {
+                frm = await clickgo.form.create(qrcode_1.default);
+                break;
+            }
+            case 'cradio': {
+                frm = await clickgo.form.create(radio_1.default);
+                break;
+            }
+            case 'cswitch': {
+                frm = await clickgo.form.create(switch_1.default);
+                break;
+            }
+            case 'cscroll': {
+                frm = await clickgo.form.create(scroll_1.default);
+                break;
+            }
+            case 'cselect': {
+                frm = await clickgo.form.create(select_1.default);
+                break;
+            }
+            case 'cuploader': {
+                frm = await clickgo.form.create(uploader_1.default);
+                break;
+            }
+            case 'csvg': {
+                frm = await clickgo.form.create(svg_1.default);
+                break;
+            }
+            case 'ctab': {
+                frm = await clickgo.form.create(tab_1.default);
+                break;
+            }
+            case 'ctable': {
+                frm = await clickgo.form.create(table_1.default);
+                break;
+            }
+            case 'ctext': {
+                frm = await clickgo.form.create(text_1.default);
+                break;
+            }
+            case 'ctimeline': {
+                frm = await clickgo.form.create(timeline_1.default);
+                break;
+            }
+            case 'cjodit': {
+                frm = await clickgo.form.create(jodit_1.default);
+                break;
+            }
+            case 'ctuieditor': {
+                frm = await clickgo.form.create(tuieditor_1.default);
+                break;
+            }
+            case 'ctuiviewer': {
+                frm = await clickgo.form.create(tuiviewer_1.default);
+                break;
+            }
+            case 'carteditor': {
+                frm = await clickgo.form.create(arteditor_1.default);
+                break;
+            }
+            case 'cdelete': {
+                frm = await clickgo.form.create(delete_1.default);
+                break;
+            }
+            case 'cpdf': {
+                frm = await clickgo.form.create(pdf_1.default);
+                break;
+            }
+            case 'cweb': {
+                frm = await clickgo.form.create(web_1.default);
+                break;
+            }
+            case 'ctplink': {
+                frm = await clickgo.form.create(tplink_1.default);
+                break;
+            }
+            case 'cnovnc': {
+                frm = await clickgo.form.create(novnc_1.default);
+                break;
+            }
+            case 'ccaptcha': {
+                frm = await clickgo.form.create(captcha_1.default);
+                break;
+            }
+            case 'eform': {
+                frm = await clickgo.form.create(form_2.default);
+                break;
+            }
+            case 'eother': {
+                frm = await clickgo.form.create(other_1.default);
+                break;
+            }
+            case 'escreen': {
+                frm = await clickgo.form.create(screen_1.default);
+                break;
+            }
+            case 'etask': {
+                frm = await clickgo.form.create(task_1.default);
+                break;
+            }
+            case 'aform': {
+                frm = await clickgo.form.create(aform_1.default);
+                break;
+            }
+            case 'acontrol': {
+                frm = await clickgo.form.create(acontrol_1.default);
+                break;
+            }
+            case 'mcore': {
+                frm = await clickgo.form.create(core_1.default);
+                break;
+            }
+            case 'mdom': {
+                frm = await clickgo.form.create(dom_1.default);
+                break;
+            }
+            case 'mform': {
+                frm = await clickgo.form.create(form_3.default);
+                break;
+            }
+            case 'mfs': {
+                frm = await clickgo.form.create(fs_1.default);
+                break;
+            }
+            case 'mnative': {
+                frm = await clickgo.form.create(native_1.default);
+                break;
+            }
+            case 'mstorage': {
+                frm = await clickgo.form.create(storage_1.default);
+                break;
+            }
+            case 'msystem': {
+                frm = await clickgo.form.create(system_1.default);
+                break;
+            }
+            case 'mtask': {
+                frm = await clickgo.form.create(task_2.default);
+                break;
+            }
+            case 'mtheme': {
+                frm = await clickgo.form.create(theme_1.default);
+                break;
+            }
+            case 'mtool': {
+                frm = await clickgo.form.create(tool_1.default);
+                break;
+            }
+            case 'mzip': {
+                frm = await clickgo.form.create(zip_1.default);
+                break;
+            }
+            default: {
+                frm = await clickgo.form.create(backpanel_1.default, data);
+            }
+        }
+        this.loading = false;
+        frm.show();
     }
     onMounted(data) {
         this.adata = data;

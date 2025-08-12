@@ -49,27 +49,22 @@ class default_1 extends clickgo.control.AbstractControl {
         this.grid = null;
     }
     get directionComp() {
-        var _a, _b, _c;
-        return (_c = (_a = this.props.direction) !== null && _a !== void 0 ? _a : (_b = this.grid) === null || _b === void 0 ? void 0 : _b.direction) !== null && _c !== void 0 ? _c : 'h';
+        return this.props.direction ?? this.grid?.direction ?? 'h';
     }
     get gutterComp() {
-        var _a, _b;
         if (this.propNumber('gutter')) {
             return this.propNumber('gutter');
         }
-        return this.propNumber('gutter') ? this.propNumber('gutter') : ((_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.propNumber('itemGutter')) !== null && _b !== void 0 ? _b : 0);
+        return this.propNumber('gutter') ? this.propNumber('gutter') : (this.grid?.propNumber('itemGutter') ?? 0);
     }
     get alignHComp2() {
-        var _a, _b;
-        return (_a = this.alignHComp) !== null && _a !== void 0 ? _a : (_b = this.grid) === null || _b === void 0 ? void 0 : _b.alignHComp;
+        return this.alignHComp ?? this.grid?.alignHComp;
     }
     get alignVComp2() {
-        var _a, _b;
-        return (_a = this.alignVComp) !== null && _a !== void 0 ? _a : (_b = this.grid) === null || _b === void 0 ? void 0 : _b.alignVComp;
+        return this.alignVComp ?? this.grid?.alignVComp;
     }
     get spanNum() {
-        var _a, _b;
-        const size = (_b = (_a = this.grid) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 's';
+        const size = this.grid?.size ?? 's';
         if (size === 's') {
             return 1;
         }

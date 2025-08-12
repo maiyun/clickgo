@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -132,34 +123,24 @@ class default_1 extends clickgo.form.AbstractForm {
         msg = msg.replace(/(data:image\/).+?"/g, '$1..."');
         clickgo.form.dialog(msg).catch((e) => { throw e; });
     }
-    run() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const tid = yield clickgo.task.run('/clickgo/app/demo/');
-            yield clickgo.form.dialog('Task ID: ' + tid.toString());
-        });
+    async run() {
+        const tid = await clickgo.task.run('/clickgo/app/demo/');
+        await clickgo.form.dialog('Task ID: ' + tid.toString());
     }
-    checkPermission(val) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rtn = yield clickgo.task.checkPermission(val, true);
-            yield clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
-        });
+    async checkPermission(val) {
+        const rtn = await clickgo.task.checkPermission(val, true);
+        await clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
     }
-    end() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Result: ' + (clickgo.task.end(parseInt(this.tid)) ? 'true' : 'false'));
-        });
+    async end() {
+        await clickgo.form.dialog('Result: ' + (clickgo.task.end(parseInt(this.tid)) ? 'true' : 'false'));
     }
-    loadLocale(lang, path) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const r = yield clickgo.task.loadLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
-            yield clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
-        });
+    async loadLocale(lang, path) {
+        const r = await clickgo.task.loadLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
+        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
     }
-    setLocale(lang, path) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const r = yield clickgo.task.setLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
-            yield clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
-        });
+    async setLocale(lang, path) {
+        const r = await clickgo.task.setLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
+        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
     }
     clearLocale() {
         clickgo.task.clearLocale();

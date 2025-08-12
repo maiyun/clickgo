@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -127,65 +118,62 @@ class default_1 extends clickgo.control.AbstractControl {
             'tuieditor': undefined
         };
     }
-    execCmd(ac) {
-        return __awaiter(this, void 0, void 0, function* () {
-            switch (ac) {
-                case 'copy': {
-                    clickgo.tool.execCommand(ac);
-                    break;
-                }
-                case 'cut': {
-                    clickgo.tool.execCommand('copy');
-                    this.access.tuieditor.insertText('');
-                    break;
-                }
-                case 'paste': {
-                    try {
-                        const ls = yield navigator.clipboard.read();
-                        for (const item of ls) {
-                            if (!item.types.length) {
-                                continue;
-                            }
-                            if (item.types.length === 1) {
-                                if (item.types[0].includes('text')) {
-                                    const data = yield item.getType(item.types[0]);
-                                    this.access.tuieditor.insertText(yield data.text());
-                                    continue;
-                                }
-                                const e = {
-                                    'detail': {
-                                        'file': yield item.getType(item.types[0]),
-                                        callback: (url, opt) => {
-                                            var _a, _b;
-                                            if (opt && ((_a = opt.width) !== null && _a !== void 0 ? _a : opt.height)) {
-                                                if (this.access.tuieditor.isMarkdownMode()) {
-                                                    this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
-                                                    return;
-                                                }
-                                            }
-                                            this.access.tuieditor.exec('addImage', {
-                                                'imageUrl': url,
-                                                'altText': (_b = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _b !== void 0 ? _b : ''
-                                            });
-                                        }
-                                    }
-                                };
-                                this.emit('imgupload', e);
-                                continue;
-                            }
-                            const blob = yield item.getType(item.types[1]);
-                            let html = yield blob.text();
-                            html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
-                            this.access.tuieditor.insertText(html);
-                        }
-                    }
-                    catch (_a) {
-                        break;
-                    }
-                    break;
-                }
+    async execCmd(ac) {
+        switch (ac) {
+            case 'copy': {
+                clickgo.tool.execCommand(ac);
+                break;
             }
-        });
+            case 'cut': {
+                clickgo.tool.execCommand('copy');
+                this.access.tuieditor.insertText('');
+                break;
+            }
+            case 'paste': {
+                try {
+                    const ls = await navigator.clipboard.read();
+                    for (const item of ls) {
+                        if (!item.types.length) {
+                            continue;
+                        }
+                        if (item.types.length === 1) {
+                            if (item.types[0].includes('text')) {
+                                const data = await item.getType(item.types[0]);
+                                this.access.tuieditor.insertText(await data.text());
+                                continue;
+                            }
+                            const e = {
+                                'detail': {
+                                    'file': await item.getType(item.types[0]),
+                                    callback: (url, opt) => {
+                                        if (opt && (opt.width ?? opt.height)) {
+                                            if (this.access.tuieditor.isMarkdownMode()) {
+                                                this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                                                return;
+                                            }
+                                        }
+                                        this.access.tuieditor.exec('addImage', {
+                                            'imageUrl': url,
+                                            'altText': opt?.alt ?? ''
+                                        });
+                                    }
+                                }
+                            };
+                            this.emit('imgupload', e);
+                            continue;
+                        }
+                        const blob = await item.getType(item.types[1]);
+                        let html = await blob.text();
+                        html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
+                        this.access.tuieditor.insertText(html);
+                    }
+                }
+                catch {
+                    break;
+                }
+                break;
+            }
+        }
     }
     getLanguage() {
         switch (this.locale) {
@@ -198,204 +186,200 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return this.locale;
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const tuieditor = yield clickgo.core.getModule('tuieditor');
-            if (!tuieditor) {
-                this.isLoading = false;
-                this.notInit = true;
-                return;
-            }
-            this.access.tuieditor = new tuieditor({
-                'el': this.refs.content,
-                'height': 'initial',
-                'previewStyle': 'vertical',
-                'initialEditType': this.propBoolean('visual') ? 'wysiwyg' : 'markdown',
-                'hideModeSwitch': true,
-                'theme': this.props.theme,
-                'initialValue': this.props.modelValue,
-                'language': this.getLanguage(),
-                'autofocus': false,
-                'usageStatistics': false,
-                'hooks': {
-                    'addImageBlobHook': (file) => {
-                        const e = {
-                            'detail': {
-                                'file': file,
-                                callback: (url, opt) => {
-                                    var _a, _b;
-                                    if (opt && ((_a = opt.width) !== null && _a !== void 0 ? _a : opt.height)) {
-                                        if (this.access.tuieditor.isMarkdownMode()) {
-                                            this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
-                                            return;
-                                        }
+    async onMounted() {
+        const tuieditor = await clickgo.core.getModule('tuieditor');
+        if (!tuieditor) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
+        this.access.tuieditor = new tuieditor({
+            'el': this.refs.content,
+            'height': 'initial',
+            'previewStyle': 'vertical',
+            'initialEditType': this.propBoolean('visual') ? 'wysiwyg' : 'markdown',
+            'hideModeSwitch': true,
+            'theme': this.props.theme,
+            'initialValue': this.props.modelValue,
+            'language': this.getLanguage(),
+            'autofocus': false,
+            'usageStatistics': false,
+            'hooks': {
+                'addImageBlobHook': (file) => {
+                    const e = {
+                        'detail': {
+                            'file': file,
+                            callback: (url, opt) => {
+                                if (opt && (opt.width ?? opt.height)) {
+                                    if (this.access.tuieditor.isMarkdownMode()) {
+                                        this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                                        return;
                                     }
-                                    this.access.tuieditor.exec('addImage', {
-                                        'imageUrl': url,
-                                        'altText': (_b = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _b !== void 0 ? _b : ''
-                                    });
                                 }
+                                this.access.tuieditor.exec('addImage', {
+                                    'imageUrl': url,
+                                    'altText': opt?.alt ?? ''
+                                });
                             }
-                        };
-                        this.emit('imgupload', e);
-                    }
-                },
-                'events': {
-                    change: () => {
-                        this.emit('update:modelValue', this.access.tuieditor.getMarkdown());
-                        this.emit('html', this.access.tuieditor.getHTML());
-                    }
-                },
-                'toolbarItems': [
-                    ['heading', 'bold', 'italic', 'strike'],
-                    ['hr', 'quote'],
-                    ['ul', 'ol', 'task', 'indent', 'outdent'],
-                    ['table', 'link'],
-                    ['code', 'codeblock'],
-                    ['scrollSync'],
-                ]
-            });
-            const cgimage = clickgo.dom.createElement('button');
-            cgimage.className = 'image toastui-editor-toolbar-icons';
-            cgimage.style.margin = '0';
-            cgimage.addEventListener('click', () => {
-                this.emit('imgselect', (url, opt) => {
-                    var _a, _b;
-                    if (opt && ((_a = opt.width) !== null && _a !== void 0 ? _a : opt.height)) {
-                        if (this.access.tuieditor.isMarkdownMode()) {
-                            this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
-                            return;
                         }
+                    };
+                    this.emit('imgupload', e);
+                }
+            },
+            'events': {
+                change: () => {
+                    this.emit('update:modelValue', this.access.tuieditor.getMarkdown());
+                    this.emit('html', this.access.tuieditor.getHTML());
+                }
+            },
+            'toolbarItems': [
+                ['heading', 'bold', 'italic', 'strike'],
+                ['hr', 'quote'],
+                ['ul', 'ol', 'task', 'indent', 'outdent'],
+                ['table', 'link'],
+                ['code', 'codeblock'],
+                ['scrollSync'],
+            ]
+        });
+        const cgimage = clickgo.dom.createElement('button');
+        cgimage.className = 'image toastui-editor-toolbar-icons';
+        cgimage.style.margin = '0';
+        cgimage.addEventListener('click', () => {
+            this.emit('imgselect', (url, opt) => {
+                if (opt && (opt.width ?? opt.height)) {
+                    if (this.access.tuieditor.isMarkdownMode()) {
+                        this.access.tuieditor.replaceSelection(`<div${opt.align ? ' align="center"' : ''}><img src="${url}"${opt.alt ? ` alt="${opt.alt}"` : ''}${opt.width ? ` width="${opt.width}"` : ''}${opt.height ? ` height="${opt.height}"` : ''}></div>`);
+                        return;
                     }
-                    this.access.tuieditor.exec('addImage', {
-                        'imageUrl': url,
-                        'altText': (_b = opt === null || opt === void 0 ? void 0 : opt.alt) !== null && _b !== void 0 ? _b : ''
-                    });
+                }
+                this.access.tuieditor.exec('addImage', {
+                    'imageUrl': url,
+                    'altText': opt?.alt ?? ''
                 });
             });
-            this.access.tuieditor.insertToolbarItem({
-                'groupIndex': 3,
-                'itemIndex': 1
-            }, {
-                'el': cgimage,
-                'tooltip': this.access.tuieditor.i18n.get('Insert image')
-            });
-            this.element.addEventListener('contextmenu', (e) => {
+        });
+        this.access.tuieditor.insertToolbarItem({
+            'groupIndex': 3,
+            'itemIndex': 1
+        }, {
+            'el': cgimage,
+            'tooltip': this.access.tuieditor.i18n.get('Insert image')
+        });
+        this.element.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            if (clickgo.dom.hasTouchButMouse(e)) {
+                return;
+            }
+            const target = e.target;
+            if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
+                return;
+            }
+            if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
+                return;
+            }
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
+        this.element.addEventListener('paste', (e) => {
+            if (!e.clipboardData) {
+                return;
+            }
+            if (this.propBoolean('visual')) {
+                return;
+            }
+            for (const item of e.clipboardData.items) {
+                if (item.kind === 'file') {
+                    continue;
+                }
                 e.preventDefault();
-                if (clickgo.dom.hasTouchButMouse(e)) {
-                    return;
-                }
-                const target = e.target;
-                if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
-                    return;
-                }
-                if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
-                    return;
-                }
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-            this.element.addEventListener('paste', (e) => {
-                if (!e.clipboardData) {
-                    return;
-                }
-                if (this.propBoolean('visual')) {
-                    return;
-                }
-                for (const item of e.clipboardData.items) {
-                    if (item.kind === 'file') {
-                        continue;
-                    }
-                    e.preventDefault();
-                    item.getAsString((html) => {
-                        html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
-                        this.access.tuieditor.insertText(html);
-                    });
-                }
-            });
-            const down = (e) => {
-                if (clickgo.dom.hasTouchButMouse(e)) {
-                    return;
-                }
-                if (this.element.dataset.cgPopOpen !== undefined) {
-                    clickgo.form.hidePop(this.element);
-                }
-                const target = e.target;
-                if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
-                    return;
-                }
-                if (e instanceof TouchEvent) {
-                    clickgo.dom.bindLong(e, () => {
-                        clickgo.form.showPop(this.element, this.refs.pop, e);
-                    });
-                }
-            };
-            this.element.addEventListener('mousedown', down);
-            this.element.addEventListener('touchstart', down, {
-                'passive': true
-            });
-            this.watch('locale', () => {
-                if (!this.access.tuieditor) {
-                    return;
-                }
-            });
-            this.watch('visual', () => {
-                if (!this.access.tuieditor) {
-                    return;
-                }
-                this.access.tuieditor.changeMode(this.propBoolean('visual') ? 'wysiwyg' : 'markdown');
-            });
-            this.watch('theme', () => {
-                if (!this.access.tuieditor) {
-                    return;
-                }
-                const el = this.refs.content.children[0];
-                if (this.props.theme === 'dark') {
-                    if (!el.classList.contains('toastui-editor-dark')) {
-                        el.classList.add('toastui-editor-dark');
-                    }
-                }
-                else {
-                    if (el.classList.contains('toastui-editor-dark')) {
-                        el.classList.remove('toastui-editor-dark');
-                    }
-                }
-            }, {
-                'immediate': true
-            });
-            this.watch('modelValue', (v) => {
-                if (!this.access.tuieditor) {
-                    return;
-                }
-                if (v === this.access.tuieditor.getMarkdown()) {
-                    return;
-                }
-                this.access.tuieditor.setMarkdown(v);
-            });
-            clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
-                if (!this.access.tuieditor) {
-                    return;
-                }
-                const pm = this.refs.content.querySelector('.ProseMirror');
-                if (!pm) {
-                    return;
-                }
-                switch (n) {
-                    case 'font-size': {
-                        pm.style.fontSize = v;
-                        break;
-                    }
-                    case 'font-family': {
-                        pm.style.fontFamily = v;
-                        break;
-                    }
-                }
-            }, true);
-            this.isLoading = false;
-            this.emit('init', this.access.tuieditor);
-            if (this.props.modelValue) {
-                this.emit('html', this.access.tuieditor.getHTML());
+                item.getAsString((html) => {
+                    html = html.replace(/<img.+?src=['"](.+?)['"].+?>/gi, '\n\n![image]($1)\n\n').replace(/<\/img>/ig, '').replace(/<[^>]*>/g, '');
+                    this.access.tuieditor.insertText(html);
+                });
             }
         });
+        const down = (e) => {
+            if (clickgo.dom.hasTouchButMouse(e)) {
+                return;
+            }
+            if (this.element.dataset.cgPopOpen !== undefined) {
+                clickgo.form.hidePop(this.element);
+            }
+            const target = e.target;
+            if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
+                return;
+            }
+            if (e instanceof TouchEvent) {
+                clickgo.dom.bindLong(e, () => {
+                    clickgo.form.showPop(this.element, this.refs.pop, e);
+                });
+            }
+        };
+        this.element.addEventListener('mousedown', down);
+        this.element.addEventListener('touchstart', down, {
+            'passive': true
+        });
+        this.watch('locale', () => {
+            if (!this.access.tuieditor) {
+                return;
+            }
+        });
+        this.watch('visual', () => {
+            if (!this.access.tuieditor) {
+                return;
+            }
+            this.access.tuieditor.changeMode(this.propBoolean('visual') ? 'wysiwyg' : 'markdown');
+        });
+        this.watch('theme', () => {
+            if (!this.access.tuieditor) {
+                return;
+            }
+            const el = this.refs.content.children[0];
+            if (this.props.theme === 'dark') {
+                if (!el.classList.contains('toastui-editor-dark')) {
+                    el.classList.add('toastui-editor-dark');
+                }
+            }
+            else {
+                if (el.classList.contains('toastui-editor-dark')) {
+                    el.classList.remove('toastui-editor-dark');
+                }
+            }
+        }, {
+            'immediate': true
+        });
+        this.watch('modelValue', (v) => {
+            if (!this.access.tuieditor) {
+                return;
+            }
+            if (v === this.access.tuieditor.getMarkdown()) {
+                return;
+            }
+            this.access.tuieditor.setMarkdown(v);
+        });
+        clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
+            if (!this.access.tuieditor) {
+                return;
+            }
+            const pm = this.refs.content.querySelector('.ProseMirror');
+            if (!pm) {
+                return;
+            }
+            switch (n) {
+                case 'font-size': {
+                    pm.style.fontSize = v;
+                    break;
+                }
+                case 'font-family': {
+                    pm.style.fontFamily = v;
+                    break;
+                }
+            }
+        }, true);
+        this.isLoading = false;
+        this.emit('init', this.access.tuieditor);
+        if (this.props.modelValue) {
+            this.emit('html', this.access.tuieditor.getHTML());
+        }
     }
 }
 exports.default = default_1;

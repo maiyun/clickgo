@@ -1,15 +1,5 @@
-<form title="Dialog" width="450" height="550" min-width="400" min-height="400" padding="10">
+<form title="Dialog" width="550" height="700" min-width="400" min-height="400" padding="10">
     <layout direction="v" gutter="10" style="flex: 1; width: 0;">
-        <layout align-h="center" align-v="center" style="flex: 1;">
-            <form title="Title" :min="false" :max="false" :resize="false" width="auto" height="auto" direction="v">
-                <dialog @select="btn = $event" :buttons="buttons" :direction="message === 'lines' ? 'v' : 'h'" :width="width ? 300 : undefined" :height="width ? 300 : undefined" :padding="padding">
-                    <template v-if="message === 'message'">Message</template>
-                    <template v-else-if="message === 'buttons'"><button style="flex: 1;">Button1</button><button style="margin-left: 10px; flex: 1;">Button2</button></template>
-                    <template v-else-if="message === 'lines'"><block v-for="i of 5">Line {{i}}.</block></template>
-                    <template v-else>longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong</template>
-                </dialog>
-            </form>
-        </layout>
         <layout gutter="10">
             <button style="flex: 1;" @click="buttons = ['A', 'B', 'C']">['A', 'B', 'C']</button>
             <button style="flex: 1;" @click="buttons = ['Cancel', 'OK']">['Cancel', 'OK']</button>
@@ -23,10 +13,34 @@
         <layout gutter="10">
             <button style="flex: 1;" @click="padding = !padding">padding</button>
             <button style="flex: 1;" @click="message = 'lines'">Multiple lines</button>
-            <button @click="width = !width">{{width ? '' : '!'}}w/h300</button>
+            <button style="flex: 1;" @click="message = 'many'">Too many lines</button>
+        </layout>
+        <layout gutter="10">
+            <button style="flex: 1;" @click="fill = !fill">{{fill ? '' : '!'}}fill</button>
+            <button style="flex: 1;" @click="width = !width" :disabled="fill">Dialog {{width ? '' : '!'}}w/h300</button>
+
+            <button style="flex: 1;" @click="fwidth = !fwidth" :disabled="fill">Form {{fwidth ? '' : '!'}}w/h400</button>
         </layout>
         <layout gutter="10" align-v="center">
             <label style="flex: 1;">You click: {{btn}}.</label>
+        </layout>
+        <layout align-h="center" align-v="center" style="flex: 1;">
+            <form title="Title" :min="false" :max="false" :resize="false" :width="fwidth ? 400 : 'auto'" :height="fwidth ? 400 : 'auto'" direction="v">
+                <dialog @select="btn = $event" :buttons="buttons" :direction="message === 'lines' || message === 'many' ? 'v' : 'h'" :width="fill ? undefined : (width ? 300 : undefined)" :height="fill ? 'fill' : (width ? 300 : undefined)" :padding="padding">
+
+                    <template v-if="message === 'message'">Message</template>
+                    <template v-else-if="message === 'buttons'"><button style="flex: 1;">Button1</button><button style="margin-left: 10px; flex: 1;">Button2</button></template>
+                    <template v-else-if="message === 'lines'"><block v-for="i of 5">Line {{i}}.</block></template>
+                    <template v-else-if="message === 'many'">
+                        <flow direction="v">
+                            <block v-for="i of 100">
+                                Line {{i}}.
+                            </block>
+                        </flow>
+                    </template>
+                    <template v-else>longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong</template>
+                </dialog>
+            </form>
         </layout>
     </layout>
 </form>

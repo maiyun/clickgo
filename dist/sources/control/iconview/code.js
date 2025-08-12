@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -135,7 +126,6 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get getIconData() {
         return (path) => {
-            var _a;
             const pre = path.slice(0, 6).toLowerCase();
             if (pre === 'file:/') {
                 return path;
@@ -143,7 +133,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
                 return path;
             }
-            return (_a = this.iconsData[path]) !== null && _a !== void 0 ? _a : '';
+            return this.iconsData[path] ?? '';
         };
     }
     arrowUp() {
@@ -211,7 +201,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.select((row + 1) * this.rowCount);
     }
     checkValue() {
-        var _a;
         if (!this.props.data.length) {
             return;
         }
@@ -226,7 +215,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.valueData[i] > dataMaxIndex) {
                 change = true;
                 if (this.shiftStart === this.valueData[i]) {
-                    this.shiftStart = i > 0 ? ((_a = this.valueData[0]) !== null && _a !== void 0 ? _a : 0) : 0;
+                    this.shiftStart = i > 0 ? (this.valueData[0] ?? 0) : 0;
                 }
                 this.valueData.splice(i, 1);
                 --i;
@@ -475,7 +464,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     drop(e, dindex, index) {
-        var _a, _b, _c, _d;
         if (typeof e.detail.value !== 'object') {
             return;
         }
@@ -485,9 +473,9 @@ class default_1 extends clickgo.control.AbstractControl {
         const list = [];
         for (const item of e.detail.value.list) {
             list.push({
-                'index': (_a = item.index) !== null && _a !== void 0 ? _a : 0,
-                'type': (_b = item.type) !== null && _b !== void 0 ? _b : -1,
-                'path': (_c = item.path) !== null && _c !== void 0 ? _c : ''
+                'index': item.index ?? 0,
+                'type': item.type ?? -1,
+                'path': item.path ?? ''
             });
         }
         const tov = dindex * this.rowCount + index;
@@ -498,7 +486,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'to': {
                     'index': tov,
                     'type': this.props.data[tov].type,
-                    'path': (_d = this.props.data[tov].path) !== null && _d !== void 0 ? _d : ''
+                    'path': this.props.data[tov].path ?? ''
                 }
             }
         };
@@ -662,59 +650,57 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isSelectStart = false;
         this.emit('afterselect');
     }
-    refreshIconsData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const needIcon = [];
-            for (const item of this.props.data) {
-                if (!item.icon) {
-                    continue;
-                }
-                const pre = item.icon.slice(0, 6).toLowerCase();
-                if (pre === 'file:/') {
-                    continue;
-                }
-                if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
-                    continue;
-                }
-                needIcon.push(item.icon);
+    async refreshIconsData() {
+        const needIcon = [];
+        for (const item of this.props.data) {
+            if (!item.icon) {
+                continue;
             }
-            for (const path in this.iconsData) {
-                if (needIcon.includes(path)) {
-                    continue;
-                }
-                delete this.iconsData[path];
+            const pre = item.icon.slice(0, 6).toLowerCase();
+            if (pre === 'file:/') {
+                continue;
             }
-            for (const path of needIcon) {
-                if (this.iconsData[path] !== undefined) {
-                    continue;
-                }
+            if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
+                continue;
+            }
+            needIcon.push(item.icon);
+        }
+        for (const path in this.iconsData) {
+            if (needIcon.includes(path)) {
+                continue;
+            }
+            delete this.iconsData[path];
+        }
+        for (const path of needIcon) {
+            if (this.iconsData[path] !== undefined) {
+                continue;
+            }
+            this.iconsData[path] = '';
+        }
+        const count = ++this.dataCount;
+        for (const path in this.iconsData) {
+            if (this.iconsData[path]) {
+                continue;
+            }
+            const apath = clickgo.tool.urlResolve('/package' + this.path + '/', path);
+            const blob = await clickgo.fs.getContent(apath);
+            if (count !== this.dataCount) {
+                return;
+            }
+            if (!blob || typeof blob === 'string') {
                 this.iconsData[path] = '';
+                continue;
             }
-            const count = ++this.dataCount;
-            for (const path in this.iconsData) {
-                if (this.iconsData[path]) {
-                    continue;
-                }
-                const apath = clickgo.tool.urlResolve('/package' + this.path + '/', path);
-                const blob = yield clickgo.fs.getContent(apath);
-                if (count !== this.dataCount) {
-                    return;
-                }
-                if (!blob || typeof blob === 'string') {
-                    this.iconsData[path] = '';
-                    continue;
-                }
-                const t = yield clickgo.tool.blob2DataUrl(blob);
-                if (count !== this.dataCount) {
-                    return;
-                }
-                if (t) {
-                    this.iconsData[path] = t;
-                    continue;
-                }
-                this.iconsData[path] = '';
+            const t = await clickgo.tool.blob2DataUrl(blob);
+            if (count !== this.dataCount) {
+                return;
             }
-        });
+            if (t) {
+                this.iconsData[path] = t;
+                continue;
+            }
+            this.iconsData[path] = '';
+        }
     }
     onMounted() {
         this.watch('must', () => {
@@ -767,10 +753,10 @@ class default_1 extends clickgo.control.AbstractControl {
             };
             cb();
         });
-        this.watch('data', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('data', async () => {
             this.checkValue();
-            yield this.refreshIconsData();
-        }), {
+            await this.refreshIconsData();
+        }, {
             'deep': true
         });
         this.watch('modelValue', () => {

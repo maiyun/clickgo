@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -143,68 +134,66 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.access.instance.show();
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.props.factory === 'tc') {
-                const tcc = yield clickgo.core.getModule('tcc');
-                if (!tcc) {
-                    this.isLoading = false;
-                    this.notInit = true;
-                    return;
-                }
-                this.access.lib = tcc;
-                this.refs.content.innerHTML = this.l('click');
-                try {
-                    const captcha = new tcc(this.props.akey, (res) => {
-                        if (res.ret === 0 && !res.errorCode) {
-                            this.state = 'successful';
-                            this.refs.content.innerHTML = this.l('successful');
-                        }
-                        else {
-                            this.state = 'failed';
-                            this.refs.content.innerHTML = this.l('failed');
-                        }
-                        const event = {
-                            'detail': {
-                                'result': (res.ret === 0 && !res.errorCode) ? 1 : 0,
-                                'token': res.ticket + '|' + res.randstr,
-                            },
-                        };
-                        this.emit('result', event);
-                    }, {
-                        'needFeedBack': false,
-                    });
-                    this.access.instance = captcha;
-                }
-                catch (_a) {
-                    return;
-                }
-                this.isLoading = false;
-                return;
-            }
-            const cft = yield clickgo.core.getModule('cft');
-            if (!cft) {
+    async onMounted() {
+        if (this.props.factory === 'tc') {
+            const tcc = await clickgo.core.getModule('tcc');
+            if (!tcc) {
                 this.isLoading = false;
                 this.notInit = true;
                 return;
             }
-            this.access.lib = cft;
-            const captcha = cft.render(this.refs.content, {
-                'sitekey': this.props.akey,
-                'size': 'flexible',
-                callback: (token) => {
+            this.access.lib = tcc;
+            this.refs.content.innerHTML = this.l('click');
+            try {
+                const captcha = new tcc(this.props.akey, (res) => {
+                    if (res.ret === 0 && !res.errorCode) {
+                        this.state = 'successful';
+                        this.refs.content.innerHTML = this.l('successful');
+                    }
+                    else {
+                        this.state = 'failed';
+                        this.refs.content.innerHTML = this.l('failed');
+                    }
                     const event = {
                         'detail': {
-                            'result': 1,
-                            'token': token,
+                            'result': (res.ret === 0 && !res.errorCode) ? 1 : 0,
+                            'token': res.ticket + '|' + res.randstr,
                         },
                     };
                     this.emit('result', event);
-                },
-            });
-            this.access.instance = captcha;
+                }, {
+                    'needFeedBack': false,
+                });
+                this.access.instance = captcha;
+            }
+            catch {
+                return;
+            }
             this.isLoading = false;
+            return;
+        }
+        const cft = await clickgo.core.getModule('cft');
+        if (!cft) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
+        this.access.lib = cft;
+        const captcha = cft.render(this.refs.content, {
+            'sitekey': this.props.akey,
+            'size': 'flexible',
+            callback: (token) => {
+                const event = {
+                    'detail': {
+                        'result': 1,
+                        'token': token,
+                    },
+                };
+                this.emit('result', event);
+            },
         });
+        this.access.instance = captcha;
+        this.isLoading = false;
     }
     onUnmounted() {
         if (this.props.factory === 'tc') {

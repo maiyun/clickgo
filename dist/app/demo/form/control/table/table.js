@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -118,10 +109,8 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         return rtn;
     }
-    onGesture(dir) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('onGesture: ' + dir);
-        });
+    async onGesture(dir) {
+        await clickgo.form.dialog('onGesture: ' + dir);
     }
     onSelect(area) {
         this.selectionArea = area;
@@ -137,9 +126,8 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         if (this.sortinfo.index === (this.index ? 1 : 0)) {
             this.data.sort((a, b) => {
-                var _a, _b;
-                const aname = (_a = a.name) !== null && _a !== void 0 ? _a : 'name';
-                const bname = (_b = b.name) !== null && _b !== void 0 ? _b : 'name';
+                const aname = a.name ?? 'name';
+                const bname = b.name ?? 'name';
                 if (this.sortinfo.sort === 'asc') {
                     return aname.localeCompare(bname);
                 }
@@ -150,9 +138,8 @@ class default_1 extends clickgo.form.AbstractForm {
             return;
         }
         this.data.sort((a, b) => {
-            var _a, _b;
-            const atype = (_a = a.type) !== null && _a !== void 0 ? _a : 0;
-            const btype = (_b = b.type) !== null && _b !== void 0 ? _b : 0;
+            const atype = a.type ?? 0;
+            const btype = b.type ?? 0;
             if (this.sortinfo.sort === 'asc') {
                 return atype - btype;
             }
@@ -161,10 +148,8 @@ class default_1 extends clickgo.form.AbstractForm {
             }
         });
     }
-    showIndex() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Index is ' + this.val[0].toString() + '.');
-        });
+    async showIndex() {
+        await clickgo.form.dialog('Index is ' + this.val[0].toString() + '.');
     }
     scrollChange() {
         switch (this.scroll) {

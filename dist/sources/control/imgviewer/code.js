@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -58,51 +49,49 @@ class default_1 extends clickgo.control.AbstractControl {
         this.scaleX = 0;
         this.scaleY = 0;
     }
-    refreshImgData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const count = ++this.count;
-            const srcArray = this.propArray('src');
-            const src = srcArray[this.propNumber('modelValue')];
-            if (!src) {
-                return;
-            }
-            if (typeof src !== 'string' || src === '') {
-                this.imgData = '';
-                return;
-            }
-            const pre = src.slice(0, 6).toLowerCase();
-            if (pre === 'file:/') {
-                this.imgData = '';
-                return;
-            }
-            if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
-                this.imgData = src;
-                return;
-            }
-            let blob = null;
-            if (src.startsWith('/control/')) {
-                if (!this.rootControl) {
-                    return;
-                }
-                blob = this.rootControl.packageFiles[src.slice(8)];
-            }
-            else {
-                const path = clickgo.tool.urlResolve('/package' + this.path + '/', src);
-                blob = yield clickgo.fs.getContent(path);
-            }
-            if ((count !== this.count) || !blob || typeof blob === 'string') {
-                return;
-            }
-            const t = yield clickgo.tool.blob2DataUrl(blob);
-            if (count !== this.count) {
-                return;
-            }
-            if (t) {
-                this.imgData = t;
-                return;
-            }
+    async refreshImgData() {
+        const count = ++this.count;
+        const srcArray = this.propArray('src');
+        const src = srcArray[this.propNumber('modelValue')];
+        if (!src) {
+            return;
+        }
+        if (typeof src !== 'string' || src === '') {
             this.imgData = '';
-        });
+            return;
+        }
+        const pre = src.slice(0, 6).toLowerCase();
+        if (pre === 'file:/') {
+            this.imgData = '';
+            return;
+        }
+        if (pre === 'http:/' || pre === 'https:' || pre.startsWith('data:')) {
+            this.imgData = src;
+            return;
+        }
+        let blob = null;
+        if (src.startsWith('/control/')) {
+            if (!this.rootControl) {
+                return;
+            }
+            blob = this.rootControl.packageFiles[src.slice(8)];
+        }
+        else {
+            const path = clickgo.tool.urlResolve('/package' + this.path + '/', src);
+            blob = await clickgo.fs.getContent(path);
+        }
+        if ((count !== this.count) || !blob || typeof blob === 'string') {
+            return;
+        }
+        const t = await clickgo.tool.blob2DataUrl(blob);
+        if (count !== this.count) {
+            return;
+        }
+        if (t) {
+            this.imgData = t;
+            return;
+        }
+        this.imgData = '';
     }
     scale(oe) {
         clickgo.dom.bindScale(oe, (e, scale, cpos) => {
@@ -134,18 +123,18 @@ class default_1 extends clickgo.control.AbstractControl {
             this.width = this.element.offsetWidth;
             this.height = this.element.offsetHeight;
         }, true);
-        this.watch('modelValue', (n, o) => __awaiter(this, void 0, void 0, function* () {
+        this.watch('modelValue', async (n, o) => {
             if (n === o) {
                 return;
             }
             this.scaleX = 0;
             this.scaleY = 0;
             this.scaleS = 1;
-            yield this.refreshImgData();
-        }));
-        this.watch('src', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.refreshImgData();
-        }), {
+            await this.refreshImgData();
+        });
+        this.watch('src', async () => {
+            await this.refreshImgData();
+        }, {
             'deep': true,
             'immediate': true
         });

@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -56,14 +47,12 @@ class default_1 extends clickgo.form.AbstractForm {
         this.plain = false;
         this.map = null;
     }
-    go() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.loading = true;
-            yield this.refs.panel.go(test1_1.default, {
-                'type': 'show'
-            });
-            this.loading = false;
+    async go() {
+        this.loading = true;
+        await this.refs.panel.go(test1_1.default, {
+            'type': 'show'
         });
+        this.loading = false;
     }
     ssend() {
         this.refs.panel.send({
@@ -77,7 +66,7 @@ class default_1 extends clickgo.form.AbstractForm {
         };
     }
     onMounted() {
-        this.watch('selected', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('selected', async () => {
             switch (this.selected[0]) {
                 case 'none': {
                     if (this.map) {
@@ -91,7 +80,7 @@ class default_1 extends clickgo.form.AbstractForm {
                     }
                     else {
                         this.loading = true;
-                        yield this.refs.panel.go(test1_1.default);
+                        await this.refs.panel.go(test1_1.default);
                         this.loading = false;
                     }
                     break;
@@ -102,13 +91,13 @@ class default_1 extends clickgo.form.AbstractForm {
                     }
                     else {
                         this.loading = true;
-                        yield this.refs.panel.go('./test2');
+                        await this.refs.panel.go('./test2');
                         this.loading = false;
                     }
                     break;
                 }
             }
-        }), {
+        }, {
             'deep': true,
             'immediate': true
         });

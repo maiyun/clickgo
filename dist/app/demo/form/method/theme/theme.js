@@ -32,50 +32,37 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
-    get(name) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const f = yield clickgo.fs.getContent('/clickgo/theme/' + name + '.cgt');
-            if (!f) {
-                return null;
-            }
-            if (typeof f === 'string') {
-                return null;
-            }
-            const t = yield clickgo.theme.read(f);
-            if (!t) {
-                return null;
-            }
-            return t;
-        });
+    async get(name) {
+        const f = await clickgo.fs.getContent('/clickgo/theme/' + name + '.cgt');
+        if (!f) {
+            return null;
+        }
+        if (typeof f === 'string') {
+            return null;
+        }
+        const t = await clickgo.theme.read(f);
+        if (!t) {
+            return null;
+        }
+        return t;
     }
-    load() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const n = clickgo.form.notify({
-                'title': 'Info',
-                'content': 'Theme loading...',
-                'type': 'info'
-            });
-            const t = yield this.get('blue');
-            if (!t) {
-                clickgo.form.hideNotify(n);
-                return;
-            }
-            clickgo.form.hideNotify(n);
-            const r = yield clickgo.theme.load(t);
-            yield clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
+    async load() {
+        const n = clickgo.form.notify({
+            'title': 'Info',
+            'content': 'Theme loading...',
+            'type': 'info'
         });
+        const t = await this.get('blue');
+        if (!t) {
+            clickgo.form.hideNotify(n);
+            return;
+        }
+        clickgo.form.hideNotify(n);
+        const r = await clickgo.theme.load(t);
+        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
     }
     remove() {
         clickgo.theme.remove('blue').catch((e) => { throw e; });
@@ -83,22 +70,20 @@ class default_1 extends clickgo.form.AbstractForm {
     clear() {
         clickgo.theme.clear().catch((e) => { throw e; });
     }
-    setGlobal(name) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const n = clickgo.form.notify({
-                'title': 'Info',
-                'content': 'Theme loading...',
-                'type': 'info'
-            });
-            const t = yield this.get(name);
-            if (!t) {
-                clickgo.form.hideNotify(n);
-                return;
-            }
-            clickgo.form.hideNotify(n);
-            yield clickgo.theme.setGlobal(t);
-            yield clickgo.form.dialog('Done.');
+    async setGlobal(name) {
+        const n = clickgo.form.notify({
+            'title': 'Info',
+            'content': 'Theme loading...',
+            'type': 'info'
         });
+        const t = await this.get(name);
+        if (!t) {
+            clickgo.form.hideNotify(n);
+            return;
+        }
+        clickgo.form.hideNotify(n);
+        await clickgo.theme.setGlobal(t);
+        await clickgo.form.dialog('Done.');
     }
     clearGlobal() {
         clickgo.theme.clearGlobal();

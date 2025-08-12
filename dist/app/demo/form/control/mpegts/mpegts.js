@@ -60,7 +60,7 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     changed(e) {
         const found = this.list.find(item => item.value === e.detail.value[0]);
-        if (found && found.fval) {
+        if (found?.fval) {
             this.fsrc = found.fval;
             return;
         }

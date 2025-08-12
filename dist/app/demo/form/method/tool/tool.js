@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -80,15 +71,13 @@ class default_1 extends clickgo.form.AbstractForm {
         this.weight = '8761';
         this.qs = 'a=1&b=2&c=3';
     }
-    sleep() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.sleeping) {
-                return;
-            }
-            this.sleeping = true;
-            yield clickgo.tool.sleep(1000);
-            this.sleeping = false;
-        });
+    async sleep() {
+        if (this.sleeping) {
+            return;
+        }
+        this.sleeping = true;
+        await clickgo.tool.sleep(1000);
+        this.sleeping = false;
     }
     purify() {
         this.purifyTxt = clickgo.tool.purify(this.purifyTxt);
@@ -96,15 +85,13 @@ class default_1 extends clickgo.form.AbstractForm {
     rand() {
         clickgo.form.dialog(clickgo.tool.rand(parseInt(this.min), parseInt(this.max)).toString()).catch((e) => { throw e; });
     }
-    random() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog({
-                'direction': 'v',
-                'content': '<text modelValue="' + clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LUN, this.block) + '" readonly />',
-                'data': {
-                    'txt': 'Text\nLine 2.'
-                }
-            });
+    async random() {
+        await clickgo.form.dialog({
+            'direction': 'v',
+            'content': '<text modelValue="' + clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LUN, this.block) + '" readonly />',
+            'data': {
+                'txt': 'Text\nLine 2.'
+            }
         });
     }
     escapeHTML() {
@@ -119,25 +106,17 @@ class default_1 extends clickgo.form.AbstractForm {
     urlResolve() {
         clickgo.form.dialog(clickgo.tool.urlResolve(this.url1, this.url2)).catch((e) => { throw e; });
     }
-    formatSecond() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
-        });
+    async formatSecond() {
+        await clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
     }
-    weightFormat() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.tool.weightFormat(parseInt(this.weight) || 0));
-        });
+    async weightFormat() {
+        await clickgo.form.dialog(clickgo.tool.weightFormat(parseInt(this.weight) || 0));
     }
-    queryParse() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.tool.queryParse(this.qs)));
-        });
+    async queryParse() {
+        await clickgo.form.dialog(JSON.stringify(clickgo.tool.queryParse(this.qs)));
     }
-    queryStringify() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
-        });
+    async queryStringify() {
+        await clickgo.form.dialog(clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
     }
 }
 exports.default = default_1;

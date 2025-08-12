@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -177,7 +168,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     blur() {
-        var _a, _b, _c, _d, _e, _f;
         if (!this.propBoolean('multi')) {
             if (this.inputValue === this.listValue[0]) {
                 return;
@@ -191,8 +181,8 @@ class default_1 extends clickgo.control.AbstractControl {
                         value = item;
                     }
                     else {
-                        label = (_b = (_a = item.label) !== null && _a !== void 0 ? _a : item.value) !== null && _b !== void 0 ? _b : '';
-                        value = (_d = (_c = item.value) !== null && _c !== void 0 ? _c : item.label) !== null && _d !== void 0 ? _d : '';
+                        label = item.label ?? item.value ?? '';
+                        value = item.value ?? item.label ?? '';
                     }
                     if ((value.toLowerCase() === this.inputValue.toLowerCase()) ||
                         (label.toLowerCase() === this.inputValue.toLowerCase())) {
@@ -208,7 +198,7 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
                 for (const key in this.dataComp) {
                     const label = typeof this.dataComp[key] === 'string' ? this.dataComp[key] :
-                        ((_f = (_e = this.dataComp[key].label) !== null && _e !== void 0 ? _e : key) !== null && _f !== void 0 ? _f : '');
+                        (this.dataComp[key].label ?? key ?? '');
                     const value = key;
                     if ((value.toLowerCase() === this.inputValue.toLowerCase()) ||
                         (label.toLowerCase() === this.inputValue.toLowerCase())) {
@@ -225,49 +215,120 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.inputValue = '';
     }
-    keydown(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            if (e.key === 'Backspace') {
-                if (this.propBoolean('multi')) {
-                    if (e.target.value === '' && this.propBoolean('multi') && this.value.length > 0) {
-                        const index = this.value.length - 1;
-                        const value = this.value[index];
-                        const event = {
-                            'go': true,
-                            preventDefault: function () {
-                                this.go = false;
-                            },
+    async keydown(e) {
+        if (e.key === 'Backspace') {
+            if (this.propBoolean('multi')) {
+                if (e.target.value === '' && this.propBoolean('multi') && this.value.length > 0) {
+                    const index = this.value.length - 1;
+                    const value = this.value[index];
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': index,
+                            'value': value,
+                            'mode': 'backspace'
+                        }
+                    };
+                    this.emit('remove', event);
+                    if (event.go) {
+                        this.value.splice(-1);
+                        this.label.splice(-1);
+                        this.updateValue();
+                        this.emit('removed', {
                             'detail': {
                                 'index': index,
                                 'value': value,
                                 'mode': 'backspace'
                             }
-                        };
-                        this.emit('remove', event);
-                        if (event.go) {
-                            this.value.splice(-1);
-                            this.label.splice(-1);
-                            this.updateValue();
-                            this.emit('removed', {
-                                'detail': {
-                                    'index': index,
-                                    'value': value,
-                                    'mode': 'backspace'
-                                }
-                            });
-                        }
+                        });
                     }
                 }
+            }
+            return;
+        }
+        if ((e.key === 'Enter') && (this.element.dataset.cgPopOpen === undefined) && (this.propBoolean('multi'))) {
+            e.stopPropagation();
+            if (!this.inputValue) {
+                this.refs.gs.showPop();
                 return;
             }
-            if ((e.key === 'Enter') && (this.element.dataset.cgPopOpen === undefined) && (this.propBoolean('multi'))) {
-                e.stopPropagation();
-                if (!this.inputValue) {
-                    this.refs.gs.showPop();
+            if (this.value.includes(this.inputValue)) {
+                this.inputValue = '';
+                this.refs.gs.hidePop();
+                return;
+            }
+            const addIndex = this.value.length;
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'index': addIndex,
+                    'value': this.inputValue
+                }
+            };
+            this.emit('add', event);
+            if (event.go) {
+                this.value.push(this.inputValue);
+                this.label.push(this.listLabel[0] ?? this.inputValue);
+                this.updateValue({
+                    'clearInput': true,
+                    'clearList': true
+                });
+                this.emit('added', {
+                    'detail': {
+                        'index': addIndex,
+                        'value': this.inputValue
+                    }
+                });
+                if (this.propBoolean('search')) {
+                    await this._search();
+                }
+            }
+            return;
+        }
+        if ((e.key === 'ArrowDown' || e.key === 'Enter') && (this.element.dataset.cgPopOpen === undefined)) {
+            e.stopPropagation();
+            this.refs.gs.showPop();
+            return;
+        }
+        await this.textKeyDown(e);
+    }
+    async textKeyDown(e) {
+        e.stopPropagation();
+        if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.element.dataset.cgPopOpen !== undefined) {
+            e.preventDefault();
+            switch (e.key) {
+                case 'ArrowUp': {
+                    this.refs.list.arrowUp();
+                    this.inputValue = this.listValue[0] ?? '';
+                    this.searchValue = this.listValue[0] ?? '';
+                    break;
+                }
+                default: {
+                    this.refs.list.arrowDown();
+                    this.inputValue = this.listValue[0] ?? '';
+                    this.searchValue = this.listValue[0] ?? '';
+                }
+            }
+            await this.updateInputValue(this.propBoolean('editable') ? this.inputValue : this.searchValue);
+            return;
+        }
+        if (e.key !== 'Enter') {
+            return;
+        }
+        const value = this.searchValue || this.inputValue;
+        if (this.propBoolean('editable')) {
+            if (this.propBoolean('multi')) {
+                if (!value) {
+                    this.refs.gs.hidePop();
                     return;
                 }
-                if (this.value.includes(this.inputValue)) {
+                if (this.value.includes(value)) {
                     this.inputValue = '';
                     this.refs.gs.hidePop();
                     return;
@@ -280,13 +341,288 @@ class default_1 extends clickgo.control.AbstractControl {
                     },
                     'detail': {
                         'index': addIndex,
-                        'value': this.inputValue
+                        'value': value
                     }
                 };
                 this.emit('add', event);
                 if (event.go) {
-                    this.value.push(this.inputValue);
-                    this.label.push((_a = this.listLabel[0]) !== null && _a !== void 0 ? _a : this.inputValue);
+                    this.value.push(value);
+                    this.label.push(this.listLabel[0] ?? value);
+                    this.updateValue({
+                        'clearInput': true,
+                        'clearList': true
+                    });
+                    this.emit('added', {
+                        'detail': {
+                            'index': addIndex,
+                            'value': value
+                        }
+                    });
+                    this.refs.gs.hidePop();
+                    if (this.propBoolean('search')) {
+                        await this._search();
+                    }
+                }
+            }
+            else {
+                if (!value) {
+                    this.refs.gs.hidePop();
+                    return;
+                }
+                this.value = [value];
+                this.listValue = [value];
+                await this.nextTick();
+                this.label = [this.listLabel[0] ?? value];
+                this.updateValue();
+                this.refs.gs.hidePop();
+            }
+        }
+        else {
+            if (this.propBoolean('multi')) {
+                if (!value) {
+                    return;
+                }
+                if (this.value.includes(value)) {
+                    this.searchValue = '';
+                    this.refs.gs.hidePop();
+                    await this._search();
+                    return;
+                }
+                if (!this.listValue[0]) {
+                    this.searchValue = '';
+                    this.refs.gs.hidePop();
+                    await this._search();
+                    return;
+                }
+                const addIndex = this.value.length;
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'index': addIndex,
+                        'value': value
+                    }
+                };
+                this.emit('add', event);
+                if (event.go) {
+                    this.value.push(value);
+                    this.label.push(this.listLabel[0] ?? '');
+                    this.searchValue = '';
+                    this.updateValue();
+                    this.emit('added', {
+                        'detail': {
+                            'index': addIndex,
+                            'value': value
+                        }
+                    });
+                    this.refs.gs.hidePop();
+                    await this._search();
+                }
+            }
+            else {
+                if (!this.listValue[0]) {
+                    this.searchValue = '';
+                    this.refs.gs.hidePop();
+                    await this._search();
+                    return;
+                }
+                this.value = [this.listValue[0] ?? ''];
+                this.label = [this.listLabel[0] ?? ''];
+                this.searchValue = '';
+                this.updateValue();
+                this.refs.gs.hidePop();
+                await this._search();
+            }
+        }
+    }
+    async _search(success) {
+        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
+        if (this.propBoolean('remote')) {
+            const delay = this.propInt('remoteDelay');
+            ++this._needSearch;
+            await clickgo.tool.sleep(delay);
+            if (this._needSearch > 1) {
+                --this._needSearch;
+                return;
+            }
+            if (this._needSearch === 0) {
+                return;
+            }
+            --this._needSearch;
+            if (searchValue === '') {
+                this.searchData = [];
+                await this.nextTick();
+                await success?.();
+                return;
+            }
+            ++this.searching;
+            const event = {
+                'detail': {
+                    'value': searchValue,
+                    'callback': async (data) => {
+                        --this.searching;
+                        this.searchData = data ? clickgo.tool.clone(data) : [];
+                        await this.nextTick();
+                        await success?.();
+                    }
+                }
+            };
+            this.emit('remote', event);
+        }
+        else {
+            await this.nextTick();
+            if (this._needSearch > 1) {
+                --this._needSearch;
+                return;
+            }
+            --this._needSearch;
+            if (searchValue === '') {
+                this.searchData = [];
+                await this.nextTick();
+                await success?.();
+                return;
+            }
+            if (Array.isArray(this.props.data)) {
+                this.searchData = [];
+                for (const item of this.props.data) {
+                    const val = (typeof item === 'object' ? item.value ?? '' : item).toString().toLowerCase();
+                    const lab = (typeof item === 'object' ? item.label ?? '' : '').toLowerCase();
+                    let include = true;
+                    for (const char of searchValue) {
+                        const c = char.toLowerCase();
+                        if (val.includes(c) || lab.includes(c)) {
+                            continue;
+                        }
+                        include = false;
+                        break;
+                    }
+                    if (!include) {
+                        continue;
+                    }
+                    this.searchData.push(item);
+                }
+            }
+            else {
+                this.searchData = {};
+                for (const key in this.props.data) {
+                    const item = this.props.data[key];
+                    const val = key.toLowerCase();
+                    const lab = '';
+                    let include = true;
+                    for (const char of searchValue) {
+                        const c = char.toLowerCase();
+                        if (val.includes(c) || lab.includes(c)) {
+                            continue;
+                        }
+                        include = false;
+                        break;
+                    }
+                    if (!include) {
+                        continue;
+                    }
+                    this.searchData[key] = item;
+                }
+            }
+            await success?.();
+        }
+    }
+    async updateSearchValue(value) {
+        this.searchValue = value.trim();
+        await this._search(() => {
+            this.listValue = [this.searchValue];
+        });
+    }
+    async updateInputValue(value) {
+        value = value.trim();
+        if (this.propBoolean('editable') && !this.propBoolean('multi')) {
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': [value]
+                },
+            };
+            this.emit('change', event);
+            if (!event.go) {
+                return;
+            }
+        }
+        this.inputValue = value;
+        if (this.propBoolean('search')) {
+            if (this.element.dataset.cgPopOpen === undefined) {
+                this.refs.gs.showPop();
+            }
+            await this._search(() => {
+                this.listValue = [this.inputValue];
+            });
+        }
+        if (this.propBoolean('multi')) {
+            if (!this.propBoolean('search')) {
+                this.listValue = [this.inputValue];
+            }
+            return;
+        }
+        const before = clickgo.tool.clone(this.value);
+        if (this.inputValue === '') {
+            this.value = [];
+            this.label = [];
+            this.listValue = [];
+        }
+        else {
+            this.value = [this.inputValue];
+            this.label = [this.inputValue];
+            this.listValue = [this.inputValue];
+            await this.nextTick();
+            if (this.listLabel[0]) {
+                this.label = clickgo.tool.clone(this.listLabel);
+            }
+        }
+        this.updateValue();
+        if (this.propBoolean('editable') && !this.propBoolean('multi')) {
+            const event = {
+                'detail': {
+                    'before': before,
+                    'value': [value]
+                }
+            };
+            this.emit('changed', event);
+        }
+    }
+    async listItemClicked(e) {
+        const event = {
+            'detail': {
+                'event': e.detail.event,
+                'value': e.detail.value,
+                'arrow': e.detail.arrow
+            }
+        };
+        this.emit('itemclicked', event);
+        if (this.propBoolean('editable')) {
+            const v = this.listValue[0] ?? '';
+            if (this.propBoolean('multi')) {
+                if (this.value.includes(v)) {
+                    this.refs.gs.hidePop();
+                    return;
+                }
+                const addIndex = this.value.length;
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'index': addIndex,
+                        'value': v
+                    }
+                };
+                this.emit('add', event);
+                if (event.go) {
+                    this.value.push(v);
+                    this.label.push(this.listLabel[0] ?? '');
                     this.updateValue({
                         'clearInput': true,
                         'clearList': true
@@ -298,339 +634,54 @@ class default_1 extends clickgo.control.AbstractControl {
                         }
                     });
                     if (this.propBoolean('search')) {
-                        yield this._search();
-                    }
-                }
-                return;
-            }
-            if ((e.key === 'ArrowDown' || e.key === 'Enter') && (this.element.dataset.cgPopOpen === undefined)) {
-                e.stopPropagation();
-                this.refs.gs.showPop();
-                return;
-            }
-            yield this.textKeyDown(e);
-        });
-    }
-    textKeyDown(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            e.stopPropagation();
-            if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.element.dataset.cgPopOpen !== undefined) {
-                e.preventDefault();
-                switch (e.key) {
-                    case 'ArrowUp': {
-                        this.refs.list.arrowUp();
-                        this.inputValue = (_a = this.listValue[0]) !== null && _a !== void 0 ? _a : '';
-                        this.searchValue = (_b = this.listValue[0]) !== null && _b !== void 0 ? _b : '';
-                        break;
-                    }
-                    default: {
-                        this.refs.list.arrowDown();
-                        this.inputValue = (_c = this.listValue[0]) !== null && _c !== void 0 ? _c : '';
-                        this.searchValue = (_d = this.listValue[0]) !== null && _d !== void 0 ? _d : '';
-                    }
-                }
-                yield this.updateInputValue(this.propBoolean('editable') ? this.inputValue : this.searchValue);
-                return;
-            }
-            if (e.key !== 'Enter') {
-                return;
-            }
-            const value = this.searchValue || this.inputValue;
-            if (this.propBoolean('editable')) {
-                if (this.propBoolean('multi')) {
-                    if (!value) {
                         this.refs.gs.hidePop();
-                        return;
+                        await this._search();
                     }
-                    if (this.value.includes(value)) {
-                        this.inputValue = '';
+                    else {
                         this.refs.gs.hidePop();
-                        return;
                     }
-                    const addIndex = this.value.length;
-                    const event = {
-                        'go': true,
-                        preventDefault: function () {
-                            this.go = false;
-                        },
-                        'detail': {
-                            'index': addIndex,
-                            'value': value
-                        }
-                    };
-                    this.emit('add', event);
-                    if (event.go) {
-                        this.value.push(value);
-                        this.label.push((_e = this.listLabel[0]) !== null && _e !== void 0 ? _e : value);
-                        this.updateValue({
-                            'clearInput': true,
-                            'clearList': true
-                        });
-                        this.emit('added', {
-                            'detail': {
-                                'index': addIndex,
-                                'value': value
-                            }
-                        });
-                        this.refs.gs.hidePop();
-                        if (this.propBoolean('search')) {
-                            yield this._search();
-                        }
-                    }
-                }
-                else {
-                    if (!value) {
-                        this.refs.gs.hidePop();
-                        return;
-                    }
-                    this.value = [value];
-                    this.listValue = [value];
-                    yield this.nextTick();
-                    this.label = [(_f = this.listLabel[0]) !== null && _f !== void 0 ? _f : value];
-                    this.updateValue();
-                    this.refs.gs.hidePop();
                 }
             }
             else {
-                if (this.propBoolean('multi')) {
-                    if (!value) {
-                        return;
-                    }
-                    if (this.value.includes(value)) {
-                        this.searchValue = '';
-                        this.refs.gs.hidePop();
-                        yield this._search();
-                        return;
-                    }
-                    if (!this.listValue[0]) {
-                        this.searchValue = '';
-                        this.refs.gs.hidePop();
-                        yield this._search();
-                        return;
-                    }
-                    const addIndex = this.value.length;
+                if (this.inputValue !== v) {
                     const event = {
                         'go': true,
                         preventDefault: function () {
                             this.go = false;
                         },
                         'detail': {
-                            'index': addIndex,
-                            'value': value
+                            'value': [v]
                         }
                     };
-                    this.emit('add', event);
+                    this.emit('change', event);
                     if (event.go) {
-                        this.value.push(value);
-                        this.label.push((_g = this.listLabel[0]) !== null && _g !== void 0 ? _g : '');
-                        this.searchValue = '';
+                        this.inputValue = v;
+                        const before = clickgo.tool.clone(this.value);
+                        this.value = [v];
+                        this.label = [this.listLabel[0] ?? ''];
                         this.updateValue();
-                        this.emit('added', {
+                        if (this.propBoolean('search')) {
+                            await this._search();
+                        }
+                        const event = {
                             'detail': {
-                                'index': addIndex,
-                                'value': value
+                                'before': before,
+                                'value': [v]
                             }
-                        });
-                        this.refs.gs.hidePop();
-                        yield this._search();
+                        };
+                        this.emit('changed', event);
                     }
                 }
-                else {
-                    if (!this.listValue[0]) {
-                        this.searchValue = '';
-                        this.refs.gs.hidePop();
-                        yield this._search();
-                        return;
-                    }
-                    this.value = [(_h = this.listValue[0]) !== null && _h !== void 0 ? _h : ''];
-                    this.label = [(_j = this.listLabel[0]) !== null && _j !== void 0 ? _j : ''];
-                    this.searchValue = '';
-                    this.updateValue();
-                    this.refs.gs.hidePop();
-                    yield this._search();
-                }
+                this.refs.gs.hidePop();
             }
-        });
-    }
-    _search(success) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
-            const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
-            if (this.propBoolean('remote')) {
-                const delay = this.propInt('remoteDelay');
-                ++this._needSearch;
-                yield clickgo.tool.sleep(delay);
-                if (this._needSearch > 1) {
-                    --this._needSearch;
-                    return;
-                }
-                if (this._needSearch === 0) {
-                    return;
-                }
-                --this._needSearch;
-                if (searchValue === '') {
-                    this.searchData = [];
-                    yield this.nextTick();
-                    yield (success === null || success === void 0 ? void 0 : success());
-                    return;
-                }
-                ++this.searching;
-                const event = {
-                    'detail': {
-                        'value': searchValue,
-                        'callback': (data) => __awaiter(this, void 0, void 0, function* () {
-                            --this.searching;
-                            this.searchData = data ? clickgo.tool.clone(data) : [];
-                            yield this.nextTick();
-                            yield (success === null || success === void 0 ? void 0 : success());
-                        })
-                    }
-                };
-                this.emit('remote', event);
-            }
-            else {
-                yield this.nextTick();
-                if (this._needSearch > 1) {
-                    --this._needSearch;
-                    return;
-                }
-                --this._needSearch;
-                if (searchValue === '') {
-                    this.searchData = [];
-                    yield this.nextTick();
-                    yield (success === null || success === void 0 ? void 0 : success());
-                    return;
-                }
-                if (Array.isArray(this.props.data)) {
-                    this.searchData = [];
-                    for (const item of this.props.data) {
-                        const val = (typeof item === 'object' ? (_a = item.value) !== null && _a !== void 0 ? _a : '' : item).toString().toLowerCase();
-                        const lab = (typeof item === 'object' ? (_b = item.label) !== null && _b !== void 0 ? _b : '' : '').toLowerCase();
-                        let include = true;
-                        for (const char of searchValue) {
-                            const c = char.toLowerCase();
-                            if (val.includes(c) || lab.includes(c)) {
-                                continue;
-                            }
-                            include = false;
-                            break;
-                        }
-                        if (!include) {
-                            continue;
-                        }
-                        this.searchData.push(item);
-                    }
-                }
-                else {
-                    this.searchData = {};
-                    for (const key in this.props.data) {
-                        const item = this.props.data[key];
-                        const val = key.toLowerCase();
-                        const lab = '';
-                        let include = true;
-                        for (const char of searchValue) {
-                            const c = char.toLowerCase();
-                            if (val.includes(c) || lab.includes(c)) {
-                                continue;
-                            }
-                            include = false;
-                            break;
-                        }
-                        if (!include) {
-                            continue;
-                        }
-                        this.searchData[key] = item;
-                    }
-                }
-                yield (success === null || success === void 0 ? void 0 : success());
-            }
-        });
-    }
-    updateSearchValue(value) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.searchValue = value.trim();
-            yield this._search(() => {
-                this.listValue = [this.searchValue];
-            });
-        });
-    }
-    updateInputValue(value) {
-        return __awaiter(this, void 0, void 0, function* () {
-            value = value.trim();
-            if (this.propBoolean('editable') && !this.propBoolean('multi')) {
-                const event = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'value': [value]
-                    },
-                };
-                this.emit('change', event);
-                if (!event.go) {
-                    return;
-                }
-            }
-            this.inputValue = value;
-            if (this.propBoolean('search')) {
-                if (this.element.dataset.cgPopOpen === undefined) {
-                    this.refs.gs.showPop();
-                }
-                yield this._search(() => {
-                    this.listValue = [this.inputValue];
-                });
-            }
+        }
+        else {
             if (this.propBoolean('multi')) {
-                if (!this.propBoolean('search')) {
-                    this.listValue = [this.inputValue];
-                }
-                return;
-            }
-            const before = clickgo.tool.clone(this.value);
-            if (this.inputValue === '') {
-                this.value = [];
-                this.label = [];
-                this.listValue = [];
-            }
-            else {
-                this.value = [this.inputValue];
-                this.label = [this.inputValue];
-                this.listValue = [this.inputValue];
-                yield this.nextTick();
-                if (this.listLabel[0]) {
-                    this.label = clickgo.tool.clone(this.listLabel);
-                }
-            }
-            this.updateValue();
-            if (this.propBoolean('editable') && !this.propBoolean('multi')) {
-                const event = {
-                    'detail': {
-                        'before': before,
-                        'value': [value]
-                    }
-                };
-                this.emit('changed', event);
-            }
-        });
-    }
-    listItemClicked(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            const event = {
-                'detail': {
-                    'event': e.detail.event,
-                    'value': e.detail.value,
-                    'arrow': e.detail.arrow
-                }
-            };
-            this.emit('itemclicked', event);
-            if (this.propBoolean('editable')) {
-                const v = (_a = this.listValue[0]) !== null && _a !== void 0 ? _a : '';
-                if (this.propBoolean('multi')) {
-                    if (this.value.includes(v)) {
+                if (this.propBoolean('search')) {
+                    if (this.value.includes(this.listValue[0] ?? '')) {
                         this.refs.gs.hidePop();
+                        this.searchValue = '';
+                        await this._search();
                         return;
                     }
                     const addIndex = this.value.length;
@@ -641,13 +692,13 @@ class default_1 extends clickgo.control.AbstractControl {
                         },
                         'detail': {
                             'index': addIndex,
-                            'value': v
+                            'value': this.listValue[0] ?? ''
                         }
                     };
                     this.emit('add', event);
                     if (event.go) {
-                        this.value.push(v);
-                        this.label.push((_b = this.listLabel[0]) !== null && _b !== void 0 ? _b : '');
+                        this.value.push(this.listValue[0] ?? '');
+                        this.label.push(this.listLabel[0] ?? '');
                         this.updateValue({
                             'clearInput': true,
                             'clearList': true
@@ -658,117 +709,39 @@ class default_1 extends clickgo.control.AbstractControl {
                                 'value': this.inputValue
                             }
                         });
-                        if (this.propBoolean('search')) {
-                            this.refs.gs.hidePop();
-                            yield this._search();
-                        }
-                        else {
-                            this.refs.gs.hidePop();
-                        }
+                        this.refs.gs.hidePop();
+                        await this._search();
                     }
                 }
                 else {
-                    if (this.inputValue !== v) {
-                        const event = {
-                            'go': true,
-                            preventDefault: function () {
-                                this.go = false;
-                            },
-                            'detail': {
-                                'value': [v]
-                            }
-                        };
-                        this.emit('change', event);
-                        if (event.go) {
-                            this.inputValue = v;
-                            const before = clickgo.tool.clone(this.value);
-                            this.value = [v];
-                            this.label = [(_c = this.listLabel[0]) !== null && _c !== void 0 ? _c : ''];
-                            this.updateValue();
-                            if (this.propBoolean('search')) {
-                                yield this._search();
-                            }
-                            const event = {
-                                'detail': {
-                                    'before': before,
-                                    'value': [v]
-                                }
-                            };
-                            this.emit('changed', event);
-                        }
-                    }
-                    this.refs.gs.hidePop();
                 }
             }
             else {
-                if (this.propBoolean('multi')) {
-                    if (this.propBoolean('search')) {
-                        if (this.value.includes((_d = this.listValue[0]) !== null && _d !== void 0 ? _d : '')) {
-                            this.refs.gs.hidePop();
-                            this.searchValue = '';
-                            yield this._search();
-                            return;
-                        }
-                        const addIndex = this.value.length;
-                        const event = {
-                            'go': true,
-                            preventDefault: function () {
-                                this.go = false;
-                            },
-                            'detail': {
-                                'index': addIndex,
-                                'value': (_e = this.listValue[0]) !== null && _e !== void 0 ? _e : ''
-                            }
-                        };
-                        this.emit('add', event);
-                        if (event.go) {
-                            this.value.push((_f = this.listValue[0]) !== null && _f !== void 0 ? _f : '');
-                            this.label.push((_g = this.listLabel[0]) !== null && _g !== void 0 ? _g : '');
-                            this.updateValue({
-                                'clearInput': true,
-                                'clearList': true
-                            });
-                            this.emit('added', {
-                                'detail': {
-                                    'index': addIndex,
-                                    'value': this.inputValue
-                                }
-                            });
-                            this.refs.gs.hidePop();
-                            yield this._search();
-                        }
-                    }
-                    else {
-                    }
+                const before = clickgo.tool.clone(this.value);
+                this.value = [this.listValue[0] ?? ''];
+                this.label = [this.listLabel[0] ?? ''];
+                if (this.propBoolean('search')) {
+                    this.updateValue({
+                        'clearInput': true
+                    });
+                    this.refs.gs.hidePop();
+                    await this._search();
                 }
                 else {
-                    const before = clickgo.tool.clone(this.value);
-                    this.value = [(_h = this.listValue[0]) !== null && _h !== void 0 ? _h : ''];
-                    this.label = [(_j = this.listLabel[0]) !== null && _j !== void 0 ? _j : ''];
-                    if (this.propBoolean('search')) {
-                        this.updateValue({
-                            'clearInput': true
-                        });
-                        this.refs.gs.hidePop();
-                        yield this._search();
-                    }
-                    else {
-                        this.updateValue();
-                        this.refs.gs.hidePop();
-                    }
-                    const event = {
-                        'detail': {
-                            'before': before,
-                            'value': this.value
-                        }
-                    };
-                    this.emit('changed', event);
+                    this.updateValue();
+                    this.refs.gs.hidePop();
                 }
+                const event = {
+                    'detail': {
+                        'before': before,
+                        'value': this.value
+                    }
+                };
+                this.emit('changed', event);
             }
-        });
+        }
     }
     onAdd(e) {
-        var _a;
         if (!this.propBoolean('multi')) {
             return;
         }
@@ -793,7 +766,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value.push(e.detail.value);
         const result = this.refs.list.findFormat(e.detail.value, false);
-        this.label.push((_a = result === null || result === void 0 ? void 0 : result[e.detail.value].label) !== null && _a !== void 0 ? _a : 'error');
+        this.label.push(result?.[e.detail.value].label ?? 'error');
         this.updateValue();
         this.emit('added', event);
     }
@@ -922,7 +895,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onMounted() {
         let mvimmediate = true;
-        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('modelValue', async () => {
             if (mvimmediate) {
                 mvimmediate = false;
             }
@@ -941,7 +914,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         for (const item of this.props.modelValue) {
                             const items = item.toString();
                             const result = this.refs.list.findFormat(items, false);
-                            if (result === null || result === void 0 ? void 0 : result[items]) {
+                            if (result?.[items]) {
                                 this.value.push(result[items].value);
                                 this.label.push(result[items].label);
                             }
@@ -956,7 +929,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.inputValue = (this.props.modelValue[0]).toString();
                     this.value = [this.inputValue];
                     const result = this.refs.list.findFormat(this.inputValue, false);
-                    this.label = [(result === null || result === void 0 ? void 0 : result[this.inputValue]) ? result[this.inputValue].label : this.inputValue];
+                    this.label = [result?.[this.inputValue] ? result[this.inputValue].label : this.inputValue];
                     this.listValue = [this.inputValue];
                     this.updateValue();
                     return;
@@ -976,7 +949,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     for (const item of this.props.modelValue) {
                         const items = item.toString();
                         const result = this.refs.list.findFormat(items, false);
-                        if (result === null || result === void 0 ? void 0 : result[items]) {
+                        if (result?.[items]) {
                             this.value.push(result[items].value);
                             this.label.push(result[items].label);
                         }
@@ -986,45 +959,44 @@ class default_1 extends clickgo.control.AbstractControl {
                     return;
                 }
                 this.listValue = [this.props.modelValue[0].toString()];
-                yield this.nextTick();
-                yield clickgo.tool.sleep(0);
+                await this.nextTick();
+                await clickgo.tool.sleep(0);
                 this.value = clickgo.tool.clone(this.listValue);
                 this.label = clickgo.tool.clone(this.listLabel);
                 this.updateValue();
                 return;
             }
             this.listValue = [];
-            yield this.nextTick();
-            yield clickgo.tool.sleep(0);
+            await this.nextTick();
+            await clickgo.tool.sleep(0);
             this.value = clickgo.tool.clone(this.listValue);
             this.label = clickgo.tool.clone(this.listLabel);
             this.updateValue();
-        }), {
+        }, {
             'immediate': true,
             'deep': true
         });
-        this.watch('search', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.nextTick();
+        this.watch('search', async () => {
+            await this.nextTick();
             this.listValue = clickgo.tool.clone(this.value);
             if (!this.propBoolean('search')) {
                 return;
             }
             this.searchValue = '';
-            yield this._search();
-        }));
-        this.watch('remote', () => __awaiter(this, void 0, void 0, function* () {
+            await this._search();
+        });
+        this.watch('remote', async () => {
             if (!this.propBoolean('search')) {
                 return;
             }
-            yield this._search();
-        }));
-        this.watch('editable', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            await this._search();
+        });
+        this.watch('editable', async () => {
             if (!this.propBoolean('editable')) {
                 if (this.propBoolean('multi')) {
-                    yield this.nextTick();
+                    await this.nextTick();
                     this.listValue = clickgo.tool.clone(this.value);
-                    yield this.nextTick();
+                    await this.nextTick();
                     if (JSON.stringify(this.value) === JSON.stringify(this.listValue)) {
                         return;
                     }
@@ -1035,11 +1007,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (!this.propBoolean('multi')) {
-                this.inputValue = ((_a = this.value[0]) !== null && _a !== void 0 ? _a : '').toString();
+                this.inputValue = (this.value[0] ?? '').toString();
             }
-        }));
+        });
         this.watch('multi', () => {
-            var _a;
             if (!this.propBoolean('multi')) {
                 if (this.value.length > 1) {
                     this.value.splice(1);
@@ -1048,7 +1019,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.listValue = clickgo.tool.clone(this.value);
                 }
                 if (this.propBoolean('editable')) {
-                    this.inputValue = ((_a = this.value[0]) !== null && _a !== void 0 ? _a : '').toString();
+                    this.inputValue = (this.value[0] ?? '').toString();
                 }
                 return;
             }
@@ -1056,17 +1027,17 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.inputValue = '';
             }
         });
-        this.watch(() => JSON.stringify(this.props.data), (n, o) => __awaiter(this, void 0, void 0, function* () {
+        this.watch(() => JSON.stringify(this.props.data), async (n, o) => {
             if (n === o) {
                 return;
             }
             if (this.propBoolean('editable')) {
-                yield this._search();
+                await this._search();
                 if (this.propBoolean('multi')) {
                     return;
                 }
                 this.listValue = this.value;
-                yield this.nextTick();
+                await this.nextTick();
                 if (this.label[0] === this.listLabel[0]) {
                     return;
                 }
@@ -1079,8 +1050,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('label', clickgo.tool.clone(this.label));
                 return;
             }
-            yield this.nextTick();
-            yield clickgo.tool.sleep(0);
+            await this.nextTick();
+            await clickgo.tool.sleep(0);
             if (JSON.stringify(this.value) !== JSON.stringify(this.listValue)) {
                 this.value = clickgo.tool.clone(this.listValue);
                 this.emit('update:modelValue', clickgo.tool.clone(this.value));
@@ -1089,7 +1060,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.label = clickgo.tool.clone(this.listLabel);
                 this.emit('label', clickgo.tool.clone(this.label));
             }
-        }));
+        });
     }
 }
 exports.default = default_1;

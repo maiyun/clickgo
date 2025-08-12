@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -160,21 +151,19 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         return rtn;
     }
-    onLoad(value, resolve) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (value !== 'haha4') {
-                yield clickgo.tool.sleep(100);
-                if (value === 'haha2') {
-                    resolve(['60']);
-                }
-                else {
-                    resolve();
-                }
-                return;
+    async onLoad(value, resolve) {
+        if (value !== 'haha4') {
+            await clickgo.tool.sleep(100);
+            if (value === 'haha2') {
+                resolve(['60']);
             }
-            yield clickgo.tool.sleep(300);
-            resolve(['he', 'ha']);
-        });
+            else {
+                resolve();
+            }
+            return;
+        }
+        await clickgo.tool.sleep(300);
+        resolve(['he', 'ha']);
     }
     onLoaded() {
         clickgo.form.notify({
@@ -183,21 +172,19 @@ class default_1 extends clickgo.form.AbstractForm {
             'content': 'Done'
         });
     }
-    onRemote(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(300);
-            if (!e.detail.value || e.detail.value === '8') {
-                yield e.detail.callback();
-                return;
-            }
-            yield e.detail.callback(['test', e.detail.value, 'remote', {
-                    'label': 'label',
-                    'value': 'ok'
-                }, {
-                    'label': 'label2',
-                    'value': 2
-                }]);
-        });
+    async onRemote(e) {
+        await clickgo.tool.sleep(300);
+        if (!e.detail.value || e.detail.value === '8') {
+            await e.detail.callback();
+            return;
+        }
+        await e.detail.callback(['test', e.detail.value, 'remote', {
+                'label': 'label',
+                'value': 'ok'
+            }, {
+                'label': 'label2',
+                'value': 2
+            }]);
     }
     onGAdd(e) {
         clickgo.form.notify({

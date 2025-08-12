@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -55,10 +46,8 @@ class default_1 extends clickgo.form.AbstractForm {
     onLoaded(pdf) {
         this.access.pdf = pdf;
     }
-    onView(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(e.detail));
-        });
+    async onView(e) {
+        await clickgo.form.dialog(JSON.stringify(e.detail));
     }
     load() {
         this.src = '/package/form/control/pdf/test.pdf';
@@ -66,13 +55,11 @@ class default_1 extends clickgo.form.AbstractForm {
     select() {
         this.refs.file.select();
     }
-    change(files) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!files) {
-                return;
-            }
-            yield this.refs.pdf.load(files[0]);
-        });
+    async change(files) {
+        if (!files) {
+            return;
+        }
+        await this.refs.pdf.load(files[0]);
     }
 }
 exports.default = default_1;

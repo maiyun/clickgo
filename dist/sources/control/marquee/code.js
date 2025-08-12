@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -113,7 +104,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.timer > 0) {
                 return;
             }
-            this.timer = clickgo.task.onFrame(() => __awaiter(this, void 0, void 0, function* () {
+            this.timer = clickgo.task.onFrame(async () => {
                 if (!clickgo.dom.inPage(this.element)) {
                     clickgo.task.offFrame(this.timer);
                     this.timer = 0;
@@ -127,14 +118,14 @@ class default_1 extends clickgo.control.AbstractControl {
                             clickgo.task.sleep(() => {
                                 this.ani = false;
                             }, 150);
-                            yield clickgo.tool.sleep(1000);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.left -= this.speedPx;
                             if (this.left < -xv) {
                                 this.left = -xv;
                                 this.ani = true;
-                                yield clickgo.tool.sleep(1000);
+                                await clickgo.tool.sleep(1000);
                             }
                         }
                         break;
@@ -145,14 +136,14 @@ class default_1 extends clickgo.control.AbstractControl {
                             clickgo.task.sleep(() => {
                                 this.ani = false;
                             }, 150);
-                            yield clickgo.tool.sleep(1000);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.left += this.speedPx;
                             if (this.left > 0) {
                                 this.left = 0;
                                 this.ani = true;
-                                yield clickgo.tool.sleep(1000);
+                                await clickgo.tool.sleep(1000);
                             }
                         }
                         break;
@@ -163,14 +154,14 @@ class default_1 extends clickgo.control.AbstractControl {
                             clickgo.task.sleep(() => {
                                 this.ani = false;
                             }, 150);
-                            yield clickgo.tool.sleep(1000);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.top -= this.speedPx;
                             if (this.top < -xv) {
                                 this.top = -xv;
                                 this.ani = true;
-                                yield clickgo.tool.sleep(1000);
+                                await clickgo.tool.sleep(1000);
                             }
                         }
                         break;
@@ -181,20 +172,20 @@ class default_1 extends clickgo.control.AbstractControl {
                             clickgo.task.sleep(() => {
                                 this.ani = false;
                             }, 150);
-                            yield clickgo.tool.sleep(1000);
+                            await clickgo.tool.sleep(1000);
                         }
                         else {
                             this.top += this.speedPx;
                             if (this.top > 0) {
                                 this.top = 0;
                                 this.ani = true;
-                                yield clickgo.tool.sleep(1000);
+                                await clickgo.tool.sleep(1000);
                             }
                         }
                         break;
                     }
                 }
-            }), {
+            }, {
                 'formId': this.formId
             });
         }, 1000);

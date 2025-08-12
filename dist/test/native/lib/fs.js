@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshDrives = refreshDrives;
 exports.getContent = getContent;
@@ -59,269 +50,243 @@ const fs = __importStar(require("fs"));
 const tool = __importStar(require("./tool"));
 const platform = process.platform;
 const drives = [];
-function refreshDrives() {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (platform !== 'win32') {
-            return;
+async function refreshDrives() {
+    if (platform !== 'win32') {
+        return;
+    }
+    drives.length = 0;
+    for (let i = 0; i < 26; ++i) {
+        const char = String.fromCharCode(97 + i);
+        try {
+            await fs.promises.stat(char + ':/');
+            drives.push(char);
         }
-        drives.length = 0;
-        for (let i = 0; i < 26; ++i) {
-            const char = String.fromCharCode(97 + i);
-            try {
-                yield fs.promises.stat(char + ':/');
-                drives.push(char);
-            }
-            catch (_a) {
-            }
+        catch {
         }
-    });
+    }
 }
-function getContent(path, options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        const encoding = options.encoding;
-        const start = options.start;
-        const end = options.end;
-        if (start || end) {
-            return new Promise(function (resolve) {
-                const rs = fs.createReadStream(path, {
-                    'encoding': encoding,
-                    'start': start,
-                    'end': end
-                });
-                const data = [];
-                rs.on('data', function (chunk) {
-                    if (!(chunk instanceof Buffer)) {
-                        return;
-                    }
-                    data.push(chunk);
-                }).on('end', function () {
-                    const buf = Buffer.concat(data);
-                    if (encoding) {
-                        resolve(buf.toString());
-                    }
-                    else {
-                        resolve(buf);
-                    }
-                }).on('error', function () {
-                    resolve(null);
-                });
+async function getContent(path, options) {
+    path = tool.formatPath(path);
+    const encoding = options.encoding;
+    const start = options.start;
+    const end = options.end;
+    if (start || end) {
+        return new Promise(function (resolve) {
+            const rs = fs.createReadStream(path, {
+                'encoding': encoding,
+                'start': start,
+                'end': end
             });
-        }
-        else {
-            try {
+            const data = [];
+            rs.on('data', function (chunk) {
+                if (!(chunk instanceof Buffer)) {
+                    return;
+                }
+                data.push(chunk);
+            }).on('end', function () {
+                const buf = Buffer.concat(data);
                 if (encoding) {
-                    return yield fs.promises.readFile(path, {
-                        'encoding': encoding
-                    });
+                    resolve(buf.toString());
                 }
                 else {
-                    return yield fs.promises.readFile(path);
+                    resolve(buf);
                 }
-            }
-            catch (_a) {
-                return null;
-            }
-        }
-    });
-}
-function putContent(path, data, options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        try {
-            yield fs.promises.writeFile(path, data, options);
-            return true;
-        }
-        catch (_a) {
-            return false;
-        }
-    });
-}
-function readLink(path, encoding) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        try {
-            return yield fs.promises.readlink(path, {
-                'encoding': encoding
+            }).on('error', function () {
+                resolve(null);
             });
+        });
+    }
+    else {
+        try {
+            if (encoding) {
+                return await fs.promises.readFile(path, {
+                    'encoding': encoding
+                });
+            }
+            else {
+                return await fs.promises.readFile(path);
+            }
         }
-        catch (_a) {
+        catch {
             return null;
         }
-    });
+    }
 }
-function symlink(filePath, linkPath, type) {
-    return __awaiter(this, void 0, void 0, function* () {
-        filePath = tool.formatPath(filePath);
-        linkPath = tool.formatPath(linkPath);
+async function putContent(path, data, options) {
+    path = tool.formatPath(path);
+    try {
+        await fs.promises.writeFile(path, data, options);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function readLink(path, encoding) {
+    path = tool.formatPath(path);
+    try {
+        return await fs.promises.readlink(path, {
+            'encoding': encoding
+        });
+    }
+    catch {
+        return null;
+    }
+}
+async function symlink(filePath, linkPath, type) {
+    filePath = tool.formatPath(filePath);
+    linkPath = tool.formatPath(linkPath);
+    try {
+        await fs.promises.symlink(filePath, linkPath, type);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function unlink(path) {
+    path = tool.formatPath(path);
+    for (let i = 0; i <= 2; ++i) {
         try {
-            yield fs.promises.symlink(filePath, linkPath, type);
+            await fs.promises.unlink(path);
             return true;
         }
-        catch (_a) {
-            return false;
+        catch {
+            await tool.sleep(250);
         }
-    });
+    }
+    try {
+        await fs.promises.unlink(path);
+        return true;
+    }
+    catch {
+        return false;
+    }
 }
-function unlink(path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        for (let i = 0; i <= 2; ++i) {
-            try {
-                yield fs.promises.unlink(path);
-                return true;
-            }
-            catch (_a) {
-                yield tool.sleep(250);
-            }
-        }
-        try {
-            yield fs.promises.unlink(path);
-            return true;
-        }
-        catch (_b) {
-            return false;
-        }
-    });
+async function stats(path) {
+    path = tool.formatPath(path);
+    try {
+        const item = await fs.promises.lstat(path);
+        return {
+            isFile: item.isFile(),
+            isDirectory: item.isDirectory(),
+            isSymbolicLink: item.isSymbolicLink(),
+            'size': item.size,
+            'blksize': item.blksize,
+            'atimeMs': item.atimeMs,
+            'mtimeMs': item.mtimeMs,
+            'ctimeMs': item.ctimeMs,
+            'birthtimeMs': item.birthtimeMs,
+            'atime': item.atime,
+            'mtime': item.mtime,
+            'ctime': item.ctime,
+            'birthtime': item.birthtime
+        };
+    }
+    catch {
+        return null;
+    }
 }
-function stats(path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        try {
-            const item = yield fs.promises.lstat(path);
-            return {
+async function mkdir(path, mode) {
+    path = tool.formatPath(path);
+    const stats = await fs.promises.lstat(path);
+    if (stats.isDirectory()) {
+        return true;
+    }
+    try {
+        await fs.promises.mkdir(path, {
+            'recursive': true,
+            'mode': mode
+        });
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function rmdir(path) {
+    path = tool.formatPath(path);
+    const stats = await fs.promises.lstat(path);
+    if (!stats.isDirectory()) {
+        return true;
+    }
+    try {
+        await fs.promises.rmdir(path);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function chmod(path, mod) {
+    path = tool.formatPath(path);
+    try {
+        await fs.promises.chmod(path, mod);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function rename(oldPath, newPath) {
+    oldPath = tool.formatPath(oldPath);
+    newPath = tool.formatPath(newPath);
+    try {
+        await fs.promises.rename(oldPath, newPath);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function readDir(path, encoding) {
+    try {
+        const list = [];
+        if (platform === 'win32') {
+            if (path === '/') {
+                for (const item of drives) {
+                    list.push({
+                        isFile: false,
+                        isDirectory: true,
+                        isSymbolicLink: false,
+                        'name': item
+                    });
+                }
+                return list;
+            }
+            else {
+                path = path[1] + ':' + path.slice(2);
+            }
+        }
+        const dlist = await fs.promises.readdir(path, {
+            'encoding': encoding,
+            'withFileTypes': true
+        });
+        for (const item of dlist) {
+            if (item.name === '.' || item.name === '..') {
+                continue;
+            }
+            list.push({
                 isFile: item.isFile(),
                 isDirectory: item.isDirectory(),
                 isSymbolicLink: item.isSymbolicLink(),
-                'size': item.size,
-                'blksize': item.blksize,
-                'atimeMs': item.atimeMs,
-                'mtimeMs': item.mtimeMs,
-                'ctimeMs': item.ctimeMs,
-                'birthtimeMs': item.birthtimeMs,
-                'atime': item.atime,
-                'mtime': item.mtime,
-                'ctime': item.ctime,
-                'birthtime': item.birthtime
-            };
-        }
-        catch (_a) {
-            return null;
-        }
-    });
-}
-function mkdir(path, mode) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        const stats = yield fs.promises.lstat(path);
-        if (stats.isDirectory()) {
-            return true;
-        }
-        try {
-            yield fs.promises.mkdir(path, {
-                'recursive': true,
-                'mode': mode
+                'name': item.name
             });
-            return true;
         }
-        catch (_a) {
-            return false;
-        }
-    });
+        return list;
+    }
+    catch {
+        return [];
+    }
 }
-function rmdir(path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        const stats = yield fs.promises.lstat(path);
-        if (!stats.isDirectory()) {
-            return true;
-        }
-        try {
-            yield fs.promises.rmdir(path);
-            return true;
-        }
-        catch (_a) {
-            return false;
-        }
-    });
-}
-function chmod(path, mod) {
-    return __awaiter(this, void 0, void 0, function* () {
-        path = tool.formatPath(path);
-        try {
-            yield fs.promises.chmod(path, mod);
-            return true;
-        }
-        catch (_a) {
-            return false;
-        }
-    });
-}
-function rename(oldPath, newPath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        oldPath = tool.formatPath(oldPath);
-        newPath = tool.formatPath(newPath);
-        try {
-            yield fs.promises.rename(oldPath, newPath);
-            return true;
-        }
-        catch (_a) {
-            return false;
-        }
-    });
-}
-function readDir(path, encoding) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const list = [];
-            if (platform === 'win32') {
-                if (path === '/') {
-                    for (const item of drives) {
-                        list.push({
-                            isFile: false,
-                            isDirectory: true,
-                            isSymbolicLink: false,
-                            'name': item
-                        });
-                    }
-                    return list;
-                }
-                else {
-                    path = path[1] + ':' + path.slice(2);
-                }
-            }
-            const dlist = yield fs.promises.readdir(path, {
-                'encoding': encoding,
-                'withFileTypes': true
-            });
-            for (const item of dlist) {
-                if (item.name === '.' || item.name === '..') {
-                    continue;
-                }
-                list.push({
-                    isFile: item.isFile(),
-                    isDirectory: item.isDirectory(),
-                    isSymbolicLink: item.isSymbolicLink(),
-                    'name': item.name
-                });
-            }
-            return list;
-        }
-        catch (_a) {
-            return [];
-        }
-    });
-}
-function copyFile(src, dest) {
-    return __awaiter(this, void 0, void 0, function* () {
-        src = tool.formatPath(src);
-        dest = tool.formatPath(dest);
-        try {
-            yield fs.promises.copyFile(src, dest);
-            return true;
-        }
-        catch (_a) {
-            return false;
-        }
-    });
+async function copyFile(src, dest) {
+    src = tool.formatPath(src);
+    dest = tool.formatPath(dest);
+    try {
+        await fs.promises.copyFile(src, dest);
+        return true;
+    }
+    catch {
+        return false;
+    }
 }

@@ -60,9 +60,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('select');
     }
     down(e, index) {
-        var _a;
         clickgo.dom.bindDrag(e, {
-            'el': (_a = e.currentTarget.parentNode) === null || _a === void 0 ? void 0 : _a.parentNode,
+            'el': e.currentTarget.parentNode?.parentNode,
             'data': {
                 'index': index,
                 'tab': this.rand

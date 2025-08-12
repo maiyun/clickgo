@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractBoot = exports.tool = exports.fs = void 0;
 exports.launcher = launcher;
@@ -178,152 +169,126 @@ const methods = {
     },
     'cg-fs-getContent': {
         'once': false,
-        handler: function (t, path, options) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return null;
-                }
-                return libFs.getContent(path, options);
-            });
+        handler: async function (t, path, options) {
+            if (!verifyToken(t)) {
+                return null;
+            }
+            return libFs.getContent(path, options);
         }
     },
     'cg-fs-putContent': {
         'once': false,
-        handler: function (t, path, data, options) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.putContent(path, data, options);
-            });
+        handler: async function (t, path, data, options) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.putContent(path, data, options);
         }
     },
     'cg-fs-readLink': {
         'once': false,
-        handler: function (t, path, encoding) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return null;
-                }
-                return exports.fs.readLink(path, encoding);
-            });
+        handler: async function (t, path, encoding) {
+            if (!verifyToken(t)) {
+                return null;
+            }
+            return exports.fs.readLink(path, encoding);
         }
     },
     'cg-fs-symlink': {
         'once': false,
-        handler: function (t, filePath, linkPath, type) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.symlink(filePath, linkPath, type);
-            });
+        handler: async function (t, filePath, linkPath, type) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.symlink(filePath, linkPath, type);
         }
     },
     'cg-fs-unlink': {
         'once': false,
-        handler: function (t, path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.unlink(path);
-            });
+        handler: async function (t, path) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.unlink(path);
         }
     },
     'cg-fs-stats': {
         'once': false,
-        handler: function (t, path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return null;
-                }
-                return exports.fs.stats(path);
-            });
+        handler: async function (t, path) {
+            if (!verifyToken(t)) {
+                return null;
+            }
+            return exports.fs.stats(path);
         }
     },
     'cg-fs-mkdir': {
         'once': false,
-        handler: function (t, path, mode) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.mkdir(path, mode);
-            });
+        handler: async function (t, path, mode) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.mkdir(path, mode);
         }
     },
     'cg-fs-rmdir': {
         'once': false,
-        handler: function (t, path) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.rmdir(path);
-            });
+        handler: async function (t, path) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.rmdir(path);
         }
     },
     'cg-fs-chmod': {
         'once': false,
-        handler: function (t, path, mod) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.chmod(path, mod);
-            });
+        handler: async function (t, path, mod) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.chmod(path, mod);
         }
     },
     'cg-fs-rename': {
         'once': false,
-        handler: function (t, oldPath, newPath) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.rename(oldPath, newPath);
-            });
+        handler: async function (t, oldPath, newPath) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.rename(oldPath, newPath);
         }
     },
     'cg-fs-readDir': {
         'once': false,
-        handler: function (t, path, encoding) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return [];
-                }
-                return exports.fs.readDir(path, encoding);
-            });
+        handler: async function (t, path, encoding) {
+            if (!verifyToken(t)) {
+                return [];
+            }
+            return exports.fs.readDir(path, encoding);
         }
     },
     'cg-fs-copyFile': {
         'once': false,
-        handler: function (t, src, dest) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!verifyToken(t)) {
-                    return false;
-                }
-                return exports.fs.copyFile(src, dest);
-            });
+        handler: async function (t, src, dest) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            return exports.fs.copyFile(src, dest);
         }
     },
     'cg-form-open': {
         'once': false,
         handler: function (t, options = {}) {
-            var _a, _b, _c, _d, _e;
-            var _f, _g, _h;
             if (!t || !form) {
                 return null;
             }
             if (!verifyToken(t)) {
                 return null;
             }
-            (_a = options.filters) !== null && _a !== void 0 ? _a : (options.filters = []);
-            (_b = options.props) !== null && _b !== void 0 ? _b : (options.props = {});
-            (_c = (_f = options.props).file) !== null && _c !== void 0 ? _c : (_f.file = true);
-            (_d = (_g = options.props).directory) !== null && _d !== void 0 ? _d : (_g.directory = false);
-            (_e = (_h = options.props).multi) !== null && _e !== void 0 ? _e : (_h.multi = false);
+            options.filters ??= [];
+            options.props ??= {};
+            options.props.file ??= true;
+            options.props.directory ??= false;
+            options.props.multi ??= false;
             const paths = electron.dialog.showOpenDialogSync(form, {
                 'defaultPath': options.path ? exports.tool.formatPath(options.path) : undefined,
                 'filters': options.filters.map((item) => {
@@ -347,14 +312,13 @@ const methods = {
     'cg-form-save': {
         'once': false,
         handler: function (t, options = {}) {
-            var _a;
             if (!t || !form) {
                 return null;
             }
             if (!verifyToken(t)) {
                 return null;
             }
-            (_a = options.filters) !== null && _a !== void 0 ? _a : (options.filters = []);
+            options.filters ??= [];
             const path = electron.dialog.showSaveDialogSync(form, {
                 'defaultPath': options.path ? exports.tool.formatPath(options.path) : undefined,
                 'filters': options.filters.map((item) => {
@@ -373,7 +337,6 @@ const methods = {
     'cg-form-dialog': {
         'once': false,
         handler: function (t, options = {}) {
-            var _a, _b;
             if (!t || !form) {
                 return -1;
             }
@@ -385,8 +348,8 @@ const methods = {
                     'message': options
                 };
             }
-            (_a = options.title) !== null && _a !== void 0 ? _a : (options.title = 'ClickGo');
-            (_b = options.message) !== null && _b !== void 0 ? _b : (options.message = '');
+            options.title ??= 'ClickGo';
+            options.message ??= '';
             return electron.dialog.showMessageBoxSync(form, {
                 'type': options.type,
                 'title': options.title,
@@ -405,7 +368,7 @@ const methods = {
     'cg-is-max': {
         'once': false,
         handler: function () {
-            return (form === null || form === void 0 ? void 0 : form.isMaximized) ? true : false;
+            return form?.isMaximized ? true : false;
         }
     }
 };
@@ -482,7 +445,6 @@ class AbstractBoot {
         delete methods[name];
     }
     dialog(options = {}) {
-        var _a, _b;
         if (!form) {
             return -1;
         }
@@ -491,8 +453,8 @@ class AbstractBoot {
                 'message': options
             };
         }
-        (_a = options.title) !== null && _a !== void 0 ? _a : (options.title = 'ClickGo');
-        (_b = options.message) !== null && _b !== void 0 ? _b : (options.message = '');
+        options.title ??= 'ClickGo';
+        options.message ??= '';
         return electron.dialog.showMessageBoxSync(form, {
             'type': options.type,
             'title': options.title,
@@ -504,12 +466,10 @@ class AbstractBoot {
 }
 exports.AbstractBoot = AbstractBoot;
 function launcher(boot) {
-    (function () {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield electron.app.whenReady();
-            yield exports.fs.refreshDrives();
-            yield boot.main();
-        });
+    (async function () {
+        await electron.app.whenReady();
+        await exports.fs.refreshDrives();
+        await boot.main();
     })().catch(function () {
         return;
     });
@@ -581,9 +541,9 @@ function createForm(p) {
         form = undefined;
     });
     form.on('maximize', function () {
-        form === null || form === void 0 ? void 0 : form.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("maximize")}');
+        form?.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("maximize")}');
     });
     form.on('unmaximize', function () {
-        form === null || form === void 0 ? void 0 : form.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("unmaximize")}');
+        form?.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("unmaximize")}');
     });
 }

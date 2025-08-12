@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -58,47 +49,45 @@ class default_1 extends clickgo.control.AbstractControl {
             'tuieditor': undefined
         };
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const tuieditor = yield clickgo.core.getModule('tuieditor');
-            if (!tuieditor) {
-                this.isLoading = false;
-                this.notInit = true;
+    async onMounted() {
+        const tuieditor = await clickgo.core.getModule('tuieditor');
+        if (!tuieditor) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
+        this.access.tuieditor = new tuieditor.factory({
+            'el': this.refs.content,
+            'viewer': true,
+            'initialValue': this.props.modelValue,
+        });
+        this.watch('modelValue', (v) => {
+            if (!this.access.tuieditor) {
                 return;
             }
-            this.access.tuieditor = new tuieditor.factory({
-                'el': this.refs.content,
-                'viewer': true,
-                'initialValue': this.props.modelValue,
-            });
-            this.watch('modelValue', (v) => {
-                if (!this.access.tuieditor) {
-                    return;
-                }
-                this.access.tuieditor.setMarkdown(v);
-            });
-            clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
-                if (!this.access.tuieditor) {
-                    return;
-                }
-                const pm = this.refs.content.children[0];
-                if (!pm) {
-                    return;
-                }
-                switch (n) {
-                    case 'font-size': {
-                        pm.style.fontSize = v;
-                        break;
-                    }
-                    case 'font-family': {
-                        pm.style.fontFamily = v;
-                        break;
-                    }
-                }
-            }, true);
-            this.isLoading = false;
-            this.emit('init', this.access.tuieditor);
+            this.access.tuieditor.setMarkdown(v);
         });
+        clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
+            if (!this.access.tuieditor) {
+                return;
+            }
+            const pm = this.refs.content.children[0];
+            if (!pm) {
+                return;
+            }
+            switch (n) {
+                case 'font-size': {
+                    pm.style.fontSize = v;
+                    break;
+                }
+                case 'font-family': {
+                    pm.style.fontFamily = v;
+                    break;
+                }
+            }
+        }, true);
+        this.isLoading = false;
+        this.emit('init', this.access.tuieditor);
     }
 }
 exports.default = default_1;

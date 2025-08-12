@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -115,12 +106,11 @@ class default_1 extends clickgo.control.AbstractControl {
         return w;
     }
     get mapComp() {
-        var _a, _b, _c, _d;
         return {
-            'disabled': (_a = this.props.map.disabled) !== null && _a !== void 0 ? _a : 'disabled',
-            'control': (_b = this.props.map.control) !== null && _b !== void 0 ? _b : 'control',
-            'unavailable': (_c = this.props.map.unavailable) !== null && _c !== void 0 ? _c : 'unavailable',
-            'leftline': (_d = this.props.map.leftline) !== null && _d !== void 0 ? _d : 'leftline',
+            'disabled': this.props.map.disabled ?? 'disabled',
+            'control': this.props.map.control ?? 'control',
+            'unavailable': this.props.map.unavailable ?? 'unavailable',
+            'leftline': this.props.map.leftline ?? 'leftline',
         };
     }
     get leftlinecolor() {
@@ -215,98 +205,95 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         cb();
     }
-    checkValue() {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c;
-            if (!this.props.data.length) {
-                return;
-            }
-            ++this._needCheckValue;
-            yield this.nextTick();
-            if (this._needCheckValue > 1) {
-                --this._needCheckValue;
-                return;
-            }
+    async checkValue() {
+        if (!this.props.data.length) {
+            return;
+        }
+        ++this._needCheckValue;
+        await this.nextTick();
+        if (this._needCheckValue > 1) {
             --this._needCheckValue;
-            let change = false;
-            const notDisabledIndex = this.getFirstNotDisabledIndex();
-            const dataMaxIndex = this.props.data.length - 1;
-            const oldValueData = clickgo.tool.clone(this.valueData);
-            if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
+            return;
+        }
+        --this._needCheckValue;
+        let change = false;
+        const notDisabledIndex = this.getFirstNotDisabledIndex();
+        const dataMaxIndex = this.props.data.length - 1;
+        const oldValueData = clickgo.tool.clone(this.valueData);
+        if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
+            change = true;
+            this.valueData.splice(1);
+            this.shiftStart = this.valueData[0];
+        }
+        for (let i = 0; i < this.valueData.length; ++i) {
+            if ((this.valueData[i] > dataMaxIndex) ||
+                (this.props.data[this.valueData[i]]?.[this.mapComp.disabled] || (this.props.data[this.valueData[i]]?.[this.mapComp.control] === 'split'))) {
                 change = true;
-                this.valueData.splice(1);
-                this.shiftStart = this.valueData[0];
-            }
-            for (let i = 0; i < this.valueData.length; ++i) {
-                if ((this.valueData[i] > dataMaxIndex) ||
-                    (((_a = this.props.data[this.valueData[i]]) === null || _a === void 0 ? void 0 : _a[this.mapComp.disabled]) || (((_b = this.props.data[this.valueData[i]]) === null || _b === void 0 ? void 0 : _b[this.mapComp.control]) === 'split'))) {
-                    change = true;
-                    if (this.shiftStart === this.valueData[i]) {
-                        this.shiftStart = i > 0 ? ((_c = this.valueData[0]) !== null && _c !== void 0 ? _c : notDisabledIndex) : notDisabledIndex;
-                        if (this.shiftStart < 0) {
-                            this.shiftStart = 0;
-                        }
-                    }
-                    this.valueData.splice(i, 1);
-                    --i;
-                }
-            }
-            if (this.propBoolean('must') && (this.valueData.length === 0)) {
-                change = true;
-                this.valueData = notDisabledIndex < 0 ? [] : [notDisabledIndex];
-                this.shiftStart = this.valueData.length ? this.valueData[0] : 0;
-            }
-            if (change) {
-                if (this.propBoolean('multi')) {
-                    const res = clickgo.tool.compar(oldValueData, this.valueData);
-                    for (const key in res.remove) {
-                        const event = {
-                            'go': true,
-                            preventDefault: function () {
-                                this.go = false;
-                            },
-                            'detail': {
-                                'index': res.remove[key],
-                                'value': parseInt(key)
-                            }
-                        };
-                        this.emit('remove', event);
-                    }
-                    for (const key in res.add) {
-                        const event = {
-                            'go': true,
-                            preventDefault: function () {
-                                this.go = false;
-                            },
-                            'detail': {
-                                'index': res.add[key],
-                                'value': parseInt(key)
-                            }
-                        };
-                        this.emit('add', event);
+                if (this.shiftStart === this.valueData[i]) {
+                    this.shiftStart = i > 0 ? (this.valueData[0] ?? notDisabledIndex) : notDisabledIndex;
+                    if (this.shiftStart < 0) {
+                        this.shiftStart = 0;
                     }
                 }
-                else {
+                this.valueData.splice(i, 1);
+                --i;
+            }
+        }
+        if (this.propBoolean('must') && (this.valueData.length === 0)) {
+            change = true;
+            this.valueData = notDisabledIndex < 0 ? [] : [notDisabledIndex];
+            this.shiftStart = this.valueData.length ? this.valueData[0] : 0;
+        }
+        if (change) {
+            if (this.propBoolean('multi')) {
+                const res = clickgo.tool.compar(oldValueData, this.valueData);
+                for (const key in res.remove) {
                     const event = {
                         'go': true,
                         preventDefault: function () {
                             this.go = false;
                         },
                         'detail': {
-                            'value': this.valueData,
+                            'index': res.remove[key],
+                            'value': parseInt(key)
                         }
                     };
-                    this.emit('change', event);
-                    const event2 = {
-                        'detail': {
-                            'value': this.valueData,
-                        }
-                    };
-                    this.emit('changed', event2);
+                    this.emit('remove', event);
                 }
-                this.emit('update:modelValue', this.valueData);
+                for (const key in res.add) {
+                    const event = {
+                        'go': true,
+                        preventDefault: function () {
+                            this.go = false;
+                        },
+                        'detail': {
+                            'index': res.add[key],
+                            'value': parseInt(key)
+                        }
+                    };
+                    this.emit('add', event);
+                }
             }
-        });
+            else {
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': this.valueData,
+                    }
+                };
+                this.emit('change', event);
+                const event2 = {
+                    'detail': {
+                        'value': this.valueData,
+                    }
+                };
+                this.emit('changed', event2);
+            }
+            this.emit('update:modelValue', this.valueData);
+        }
     }
     onScrollHeight(sh) {
         this.length = sh;
@@ -878,9 +865,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refreshOffset();
         });
-        this.watch(() => JSON.stringify(this.props.data), () => __awaiter(this, void 0, void 0, function* () {
-            yield this.checkValue();
-        }), {
+        this.watch(() => JSON.stringify(this.props.data), async () => {
+            await this.checkValue();
+        }, {
             'deep': true
         });
         this.watch('sl', () => {
@@ -904,13 +891,12 @@ class default_1 extends clickgo.control.AbstractControl {
             this.client = offset;
         });
         this.watch('modelValue', () => {
-            var _a;
             if ((this.valueData.length === this.props.modelValue.length)
                 && this.valueData.every((item) => this.props.modelValue.includes(item))) {
                 return;
             }
             this.valueData = this.props.modelValue;
-            this.shiftStart = (_a = this.valueData[0]) !== null && _a !== void 0 ? _a : 0;
+            this.shiftStart = this.valueData[0] ?? 0;
             this.checkValue().catch(() => {
             });
         });

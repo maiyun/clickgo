@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -61,63 +52,53 @@ class default_1 extends clickgo.form.AbstractForm {
             'key': this.sendValue
         });
     }
-    hhide() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.hide();
-            yield clickgo.tool.sleep(1000);
-            this.show();
-        });
+    async hhide() {
+        this.hide();
+        await clickgo.tool.sleep(1000);
+        this.show();
     }
-    sshowDialog() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield clickgo.form.create(sd_1.default);
-            this.dr = yield frm.showDialog();
-        });
+    async sshowDialog() {
+        const frm = await clickgo.form.create(sd_1.default);
+        this.dr = await frm.showDialog();
     }
-    showLoading() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.loading = true;
-            yield clickgo.tool.sleep(1000);
-            this.loading = false;
-        });
+    async showLoading() {
+        this.loading = true;
+        await clickgo.tool.sleep(1000);
+        this.loading = false;
     }
-    showLoadingFast() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.loading = true;
-            yield clickgo.tool.sleep(1000);
-            this.loading = false;
-            this.loading = true;
-            yield clickgo.tool.sleep(1000);
-            this.loading = false;
-        });
+    async showLoadingFast() {
+        this.loading = true;
+        await clickgo.tool.sleep(1000);
+        this.loading = false;
+        this.loading = true;
+        await clickgo.tool.sleep(1000);
+        this.loading = false;
     }
-    toEnterStep() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const rtn = yield this.enterStep([
-                {
-                    'value': 'step1',
-                    'label': 'step1'
-                },
-                {
-                    'value': 'step2'
-                },
-                {
-                    'icon': '/package/res/marker.svg',
-                    'value': 'icon'
-                },
-                {
-                    'label': 'successful',
-                    'value': 'step3',
-                    'desc': 'qq'
-                }
-            ]);
-            yield clickgo.form.dialog('Result: ' + (rtn ? 'true' : 'false'));
-        });
+    async toEnterStep() {
+        const rtn = await this.enterStep([
+            {
+                'value': 'step1',
+                'label': 'step1'
+            },
+            {
+                'value': 'step2'
+            },
+            {
+                'icon': '/package/res/marker.svg',
+                'value': 'icon'
+            },
+            {
+                'label': 'successful',
+                'value': 'step3',
+                'desc': 'qq'
+            }
+        ]);
+        await clickgo.form.dialog('Result: ' + (rtn ? 'true' : 'false'));
     }
     onMounted() {
-        this.watch('test', () => __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('test changed.');
-        }));
+        this.watch('test', async () => {
+            await clickgo.form.dialog('test changed.');
+        });
     }
 }
 exports.default = default_1;

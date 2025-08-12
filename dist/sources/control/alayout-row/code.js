@@ -40,8 +40,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.alayout = null;
     }
     get gap() {
-        var _a;
-        if (!((_a = this.alayout) === null || _a === void 0 ? void 0 : _a.propNumber)) {
+        if (!this.alayout?.propNumber) {
             return '0';
         }
         return this.alayout.propNumber('gutter') + 'px';

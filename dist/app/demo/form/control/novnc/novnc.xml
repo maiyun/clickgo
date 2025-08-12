@@ -1,0 +1,13 @@
+<form width="450" height="600" title="Novnc" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <novnc v-model="config" @connect="connect" @disconnect="disconnect" @password="password" @fail="fail" @desktopresize="desktopresize" @clipboard="clipboard" style="flex: 1; height: 0;"></novnc>
+        <layout gutter="10">
+            <text v-model="url" placeholder="ws:// | wss://" style="flex: 1;" />
+            <text v-model="pwd" placeholder="Password" style="flex: 1;" />
+            <button @click="toConnect">connect</button>
+        </layout>
+        <flow direction="v" style="background: oklch(0 0 0); color: oklch(1 0 0); height: 70px;">
+            <label v-for="item of list">{{ item }}</label>
+        </flow>
+    </layout>
+</form>

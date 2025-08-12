@@ -223,7 +223,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('changed', event);
     }
     formatColor(color) {
-        var _a;
         if (!color) {
             const event = {
                 'detail': {
@@ -244,7 +243,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.hsl.h = Math.round(f[0]);
             this.hsl.s = Math.round(f[1]);
             this.hsl.l = Math.round(f[2]);
-            this.hsl.a = (_a = f[3]) !== null && _a !== void 0 ? _a : 1;
+            this.hsl.a = f[3] ?? 1;
         }
         else if (v.startsWith('rgb')) {
             const f = clickgo.tool.formatColor(v);

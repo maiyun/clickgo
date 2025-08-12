@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -92,10 +83,8 @@ class default_1 extends clickgo.form.AbstractForm {
     getStyleCount() {
         clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
     }
-    getWatchSizeCount(taskId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.dom.getWatchSizeCount(taskId).toString());
-        });
+    async getWatchSizeCount(taskId) {
+        await clickgo.form.dialog(clickgo.dom.getWatchSizeCount(taskId).toString());
     }
     watchSize() {
         this.watchSizeText = !this.watchSizeText;
@@ -133,24 +122,20 @@ class default_1 extends clickgo.form.AbstractForm {
             clickgo.dom.unwatch(this.refs.watch.$el);
         }
     }
-    getWatchCount(taskId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.dom.getWatchCount(taskId).toString());
-        });
+    async getWatchCount(taskId) {
+        await clickgo.form.dialog(clickgo.dom.getWatchCount(taskId).toString());
     }
     isWatchStyle() {
         clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
     }
-    getWatchInfo() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.getWatchInfoDisabled = true;
-            for (let i = 0; i < 40; ++i) {
-                const rtn = clickgo.dom.getWatchInfo();
-                this.getWatchInfoText = JSON.stringify(rtn, undefined, 4);
-                yield clickgo.tool.sleep(500);
-            }
-            this.getWatchInfoDisabled = false;
-        });
+    async getWatchInfo() {
+        this.getWatchInfoDisabled = true;
+        for (let i = 0; i < 40; ++i) {
+            const rtn = clickgo.dom.getWatchInfo();
+            this.getWatchInfoText = JSON.stringify(rtn, undefined, 4);
+            await clickgo.tool.sleep(500);
+        }
+        this.getWatchInfoDisabled = false;
     }
     bindGesture(e) {
         clickgo.dom.bindGesture(e, (ne, dir) => {
@@ -158,11 +143,11 @@ class default_1 extends clickgo.form.AbstractForm {
                 return 1;
             }
             return 0;
-        }, (dir) => __awaiter(this, void 0, void 0, function* () {
+        }, async (dir) => {
             this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-            yield clickgo.tool.sleep(500);
+            await clickgo.tool.sleep(500);
             this.bindGestureText = '';
-        }));
+        });
     }
     bindGestureWheel(e) {
         clickgo.dom.bindGesture(e, (ne, dir) => {
@@ -170,21 +155,21 @@ class default_1 extends clickgo.form.AbstractForm {
                 return 1;
             }
             return 0;
-        }, (dir) => __awaiter(this, void 0, void 0, function* () {
+        }, async (dir) => {
             this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
-            yield clickgo.tool.sleep(500);
+            await clickgo.tool.sleep(500);
             this.bindGestureWheelText = '';
-        }));
+        });
     }
     bindLong() {
         clickgo.form.dialog('Press and hold this button.').catch((e) => { throw e; });
     }
     bindLongDown(e) {
-        clickgo.dom.bindLong(e, () => __awaiter(this, void 0, void 0, function* () {
+        clickgo.dom.bindLong(e, async () => {
             this.bindLongText = true;
-            yield clickgo.tool.sleep(500);
+            await clickgo.tool.sleep(500);
             this.bindLongText = false;
-        }));
+        });
     }
     bindDragDown(e) {
         clickgo.dom.bindDrag(e, {
@@ -192,26 +177,20 @@ class default_1 extends clickgo.form.AbstractForm {
             'data': 'bindDragDownTest'
         });
     }
-    dragEnter(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            e.target.innerText = 'enter';
-            yield clickgo.tool.sleep(200);
-            e.target.innerText = '';
-        });
+    async dragEnter(e) {
+        e.target.innerText = 'enter';
+        await clickgo.tool.sleep(200);
+        e.target.innerText = '';
     }
-    dragLeave(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            e.target.innerText = 'leave';
-            yield clickgo.tool.sleep(200);
-            e.target.innerText = '';
-        });
+    async dragLeave(e) {
+        e.target.innerText = 'leave';
+        await clickgo.tool.sleep(200);
+        e.target.innerText = '';
     }
-    drop(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            e.target.innerText = 'drop';
-            yield clickgo.tool.sleep(500);
-            e.target.innerText = '';
-        });
+    async drop(e) {
+        e.target.innerText = 'drop';
+        await clickgo.tool.sleep(500);
+        e.target.innerText = '';
     }
     bindMoveDown(e) {
         clickgo.dom.bindMove(e, {
@@ -237,10 +216,8 @@ class default_1 extends clickgo.form.AbstractForm {
             this.scaleS *= scale;
         });
     }
-    fullscreen() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.dom.fullscreen();
-        });
+    async fullscreen() {
+        await clickgo.dom.fullscreen();
     }
     onMounted() {
         clickgo.dom.watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => {

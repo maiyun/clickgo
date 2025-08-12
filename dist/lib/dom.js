@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.is = exports.dpi = void 0;
 exports.inPage = inPage;
@@ -154,7 +145,7 @@ function hasTouchButMouse(e) {
         return true;
     }
     const now = Date.now();
-    if (now - lastTouchTime < 60000) {
+    if (now - lastTouchTime < 60_000) {
         return true;
     }
     return false;
@@ -163,8 +154,7 @@ function createToStyleList(taskId) {
     styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><div class="cg-style-control"></div><div class="cg-style-theme"></div><style class="cg-style-global"></style><div class="cg-style-form"></div></div>`);
 }
 function removeFromStyleList(taskId) {
-    var _a;
-    (_a = document.getElementById('cg-style-task' + taskId.toString())) === null || _a === void 0 ? void 0 : _a.remove();
+    document.getElementById('cg-style-task' + taskId.toString())?.remove();
 }
 function pushStyle(taskId, style, type = 'global', formId = 0, panelId) {
     const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
@@ -713,7 +703,6 @@ function clearWatchProperty(formId, panelId) {
     delete watchPropertyObjects[formId];
 }
 function getWatchInfo() {
-    var _a, _b;
     const rtn = {
         'formId': 0,
         'default': {},
@@ -726,14 +715,13 @@ function getWatchInfo() {
     rtn.formId = formId;
     const panelIds = form.getActivePanel(formId);
     const handler = (item, type, panelId) => {
-        var _a, _b, _c;
         if (panelId) {
             if (!rtn.panels[panelId]) {
                 rtn.panels[panelId] = {};
             }
         }
         const ritem = panelId ? rtn.panels[panelId] : rtn.default;
-        const cname = (_c = (_a = item.el.dataset.cgControl) !== null && _a !== void 0 ? _a : (_b = findParentByData(item.el, 'cg-control')) === null || _b === void 0 ? void 0 : _b.dataset.cgControl) !== null && _c !== void 0 ? _c : 'unknown';
+        const cname = item.el.dataset.cgControl ?? findParentByData(item.el, 'cg-control')?.dataset.cgControl ?? 'unknown';
         if (!ritem[cname]) {
             ritem[cname] = {
                 'style': {
@@ -780,7 +768,7 @@ function getWatchInfo() {
             }
         }
         for (const id of panelIds) {
-            if ((_a = watchPropertyObjects[formId]) === null || _a === void 0 ? void 0 : _a[id]) {
+            if (watchPropertyObjects[formId]?.[id]) {
                 for (const index in watchPropertyObjects[formId][id]) {
                     handler(watchPropertyObjects[formId][id][index], 'property', id.toString());
                 }
@@ -794,7 +782,7 @@ function getWatchInfo() {
             }
         }
         for (const id of panelIds) {
-            if ((_b = watchPositionObjects[formId]) === null || _b === void 0 ? void 0 : _b[id]) {
+            if (watchPositionObjects[formId]?.[id]) {
                 for (const index in watchPositionObjects[formId][id]) {
                     handler(watchPositionObjects[formId][id][index], 'position', id.toString());
                 }
@@ -972,7 +960,6 @@ function bindDblClick(e, handler) {
     });
 }
 function bindDown(oe, opt) {
-    var _a;
     if (hasTouchButMouse(oe)) {
         return;
     }
@@ -1048,7 +1035,6 @@ function bindDown(oe, opt) {
         }
     };
     end = function (e) {
-        var _a, _b;
         if (e instanceof MouseEvent) {
             window.removeEventListener('mousemove', move);
             window.removeEventListener('mouseup', end);
@@ -1060,9 +1046,9 @@ function bindDown(oe, opt) {
                 oe.target.removeEventListener('touchcancel', end);
             }
         }
-        (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt, e);
+        opt.up?.(e);
         if (isStart) {
-            (_b = opt.end) === null || _b === void 0 ? void 0 : _b.call(opt, e);
+            opt.end?.(e);
         }
     };
     if (oe instanceof MouseEvent) {
@@ -1078,10 +1064,9 @@ function bindDown(oe, opt) {
         oe.target.addEventListener('touchend', end);
         oe.target.addEventListener('touchcancel', end);
     }
-    (_a = opt.down) === null || _a === void 0 ? void 0 : _a.call(opt, oe);
+    opt.down?.(oe);
 }
 function bindScale(oe, handler) {
-    var _a, _b, _c, _d;
     const el = oe.currentTarget;
     if (!el) {
         return;
@@ -1094,8 +1079,8 @@ function bindScale(oe, handler) {
             el.removeAttribute('data-cg-scale');
             return;
         }
-        const ex = [oe.touches[0].clientX, (_b = (_a = oe.touches[1]) === null || _a === void 0 ? void 0 : _a.clientX) !== null && _b !== void 0 ? _b : -1000];
-        const ey = [oe.touches[0].clientY, (_d = (_c = oe.touches[1]) === null || _c === void 0 ? void 0 : _c.clientY) !== null && _d !== void 0 ? _d : -1000];
+        const ex = [oe.touches[0].clientX, oe.touches[1]?.clientX ?? -1000];
+        const ey = [oe.touches[0].clientY, oe.touches[1]?.clientY ?? -1000];
         let ndis = 0;
         const epos = {
             'x': ex[0],
@@ -1309,12 +1294,12 @@ function bindGesture(oe, before, handler) {
                 if (offset < 90) {
                     return;
                 }
-                handler === null || handler === void 0 ? void 0 : handler(dir);
+                handler?.(dir);
             }
         });
     }
     else {
-        (() => __awaiter(this, void 0, void 0, function* () {
+        (async () => {
             const now = Date.now();
             if (now - gestureWheel.last > 250) {
                 gestureWheel.offset = 0;
@@ -1392,7 +1377,7 @@ function bindGesture(oe, before, handler) {
                     }
                 }
                 gestureWheel.firstTimer = true;
-                yield tool.sleep(30);
+                await tool.sleep(30);
                 gestureWheel.firstTimer = false;
                 form.elements.gesture.classList.add('ani');
             }
@@ -1447,11 +1432,11 @@ function bindGesture(oe, before, handler) {
                 return;
             }
             gestureWheel.done = true;
-            handler === null || handler === void 0 ? void 0 : handler(gestureWheel.dir);
-            yield tool.sleep(500);
+            handler?.(gestureWheel.dir);
+            await tool.sleep(500);
             form.elements.gesture.style.opacity = '0';
             form.elements.gesture.classList.remove('ani');
-        }))().catch((e) => {
+        })().catch((e) => {
             console.log('error', 'dom.bindGesture', e);
         });
     }
@@ -1523,7 +1508,6 @@ function bindDrag(e, opt) {
     bindMove(e, {
         'object': opt.el,
         'start': function (x, y) {
-            var _a;
             const rect = opt.el.getBoundingClientRect();
             form.showDrag();
             form.moveDrag({
@@ -1535,10 +1519,9 @@ function bindDrag(e, opt) {
             });
             otop = rect.top;
             oleft = rect.left;
-            (_a = opt.start) === null || _a === void 0 ? void 0 : _a.call(opt, x, y);
+            opt.start?.(x, y);
         },
         'move': function (e, o) {
-            var _a;
             const ntop = otop + o.oy;
             const nleft = oleft + o.ox;
             form.moveDrag({
@@ -1589,10 +1572,9 @@ function bindDrag(e, opt) {
                 }
             }));
             nel = null;
-            (_a = opt.move) === null || _a === void 0 ? void 0 : _a.call(opt, e, o);
+            opt.move?.(e, o);
         },
         'end': function (moveTimes, e) {
-            var _a;
             form.hideDrag();
             if (nel === null) {
                 return;
@@ -1603,7 +1585,7 @@ function bindDrag(e, opt) {
                     'value': bindDragData
                 }
             }));
-            (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt, moveTimes, e);
+            opt.end?.(moveTimes, e);
             bindDragData = undefined;
         }
     });
@@ -1651,7 +1633,6 @@ window.addEventListener('keyup', function (e) {
     core.trigger('keyup', e);
 });
 function bindMove(e, opt) {
-    var _a, _b, _c, _d, _e;
     if (hasTouchButMouse(e)) {
         return {
             'left': 0,
@@ -1661,7 +1642,7 @@ function bindMove(e, opt) {
         };
     }
     exports.is.move = true;
-    setGlobalCursor((_a = opt.cursor) !== null && _a !== void 0 ? _a : getComputedStyle(e.target).cursor);
+    setGlobalCursor(opt.cursor ?? getComputedStyle(e.target).cursor);
     let tx = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     let ty = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let left, top, right, bottom;
@@ -1680,10 +1661,10 @@ function bindMove(e, opt) {
     }
     else {
         const area = core.getAvailArea();
-        left = (_b = opt.left) !== null && _b !== void 0 ? _b : area.left;
-        top = (_c = opt.top) !== null && _c !== void 0 ? _c : area.top;
-        right = (_d = opt.right) !== null && _d !== void 0 ? _d : area.width;
-        bottom = (_e = opt.bottom) !== null && _e !== void 0 ? _e : area.height;
+        left = opt.left ?? area.left;
+        top = opt.top ?? area.top;
+        right = opt.right ?? area.width;
+        bottom = opt.bottom ?? area.height;
     }
     if (opt.offsetLeft) {
         left += opt.offsetLeft;
@@ -1703,7 +1684,6 @@ function bindMove(e, opt) {
     const moveTimes = [];
     bindDown(e, {
         start: () => {
-            var _a, _b, _c, _d;
             if (opt.start) {
                 if (opt.start(tx, ty) === false) {
                     setGlobalCursor();
@@ -1721,10 +1701,10 @@ function bindMove(e, opt) {
                 objectHeight = rect.height;
             }
             else {
-                objectLeft = (_a = opt.objectLeft) !== null && _a !== void 0 ? _a : 0;
-                objectTop = (_b = opt.objectTop) !== null && _b !== void 0 ? _b : 0;
-                objectWidth = (_c = opt.objectWidth) !== null && _c !== void 0 ? _c : 0;
-                objectHeight = (_d = opt.objectHeight) !== null && _d !== void 0 ? _d : 0;
+                objectLeft = opt.objectLeft ?? 0;
+                objectTop = opt.objectTop ?? 0;
+                objectWidth = opt.objectWidth ?? 0;
+                objectHeight = opt.objectHeight ?? 0;
             }
             if (objectWidth > 0) {
                 offsetLeft = tx - objectLeft;
@@ -1736,7 +1716,6 @@ function bindMove(e, opt) {
             offsetBottom = objectHeight - offsetTop;
         },
         move: (e, dir) => {
-            var _a, _b, _c;
             let x, y;
             x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
             y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
@@ -1872,13 +1851,13 @@ function bindMove(e, opt) {
                 }
                 if (!isBorder) {
                     isBorder = true;
-                    (_a = opt.borderIn) === null || _a === void 0 ? void 0 : _a.call(opt, x, y, border, e);
+                    opt.borderIn?.(x, y, border, e);
                 }
             }
             else {
                 if (isBorder) {
                     isBorder = false;
-                    (_b = opt.borderOut) === null || _b === void 0 ? void 0 : _b.call(opt);
+                    opt.borderOut?.();
                 }
             }
             const ox = x - tx;
@@ -1888,7 +1867,7 @@ function bindMove(e, opt) {
                 'ox': ox,
                 'oy': oy
             });
-            (_c = opt.move) === null || _c === void 0 ? void 0 : _c.call(opt, e, {
+            opt.move?.(e, {
                 'ox': ox,
                 'oy': oy,
                 'x': x,
@@ -1906,14 +1885,12 @@ function bindMove(e, opt) {
             ty = y;
         },
         up: (e) => {
-            var _a;
             exports.is.move = false;
             setGlobalCursor();
-            (_a = opt.up) === null || _a === void 0 ? void 0 : _a.call(opt, moveTimes, e);
+            opt.up?.(moveTimes, e);
         },
         end: (e) => {
-            var _a;
-            (_a = opt.end) === null || _a === void 0 ? void 0 : _a.call(opt, moveTimes, e);
+            opt.end?.(moveTimes, e);
         }
     });
     if (opt.showRect) {
@@ -1935,12 +1912,11 @@ function bindMove(e, opt) {
     };
 }
 function bindResize(e, opt) {
-    var _a, _b;
     if (hasTouchButMouse(e)) {
         return;
     }
-    opt.minWidth = (_a = opt.minWidth) !== null && _a !== void 0 ? _a : 0;
-    opt.minHeight = (_b = opt.minHeight) !== null && _b !== void 0 ? _b : 0;
+    opt.minWidth = opt.minWidth ?? 0;
+    opt.minHeight = opt.minHeight ?? 0;
     const x = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
     const y = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
     let offsetLeft, offsetTop, offsetRight, offsetBottom;
@@ -2004,7 +1980,6 @@ function bindResize(e, opt) {
         'offsetBottom': offsetBottom,
         'start': opt.start,
         'move': function (e, o) {
-            var _a;
             if (opt.border === 'tr' || opt.border === 'r' || opt.border === 'rb') {
                 opt.objectWidth += o.ox;
             }
@@ -2019,7 +1994,7 @@ function bindResize(e, opt) {
                 opt.objectHeight -= o.oy;
                 opt.objectTop += o.oy;
             }
-            (_a = opt.move) === null || _a === void 0 ? void 0 : _a.call(opt, opt.objectLeft, opt.objectTop, opt.objectWidth, opt.objectHeight, x, y, o.border);
+            opt.move?.(opt.objectLeft, opt.objectTop, opt.objectWidth, opt.objectHeight, x, y, o.border);
         },
         'end': opt.end
     });
@@ -2117,37 +2092,33 @@ function siblingsData(el, name) {
     }
     return olist;
 }
-function fullscreen() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const he = document.getElementsByTagName('html')[0];
-        if (he.webkitRequestFullscreen) {
-            yield he.webkitRequestFullscreen();
-            return true;
-        }
-        else if (he.requestFullscreen) {
-            yield he.requestFullscreen();
-            return true;
-        }
-        else {
-            return false;
-        }
-    });
+async function fullscreen() {
+    const he = document.getElementsByTagName('html')[0];
+    if (he.webkitRequestFullscreen) {
+        await he.webkitRequestFullscreen();
+        return true;
+    }
+    else if (he.requestFullscreen) {
+        await he.requestFullscreen();
+        return true;
+    }
+    else {
+        return false;
+    }
 }
-function exitFullscreen() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const d = document;
-        if (d.webkitExitFullscreen) {
-            yield d.webkitExitFullscreen();
-            return true;
-        }
-        else if (d.exitFullscreen) {
-            yield d.exitFullscreen();
-            return true;
-        }
-        else {
-            return false;
-        }
-    });
+async function exitFullscreen() {
+    const d = document;
+    if (d.webkitExitFullscreen) {
+        await d.webkitExitFullscreen();
+        return true;
+    }
+    else if (d.exitFullscreen) {
+        await d.exitFullscreen();
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 function createElement(tagName) {
     return document.createElement(tagName);

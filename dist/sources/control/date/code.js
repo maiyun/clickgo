@@ -299,7 +299,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.vzone[0] = (parseInt(z[0]) >= 0 ? '+' : '') + z[0];
             this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
             if (this.timestamp !== undefined) {
-                this.emit('update:modelValue', this.dateObj.getTime() - this.tzData * 60 * 60000);
+                this.emit('update:modelValue', this.dateObj.getTime() - this.tzData * 60 * 60_000);
             }
         }, {
             'immediate': true

@@ -114,7 +114,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.scrollLeft = sl;
     }
     refreshHeader() {
-        var _a, _b;
         const slots = this.slotsAll('default');
         this.items.length = 0;
         this.widthMap.length = 0;
@@ -122,18 +121,17 @@ class default_1 extends clickgo.control.AbstractControl {
         for (const slot of slots) {
             const width = slot.props.width ? parseInt(slot.props.width) : 0;
             this.items.push({
-                'label': (_a = slot.props.label) !== null && _a !== void 0 ? _a : '',
+                'label': slot.props.label ?? '',
                 'width': width,
                 'sort': slot.props.sort !== undefined ? clickgo.tool.getBoolean(slot.props.sort) : slot.props.sort
             });
             this.widthMap.push(this.propBoolean('split') ? (width ? width : 0) : width);
-            const minWidth = (_b = slot.props.minWidth) !== null && _b !== void 0 ? _b : slot.props['min-width'];
+            const minWidth = slot.props.minWidth ?? slot.props['min-width'];
             this.minWidthMap.push(minWidth ? parseInt(minWidth) : 50);
         }
         this.checkNowSort();
     }
     checkNowSort() {
-        var _a;
         if (this.nowSort.index === -1) {
             return;
         }
@@ -142,7 +140,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 continue;
             }
             const item = this.items[i];
-            const sort = (_a = item.sort) !== null && _a !== void 0 ? _a : this.propBoolean('sort');
+            const sort = item.sort ?? this.propBoolean('sort');
             if (sort) {
                 return;
             }
@@ -164,9 +162,8 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     headerClick(e, i) {
         clickgo.dom.bindClick(e, () => {
-            var _a;
             const item = this.items[i];
-            const sort = (_a = item.sort) !== null && _a !== void 0 ? _a : this.propBoolean('sort');
+            const sort = item.sort ?? this.propBoolean('sort');
             if (!sort) {
                 return;
             }
@@ -225,8 +222,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.checkNowSort();
         });
         this.watch(() => {
-            var _a;
-            return ((_a = this.props.fixed) !== null && _a !== void 0 ? _a : '') + '|' + this.itemsLength;
+            return (this.props.fixed ?? '') + '|' + this.itemsLength;
         }, () => {
             if (this.props.fixed === undefined) {
                 this.isFixed.left = undefined;

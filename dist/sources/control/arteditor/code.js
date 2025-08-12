@@ -225,7 +225,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.emit('update:modelValue', []);
                     return;
                 }
-                catch (_a) {
+                catch {
                     this.value = [];
                     this.emit('update:modelValue', []);
                     return;

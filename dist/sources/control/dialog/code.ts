@@ -3,7 +3,7 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
-        'select': null
+        'select': null,
     };
 
     public props: {
@@ -21,7 +21,7 @@ export default class extends clickgo.control.AbstractControl {
             'height': undefined,
             'padding': true,
 
-            'buttons': ['OK']
+            'buttons': ['OK'],
         };
 
     public click(item: string): void {

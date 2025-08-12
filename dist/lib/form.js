@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activePanels = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
 exports.superConfirm = superConfirm;
@@ -245,8 +236,7 @@ class AbstractCommon {
     }
     get l() {
         return (key, data) => {
-            var _a, _b, _c, _d;
-            const loc = (_d = (_b = (_a = task.list[this.taskId].locale.data[this.locale]) === null || _a === void 0 ? void 0 : _a[key]) !== null && _b !== void 0 ? _b : (_c = task.list[this.taskId].locale.data['en']) === null || _c === void 0 ? void 0 : _c[key]) !== null && _d !== void 0 ? _d : '[LocaleError]' + key;
+            const loc = task.list[this.taskId].locale.data[this.locale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? '[LocaleError]' + key;
             if (!data) {
                 return loc;
             }
@@ -339,30 +329,23 @@ class AbstractPanel extends AbstractCommon {
     set formHashData(v) {
         this.rootForm.formHashData = v;
     }
-    formHashBack() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.rootForm.formHashBack();
-        });
+    async formHashBack() {
+        await this.rootForm.formHashBack();
     }
     sendToRootPanel(data) {
         this.rootPanel.send(data);
     }
-    enterStep(list) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.rootForm.enterStep(list);
-        });
+    async enterStep(list) {
+        return this.rootForm.enterStep(list);
     }
-    doneStep() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.rootForm.doneStep();
-        });
+    async doneStep() {
+        await this.rootForm.doneStep();
     }
     clearQs() {
         this.qs = {};
     }
     get formFocus() {
-        var _a;
-        return (_a = this.rootForm.formFocus) !== null && _a !== void 0 ? _a : false;
+        return this.rootForm.formFocus ?? false;
     }
     onShow() {
         return;
@@ -435,50 +418,48 @@ class AbstractForm extends AbstractCommon {
     ready(cb) {
         cb();
     }
-    formHashBack() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const v = this;
-            if (Date.now() - v.$data._lastFormHashData > 300) {
-                v.$data._formHashData = {};
-            }
-            if (!v.$data._historyHash.length) {
-                if (v.$data._formHash) {
-                    if (this.inStep) {
-                        if (!(yield clickgo.form.confirm({
-                            'taskId': this.taskId,
-                            'content': info.locale[this.locale].confirmExitStep
-                        }))) {
-                            return;
-                        }
-                        this._inStep = false;
-                        this.refs.form.stepHide();
-                    }
-                    v.$data._formHash = '';
-                    core.trigger('formHashChange', this.taskId, this.formId, '', v.$data._formHashData);
-                    return;
-                }
-                return;
-            }
-            const parent = v.$data._historyHash[v.$data._historyHash.length - 1];
-            if (this.inStep) {
-                if (this._stepValues.includes(parent)) {
-                    this.refs.form.stepValue = parent;
-                }
-                else {
-                    if (!(yield clickgo.form.confirm({
+    async formHashBack() {
+        const v = this;
+        if (Date.now() - v.$data._lastFormHashData > 300) {
+            v.$data._formHashData = {};
+        }
+        if (!v.$data._historyHash.length) {
+            if (v.$data._formHash) {
+                if (this.inStep) {
+                    if (!await clickgo.form.confirm({
                         'taskId': this.taskId,
                         'content': info.locale[this.locale].confirmExitStep
-                    }))) {
+                    })) {
                         return;
                     }
                     this._inStep = false;
                     this.refs.form.stepHide();
                 }
+                v.$data._formHash = '';
+                core.trigger('formHashChange', this.taskId, this.formId, '', v.$data._formHashData);
+                return;
             }
-            v.$data._formHash = parent;
-            v.$data._historyHash.splice(-1);
-            core.trigger('formHashChange', this.taskId, this.formId, parent, v.$data._formHashData);
-        });
+            return;
+        }
+        const parent = v.$data._historyHash[v.$data._historyHash.length - 1];
+        if (this.inStep) {
+            if (this._stepValues.includes(parent)) {
+                this.refs.form.stepValue = parent;
+            }
+            else {
+                if (!await clickgo.form.confirm({
+                    'taskId': this.taskId,
+                    'content': info.locale[this.locale].confirmExitStep
+                })) {
+                    return;
+                }
+                this._inStep = false;
+                this.refs.form.stepHide();
+            }
+        }
+        v.$data._formHash = parent;
+        v.$data._historyHash.splice(-1);
+        core.trigger('formHashChange', this.taskId, this.formId, parent, v.$data._formHashData);
     }
     sendToPanel(panel, data) {
         panel.send(data);
@@ -495,25 +476,23 @@ class AbstractForm extends AbstractCommon {
     get inStep() {
         return this._inStep;
     }
-    enterStep(list) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this._inStep) {
-                return false;
-            }
-            if (list[0].value !== this.formHash) {
-                return false;
-            }
-            this._inStep = true;
-            this._stepValues.length = 0;
-            for (const item of list) {
-                this._stepValues.push(item.value);
-            }
-            this.refs.form.stepData = list;
-            this.refs.form.stepValue = this.formHash;
-            yield this.nextTick();
-            this.refs.form.stepShow();
-            return true;
-        });
+    async enterStep(list) {
+        if (this._inStep) {
+            return false;
+        }
+        if (list[0].value !== this.formHash) {
+            return false;
+        }
+        this._inStep = true;
+        this._stepValues.length = 0;
+        for (const item of list) {
+            this._stepValues.push(item.value);
+        }
+        this.refs.form.stepData = list;
+        this.refs.form.stepValue = this.formHash;
+        await this.nextTick();
+        this.refs.form.stepShow();
+        return true;
     }
     updateStep(index, value) {
         if (this._inStep) {
@@ -525,14 +504,12 @@ class AbstractForm extends AbstractCommon {
         this._stepValues[index] = value;
         return true;
     }
-    doneStep() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this._inStep) {
-                return;
-            }
-            this._inStep = false;
-            yield this.refs.form.stepDone();
-        });
+    async doneStep() {
+        if (!this._inStep) {
+            return;
+        }
+        this._inStep = false;
+        await this.refs.form.stepDone();
     }
     show() {
         const v = this;
@@ -554,16 +531,14 @@ class AbstractForm extends AbstractCommon {
             v.$refs.form.$data.isShow = true;
         }
     }
-    showDialog() {
-        return __awaiter(this, void 0, void 0, function* () {
-            task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
-            this.show();
-            this.topMost = true;
-            return new Promise((resolve) => {
-                this.cgDialogCallback = () => {
-                    resolve(this.dialogResult);
-                };
-            });
+    async showDialog() {
+        task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
+        this.show();
+        this.topMost = true;
+        return new Promise((resolve) => {
+            this.cgDialogCallback = () => {
+                resolve(this.dialogResult);
+            };
         });
     }
     hide() {
@@ -794,8 +769,7 @@ exports.elements = {
                 },
                 'computed': {
                     'search': function () {
-                        var _a, _b;
-                        return (_b = (_a = info.locale[core.config.locale]) === null || _a === void 0 ? void 0 : _a.search) !== null && _b !== void 0 ? _b : info.locale['en'].search;
+                        return info.locale[core.config.locale]?.search ?? info.locale['en'].search;
                     },
                     'list': function () {
                         if (this.name === '') {
@@ -837,26 +811,22 @@ exports.elements = {
                             this.closeFolder();
                         }
                     },
-                    iconClick: function (e, item) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (this.md !== e.pageX + e.pageY) {
-                                return;
-                            }
-                            hideLauncher();
-                            yield clickgo.task.run(item.path, {
-                                'icon': item.icon
-                            });
+                    iconClick: async function (e, item) {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        hideLauncher();
+                        await clickgo.task.run(item.path, {
+                            'icon': item.icon
                         });
                     },
-                    subIconClick: function (e, item) {
-                        return __awaiter(this, void 0, void 0, function* () {
-                            if (this.md !== e.pageX + e.pageY) {
-                                return;
-                            }
-                            hideLauncher();
-                            yield clickgo.task.run(item.path, {
-                                'icon': item.icon
-                            });
+                    subIconClick: async function (e, item) {
+                        if (this.md !== e.pageX + e.pageY) {
+                            return;
+                        }
+                        hideLauncher();
+                        await clickgo.task.run(item.path, {
+                            'icon': item.icon
                         });
                     },
                     closeFolder: function () {
@@ -903,7 +873,6 @@ exports.elements = {
                         });
                     },
                     folderNameChange: function (e) {
-                        var _a;
                         const input = e.target;
                         const val = input.value.trim();
                         if (val === '') {
@@ -911,7 +880,7 @@ exports.elements = {
                             return;
                         }
                         this.folderName = val;
-                        core.trigger('launcherFolderNameChanged', (_a = this.folderItem.id) !== null && _a !== void 0 ? _a : '', val);
+                        core.trigger('launcherFolderNameChanged', this.folderItem.id ?? '', val);
                     }
                 },
                 'mounted': function () {
@@ -932,7 +901,7 @@ exports.elements = {
             `</div>`;
         this.confirm.style.display = 'none';
         document.getElementById('cg-confirm-cancel').addEventListener('click', () => {
-            superConfirmHandler === null || superConfirmHandler === void 0 ? void 0 : superConfirmHandler(false);
+            superConfirmHandler?.(false);
             this.confirm.style.display = 'none';
             const fid = getMaxZIndexID();
             if (fid) {
@@ -940,7 +909,7 @@ exports.elements = {
             }
         });
         document.getElementById('cg-confirm-ok').addEventListener('click', () => {
-            superConfirmHandler === null || superConfirmHandler === void 0 ? void 0 : superConfirmHandler(true);
+            superConfirmHandler?.(true);
             this.confirm.style.display = 'none';
             const fid = getMaxZIndexID();
             if (fid) {
@@ -952,15 +921,14 @@ exports.elements = {
 exports.elements.init();
 function superConfirm(html) {
     return new Promise((resolve) => {
-        var _a, _b, _c, _d;
         if (superConfirmHandler !== undefined) {
             resolve(false);
             return;
         }
         exports.elements.confirm.style.display = 'flex';
         document.getElementById('cg-confirm-content').innerHTML = html;
-        document.getElementById('cg-confirm-cancel').innerHTML = (_b = (_a = info.locale[core.config.locale]) === null || _a === void 0 ? void 0 : _a.cancel) !== null && _b !== void 0 ? _b : info.locale['en'].cancel;
-        document.getElementById('cg-confirm-ok').innerHTML = (_d = (_c = info.locale[core.config.locale]) === null || _c === void 0 ? void 0 : _c.ok) !== null && _d !== void 0 ? _d : info.locale['en'].ok;
+        document.getElementById('cg-confirm-cancel').innerHTML = info.locale[core.config.locale]?.cancel ?? info.locale['en'].cancel;
+        document.getElementById('cg-confirm-ok').innerHTML = info.locale[core.config.locale]?.ok ?? info.locale['en'].ok;
         superConfirmHandler = (result) => {
             superConfirmHandler = undefined;
             resolve(result);
@@ -1121,8 +1089,7 @@ function getFocus() {
 }
 exports.activePanels = {};
 function getActivePanel(formId) {
-    var _a;
-    return (_a = exports.activePanels[formId]) !== null && _a !== void 0 ? _a : [];
+    return exports.activePanels[formId] ?? [];
 }
 function removeActivePanel(panelId, formId, taskId) {
     if (!taskId) {
@@ -1198,26 +1165,23 @@ function getHash(formId) {
     }
     return item.vroot.$data._formHash;
 }
-function hashBack(formId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const taskId = getTaskId(formId);
-        if (taskId === 0) {
-            return false;
-        }
-        const t = task.list[taskId];
-        if (!t) {
-            return false;
-        }
-        const item = task.list[taskId].forms[formId];
-        if (!item) {
-            return false;
-        }
-        yield item.vroot.formHashBack();
-        return true;
-    });
+async function hashBack(formId) {
+    const taskId = getTaskId(formId);
+    if (taskId === 0) {
+        return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    const item = task.list[taskId].forms[formId];
+    if (!item) {
+        return false;
+    }
+    await item.vroot.formHashBack();
+    return true;
 }
 function changeFocus(formId = 0) {
-    var _a;
     if (typeof formId === 'string') {
         formId = parseInt(formId);
     }
@@ -1245,7 +1209,7 @@ function changeFocus(formId = 0) {
     if (el.children.item(0).dataset.cgMin !== undefined) {
         min(formId);
     }
-    const taskId = parseInt((_a = el.getAttribute('data-task-id')) !== null && _a !== void 0 ? _a : '0');
+    const taskId = parseInt(el.getAttribute('data-task-id') ?? '0');
     const t = task.list[taskId];
     if (t.runtime.dialogFormIds.length) {
         const dialogFormId = t.runtime.dialogFormIds[t.runtime.dialogFormIds.length - 1];
@@ -1288,7 +1252,6 @@ function changeFocus(formId = 0) {
     }
 }
 function getMaxZIndexID(out = {}) {
-    var _a, _b;
     let zIndex = 0;
     let formId = null;
     for (let i = 0; i < exports.elements.list.children.length; ++i) {
@@ -1308,11 +1271,11 @@ function getMaxZIndexID(out = {}) {
         if (tid === task.systemTaskInfo.taskId) {
             continue;
         }
-        if ((_a = out.taskIds) === null || _a === void 0 ? void 0 : _a.includes(tid)) {
+        if (out.taskIds?.includes(tid)) {
             continue;
         }
         const fid = parseInt(formWrap.getAttribute('data-form-id'));
-        if ((_b = out.formIds) === null || _b === void 0 ? void 0 : _b.includes(fid)) {
+        if (out.formIds?.includes(fid)) {
             continue;
         }
         if (z > zIndex) {
@@ -1323,7 +1286,6 @@ function getMaxZIndexID(out = {}) {
     return formId;
 }
 function getRectByBorder(border) {
-    var _a, _b, _c, _d;
     const area = core.getAvailArea();
     let width, height, left, top;
     if (typeof border === 'string') {
@@ -1390,10 +1352,10 @@ function getRectByBorder(border) {
         }
     }
     else {
-        width = (_a = border.width) !== null && _a !== void 0 ? _a : area.width;
-        height = (_b = border.height) !== null && _b !== void 0 ? _b : area.height;
-        left = (_c = border.left) !== null && _c !== void 0 ? _c : area.left;
-        top = (_d = border.top) !== null && _d !== void 0 ? _d : area.top;
+        width = border.width ?? area.width;
+        height = border.height ?? area.height;
+        left = border.left ?? area.left;
+        top = border.top ?? area.top;
     }
     return {
         'width': width,
@@ -1423,13 +1385,12 @@ function showCircular(x, y) {
     });
 }
 function moveRectangle(border) {
-    var _a, _b, _c, _d;
-    const dataReady = (_a = exports.elements.rectangle.getAttribute('data-ready')) !== null && _a !== void 0 ? _a : '0';
+    const dataReady = exports.elements.rectangle.getAttribute('data-ready') ?? '0';
     if (dataReady === '0') {
         return;
     }
-    const dataBorder = (_b = exports.elements.rectangle.getAttribute('data-border')) !== null && _b !== void 0 ? _b : '';
-    const setDataBorder = typeof border === 'string' ? border : `o-${border.left}-${(_c = border.top) !== null && _c !== void 0 ? _c : 'n'}-${border.width}-${(_d = border.height) !== null && _d !== void 0 ? _d : 'n'}`;
+    const dataBorder = exports.elements.rectangle.getAttribute('data-border') ?? '';
+    const setDataBorder = typeof border === 'string' ? border : `o-${border.left}-${border.top ?? 'n'}-${border.width}-${border.height ?? 'n'}`;
     if (dataBorder === setDataBorder) {
         return;
     }
@@ -1524,7 +1485,7 @@ function alert(content, type) {
     const el = document.createElement('div');
     const y = alertBottom;
     el.classList.add('cg-alert-wrap');
-    el.classList.add('cg-' + (type !== null && type !== void 0 ? type : 'default'));
+    el.classList.add('cg-' + (type ?? 'default'));
     el.setAttribute('data-alertid', nid.toString());
     el.style.transform = `translateY(${y + 10}px)`;
     el.style.opacity = '0';
@@ -1565,13 +1526,12 @@ function alert(content, type) {
 let notifyBottom = -10;
 let notifyId = 0;
 function notify(opt) {
-    var _a;
     const nid = ++notifyId;
-    let timeout = 5000;
-    const maxTimeout = 60000 * 10;
+    let timeout = 5_000;
+    const maxTimeout = 60_000 * 10;
     if (opt.timeout !== undefined) {
         if (opt.timeout <= 0) {
-            timeout = 5000;
+            timeout = 5_000;
         }
         else if (opt.timeout > maxTimeout) {
             timeout = maxTimeout;
@@ -1599,7 +1559,7 @@ function notify(opt) {
     el.style.transform = `translateY(${y}px) translateX(280px)`;
     el.style.opacity = '0';
     el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
-    el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML((_a = opt.type) !== null && _a !== void 0 ? _a : 'primary')}"></div>` +
+    el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML(opt.type ?? 'primary')}"></div>` +
         '<div style="flex: 1;">' +
         (opt.title ? `<div class="cg-notify-title">${tool.escapeHTML(opt.title)}</div>` : '') +
         (opt.content ? `<div class="cg-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>` +
@@ -1697,9 +1657,8 @@ function removeFromPop(el) {
     exports.elements.popList.removeChild(el);
 }
 function refreshPopPosition(el, pop, direction, size = {}) {
-    var _a, _b;
-    const width = (_a = size.width) !== null && _a !== void 0 ? _a : pop.offsetWidth;
-    const height = (_b = size.height) !== null && _b !== void 0 ? _b : pop.offsetHeight;
+    const width = size.width ?? pop.offsetWidth;
+    const height = size.height ?? pop.offsetHeight;
     let left, top;
     if (typeof direction === 'string') {
         const bcr = el.getBoundingClientRect();
@@ -1784,7 +1743,6 @@ function refreshPopPosition(el, pop, direction, size = {}) {
 }
 let lastShowPopTime = 0;
 function showPop(el, pop, direction, opt = {}) {
-    var _a, _b, _c, _d;
     if (!(el instanceof Element)) {
         if (!el.$el) {
             return;
@@ -1797,9 +1755,9 @@ function showPop(el, pop, direction, opt = {}) {
         }
         pop = pop.$el;
     }
-    (_a = opt.null) !== null && _a !== void 0 ? _a : (opt.null = false);
-    (_b = opt.size) !== null && _b !== void 0 ? _b : (opt.size = {});
-    (_c = opt.flow) !== null && _c !== void 0 ? _c : (opt.flow = true);
+    opt.null ??= false;
+    opt.size ??= {};
+    opt.flow ??= true;
     if (!pop && !opt.null) {
         return;
     }
@@ -1831,7 +1789,7 @@ function showPop(el, pop, direction, opt = {}) {
         return;
     }
     const parentPop = dom.findParentByData(el, 'cg-pop');
-    if ((parentPop === null || parentPop === void 0 ? void 0 : parentPop.dataset.cgLevel) !== undefined) {
+    if (parentPop?.dataset.cgLevel !== undefined) {
         const nextlevel = parseInt(parentPop.dataset.cgLevel) + 1;
         if (popInfo.elList[nextlevel]) {
             hidePop(popInfo.elList[nextlevel]);
@@ -1849,7 +1807,7 @@ function showPop(el, pop, direction, opt = {}) {
     pop.removeAttribute('data-cg-pop-none');
     popInfo.list.push(pop);
     popInfo.elList.push(el);
-    popInfo.wayList.push((_d = opt.way) !== null && _d !== void 0 ? _d : 'normal');
+    popInfo.wayList.push(opt.way ?? 'normal');
     popInfo.time.push(Date.now());
     pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
     el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
@@ -1964,7 +1922,6 @@ function isJustPop(el) {
     return true;
 }
 function doFocusAndPopEvent(e) {
-    var _a, _b;
     if (dom.hasTouchButMouse(e)) {
         return;
     }
@@ -1972,7 +1929,7 @@ function doFocusAndPopEvent(e) {
     if (!target) {
         return;
     }
-    const paths = (_a = e.path) !== null && _a !== void 0 ? _a : (e.composedPath ? e.composedPath() : []);
+    const paths = e.path ?? (e.composedPath ? e.composedPath() : []);
     let isCgPopOpen = null;
     for (const item of paths) {
         if (!item.tagName) {
@@ -1983,7 +1940,7 @@ function doFocusAndPopEvent(e) {
             continue;
         }
         if (item.classList.contains('cg-form-wrap')) {
-            const formId = parseInt((_b = item.getAttribute('data-form-id')) !== null && _b !== void 0 ? _b : '0');
+            const formId = parseInt(item.getAttribute('data-form-id') ?? '0');
             changeFocus(formId);
             if (isCgPopOpen) {
                 if (!isJustPop(isCgPopOpen)) {
@@ -2040,7 +1997,6 @@ function remove(formId) {
     }
     task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
     setTimeout(function () {
-        var _a;
         const fid = getMaxZIndexID({
             'formIds': [formId]
         });
@@ -2055,7 +2011,7 @@ function remove(formId) {
         }
         task.list[taskId].forms[formId].vapp.unmount();
         task.list[taskId].forms[formId].vapp._container.remove();
-        (_a = exports.elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
+        exports.elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')?.remove();
         if (io > -1) {
             task.list[taskId].forms[formId].vroot.cgDialogCallback();
         }
@@ -2074,7 +2030,6 @@ function remove(formId) {
     return true;
 }
 function removePanel(id, vapp, el) {
-    var _a;
     const formWrap = dom.findParentByClass(el, 'cg-form-wrap');
     if (!formWrap) {
         return false;
@@ -2090,7 +2045,7 @@ function removePanel(id, vapp, el) {
     const tid = parseInt(taskId);
     vapp.unmount();
     vapp._container.remove();
-    (_a = el.querySelector('[data-panel-id="' + id.toString() + '"]')) === null || _a === void 0 ? void 0 : _a.remove();
+    el.querySelector('[data-panel-id="' + id.toString() + '"]')?.remove();
     dom.removeStyle(tid, 'form', formId, id);
     dom.clearWatchStyle(formId, id);
     dom.clearWatchProperty(formId, id);
@@ -2117,718 +2072,699 @@ function getForm(taskId, formId) {
     }
     return form;
 }
-function createPanel(rootPanel_1, cls_1) {
-    return __awaiter(this, arguments, void 0, function* (rootPanel, cls, opt = {}, taskId) {
-        var _a;
-        if (rootPanel.element.dataset.cgControl !== 'panel') {
-            const err = new Error('form.createPanel: -0');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
-        }
-        const formWrap = dom.findParentByData(rootPanel.element, 'form-id');
-        if (!formWrap) {
-            const err = new Error('form.createPanel: -0');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
-        }
-        const formId = parseInt(formWrap.dataset.formId);
-        if (!taskId) {
-            const err = new Error('form.createPanel: -1');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
-        }
-        const t = task.list[taskId];
-        if (!t) {
-            const err = new Error('form.createPanel: -2');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
-        }
-        let layout = '';
-        if (opt.layout) {
-            layout = opt.layout;
-        }
-        let style = '';
-        let prep = '';
-        if (opt.style) {
-            style = opt.style;
-        }
-        let filename = '';
-        if (typeof cls === 'string') {
-            filename = tool.urlResolve((_a = opt.path) !== null && _a !== void 0 ? _a : '/', cls);
-            if (!layout) {
-                const l = t.app.files[filename + '.xml'];
-                if (typeof l !== 'string') {
-                    const err = new Error('form.createPanel: -3');
-                    core.trigger('error', 0, 0, err, err.message);
-                    throw err;
-                }
-                layout = l;
-            }
-            if (!style) {
-                const s = t.app.files[filename + '.css'];
-                if (typeof s === 'string') {
-                    style = s;
-                }
-            }
-            cls = class extends AbstractPanel {
-                get filename() {
-                    return filename + '.js';
-                }
-                get taskId() {
-                    return t.id;
-                }
-            };
-        }
-        const panelId = ++info.lastPanelId;
-        const panel = new cls();
-        if (!filename) {
-            filename = panel.filename;
-        }
-        const lio = filename.lastIndexOf('/');
-        const path = filename.slice(0, lio);
+async function createPanel(rootPanel, cls, opt = {}, taskId) {
+    if (rootPanel.element.dataset.cgControl !== 'panel') {
+        const err = new Error('form.createPanel: -0');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    const formWrap = dom.findParentByData(rootPanel.element, 'form-id');
+    if (!formWrap) {
+        const err = new Error('form.createPanel: -0');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    const formId = parseInt(formWrap.dataset.formId);
+    if (!taskId) {
+        const err = new Error('form.createPanel: -1');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        const err = new Error('form.createPanel: -2');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    let layout = '';
+    if (opt.layout) {
+        layout = opt.layout;
+    }
+    let style = '';
+    let prep = '';
+    if (opt.style) {
+        style = opt.style;
+    }
+    let filename = '';
+    if (typeof cls === 'string') {
+        filename = tool.urlResolve(opt.path ?? '/', cls);
         if (!layout) {
-            const l = t.app.files[filename.slice(0, -2) + 'xml'];
+            const l = t.app.files[filename + '.xml'];
             if (typeof l !== 'string') {
-                const err = new Error('form.createPanel: -4');
+                const err = new Error('form.createPanel: -3');
                 core.trigger('error', 0, 0, err, err.message);
                 throw err;
             }
             layout = l;
         }
         if (!style) {
-            const s = t.app.files[filename.slice(0, -2) + 'css'];
+            const s = t.app.files[filename + '.css'];
             if (typeof s === 'string') {
                 style = s;
             }
         }
-        if (style) {
-            const r = tool.stylePrepend(style);
-            prep = r.prep;
-            style = yield tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
-        }
-        layout = tool.purify(layout);
-        layout = tool.layoutAddTagClassAndReTagName(layout, true);
-        const prepList = ['cg-task' + t.id.toString() + '_'];
-        if (prep !== '') {
-            prepList.push(prep);
-        }
-        layout = tool.layoutClassPrepend(layout, prepList);
-        layout = tool.eventsAttrWrap(layout);
-        if (layout.includes('<teleport')) {
-            layout = tool.teleportGlue(layout, formId);
-        }
-        const components = control.buildComponents(t.id, formId, path);
-        if (!components) {
-            const err = new Error('form.createPanel: -5');
+        cls = class extends AbstractPanel {
+            get filename() {
+                return filename + '.js';
+            }
+            get taskId() {
+                return t.id;
+            }
+        };
+    }
+    const panelId = ++info.lastPanelId;
+    const panel = new cls();
+    if (!filename) {
+        filename = panel.filename;
+    }
+    const lio = filename.lastIndexOf('/');
+    const path = filename.slice(0, lio);
+    if (!layout) {
+        const l = t.app.files[filename.slice(0, -2) + 'xml'];
+        if (typeof l !== 'string') {
+            const err = new Error('form.createPanel: -4');
             core.trigger('error', 0, 0, err, err.message);
             throw err;
         }
-        const idata = {};
-        const cdata = Object.entries(panel);
-        for (const item of cdata) {
-            if (item[0] === 'access') {
-                continue;
-            }
-            idata[item[0]] = item[1];
+        layout = l;
+    }
+    if (!style) {
+        const s = t.app.files[filename.slice(0, -2) + 'css'];
+        if (typeof s === 'string') {
+            style = s;
         }
-        const prot = tool.getClassPrototype(panel);
-        const methods = prot.method;
-        const computed = prot.access;
-        computed.formId = {
-            get: function () {
-                return formId;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.panelId = {
-            get: function () {
-                return panelId;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "panelId".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.path = {
-            get: function () {
-                return path;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.prep = {
-            get: function () {
-                return prep;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.rootForm = {
-            get: function () {
-                return t.forms[formId].vroot;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "rootForm".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.rootPanel = {
-            get: function () {
-                return rootPanel;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "rootPanel".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        rootPanel.element.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
-        if (style) {
-            dom.pushStyle(t.id, style, 'form', formId, panelId);
+    }
+    if (style) {
+        const r = tool.stylePrepend(style);
+        prep = r.prep;
+        style = await tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
+    }
+    layout = tool.purify(layout);
+    layout = tool.layoutAddTagClassAndReTagName(layout, true);
+    const prepList = ['cg-task' + t.id.toString() + '_'];
+    if (prep !== '') {
+        prepList.push(prep);
+    }
+    layout = tool.layoutClassPrepend(layout, prepList);
+    layout = tool.eventsAttrWrap(layout);
+    if (layout.includes('<teleport')) {
+        layout = tool.teleportGlue(layout, formId);
+    }
+    const components = control.buildComponents(t.id, formId, path);
+    if (!components) {
+        const err = new Error('form.createPanel: -5');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    const idata = {};
+    const cdata = Object.entries(panel);
+    for (const item of cdata) {
+        if (item[0] === 'access') {
+            continue;
         }
-        const mel = rootPanel.element.children.item(rootPanel.element.children.length - 1);
-        mel.style.position = 'absolute';
-        mel.style.display = 'none';
-        const rtn = yield new Promise(function (resolve) {
-            const vapp = clickgo.vue.createApp({
-                'template': layout.replace(/^<cg-panel([\s\S]+)-panel>$/, '<cg-layout$1-layout>'),
-                'data': function () {
-                    return tool.clone(idata);
-                },
-                'methods': methods,
-                'computed': computed,
-                'beforeCreate': panel.onBeforeCreate,
-                'created': function () {
-                    if (panel.access) {
-                        this.access = tool.clone(panel.access);
-                    }
-                    this.onCreated();
-                },
-                'beforeMount': function () {
-                    this.onBeforeMount();
-                },
-                'mounted': function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        mel.children.item(0).style.flex = '1';
-                        resolve({
-                            'vapp': vapp,
-                            'vroot': this
-                        });
-                    });
-                },
-                'beforeUpdate': function () {
-                    this.onBeforeUpdate();
-                },
-                'updated': function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        this.onUpdated();
-                    });
-                },
-                'beforeUnmount': function () {
-                    this.onBeforeUnmount();
-                },
-                'unmounted': function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        this.onUnmounted();
-                    });
-                }
+        idata[item[0]] = item[1];
+    }
+    const prot = tool.getClassPrototype(panel);
+    const methods = prot.method;
+    const computed = prot.access;
+    computed.formId = {
+        get: function () {
+            return formId;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
+                'type': 'danger'
             });
-            vapp.config.errorHandler = function (err, vm, info) {
-                notify({
-                    'title': 'Runtime Error',
-                    'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
-                    'type': 'danger'
+            return;
+        }
+    };
+    computed.panelId = {
+        get: function () {
+            return panelId;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "panelId".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.path = {
+        get: function () {
+            return path;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.prep = {
+        get: function () {
+            return prep;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.rootForm = {
+        get: function () {
+            return t.forms[formId].vroot;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "rootForm".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.rootPanel = {
+        get: function () {
+            return rootPanel;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "rootPanel".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    rootPanel.element.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
+    if (style) {
+        dom.pushStyle(t.id, style, 'form', formId, panelId);
+    }
+    const mel = rootPanel.element.children.item(rootPanel.element.children.length - 1);
+    mel.style.position = 'absolute';
+    mel.style.display = 'none';
+    const rtn = await new Promise(function (resolve) {
+        const vapp = clickgo.vue.createApp({
+            'template': layout.replace(/^<cg-panel([\s\S]+)-panel>$/, '<cg-layout$1-layout>'),
+            'data': function () {
+                return tool.clone(idata);
+            },
+            'methods': methods,
+            'computed': computed,
+            'beforeCreate': panel.onBeforeCreate,
+            'created': function () {
+                if (panel.access) {
+                    this.access = tool.clone(panel.access);
+                }
+                this.onCreated();
+            },
+            'beforeMount': function () {
+                this.onBeforeMount();
+            },
+            'mounted': async function () {
+                await this.$nextTick();
+                mel.children.item(0).style.flex = '1';
+                resolve({
+                    'vapp': vapp,
+                    'vroot': this
                 });
-                console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
-                core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
-            };
-            for (const key in components) {
-                vapp.component(key, components[key]);
-            }
-            try {
-                vapp.mount(mel);
-            }
-            catch (err) {
-                notify({
-                    'title': 'Runtime Error',
-                    'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
-                    'type': 'danger'
-                });
-                console.error('Runtime Error [form.createPanel.mount]', `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`, err);
-                core.trigger('error', t.id, formId, err, err.message);
+            },
+            'beforeUpdate': function () {
+                this.onBeforeUpdate();
+            },
+            'updated': async function () {
+                await this.$nextTick();
+                this.onUpdated();
+            },
+            'beforeUnmount': function () {
+                this.onBeforeUnmount();
+            },
+            'unmounted': async function () {
+                await this.$nextTick();
+                this.onUnmounted();
             }
         });
-        yield tool.sleep(34);
+        vapp.config.errorHandler = function (err, vm, info) {
+            notify({
+                'title': 'Runtime Error',
+                'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                'type': 'danger'
+            });
+            console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
+            core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
+        };
+        for (const key in components) {
+            vapp.component(key, components[key]);
+        }
         try {
-            yield panel.onMounted.call(rtn.vroot);
+            vapp.mount(mel);
         }
         catch (err) {
-            core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create panel mounted error: -6.');
-            try {
-                rtn.vapp.unmount();
-            }
-            catch (err) {
-                const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.createPanel, unmount.`;
-                notify({
-                    'title': 'Panel Unmount Error',
-                    'content': msg,
-                    'type': 'danger'
-                });
-                console.log('Panel Unmount Error', msg, err);
-            }
-            rtn.vapp._container.remove();
-            dom.clearWatchStyle(rtn.vroot.formId, panelId);
-            dom.clearWatchProperty(rtn.vroot.formId, panelId);
-            dom.clearWatchPosition(rtn.vroot.formId, panelId);
-            dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
-            throw err;
+            notify({
+                'title': 'Runtime Error',
+                'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
+                'type': 'danger'
+            });
+            console.error('Runtime Error [form.createPanel.mount]', `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`, err);
+            core.trigger('error', t.id, formId, err, err.message);
         }
-        return {
-            'id': panelId,
-            'vapp': rtn.vapp,
-            'vroot': rtn.vroot
-        };
     });
+    await tool.sleep(34);
+    try {
+        await panel.onMounted.call(rtn.vroot);
+    }
+    catch (err) {
+        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create panel mounted error: -6.');
+        try {
+            rtn.vapp.unmount();
+        }
+        catch (err) {
+            const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.createPanel, unmount.`;
+            notify({
+                'title': 'Panel Unmount Error',
+                'content': msg,
+                'type': 'danger'
+            });
+            console.log('Panel Unmount Error', msg, err);
+        }
+        rtn.vapp._container.remove();
+        dom.clearWatchStyle(rtn.vroot.formId, panelId);
+        dom.clearWatchProperty(rtn.vroot.formId, panelId);
+        dom.clearWatchPosition(rtn.vroot.formId, panelId);
+        dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
+        throw err;
+    }
+    return {
+        'id': panelId,
+        'vapp': rtn.vapp,
+        'vroot': rtn.vroot
+    };
 }
-function create(cls_1, data_1) {
-    return __awaiter(this, arguments, void 0, function* (cls, data, opt = {}, taskId) {
-        var _a, _b;
-        if (!taskId) {
-            const err = new Error('form.create: -1');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
-        }
-        const t = task.list[taskId];
-        if (!t) {
-            const err = new Error('form.create: -2');
-            core.trigger('error', 0, 0, err, err.message);
-            throw err;
-        }
-        let layout = '';
-        if (opt.layout) {
-            layout = opt.layout;
-        }
-        let style = '';
-        let prep = '';
-        if (opt.style) {
-            style = opt.style;
-        }
-        let filename = '';
-        if (typeof cls === 'string') {
-            filename = tool.urlResolve((_a = opt.path) !== null && _a !== void 0 ? _a : '/', cls);
-            if (!layout) {
-                const l = t.app.files[filename + '.xml'];
-                if (typeof l !== 'string') {
-                    const err = new Error('form.create: -3');
-                    core.trigger('error', 0, 0, err, err.message);
-                    throw err;
-                }
-                layout = l;
-            }
-            if (!style) {
-                const s = t.app.files[filename + '.css'];
-                if (typeof s === 'string') {
-                    style = s;
-                }
-            }
-            cls = class extends AbstractForm {
-                get filename() {
-                    return filename + '.js';
-                }
-                get taskId() {
-                    return t.id;
-                }
-            };
-        }
-        const formId = ++info.lastId;
-        const frm = new cls();
-        if (!filename) {
-            filename = frm.filename;
-        }
-        const lio = filename.lastIndexOf('/');
-        const path = filename.slice(0, lio);
+async function create(cls, data, opt = {}, taskId) {
+    if (!taskId) {
+        const err = new Error('form.create: -1');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        const err = new Error('form.create: -2');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    let layout = '';
+    if (opt.layout) {
+        layout = opt.layout;
+    }
+    let style = '';
+    let prep = '';
+    if (opt.style) {
+        style = opt.style;
+    }
+    let filename = '';
+    if (typeof cls === 'string') {
+        filename = tool.urlResolve(opt.path ?? '/', cls);
         if (!layout) {
-            const l = t.app.files[filename.slice(0, -2) + 'xml'];
+            const l = t.app.files[filename + '.xml'];
             if (typeof l !== 'string') {
-                const err = new Error('form.create: -4');
+                const err = new Error('form.create: -3');
                 core.trigger('error', 0, 0, err, err.message);
                 throw err;
             }
             layout = l;
         }
         if (!style) {
-            const s = t.app.files[filename.slice(0, -2) + 'css'];
+            const s = t.app.files[filename + '.css'];
             if (typeof s === 'string') {
                 style = s;
             }
         }
-        if (style) {
-            const r = tool.stylePrepend(style);
-            prep = r.prep;
-            style = yield tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
-        }
-        layout = tool.purify(layout);
-        layout = tool.layoutAddTagClassAndReTagName(layout, true);
-        const prepList = ['cg-task' + t.id.toString() + '_'];
-        if (prep !== '') {
-            prepList.push(prep);
-        }
-        layout = tool.layoutClassPrepend(layout, prepList);
-        layout = tool.eventsAttrWrap(layout);
-        if (layout.includes('<teleport')) {
-            layout = tool.teleportGlue(layout, formId);
-        }
-        const components = control.buildComponents(t.id, formId, path);
-        if (!components) {
-            const err = new Error('form.create: -5');
+        cls = class extends AbstractForm {
+            get filename() {
+                return filename + '.js';
+            }
+            get taskId() {
+                return t.id;
+            }
+        };
+    }
+    const formId = ++info.lastId;
+    const frm = new cls();
+    if (!filename) {
+        filename = frm.filename;
+    }
+    const lio = filename.lastIndexOf('/');
+    const path = filename.slice(0, lio);
+    if (!layout) {
+        const l = t.app.files[filename.slice(0, -2) + 'xml'];
+        if (typeof l !== 'string') {
+            const err = new Error('form.create: -4');
             core.trigger('error', 0, 0, err, err.message);
             throw err;
         }
-        const idata = {};
-        const cdata = Object.entries(frm);
-        for (const item of cdata) {
-            if (item[0] === 'access') {
-                continue;
-            }
-            idata[item[0]] = item[1];
+        layout = l;
+    }
+    if (!style) {
+        const s = t.app.files[filename.slice(0, -2) + 'css'];
+        if (typeof s === 'string') {
+            style = s;
         }
-        idata._formFocus = false;
-        if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
-            idata.isNativeSync = true;
+    }
+    if (style) {
+        const r = tool.stylePrepend(style);
+        prep = r.prep;
+        style = await tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
+    }
+    layout = tool.purify(layout);
+    layout = tool.layoutAddTagClassAndReTagName(layout, true);
+    const prepList = ['cg-task' + t.id.toString() + '_'];
+    if (prep !== '') {
+        prepList.push(prep);
+    }
+    layout = tool.layoutClassPrepend(layout, prepList);
+    layout = tool.eventsAttrWrap(layout);
+    if (layout.includes('<teleport')) {
+        layout = tool.teleportGlue(layout, formId);
+    }
+    const components = control.buildComponents(t.id, formId, path);
+    if (!components) {
+        const err = new Error('form.create: -5');
+        core.trigger('error', 0, 0, err, err.message);
+        throw err;
+    }
+    const idata = {};
+    const cdata = Object.entries(frm);
+    for (const item of cdata) {
+        if (item[0] === 'access') {
+            continue;
         }
-        const prot = tool.getClassPrototype(frm);
-        const methods = prot.method;
-        const computed = prot.access;
-        computed.formId = {
-            get: function () {
-                return formId;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.path = {
-            get: function () {
-                return path;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        computed.prep = {
-            get: function () {
-                return prep;
-            },
-            set: function () {
-                notify({
-                    'title': 'Error',
-                    'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
-                    'type': 'danger'
-                });
-                return;
-            }
-        };
-        idata._bottomMost = false;
-        computed.bottomMost = {
-            get: function () {
-                return this._bottomMost;
-            },
-            set: function (v) {
-                if (v) {
-                    this._bottomMost = true;
-                    this.$el.dataset.cgBottomMost = '';
-                    if (this._topMost) {
-                        this._topMost = false;
-                    }
-                    this.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+        idata[item[0]] = item[1];
+    }
+    idata._formFocus = false;
+    if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
+        idata.isNativeSync = true;
+    }
+    const prot = tool.getClassPrototype(frm);
+    const methods = prot.method;
+    const computed = prot.access;
+    computed.formId = {
+        get: function () {
+            return formId;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "formId".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.path = {
+        get: function () {
+            return path;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "path".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    computed.prep = {
+        get: function () {
+            return prep;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "prep".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
+    idata._bottomMost = false;
+    computed.bottomMost = {
+        get: function () {
+            return this._bottomMost;
+        },
+        set: function (v) {
+            if (v) {
+                this._bottomMost = true;
+                this.$el.dataset.cgBottomMost = '';
+                if (this._topMost) {
+                    this._topMost = false;
                 }
-                else {
+                this.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
+            }
+            else {
+                this._bottomMost = false;
+                this.$el.removeAttribute('data-cg-bottom-most');
+                this.$refs.form.$data.zIndex = ++info.lastZIndex;
+            }
+        }
+    };
+    idata._topMost = false;
+    computed.topMost = {
+        get: function () {
+            return this._topMost;
+        },
+        set: function (v) {
+            if (v) {
+                this._topMost = true;
+                if (this._bottomMost) {
                     this._bottomMost = false;
                     this.$el.removeAttribute('data-cg-bottom-most');
-                    this.$refs.form.$data.zIndex = ++info.lastZIndex;
                 }
-            }
-        };
-        idata._topMost = false;
-        computed.topMost = {
-            get: function () {
-                return this._topMost;
-            },
-            set: function (v) {
-                if (v) {
-                    this._topMost = true;
-                    if (this._bottomMost) {
-                        this._bottomMost = false;
-                        this.$el.removeAttribute('data-cg-bottom-most');
-                    }
-                    if (!this._formFocus) {
-                        changeFocus(this.formId);
-                    }
-                    else {
-                        this.$refs.form.$data.zIndex = ++info.topLastZIndex;
-                    }
+                if (!this._formFocus) {
+                    changeFocus(this.formId);
                 }
                 else {
-                    this._topMost = false;
-                    this.$refs.form.$data.zIndex = ++info.lastZIndex;
+                    this.$refs.form.$data.zIndex = ++info.topLastZIndex;
                 }
             }
-        };
-        idata._historyHash = [];
-        idata._formHash = '';
-        computed.formHash = {
-            get: function () {
-                return this._formHash;
-            },
-            set: function (v) {
-                if (v === this._formHash) {
-                    return;
-                }
-                if (Date.now() - this._lastFormHashData > 300) {
-                    this._formHashData = {};
-                }
-                if (this.inStep) {
-                    (() => __awaiter(this, void 0, void 0, function* () {
-                        if (this._stepValues.includes(v)) {
-                            this.$refs.form.stepValue = v;
-                        }
-                        else {
-                            if (!(yield clickgo.form.confirm({
-                                'taskId': this.taskId,
-                                'content': info.locale[this.locale].confirmExitStep
-                            }))) {
-                                return;
-                            }
-                            this._inStep = false;
-                            this.$refs.form.stepHide();
-                        }
-                        if (this._formHash) {
-                            this._historyHash.push(this._formHash);
-                        }
-                        this._formHash = v;
-                        core.trigger('formHashChange', t.id, formId, v, this._formHashData);
-                    }))();
-                    return;
-                }
-                if (this._formHash) {
-                    this._historyHash.push(this._formHash);
-                }
-                this._formHash = v;
-                core.trigger('formHashChange', t.id, formId, v, this._formHashData);
+            else {
+                this._topMost = false;
+                this.$refs.form.$data.zIndex = ++info.lastZIndex;
             }
-        };
-        idata._lastFormHashData = 0;
-        idata._formHashData = {};
-        computed.formHashData = {
-            get: function () {
-                return this._formHashData;
-            },
-            set: function (v) {
-                this._formHashData = v;
-                this._lastFormHashData = Date.now();
-            }
-        };
-        idata._showInSystemTask = true;
-        computed.showInSystemTask = {
-            get: function () {
-                return this._showInSystemTask;
-            },
-            set: function (v) {
-                this._showInSystemTask = v;
-                core.trigger('formShowInSystemTaskChange', t.id, formId, v);
-            }
-        };
-        const cbs = [];
-        methods.ready = function (cb) {
-            if (this.isReady) {
-                cb();
+        }
+    };
+    idata._historyHash = [];
+    idata._formHash = '';
+    computed.formHash = {
+        get: function () {
+            return this._formHash;
+        },
+        set: function (v) {
+            if (v === this._formHash) {
                 return;
             }
-            cbs.push(cb);
-        };
-        exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
-        exports.elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
-        if (style) {
-            dom.pushStyle(t.id, style, 'form', formId);
-        }
-        const el = exports.elements.list.children.item(exports.elements.list.children.length - 1);
-        const rtn = yield new Promise(function (resolve) {
-            const vapp = clickgo.vue.createApp({
-                'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
-                'data': function () {
-                    return tool.clone(idata);
-                },
-                'methods': methods,
-                'computed': computed,
-                'beforeCreate': frm.onBeforeCreate,
-                'created': function () {
-                    if (frm.access) {
-                        this.access = tool.clone(frm.access);
+            if (Date.now() - this._lastFormHashData > 300) {
+                this._formHashData = {};
+            }
+            if (this.inStep) {
+                (async () => {
+                    if (this._stepValues.includes(v)) {
+                        this.$refs.form.stepValue = v;
                     }
-                    this.onCreated();
-                },
-                'beforeMount': function () {
-                    this.onBeforeMount();
-                },
-                'mounted': function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        if (this.$refs.form.icon) {
-                            const icon = yield fs.getContent(this.$refs.form.icon, undefined, taskId);
-                            this.$refs.form.iconDataUrl = (icon instanceof Blob) ? yield tool.blob2DataUrl(icon) : '';
+                    else {
+                        if (!await clickgo.form.confirm({
+                            'taskId': this.taskId,
+                            'content': info.locale[this.locale].confirmExitStep
+                        })) {
+                            return;
                         }
-                        resolve({
-                            'vapp': vapp,
-                            'vroot': this
-                        });
-                    });
-                },
-                'beforeUpdate': function () {
-                    this.onBeforeUpdate();
-                },
-                'updated': function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        this.onUpdated();
-                    });
-                },
-                'beforeUnmount': function () {
-                    this.onBeforeUnmount();
-                },
-                'unmounted': function () {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        yield this.$nextTick();
-                        this.onUnmounted();
-                    });
+                        this._inStep = false;
+                        this.$refs.form.stepHide();
+                    }
+                    if (this._formHash) {
+                        this._historyHash.push(this._formHash);
+                    }
+                    this._formHash = v;
+                    core.trigger('formHashChange', t.id, formId, v, this._formHashData);
+                })();
+                return;
+            }
+            if (this._formHash) {
+                this._historyHash.push(this._formHash);
+            }
+            this._formHash = v;
+            core.trigger('formHashChange', t.id, formId, v, this._formHashData);
+        }
+    };
+    idata._lastFormHashData = 0;
+    idata._formHashData = {};
+    computed.formHashData = {
+        get: function () {
+            return this._formHashData;
+        },
+        set: function (v) {
+            this._formHashData = v;
+            this._lastFormHashData = Date.now();
+        }
+    };
+    idata._showInSystemTask = true;
+    computed.showInSystemTask = {
+        get: function () {
+            return this._showInSystemTask;
+        },
+        set: function (v) {
+            this._showInSystemTask = v;
+            core.trigger('formShowInSystemTaskChange', t.id, formId, v);
+        }
+    };
+    const cbs = [];
+    methods.ready = function (cb) {
+        if (this.isReady) {
+            cb();
+            return;
+        }
+        cbs.push(cb);
+    };
+    exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
+    exports.elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
+    if (style) {
+        dom.pushStyle(t.id, style, 'form', formId);
+    }
+    const el = exports.elements.list.children.item(exports.elements.list.children.length - 1);
+    const rtn = await new Promise(function (resolve) {
+        const vapp = clickgo.vue.createApp({
+            'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
+            'data': function () {
+                return tool.clone(idata);
+            },
+            'methods': methods,
+            'computed': computed,
+            'beforeCreate': frm.onBeforeCreate,
+            'created': function () {
+                if (frm.access) {
+                    this.access = tool.clone(frm.access);
                 }
-            });
-            vapp.config.errorHandler = function (err, vm, info) {
-                notify({
-                    'title': 'Runtime Error',
-                    'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
-                    'type': 'danger'
+                this.onCreated();
+            },
+            'beforeMount': function () {
+                this.onBeforeMount();
+            },
+            'mounted': async function () {
+                await this.$nextTick();
+                if (this.$refs.form.icon) {
+                    const icon = await fs.getContent(this.$refs.form.icon, undefined, taskId);
+                    this.$refs.form.iconDataUrl = (icon instanceof Blob) ? await tool.blob2DataUrl(icon) : '';
+                }
+                resolve({
+                    'vapp': vapp,
+                    'vroot': this
                 });
-                console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
-                core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
-            };
-            for (const key in components) {
-                vapp.component(key, components[key]);
-            }
-            try {
-                vapp.mount(el);
-            }
-            catch (err) {
-                notify({
-                    'title': 'Runtime Error',
-                    'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
-                    'type': 'danger'
-                });
-                console.error('Runtime Error [form.create.mount]', `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`, err);
-                core.trigger('error', t.id, formId, err, err.message);
+            },
+            'beforeUpdate': function () {
+                this.onBeforeUpdate();
+            },
+            'updated': async function () {
+                await this.$nextTick();
+                this.onUpdated();
+            },
+            'beforeUnmount': function () {
+                this.onBeforeUnmount();
+            },
+            'unmounted': async function () {
+                await this.$nextTick();
+                this.onUnmounted();
             }
         });
-        const nform = {
-            'id': formId,
-            'vapp': rtn.vapp,
-            'vroot': rtn.vroot,
-            'closed': false
+        vapp.config.errorHandler = function (err, vm, info) {
+            notify({
+                'title': 'Runtime Error',
+                'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                'type': 'danger'
+            });
+            console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
+            core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
         };
-        t.forms[formId] = nform;
-        yield tool.sleep(34);
+        for (const key in components) {
+            vapp.component(key, components[key]);
+        }
         try {
-            yield frm.onMounted.call(rtn.vroot, data !== null && data !== void 0 ? data : {});
+            vapp.mount(el);
         }
         catch (err) {
-            core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -6.');
-            delete t.forms[formId];
-            try {
-                rtn.vapp.unmount();
-            }
-            catch (err) {
-                const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.create, unmount.`;
-                notify({
-                    'title': 'Form Unmount Error',
-                    'content': msg,
-                    'type': 'danger'
-                });
-                console.log('Form Unmount Error', msg, err);
-            }
-            rtn.vapp._container.remove();
-            (_b = exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')) === null || _b === void 0 ? void 0 : _b.remove();
-            dom.clearWatchStyle(rtn.vroot.formId);
-            dom.clearWatchProperty(rtn.vroot.formId);
-            dom.clearWatchPosition(rtn.vroot.formId);
-            native.clear(formId, t.id);
-            dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
-            throw err;
-        }
-        core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl, rtn.vroot.showInSystemTask);
-        if (rtn.vroot.isNativeSync) {
-            yield native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
-            window.addEventListener('resize', function () {
-                rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
-                rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
+            notify({
+                'title': 'Runtime Error',
+                'content': `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`,
+                'type': 'danger'
             });
+            console.error('Runtime Error [form.create.mount]', `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`, err);
+            core.trigger('error', t.id, formId, err, err.message);
         }
-        rtn.vroot.isReady = true;
-        for (const cb of cbs) {
-            cb.call(rtn.vroot);
-        }
-        return rtn.vroot;
     });
+    const nform = {
+        'id': formId,
+        'vapp': rtn.vapp,
+        'vroot': rtn.vroot,
+        'closed': false
+    };
+    t.forms[formId] = nform;
+    await tool.sleep(34);
+    try {
+        await frm.onMounted.call(rtn.vroot, data ?? {});
+    }
+    catch (err) {
+        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -6.');
+        delete t.forms[formId];
+        try {
+            rtn.vapp.unmount();
+        }
+        catch (err) {
+            const msg = `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}\nFunction: form.create, unmount.`;
+            notify({
+                'title': 'Form Unmount Error',
+                'content': msg,
+                'type': 'danger'
+            });
+            console.log('Form Unmount Error', msg, err);
+        }
+        rtn.vapp._container.remove();
+        exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
+        dom.clearWatchStyle(rtn.vroot.formId);
+        dom.clearWatchProperty(rtn.vroot.formId);
+        dom.clearWatchPosition(rtn.vroot.formId);
+        native.clear(formId, t.id);
+        dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
+        throw err;
+    }
+    core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl, rtn.vroot.showInSystemTask);
+    if (rtn.vroot.isNativeSync) {
+        await native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
+        window.addEventListener('resize', function () {
+            rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
+            rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
+        });
+    }
+    rtn.vroot.isReady = true;
+    for (const cb of cbs) {
+        cb.call(rtn.vroot);
+    }
+    return rtn.vroot;
 }
 function dialog(opt) {
     return new Promise(function (resolve) {
-        var _a, _b, _c, _d, _e;
         if (typeof opt === 'string') {
             opt = {
                 'content': opt
             };
         }
-        const filename = tool.urlResolve((_a = opt.path) !== null && _a !== void 0 ? _a : '/', './tmp' + (Math.random() * 100000000000000).toFixed() + '.js');
+        const filename = tool.urlResolve(opt.path ?? '/', './tmp' + (Math.random() * 100000000000000).toFixed() + '.js');
         const nopt = opt;
         const taskId = nopt.taskId;
         if (!taskId) {
@@ -2841,14 +2777,13 @@ function dialog(opt) {
             return;
         }
         const locale = t.locale.lang || core.config.locale;
-        (_b = nopt.buttons) !== null && _b !== void 0 ? _b : (nopt.buttons = [(_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.ok) !== null && _d !== void 0 ? _d : info.locale['en'].ok]);
+        nopt.buttons ??= [info.locale[locale]?.ok ?? info.locale['en'].ok];
         const cls = class extends AbstractForm {
             constructor() {
-                var _a, _b;
                 super(...arguments);
                 this.buttons = nopt.buttons;
-                this.data = (_a = nopt.data) !== null && _a !== void 0 ? _a : {};
-                this.methods = (_b = nopt.methods) !== null && _b !== void 0 ? _b : {};
+                this.data = nopt.data ?? {};
+                this.methods = nopt.methods ?? {};
             }
             get filename() {
                 return filename;
@@ -2878,7 +2813,7 @@ function dialog(opt) {
             }
         };
         create(cls, undefined, {
-            'layout': `<form title="${(_e = nopt.title) !== null && _e !== void 0 ? _e : 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
+            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
         }, t.id).then((frm) => {
             if (typeof frm === 'number') {
@@ -2895,100 +2830,93 @@ function dialog(opt) {
         });
     });
 }
-function confirm(opt) {
-    return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-        if (typeof opt === 'string') {
-            opt = {
-                'content': opt
-            };
-        }
-        const taskId = opt.taskId;
-        if (!taskId) {
-            return false;
-        }
-        const t = task.list[taskId];
-        if (!t) {
-            return false;
-        }
-        const locale = t.locale.lang || core.config.locale;
-        const buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.no) !== null && _b !== void 0 ? _b : info.locale['en'].no, (_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.yes) !== null && _d !== void 0 ? _d : info.locale['en'].yes];
-        if (opt.cancel) {
-            buttons.unshift((_f = (_e = info.locale[locale]) === null || _e === void 0 ? void 0 : _e.cancel) !== null && _f !== void 0 ? _f : info.locale['en'].cancel);
-        }
-        const res = yield dialog({
-            'taskId': taskId,
-            'title': opt.title,
-            'content': opt.content,
-            'buttons': buttons
-        });
-        if (res === ((_h = (_g = info.locale[locale]) === null || _g === void 0 ? void 0 : _g.yes) !== null && _h !== void 0 ? _h : info.locale['en'].yes)) {
-            return true;
-        }
-        if (res === ((_k = (_j = info.locale[locale]) === null || _j === void 0 ? void 0 : _j.cancel) !== null && _k !== void 0 ? _k : info.locale['en'].cancel)) {
-            return 0;
-        }
+async function confirm(opt) {
+    if (typeof opt === 'string') {
+        opt = {
+            'content': opt
+        };
+    }
+    const taskId = opt.taskId;
+    if (!taskId) {
         return false;
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return false;
+    }
+    const locale = t.locale.lang || core.config.locale;
+    const buttons = [info.locale[locale]?.no ?? info.locale['en'].no, info.locale[locale]?.yes ?? info.locale['en'].yes];
+    if (opt.cancel) {
+        buttons.unshift(info.locale[locale]?.cancel ?? info.locale['en'].cancel);
+    }
+    const res = await dialog({
+        'taskId': taskId,
+        'title': opt.title,
+        'content': opt.content,
+        'buttons': buttons
     });
+    if (res === (info.locale[locale]?.yes ?? info.locale['en'].yes)) {
+        return true;
+    }
+    if (res === (info.locale[locale]?.cancel ?? info.locale['en'].cancel)) {
+        return 0;
+    }
+    return false;
 }
-function prompt(opt) {
-    return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e;
-        if (typeof opt === 'string') {
-            opt = {
-                'content': opt
+async function prompt(opt) {
+    if (typeof opt === 'string') {
+        opt = {
+            'content': opt
+        };
+    }
+    const taskId = opt.taskId;
+    if (!taskId) {
+        return '';
+    }
+    const t = task.list[taskId];
+    if (!t) {
+        return '';
+    }
+    const locale = t.locale.lang || core.config.locale;
+    const buttons = [info.locale[locale]?.ok ?? info.locale['en'].ok];
+    const cancelBtn = info.locale[locale]?.cancel ?? info.locale['en'].cancel;
+    if (opt.cancel === true || opt.cancel === undefined) {
+        buttons.unshift(cancelBtn);
+    }
+    const res = await dialog({
+        'taskId': taskId,
+        'title': opt.title,
+        'direction': 'v',
+        'gutter': 10,
+        'content': '<block>' + opt.content + '</block><text v-model="data.text" />',
+        'data': {
+            'text': opt.text ?? ''
+        },
+        'select': function (e, button) {
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'button': button,
+                    'value': this.data.text
+                }
             };
-        }
-        const taskId = opt.taskId;
-        if (!taskId) {
-            return '';
-        }
-        const t = task.list[taskId];
-        if (!t) {
-            return '';
-        }
-        const locale = t.locale.lang || core.config.locale;
-        const buttons = [(_b = (_a = info.locale[locale]) === null || _a === void 0 ? void 0 : _a.ok) !== null && _b !== void 0 ? _b : info.locale['en'].ok];
-        const cancelBtn = (_d = (_c = info.locale[locale]) === null || _c === void 0 ? void 0 : _c.cancel) !== null && _d !== void 0 ? _d : info.locale['en'].cancel;
-        if (opt.cancel === true || opt.cancel === undefined) {
-            buttons.unshift(cancelBtn);
-        }
-        const res = yield dialog({
-            'taskId': taskId,
-            'title': opt.title,
-            'direction': 'v',
-            'gutter': 10,
-            'content': '<block>' + opt.content + '</block><text v-model="data.text" />',
-            'data': {
-                'text': (_e = opt.text) !== null && _e !== void 0 ? _e : ''
-            },
-            'select': function (e, button) {
-                var _a;
-                const event = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'button': button,
-                        'value': this.data.text
-                    }
-                };
-                (_a = opt.select) === null || _a === void 0 ? void 0 : _a.call(this, event, button);
-                if (!event.go) {
-                    e.preventDefault();
-                }
-                if (e.detail.button === cancelBtn) {
-                    this.dialogResult = '';
-                    return;
-                }
-                this.dialogResult = this.data.text;
-            },
-            'buttons': buttons,
-            'autoDialogResult': false
-        });
-        return res;
+            opt.select?.call(this, event, button);
+            if (!event.go) {
+                e.preventDefault();
+            }
+            if (e.detail.button === cancelBtn) {
+                this.dialogResult = '';
+                return;
+            }
+            this.dialogResult = this.data.text;
+        },
+        'buttons': buttons,
+        'autoDialogResult': false
     });
+    return res;
 }
 function flash(formId, taskId) {
     if (!taskId) {

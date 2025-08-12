@@ -47,20 +47,18 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     get dataComp() {
-        var _a, _b, _c, _d, _e, _f;
         const data = [];
         for (const item of this.props.data) {
             data.push({
-                'icon': (_a = item.icon) !== null && _a !== void 0 ? _a : '',
-                'label': (_c = (_b = item.label) !== null && _b !== void 0 ? _b : item.value) !== null && _c !== void 0 ? _c : 'label',
-                'value': (_e = (_d = item.value) !== null && _d !== void 0 ? _d : item.label) !== null && _e !== void 0 ? _e : 'value',
-                'desc': (_f = item.desc) !== null && _f !== void 0 ? _f : ''
+                'icon': item.icon ?? '',
+                'label': item.label ?? item.value ?? 'label',
+                'value': item.value ?? item.label ?? 'value',
+                'desc': item.desc ?? ''
             });
         }
         return data;
     }
     get nowIndex() {
-        var _a, _b;
         if (this.props.modelValue === '#') {
             return this.dataComp.length;
         }
@@ -71,7 +69,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             return i;
         }
-        this.emit('update:modelValue', (_b = (_a = this.dataComp[0]) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : '');
+        this.emit('update:modelValue', this.dataComp[0]?.value ?? '');
         return 0;
     }
 }

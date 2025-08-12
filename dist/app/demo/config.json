@@ -28,7 +28,8 @@
         "/clickgo/control/jodit",
         "/clickgo/control/qrcode",
         "/clickgo/control/mpegts",
-        "/clickgo/control/tplink"
+        "/clickgo/control/tplink",
+        "/clickgo/control/novnc"
     ],
     "style": "/package/global",
 
@@ -121,6 +122,8 @@
         "/form/control/mpegts/mpegts.xml",
         "/form/control/nav/nav.js",
         "/form/control/nav/nav.xml",
+        "/form/control/novnc/novnc.js",
+        "/form/control/novnc/novnc.xml",
         "/form/control/page/page.js",
         "/form/control/page/page.xml",
         "/form/control/palette/palette.js",

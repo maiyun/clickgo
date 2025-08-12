@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -259,7 +250,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('input');
     }
     checkNumber(target) {
-        target !== null && target !== void 0 ? target : (target = this.refs.text);
+        target ??= this.refs.text;
         if (this.props.type !== 'number') {
             return false;
         }
@@ -423,7 +414,6 @@ class default_1 extends clickgo.control.AbstractControl {
         e.stopPropagation();
     }
     numberClick(num) {
-        var _a;
         if (!this.value) {
             this.value = '0';
         }
@@ -442,48 +432,45 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             return;
         }
-        this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : n;
+        this.value = event.detail.change ?? n;
         this.emit('update:modelValue', this.value);
         this.emit('changed');
     }
-    execCmd(ac) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            this.refs.text.focus();
-            if (ac === 'paste') {
-                if (this.propBoolean('readonly')) {
-                    return;
-                }
-                const str = yield navigator.clipboard.readText();
-                const value = this.value.slice(0, this.refs.text.selectionStart)
-                    + str
-                    + this.value.slice(this.refs.text.selectionEnd);
-                const event = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'value': value,
-                        'change': undefined
-                    }
-                };
-                this.emit('beforechange', event);
-                if (!event.go) {
-                    return;
-                }
-                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.value.slice(0, this.refs.text.selectionStart)
-                    + str
-                    + this.value.slice(this.refs.text.selectionEnd);
-                this.emit('update:modelValue', this.value);
-                this.emit('changed');
-                this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
-                this.refs.text.selectionEnd = this.refs.text.selectionStart;
+    async execCmd(ac) {
+        this.refs.text.focus();
+        if (ac === 'paste') {
+            if (this.propBoolean('readonly')) {
+                return;
             }
-            else {
-                clickgo.tool.execCommand(ac);
+            const str = await navigator.clipboard.readText();
+            const value = this.value.slice(0, this.refs.text.selectionStart)
+                + str
+                + this.value.slice(this.refs.text.selectionEnd);
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': value,
+                    'change': undefined
+                }
+            };
+            this.emit('beforechange', event);
+            if (!event.go) {
+                return;
             }
-        });
+            this.value = event.detail.change ?? this.value.slice(0, this.refs.text.selectionStart)
+                + str
+                + this.value.slice(this.refs.text.selectionEnd);
+            this.emit('update:modelValue', this.value);
+            this.emit('changed');
+            this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
+            this.refs.text.selectionEnd = this.refs.text.selectionStart;
+        }
+        else {
+            clickgo.tool.execCommand(ac);
+        }
     }
     checkWatch() {
         if (clickgo.dom.isWatchProperty(this.refs.text)) {
@@ -551,8 +538,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return false;
     }
     onMounted() {
-        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
+        this.watch('modelValue', async () => {
             if (this.value === this.props.modelValue) {
                 return;
             }
@@ -560,7 +546,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.dangerBorder = false;
             }
             this.value = this.props.modelValue;
-            yield this.nextTick();
+            await this.nextTick();
             this.checkNumber();
             if (this.propNumber('maxlength') && this.refs.text.value.length > this.propNumber('maxlength')) {
                 this.refs.text.value = this.refs.text.value.slice(0, this.propNumber('maxlength'));
@@ -585,16 +571,15 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.refs.text.value = this.value;
                 return;
             }
-            this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
+            this.value = event.detail.change ?? this.refs.text.value;
             this.emit('update:modelValue', this.value);
             this.emit('changed');
             this.check();
-        }), {
+        }, {
             'immediate': true
         });
-        this.watch('type', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield this.nextTick();
+        this.watch('type', async () => {
+            await this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
                     'go': true,
@@ -620,7 +605,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     };
                     this.emit('beforechange', event);
                     if (event.go) {
-                        this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
+                        this.value = event.detail.change ?? this.refs.text.value;
                         this.emit('update:modelValue', this.value);
                         this.emit('changed');
                     }
@@ -629,12 +614,11 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
             }
-            yield this.nextTick();
+            await this.nextTick();
             this.checkWatch();
-        }));
-        this.watch('max', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield this.nextTick();
+        });
+        this.watch('max', async () => {
+            await this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
                     'go': true,
@@ -666,14 +650,13 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
+                this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
                 this.emit('changed');
             }
-        }));
-        this.watch('min', () => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield this.nextTick();
+        });
+        this.watch('min', async () => {
+            await this.nextTick();
             if (this.checkNumber()) {
                 const mxEvent = {
                     'go': true,
@@ -705,13 +688,12 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : this.refs.text.value;
+                this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
                 this.emit('changed');
             }
-        }));
+        });
         this.watch('maxlength', () => {
-            var _a;
             if (!this.propNumber('maxlength')) {
                 return;
             }
@@ -733,7 +715,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            this.value = (_a = event.detail.change) !== null && _a !== void 0 ? _a : value;
+            this.value = event.detail.change ?? value;
             this.emit('update:modelValue', this.value);
             this.emit('changed');
         });

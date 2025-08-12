@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -55,54 +46,38 @@ class default_1 extends clickgo.form.AbstractForm {
     get global() {
         return JSON.stringify(clickgo.core.global, null, 4);
     }
-    getCdn() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.core.getCdn());
-        });
+    async getCdn() {
+        await clickgo.form.dialog(clickgo.core.getCdn());
     }
-    getAvailArea() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.core.getAvailArea()));
-        });
+    async getAvailArea() {
+        await clickgo.form.dialog(JSON.stringify(clickgo.core.getAvailArea()));
     }
-    hashe() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.core.hash(this.hash)) {
-                return;
-            }
-            yield clickgo.form.dialog('No permission.');
-        });
+    async hashe() {
+        if (clickgo.core.hash(this.hash)) {
+            return;
+        }
+        await clickgo.form.dialog('No permission.');
     }
-    getHash() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
-        });
+    async getHash() {
+        await clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
     }
-    getHost() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Host is: ' + clickgo.core.getHost());
-        });
+    async getHost() {
+        await clickgo.form.dialog('Host is: ' + clickgo.core.getHost());
     }
-    locatione() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.core.location(this.location)) {
-                return;
-            }
-            yield clickgo.form.dialog('No permission.');
-        });
+    async locatione() {
+        if (clickgo.core.location(this.location)) {
+            return;
+        }
+        await clickgo.form.dialog('No permission.');
     }
-    getLocation() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
-        });
+    async getLocation() {
+        await clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
     }
-    back() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.core.back()) {
-                return;
-            }
-            yield clickgo.form.dialog('No permission.');
-        });
+    async back() {
+        if (clickgo.core.back()) {
+            return;
+        }
+        await clickgo.form.dialog('No permission.');
     }
     open() {
         clickgo.core.open('https://www.maiyun.net');

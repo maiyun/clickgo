@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -51,22 +42,15 @@ class default_1 extends clickgo.form.AbstractForm {
         this.list = [];
         this.ppath = '';
     }
-    get() {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            yield clickgo.form.dialog((_a = clickgo.storage.get(this.key)) !== null && _a !== void 0 ? _a : 'null');
-        });
+    async get() {
+        await clickgo.form.dialog(clickgo.storage.get(this.key) ?? 'null');
     }
-    set() {
-        return __awaiter(this, void 0, void 0, function* () {
-            clickgo.storage.set(this.key, this.val);
-            yield clickgo.form.dialog('done');
-        });
+    async set() {
+        clickgo.storage.set(this.key, this.val);
+        await clickgo.form.dialog('done');
     }
-    remove() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(clickgo.storage.remove(this.key) ? 'true' : 'false');
-        });
+    async remove() {
+        await clickgo.form.dialog(clickgo.storage.remove(this.key) ? 'true' : 'false');
     }
     getlist() {
         this.list.length = 0;
@@ -86,10 +70,8 @@ class default_1 extends clickgo.form.AbstractForm {
             this.list.push(key + ': ' + obj[key].toString() + ' Bytes');
         }
     }
-    clear() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Removed ' + (yield clickgo.storage.clear(this.ppath)).toString() + ' items.');
-        });
+    async clear() {
+        await clickgo.form.dialog('Removed ' + (await clickgo.storage.clear(this.ppath)).toString() + ' items.');
     }
 }
 exports.default = default_1;

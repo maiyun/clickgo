@@ -38,7 +38,7 @@ class default_1 extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
-            'select': null
+            'select': null,
         };
         this.props = {
             'direction': 'h',
@@ -46,7 +46,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'width': undefined,
             'height': undefined,
             'padding': true,
-            'buttons': ['OK']
+            'buttons': ['OK'],
         };
     }
     click(item) {

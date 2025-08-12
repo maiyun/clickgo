@@ -53,8 +53,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return clickgo.tool.getBoolean(this.props.multi);
     }
     get position() {
-        var _a, _b;
-        return (_b = (_a = this.parentByName('task')) === null || _a === void 0 ? void 0 : _a.position) !== null && _b !== void 0 ? _b : 'bottom';
+        return this.parentByName('task')?.position ?? 'bottom';
     }
     click() {
         if (!this.slots['pop']) {
@@ -76,7 +75,6 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');
     }
     down(e) {
-        var _a;
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
@@ -87,15 +85,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             else {
-                if (((_a = this.refs.contextmenu) === null || _a === void 0 ? void 0 : _a.dataset.cgOpen) !== undefined) {
+                if (this.refs.contextmenu?.dataset.cgOpen !== undefined) {
                     clickgo.form.hidePop();
                 }
             }
         }
         if (e instanceof TouchEvent) {
             clickgo.dom.bindLong(e, () => {
-                var _a;
-                if (((_a = this.refs.pop) === null || _a === void 0 ? void 0 : _a.dataset.cgOpen) !== undefined) {
+                if (this.refs.pop?.dataset.cgOpen !== undefined) {
                     clickgo.form.hidePop();
                 }
                 clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');

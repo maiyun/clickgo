@@ -40,16 +40,13 @@ class default_1 extends clickgo.control.AbstractControl {
         this.desc = null;
     }
     get isBorder() {
-        var _a, _b;
-        return ((_b = (_a = this.desc) === null || _a === void 0 ? void 0 : _a.propBoolean) === null || _b === void 0 ? void 0 : _b.call(_a, 'border')) ? true : false;
+        return this.desc?.propBoolean?.('border') ? true : false;
     }
     get size() {
-        var _a;
-        return (_a = this.desc) === null || _a === void 0 ? void 0 : _a.props.size;
+        return this.desc?.props.size;
     }
     get plain() {
-        var _a;
-        return (_a = this.desc) === null || _a === void 0 ? void 0 : _a.propBoolean('plain');
+        return this.desc?.propBoolean('plain');
     }
     onMounted() {
         this.desc = this.parentByName('desc');

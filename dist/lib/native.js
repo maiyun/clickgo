@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getToken = getToken;
 exports.on = on;
@@ -158,54 +149,36 @@ function getListenerList(taskId) {
     }
     return rtn;
 }
-function invoke(name, ...param) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!clickgo.isNative()) {
-            return;
-        }
-        return window.clickgoNative.invoke(name, ...param);
-    });
+async function invoke(name, ...param) {
+    if (!clickgo.isNative()) {
+        return;
+    }
+    return window.clickgoNative.invoke(name, ...param);
 }
 invoke('cg-init', token);
-function quit() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-quit', token);
-    });
+async function quit() {
+    await invoke('cg-quit', token);
 }
-function size(width, height) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-set-size', token, width, height);
-    });
+async function size(width, height) {
+    await invoke('cg-set-size', token, width, height);
 }
-function max() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-set-state', token, 'max');
-    });
+async function max() {
+    await invoke('cg-set-state', token, 'max');
 }
-function min() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-set-state', token, 'min');
-    });
+async function min() {
+    await invoke('cg-set-state', token, 'min');
 }
-function restore() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-set-state', token, 'restore');
-    });
+async function restore() {
+    await invoke('cg-set-state', token, 'restore');
 }
-function activate() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-activate', token);
-    });
+async function activate() {
+    await invoke('cg-activate', token);
 }
-function close() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-close', token);
-    });
+async function close() {
+    await invoke('cg-close', token);
 }
-function maximizable(val) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield invoke('cg-maximizable', token, val);
-    });
+async function maximizable(val) {
+    await invoke('cg-maximizable', token, val);
 }
 function open(options = {}) {
     return invoke('cg-form-open', token, options);
@@ -216,13 +189,9 @@ function save(options = {}) {
 function dialog(options = {}) {
     return invoke('cg-form-dialog', token, options);
 }
-function ping(val) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return invoke('cg-ping', val);
-    });
+async function ping(val) {
+    return invoke('cg-ping', val);
 }
-function isMax() {
-    return __awaiter(this, void 0, void 0, function* () {
-        return invoke('cg-is-max');
-    });
+async function isMax() {
+    return invoke('cg-is-max');
 }

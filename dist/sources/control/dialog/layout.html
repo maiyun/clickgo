@@ -1,4 +1,4 @@
-<div class="wrap" :class="[(width===undefined)&&'minmax',propBoolean('padding')&&'padding']" :style="{'width': width === undefined ? undefined : propNumber('width') + 'px', 'height': height === undefined ? undefined : propNumber('height') + 'px'}">
+<div class="wrap" :class="[(width===undefined)&&'minmax',propBoolean('padding')&&'padding',(width==='fill'||height==='fill')&&'fill']" :style="{'width': width === undefined ? undefined : (width === 'fill' ? 0 : propNumber('width') + 'px'), 'height': height === undefined ? undefined : (height === 'fill' ? 0 : propNumber('height')) + 'px'}">
     <cg-layout class="content" :direction="direction" :gutter="gutter" :style="{'height': height === undefined ? undefined : '0'}">
         <slot></slot>
     </cg-layout>

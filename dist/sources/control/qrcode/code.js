@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -56,31 +47,29 @@ class default_1 extends clickgo.control.AbstractControl {
         this.notInit = false;
         this.isLoading = true;
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const qrcode = yield clickgo.core.getModule('qrcode');
-            if (!qrcode) {
-                this.isLoading = false;
-                this.notInit = true;
+    async onMounted() {
+        const qrcode = await clickgo.core.getModule('qrcode');
+        if (!qrcode) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
+        this.access.qrcode = qrcode;
+        this.watch('options', () => {
+            if (!this.access.qrcode || !this.props.text) {
                 return;
             }
-            this.access.qrcode = qrcode;
-            this.watch('options', () => {
-                if (!this.access.qrcode || !this.props.text) {
-                    return;
-                }
-                this.access.qrcode.toCanvas(this.refs.content, this.props.text, this.props.options);
-            }, {
-                'immediate': true
-            });
-            this.watch('text', () => {
-                if (!this.access.qrcode || !this.props.text) {
-                    return;
-                }
-                this.access.qrcode.toCanvas(this.refs.content, this.props.text, this.props.options);
-            });
-            this.isLoading = false;
+            this.access.qrcode.toCanvas(this.refs.content, this.props.text, this.props.options);
+        }, {
+            'immediate': true
         });
+        this.watch('text', () => {
+            if (!this.access.qrcode || !this.props.text) {
+                return;
+            }
+            this.access.qrcode.toCanvas(this.refs.content, this.props.text, this.props.options);
+        });
+        this.isLoading = false;
     }
 }
 exports.default = default_1;

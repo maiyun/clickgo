@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractPanel {
@@ -50,23 +41,17 @@ class default_1 extends clickgo.form.AbstractPanel {
         this.data = {};
         this.rootMountData = 'none';
     }
-    onShow(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(1000);
-            ++this.scount;
-            this.data = e;
-        });
+    async onShow(e) {
+        await clickgo.tool.sleep(1000);
+        ++this.scount;
+        this.data = e;
     }
-    onHide() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(1000);
-        });
+    async onHide() {
+        await clickgo.tool.sleep(1000);
     }
-    onReceive(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.data = data;
-            yield clickgo.form.dialog('test1 got data.');
-        });
+    async onReceive(data) {
+        this.data = data;
+        await clickgo.form.dialog('test1 got data.');
     }
     onQsChange() {
         clickgo.form.notify({
@@ -74,26 +59,20 @@ class default_1 extends clickgo.form.AbstractPanel {
             'content': 'onQsChange: ' + Object.keys(this.qs).length.toString()
         });
     }
-    onQsChangeShow(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(500);
-            clickgo.form.notify({
-                'title': 'Test1 Panel',
-                'content': 'onQsChangeShow'
-            });
-            console.log('onQsChangeShow', e);
+    async onQsChangeShow(e) {
+        await clickgo.tool.sleep(500);
+        clickgo.form.notify({
+            'title': 'Test1 Panel',
+            'content': 'onQsChangeShow'
         });
+        console.log('onQsChangeShow', e);
     }
-    click() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog('Hello panel!');
-        });
+    async click() {
+        await clickgo.form.dialog('Hello panel!');
     }
-    clearQss() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.clearQs();
-            yield clickgo.form.dialog('cleard.');
-        });
+    async clearQss() {
+        this.clearQs();
+        await clickgo.form.dialog('cleard.');
     }
     jump() {
         this.rootForm.formHash = 'test1?a=1&b=3';

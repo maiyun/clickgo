@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.get = get;
 exports.set = set;
@@ -106,7 +97,7 @@ function get(key, taskId) {
     try {
         return JSON.parse(v);
     }
-    catch (_a) {
+    catch {
         return null;
     }
 }
@@ -188,7 +179,7 @@ function all() {
     const rtn = {};
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (!(key === null || key === void 0 ? void 0 : key.startsWith('clickgo-size-'))) {
+        if (!key?.startsWith('clickgo-size-')) {
             continue;
         }
         const sizes = localStorage.getItem(key);
@@ -201,27 +192,24 @@ function all() {
     }
     return rtn;
 }
-function clear(path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b;
-        if (!path) {
-            return 0;
+async function clear(path) {
+    if (!path) {
+        return 0;
+    }
+    const loc = localeData[core.config.locale]?.['sure-clear'] ?? localeData['en']['sure-clear'];
+    if (!await form.superConfirm(loc.replace('?', tool.escapeHTML(path)))) {
+        return 0;
+    }
+    let count = 0;
+    localStorage.removeItem('clickgo-size-' + path);
+    const pre = 'clickgo-item-' + path + '-';
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key?.startsWith(pre)) {
+            continue;
         }
-        const loc = (_b = (_a = localeData[core.config.locale]) === null || _a === void 0 ? void 0 : _a['sure-clear']) !== null && _b !== void 0 ? _b : localeData['en']['sure-clear'];
-        if (!(yield form.superConfirm(loc.replace('?', tool.escapeHTML(path))))) {
-            return 0;
-        }
-        let count = 0;
-        localStorage.removeItem('clickgo-size-' + path);
-        const pre = 'clickgo-item-' + path + '-';
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (!(key === null || key === void 0 ? void 0 : key.startsWith(pre))) {
-                continue;
-            }
-            localStorage.removeItem(key);
-            ++count;
-        }
-        return count;
-    });
+        localStorage.removeItem(key);
+        ++count;
+    }
+    return count;
 }

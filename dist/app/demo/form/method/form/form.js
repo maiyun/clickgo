@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -75,31 +66,21 @@ class default_1 extends clickgo.form.AbstractForm {
     get() {
         clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
     }
-    getHash() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.form.getHash(parseInt(this.fid))));
-        });
+    async getHash() {
+        await clickgo.form.dialog(JSON.stringify(clickgo.form.getHash(parseInt(this.fid))));
     }
-    hashBack() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(yield clickgo.form.hashBack(parseInt(this.fid))));
-        });
+    async hashBack() {
+        await clickgo.form.dialog(JSON.stringify(await clickgo.form.hashBack(parseInt(this.fid))));
     }
-    tohash() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.form.hash(this.hash, parseInt(this.fid))));
-        });
+    async tohash() {
+        await clickgo.form.dialog(JSON.stringify(clickgo.form.hash(this.hash, parseInt(this.fid))));
     }
-    getActivePanel() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.form.dialog(JSON.stringify(clickgo.form.getActivePanel(parseInt(this.fid))));
-        });
+    async getActivePanel() {
+        await clickgo.form.dialog(JSON.stringify(clickgo.form.getActivePanel(parseInt(this.fid))));
     }
-    getFocus() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const f = clickgo.form.getFocus();
-            yield clickgo.form.dialog(f ? f.toString() : 'null');
-        });
+    async getFocus() {
+        const f = clickgo.form.getFocus();
+        await clickgo.form.dialog(f ? f.toString() : 'null');
     }
     changeFocus() {
         clickgo.form.changeFocus(parseInt(this.fid));
@@ -122,65 +103,59 @@ class default_1 extends clickgo.form.AbstractForm {
     showCircular(e) {
         clickgo.form.showCircular(e.clientX, e.clientY);
     }
-    showRectangle(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            clickgo.form.showRectangle(e.clientX, e.clientY, 'rb');
-            yield clickgo.tool.sleep(1000);
-            clickgo.form.hideRectangle();
-        });
+    async showRectangle(e) {
+        clickgo.form.showRectangle(e.clientX, e.clientY, 'rb');
+        await clickgo.tool.sleep(1000);
+        clickgo.form.hideRectangle();
     }
-    showDrag() {
-        return __awaiter(this, void 0, void 0, function* () {
-            clickgo.form.showDrag();
-            const rect = this.refs.showDrag.$el.getBoundingClientRect();
-            clickgo.form.moveDrag({
-                'left': rect.left,
-                'top': rect.top,
-                'width': rect.width,
-                'height': rect.height
-            });
-            yield clickgo.tool.sleep(1000);
-            clickgo.form.hideDrag();
+    async showDrag() {
+        clickgo.form.showDrag();
+        const rect = this.refs.showDrag.$el.getBoundingClientRect();
+        clickgo.form.moveDrag({
+            'left': rect.left,
+            'top': rect.top,
+            'width': rect.width,
+            'height': rect.height
         });
+        await clickgo.tool.sleep(1000);
+        clickgo.form.hideDrag();
     }
-    notify() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let icon = null;
-            if (this.progress[0] === 'progress + icon') {
-                icon = yield clickgo.fs.getContent('/package/res/icon.svg');
-            }
-            if (icon instanceof Blob) {
-                icon = yield clickgo.tool.blob2DataUrl(icon);
-            }
-            const nid = clickgo.form.notify({
-                'title': this.progress[0] === 'only content' ? undefined : 'Notify',
-                'content': this.progress[0] === 'only title' ? undefined : 'Content',
-                'type': this.type[0],
-                'progress': (this.progress[0] === 'progress + icon') ? true : false,
-                'icon': icon
-            });
-            if (this.progress[0] === 'progress + icon') {
-                clickgo.form.notifyProgress(nid, 12);
-                yield clickgo.tool.sleep(1000);
-                clickgo.form.notifyProgress(nid, 30);
-                yield clickgo.tool.sleep(300);
-                clickgo.form.notifyProgress(nid, 50);
-                clickgo.form.notifyContent(nid, {
-                    'content': 'loading... (3/4)'
-                });
-                yield clickgo.tool.sleep(700);
-                clickgo.form.notifyProgress(nid, 75);
-                clickgo.form.notifyContent(nid, {
-                    'content': 'loading... (4/4)'
-                });
-                yield clickgo.tool.sleep(1000);
-                clickgo.form.notifyProgress(nid, 100);
-                clickgo.form.notifyContent(nid, {
-                    'title': 'Done',
-                    'content': 'loaded'
-                });
-            }
+    async notify() {
+        let icon = null;
+        if (this.progress[0] === 'progress + icon') {
+            icon = await clickgo.fs.getContent('/package/res/icon.svg');
+        }
+        if (icon instanceof Blob) {
+            icon = await clickgo.tool.blob2DataUrl(icon);
+        }
+        const nid = clickgo.form.notify({
+            'title': this.progress[0] === 'only content' ? undefined : 'Notify',
+            'content': this.progress[0] === 'only title' ? undefined : 'Content',
+            'type': this.type[0],
+            'progress': (this.progress[0] === 'progress + icon') ? true : false,
+            'icon': icon
         });
+        if (this.progress[0] === 'progress + icon') {
+            clickgo.form.notifyProgress(nid, 12);
+            await clickgo.tool.sleep(1000);
+            clickgo.form.notifyProgress(nid, 30);
+            await clickgo.tool.sleep(300);
+            clickgo.form.notifyProgress(nid, 50);
+            clickgo.form.notifyContent(nid, {
+                'content': 'loading... (3/4)'
+            });
+            await clickgo.tool.sleep(700);
+            clickgo.form.notifyProgress(nid, 75);
+            clickgo.form.notifyContent(nid, {
+                'content': 'loading... (4/4)'
+            });
+            await clickgo.tool.sleep(1000);
+            clickgo.form.notifyProgress(nid, 100);
+            clickgo.form.notifyContent(nid, {
+                'title': 'Done',
+                'content': 'loaded'
+            });
+        }
     }
     alert() {
         const aid = clickgo.form.alert(this.atype[0], this.atype[0]);
@@ -192,83 +167,65 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         clickgo.form.showPop(e.currentTarget, this.refs.pop, 'v');
     }
-    create() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const frm = yield clickgo.form.create('test', undefined, {
-                'path': this.filename
-            });
-            frm.show();
+    async create() {
+        const frm = await clickgo.form.create('test', undefined, {
+            'path': this.filename
+        });
+        frm.show();
+    }
+    async dialog() {
+        this.dr = await clickgo.form.dialog('Hello world!');
+    }
+    async dialogLong() {
+        this.dr = await clickgo.form.dialog('longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
+    }
+    async dialogTitle() {
+        this.dr = await clickgo.form.dialog({
+            'title': 'Title',
+            'content': 'Hello world!'
         });
     }
-    dialog() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.dialog('Hello world!');
+    async dialogButtons() {
+        this.dr = await clickgo.form.dialog({
+            'content': 'Hello world!',
+            'buttons': ['A', 'B', 'C']
         });
     }
-    dialogLong() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.dialog('longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
-        });
-    }
-    dialogTitle() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.dialog({
-                'title': 'Title',
-                'content': 'Hello world!'
-            });
-        });
-    }
-    dialogButtons() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.dialog({
-                'content': 'Hello world!',
-                'buttons': ['A', 'B', 'C']
-            });
-        });
-    }
-    dialogCannot() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.dialog({
-                'content': 'Hello world!',
-                'buttons': ['Do not close', 'Close'],
-                'select': (e, button) => {
-                    if (button === 'Do not close') {
-                        e.preventDefault();
-                    }
+    async dialogCannot() {
+        this.dr = await clickgo.form.dialog({
+            'content': 'Hello world!',
+            'buttons': ['Do not close', 'Close'],
+            'select': (e, button) => {
+                if (button === 'Do not close') {
+                    e.preventDefault();
                 }
-            });
-        });
-    }
-    dialogData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.dialog({
-                'direction': 'v',
-                'gutter': 10,
-                'content': '<block>Hello text!</block><text :modelValue="data.txt" />',
-                'data': {
-                    'txt': 'Text\nLine 2.'
-                }
-            });
-        });
-    }
-    confirm(cancel) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.confirm({
-                'content': 'Hello world?',
-                'cancel': cancel
-            });
-            if (typeof this.dr === 'boolean') {
-                this.dr = this.dr ? 'true (boolean)' : 'false (boolean)';
-            }
-            else {
-                this.dr = this.dr.toString() + ' (number)';
             }
         });
     }
-    prompt() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.dr = yield clickgo.form.prompt('test');
+    async dialogData() {
+        this.dr = await clickgo.form.dialog({
+            'direction': 'v',
+            'gutter': 10,
+            'content': '<block>Hello text!</block><text :modelValue="data.txt" />',
+            'data': {
+                'txt': 'Text\nLine 2.'
+            }
         });
+    }
+    async confirm(cancel) {
+        this.dr = await clickgo.form.confirm({
+            'content': 'Hello world?',
+            'cancel': cancel
+        });
+        if (typeof this.dr === 'boolean') {
+            this.dr = this.dr ? 'true (boolean)' : 'false (boolean)';
+        }
+        else {
+            this.dr = this.dr.toString() + ' (number)';
+        }
+    }
+    async prompt() {
+        this.dr = await clickgo.form.prompt('test');
     }
     flash() {
         clickgo.form.flash(this.formId);

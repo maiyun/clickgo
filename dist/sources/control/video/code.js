@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -151,14 +142,12 @@ class default_1 extends clickgo.control.AbstractControl {
         this.playData = !this.playData;
         this.emit('update:play', this.playData);
     }
-    fullClick() {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.dom.is.full) {
-                yield clickgo.dom.exitFullscreen();
-                return;
-            }
-            yield this.element.requestFullscreen();
-        });
+    async fullClick() {
+        if (clickgo.dom.is.full) {
+            await clickgo.dom.exitFullscreen();
+            return;
+        }
+        await this.element.requestFullscreen();
     }
     get isFull() {
         return clickgo.dom.is.full;
@@ -257,7 +246,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('canplay');
     }
     onMounted() {
-        this.watch('src', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('src', async () => {
             const count = ++this.count;
             if (typeof this.props.src !== 'string' || this.props.src === '') {
                 if (this.isBlob) {
@@ -285,7 +274,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-            const blob = yield clickgo.fs.getContent(path);
+            const blob = await clickgo.fs.getContent(path);
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
             }
@@ -294,7 +283,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             const t = URL.createObjectURL(blob);
             this.srcData = t;
-        }), {
+        }, {
             'immediate': true
         });
         this.watch('volume', () => {

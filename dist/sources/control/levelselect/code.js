@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -129,15 +120,14 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     get nowlistComp() {
-        var _a, _b;
         if (this.inputValue === '') {
             return this.nowlist;
         }
         const inputValue = this.inputValue.toLowerCase();
         const searchData = [];
         for (const item of this.nowlist) {
-            const val = (typeof item === 'object' ? (_a = item.value) !== null && _a !== void 0 ? _a : '' : item).toString().toLowerCase();
-            const lab = (typeof item === 'object' ? (_b = item.label) !== null && _b !== void 0 ? _b : '' : '').toLowerCase();
+            const val = (typeof item === 'object' ? item.value ?? '' : item).toString().toLowerCase();
+            const lab = (typeof item === 'object' ? item.label ?? '' : '').toLowerCase();
             let include = true;
             for (const char of inputValue) {
                 if (val.includes(char) || lab.includes(char)) {
@@ -186,177 +176,168 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.emit('update:modelValue', newval);
     }
-    _findValueInDataAndSelectValueCheckChildren(nextChildren_1) {
-        return __awaiter(this, arguments, void 0, function* (nextChildren, autoUpdate = true, hidePop = false) {
-            if (!nextChildren) {
-                if (!this.propBoolean('async')) {
-                    if (hidePop) {
-                        clickgo.form.hidePop();
-                    }
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    if (autoUpdate) {
-                        this.updateValue();
-                    }
-                    return false;
+    async _findValueInDataAndSelectValueCheckChildren(nextChildren, autoUpdate = true, hidePop = false) {
+        if (!nextChildren) {
+            if (!this.propBoolean('async')) {
+                if (hidePop) {
+                    clickgo.form.hidePop();
                 }
-                this.loading = true;
-                const children = yield new Promise((resolve) => {
-                    this.emit('load', this.value[this.level], (children) => {
-                        resolve(children);
-                        this.emit('loaded');
-                    });
+                ++this.level;
+                this.listValue = [];
+                this.nowlist = [];
+                this.value[this.level] = '';
+                this.label[this.level] = '';
+                this.lists[this.level] = [];
+                this.levelData[this.level] = {
+                    'label': '',
+                    'value': ''
+                };
+                if (autoUpdate) {
+                    this.updateValue();
+                }
+                return false;
+            }
+            this.loading = true;
+            const children = await new Promise((resolve) => {
+                this.emit('load', this.value[this.level], (children) => {
+                    resolve(children);
+                    this.emit('loaded');
                 });
-                this.loading = false;
-                if (!(children === null || children === void 0 ? void 0 : children.length)) {
-                    if (hidePop) {
-                        clickgo.form.hidePop();
-                    }
-                    ++this.level;
-                    this.listValue = [];
-                    this.nowlist = [];
-                    this.value[this.level] = '';
-                    this.label[this.level] = '';
-                    this.lists[this.level] = [];
-                    this.levelData[this.level] = {
-                        'label': '',
-                        'value': ''
-                    };
-                    if (autoUpdate) {
-                        this.updateValue();
-                    }
-                    return false;
+            });
+            this.loading = false;
+            if (!children?.length) {
+                if (hidePop) {
+                    clickgo.form.hidePop();
                 }
-                nextChildren = children;
+                ++this.level;
+                this.listValue = [];
+                this.nowlist = [];
+                this.value[this.level] = '';
+                this.label[this.level] = '';
+                this.lists[this.level] = [];
+                this.levelData[this.level] = {
+                    'label': '',
+                    'value': ''
+                };
+                if (autoUpdate) {
+                    this.updateValue();
+                }
+                return false;
             }
-            ++this.level;
-            this.listValue = [];
-            this.setNowList(nextChildren);
-            this.value[this.level] = '';
-            this.label[this.level] = '';
-            this.lists[this.level] = nextChildren;
-            this.levelData[this.level] = {
-                'label': '',
-                'value': ''
-            };
-            if (autoUpdate) {
-                this.updateValue();
-            }
-            return true;
-        });
+            nextChildren = children;
+        }
+        ++this.level;
+        this.listValue = [];
+        this.setNowList(nextChildren);
+        this.value[this.level] = '';
+        this.label[this.level] = '';
+        this.lists[this.level] = nextChildren;
+        this.levelData[this.level] = {
+            'label': '',
+            'value': ''
+        };
+        if (autoUpdate) {
+            this.updateValue();
+        }
+        return true;
     }
-    findValueInData(value, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d, _e;
-            if (!data) {
-                data = this.props.data;
-                this._fvid.level = 0;
-                this._fvid.value = [''];
-                this._fvid.label = [''];
-                this._fvid.lists = [data];
-                this._fvid.levelData = [{
-                        'label': '',
-                        'value': ''
-                    }];
-            }
-            let nextChildren = null;
-            const isArray = Array.isArray(data);
-            for (const key in data) {
-                const item = data[key];
-                const val = (isArray ?
-                    (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
-                    key).toString();
-                if (value !== val) {
-                    if (!item.children) {
-                        continue;
-                    }
-                    this._fvid.value[this._fvid.level] = val;
-                    this._fvid.label[this._fvid.level] = (_c = item.label) !== null && _c !== void 0 ? _c : val;
-                    this._fvid.lists[this._fvid.level] = data;
-                    this._fvid.levelData[this._fvid.level] = {
-                        'value': this._fvid.value[this._fvid.level],
-                        'label': this._fvid.label[this._fvid.level]
-                    };
-                    ++this._fvid.level;
-                    if (yield this.findValueInData(value, item.children)) {
-                        return true;
-                    }
-                    this._fvid.value.splice(-1);
-                    this._fvid.label.splice(-1);
-                    this._fvid.lists.splice(-1);
-                    this._fvid.levelData.splice(-1);
-                    --this._fvid.level;
+    async findValueInData(value, data) {
+        if (!data) {
+            data = this.props.data;
+            this._fvid.level = 0;
+            this._fvid.value = [''];
+            this._fvid.label = [''];
+            this._fvid.lists = [data];
+            this._fvid.levelData = [{
+                    'label': '',
+                    'value': ''
+                }];
+        }
+        let nextChildren = null;
+        const isArray = Array.isArray(data);
+        for (const key in data) {
+            const item = data[key];
+            const val = (isArray ?
+                (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
+                key).toString();
+            if (value !== val) {
+                if (!item.children) {
                     continue;
                 }
-                nextChildren = (_d = item.children) !== null && _d !== void 0 ? _d : null;
-                this.level = this._fvid.level;
                 this._fvid.value[this._fvid.level] = val;
-                this._fvid.label[this._fvid.level] = (_e = item.label) !== null && _e !== void 0 ? _e : val;
+                this._fvid.label[this._fvid.level] = item.label ?? val;
                 this._fvid.lists[this._fvid.level] = data;
                 this._fvid.levelData[this._fvid.level] = {
                     'value': this._fvid.value[this._fvid.level],
                     'label': this._fvid.label[this._fvid.level]
                 };
-                this.value = this._fvid.value;
-                this.label = this._fvid.label;
-                this.lists = this._fvid.lists;
-                this.levelData = this._fvid.levelData;
-                yield this._findValueInDataAndSelectValueCheckChildren(nextChildren);
-                return true;
-            }
-            return false;
-        });
-    }
-    blur() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield clickgo.tool.sleep(350);
-            this.inputValue = '';
-        });
-    }
-    keydown(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (e.key === 'Backspace') {
-                if (this.level > 0) {
-                    if (e.target.value === '') {
-                        this.back();
-                    }
+                ++this._fvid.level;
+                if (await this.findValueInData(value, item.children)) {
+                    return true;
                 }
-                return;
+                this._fvid.value.splice(-1);
+                this._fvid.label.splice(-1);
+                this._fvid.lists.splice(-1);
+                this._fvid.levelData.splice(-1);
+                --this._fvid.level;
+                continue;
             }
-            if ((e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen === undefined)) {
-                this.refs.gs.showPop();
-                return;
-            }
-            if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen !== undefined)) {
-                e.preventDefault();
-                switch (e.key) {
-                    case 'ArrowUp': {
-                        this.refs.list.arrowUp();
-                        break;
-                    }
-                    default: {
-                        this.refs.list.arrowDown();
-                    }
+            nextChildren = item.children ?? null;
+            this.level = this._fvid.level;
+            this._fvid.value[this._fvid.level] = val;
+            this._fvid.label[this._fvid.level] = item.label ?? val;
+            this._fvid.lists[this._fvid.level] = data;
+            this._fvid.levelData[this._fvid.level] = {
+                'value': this._fvid.value[this._fvid.level],
+                'label': this._fvid.label[this._fvid.level]
+            };
+            this.value = this._fvid.value;
+            this.label = this._fvid.label;
+            this.lists = this._fvid.lists;
+            this.levelData = this._fvid.levelData;
+            await this._findValueInDataAndSelectValueCheckChildren(nextChildren);
+            return true;
+        }
+        return false;
+    }
+    async blur() {
+        await clickgo.tool.sleep(350);
+        this.inputValue = '';
+    }
+    async keydown(e) {
+        if (e.key === 'Backspace') {
+            if (this.level > 0) {
+                if (e.target.value === '') {
+                    this.back();
                 }
-                return;
             }
-            if (e.key !== 'Enter') {
-                return;
+            return;
+        }
+        if ((e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen === undefined)) {
+            this.refs.gs.showPop();
+            return;
+        }
+        if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen !== undefined)) {
+            e.preventDefault();
+            switch (e.key) {
+                case 'ArrowUp': {
+                    this.refs.list.arrowUp();
+                    break;
+                }
+                default: {
+                    this.refs.list.arrowDown();
+                }
             }
-            if (!this.listValue[0]) {
-                return;
-            }
-            e.stopPropagation();
-            yield this.listItemClicked();
-        });
+            return;
+        }
+        if (e.key !== 'Enter') {
+            return;
+        }
+        if (!this.listValue[0]) {
+            return;
+        }
+        e.stopPropagation();
+        await this.listItemClicked();
     }
     updateInputValue(value) {
         this.inputValue = value.trim();
@@ -382,35 +363,32 @@ class default_1 extends clickgo.control.AbstractControl {
             delete item.children;
         }
     }
-    listItemClicked() {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c;
-            this.inputValue = '';
-            let nextChildren = null;
-            let isSelected = false;
-            const isArray = Array.isArray(this.lists[this.level]);
-            for (const key in this.lists[this.level]) {
-                const item = this.lists[this.level][key];
-                const val = (isArray ?
-                    (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
-                    key).toString();
-                if (this.listValue[0] !== val) {
-                    continue;
-                }
-                nextChildren = (_c = item.children) !== null && _c !== void 0 ? _c : null;
-                isSelected = true;
-                this.value[this.level] = this.listValue[0];
-                this.label[this.level] = this.listLabel[0];
-                this.levelData[this.level] = {
-                    'label': this.label[this.level],
-                    'value': this.value[this.level]
-                };
+    async listItemClicked() {
+        this.inputValue = '';
+        let nextChildren = null;
+        let isSelected = false;
+        const isArray = Array.isArray(this.lists[this.level]);
+        for (const key in this.lists[this.level]) {
+            const item = this.lists[this.level][key];
+            const val = (isArray ?
+                (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
+                key).toString();
+            if (this.listValue[0] !== val) {
+                continue;
             }
-            if (!isSelected) {
-                return;
-            }
-            yield this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
-        });
+            nextChildren = item.children ?? null;
+            isSelected = true;
+            this.value[this.level] = this.listValue[0];
+            this.label[this.level] = this.listLabel[0];
+            this.levelData[this.level] = {
+                'label': this.label[this.level],
+                'value': this.value[this.level]
+            };
+        }
+        if (!isSelected) {
+            return;
+        }
+        await this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
     }
     back() {
         this.value.splice(-1);
@@ -428,60 +406,55 @@ class default_1 extends clickgo.control.AbstractControl {
         this.setNowList(this.lists[this.level]);
         this.updateValue();
     }
-    selectLevelValue(list) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.level = 0;
-            this.listValue = [];
-            this.value = [''];
-            this.label = [''];
-            this.setNowList(this.props.data);
-            this.lists = [this.props.data];
-            this.levelData = [{
-                    'label': '',
-                    'value': ''
-                }];
-            for (let i = 0; i < list.length; ++i) {
-                this.level = i;
-                if (!list[i]) {
-                    break;
-                }
-                const r = yield this._selectValue(list[i]);
-                yield this.nextTick();
-                if (!r) {
-                    break;
-                }
+    async selectLevelValue(list) {
+        this.level = 0;
+        this.listValue = [];
+        this.value = [''];
+        this.label = [''];
+        this.setNowList(this.props.data);
+        this.lists = [this.props.data];
+        this.levelData = [{
+                'label': '',
+                'value': ''
+            }];
+        for (let i = 0; i < list.length; ++i) {
+            this.level = i;
+            if (!list[i]) {
+                break;
             }
-            this.updateValue();
-        });
+            const r = await this._selectValue(list[i]);
+            await this.nextTick();
+            if (!r) {
+                break;
+            }
+        }
+        this.updateValue();
     }
-    _selectValue(value) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var _a, _b, _c, _d;
-            let nextChildren = null;
-            let isSelected = false;
-            const isArray = Array.isArray(this.lists[this.level]);
-            for (const key in this.lists[this.level]) {
-                const item = this.lists[this.level][key];
-                const val = (isArray ?
-                    (typeof item === 'object' ? ((_b = (_a = item.value) !== null && _a !== void 0 ? _a : item.label) !== null && _b !== void 0 ? _b : '') : item) :
-                    key).toString();
-                if (value !== val) {
-                    continue;
-                }
-                nextChildren = (_c = item.children) !== null && _c !== void 0 ? _c : null;
-                isSelected = true;
-                this.value[this.level] = val;
-                this.label[this.level] = (_d = item.label) !== null && _d !== void 0 ? _d : val;
-                this.levelData[this.level] = {
-                    'value': this.value[this.level],
-                    'label': this.label[this.level]
-                };
+    async _selectValue(value) {
+        let nextChildren = null;
+        let isSelected = false;
+        const isArray = Array.isArray(this.lists[this.level]);
+        for (const key in this.lists[this.level]) {
+            const item = this.lists[this.level][key];
+            const val = (isArray ?
+                (typeof item === 'object' ? (item.value ?? item.label ?? '') : item) :
+                key).toString();
+            if (value !== val) {
+                continue;
             }
-            if (!isSelected) {
-                return false;
-            }
-            return this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
-        });
+            nextChildren = item.children ?? null;
+            isSelected = true;
+            this.value[this.level] = val;
+            this.label[this.level] = item.label ?? val;
+            this.levelData[this.level] = {
+                'value': this.value[this.level],
+                'label': this.label[this.level]
+            };
+        }
+        if (!isSelected) {
+            return false;
+        }
+        return this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
     }
     onMounted() {
         this.watch('data', () => {
@@ -499,7 +472,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'deep': true
         });
-        this.watch('modelValue', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('modelValue', async () => {
             const value = this.props.modelValue.toString();
             if (value === '') {
                 if (this.value.length === 1) {
@@ -520,11 +493,11 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.value.length > 1 && (value === this.value[this.level - 1])) {
                 return;
             }
-            if (yield this._selectValue(value)) {
+            if (await this._selectValue(value)) {
                 this.updateValue();
                 return;
             }
-            if (yield this.findValueInData(value)) {
+            if (await this.findValueInData(value)) {
                 return;
             }
             if (this.value.length === 1) {
@@ -540,7 +513,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     'value': ''
                 }];
             this.updateValue();
-        }));
+        });
         this.setNowList(this.props.data);
         this.lists[0] = this.props.data;
     }

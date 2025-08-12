@@ -459,7 +459,7 @@ class default_1 extends clickgo.control.AbstractControl {
             now.setUTCDate(1 - day1);
         }
         this.maps.length = 0;
-        const zone = this.tzData * 60 * 60000;
+        const zone = this.tzData * 60 * 60_000;
         for (let i = 0; i < 6; ++i) {
             this.maps[i] = Array.from({ length: 7 }, () => {
                 const col = {
@@ -494,7 +494,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             return;
         }
-        this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60000;
+        this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60_000;
         if (modelValue !== this.timestamp) {
             const event = {
                 'detail': {
@@ -525,7 +525,6 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     colClick(col) {
-        var _a, _b, _c, _d, _e, _f;
         if (this.rangeDate === undefined && (this.timestamp !== undefined) && this.propBoolean('range')) {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (cols === this.dateValueStr) {
@@ -537,7 +536,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     },
                     'detail': {
                         'start': this.timestamp,
-                        'end': endDate.getTime() - this.tzData * 60 * 60000
+                        'end': endDate.getTime() - this.tzData * 60 * 60_000
                     }
                 };
                 this.emit('range', event);
@@ -547,9 +546,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (cols > this.dateValueStr) {
-                const nhour = parseInt((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '00');
-                const nminute = parseInt((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '00');
-                const nseconds = parseInt((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '00');
+                const nhour = parseInt(this.vhour[0] ?? '00');
+                const nminute = parseInt(this.vminute[0] ?? '00');
+                const nseconds = parseInt(this.vseconds[0] ?? '00');
                 const sdate = new Date(this.dateObj.getTime());
                 if (nhour === 23 && nminute === 59 && nseconds === 59) {
                     sdate.setUTCHours(0, 0, 0, 0);
@@ -564,8 +563,8 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.go = false;
                     },
                     'detail': {
-                        'start': sdate.getTime() - this.tzData * 60 * 60000,
-                        'end': edate.getTime() - this.tzData * 60 * 60000
+                        'start': sdate.getTime() - this.tzData * 60 * 60_000,
+                        'end': edate.getTime() - this.tzData * 60 * 60_000
                     }
                 };
                 this.emit('range', event);
@@ -582,7 +581,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.timestamp = 0;
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
-        this.dateObj.setUTCHours(parseInt((_d = this.vhour[0]) !== null && _d !== void 0 ? _d : '00'), parseInt((_e = this.vminute[0]) !== null && _e !== void 0 ? _e : '00'), parseInt((_f = this.vseconds[0]) !== null && _f !== void 0 ? _f : '00'), 0);
+        this.dateObj.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vseconds[0] ?? '00'), 0);
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
@@ -638,15 +637,15 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.startDate.setUTCFullYear(1900, 0, 1);
                 this.startDate.setUTCHours(0, 0, 0, 0);
                 this.startTs = this.startDate.getTime();
-                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1_000);
                 this.startDate.setMilliseconds(0);
             }
             else {
                 this.startTs = this.propNumber('start');
                 if (this.startTs.toString().length < 13) {
-                    this.startTs *= 1000;
+                    this.startTs *= 1_000;
                 }
-                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
+                this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1_000);
                 this.startDate.setMilliseconds(0);
             }
             this.refreshStartValue();
@@ -664,15 +663,15 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.endDate.setUTCFullYear(this.endDate.getUTCFullYear() + 100);
                 this.endDate.setUTCHours(23, 59, 59, 0);
                 this.endTs = this.endDate.getTime();
-                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1_000);
                 this.endDate.setMilliseconds(0);
             }
             else {
                 this.endTs = this.propNumber('end');
                 if (this.endTs.toString().length < 13) {
-                    this.endTs *= 1000;
+                    this.endTs *= 1_000;
                 }
-                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1000);
+                this.endDate.setTime(this.endTs + this.tzData * 60 * 60 * 1_000);
                 this.endDate.setMilliseconds(0);
             }
             this.refreshEndValue();
@@ -715,8 +714,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.refreshView();
         });
         this.watch(() => {
-            var _a, _b, _c;
-            return ((_a = this.vhour[0]) !== null && _a !== void 0 ? _a : '') + ':' + ((_b = this.vminute[0]) !== null && _b !== void 0 ? _b : '') + ':' + ((_c = this.vseconds[0]) !== null && _c !== void 0 ? _c : '');
+            return (this.vhour[0] ?? '') + ':' + (this.vminute[0] ?? '') + ':' + (this.vseconds[0] ?? '');
         }, () => {
             if (!this.vhour[0] || !this.vminute[0] || !this.vseconds[0]) {
                 return;

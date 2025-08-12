@@ -119,16 +119,15 @@ class default_1 extends clickgo.control.AbstractControl {
         return dg;
     }
     get mapComp() {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
         return {
-            'children': (_a = this.props.map.children) !== null && _a !== void 0 ? _a : 'children',
-            'label': (_b = this.props.map.label) !== null && _b !== void 0 ? _b : 'label',
-            'value': (_c = this.props.map.value) !== null && _c !== void 0 ? _c : 'value',
-            'title': (_d = this.props.map.title) !== null && _d !== void 0 ? _d : 'title',
-            'disabled': (_e = this.props.map.disabled) !== null && _e !== void 0 ? _e : 'disabled',
-            'control': (_f = this.props.map.control) !== null && _f !== void 0 ? _f : 'control',
-            'unavailable': (_g = this.props.map.unavailable) !== null && _g !== void 0 ? _g : 'unavailable',
-            'leftline': (_h = this.props.map.leftline) !== null && _h !== void 0 ? _h : 'leftline'
+            'children': this.props.map.children ?? 'children',
+            'label': this.props.map.label ?? 'label',
+            'value': this.props.map.value ?? 'value',
+            'title': this.props.map.title ?? 'title',
+            'disabled': this.props.map.disabled ?? 'disabled',
+            'control': this.props.map.control ?? 'control',
+            'unavailable': this.props.map.unavailable ?? 'unavailable',
+            'leftline': this.props.map.leftline ?? 'leftline'
         };
     }
     select(index) {
@@ -139,7 +138,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     findFormat(value, autoOpen = true, data, level) {
         const rtn = {};
-        level !== null && level !== void 0 ? level : (level = 0);
+        level ??= 0;
         if (!Array.isArray(value)) {
             value = [value];
         }
@@ -149,7 +148,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             value[i] = value[i].toString();
         }
-        data !== null && data !== void 0 ? data : (data = this.dataFormat);
+        data ??= this.dataFormat;
         for (const item of data) {
             if (value.includes(item.value)) {
                 rtn[item.value] = item;
@@ -197,7 +196,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('item', items);
     }
     formatData(nowData, oldData) {
-        var _a, _b, _c, _d, _e, _f;
         if (!Array.isArray(nowData)) {
             const newArray = [];
             for (const k in nowData) {
@@ -231,13 +229,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 'children': [],
                 'data': item
             };
-            let value = typeof item === 'object' ? ((_b = (_a = item[this.mapComp.value]) !== null && _a !== void 0 ? _a : item[this.mapComp.label]) !== null && _b !== void 0 ? _b : k) : item;
+            let value = typeof item === 'object' ? (item[this.mapComp.value] ?? item[this.mapComp.label] ?? k) : item;
             if (typeof value === 'number') {
                 value = value.toString();
             }
             const oldIo = oldValues.indexOf(value);
             if (typeof item === 'object') {
-                over.label = (_d = (_c = item[this.mapComp.label]) !== null && _c !== void 0 ? _c : item[this.mapComp.value]) !== null && _d !== void 0 ? _d : k;
+                over.label = item[this.mapComp.label] ?? item[this.mapComp.value] ?? k;
                 over.value = value;
                 over.title = item[this.mapComp.title] !== undefined ? item[this.mapComp.title] : false;
                 over.disabled = item[this.mapComp.disabled] !== undefined ?
@@ -246,7 +244,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 over.unavailable = item[this.mapComp.unavailable];
                 over.leftline = item[this.mapComp.leftline];
                 over.color = item.color ? (item.color === 'tip' ? 'var(--g-color-disabled)' : item.color) : undefined;
-                over.control = (_e = item.control) !== null && _e !== void 0 ? _e : 'item';
+                over.control = item.control ?? 'item';
                 if (item.icon) {
                     over.icon = item.icon;
                 }
@@ -256,7 +254,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (item.tree !== undefined) {
                     over.tree = item.tree;
                 }
-                if (((_f = item[this.mapComp.children]) === null || _f === void 0 ? void 0 : _f.length) > 0) {
+                if (item[this.mapComp.children]?.length > 0) {
                     over.children = this.formatData(item[this.mapComp.children], oldIo !== -1 ? oldData[oldIo].children : []);
                 }
             }
@@ -285,7 +283,6 @@ class default_1 extends clickgo.control.AbstractControl {
         return data;
     }
     unpack(data, level = 0) {
-        var _a, _b, _c;
         const result = [];
         const disabledList = this.propArray('disabledList');
         const unavailableList = this.propArray('unavailableList');
@@ -304,8 +301,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 'color': item.color,
                 'control': item.control,
                 'tree': tree,
-                'icon': (_a = item.icon) !== null && _a !== void 0 ? _a : this.props.iconDefault,
-                'openicon': (_c = (_b = item.openicon) !== null && _b !== void 0 ? _b : item.icon) !== null && _c !== void 0 ? _c : this.props.iconDefault,
+                'icon': item.icon ?? this.props.iconDefault,
+                'openicon': item.openicon ?? item.icon ?? this.props.iconDefault,
                 'level': level,
                 'format': item,
                 'data': item.data,
@@ -332,7 +329,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.propBoolean('async') && !item.format.children.length) {
                 item.format.tree = 2;
                 this.emit('load', item.value, (children) => {
-                    if (!(children === null || children === void 0 ? void 0 : children.length)) {
+                    if (!children?.length) {
                         item.format.children = [];
                         item.format.tree = -1;
                         return;
@@ -486,7 +483,6 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get childrenTotal() {
         return (data, opt = {}) => {
-            var _a, _b;
             const rtn = {
                 'total': 0,
                 'check': 0,
@@ -504,7 +500,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (data.format) {
                 data = data.format;
             }
-            if (!((_a = data.children) === null || _a === void 0 ? void 0 : _a.length)) {
+            if (!data.children?.length) {
                 if (opt.checkValues) {
                     const io = opt.checkValues.wait.indexOf(data.value);
                     if (io > -1) {
@@ -514,7 +510,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return rtn;
             }
             for (const item of data.children) {
-                if ((_b = item.children) === null || _b === void 0 ? void 0 : _b.length) {
+                if (item.children?.length) {
                     const r = this.childrenTotal(item, opt);
                     rtn.total += r.total;
                     rtn.check += r.check;

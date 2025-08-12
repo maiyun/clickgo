@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -68,7 +59,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     onMounted() {
-        this.watch('src', () => __awaiter(this, void 0, void 0, function* () {
+        this.watch('src', async () => {
             const count = ++this.count;
             if (typeof this.props.src !== 'string' || this.props.src === '') {
                 this.imgData = '';
@@ -92,12 +83,12 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             else {
                 const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-                blob = yield clickgo.fs.getContent(path);
+                blob = await clickgo.fs.getContent(path);
             }
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
             }
-            const t = yield clickgo.tool.blob2DataUrl(blob);
+            const t = await clickgo.tool.blob2DataUrl(blob);
             if (count !== this.count) {
                 return;
             }
@@ -106,7 +97,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.imgData = '';
-        }), {
+        }, {
             'immediate': true
         });
         clickgo.dom.watchSize(this.element, () => {

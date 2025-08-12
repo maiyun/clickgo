@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -61,65 +52,61 @@ class default_1 extends clickgo.control.AbstractControl {
             'term': undefined
         };
     }
-    down(e) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
+    async down(e) {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (e.button !== 2) {
+            return;
+        }
+        const sel = this.access.term.getSelection();
+        if (sel) {
+            try {
+                await navigator.clipboard.writeText(sel);
+                this.access.term.clearSelection();
             }
-            if (e.button !== 2) {
-                return;
+            catch (e) {
+                console.log('Clipboard error.', e);
             }
-            const sel = this.access.term.getSelection();
-            if (sel) {
-                try {
-                    yield navigator.clipboard.writeText(sel);
-                    this.access.term.clearSelection();
-                }
-                catch (e) {
-                    console.log('Clipboard error.', e);
-                }
-            }
-            else {
-                const str = yield navigator.clipboard.readText();
-                this.access.term.paste(str);
-            }
-        });
+        }
+        else {
+            const str = await navigator.clipboard.readText();
+            this.access.term.paste(str);
+        }
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const xterm = yield clickgo.core.getModule('xterm');
-            if (!xterm) {
-                this.isLoading = false;
-                this.notInit = true;
-                return;
-            }
-            this.access.term = new xterm[0]();
-            this.access.term.onData((char) => {
-                this.emit('data', char);
-            });
-            this.access.term.onResize((cr) => __awaiter(this, void 0, void 0, function* () {
-                const screen = this.refs.content.querySelector('.xterm-screen');
-                yield clickgo.tool.sleep(50);
-                this.emit('resize', {
-                    'cols': cr.cols,
-                    'rows': cr.rows,
-                    'width': screen.clientWidth,
-                    'height': screen.clientHeight
-                });
-            }));
-            const fitAddon = new xterm[1]();
-            this.access.term.loadAddon(fitAddon);
-            const webgl = new xterm[2]();
-            this.access.term.loadAddon(webgl);
-            this.access.term.open(this.refs.content);
-            clickgo.dom.watchSize(this.element, () => {
-                fitAddon.fit();
-            });
+    async onMounted() {
+        const xterm = await clickgo.core.getModule('xterm');
+        if (!xterm) {
             this.isLoading = false;
-            this.emit('init', this.access.term);
-            yield clickgo.tool.sleep(34);
+            this.notInit = true;
+            return;
+        }
+        this.access.term = new xterm[0]();
+        this.access.term.onData((char) => {
+            this.emit('data', char);
+        });
+        this.access.term.onResize(async (cr) => {
+            const screen = this.refs.content.querySelector('.xterm-screen');
+            await clickgo.tool.sleep(50);
+            this.emit('resize', {
+                'cols': cr.cols,
+                'rows': cr.rows,
+                'width': screen.clientWidth,
+                'height': screen.clientHeight
+            });
+        });
+        const fitAddon = new xterm[1]();
+        this.access.term.loadAddon(fitAddon);
+        const webgl = new xterm[2]();
+        this.access.term.loadAddon(webgl);
+        this.access.term.open(this.refs.content);
+        clickgo.dom.watchSize(this.element, () => {
             fitAddon.fit();
         });
+        this.isLoading = false;
+        this.emit('init', this.access.term);
+        await clickgo.tool.sleep(34);
+        fitAddon.fit();
     }
 }
 exports.default = default_1;

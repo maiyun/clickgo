@@ -178,8 +178,8 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:tz', this.tzData);
         if (this.dateStr[0]) {
             this.emit('update:modelValue', [
-                this.dateObj[0].getTime() - this.tzData * 60 * 60000,
-                this.dateObj[1].getTime() - this.tzData * 60 * 60000
+                this.dateObj[0].getTime() - this.tzData * 60 * 60_000,
+                this.dateObj[1].getTime() - this.tzData * 60 * 60_000
             ]);
         }
         clickgo.form.hidePop();
@@ -199,12 +199,12 @@ class default_1 extends clickgo.control.AbstractControl {
         this.dateStr[0] = res.date;
         this.timeStr[0] = res.time;
         value.push(e.detail.start);
-        this.dateObj[0].setTime(e.detail.start + this.tzData * 60 * 60000);
+        this.dateObj[0].setTime(e.detail.start + this.tzData * 60 * 60_000);
         res = clickgo.tool.formatTime(e.detail.end, this.tzData);
         this.dateStr[1] = res.date;
         this.timeStr[1] = res.time;
         value.push(e.detail.end);
-        this.dateObj[1].setTime(e.detail.end + this.tzData * 60 * 60000);
+        this.dateObj[1].setTime(e.detail.end + this.tzData * 60 * 60_000);
         this.emit('update:modelValue', value);
         clickgo.form.hidePop(this.refs.firstpop);
         this.refs.firstpanel.clear();
@@ -217,7 +217,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         const date = new Date(e.detail.value);
         date.setUTCHours(23, 59, 59, 0);
-        this.ts2 = date.getTime() - this.tzData * 60 * 60000;
+        this.ts2 = date.getTime() - this.tzData * 60 * 60_000;
     }
     onYmChange() {
         if (this.endym > this.firstym) {
@@ -244,8 +244,8 @@ class default_1 extends clickgo.control.AbstractControl {
             this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
             if (this.dateStr[0]) {
                 this.emit('update:modelValue', [
-                    this.dateObj[0].getTime() - this.tzData * 60 * 60000,
-                    this.dateObj[1].getTime() - this.tzData * 60 * 60000
+                    this.dateObj[0].getTime() - this.tzData * 60 * 60_000,
+                    this.dateObj[1].getTime() - this.tzData * 60 * 60_000
                 ]);
             }
         }, {

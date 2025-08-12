@@ -30,9 +30,9 @@ export default class extends clickgo.form.AbstractForm {
     public fsrc: string = '';
 
     /** --- select changed 事件 --- */
-    public changed(e: types.ISelectChangedEvent) {
+    public changed(e: types.ISelectChangedEvent): void {
         const found = this.list.find(item => item.value === e.detail.value[0]);
-        if (found && found.fval) {
+        if (found?.fval) {
             this.fsrc = found.fval;
             return;
         }

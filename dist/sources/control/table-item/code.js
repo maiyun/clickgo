@@ -58,15 +58,14 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     get isFixed() {
-        var _a, _b;
         if (this.table.clientWidth < 500) {
             return undefined;
         }
         if (this.index === 0) {
-            return (_a = this.table.isFixed) === null || _a === void 0 ? void 0 : _a.left;
+            return this.table.isFixed?.left;
         }
         if (this.index === this.table.itemsLength - 1) {
-            return (_b = this.table.isFixed) === null || _b === void 0 ? void 0 : _b.right;
+            return this.table.isFixed?.right;
         }
         return undefined;
     }
@@ -89,12 +88,10 @@ class default_1 extends clickgo.control.AbstractControl {
         return undefined;
     }
     get scrollLeft() {
-        var _a;
-        return (_a = this.table.scrollLeft) !== null && _a !== void 0 ? _a : 0;
+        return this.table.scrollLeft ?? 0;
     }
     get maxScrollLeft() {
-        var _a;
-        return (_a = this.table.maxScrollLeft) !== null && _a !== void 0 ? _a : 0;
+        return this.table.maxScrollLeft ?? 0;
     }
     onMounted() {
         const table = this.parentByName('table');

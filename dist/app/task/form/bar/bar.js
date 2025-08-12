@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.form.AbstractForm {
@@ -54,43 +45,39 @@ class default_1 extends clickgo.form.AbstractForm {
     showLauncher() {
         clickgo.form.showLauncher();
     }
-    itemClick(appIndex) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.apps[appIndex].formCount === 0) {
-                try {
-                    yield clickgo.task.run(this.apps[appIndex].path);
-                }
-                catch (_a) {
-                    return;
-                }
-            }
-            else if (this.apps[appIndex].formCount === 1) {
-                const formIds = Object.keys(this.apps[appIndex].forms);
-                const formId = parseInt(formIds[0]);
-                const form = clickgo.form.get(formId);
-                if (!form) {
-                    return;
-                }
-                if (form.focus) {
-                    clickgo.form.min(formId);
-                }
-                else {
-                    clickgo.form.changeFocus(formId);
-                }
-            }
-            else {
-            }
-        });
-    }
-    run(path) {
-        return __awaiter(this, void 0, void 0, function* () {
+    async itemClick(appIndex) {
+        if (this.apps[appIndex].formCount === 0) {
             try {
-                yield clickgo.task.run(path);
+                await clickgo.task.run(this.apps[appIndex].path);
             }
-            catch (_a) {
+            catch {
                 return;
             }
-        });
+        }
+        else if (this.apps[appIndex].formCount === 1) {
+            const formIds = Object.keys(this.apps[appIndex].forms);
+            const formId = parseInt(formIds[0]);
+            const form = clickgo.form.get(formId);
+            if (!form) {
+                return;
+            }
+            if (form.focus) {
+                clickgo.form.min(formId);
+            }
+            else {
+                clickgo.form.changeFocus(formId);
+            }
+        }
+        else {
+        }
+    }
+    async run(path) {
+        try {
+            await clickgo.task.run(path);
+        }
+        catch {
+            return;
+        }
     }
     pin(index) {
         const app = this.apps[index];
@@ -180,13 +167,13 @@ class default_1 extends clickgo.form.AbstractForm {
                 if (!form.show) {
                     continue;
                 }
-                (app !== null && app !== void 0 ? app : this.apps[appIndex]).forms[formId] = {
+                (app ?? this.apps[appIndex]).forms[formId] = {
                     'title': form.title,
-                    'icon': form.icon || (app !== null && app !== void 0 ? app : this.apps[appIndex]).icon
+                    'icon': form.icon || (app ?? this.apps[appIndex]).icon
                 };
             }
-            (app !== null && app !== void 0 ? app : this.apps[appIndex]).formCount = Object.keys((app !== null && app !== void 0 ? app : this.apps[appIndex]).forms).length;
-            if (app === null || app === void 0 ? void 0 : app.formCount) {
+            (app ?? this.apps[appIndex]).formCount = Object.keys((app ?? this.apps[appIndex]).forms).length;
+            if (app?.formCount) {
                 this.apps.push(app);
             }
         }

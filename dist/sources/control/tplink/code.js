@@ -32,15 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const clickgo = __importStar(require("clickgo"));
 class default_1 extends clickgo.control.AbstractControl {
@@ -87,10 +78,10 @@ class default_1 extends clickgo.control.AbstractControl {
             'szPluginContainer': 'cg-control-tplink-' + this.rand,
             'iServicePortStart': 15410,
             'iServicePortEnd': 15419,
-            cbConnectSuccess: () => __awaiter(this, void 0, void 0, function* () {
+            cbConnectSuccess: async () => {
                 const bcr = this.refs.content.getBoundingClientRect();
                 try {
-                    yield this.access.instance.CreateWnd('cg-control-tplink-' + this.rand, Math.round(bcr.width), Math.round(bcr.height), 0);
+                    await this.access.instance.CreateWnd('cg-control-tplink-' + this.rand, Math.round(bcr.width), Math.round(bcr.height), 0);
                     this.initCount = 0;
                     this.access.instance.InitAuthInfo(this.props.init.sid, this.props.init.skey);
                     this.access.instance.SetCustomLayout(JSON.stringify(this.props.layout));
@@ -102,8 +93,8 @@ class default_1 extends clickgo.control.AbstractControl {
                 catch (e) {
                     console.log('[CONTROL] [TPLINK] ERROR', e);
                 }
-            }),
-            cbConnectError: () => __awaiter(this, void 0, void 0, function* () {
+            },
+            cbConnectError: async () => {
                 this.access.instance = null;
                 this.access.tplink.WakeUpPlugin('SMBCloudHDPlugin://');
                 ++this.initCount;
@@ -111,10 +102,10 @@ class default_1 extends clickgo.control.AbstractControl {
                     clickgo.form.alert('Tplink error', 'danger');
                 }
                 clickgo.form.alert('Tplink retry ' + this.initCount, 'warning');
-                yield clickgo.tool.sleep(3000);
+                await clickgo.tool.sleep(3_000);
                 this._init();
-            }),
-            cbConnectClose: () => __awaiter(this, void 0, void 0, function* () {
+            },
+            cbConnectClose: async () => {
                 this.access.instance = null;
                 this.access.tplink.WakeUpPlugin('SMBCloudHDPlugin://');
                 ++this.initCount;
@@ -122,9 +113,9 @@ class default_1 extends clickgo.control.AbstractControl {
                     clickgo.form.alert('Tplink error', 'danger');
                 }
                 clickgo.form.alert('Tplink retry ' + this.initCount, 'warning');
-                yield clickgo.tool.sleep(3000);
+                await clickgo.tool.sleep(3_000);
                 this._init();
-            })
+            }
         });
     }
     _clear() {
@@ -139,7 +130,6 @@ class default_1 extends clickgo.control.AbstractControl {
         this.indexs.length = 0;
     }
     _play() {
-        var _a, _b;
         for (const item of this.props.list) {
             let qrCode = '';
             let mac = '';
@@ -154,7 +144,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.indexs.push({
                     'index': item.index,
                     'range': false,
-                    'volume': (_a = item.volume) !== null && _a !== void 0 ? _a : true,
+                    'volume': item.volume ?? true,
                 });
             }
             else {
@@ -162,7 +152,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.indexs.push({
                     'index': item.index,
                     'range': true,
-                    'volume': (_b = item.volume) !== null && _b !== void 0 ? _b : true,
+                    'volume': item.volume ?? true,
                 });
             }
             this.access.instance.SetVolume(item.index, item.volume === false ? 0 : this.propInt('volume'));
@@ -181,70 +171,68 @@ class default_1 extends clickgo.control.AbstractControl {
     stopTalk(index) {
         this.access.instance.StopTalk(index);
     }
-    onMounted() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.rand = clickgo.tool.random(16);
-            const tplink = yield clickgo.core.getModule('tplink');
-            if (!tplink) {
-                this.isLoading = false;
-                this.notInit = true;
+    async onMounted() {
+        this.rand = clickgo.tool.random(16);
+        const tplink = await clickgo.core.getModule('tplink');
+        if (!tplink) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
+        this.access.tplink = tplink;
+        this._init();
+        let count = 0;
+        clickgo.dom.watchPosition(this.element, async () => {
+            if (!this.access.instance) {
                 return;
             }
-            this.access.tplink = tplink;
-            this._init();
-            let count = 0;
-            clickgo.dom.watchPosition(this.element, () => __awaiter(this, void 0, void 0, function* () {
-                if (!this.access.instance) {
-                    return;
-                }
-                const now = ++count;
-                const bcr = this.refs.content.getBoundingClientRect();
-                this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
-                yield clickgo.tool.sleep(600);
-                if (now < count) {
-                    return;
-                }
-                this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
-            }));
-            this.watch('layout', () => {
-                if (!this.access.instance) {
-                    return;
-                }
-                this.access.instance.SetCustomLayout(JSON.stringify(this.props.layout));
-            }, {
-                'deep': true,
-            });
-            this.watch('controls', () => {
-                if (!this.access.instance) {
-                    return;
-                }
-                if (this.propBoolean('controls')) {
-                    this.access.instance.ShowWndToolbar();
-                }
-                else {
-                    this.access.instance.HideWndToolbar();
-                }
-            });
-            this.watch('list', () => {
-                this.refresh();
-            }, {
-                'deep': true,
-            });
-            this.watch('range', () => {
-                this.refresh();
-            }, {
-                'deep': true,
-            });
-            this.watch('volume', () => {
-                for (const item of this.indexs) {
-                    this.access.instance.SetVolume(item.index, item.volume ? this.propInt('volume') : 0);
-                }
-            });
-            this.isLoading = false;
-            this.emit('init', {
-                'tplink': this.access.tplink,
-                'instance': this.access.instance,
-            });
+            const now = ++count;
+            const bcr = this.refs.content.getBoundingClientRect();
+            this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
+            await clickgo.tool.sleep(600);
+            if (now < count) {
+                return;
+            }
+            this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
+        });
+        this.watch('layout', () => {
+            if (!this.access.instance) {
+                return;
+            }
+            this.access.instance.SetCustomLayout(JSON.stringify(this.props.layout));
+        }, {
+            'deep': true,
+        });
+        this.watch('controls', () => {
+            if (!this.access.instance) {
+                return;
+            }
+            if (this.propBoolean('controls')) {
+                this.access.instance.ShowWndToolbar();
+            }
+            else {
+                this.access.instance.HideWndToolbar();
+            }
+        });
+        this.watch('list', () => {
+            this.refresh();
+        }, {
+            'deep': true,
+        });
+        this.watch('range', () => {
+            this.refresh();
+        }, {
+            'deep': true,
+        });
+        this.watch('volume', () => {
+            for (const item of this.indexs) {
+                this.access.instance.SetVolume(item.index, item.volume ? this.propInt('volume') : 0);
+            }
+        });
+        this.isLoading = false;
+        this.emit('init', {
+            'tplink': this.access.tplink,
+            'instance': this.access.instance,
         });
     }
     onUnmounted() {

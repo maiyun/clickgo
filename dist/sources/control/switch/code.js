@@ -51,10 +51,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.isSpaceDown = false;
     }
     get mapComp() {
-        var _a, _b;
         return {
-            'true': (_a = this.props.map.true) !== null && _a !== void 0 ? _a : true,
-            'false': (_b = this.props.map.false) !== null && _b !== void 0 ? _b : false
+            'true': this.props.map.true ?? true,
+            'false': this.props.map.false ?? false
         };
     }
     click() {
