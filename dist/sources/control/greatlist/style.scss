@@ -7,7 +7,7 @@
         }
     }
     &[data-cg-disabled] {
-        background: var(--g-plain-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+        background: var(--g-plain-background-disabled); color: var(--g-color-disabled);
         > * {
             pointer-events: none;
         }
@@ -50,7 +50,7 @@
                     }
                 }
                 &[data-cg-disabled], &.unavailable {
-                    color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled); pointer-events: none;
+                    color: var(--g-color-disabled); pointer-events: none;
                 }
 
                 // --- 左侧颜色 ---
@@ -157,5 +157,5 @@
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
+    color: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

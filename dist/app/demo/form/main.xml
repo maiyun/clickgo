@@ -3,6 +3,13 @@
         <flow v-if="ntab === 'control'" class="inner" direction="v">
             <layout class="buttons" gutter="10" direction="v">
                 <label>App data: {{adata}}</label>
+                <layout align-v="center" gutter="10">
+                    <layout gutter="10" direction="v" style="flex: 1">
+                        <label>Some content has been switched to your browser's language.</label>
+                        <label style="flex: 1">browser's language: {{language}}</label>
+                    </layout>
+                    <button v-if="language !== 'en'" type="cg" @click="changeToEn()" style="flex: initial">to "en"</button>
+                </layout>
                 <layout gutter="10">
                     <button @click="openForm('cform')">Form</button>
                     <button @click="openForm('clayout')">Layout</button>
@@ -120,11 +127,12 @@
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('cmpegts')">Mpegts</button>
-                    <button @click="openForm('ctplink')">Tplink</button>
+                    <button @click="openForm('cnovnc')">Novnc</button>
                     <button @click="openForm('ccaptcha')">Captcha</button>
                 </layout>
                 <layout gutter="10">
-                    <button @click="openForm('cnovnc')">Novnc</button>
+                    <button @click="openForm('ctplink')">Tplink</button>
+                    <button @click="openForm('ctums')">Tums</button>
                 </layout>
             </layout>
         </flow>

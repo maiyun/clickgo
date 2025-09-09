@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2007-2025 MAIYUN.NET
 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,51 +13,92 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as types from '../../types';
-import * as core from './core';
-import * as zip from './zip';
-import * as tool from './tool';
-import * as task from './task';
-import * as dom from './dom';
-import * as form from './form';
-import * as fs from './fs';
+import * as clickgo from '../clickgo';
+import * as lCore from './core';
+import * as lZip from './zip';
+import * as lTool from './tool';
+import * as lTask from './task';
+import * as lDom from './dom';
+import * as lForm from './form';
+import * as lFs from './fs';
+
+/** --- 系统级 ID --- */
+let sysId = '';
+
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id: string): void {
+    if (sysId) {
+        return;
+    }
+    sysId = id;
+}
 
 /** --- 窗体的抽象类 --- */
 export abstract class AbstractControl {
 
-    /** --- 当前 js 文件在包内的完整路径 --- */
+    /** --- 当前文件在包内的路径 --- */
     public get filename(): string {
-        // --- require 时系统自动在继承类中重写本函数 ---
+        // --- pack 时系统自动在继承类中重写本函数 ---
         return '';
     }
 
-    /** --- 当前控件的名字 --- */
+    // --- init 中以下参数记得设置 ---
+
+    /** --- 当前的窗体创建的位数 --- */
+    public get findex(): number {
+        // --- 窗体创建时继承时重写本函数 ---
+        return 0;
+    }
+
+    /** --- 当前的控件名称 --- */
     public get controlName(): string {
         // --- init 中系统自动去重写本函数 ---
         return '';
     }
 
     /** --- 当前组件所在的任务 ID --- */
-    public get taskId(): number {
-        // ---  init/require 中系统自动重写本函数 ---
-        return 0;
+    public get taskId(): string {
+        // ---  init 中系统自动重写本函数 ---
+        return '';
     }
 
     /** --- 当前组件所在的窗体 ID --- */
-    public get formId(): number {
+    public get formId(): string {
         // --- buildComponents 时会重写本函数 ---
-        return 0;
+        return '';
     }
 
+    /** --- 当前控件所在运行窗体的包内路径不以 / 结尾 --- */
+    public get path(): string {
+        // --- buildComponents 时会重写本函数 ---
+        return '';
+    }
+
+    /** --- 样式独占前缀 --- */
+    public get prep(): string {
+        // --- init 时会重写本函数 ---
+        return '';
+    }
+
+    /** --- 获取当前的 HTML DOM --- */
+    public get element(): HTMLElement {
+        return (this as any).$el;
+    }
+
+    // --- init 止 ---
+
     /** --- root form --- */
-    private _rootForm: (form.AbstractForm & Record<string, any>) | null = null;
+    private _rootForm: (lForm.AbstractForm & Record<string, any>) | null = null;
 
     /** --- 当前控件所在窗体的窗体对象 --- */
-    public get rootForm(): form.AbstractForm & Record<string, any> {
+    public get rootForm(): lForm.AbstractForm & Record<string, any> {
         if (!this._rootForm) {
             this._rootForm = this.parentByName('root') as any;
             if (!this._rootForm) {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
                     'content': `The "rootForm" is not ready yet.\nFile: "${this.controlName}".`,
                     'type': 'danger'
@@ -82,21 +123,10 @@ export abstract class AbstractControl {
         return this.rootForm?.formFocus ?? false;
     }
 
-    /** --- 当前控件所在运行窗体的包内路径不以 / 结尾 --- */
-    public get path(): string {
-        // --- buildComponents 时会重写本函数 ---
-        return '';
-    }
-
-    /** --- 样式独占前缀 --- */
-    public get prep(): string {
-        // --- init 时会重写本函数 ---
-        return '';
-    }
-
     /** --- 获取当前语言名 --- */
     public get locale(): string {
-        return task.list[this.taskId].locale.lang || core.config.locale;
+        const task = lTask.getOrigin(this.taskId);
+        return lTool.logicalOr(task?.locale.lang ?? '', lCore.config.locale);
     }
 
     /**
@@ -200,7 +230,7 @@ export abstract class AbstractControl {
      * @param e 鼠标、触摸、键盘事件
      */
     public allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
-        return dom.allowEvent(e);
+        return lDom.allowEvent(e);
     }
 
     /**
@@ -209,11 +239,11 @@ export abstract class AbstractControl {
      * @param param1 参数1
      * @param param2 参数2
      */
-    public trigger(name: types.TGlobalEvent, param1: boolean | Error | string = '', param2: string = ''): void {
+    public async trigger(name: lCore.TGlobalEvent, param1: boolean | Error | string = '', param2: string = ''): Promise<void> {
         if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
             return;
         }
-        core.trigger(name, this.taskId, this.formId, param1, param2);
+        await lCore.trigger(name, this.taskId, this.formId, param1, param2);
     }
 
     // --- 以下为 control 有，但窗体没有 ---
@@ -256,14 +286,14 @@ export abstract class AbstractControl {
     /** --- 获取 props 中的 boolean 类型的值 --- */
     public get propBoolean() {
         return (name: keyof this['props']): boolean => {
-            return tool.getBoolean((this.props as any)[name]);
+            return lTool.getBoolean((this.props as any)[name]);
         };
     }
 
     /** --- 获取 props 中的 number 类型的值 --- */
     public get propNumber() {
         return (name: keyof this['props']): number => {
-            return tool.getNumber((this.props as any)[name]);
+            return lTool.getNumber((this.props as any)[name]);
         };
     }
 
@@ -277,13 +307,8 @@ export abstract class AbstractControl {
     /** --- 获取 props 中的 array 类型的值 --- */
     public get propArray() {
         return (name: keyof this['props']): any[] => {
-            return tool.getArray((this.props as any)[name]);
+            return lTool.getArray((this.props as any)[name]);
         };
-    }
-
-    /** --- 获取当前的 HTML DOM --- */
-    public get element(): HTMLElement {
-        return (this as any).$el;
     }
 
     /**
@@ -298,7 +323,7 @@ export abstract class AbstractControl {
     /**
      * --- 获取上层控件 ---
      */
-    public get parent(): AbstractControl & form.AbstractForm & Record<string, any> {
+    public get parent(): AbstractControl & lForm.AbstractForm & Record<string, any> {
         return (this as any).$parent;
     }
 
@@ -356,6 +381,7 @@ export abstract class AbstractControl {
         return;
     }
 
+    /** --- 控件挂载好后触发 --- */
     public onMounted(): void | Promise<void> {
         return;
     }
@@ -382,13 +408,13 @@ export abstract class AbstractControl {
  * --- 将 cgc 文件 blob 转换为 control 对象 ---
  * @param blob 文件 blob
  */
-export async function read(blob: Blob): Promise<false | types.TControlPackage> {
-    const z = await zip.get(blob);
+export async function read(blob: Blob): Promise<false | TControlPackage> {
+    const z = await lZip.get(blob);
     if (!z) {
         return false;
     }
     /** --- 要返回的 control pkg 对象 --- */
-    const controlPkg: types.TControlPackage = {};
+    const controlPkg: TControlPackage = {};
 
     // --- 读取包 ---
     const list = z.readDir('/');
@@ -398,7 +424,7 @@ export async function read(blob: Blob): Promise<false | types.TControlPackage> {
         }
         const configContent = await z.getContent('/' + sub.name + '/config.json');
         if (!configContent) {
-            form.notify({
+            lForm.notify({
                 'title': 'Error',
                 'content': `Control file not found.\nFile: "${'/' + sub.name + '/config.json'}".`,
                 'type': 'danger'
@@ -406,7 +432,7 @@ export async function read(blob: Blob): Promise<false | types.TControlPackage> {
             continue;
         }
         // --- 读取本条控件内容 ---
-        const config: types.IControlConfig = JSON.parse(configContent);
+        const config: IControlConfig = JSON.parse(configContent);
         controlPkg[config.name] = {
             'type': 'control',
             'config': config,
@@ -418,7 +444,7 @@ export async function read(blob: Blob): Promise<false | types.TControlPackage> {
         });
         for (const file of list) {
             const pre = file.path.slice(config.name.length + 1);
-            const mime = tool.getMimeByPath(file.name);
+            const mime = lTool.getMimeByPath(file.name);
             if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                 const fab = await z.getContent(file.path + file.name, 'string');
                 if (!fab) {
@@ -444,23 +470,26 @@ export async function read(blob: Blob): Promise<false | types.TControlPackage> {
  * --- 任务创建过程中，需要对 control 进行先行初始化，并将样式表插入到实际的任务 DOM 中 ---
  * @param taskId 要处理的任务 ID
  */
-export async function init(
-    taskId: number,
-    invoke: Record<string, any>,
-    cache?: string
-): Promise<number> {
-    const t = task.list[taskId];
-    if (!t) {
+export async function init(taskId: string, opt: {
+    /**
+     * --- 控件加载进度 ---
+     * @param loaded 已加载
+     * @param total 总数
+     * @param path 已加载的控件路径
+     */
+    progress?: (loaded: number, total: number, path: string) => void | Promise<void>;
+} = {}): Promise<number> {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return -1;
     }
-    for (let path of t.app.config.controls) {
+    let loaded = 0;
+    for (let path of task.app.config.controls) {
         if (!path.endsWith('.cgc')) {
             path += '.cgc';
         }
-        path = tool.urlResolve('/', path);
-        const file = await fs.getContent(path, {
-            'cache': cache
-        }, taskId);
+        path = lTool.urlResolve('/', path);
+        const file = await lFs.getContent(taskId, path);
         if (file && typeof file !== 'string') {
             const c = await read(file);
             if (c) {
@@ -470,121 +499,133 @@ export async function init(
                     /** --- 样式唯一前缀 --- */
                     let prep: string = '';
                     // --- 组装预加载 control 对象 ---
-                    t.controls[name] = {
+                    task.controls[name] = {
                         'layout': '',
 
                         'files': item.files,
+                        'config': item.config,
+
                         'props': {},
                         'emits': {},
                         'data': {},
                         'access': {},
                         'methods': {},
-                        'computed': {}
+                        'computed': {},
                     };
                     // --- 要创建的控件的 layout ---
-                    t.controls[name].layout = item.files[item.config.layout + '.html'] as string;
-                    if (t.controls[name].layout === undefined) {
+                    task.controls[name].layout = item.files[item.config.layout + '.html'] as string;
+                    if (task.controls[name].layout === undefined) {
                         // --- 控件没有 layout 那肯定不能用 ---
                         return -2;
                     }
                     // --- 给 layout 增加 data-cg-control-xxx ---
-                    t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control="' + name + '"$2');
+                    task.controls[name].layout = task.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control="' + name + '"$2');
                     /** --- 样式表 --- */
                     const style = item.files[item.config.style + '.css'] as string;
                     if (style) {
                         // --- 有样式表，给样式表内的项增加唯一前缀（scope） ---
-                        const r = tool.stylePrepend(style);
+                        const r = lTool.stylePrepend(style);
                         prep = r.prep;
-                        dom.pushStyle(t.id, await tool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
+                        lDom.pushStyle(task.id, await lTool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
                     }
                     // --- 给控件的 layout 的 class 增加前置 ---
                     const prepList = [
-                        'cg-theme-task' + t.id.toString() + '-' + name + '_'
+                        'cg-theme-task' + task.id.toString() + '-' + name + '_'
                     ];
                     if (prep !== '') {
                         prepList.push(prep);
                     }
                     // --- 增加 class 为 tag-xxx ---
-                    t.controls[name].layout = tool.layoutAddTagClassAndReTagName(t.controls[name].layout, false);
+                    task.controls[name].layout = lTool.layoutAddTagClassAndReTagName(task.controls[name].layout, false);
                     // --- 给 layout 的 class 增加前置 ---
-                    t.controls[name].layout = tool.layoutClassPrepend(t.controls[name].layout, prepList);
+                    task.controls[name].layout = lTool.layoutClassPrepend(task.controls[name].layout, prepList);
                     // --- 给 cg 对象增加 :form-focus 传递 ---
-                    /*
-                    if (t.controls[name].layout.includes('<cg-')) {
-                        t.controls[name].layout = tool.layoutInsertAttr(t.controls[name].layout, ':form-focus=\'formFocus\'', {
+                    if (task.controls[name].layout.includes('<cg-')) {
+                        task.controls[name].layout = lTool.layoutInsertAttr(task.controls[name].layout, ':form-focus=\'formFocus\'', {
                             'include': [/^cg-.+/]
                         });
                     }
-                    */
                     // --- 给 event 增加包裹 ---
-                    t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
+                    task.controls[name].layout = lTool.eventsAttrWrap(task.controls[name].layout);
                     // --- 给 teleport 做处理 ---
-                    if (t.controls[name].layout.includes('<teleport')) {
-                        t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
+                    if (task.controls[name].layout.includes('<teleport')) {
+                        task.controls[name].layout = lTool.teleportGlue(task.controls[name].layout, '{{{formId}}}');
                     }
                     // --- 添加父子组件的映射关系 ---
-                    t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS, '"<>$');
-                    t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${t.controls[name].access['cgPCMap']}"`);
+                    task.controls[name].access['cgPCMap'] = lTool.random(8, lTool.RANDOM_LUNS, '"<>$');
+                    task.controls[name].layout = task.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${task.controls[name].access['cgPCMap']}"`);
                     // --- 检测是否有 js ---
                     let cls: any;
                     if (item.files[item.config.code + '.js']) {
-                        item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-                        let expo: any = [];
-                        try {
-                            expo = loader.require(item.config.code, item.files, {
-                                'dir': '/',
-                                'invoke': invoke,
-                                'preprocess': function(code: string, path: string): string {
-                                    // --- 屏蔽 eval 函数 ---
-                                    const exec = /eval\W/.exec(code);
-                                    if (exec) {
-                                        form.notify({
-                                            'title': 'Error',
-                                            'content': `The "eval" is prohibited.\nFile: "${path}".`,
-                                            'type': 'danger'
-                                        });
-                                        return '';
-                                    }
-                                    // --- 给 control 的 class 增加 filename 的 get ---
-                                    code = code.replace(/extends[\s\S]+?\.\s*AbstractControl\s*{/, (t: string) => {
-                                        return t + 'get filename() {return __filename;}';
-                                    });
-                                    return code;
-                                },
-                                'map': {
-                                    'clickgo': '/invoke/clickgo'
-                                }
-                            })[0];
-                        }
-                        catch (e: any) {
-                            core.trigger('error', taskId, 0, e, e.message + '(-4)');
+                        const code = item.files[item.config.code + '.js'];
+                        if (typeof code !== 'string') {
                             return -3;
                         }
-                        if (!expo?.default) {
-                            const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
-                            core.trigger('error', taskId, 0, new Error(msg), msg);
-                            return -4;
+                        // --- code 用状态机判断敏感函数 ---
+                        let goOn = true;
+                        lTool.stateMachine(code, 0, (event) => {
+                            if (event.state !== lTool.ESTATE.WORD) {
+                                return true;
+                            }
+                            if (!['eval', 'Function'].includes(event.word)) {
+                                return true;
+                            }
+                            lForm.notify({
+                                'title': 'Error',
+                                'content': `The "${event.word}" is prohibited.\nFile: "${path}".`,
+                                'type': 'danger'
+                            });
+                            goOn = false;
+                            return false;
+                        });
+                        if (!goOn) {
+                            return -6;
                         }
-                        cls = new expo.default();
+                        // --- 加载库 ---
+                        if (item.config.modules?.length) {
+                            for (const m of item.config.modules) {
+                                if (clickgo.modules[m]) {
+                                    continue;
+                                }
+                                // --- 要加载库 ---
+                                if (!lCore.checkModule(m)) {
+                                    // --- 没模块，不加载 ---
+                                    continue;
+                                }
+                                if (!(await lCore.loadModule(m))) {
+                                    // --- 加载失败 ---
+                                    return -4;
+                                }
+                            }
+                        }
+                        // --- 判断结束 ---
+                        const expo = lTool.runIife(code);
+                        if (!expo) {
+                            const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
+                            await lCore.trigger('error', taskId, '', new Error(msg), msg);
+                            return -7;
+                        }
+                        cls = new expo();
+                        //*/
                     }
                     else {
                         // --- 没有 js 文件 ---
                         cls = new (class extends AbstractControl {
-                            public get taskId(): number {
-                                return taskId;
+                            public get filename(): string {
+                                return item.config.layout + '.js';
                             }
                         })();
                     }
                     if (cls.props) {
                         for (const key in cls.props) {
-                            t.controls[name].props[key] = {
+                            task.controls[name].props[key] = {
                                 'default': cls.props[key]
                             };
                         }
                     }
                     if (cls.emits) {
                         for (const key in cls.emits) {
-                            t.controls[name].emits[key] = cls.emits[key];
+                            task.controls[name].emits[key] = cls.emits[key];
                         }
                     }
                     // --- DATA ---
@@ -595,20 +636,21 @@ export async function init(
                         }
                         if (item[0] === 'access') {
                             // --- access 属性不放在 data 当中 ---
-                            t.controls[name].access = item[1] as any;
+                            task.controls[name].access = item[1] as any;
                             continue;
                         }
-                        t.controls[name].data[item[0]] = item[1];
+                        task.controls[name].data[item[0]] = item[1];
                     }
-                    const prot = tool.getClassPrototype(cls);
-                    t.controls[name].methods = prot.method;
-                    Object.assign(t.controls[name].computed, prot.access);
-                    t.controls[name].computed.controlName = {
+                    const prot = lTool.getClassPrototype(cls);
+                    task.controls[name].methods = prot.method;
+                    // --- COMPUTED ---
+                    Object.assign(task.controls[name].computed, prot.access);
+                    task.controls[name].computed.controlName = {
                         get: function() {
                             return name;
                         },
                         set: function() {
-                            form.notify({
+                            lForm.notify({
                                 'title': 'Error',
                                 'content': `The software tries to modify the system variable "controlName".\nControl: ${name}`,
                                 'type': 'danger'
@@ -616,12 +658,25 @@ export async function init(
                             return;
                         }
                     };
-                    t.controls[name].computed.prep = {
+                    task.controls[name].computed.taskId = {
+                        get: function() {
+                            return taskId;
+                        },
+                        set: function() {
+                            lForm.notify({
+                                'title': 'Error',
+                                'content': `The software tries to modify the system variable "taskId".\nControl: ${name}`,
+                                'type': 'danger'
+                            });
+                            return;
+                        }
+                    };
+                    task.controls[name].computed.prep = {
                         get: function() {
                             return prep;
                         },
                         set: function() {
-                            form.notify({
+                            lForm.notify({
                                 'title': 'Error',
                                 'content': `The software tries to modify the system variable "prep".\nControl: ${name}`,
                                 'type': 'danger'
@@ -632,45 +687,59 @@ export async function init(
                 }
             }
             else {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
-                    'content': 'Control failed to load.\nTask id: ' + t.id.toString() + '\nPath: ' + path,
+                    'content': 'Control failed to load.\nTask id: ' + task.id.toString() + '\nPath: ' + path,
                     'type': 'danger'
                 });
                 return -5;
             }
         }
+        // --- 不能等待他，影响加载效率 ---
+        opt.progress?.(++loaded, task.app.config.controls.length, path) as unknown;
     }
     return 1;
 }
 
 /**
- * --- 初始化获取新窗体的控件 component ---
+ * --- 初始化获取新窗体的控件 component（init 后执行） ---
  * @param taskId 任务 id
  * @param formId 窗体 id
  * @param path 窗体路径基准（包内路径）不以 / 结尾
  */
 export function buildComponents(
-    taskId: number,
-    formId: number,
+    taskId: string,
+    formId: string,
     path: string
 ): false | Record<string, any> {
-    const t = task.list[taskId];
-    if (!t) {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return false;
     }
     /** --- 要返回的控件列表 --- */
     const components: Record<string, any> = {};
-    for (const name in t.controls) {
-        const control = t.controls[name];
+    for (const name in task.controls) {
+        const control = task.controls[name];
         // --- 准备相关变量 ---
         const computed: Record<string, any> = Object.assign({}, control.computed);
+        computed.findex = {
+            get: function(): string {
+                return task.forms[formId].vroot.findex;
+            },
+            set: function(): void {
+                lForm.notify({
+                    'title': 'Error',
+                    'content': `The control tries to modify the system variable "findex".\nControl: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
         computed.formId = {
-            get: function(): number {
+            get: function(): string {
                 return formId;
             },
             set: function(): void {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
                     'content': `The control tries to modify the system variable "formId".\nControl: ${name}`,
                     'type': 'danger'
@@ -682,7 +751,7 @@ export function buildComponents(
                 return path;
             },
             set: function(): void {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
                     'content': `The control tries to modify the system variable "path".\nControl: ${name}`,
                     'type': 'danger'
@@ -695,7 +764,7 @@ export function buildComponents(
             'emits': control.emits,
 
             'data': function() {
-                const data = tool.clone(control.data);
+                const data = lTool.clone(control.data);
                 if (data.props) {
                     delete data.props;
                 }
@@ -711,7 +780,7 @@ export function buildComponents(
             created: function() {
                 this.props = this.$props;
                 this.slots = this.$slots;
-                this.access = tool.clone(control.access);
+                this.access = lTool.clone(control.access);
                 this.packageFiles = {};
                 for (const fname in control.files) {
                     this.packageFiles[fname] = control.files[fname];
@@ -748,4 +817,629 @@ export function buildComponents(
         };
     }
     return components;
+}
+
+// --- 类型 ---
+
+/** --- 控件文件包的 config --- */
+export interface IControlConfig {
+    'name': string;
+    'ver': number;
+    'version': string;
+    'author': string;
+
+    /** --- 不带扩展名，系统会在末尾添加 .js --- */
+    'code': string;
+    /** --- 不带扩展名，系统会在末尾添加 .html --- */
+    'layout': string;
+    /** --- 不带扩展名，系统会在末尾添加 .css --- */
+    'style': string;
+
+    /** --- 要提前加载的库名 --- */
+    'modules'?: string[];
+}
+
+/** --- 控件对象 --- */
+export interface IControl {
+    'type': 'control';
+    /** --- 控件对象配置文件 --- */
+    'config': IControlConfig;
+    /** --- 所有已加载的文件内容 --- */
+    'files': Record<string, Blob | string>;
+}
+
+/** --- 控件文件包 --- */
+export type TControlPackage = Record<string, IControl>;
+
+// -----------
+// --- 控件 ---
+// -----------
+
+/** --- Custom Event --- */
+export interface ICustomEvent {
+    'go': boolean;
+    preventDefault: () => void;
+}
+
+// --- Check Control ---
+
+export interface ICheckChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': boolean;
+        'indeterminate': boolean;
+    };
+}
+
+export interface ICheckChangedEvent {
+    'detail': {
+        'value': boolean;
+        'indeterminate': boolean;
+    };
+}
+
+// --- Number Control ---
+
+export interface INumberBeforeChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+        'change'?: string;
+    };
+}
+
+export interface INumberMinMaxChangeEvent extends ICustomEvent {
+    'detail': {
+        'before': string;
+        'value': string;
+    };
+}
+
+// --- Text Control ---
+
+export interface ITextBeforeChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+        'change'?: string;
+    };
+}
+
+export interface ITextMinMaxChangeEvent extends ICustomEvent {
+    'detail': {
+        'before': string;
+        'value': string;
+    };
+}
+
+// --- MenulistItem Control ---
+
+export interface IMenulistItemCheckEvent extends ICustomEvent {
+    'detail': {
+        /** --- 当前要选中的项 --- */
+        'value': string | boolean;
+        /** --- radio 模式下，当前项的 label 内容 --- */
+        'label'?: string;
+    };
+}
+
+// --- Date Control ---
+
+export interface IDateChangedEvent {
+    'detail': {
+        'before'?: number;
+        'value'?: number;
+    };
+}
+
+// --- Calendar Control ---
+
+export interface ICalendarSelectedEvent {
+    'detail': {
+        'year': string;
+        'month': string;
+        'date': string;
+        'value': string;
+        'type': 'default' | 'click';
+    };
+}
+
+// --- Datepanel Control ---
+
+export interface IDatepanelRangeEvent extends ICustomEvent {
+    'detail': {
+        'start': number;
+        'end': number;
+    };
+}
+
+export interface IDatepanelChangedEvent {
+    'detail': {
+        'before'?: number;
+        'value'?: number;
+    };
+}
+
+export interface IDatepanelSelectedEvent {
+    'detail': {
+        'time': number;
+        'date': number;
+        'month': number;
+        'year': number;
+        'day': number;
+        'str': string;
+    };
+}
+
+// --- Form Control ---
+
+export interface IFormCloseEvent extends ICustomEvent {
+    'detail': {
+        'event': MouseEvent;
+    };
+}
+
+export interface IFormMaxEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent | null;
+        'action': 'click' | 'move';
+        /** --- 当前是否时最大化状态 --- */
+        'max': boolean;
+        /** --- 最大化之前的窗体位置 --- */
+        'history': {
+            'width': number;
+            'height': number;
+            'left': number;
+            'top': number;
+        } | null;
+    };
+}
+
+export interface IFormMinEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent | null;
+        'action': 'click' | 'method';
+        /** --- 当前是否时最小化状态 --- */
+        'min': boolean;
+        /** --- 最小化之前的窗体位置 --- */
+        'history': {
+            'width': number;
+            'height': number;
+            'left': number;
+            'top': number;
+        } | null;
+    };
+}
+
+// --- Greatlist Control ---
+
+export interface IGreatlistChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IGreatlistChangedEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IGreatlistRemoveEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': number;
+    };
+}
+
+export interface IGreatlistAddEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': number;
+    };
+}
+
+export interface IGreatlistItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': number;
+        'arrow': boolean;
+    };
+}
+
+export interface IGreatlistItemdblclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': number;
+        'arrow': boolean;
+    };
+}
+
+// --- Greatselect Control ---
+
+export interface IGreatselectChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IGreatselectChangedEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IGreatselectRemoveEvent extends ICustomEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
+export interface IGreatselectAddEvent extends ICustomEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
+// --- Captcha Control ---
+
+export interface ICaptchaResultEvent {
+    'detail': {
+        'result': number;
+        'token': string;
+    };
+}
+
+// --- Pdf Control ---
+
+export interface IPdfViewEvent {
+    'detail': {
+        /** --- 宽度 point --- */
+        'width': number;
+        /** --- 高度 point --- */
+        'height': number;
+        /** --- 宽度英寸 --- */
+        'inwidth': number;
+        /** --- 高度英寸 --- */
+        'inheight': number;
+        /** --- 宽度像素 --- */
+        'pxwidth': number;
+        /** --- 高度像素 --- */
+        'pxheight': number;
+    };
+}
+
+// --- Iconview Control ---
+
+export interface IIconviewItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': number;
+    };
+}
+
+export interface IIconviewOpenEvent {
+    'detail': {
+        'value': number[];
+    };
+}
+
+export interface IIconviewDropEvent {
+    'detail': {
+        'self': boolean;
+        'from': Array<{
+            'index': number;
+            'type': 0 | 1 | -1 | undefined;
+            'path': string;
+        }>;
+        'to': {
+            'index': number;
+            'type': 0 | 1 | -1 | undefined;
+            'path': string;
+        };
+    };
+}
+
+export interface IIconviewSelectEvent {
+    'detail': {
+        'area': {
+            'x': number;
+            'y': number;
+            'width': number;
+            'height': number;
+            'shift': boolean;
+            'ctrl': boolean;
+            'start': number;
+            'end': number;
+            'empty': boolean;
+        };
+    };
+}
+
+// --- Levelselect Control ---
+
+export interface ILevelselectLevelEvent {
+    'detail': {
+        'list': Array<{
+            'label': string;
+            'value': string;
+        }>;
+        'values': string[];
+        'labels': string[];
+    };
+}
+
+// --- Checklist Control ---
+
+export interface IChecklistRemoveEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface IChecklistAddEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface IChecklistItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': string;
+        'arrow': boolean;
+    };
+}
+
+// --- List Control ---
+
+export interface IListChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+export interface IListChangedEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+export interface IListRemoveEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface IListAddEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface IListItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': string;
+        'arrow': boolean;
+    };
+}
+
+export interface IListItemdblclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': string;
+        'arrow': boolean;
+    };
+}
+
+// --- Nav Item ---
+
+export interface INavItemSelectEvent extends ICustomEvent {
+    'detail': {
+        'name': string;
+        'selected': string;
+    };
+}
+
+// --- Panel Item ---
+
+export interface IPanelGoEvent extends ICustomEvent {
+    'detail': {
+        'from': string;
+        'to': string;
+    };
+}
+
+export interface IPanelWentEvent {
+    'detail': {
+        'result': boolean;
+        'from': string;
+        'to': string;
+    };
+}
+
+// --- Radio Control ---
+
+export interface IRadioChangeEvent extends ICustomEvent {
+    'detail': {
+        /** --- 设定的值 --- */
+        'value': string;
+        /** --- 选中的值 --- */
+        'selected': string;
+    };
+}
+
+// --- Palette Control ---
+
+export interface IPaletteChangedEvent {
+    'detail': {
+        /** --- 颜色值 --- */
+        'value': string;
+        /** --- 对象 --- */
+        'hsl'?: {
+            'h': number;
+            's': number;
+            'l': number;
+            'a': number;
+        };
+        'rgb'?: {
+            'r': number;
+            'g': number;
+            'b': number;
+            'a': number;
+        };
+    };
+}
+
+// --- Colorist Control ---
+
+export interface IColoristChangedEvent {
+    'detail': {
+        /** --- 颜色值 --- */
+        'value': string;
+        /** --- 对象 --- */
+        'hsl'?: {
+            'h': number;
+            's': number;
+            'l': number;
+            'a': number;
+        };
+        'rgb'?: {
+            'r': number;
+            'g': number;
+            'b': number;
+            'a': number;
+        };
+    };
+}
+
+// --- Select Control ---
+
+export interface ISelectAddEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface ISelectRemoveEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+        'mode': 'backspace' | 'tag' | 'list';
+    };
+}
+
+export interface ISelectAddedEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface ISelectRemovedEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+        'mode': 'backspace' | 'tag' | 'list';
+    };
+}
+
+export interface ISelectChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+export interface ISelectChangedEvent {
+    'detail': {
+        'before': string[];
+        'value': string[];
+    };
+}
+
+export interface ISelectTagclickEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+export interface ISelectRemoteEvent {
+    'detail': {
+        'value': string;
+        'callback': (data?: any[] | Record<string, string>) => Promise<void>;
+    };
+}
+
+export interface ISelectItemclickedEvent {
+    'detail': {
+        'event': MouseEvent | TouchEvent;
+        'value': string;
+        'arrow': boolean;
+    };
+}
+
+// --- Switch Control ---
+
+export interface ISwitchChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': boolean;
+    };
+}
+
+// --- Tab Control ---
+
+export interface ITabChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': string;
+    };
+}
+
+export interface ITabChangedEvent {
+    'detail': {
+        'value': string;
+    };
+}
+
+export interface ITabCloseEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+    };
+}
+
+// --- Table Control ---
+
+export interface ITableSortEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+        'label': string;
+        'sort': 'desc' | 'asc';
+    };
+}
+
+// --- Tuieditor Control ---
+
+export interface ITuieditorImguploadEvent {
+    'detail': {
+        'file': Blob;
+        'callback': (url: string, opt?: {
+            'alt'?: string;
+            'width'?: number;
+            'height'?: number;
+            'align'?: string;
+        }) => void | Promise<void>;
+    };
+}
+
+// --- Tag Control ---
+
+export interface ITagDropEvent {
+    'detail': {
+        'before': number;
+        'after': number;
+    };
 }

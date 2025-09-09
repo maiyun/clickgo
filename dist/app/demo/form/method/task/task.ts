@@ -42,13 +42,13 @@ export default class extends clickgo.form.AbstractForm {
                 break;
             }
         }
-        this.frameTimer = clickgo.task.onFrame(() => {
+        this.frameTimer = clickgo.task.onFrame(this, () => {
             ++this.frameCount;
         }, opt);
     }
 
     public frameEnd(): void {
-        clickgo.task.offFrame(this.frameTimer);
+        clickgo.task.offFrame(this, this.frameTimer);
         this.frameCount = 0;
         this.frameTimer = 0;
     }
@@ -75,71 +75,71 @@ export default class extends clickgo.form.AbstractForm {
                 break;
             }
         }
-        this.timer = clickgo.task.createTimer(() => {
+        this.timer = clickgo.task.createTimer(this, () => {
             ++this.timerCount;
         }, 1, opt);
     }
 
     public timerEnd(): void {
-        clickgo.task.removeTimer(this.timer);
+        clickgo.task.removeTimer(this, this.timer);
         this.timerCount = 0;
         this.timer = 0;
     }
 
     public get(): void {
-        const r = clickgo.task.get(parseInt(this.tid));
-        clickgo.form.dialog(r ? JSON.stringify(r).replace(/(data:image\/).+?"/g, '$1..."') : 'null').catch((e) => { throw e; });
+        const r = clickgo.task.get(this);
+        clickgo.form.dialog(this, r ? JSON.stringify(r).replace(/(data:image\/).+?"/g, '$1..."') : 'null').catch(() => {});
     }
 
     public getPermissions(): void {
-        const r = clickgo.task.getPermissions(parseInt(this.tid));
-        clickgo.form.dialog(JSON.stringify(r)).catch((e) => { throw e; });
+        const r = clickgo.task.getPermissions(this);
+        clickgo.form.dialog(this, JSON.stringify(r)).catch(() => {});
     }
 
     public getList(): void {
         let msg = JSON.stringify(clickgo.task.getList());
         msg = msg.replace(/(data:image\/).+?"/g, '$1..."');
-        clickgo.form.dialog(msg).catch((e) => { throw e; });
+        clickgo.form.dialog(this, msg).catch(() => {});
     }
 
     public async run(): Promise<void> {
-        const tid = await clickgo.task.run('/clickgo/app/demo/');
-        await clickgo.form.dialog('Task ID: ' + tid.toString());
+        const tid = await clickgo.task.run(this, '/clickgo/app/demo/');
+        await clickgo.form.dialog(this, 'Task ID: ' + tid.toString());
     }
 
     public async checkPermission(val: string): Promise<void> {
-        const rtn = await clickgo.task.checkPermission(val, true);
-        await clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
+        const rtn = await clickgo.task.checkPermission(this, val, true);
+        await clickgo.form.dialog(this, rtn[0] ? 'Succeed' : 'Failed');
     }
 
     public async end(): Promise<void> {
-        await clickgo.form.dialog('Result: ' + (clickgo.task.end(parseInt(this.tid)) ? 'true' : 'false'));
+        await clickgo.form.dialog(this, 'Result: ' + (await clickgo.task.end(this) ? 'true' : 'false'));
     }
 
     public async loadLocale(lang: string, path: string): Promise<void> {
-        const r = await clickgo.task.loadLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
-        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
+        const r = await clickgo.task.loadLocale(this, lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
+        await clickgo.form.dialog(this, 'Result: ' + (r ? 'true' : 'false'));
     }
 
     public async setLocale(lang: string, path: string): Promise<void> {
-        const r = await clickgo.task.setLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
-        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
+        const r = await clickgo.task.setLocale(this, lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
+        await clickgo.form.dialog(this, 'Result: ' + (r ? 'true' : 'false'));
     }
 
     public clearLocale(): void {
-        clickgo.task.clearLocale();
+        clickgo.task.clearLocale(this);
     }
 
     public loadLocaleData(lang: string, data: Record<string, any>): void {
-        clickgo.task.loadLocaleData(lang, data);
+        clickgo.task.loadLocaleData(this, lang, data);
     }
 
     public setLocaleLang(lang: string): void {
-        clickgo.task.setLocaleLang(lang);
+        clickgo.task.setLocaleLang(this, lang);
     }
 
     public clearLocaleLang(): void {
-        clickgo.task.clearLocaleLang();
+        clickgo.task.clearLocaleLang(this);
     }
 
     public changeLocaleLang(): void {
@@ -151,13 +151,13 @@ export default class extends clickgo.form.AbstractForm {
             return;
         }
         this.sleeping = true;
-        clickgo.task.sleep(() => {
+        clickgo.task.sleep(this, () => {
             this.sleeping = false;
-        }, 1000);
+        }, 1_000);
     }
 
     public systemTaskInfo(): void {
-        clickgo.form.dialog(JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
     }
 
     public onMounted(): void {

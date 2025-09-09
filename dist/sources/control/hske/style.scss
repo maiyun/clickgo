@@ -2,11 +2,11 @@
     display: flex;
 
     .first {
-        flex: 2; background-size: cover; background-position: center; display: flex; flex-direction: column; color: rgb(0, 0, 0, .6); fill: rgb(0, 0, 0, .6); stroke: rgb(0, 0, 0, .6);
+        flex: 2; background-size: cover; background-position: center; display: flex; flex-direction: column; color: rgb(0, 0, 0, .6);
     }
     &.dark {
         .first {
-            color: rgb(255, 255, 255, .6); fill: rgb(255, 255, 255, .6); stroke: rgb(255, 255, 255, .6);
+            color: rgb(255, 255, 255, .6);
         }
     }
     &.size-s {

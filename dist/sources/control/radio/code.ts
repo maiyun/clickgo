@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -24,7 +23,7 @@ export default class extends clickgo.control.AbstractControl {
     public isSpaceDown = false;
 
     public click(): void {
-        const event: types.IRadioChangeEvent = {
+        const event: clickgo.control.IRadioChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;

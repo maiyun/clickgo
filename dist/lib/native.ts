@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2007-2025 MAIYUN.NET
 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 import * as clickgo from '../clickgo';
+import * as lCore from './core';
+import * as lTool from './tool';
+import * as lTask from './task';
 
-const token = (Math.random() * 100000000000000 * (100 + Math.round(Math.random() * (999 - 100)))).toString(32);
+/** --- 系统级 ID --- */
+let sysId = '';
+
 /**
- * --- 获取 native 通讯 token，app 模式下无效 ---
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
  */
-export function getToken(): string {
-    return token;
+export function initSysId(id: string): void {
+    if (sysId) {
+        return;
+    }
+    sysId = id;
 }
+
+/** --- native 通讯秘钥 --- */
+const token = lTool.random(32, lTool.RANDOM_LUNS);
 
 // ---------------------------
 // --- 供 native 调用的部分 ---
@@ -33,9 +45,7 @@ const methods: Record<string,
         'once': boolean;
         'handler': (...param: any[]) => any | Promise<any>;
     }>
-> = {
-
-};
+> = {};
 
 // --- 供 native 调用的 web 上的对象 ---
 (window as any).clickgoNativeWeb = {
@@ -59,26 +69,29 @@ const methods: Record<string,
 
 /**
  * --- 监听 native 传输过来的事件 ---
+ * @param current 当前任务 ID
  * @param name 事件名
  * @param handler 回调函数
  * @param once 是否只监听一次
  * @param formId 限定某个窗体
- * @param taskId 绑定到任务，App 模式下无效
  */
 export function on(
+    current: lCore.TCurrent,
     name: string,
     handler: (...param: any[]) => any | Promise<any>,
     once: boolean = false,
-    formId?: number,
-    taskId?: number
+    formId?: string
 ): void {
-    if (!taskId) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!lTask.getOrigin(current)) {
         return;
     }
-    if (!methods[taskId]) {
-        methods[taskId] = {};
+    if (!methods[current]) {
+        methods[current] = {};
     }
-    methods[taskId][name + '-' + (formId ? formId.toString() : '0')] = {
+    methods[current][name + '-' + (formId ? formId.toString() : '')] = {
         'once': once,
         'handler': handler
     };
@@ -86,44 +99,48 @@ export function on(
 
 /**
  * --- 监听 native 传输过来的事件（仅一次） ---
+ * @param current 当前任务 ID
+ * @param name 事件名
+ * @param handler 回调函数
+ * @param formId 限定某个窗体
  */
 export function once(
+    current: lCore.TCurrent,
     name: string,
     handler: (...param: any[]) => any | Promise<any>,
-    formId?: number,
-    taskId?: number
+    formId?: string
 ): void {
-    on(name, handler, true, formId, taskId);
+    on(current, name, handler, true, formId);
 }
 
 /**
  * --- 解绑监听的方法 ---
+ * @param current 当前任务 ID
  * @param name 方法名
  * @param formId 要清除的窗体的 ID
- * @param taskId 所属的任务 ID，App 模式下无效
  */
-export function off(name: string, formId?: number, taskId?: number): void {
-    if (!taskId) {
+export function off(current: lCore.TCurrent, name: string, formId?: string): void {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!methods[current]) {
         return;
     }
-    if (!methods[taskId]) {
+    const key = name + '-' + (formId ? formId.toString() : '');
+    if (!methods[current][key]) {
         return;
     }
-    const key = name + '-' + (formId ? formId.toString() : '0');
-    if (!methods[taskId][key]) {
-        return;
-    }
-    delete methods[taskId][key];
+    delete methods[current][key];
 }
 
 /**
  * --- 清除某个窗体或某个任务的所有事件监听 ---
+ * @param taskId 要清除的任务 ID
  * @param formId 窗体 ID，留空为清除任务的所有事件
- * @param taskId 要清楚的任务 ID，App 模式下无效
  */
-export function clear(formId?: number, taskId?: number): void {
-    if (!taskId) {
-        return;
+export function clear(taskId: lCore.TCurrent, formId?: string): void {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     if (!methods[taskId]) {
         return;
@@ -142,15 +159,18 @@ export function clear(formId?: number, taskId?: number): void {
 
 /**
  * --- 获取监听 native 事件的监听统计信息列表 ---
- * @param taskId 为 0 或 undefined 则返回所有
+ * @param taskId 为 undefined 则返回所有
  */
-export function getListenerList(taskId?: number): Record<string, Record<string, Record<string, number>>> {
+export function getListenerList(taskId?: lCore.TCurrent): Record<string, Record<string, Record<string, number>>> {
+    if (taskId !== undefined && typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
     const rtn: Record<string,
         Record<string, Record<string, number>>
     > = {};
     for (const tid in methods) {
         if (taskId) {
-            if (tid !== taskId.toString()) {
+            if (tid !== taskId) {
                 continue;
             }
         }
@@ -189,40 +209,101 @@ export async function invoke(name: string, ...param: any[]): Promise<any> {
     return (window as any).clickgoNative.invoke(name, ...param) as Promise<any>;
 }
 
-invoke('cg-init', token) as any;
+/**
+ * --- 向 native 发送指令（系统级） ---
+ * @param current 仅支持 sysId
+ * @param name 指令名
+ * @param param 参数
+ */
+export async function invokeSys(current: string, name: string, ...param: any[]): Promise<any> {
+    if (current !== sysId) {
+        return;
+    }
+    return invoke(name, token, ...param);
+}
 
 // --- 常见向 native 发送的操作 ---
 
-export async function quit(): Promise<void> {
+/**
+ * --- 直接让整个 native 进程退出 ---
+ * @param current 当前任务 id
+ */
+export async function quit(current: lCore.TCurrent): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'root'))[0]) {
+        return false;
+    }
     await invoke('cg-quit', token);
+    return true;
 }
 
-export async function size(width: number, height: number): Promise<void> {
+export async function size(current: lCore.TCurrent, width: number, height: number): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
     await invoke('cg-set-size', token, width, height);
+    return true;
 }
 
-export async function max(): Promise<void> {
+export async function max(current: lCore.TCurrent): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
     await invoke('cg-set-state', token, 'max');
+    return true;
 }
 
-export async function min(): Promise<void> {
+export async function min(current: lCore.TCurrent): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
     await invoke('cg-set-state', token, 'min');
+    return true;
 }
 
-export async function restore(): Promise<void> {
+/** --- 从最大化还原 --- */
+export async function unmaximize(current: lCore.TCurrent): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
+    await invoke('cg-set-state', token, 'unmaximize');
+    return true;
+}
+
+/** --- 从最小化还原 --- */
+export async function restore(current: lCore.TCurrent): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
     await invoke('cg-set-state', token, 'restore');
+    return true;
 }
 
-export async function activate(): Promise<void> {
+export async function activate(current: lCore.TCurrent): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
     await invoke('cg-activate', token);
+    return true;
 }
 
-export async function close(): Promise<void> {
+/**
+ * --- 关闭当前 native 真实窗体，根据配置整个 native 任务可能结束也可能保留 node 不结束 ---
+ * @param current 当前任务 id
+ */
+export async function close(current: lCore.TCurrent): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'root'))[0]) {
+        return false;
+    }
     await invoke('cg-close', token);
+    return true;
 }
 
-export async function maximizable(val: boolean): Promise<void> {
+export async function maximizable(current: lCore.TCurrent, val: boolean): Promise<boolean> {
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
     await invoke('cg-maximizable', token, val);
+    return true;
 }
 
 // --- form ---
@@ -248,7 +329,7 @@ export function open(options: {
         'directory'?: boolean;
         /** --- 允许多选，默认 false --- */
         'multi'?: boolean;
-    },
+    };
 } = {}): Promise<string[] | null> {
     return invoke('cg-form-open', token, options);
 }
@@ -302,4 +383,15 @@ export async function ping(val: string): Promise<string> {
  */
 export async function isMax(): Promise<boolean> {
     return invoke('cg-is-max');
+}
+
+// --- 需要初始化 ---
+
+let inited = false;
+export function init(): void {
+    if (inited) {
+        return;
+    }
+    inited = true;
+    invoke('cg-init', token) as any;
 }

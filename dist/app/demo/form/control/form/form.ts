@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -37,7 +36,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public banClose = false;
 
-    public onClose(e: types.IFormCloseEvent) {
+    public onClose(e: clickgo.control.IFormCloseEvent): void {
         if (this.banClose) {
             e.preventDefault();
         }

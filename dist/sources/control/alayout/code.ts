@@ -17,7 +17,7 @@ export default class extends clickgo.control.AbstractControl {
     public colWidth = 0;
 
     public onMounted(): void {
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             const w = this.element.offsetWidth;
             /** --- 每行几个 --- */
             const celCount = Math.floor(w / 200);

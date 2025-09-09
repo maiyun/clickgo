@@ -1,39 +1,4 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("../../index"));
+import * as clickgo from 'clickgo';
 const state = document.getElementById('state');
 const iconwrap = document.getElementById('iconwrap');
 const body = document.getElementsByTagName('body')[0];
@@ -41,14 +6,15 @@ let app = null;
 class Boot extends clickgo.AbstractBoot {
     main() {
         state.insertAdjacentHTML('afterbegin', '<div>Initialized.</div>');
+        // --- 下载按钮 ---
         document.getElementById('download')?.addEventListener('click', () => {
             (async () => {
                 document.getElementById('download')?.remove();
                 state.insertAdjacentHTML('afterbegin', '<div>Starting download ...</div>');
-                app = await clickgo.core.fetchApp('./app.cga', {
+                app = await clickgo.core.fetchApp(this._sysId, './app.cga', {
                     'progress': (l, t) => {
                         state.insertAdjacentHTML('afterbegin', '<div>Progress ' + l.toString() + ' / ' + t.toString() + ' (' + Math.round(l / t * 100).toString() + '%)</div>');
-                    }
+                    },
                 });
                 if (!app) {
                     state.insertAdjacentHTML('afterbegin', '<div>Network error.</div>');
@@ -57,19 +23,21 @@ class Boot extends clickgo.AbstractBoot {
                 iconwrap.style.display = 'flex';
                 document.getElementById('fl').style.display = 'block';
                 document.getElementById('icon').style.backgroundImage = 'url(' + app.icon + ')';
+                // eslint-disable-next-line @typescript-eslint/no-deprecated
                 document.getElementById('mask').style.webkitMaskImage = 'url(' + app.icon + ')';
                 document.getElementById('mask').style.maskImage = 'url(' + app.icon + ')';
             })();
         });
+        // --- 点击选中 ---
         iconwrap.addEventListener('mousedown', (e) => {
             e.stopPropagation();
             iconwrap.classList.add('selected');
         });
         iconwrap.addEventListener('dblclick', () => {
-            (async function () {
+            (async () => {
                 body.style.cursor = 'progress';
                 iconwrap.classList.remove('selected');
-                await clickgo.task.run(app, {
+                await clickgo.task.run(this._sysId, app, {
                     initProgress: (s) => {
                         state.insertAdjacentHTML('afterbegin', '<div> ' + s + '</div>');
                     }
@@ -77,16 +45,17 @@ class Boot extends clickgo.AbstractBoot {
                 body.style.cursor = 'default';
             })();
         });
+        // --- 取消选中 ---
         document.addEventListener('mousedown', () => {
             iconwrap.classList.remove('selected');
         });
     }
     onError(taskId, formId, error) {
         state.insertAdjacentHTML('afterbegin', '<div>Error, Task ID: ' + taskId.toString() + ', Form ID: ' + formId.toString() + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '') + '</div>');
-        clickgo.task.end(taskId);
+        clickgo.task.end(taskId).catch(() => { });
     }
     onTaskEnded(taskId) {
         state.insertAdjacentHTML('afterbegin', '<div>Task ' + taskId.toString() + ' ended.</div>');
     }
 }
-clickgo.launcher(new Boot());
+await clickgo.launcher(new Boot());

@@ -33,7 +33,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public get direction(): string {
-        return this.alayout?.props?.direction ? this.alayout.props.direction : 'h';
+        return this.alayout?.props?.direction ?? 'h';
     }
 
     public onMounted(): void {

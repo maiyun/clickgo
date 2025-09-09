@@ -1,64 +1,22 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AbstractBoot = exports.tool = exports.fs = void 0;
-exports.launcher = launcher;
-exports.verifyToken = verifyToken;
-const electron = __importStar(require("electron"));
-const path = __importStar(require("path"));
-const libFs = __importStar(require("./lib/fs"));
-exports.fs = libFs;
-const libTool = __importStar(require("./lib/tool"));
-exports.tool = libTool;
-let isImmersion = false;
-let hasFrame = false;
+import * as electron from 'electron';
+import * as lFs from './lib/fs.js';
+import * as lTool from './lib/tool.js';
+// npm publish --tag dev --access public
+// --- sass --watch dist/:dist/ --style compressed --no-source-map ---
+/** --- 窗体是否含有 border 边框，有的话将不是沉浸式，也不会绑定任何窗体的大小的相关事件 --- */
+let hasFrame = true;
+/** --- 是否没有物理窗体时就主动退出软件（进程结束），如果不要窗体只有 node 的话，会用到 false 的情况 --- */
 let isNoFormQuit = true;
+/** --- 主窗体 --- */
 let form;
+/** --- 当前设定的通讯 token --- */
 let token = '';
+/** --- 当前系统平台 --- */
 const platform = process.platform;
+// const platform: NodeJS.Platform = 'darwin';
+/** --- 监听前台的执行的方法，内置的方法，用户可调用方法自行添加 --- */
 const methods = {
-    'cg-init': {
-        'once': true,
-        handler: function (t) {
-            if (!t || !form) {
-                return;
-            }
-            form.resizable = true;
-            token = t;
-        }
-    },
+    // --- 完全退出软件进程 ---
     'cg-quit': {
         'once': false,
         handler: function (t) {
@@ -71,10 +29,11 @@ const methods = {
             electron.app.quit();
         }
     },
+    // --- 设置实体窗体大小 ---
     'cg-set-size': {
         'once': false,
         handler: function (t, width, height) {
-            if (isImmersion || !form || !width || !height) {
+            if (!form || !width || !height) {
                 return;
             }
             if (!verifyToken(t)) {
@@ -84,6 +43,7 @@ const methods = {
             form.center();
         }
     },
+    // --- 设置窗体最大化、最小化、还原（从最大化还原） ---
     'cg-set-state': {
         'once': false,
         handler: function (t, state) {
@@ -102,12 +62,19 @@ const methods = {
                     form.minimize();
                     break;
                 }
-                default: {
+                case 'restore': {
+                    // --- 最小化还原 ---
                     form.restore();
+                    break;
+                }
+                default: {
+                    // --- 从最大化还原 ---
+                    form.unmaximize();
                 }
             }
         }
     },
+    // --- 激活窗体 ---
     'cg-activate': {
         'once': false,
         handler: function (t) {
@@ -126,6 +93,7 @@ const methods = {
             form.setAlwaysOnTop(false);
         },
     },
+    // --- 关闭窗体（可能软件进程不会被退出） ---
     'cg-close': {
         'once': false,
         handler: function (t) {
@@ -138,27 +106,11 @@ const methods = {
             form.close();
         }
     },
-    'cg-mouse-ignore': {
-        'once': false,
-        handler: function (t, val) {
-            if (!isImmersion || !form) {
-                return;
-            }
-            if (!verifyToken(t)) {
-                return;
-            }
-            if (val) {
-                form.setIgnoreMouseEvents(true, { 'forward': true });
-            }
-            else {
-                form.setIgnoreMouseEvents(false);
-            }
-        }
-    },
+    // --- 是否允许最大化 ---
     'cg-maximizable': {
         'once': false,
         handler: function (t, val) {
-            if (isImmersion || !form) {
+            if (!form) {
                 return;
             }
             if (!verifyToken(t)) {
@@ -167,13 +119,14 @@ const methods = {
             form.setMaximizable(val);
         }
     },
+    // --- fs 相关操作 ---
     'cg-fs-getContent': {
         'once': false,
         handler: async function (t, path, options) {
             if (!verifyToken(t)) {
                 return null;
             }
-            return libFs.getContent(path, options);
+            return lFs.getContent(path, options);
         }
     },
     'cg-fs-putContent': {
@@ -182,7 +135,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.putContent(path, data, options);
+            return lFs.putContent(path, data, options);
         }
     },
     'cg-fs-readLink': {
@@ -191,7 +144,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return null;
             }
-            return exports.fs.readLink(path, encoding);
+            return lFs.readLink(path, encoding);
         }
     },
     'cg-fs-symlink': {
@@ -200,7 +153,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.symlink(filePath, linkPath, type);
+            return lFs.symlink(filePath, linkPath, type);
         }
     },
     'cg-fs-unlink': {
@@ -209,7 +162,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.unlink(path);
+            return lFs.unlink(path);
         }
     },
     'cg-fs-stats': {
@@ -218,7 +171,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return null;
             }
-            return exports.fs.stats(path);
+            return lFs.stats(path);
         }
     },
     'cg-fs-mkdir': {
@@ -227,7 +180,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.mkdir(path, mode);
+            return lFs.mkdir(path, mode);
         }
     },
     'cg-fs-rmdir': {
@@ -236,7 +189,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.rmdir(path);
+            return lFs.rmdir(path);
         }
     },
     'cg-fs-chmod': {
@@ -245,7 +198,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.chmod(path, mod);
+            return lFs.chmod(path, mod);
         }
     },
     'cg-fs-rename': {
@@ -254,7 +207,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.rename(oldPath, newPath);
+            return lFs.rename(oldPath, newPath);
         }
     },
     'cg-fs-readDir': {
@@ -263,7 +216,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return [];
             }
-            return exports.fs.readDir(path, encoding);
+            return lFs.readDir(path, encoding);
         }
     },
     'cg-fs-copyFile': {
@@ -272,9 +225,10 @@ const methods = {
             if (!verifyToken(t)) {
                 return false;
             }
-            return exports.fs.copyFile(src, dest);
+            return lFs.copyFile(src, dest);
         }
     },
+    // --- form ---
     'cg-form-open': {
         'once': false,
         handler: function (t, options = {}) {
@@ -290,7 +244,7 @@ const methods = {
             options.props.directory ??= false;
             options.props.multi ??= false;
             const paths = electron.dialog.showOpenDialogSync(form, {
-                'defaultPath': options.path ? exports.tool.formatPath(options.path) : undefined,
+                'defaultPath': options.path ? lTool.formatPath(options.path) : undefined,
                 'filters': options.filters.map((item) => {
                     return {
                         'name': item.name,
@@ -306,7 +260,7 @@ const methods = {
             if (!paths) {
                 return null;
             }
-            return paths.map(item => exports.tool.parsePath(item));
+            return paths.map(item => lTool.parsePath(item));
         }
     },
     'cg-form-save': {
@@ -320,7 +274,7 @@ const methods = {
             }
             options.filters ??= [];
             const path = electron.dialog.showSaveDialogSync(form, {
-                'defaultPath': options.path ? exports.tool.formatPath(options.path) : undefined,
+                'defaultPath': options.path ? lTool.formatPath(options.path) : undefined,
                 'filters': options.filters.map((item) => {
                     return {
                         'name': item.name,
@@ -331,7 +285,7 @@ const methods = {
             if (!path) {
                 return null;
             }
-            return exports.tool.parsePath(path);
+            return lTool.parsePath(path);
         }
     },
     'cg-form-dialog': {
@@ -359,91 +313,129 @@ const methods = {
             });
         }
     },
+    // --- 无需校验码 ---
+    // --- 测试与 native 的连通性 ---
     'cg-ping': {
         'once': false,
         handler: function (t) {
+            // --- t 不是 token，传过来什么就会传回去 ---
             return 'pong: ' + t;
         }
     },
+    // --- 判断窗体是否是最大化状态 ---
     'cg-is-max': {
         'once': false,
         handler: function () {
-            return form?.isMaximized ? true : false;
+            return form?.isMaximized() ? true : false;
         }
-    }
+    },
 };
-class AbstractBoot {
-    get isImmersion() {
-        return isImmersion;
-    }
+/** --- 全局类 --- */
+export class AbstractBoot {
+    /**
+     * --- 是否含有实体窗体边框和标题 ---
+     */
     get hasFrame() {
         return hasFrame;
     }
+    /**
+     * --- 没有实体窗体时整个实体进程是不是会被结束 ---
+     */
     get isNoFormQuit() {
         return isNoFormQuit;
     }
+    /**
+     * --- 当前系统代号 ---
+     */
     get platform() {
         return platform;
     }
+    /**
+     * --- 当前的通讯 token ---
+     */
     get token() {
         return token;
     }
+    /**
+     * --- 开始运行起来一个主实体窗体，整个进程本方法只能执行一次 ---
+     * @param path 实体窗体网页路径
+     * @param opt 参数
+     */
     run(path, opt = {}) {
         if (opt.frame !== undefined) {
+            // --- 默认 true ---
             hasFrame = opt.frame;
         }
         if (opt.quit !== undefined) {
+            // --- 默认 true ---
             isNoFormQuit = opt.quit;
         }
-        if (platform === 'win32') {
-            if (!hasFrame) {
-                isImmersion = true;
-            }
-        }
-        createForm(path);
-        if (form && opt.dev) {
-            form.webContents.openDevTools();
-        }
+        // --- 创建实体窗体 ---
+        showMainForm(path, {
+            'dev': opt.dev,
+            'width': opt.width,
+            'height': opt.height,
+            'max': opt.max,
+            'stateMax': opt.stateMax,
+            'background': opt.background,
+        });
+        // --- 监听所有实体窗体关闭事件 ---
         electron.app.on('window-all-closed', function () {
             if (isNoFormQuit) {
                 electron.app.quit();
+                return;
             }
+            form = undefined;
         });
+        // --- 软件被活动性激活的事件 ---
         electron.app.on('activate', function () {
             if (electron.BrowserWindow.getAllWindows().length > 0) {
                 return;
             }
-            createForm(path);
-            if (form && opt.dev) {
-                form.webContents.openDevTools();
-            }
-            methods['cg-init'] = {
-                'once': true,
-                handler: function (t) {
-                    if (!t || !form) {
-                        return;
-                    }
-                    form.resizable = true;
-                    token = t;
-                }
-            };
+            showMainForm(path, {
+                'dev': opt.dev,
+                'width': opt.width,
+                'height': opt.height,
+                'max': opt.max,
+                'stateMax': opt.stateMax,
+                'background': opt.background,
+            });
         });
     }
+    /**
+     * --- 绑定监听网页调用方法的方法 ---
+     * @param name 方法名
+     * @param handler 要执行的函数
+     * @param once 是否只执行一次
+     */
     on(name, handler, once = false) {
         methods[name] = {
             'once': once,
             'handler': handler
         };
     }
+    /**
+     * --- 绑定监听网页调用方法的方法但只会执行一次 ---
+     * @param name 方法名
+     * @param handler 要执行的函数
+     */
     once(name, handler) {
         this.on(name, handler, true);
     }
+    /**
+     * --- 解绑监听的方法 ---
+     * @param name 方法名
+     */
     off(name) {
         if (!methods[name]) {
             return;
         }
         delete methods[name];
     }
+    /**
+     * --- 显示一个 dialog ---
+     * @param opt 选项或者一段文字
+     */
     dialog(options = {}) {
         if (!form) {
             return -1;
@@ -464,17 +456,50 @@ class AbstractBoot {
         });
     }
 }
-exports.AbstractBoot = AbstractBoot;
-function launcher(boot) {
+export function showMainForm(path, opt = {}) {
+    if (form) {
+        // --- 有主窗体了就不能创建了 ---
+        return;
+    }
+    // --- 成功运行一个 task 后再次添加 init ---
+    methods['cg-init'] = {
+        'once': true,
+        handler: function (t) {
+            // --- t 是网页传来的 token ---
+            if (!t || !form) {
+                return;
+            }
+            form.resizable = true;
+            token = t;
+        },
+    };
+    const frm = createForm(path, {
+        'width': opt.width,
+        'height': opt.height,
+        'max': opt.max,
+        'stateMax': opt.stateMax,
+        'background': opt.background,
+    });
+    if (opt.dev) {
+        // --- 开发模式 ---
+        frm.webContents.openDevTools();
+    }
+}
+/** --- 用户调用运行 boot 类 --- */
+export function launcher(boot) {
     (async function () {
+        // --- 等到 native 环境装载完毕 ---
         await electron.app.whenReady();
-        await exports.fs.refreshDrives();
+        await lFs.refreshDrives();
+        // --- 执行回调 ---
         await boot.main();
     })().catch(function () {
         return;
     });
 }
+// --- 系统启动 ---
 electron.Menu.setApplicationMenu(null);
+// --- 实际用来监听网页传输过来的数据 ---
 electron.ipcMain.handle('pre', function (e, name, ...param) {
     if (!methods[name]) {
         return;
@@ -485,47 +510,60 @@ electron.ipcMain.handle('pre', function (e, name, ...param) {
     }
     return r;
 });
-function verifyToken(t) {
+/**
+ * --- 验证 token 是否正确 ---
+ * @param t 要验证的 token
+ */
+export function verifyToken(t) {
     if (t !== token) {
         return false;
     }
     return true;
 }
-function createForm(p) {
+/**
+ * --- 内部调用用来创建实体窗体的函数 ---
+ * @param p 窗体网页路径
+ */
+function createForm(p, opt = {}) {
+    let pre = new URL('./pre.js', import.meta.url).pathname.replace(/^\/(\w:)/, '$1');
     const op = {
         'webPreferences': {
             'nodeIntegration': false,
             'contextIsolation': true,
-            'preload': path.join(__dirname, '/pre.js'),
+            'preload': pre,
         },
-        'width': hasFrame ? 800 : 500,
-        'height': hasFrame ? 700 : 300,
+        'width': opt.width ?? (hasFrame ? 800 : 600),
+        'height': opt.height ?? (hasFrame ? 700 : 400),
         'frame': hasFrame,
         'resizable': false,
         'show': false,
         'center': true,
-        'transparent': isImmersion ? true : false,
+        'maximizable': opt.max ?? true,
+        'backgroundColor': opt.background ?? 'rgba(0, 0, 0, 1)',
+        'transparent': opt.transparent,
     };
     form = new electron.BrowserWindow(op);
-    form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' immersion/' + (isImmersion ? '1' : '0') + ' frame/' + (hasFrame ? '1' : '0') + ' chrome/' + process.versions.chrome;
+    form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' frame/' + (hasFrame ? '1' : '0') + ' chrome/' + process.versions.chrome;
     form.once('ready-to-show', function () {
         if (!form) {
             return;
         }
-        if (isImmersion) {
-            form.maximize();
-            form.setIgnoreMouseEvents(true, { 'forward': true });
-        }
-        else {
+        if (opt.background) {
+            form.setBackgroundColor(opt.transparent ? 'rgba(0, 0, 0, 0)' : 'rgba(0, 0, 0, 1)');
         }
         form.show();
+        if (opt.stateMax) {
+            form.maximize();
+        }
     });
     if (p.startsWith('https://') || p.startsWith('http://')) {
+        // --- 加载网页 ---
         form.loadURL(p).catch(function (e) {
             throw e;
         });
     }
     else {
+        // --- 加载本地文件 ---
         const lio = p.indexOf('?');
         const search = lio === -1 ? '' : p.slice(lio + 1);
         if (lio !== -1) {
@@ -540,10 +578,13 @@ function createForm(p) {
     form.on('close', function () {
         form = undefined;
     });
+    // --- 最大化事件 ---
     form.on('maximize', function () {
         form?.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("maximize")}');
     });
+    // --- 最大化还原 ---
     form.on('unmaximize', function () {
         form?.webContents.executeJavaScript('if(window.clickgoNativeWeb){clickgoNativeWeb.invoke("unmaximize")}');
     });
+    return form;
 }

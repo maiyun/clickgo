@@ -34,36 +34,41 @@
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
-    --cg:oklch(.7 .23 45);
-    --cg-bg:oklch(.98 .01 45);
+    --main:oklch(.7 .2 43);
+    --cg:var(--main);
+    --cg-hover:color-mix(in oklch, var(--cg), white 10%);
+    --cg-active:color-mix(in oklch, var(--cg), black 10%);
+    --cg-focus:color-mix(in oklch, var(--cg), black 5%);
+    --cg-disabled:color-mix(in oklch, var(--cg), oklch(from var(--cg) l 0 none) 100%);
+    --cg-bg:color-mix(in oklch, var(--cg), white 85%);
 
     --success:oklch(.7 .23 150);
     --success-hover:oklch(.75 .23 150);
     --success-active:oklch(.6 .23 150);
     --success-focus:oklch(.65 .23 150);
     --success-disabled:oklch(.85 0 150);
-    --success-bg:oklch(.98 .01 150);
+    --success-bg:color-mix(in oklch, var(--success), white 85%);
 
     --info:oklch(.7 .23 255);
     --info-hover:oklch(.75 .23 255);
     --info-active:oklch(.6 .23 255);
     --info-focus:oklch(.65 .23 255);
     --info-disabled:oklch(.85 0 255);
-    --info-bg:oklch(.98 .01 255);
+    --info-bg:color-mix(in oklch, var(--info), white 85%);
 
     --warning:oklch(.7 .23 45);
     --warning-hover:oklch(.75 .23 45);
     --warning-active:oklch(.6 .23 45);
     --warning-focus:oklch(.65 .23 45);
     --warning-disabled:oklch(.85 0 45);
-    --warning-bg:oklch(.98 .01 45);
+    --warning-bg:color-mix(in oklch, var(--warning), white 85%);
 
     --danger:oklch(.7 .23 25);
     --danger-hover:oklch(.75 .23 25);
     --danger-active:oklch(.6 .23 25);
     --danger-focus:oklch(.65 .23 25);
     --danger-disabled:oklch(.85 0 25);
-    --danger-bg:oklch(.98 .01 25);
+    --danger-bg:color-mix(in oklch, var(--danger), white 85%);
 
     --system-color:oklch(.96 0 0);
     --system-background:oklch(0 0 0 / .35);
@@ -216,7 +221,7 @@
 }
 
 .cg-launcher-name {
-    font-size: var(--g-size); font-weight: bold; text-shadow: 0 0 3px rgba(0, 0, 0, .6); text-align: center; margin-top: 20px;
+    font-size: var(--g-size); text-align: center; margin-top: 20px;
 }
 .cg-launcher-icon, .cg-launcher-name {
     transition: all .3s var(--g-cubic); transition-property: opacity;
@@ -354,7 +359,7 @@
     &.cg-primary {
         color: var(--success);
         .cg-alert-content {
-            border-color: var(--success); background: var(--success-bg);
+            border-color: var(--success); background: color-mix(in oklch, var(--success), white 85%);
         }
         .cg-alert-icon {
             background: var(--success);
@@ -363,7 +368,7 @@
     &.cg-info {
         color: var(--info);
         .cg-alert-content {
-            border-color: var(--info); background: var(--info-bg);
+            border-color: var(--info); background: color-mix(in oklch, var(--info), white 85%);
         }
         .cg-alert-icon {
             background: var(--info);
@@ -372,7 +377,7 @@
     &.cg-warning {
         color: var(--warning);
         .cg-alert-content {
-            border-color: var(--warning); background: var(--warning-bg);
+            border-color: var(--warning); background: color-mix(in oklch, var(--warning), white 85%);
         }
         .cg-alert-icon {
             background: var(--warning);
@@ -381,7 +386,7 @@
     &.cg-danger {
         color: var(--danger);
         .cg-alert-content {
-            border-color: var(--danger); background: var(--danger-bg);
+            border-color: var(--danger); background: color-mix(in oklch, var(--danger), white 85%);
         }
         .cg-alert-icon {
             background: var(--danger);

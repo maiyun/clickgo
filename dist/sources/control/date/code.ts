@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -219,7 +218,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:tz', this.tzData);
         const ts = this.dateObj.getTime() - this.tzData * 60 * 60 * 1000;
         if (this.timestamp !== undefined && ts !== this.timestamp) {
-            const event: types.IDateChangedEvent = {
+            const event: clickgo.control.IDateChangedEvent = {
                 'detail': {
                     'before': this.timestamp,
                     'value': ts
@@ -233,7 +232,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public timeOk(): void {
-        const event: types.IDateChangedEvent = {
+        const event: clickgo.control.IDateChangedEvent = {
             'detail': {
                 'before': this.timestamp,
                 'value': this.dateObj.getTime() - this.tzData * 60 * 60 * 1000
@@ -260,9 +259,9 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- date panel 的 changed ---
-    public changed(e: types.IDatepanelChangedEvent): void {
+    public changed(e: clickgo.control.IDatepanelChangedEvent): void {
         this.emit('update:modelValue', this.timestamp);
-        const event: types.IDateChangedEvent = {
+        const event: clickgo.control.IDateChangedEvent = {
             'detail': {
                 'before': e.detail.before,
                 'value': this.timestamp

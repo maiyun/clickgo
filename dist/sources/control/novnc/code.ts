@@ -20,7 +20,7 @@ export default class extends clickgo.control.AbstractControl {
     public lastActive: number = 0;
 
     /** --- 定时器 --- */
-    public activeTimer: number = 0;
+    // public activeTimer: number = 0;
 
     public access: {
         'novnc': any;
@@ -45,14 +45,14 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     public async onMounted(): Promise<void> {
-        const novnc = await clickgo.core.getModule('novnc');
+        const novnc = await clickgo.core.getModule('@novnc/novnc');
         if (!novnc) {
             // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
-        this.access.novnc = novnc;
+        this.access.novnc = novnc.default.default;
         // --- 监听上面的值的变动 ---
         this.watch(() => JSON.stringify(this.props.modelValue), (v: string, o: string) => {
             if (v === o) {
@@ -72,7 +72,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 开始吧 ---
             this.access.rfb = new this.access.novnc(this.refs.content, this.props.modelValue.url, {
                 'credentials': {
-                    'password': this.props.modelValue.pwd,
+                    'password': clickgo.tool.isTruthy(this.props.modelValue.pwd) ? this.props.modelValue.pwd : undefined,
                 },
                 'viewOnly': this.props.modelValue.view ?? false,
                 'clipViewport': false,
@@ -110,22 +110,29 @@ export default class extends clickgo.control.AbstractControl {
         // --- 初始化成功 ---
         this.isLoading = false;
         this.emit('init', this.access.novnc);
-        // --- 创建定时器 ---
-        this.activeTimer = clickgo.task.createTimer(() => {
+        // --- 创建定时器（心跳包RFB一般有） ---
+        /*
+        this.activeTimer = clickgo.task.createTimer(this, () => {
             if (!this.access.rfb) {
                 return;
             }
-            if (Date.now() - this.lastActive < 30_000) {
+            if (Date.now() - this.lastActive < 3_000) {
                 return;
             }
             // --- 发送 ---
-            this.access.rfb.sendPointer(0, 0, 0);
+            const bcr = this.element.getBoundingClientRect();
+            this.element.dispatchEvent(new PointerEvent('pointermove', {
+                'clientX': bcr.left,
+                'clientY': bcr.top,
+                'buttons': 0,
+            }));
             this.lastActive = Date.now();
         }, 5_000);
+        */
     }
 
     public onUnmounted(): void {
-        clickgo.task.removeTimer(this.activeTimer);
+        // clickgo.task.removeTimer(this, this.activeTimer);
         if (!this.access.rfb) {
             return;
         }
@@ -133,14 +140,29 @@ export default class extends clickgo.control.AbstractControl {
         this.access.rfb = undefined;
     }
 
-    public mousemove(): void {
+    /** --- 检测用户是否活动 --- */
+    public mousemove(e: MouseEvent | TouchEvent): void {
         if (!this.access.rfb) {
+            return;
+        }
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.lastActive = Date.now();
     }
 
     // --- 供用户调用的方法 --
+
+    /**
+     * --- 主动断开 ---
+     */
+    public disconnect(): void {
+        if (!this.access.rfb) {
+            return;
+        }
+        this.access.rfb.disconnect();
+        this.access.rfb = undefined;
+    }
 
     /**
      * --- 发送密码 ---

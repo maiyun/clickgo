@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -36,56 +35,56 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public getTaskId(): void {
-        clickgo.form.dialog(clickgo.form.getTaskId(parseInt(this.fid)).toString()).catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.form.getTaskId(this.fid).toString()).catch(() => {});
     }
 
     public get(): void {
-        clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(clickgo.form.get(this.fid))).catch(() => {});
     }
 
     public async getHash(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(clickgo.form.getHash(parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.form.getHash(this.fid)));
     }
 
     public async hashBack(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(await clickgo.form.hashBack(parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(await clickgo.form.hashBack(this.fid)));
     }
 
     public async tohash(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(clickgo.form.hash(this.hash, parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.form.hash(this.fid, this.hash)));
     }
 
     public hash: string = 'hash' + clickgo.tool.rand(0, 100).toString();
 
     public async getActivePanel(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(clickgo.form.getActivePanel(parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.form.getActivePanel(this.fid)));
     }
 
     public async getFocus(): Promise<void> {
         const f = clickgo.form.getFocus();
-        await clickgo.form.dialog(f ? f.toString() : 'null');
+        await clickgo.form.dialog(this, f ? f.toString() : 'null');
     }
 
-    public changeFocus(): void {
-        clickgo.form.changeFocus(parseInt(this.fid));
+    public async changeFocus(): Promise<void> {
+        await clickgo.form.changeFocus(this.fid);
     }
 
     public getList(): void {
-        let str = JSON.stringify(clickgo.form.getList(parseInt(this.tid)));
+        let str = JSON.stringify(clickgo.form.getList(this.tid));
         str = str.replace(/"icon":"(.*?)"/g, function(t: string, t1: string): string {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
-        clickgo.form.dialog(`<flow direction="v" style="width: 200px; height: 80px;">${str}</flow>`).catch((e) => { throw e; });
+        clickgo.form.dialog(this, `<flow direction="v" style="width: 200px; height: 80px;">${str}</flow>`).catch(() => {});
     }
 
-    public getMaxZIndexID(): void {
-        const fid = clickgo.form.getMaxZIndexID();
-        clickgo.form.dialog(JSON.stringify(fid)).catch((e) => { throw e; });
+    public async getMaxZIndexID(): Promise<void> {
+        const fid = await clickgo.form.getMaxZIndexID(this);
+        clickgo.form.dialog(this, JSON.stringify(fid)).catch(() => {});
     }
 
     public getRectByBorder(): void {
         const size = clickgo.form.getRectByBorder('rb');
-        clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(size)).catch(() => {});
     }
 
     public showCircular(e: MouseEvent): void {
@@ -99,7 +98,9 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async showDrag(): Promise<void> {
-        clickgo.form.showDrag();
+        clickgo.form.showDrag({
+            'element': this.refs.showDrag.$el,
+        });
         const rect = this.refs.showDrag.$el.getBoundingClientRect();
         clickgo.form.moveDrag({
             'left': rect.left,
@@ -114,7 +115,7 @@ export default class extends clickgo.form.AbstractForm {
     public async notify(): Promise<void> {
         let icon: string | Blob | null = null;
         if (this.progress[0] === 'progress + icon') {
-            icon = await clickgo.fs.getContent('/package/res/icon.svg');
+            icon = await clickgo.fs.getContent(this, '/package/res/icon.svg');
         }
         if (icon instanceof Blob) {
             icon = await clickgo.tool.blob2DataUrl(icon);
@@ -162,39 +163,39 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async create(): Promise<void> {
-        const frm = await clickgo.form.create('test', undefined, {
+        const frm = await clickgo.form.create(this, 'test', undefined, {
             'path': this.filename
         });
-        frm.show();
+        await frm.show();
     }
 
     public async dialog(): Promise<void> {
-        this.dr = await clickgo.form.dialog('Hello world!');
+        this.dr = await clickgo.form.dialog(this, 'Hello world!');
     }
 
     public async dialogLong(): Promise<void> {
-        this.dr = await clickgo.form.dialog('longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
+        this.dr = await clickgo.form.dialog(this, 'longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
     }
 
     public async dialogTitle(): Promise<void> {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'title': 'Title',
             'content': 'Hello world!'
         });
     }
 
     public async dialogButtons(): Promise<void> {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'content': 'Hello world!',
             'buttons': ['A', 'B', 'C']
         });
     }
 
     public async dialogCannot(): Promise<void> {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'content': 'Hello world!',
             'buttons': ['Do not close', 'Close'],
-            'select': (e: types.IFormDialogSelectEvent, button: string): void => {
+            'select': (e: clickgo.form.IFormDialogSelectEvent, button: string): void => {
                 if (button === 'Do not close') {
                     e.preventDefault();
                 }
@@ -203,7 +204,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async dialogData(): Promise<void> {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'direction': 'v',
             'gutter': 10,
             'content': '<block>Hello text!</block><text :modelValue="data.txt" />',
@@ -214,7 +215,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async confirm(cancel: boolean): Promise<void> {
-        this.dr = await clickgo.form.confirm({
+        this.dr = await clickgo.form.confirm(this, {
             'content': 'Hello world?',
             'cancel': cancel
         });
@@ -227,11 +228,11 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async prompt(): Promise<void> {
-        this.dr = await clickgo.form.prompt('test');
+        this.dr = await clickgo.form.prompt(this, 'test');
     }
 
-    public flash(): void {
-        clickgo.form.flash(this.formId);
+    public async flash(): Promise<void> {
+        await clickgo.form.flash(this, this.formId);
     }
 
     public showLauncher(): void {
@@ -239,7 +240,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onReceive(obj: Record<string, any>): void {
-        clickgo.form.dialog(JSON.stringify(obj)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(obj)).catch(() => {});
     }
 
     public onMounted(): void {

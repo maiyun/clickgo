@@ -1,21 +1,23 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "removeComments": true,
+        "module": "esnext",
+        "removeComments": false,
         "preserveConstEnums": true, // 保留 const 和 enum 声明
         // "outDir": "dist/",
         "sourceMap": false,
         "target": "ES2021",
         "strict": true,             // 严格模式
-        "declaration": true,       // d.ts
+        "declaration": true,        // d.ts
         "declarationMap": false,
         "newLine": "LF",
+        "baseUrl": "./",
         "paths": {
-            "~/*": ["./*"],
-            "~c/*": ["./dist/app/demo/form/control/*"]
+            "~/*": ["./*"]
         },
+        "moduleResolution": "node",
         "resolveJsonModule": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "skipLibCheck": true
     },
     "include": [
         "./**/*.ts"

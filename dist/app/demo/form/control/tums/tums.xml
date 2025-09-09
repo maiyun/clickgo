@@ -1,0 +1,17 @@
+<form width="600" height="500" title="Tums" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <tums ref="tums" :init="init" :volume="volume[0]" style="flex: 1; height: 0;"></tums>
+        <layout gutter="10" align-v="center">
+            <label>volume</label>
+            <select :data="[0, 50, 80, 100]" v-model="volume" style="flex: 1;"></select>
+            <button @click="start">start</button>
+            <button @click="stop">stop</button>
+            <button @click="pause">pause</button>
+            <button @click="play">play</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="startTalk" style="flex: 1;">startTalk</button>
+            <button @click="stopTalk" style="flex: 1;">stopTalk</button>
+        </layout>
+    </layout>
+</form>

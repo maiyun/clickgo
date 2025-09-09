@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -249,16 +248,16 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public showIndex(): void {
-        clickgo.form.dialog('Index is ' + this.select.toString() + '.').catch((e: Error) => { throw e; });
+        clickgo.form.dialog(this, 'Index is ' + this.select.toString() + '.').catch((e: Error) => { throw e; });
     }
 
     public showIndex2(): void {
-        clickgo.form.dialog('Index is ' + this.select2.toString() + '.').catch((e: Error) => { throw e; });
+        clickgo.form.dialog(this, 'Index is ' + this.select2.toString() + '.').catch((e: Error) => { throw e; });
     }
 
     public showType(): void {
         if (this.select.length === 0) {
-            clickgo.form.dialog('There are currently no selected items.').catch((e: Error) => { throw e; });
+            clickgo.form.dialog(this, 'There are currently no selected items.').catch((e: Error) => { throw e; });
         }
         else {
             const types: number[] = [];
@@ -269,7 +268,7 @@ export default class extends clickgo.form.AbstractForm {
                 }
                 types.push(sitem.type);
             }
-            clickgo.form.dialog(`Type is ${types.join(', ')}.`).catch((e: Error) => { throw e; });
+            clickgo.form.dialog(this, `Type is ${types.join(', ')}.`).catch((e: Error) => { throw e; });
         }
     }
 
@@ -327,10 +326,10 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async onGesture(dir: string): Promise<void> {
-        await clickgo.form.dialog('onGesture: ' + dir);
+        await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }
 
-    public onGAdd(e: types.IGreatlistAddEvent): void {
+    public onGAdd(e: clickgo.control.IGreatlistAddEvent): void {
         clickgo.form.notify({
             'type': 'info',
             'title': 'Greatlist @add',
@@ -338,7 +337,7 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public onGRemove(e: types.IGreatlistRemoveEvent): void {
+    public onGRemove(e: clickgo.control.IGreatlistRemoveEvent): void {
         clickgo.form.notify({
             'type': 'info',
             'title': 'Greatlist @remove',
@@ -346,15 +345,15 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public onGChange(e: types.IGreatlistChangeEvent): void {
+    public onGChange(e: clickgo.control.IGreatlistChangeEvent): void {
         console.log('onGChange', e);
     }
 
-    public onGChanged(e: types.IGreatlistChangedEvent): void {
+    public onGChanged(e: clickgo.control.IGreatlistChangedEvent): void {
         console.log('onGChanged', e);
     }
 
-    public onLAdd(e: types.IListAddEvent): void {
+    public onLAdd(e: clickgo.control.IListAddEvent): void {
         clickgo.form.notify({
             'type': 'info',
             'title': 'List @add',
@@ -362,7 +361,7 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public onLRemove(e: types.IListRemoveEvent): void {
+    public onLRemove(e: clickgo.control.IListRemoveEvent): void {
         clickgo.form.notify({
             'type': 'info',
             'title': 'List @remove',

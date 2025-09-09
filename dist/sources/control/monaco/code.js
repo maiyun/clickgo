@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -121,6 +86,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     get showMask() {
+        // --- 防止拖动导致卡顿 ---
         return this.isLoading ? true : clickgo.dom.is.move;
     }
     setValue(model, val) {
@@ -146,6 +112,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         text: ''
                     }
                 ]);
+                // console.log(this.monacoInstance.getSupportedActions());
                 break;
             }
             case 'paste': {
@@ -161,12 +128,18 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
+    /**
+     * --- 根据 files 刷新代码提示 ---
+     */
     refreshModels() {
         const beforePaths = [];
         const models = this.access.monaco.editor.getModels();
+        /** --- 是否刷新当前 instance 的代码提示 --- */
         let refreshInstance = false;
         for (const model of models) {
+            // --- 遍历已经存在的 model ---
             if (this.props.files[model.uri.path] === undefined) {
+                // --- 删除不存在的 model ---
                 model.dispose();
                 refreshInstance = true;
                 continue;
@@ -174,14 +147,18 @@ class default_1 extends clickgo.control.AbstractControl {
             beforePaths.push(model.uri.path);
         }
         for (const path in this.props.files) {
+            // --- 遍历最新的文件列表 ---
             if (beforePaths.includes(path)) {
+                // --- 检测老文件内容是否相同 ---
                 const model = this.access.monaco.editor.getModel(this.access.monaco.Uri.parse(path));
                 if (model.getValue() !== this.props.files[path]) {
+                    // --- 内容不同，更新 ---
                     this.setValue(model, this.props.files[path]);
                     refreshInstance = true;
                 }
                 continue;
             }
+            // --- 新增的 model ---
             const model = this.access.monaco.editor.createModel(this.props.files[path], undefined, this.access.monaco.Uri.parse(path));
             model.pushEOL(0);
             model.onDidChangeContent(() => {
@@ -190,6 +167,7 @@ class default_1 extends clickgo.control.AbstractControl {
             });
             refreshInstance = true;
         }
+        // --- 刷新代码提示 ---
         if (this.props.language === 'typescript' && refreshInstance) {
             const model = this.access.instance.getModel();
             if (model) {
@@ -220,6 +198,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             if (after !== undefined) {
                 if (before === undefined) {
+                    // --- code 转 path 模式 ---
                     let model = this.access.monaco.editor.getModels()[0];
                     if (model) {
                         model.dispose();
@@ -233,16 +212,19 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
                 else {
+                    // --- 什么模式也不转，仅仅 files 内容、文件数变动 ---
                     this.refreshModels();
                 }
             }
             else {
+                // --- path 转 code 模式 ---
                 const models = this.access.monaco.editor.getModels();
                 for (const model of models) {
                     model.dispose();
                 }
                 const model = this.access.monaco.editor.createModel(this.props.modelValue, this.props.language);
                 model.pushEOL(0);
+                // --- 内容改变 ---
                 model.onDidChangeContent(() => {
                     this.emit('update:modelValue', model.getValue());
                 });
@@ -256,6 +238,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (Object.keys(this.props.files).length) {
+                // --- files 模式 ---
                 const model = this.access.monaco.editor.getModel(this.access.monaco.Uri.parse(this.props.modelValue));
                 if (model) {
                     this.access.instance.setModel(model);
@@ -268,6 +251,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             else {
+                // --- code 模式 ---
                 const model = this.access.instance.getModel();
                 if (this.props.modelValue === model.getValue()) {
                     return;
@@ -297,6 +281,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.access.monaco.editor.setTheme(this.props.theme);
         });
+        // --- 初始化 ---
         const iframeEl = this.refs.iframe;
         if (!iframeEl.contentWindow) {
             return;
@@ -309,28 +294,35 @@ class default_1 extends clickgo.control.AbstractControl {
         monacoEl.id = 'monaco';
         monacoEl.style.height = '100%';
         idoc.body.append(monacoEl);
-        const monaco = await clickgo.core.getModule('monaco');
+        /** --- monaco 的 loader 文件全量 data url --- */
+        const monaco = await clickgo.core.getModule('monaco-editor');
         if (!monaco) {
+            // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
+        // --- 加载成功 ---
         const loaderEl = idoc.createElement('script');
         loaderEl.addEventListener('load', () => {
             iwindow.require.config({
                 paths: {
-                    'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.50.0/min/vs'
+                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.52.2/min/vs'
                 }
             });
+            // --- 初始化 Monaco ---
             const proxy = iwindow.URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.50.0/min/'
+                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.52.2/min/'
                 };
-                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.50.0/min/vs/base/worker/workerMain.js');
-            `], { type: 'text/javascript' }));
+                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.52.2/min/vs/base/worker/workerMain.js');
+            `], {
+                'type': 'text/javascript'
+            }));
             iwindow.MonacoEnvironment = {
                 getWorkerUrl: () => proxy
             };
+            // --- 加载 ---
             iwindow.require(['vs/editor/editor.main'], (monaco) => {
                 this.access.monaco = monaco;
                 this.access.instance = this.access.monaco.editor.create(monacoEl, {
@@ -344,11 +336,17 @@ class default_1 extends clickgo.control.AbstractControl {
                 });
                 this.access.instance._codeEditorService.openCodeEditor = (input) => {
                     this.emit('jump', input);
+                    /*
+                    source.setSelection(input.options.selection);
+                    source.revealLine(input.options.selection.startLineNumber);
+                    */
                     return this.access.instance;
                 };
+                // --- 设置主题 ---
                 if (this.props.theme) {
                     this.access.monaco.editor.setTheme(this.props.theme);
                 }
+                // --- 绑定 contextmenu ---
                 if (navigator.clipboard) {
                     monacoEl.addEventListener('contextmenu', (e) => {
                         e.preventDefault();
@@ -362,23 +360,29 @@ class default_1 extends clickgo.control.AbstractControl {
                         });
                     });
                 }
+                // --- 绑定 down 事件 ---
                 const down = (e) => {
                     if (clickgo.dom.hasTouchButMouse(e)) {
                         return;
                     }
                     if (e instanceof TouchEvent) {
+                        // --- touch 长按弹出 ---
                         clickgo.dom.bindLong(e, () => {
                             clickgo.form.showPop(this.element, this.refs.pop, e);
                         });
                     }
-                    clickgo.form.changeFocus(this.formId);
+                    // --- 让本窗体获取焦点 ---
+                    clickgo.form.changeFocus(this.formId).catch(() => { });
+                    // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
                     clickgo.form.hidePop();
                 };
                 monacoEl.addEventListener('mousedown', down);
                 monacoEl.addEventListener('touchstart', down, {
                     'passive': true
                 });
+                // -- 设置文件列表 ---
                 if (Object.keys(this.props.files).length) {
+                    // --- 读取 files 中的文件内容 ---
                     this.refreshModels();
                     const model = this.access.monaco.editor.getModel(this.access.monaco.Uri.parse(this.props.modelValue));
                     if (model) {
@@ -389,13 +393,16 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
                 else {
+                    // --- modelValue 即是代码，无 files ---
                     const model = this.access.monaco.editor.createModel(this.props.modelValue, this.props.language);
                     model.pushEOL(0);
+                    // --- 内容改变 ---
                     model.onDidChangeContent(() => {
                         this.emit('update:modelValue', model.getValue());
                     });
                     this.access.instance.setModel(model);
                 }
+                // --- 监听 font 相关信息 ---
                 clickgo.dom.watchStyle(this.element, ['font-size', 'font-family'], (n, v) => {
                     switch (n) {
                         case 'font-size': {
@@ -414,6 +421,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         }
                     }
                 }, true);
+                // --- 初始化成功 ---
                 this.isLoading = false;
                 this.emit('init', {
                     'monaco': this.access.monaco,
@@ -425,4 +433,3 @@ class default_1 extends clickgo.control.AbstractControl {
         idoc.head.append(loaderEl);
     }
 }
-exports.default = default_1;

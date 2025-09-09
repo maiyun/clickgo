@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
@@ -43,6 +8,7 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.htmlPrep = '';
     }
+    // --- 编译后的布局标签列 ---
     get layout() {
         let layout = this.props.html;
         if (!layout) {
@@ -55,6 +21,7 @@ class default_1 extends clickgo.control.AbstractControl {
         layout = clickgo.tool.layoutClassPrepend(layout, [this.htmlPrep + '_']);
         return layout;
     }
+    /** --- html 内部的 style 标签的 style --- */
     get innerStyle() {
         const layout = this.props.html;
         if (!layout) {
@@ -67,7 +34,9 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         return styles.join('');
     }
+    // --- 编译后的样式表 ---
     get style() {
+        /** --- 加入尾随 --- */
         const after = (list, after) => {
             const rtn = [];
             for (const item of list) {
@@ -75,7 +44,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             return rtn.join(',');
         };
+        /** --- 预设 css --- */
         const pre = [];
+        /** --- 按钮类 --- */
         const buttons = ['input[type=submit]', 'input[type=button]', 'button'];
         pre.push(buttons.join(',') + '{border:solid .5px var(--g-border-color);background:var(--g-background);color:inherit;font:inherit;padding:var(--g-padding);border-radius:var(--g-radius);outline:dotted .5px transparent;outline-offset:-4px;line-height:inherit;}');
         pre.push(after(buttons, ':hover') + '{border:solid .5px var(--g-border-color-hover);background:var(--g-background-hover);color:var(--g-color-hover)}');
@@ -83,6 +54,7 @@ class default_1 extends clickgo.control.AbstractControl {
         pre.push(after(buttons, ':focus:not(:active):not(:hover)') + '{border:solid .5px var(--g-border-color-focus);background:var(--g-background-focus);color:var(--g-color-focus)}');
         pre.push(after(buttons, ':focus') + '{outline-color:var(--g-focusbox-border-color)}');
         pre.push(after(buttons, ':disabled') + '{border:solid .5px var(--g-border-color-disabled);background:var(--g-background-disabled);color:var(--g-color-disabled)}');
+        /** --- 输入框类 --- */
         const texts = ['input:not([type])', 'input[type=text]', 'input[type=password]', 'input[type=email]', 'input[type=url]', 'input[type=tel]', 'input[type=search]', 'input[type=color]', 'input[type=number]'];
         pre.push(texts.join(',') + '{border:solid .5px var(--g-plain-border-color);background:var(--g-plain-background);color:inherit;font:inherit;padding:var(--g-padding);border-radius:var(--g-radius);outline:none;line-height:inherit}');
         pre.push(after(texts, ':hover') + '{border:solid .5px var(--g-plain-border-color-hover)}');
@@ -95,4 +67,3 @@ class default_1 extends clickgo.control.AbstractControl {
         this.htmlPrep = 'cg-hscope' + Math.round(Math.random() * 1000000000000000).toString();
     }
 }
-exports.default = default_1;

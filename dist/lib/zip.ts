@@ -1,6 +1,6 @@
 import jszip from 'jszip';
-import * as types from '../../types';
-import * as tool from './tool';
+import * as clickgo from '../clickgo';
+import * as lTool from './tool';
 
 export class Zip {
 
@@ -16,16 +16,16 @@ export class Zip {
     }
 
     public async getContent(path: string): Promise<string | null>;
-    public async getContent<T extends types.TZipOutputType>(
+    public async getContent<T extends TZipOutputType>(
         path: string,
-        type: T): Promise<types.IZipOutputByType[T] | null>;
+        type: T): Promise<IZipOutputByType[T] | null>;
     /**
      * --- 读取完整文件 ---
      * @param path 文件路径
      * @param type 返回类型
      */
-    public async getContent<T extends types.TZipOutputType>(path: string, type: T = 'string' as T): Promise<types.IZipOutputByType[T] | string | null> {
-        path = tool.urlResolve(this._path, path);
+    public async getContent<T extends TZipOutputType>(path: string, type: T = 'string' as T): Promise<IZipOutputByType[T] | string | null> {
+        path = lTool.urlResolve(this._path, path);
         const f = this._zip.file(path.slice(1));
         if (!f) {
             return null;
@@ -44,8 +44,8 @@ export class Zip {
      * @param data 要写入的内容
      * @param options 选项
      */
-    public putContent<T extends types.TZipInputType>(path: string, data: types.IZipInputByType[T], options: { 'base64'?: boolean; 'binary'?: boolean; 'date'?: Date; } = {}): void {
-        path = tool.urlResolve(this._path, path);
+    public putContent<T extends TZipInputType>(path: string, data: IZipInputByType[T], options: { 'base64'?: boolean; 'binary'?: boolean; 'date'?: Date; } = {}): void {
+        path = lTool.urlResolve(this._path, path);
         this._zip.file(path.slice(1), data as jszip.InputType, {
             'base64': options.base64,
             'binary': options.binary,
@@ -59,7 +59,7 @@ export class Zip {
      * @param path 要删除的文件路径
      */
     public unlink(path: string): void {
-        path = tool.urlResolve(this._path, path);
+        path = lTool.urlResolve(this._path, path);
         this._zip.remove(path.slice(1));
         this._refreshList();
     }
@@ -69,8 +69,8 @@ export class Zip {
      * @param path 对象路径
      * @param options 选项
      */
-    public stats(path: string): types.IZipStats | null {
-        path = tool.urlResolve(this._path, path);
+    public stats(path: string): IZipStats | null {
+        path = lTool.urlResolve(this._path, path);
         let dirpath = path.endsWith('/') ? path : path + '/';
         if (!this._list[dirpath]) {
             // --- 可能是文件 ---
@@ -128,7 +128,7 @@ export class Zip {
      * --- 判断是否是目录或目录是否存在，是的话返回 stats ---
      * @param path 判断路径
      */
-    public isDir(path: string): types.IZipStats | false {
+    public isDir(path: string): IZipStats | false {
         const pstats = this.stats(path);
         if (!pstats?.isDirectory) {
             return false;
@@ -140,7 +140,7 @@ export class Zip {
      * --- 判断是否是文件或文件是否存在，是的话返回 stats ---
      * @param path 判断路径
      */
-    public isFile(path: string): types.IZipStats | false {
+    public isFile(path: string): IZipStats | false {
         const pstats = this.stats(path);
         if (!pstats?.isFile) {
             return false;
@@ -149,29 +149,23 @@ export class Zip {
     }
 
     /** --- 读取目录，hasChildren: false, hasDir: true, pathAsKey: false --- */
-    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: false; }): types.IZipItem[];
-    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, types.IZipItem>;
+    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: false; }): IZipItem[];
+    public readDir(path?: string, opt?: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, IZipItem>;
     /**
      * --- 获取文件夹下文件列表 ---
      * @param path 文件夹路径
      * @param opt 选项
      */
-    public readDir(path?: string, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: boolean; } = {}): Record<string, types.IZipItem> | types.IZipItem[] {
-        if (opt.hasChildren === undefined) {
-            opt.hasChildren = false;
-        }
-        if (opt.hasDir === undefined) {
-            opt.hasDir = true;
-        }
-        if (opt.pathAsKey === undefined) {
-            opt.pathAsKey = false;
-        }
+    public readDir(path?: string, opt: { 'hasChildren'?: boolean; 'hasDir'?: boolean; 'pathAsKey'?: boolean; } = {}): Record<string, IZipItem> | IZipItem[] {
+        opt.hasChildren ??= false;
+        opt.hasDir ??= true;
+        opt.pathAsKey ??= false;
 
         if (!path) {
             path = this._path;
         }
         else {
-            path = tool.urlResolve(this._path, path);
+            path = lTool.urlResolve(this._path, path);
         }
         if (!path.endsWith('/')) {
             path += '/';
@@ -187,7 +181,7 @@ export class Zip {
             if (opt.pathAsKey) {
                 return this._list[path];
             }
-            const list: types.IZipItem[] = [];
+            const list: IZipItem[] = [];
             for (const k in this._list[path]) {
                 list.push(this._list[path][k]);
             }
@@ -195,7 +189,7 @@ export class Zip {
         }
         // --- 定义 list ---
         if (opt.pathAsKey) {
-            const list: Record<string, types.IZipItem> = {};
+            const list: Record<string, IZipItem> = {};
             // --- 遍历子项 ---
             for (const k in this._list[path]) {
                 const item = this._list[path][k];
@@ -212,7 +206,7 @@ export class Zip {
             return list;
         }
         else {
-            let list: types.IZipItem[] = [];
+            let list: IZipItem[] = [];
             // --- 遍历子项 ---
             for (const k in this._list[path]) {
                 const item = this._list[path][k];
@@ -230,15 +224,15 @@ export class Zip {
         }
     }
 
-    private _readDir(item: types.IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey'?: false; }): types.IZipItem[];
-    private _readDir(item: types.IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, types.IZipItem>;
+    private _readDir(item: IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey'?: false; }): IZipItem[];
+    private _readDir(item: IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey': true; }): Record<string, IZipItem>;
     /**
      * --- 根据 item 文件夹读取子层及所有子层项 ---
      * @param item 文件夹
      */
-    private _readDir(item: types.IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey'?: boolean; }): Record<string, types.IZipItem> | types.IZipItem[] {
+    private _readDir(item: IZipItem, opt: { 'hasDir'?: boolean; 'pathAsKey'?: boolean; }): Record<string, IZipItem> | IZipItem[] {
         if (opt.pathAsKey) {
-            const list: Record<string, types.IZipItem> = {};
+            const list: Record<string, IZipItem> = {};
             if (!this._list[item.path + item.name + '/']) {
                 return {};
             }
@@ -257,7 +251,7 @@ export class Zip {
             return list;
         }
         else {
-            let list: types.IZipItem[] = [];
+            let list: IZipItem[] = [];
             if (!this._list[item.path + item.name + '/']) {
                 return [];
             }
@@ -278,14 +272,14 @@ export class Zip {
     }
 
     /** --- 目录列表缓存 --- */
-    private _list: Record<string, Record<string, types.IZipItem>> = {};
+    private _list: Record<string, Record<string, IZipItem>> = {};
 
     /**
      * --- 重建目录列表缓存 ---
      */
     private _refreshList(): void {
-        const list: Record<string, Record<string, types.IZipItem>> = {};
-        // eslint-disable-next-line @litert/rules/disable-for-each-method
+        const list: Record<string, Record<string, IZipItem>> = {};
+        // eslint-disable-next-line @litert/disable-for-each-method
         this._zip.forEach(function(relativePath: string, item: jszip.JSZipObject) {
             if (relativePath.startsWith('/')) {
                 relativePath = relativePath.slice(1);
@@ -339,7 +333,7 @@ export class Zip {
      * @param dir 相对路径或绝对路径
      */
     public cd(dir: string): string {
-        this._path = tool.urlResolve(this._path, dir);
+        this._path = lTool.urlResolve(this._path, dir);
         if (!this._path.endsWith('/')) {
             this._path += '/';
         }
@@ -350,7 +344,7 @@ export class Zip {
      * --- 打包 zip ---
      * @param options 选项
      */
-    public generate<T extends types.TZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string | null) => void; } = {}): Promise<types.IZipOutputByType[T]> {
+    public generate<T extends TZipOutputType>(options: { 'type'?: T; 'level'?: number; 'onUpdate'?: (percent: number, currentFile: string | null) => void; } = {}): Promise<IZipOutputByType[T]> {
         const opt: any = {};
         if (options.type === undefined) {
             opt.type = 'blob' as T;
@@ -367,7 +361,7 @@ export class Zip {
         if (options.level > 0) {
             opt.compression = 'DEFLATE';
         }
-        return this._zip.generateAsync(opt, function(meta: types.IZipMetadata): void {
+        return this._zip.generateAsync(opt, function(meta: IZipMetadata): void {
             options.onUpdate?.(meta.percent, meta.currentFile);
         });
     }
@@ -384,7 +378,7 @@ export class Zip {
             });
             let loaded = 0;
             for (const file of list) {
-                const mime = tool.getMimeByPath(file.name);
+                const mime = lTool.getMimeByPath(file.name);
                 if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                     this.getContent(file.path + file.name, 'string').then(function(fb) {
                         if (fb) {
@@ -430,8 +424,8 @@ export class Zip {
  * --- 获取 zip 对象 ---
  * @param data 对象数据
  */
-export async function get(data?: types.TZipInputFileFormat): Promise<Zip | null> {
-    const z = jszip();
+export async function get(data?: TZipInputFileFormat): Promise<Zip | null> {
+    const z = clickgo.modules.jszip();
     try {
         if (data) {
             await z.loadAsync(data);
@@ -441,4 +435,53 @@ export async function get(data?: types.TZipInputFileFormat): Promise<Zip | null>
     catch {
         return null;
     }
+}
+
+// --- 类型 ---
+
+export interface IZipItem {
+    'name': string;
+    'compressedSize': number;
+    'uncompressedSize': number;
+    'date': Date;
+    'isFile': boolean;
+    'isDirectory': boolean;
+    'path': string;
+}
+
+export interface IZipStats {
+    'compressedSize': number;
+    'uncompressedSize': number;
+    'date': Date;
+    'isFile': boolean;
+    'isDirectory': boolean;
+}
+
+export interface IZipOutputByType {
+    'base64': string;
+    'string': string;
+    'array': number[];
+    'uint8array': Uint8Array;
+    'arraybuffer': ArrayBuffer;
+    'blob': Blob;
+}
+
+export type TZipOutputType = keyof IZipOutputByType;
+
+export interface IZipInputByType {
+    'base64': string;
+    'string': string;
+    'array': number[];
+    'uint8array': Uint8Array;
+    'arraybuffer': ArrayBuffer;
+    'blob': Blob;
+}
+
+export type TZipInputType = keyof IZipInputByType;
+
+export type TZipInputFileFormat = IZipInputByType[keyof IZipInputByType];
+
+export interface IZipMetadata {
+    percent: number;
+    currentFile: string | null;
 }

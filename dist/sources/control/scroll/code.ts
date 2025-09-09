@@ -100,7 +100,7 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.propBoolean('float')) {
                     this.isShow = true;
                     if (this.hideTimer) {
-                        clickgo.task.removeTimer(this.hideTimer);
+                        clickgo.task.removeTimer(this, this.hideTimer);
                         this.hideTimer = 0;
                     }
                 }
@@ -108,7 +108,7 @@ export default class extends clickgo.control.AbstractControl {
             up: () => {
                 this.isEnter = false;
                 if (this.propBoolean('float')) {
-                    this.hideTimer = clickgo.task.sleep(() => {
+                    this.hideTimer = clickgo.task.sleep(this, () => {
                         this.isShow = false;
                     }, 800);
                 }
@@ -123,7 +123,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         clickgo.dom.bindDown(e, {
             down: () => {
-                this.tran = clickgo.task.onFrame(() => {
+                this.tran = clickgo.task.onFrame(this, () => {
                     if (type === 'start') {
                         // --- 向上 ---
                         if (this.offsetData - 10 < 0) {
@@ -153,7 +153,7 @@ export default class extends clickgo.control.AbstractControl {
                 });
             },
             up: () => {
-                clickgo.task.offFrame(this.tran);
+                clickgo.task.offFrame(this, this.tran);
                 this.tran = 0;
             }
         });
@@ -228,7 +228,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.propBoolean('float')) {
             this.isShow = true;
             if (this.hideTimer) {
-                clickgo.task.removeTimer(this.hideTimer);
+                clickgo.task.removeTimer(this, this.hideTimer);
                 this.hideTimer = 0;
             }
         }
@@ -241,7 +241,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.isEnter = false;
         if (this.propBoolean('float')) {
-            this.hideTimer = clickgo.task.sleep(() => {
+            this.hideTimer = clickgo.task.sleep(this, () => {
                 this.isShow = false;
             }, 800);
         }
@@ -266,10 +266,10 @@ export default class extends clickgo.control.AbstractControl {
             // --- 如果是隐藏状态，要显示一下 ---
             if (this.propBoolean('float') && !this.isEnter) {
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                 }
                 this.isShow = true;
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
@@ -280,14 +280,14 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('float', (): void => {
             if (this.propBoolean('float')) {
                 // --- 设定为 true，隐藏 ---
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
             else {
                 this.isShow = true;
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             }
@@ -299,7 +299,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('show', this.isShow);
         });
         // --- 监听 bar 的 size ---
-        clickgo.dom.watchSize(this.refs.bar, () => {
+        clickgo.dom.watchSize(this, this.refs.bar, () => {
             const barRect = this.refs.bar.getBoundingClientRect();
             this.barPx = this.props.direction === 'v' ? barRect.height : barRect.width;
             // --- bar 的 size 改了，整个 el 肯定也改了 ---
@@ -311,7 +311,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public onUnmounted(): void {
         if (this.hideTimer) {
-            clickgo.task.offFrame(this.hideTimer);
+            clickgo.task.offFrame(this, this.hideTimer);
         }
     }
 

@@ -1,48 +1,35 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+/**
+ * Copyright 2007-2025 MAIYUN.NET
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import * as lTask from './task';
+import * as lForm from './form';
+import * as lCore from './core';
+import * as lTool from './tool';
+/** --- 系统级 ID --- */
+let sysId = '';
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id) {
+    if (sysId) {
+        return;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.get = get;
-exports.set = set;
-exports.remove = remove;
-exports.list = list;
-exports.all = all;
-exports.clear = clear;
-const task = __importStar(require("./task"));
-const form = __importStar(require("./form"));
-const core = __importStar(require("./core"));
-const tool = __importStar(require("./tool"));
+    sysId = id;
+}
+/** --- storage lib 用到的语言包 --- */
 const localeData = {
     'en': {
         'sure-clear': 'Are you sure you want to clear all temporary storage for the app "?"?'
@@ -82,15 +69,20 @@ const localeData = {
     }
 };
 const textEncoder = new TextEncoder();
-function get(key, taskId) {
-    if (!taskId) {
+/**
+ * --- 获取小型存储数据 ---
+ * @param current 当前任务 id
+ * @param key 存储键
+ */
+export function get(current, key) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return null;
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return null;
-    }
-    const v = localStorage.getItem('clickgo-item-' + t.path + '-' + key);
+    const v = localStorage.getItem('clickgo-item-' + task.path + '-' + key);
     if (v === null) {
         return null;
     }
@@ -101,12 +93,18 @@ function get(key, taskId) {
         return null;
     }
 }
-function set(key, val, taskId) {
-    if (!taskId) {
-        return false;
+/**
+ * --- 存储小型存储数据，单应用最大存储 1M ---
+ * @param current 当前任务 id
+ * @param key 存储键
+ * @param val 存储值
+ */
+export function set(current, key, val) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const t = task.list[taskId];
-    if (!t) {
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return false;
     }
     if (val === undefined) {
@@ -114,12 +112,13 @@ function set(key, val, taskId) {
     }
     const v = JSON.stringify(val);
     const vsize = textEncoder.encode(v).length;
-    const sizes = localStorage.getItem('clickgo-size-' + t.path);
+    /** --- 当前 app 的 key 所占用的 size 列表 --- */
+    const sizes = localStorage.getItem('clickgo-size-' + task.path);
     if (sizes === null) {
         if (vsize > 1048576) {
             return false;
         }
-        localStorage.setItem('clickgo-size-' + t.path, JSON.stringify({
+        localStorage.setItem('clickgo-size-' + task.path, JSON.stringify({
             [key]: vsize
         }));
     }
@@ -130,20 +129,25 @@ function set(key, val, taskId) {
         if (allsize > 1048576) {
             return false;
         }
-        localStorage.setItem('clickgo-size-' + t.path, JSON.stringify(sizeso));
+        localStorage.setItem('clickgo-size-' + task.path, JSON.stringify(sizeso));
     }
-    localStorage.setItem('clickgo-item-' + t.path + '-' + key, v);
+    localStorage.setItem('clickgo-item-' + task.path + '-' + key, v);
     return true;
 }
-function remove(key, taskId) {
-    if (!taskId) {
+/**
+ * --- 移除某个小型存储数据 ---
+ * @param current 当前 task id
+ * @param key 要移除的键
+ */
+export function remove(current, key) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return false;
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return false;
-    }
-    const sizes = localStorage.getItem('clickgo-size-' + t.path);
+    const sizes = localStorage.getItem('clickgo-size-' + task.path);
     if (sizes === null) {
         return true;
     }
@@ -153,29 +157,36 @@ function remove(key, taskId) {
     }
     delete sizeso[key];
     if (Object.keys(sizeso).length) {
-        localStorage.setItem('clickgo-size-' + t.path, JSON.stringify(sizeso));
+        localStorage.setItem('clickgo-size-' + task.path, JSON.stringify(sizeso));
     }
     else {
-        localStorage.removeItem('clickgo-size-' + t.path);
+        localStorage.removeItem('clickgo-size-' + task.path);
     }
-    localStorage.removeItem('clickgo-item-' + t.path + '-' + key);
+    localStorage.removeItem('clickgo-item-' + task.path + '-' + key);
     return true;
 }
-function list(taskId) {
-    if (!taskId) {
+/**
+ * --- 获取当前任务的所有存储列表，key: size ---
+ * @param current 当前任务 id
+ */
+export function list(current) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return {};
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return {};
-    }
-    const sizes = localStorage.getItem('clickgo-size-' + t.path);
+    const sizes = localStorage.getItem('clickgo-size-' + task.path);
     if (sizes === null) {
         return {};
     }
     return JSON.parse(sizes);
 }
-function all() {
+/**
+ * --- 获取所有存储在本地的应用列表，以 path: size 返回 ---
+ */
+export function all() {
     const rtn = {};
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -192,12 +203,16 @@ function all() {
     }
     return rtn;
 }
-async function clear(path) {
+/**
+ * --- 移除某个应用的所有临时存储 ---
+ * @param path 要移除的应用的 path（末尾 .cga 或带 / 的路径）
+ */
+export async function clear(path) {
     if (!path) {
         return 0;
     }
-    const loc = localeData[core.config.locale]?.['sure-clear'] ?? localeData['en']['sure-clear'];
-    if (!await form.superConfirm(loc.replace('?', tool.escapeHTML(path)))) {
+    const loc = localeData[lCore.config.locale]?.['sure-clear'] ?? localeData['en']['sure-clear'];
+    if (!await lForm.superConfirm(sysId, loc.replace('?', lTool.escapeHTML(path)))) {
         return 0;
     }
     let count = 0;

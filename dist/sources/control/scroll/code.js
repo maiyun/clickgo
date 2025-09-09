@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -49,15 +14,24 @@ class default_1 extends clickgo.control.AbstractControl {
             'client': 100,
             'offset': 0
         };
+        /** --- 当前位置（数值） --- */
         this.offsetData = 0;
+        /** --- 将在多久后隐藏 --- */
         this.hideTimer = 0;
+        /** --- 是否在以设定数值的形式滚动中的 timer 值（controlDown） --- */
         this.tran = 0;
+        /** --- 是否在显示 --- */
         this.isShow = true;
+        /** --- 是否是 enter 状态 --- */
         this.isEnter = false;
+        /** --- 整体的元素的宽度像素 --- */
         this.width = 0;
+        /** --- 整体的元素高度像素 --- */
         this.height = 0;
+        /** --- bar 的 px --- */
         this.barPx = 0;
     }
+    /** --- block 的 px --- */
     get blockPx() {
         const px = this.propInt('client') / this.propInt('length') * this.barPx;
         if (px < 5) {
@@ -65,26 +39,42 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return px;
     }
+    /**
+     * --- 最大可拖动的 offset 位置 ---
+     */
     get maxOffset() {
         return (this.propInt('length') > this.propInt('client')) ? this.propInt('length') - this.propInt('client') : 0;
     }
+    /**
+     * --- 当前 offset 位置相对于最大位置的比例，最大为 1 ---
+     */
     get offsetRatio() {
         return this.maxOffset ? this.offsetData / this.maxOffset : 0;
     }
+    /**
+     * --- 除去 block 剩余的 bar 部分的像素 ---
+     */
     get outBlockPx() {
         return this.barPx - this.blockPx;
     }
+    /**
+     * --- 当前位置（像素） ---
+     */
     get offsetPx() {
         return this.outBlockPx * this.offsetRatio;
     }
+    /**
+     * ---- wrap 的 touchstart 事件 ---
+     */
     wrapTouch(e) {
+        // --- 防止在手机模式按下的状态下滚动条被自动隐藏，PC 下有 enter 所以没事 ---
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.isEnter = true;
                 if (this.propBoolean('float')) {
                     this.isShow = true;
                     if (this.hideTimer) {
-                        clickgo.task.removeTimer(this.hideTimer);
+                        clickgo.task.removeTimer(this, this.hideTimer);
                         this.hideTimer = 0;
                     }
                 }
@@ -92,21 +82,23 @@ class default_1 extends clickgo.control.AbstractControl {
             up: () => {
                 this.isEnter = false;
                 if (this.propBoolean('float')) {
-                    this.hideTimer = clickgo.task.sleep(() => {
+                    this.hideTimer = clickgo.task.sleep(this, () => {
                         this.isShow = false;
                     }, 800);
                 }
             }
         });
     }
+    /** --- 上下控制按钮按下事件 --- */
     controlDown(e, type) {
         if (this.props.client >= this.props.length) {
             return;
         }
         clickgo.dom.bindDown(e, {
             down: () => {
-                this.tran = clickgo.task.onFrame(() => {
+                this.tran = clickgo.task.onFrame(this, () => {
                     if (type === 'start') {
+                        // --- 向上 ---
                         if (this.offsetData - 10 < 0) {
                             if (this.offsetData !== 0) {
                                 this.offsetData = 0;
@@ -119,6 +111,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         }
                     }
                     else {
+                        // --- 向下 ---
                         if (this.offsetData + 10 > this.maxOffset) {
                             if (this.offsetData !== this.maxOffset) {
                                 this.offsetData = this.maxOffset;
@@ -133,11 +126,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 });
             },
             up: () => {
-                clickgo.task.offFrame(this.tran);
+                clickgo.task.offFrame(this, this.tran);
                 this.tran = 0;
             }
         });
     }
+    /**
+     * --- block 的 down 事件 ---
+     */
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -154,6 +150,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 else {
                     const offsetPx = this.offsetPx + (this.props.direction === 'v' ? o.oy : o.ox);
+                    /** --- 滚动百分比 --- */
                     const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
                     this.offsetData = Math.round(ratio * this.maxOffset);
                 }
@@ -161,6 +158,9 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
+    /**
+     * --- bar 的空白区域（非 down 区域）按下事件 ---
+     */
     barDown(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -168,10 +168,14 @@ class default_1 extends clickgo.control.AbstractControl {
         if (e.currentTarget !== e.target) {
             return;
         }
+        /** --- bar inner 的 rect 对象 --- */
         const barRect = this.refs.bar.getBoundingClientRect();
+        /** --- bar inner 对应的 left 或 top 位置 --- */
         const barOffsetPx = this.props.direction === 'v' ? barRect.top : barRect.left;
+        /** --- 鼠标点击在 bar 中的位置 --- */
         let eOffsetPx = this.props.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
         eOffsetPx = eOffsetPx - barOffsetPx;
+        // --- 计算 offset px 位置 ---
         let offsetPx = eOffsetPx - this.blockPx / 2;
         if (offsetPx < 0) {
             offsetPx = 0;
@@ -179,11 +183,13 @@ class default_1 extends clickgo.control.AbstractControl {
         if (offsetPx + this.blockPx > this.barPx) {
             offsetPx = this.barPx - this.blockPx;
         }
+        /** --- 滚动百分比 --- */
         const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
         this.offsetData = Math.round(ratio * this.maxOffset);
         this.emit('update:offset', this.offsetData);
         this.down(e);
     }
+    // --- 进入时保持滚动条常亮 ---
     enter(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -192,18 +198,19 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propBoolean('float')) {
             this.isShow = true;
             if (this.hideTimer) {
-                clickgo.task.removeTimer(this.hideTimer);
+                clickgo.task.removeTimer(this, this.hideTimer);
                 this.hideTimer = 0;
             }
         }
     }
+    // --- 移出后十滚动条隐藏 ---
     leave(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.isEnter = false;
         if (this.propBoolean('float')) {
-            this.hideTimer = clickgo.task.sleep(() => {
+            this.hideTimer = clickgo.task.sleep(this, () => {
                 this.isShow = false;
             }, 800);
         }
@@ -218,45 +225,52 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.watch('length', checkOffset);
         this.watch('client', checkOffset);
+        // --- 监听 prop 用户的 offset 设定 ---
         this.watch('offset', () => {
             if (this.offsetData === this.propInt('offset')) {
                 return;
             }
             this.offsetData = this.propInt('offset');
+            // --- 如果是隐藏状态，要显示一下 ---
             if (this.propBoolean('float') && !this.isEnter) {
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                 }
                 this.isShow = true;
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
         }, {
             'immediate': true
         });
+        // --- 监听用户设定的浮动 ---
         this.watch('float', () => {
             if (this.propBoolean('float')) {
-                this.hideTimer = clickgo.task.sleep(() => {
+                // --- 设定为 true，隐藏 ---
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
             else {
                 this.isShow = true;
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             }
         }, {
             'immediate': true
         });
+        // --- 监听 isShow 并向上层传递 show 事件 ---
         this.watch('isShow', () => {
             this.emit('show', this.isShow);
         });
-        clickgo.dom.watchSize(this.refs.bar, () => {
+        // --- 监听 bar 的 size ---
+        clickgo.dom.watchSize(this, this.refs.bar, () => {
             const barRect = this.refs.bar.getBoundingClientRect();
             this.barPx = this.props.direction === 'v' ? barRect.height : barRect.width;
+            // --- bar 的 size 改了，整个 el 肯定也改了 ---
             const rect = this.element.getBoundingClientRect();
             this.width = rect.width;
             this.height = rect.height;
@@ -264,8 +278,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onUnmounted() {
         if (this.hideTimer) {
-            clickgo.task.offFrame(this.hideTimer);
+            clickgo.task.offFrame(this, this.hideTimer);
         }
     }
 }
-exports.default = default_1;

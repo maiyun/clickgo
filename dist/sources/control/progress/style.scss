@@ -1,8 +1,8 @@
 .wrap {
-    border-radius: var(--g-radius); background: var(--g-plain-background); box-shadow: var(--g-shadow) inset; min-height: 4px; display: flex; background: var(--cg-bg);
+    border-radius: var(--g-radius); background: var(--g-plain-background); min-height: 4px; display: flex;
 
     .block {
-        border-radius: var(--g-radius); background: var(--cg); transition: all .3s var(--g-cubic); background: var(--cg);
+        border-radius: var(--g-radius); background: var(--g-plain-border-color); transition: all .3s var(--g-cubic);
     }
 
     &.primary {
@@ -27,6 +27,12 @@
         background: var(--danger-bg);
         .block {
             background: var(--danger);
+        }
+    }
+    &.cg {
+        background: var(--cg-bg);
+        .block {
+            background: var(--cg);
         }
     }
 }

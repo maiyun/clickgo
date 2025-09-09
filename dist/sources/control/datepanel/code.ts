@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -564,7 +563,7 @@ export default class extends clickgo.control.AbstractControl {
         const modelValue = this.props.modelValue === undefined ? undefined : this.propNumber('modelValue');
         if (this.timestamp === undefined) {
             if (modelValue !== undefined) {
-                const event: types.IDatepanelChangedEvent = {
+                const event: clickgo.control.IDatepanelChangedEvent = {
                     'detail': {
                         'before': modelValue,
                         'value': undefined
@@ -576,7 +575,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60_000;
         if (modelValue !== this.timestamp) {
-            const event: types.IDatepanelChangedEvent = {
+            const event: clickgo.control.IDatepanelChangedEvent = {
                 'detail': {
                     'before': modelValue,
                     'value': this.timestamp
@@ -623,7 +622,7 @@ export default class extends clickgo.control.AbstractControl {
             if (cols === this.dateValueStr) {
                 // --- range 状态，自己点击自己，只选择一天 ---
                 const endDate = new Date(Date.UTC(col.year, col.month, col.date, 23, 59, 59, 0));
-                const event: types.IDatepanelRangeEvent = {
+                const event: clickgo.control.IDatepanelRangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -653,7 +652,7 @@ export default class extends clickgo.control.AbstractControl {
                 if (nhour === 0 && nminute === 0 && nseconds === 0) {
                     edate.setUTCHours(23, 59, 59, 0);
                 }
-                const event: types.IDatepanelRangeEvent = {
+                const event: clickgo.control.IDatepanelRangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -682,7 +681,7 @@ export default class extends clickgo.control.AbstractControl {
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
-        const event: types.IDatepanelSelectedEvent = {
+        const event: clickgo.control.IDatepanelSelectedEvent = {
             'detail': {
                 'time': col.time,
                 'date': col.date,
@@ -1056,7 +1055,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 清除所有状态 --- */
     public clear(): void {
-        const event: types.IDatepanelChangedEvent = {
+        const event: clickgo.control.IDatepanelChangedEvent = {
             'detail': {
                 'before': this.timestamp,
                 'value': undefined

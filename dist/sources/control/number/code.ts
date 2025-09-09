@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -142,7 +141,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- 要判断数字是否符合 min max，不能在 input 判断，因为会导致用户无法正常输入数字，比如最小值是 10，他在输入 1 的时候就自动重置成 10 了 ---
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
         if (this.checkNumber(target)) {
-            const mxEvent: types.INumberMinMaxChangeEvent = {
+            const mxEvent: clickgo.control.INumberMinMaxChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -154,7 +153,7 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('minmaxchange', mxEvent);
             if (mxEvent.go) {
-                const event: types.INumberBeforeChangeEvent = {
+                const event: clickgo.control.INumberBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -194,7 +193,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 文本框的 input 事件 --- */
     public input(e: InputEvent): void {
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-        const event: types.INumberBeforeChangeEvent = {
+        const event: clickgo.control.INumberBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -220,9 +219,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 检测 value 值是否符合 max 和 min --- */
     public checkNumber(target?: HTMLInputElement | HTMLTextAreaElement): boolean {
-        if (!target) {
-            target = this.refs.text as unknown as HTMLInputElement | HTMLTextAreaElement;
-        }
+        target ??= this.refs.text as unknown as HTMLInputElement | HTMLTextAreaElement;
         let change = false;
         if (!target.value && this.value) {
             change = true;
@@ -275,7 +272,7 @@ export default class extends clickgo.control.AbstractControl {
             this.value = '0';
         }
         const n = (parseFloat(this.value) + num).toString();
-        const event: types.INumberBeforeChangeEvent = {
+        const event: clickgo.control.INumberBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -304,7 +301,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             const str = await navigator.clipboard.readText();
-            const event: types.INumberBeforeChangeEvent = {
+            const event: clickgo.control.INumberBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -365,7 +362,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.check();
                 return;
             }
-            const event: types.INumberBeforeChangeEvent = {
+            const event: clickgo.control.INumberBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -392,7 +389,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('max', async () => {
             await this.nextTick();
             if (this.checkNumber()) {
-                const mxEvent: types.INumberMinMaxChangeEvent = {
+                const mxEvent: clickgo.control.INumberMinMaxChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -407,7 +404,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                const event: types.INumberBeforeChangeEvent = {
+                const event: clickgo.control.INumberBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -431,7 +428,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('min', async () => {
             await this.nextTick();
             if (this.checkNumber()) {
-                const mxEvent: types.INumberMinMaxChangeEvent = {
+                const mxEvent: clickgo.control.INumberMinMaxChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -446,7 +443,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                const event: types.INumberBeforeChangeEvent = {
+                const event: clickgo.control.INumberBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;

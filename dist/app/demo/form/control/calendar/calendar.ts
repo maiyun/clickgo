@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -29,7 +28,7 @@ export default class extends clickgo.form.AbstractForm {
         console.log('onChanged', JSON.stringify(this.mv));
     }
 
-    public onSelected(e: types.ICalendarSelectedEvent): void {
+    public onSelected(e: clickgo.control.ICalendarSelectedEvent): void {
         this.selected = e.detail.value;
     }
 

@@ -1,4 +1,4 @@
-import * as clickgo from '../../index';
+import * as clickgo from 'clickgo';
 
 const state = document.getElementById('state')!;
 const init = document.getElementById('init')!;
@@ -21,25 +21,21 @@ class Boot extends clickgo.AbstractBoot {
             already = true;
             state.innerHTML = 'Task starting...';
             href.removeAttribute('href');
-            clickgo.task.run('../../app/demo/', {
-                'cache': '1'
-            }).then((taskId) => {
+            clickgo.task.run(this._sysId, '../../app/demo.cga?' + clickgo.tool.rand(100000, 999999).toString()).then((taskId) => {
                 state.innerHTML = 'Task ' + taskId.toString() + ' running...';
-            }).catch((e) => {
-                console.log('e', e);
-            });
+            }).catch(() => {});
         });
     }
 
-    public onError(taskId: number, formId: number, error: Error): void {
+    public onError(taskId: string, formId: string, error: Error): void {
         state.innerHTML = 'Error, Task ID: ' + taskId.toString() + ', Form ID: ' + formId.toString() + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '');
-        clickgo.task.end(taskId);
+        clickgo.task.end(taskId).catch(() => {});
     }
 
-    public onTaskEnded(taskId: number): void {
+    public onTaskEnded(taskId: string): void {
         state.innerHTML = 'Task ' + taskId.toString() + ' ended.';
     }
 
 }
 
-clickgo.launcher(new Boot());
+await clickgo.launcher(new Boot());

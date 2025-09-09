@@ -15,7 +15,7 @@ export default class extends clickgo.form.AbstractForm {
     public sizeh = false;
 
     public async dialog(text: string): Promise<void> {
-        await clickgo.form.dialog(text);
+        await clickgo.form.dialog(this, clickgo.tool.escapeHTML(text));
     }
 
 }

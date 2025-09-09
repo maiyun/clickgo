@@ -73,13 +73,13 @@ export default class extends clickgo.control.AbstractControl {
             if (this.timer === 0) {
                 return;
             }
-            clickgo.task.offFrame(this.timer);
+            clickgo.task.offFrame(this, this.timer);
             this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        clickgo.task.sleep(() => {
+        clickgo.task.sleep(this, () => {
             if (this.length <= this.client) {
                 return;
             }
@@ -87,9 +87,9 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             // --- 没创建的 timer 的现在创建 timer ---
-            this.timer = clickgo.task.onFrame(async () => {
+            this.timer = clickgo.task.onFrame(this, async () => {
                 if (!clickgo.dom.inPage(this.element)) {
-                    clickgo.task.offFrame(this.timer);
+                    clickgo.task.offFrame(this, this.timer);
                     this.timer = 0;
                     return;
                 }
@@ -99,7 +99,7 @@ export default class extends clickgo.control.AbstractControl {
                     case 'left': {
                         if (this.left === -xv) {
                             this.left = 0;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -117,7 +117,7 @@ export default class extends clickgo.control.AbstractControl {
                     case 'right': {
                         if (this.left === 0) {
                             this.left = -xv;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -135,7 +135,7 @@ export default class extends clickgo.control.AbstractControl {
                     case 'top': {
                         if (this.top === -xv) {
                             this.top = 0;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -153,7 +153,7 @@ export default class extends clickgo.control.AbstractControl {
                     case 'bottom': {
                         if (this.top === 0) {
                             this.top = -xv;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -197,7 +197,7 @@ export default class extends clickgo.control.AbstractControl {
             this.padding = v;
         }, true);
         // --- 外部包裹的改变 ---
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.offsetWidth : this.element.offsetHeight;
             if (client === this.client) {
                 return;
@@ -207,7 +207,7 @@ export default class extends clickgo.control.AbstractControl {
         }, true);
 
         // --- 内部内容的改变 ---
-        clickgo.dom.watchSize(this.refs.inner, () => {
+        clickgo.dom.watchSize(this, this.refs.inner, () => {
             const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.offsetWidth : this.refs.inner.offsetHeight;
             if (length === this.length) {
                 return;

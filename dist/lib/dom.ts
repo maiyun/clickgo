@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2007-2025 MAIYUN.NET
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as types from '../../types';
 import * as clickgo from '../clickgo';
-import * as form from './form';
-import * as core from './core';
-import * as tool from './tool';
+import * as lForm from './form';
+import * as lCore from './core';
+import * as lTool from './tool';
+import * as lTask from './task';
+
+/** --- 系统级 ID --- */
+let sysId = '';
+
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id: string): void {
+    if (sysId) {
+        return;
+    }
+    sysId = id;
+}
 
 /** --- style list 的 div --- */
 const topClass: string[] = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-alert', '#cg-simpletask', '#cg-launcher', '#cg-confirm'];
@@ -42,7 +56,7 @@ ${topClass.slice(0, 4).join(', ')} {left: 0; top: 0; width: 0; height: 0; positi
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
-${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size); line-height: 1; -webkit-font-smoothing: antialiased;}
+${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size); line-height: 1; -webkit-font-smoothing: antialiased; text-shadow: 0 0 1px color-mix(in srgb, currentColor 40%, transparent); fill: currentColor; stroke: currentColor;}
 </style>`);
 
 /**
@@ -108,30 +122,30 @@ export function hasTouchButMouse(e: MouseEvent | TouchEvent | PointerEvent): boo
 }
 
 /**
- * --- 创建任务时连同一起创建的 style 标签，App 模式下无效 ---
+ * --- 创建任务时连同一起创建的 style 标签 ---
  * @param taskId 任务 id
  */
-export function createToStyleList(taskId: number): void {
+export function createToStyleList(taskId: string): void {
     styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><div class="cg-style-control"></div><div class="cg-style-theme"></div><style class="cg-style-global"></style><div class="cg-style-form"></div></div>`);
 }
 
 /**
- * --- 任务结束时需要移除 task 的所有 style，App 模式下无效 ---
+ * --- 任务结束时需要移除 task 的所有 style ---
  * @param taskId 任务 id
  */
-export function removeFromStyleList(taskId: number): void {
-    document.getElementById('cg-style-task' + taskId.toString())?.remove();
+export function removeFromStyleList(taskId: string): void {
+    document.getElementById('cg-style-task' + taskId)?.remove();
 }
 
 /**
- * --- 将 style 内容写入 dom，App 模式下无效 ---
+ * --- 将 style 内容写入 dom ---
  * @param taskId 当前任务 ID
  * @param style 样式内容
  * @param type 插入的类型
  * @param formId 当前窗体 ID（global 下可空，theme 下为主题唯一标识符，control 下为控件名）
  * @param panelId 若是 panel 中创建的则需要指定 panelId，仅 type 为 form 有效
  */
-export function pushStyle(taskId: number, style: string, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0, panelId?: number): void {
+export function pushStyle(taskId: string, style: string, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: string = '', panelId?: string): void {
     const el = document.querySelector(`#cg-style-task${taskId} > .cg-style-${type}`);
     if (!el) {
         return;
@@ -149,14 +163,14 @@ export function pushStyle(taskId: number, style: string, type: 'global' | 'theme
 }
 
 /**
- * --- 移除 style 样式 dom，App 模式下无效 ---
+ * --- 移除 style 样式 dom ---
  * @param taskId 要移除的任务 ID
  * @param type 移除的类型
  * @param formId 要移除的窗体 ID
  * @param panelId type 为 form 模式下若不指定则当前 form 包含 panel 的样式都会被移除
  */
-export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: number | string = 0, panelId?: number): void {
-    const styleTask = document.getElementById('cg-style-task' + taskId.toString());
+export function removeStyle(taskId: string, type: 'global' | 'theme' | 'control' | 'form' = 'global', formId: string = '', panelId?: string): void {
+    const styleTask = document.getElementById('cg-style-task' + taskId);
     if (!styleTask) {
         return;
     }
@@ -168,7 +182,7 @@ export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control'
         el.innerHTML = '';
     }
     else if (type === 'theme' || type === 'control') {
-        if (formId === 0) {
+        if (!formId) {
             const el = styleTask.querySelector(`.cg-style-${type}`);
             if (!el) {
                 return;
@@ -192,11 +206,14 @@ export function removeStyle(taskId: number, type: 'global' | 'theme' | 'control'
 }
 
 /**
- * --- 获取当前任务中子类有几个子元素 ---
+ * --- 获取任务中子类有几个子元素 ---
  * @param taskId 任务 ID
  * @param type 类型
  */
-export function getStyleCount(taskId: number, type: 'theme' | 'control' | 'form'): number {
+export function getStyleCount(taskId: clickgo.core.TCurrent, type: 'theme' | 'control' | 'form'): number {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
     return document.querySelectorAll(`#cg-style-task${taskId} > .cg-style-${type} > style`).length;
 }
 
@@ -216,7 +233,7 @@ const watchPositionObjects: Record<
         Record<
             /** --- index 值 --- */
             string,
-            types.IWatchPositionItem
+            IWatchPositionItem
         >
     >
 > = {};
@@ -248,14 +265,10 @@ export function watchPosition(
                 'size': false
             });
             if (r instanceof Promise) {
-                r.catch(function(e) {
-                    console.log('dom.watchPosition', e);
-                });
+                r.catch(() => {});
             }
         }
-        catch (e) {
-            console.log('dom.watchPosition', e);
-        }
+        catch {}
     }
     const formWrap = findParentByData(el, 'form-id');
     if (!formWrap) {
@@ -320,17 +333,17 @@ export function isWatchPosition(el: HTMLElement): boolean {
 }
 
 /**
- * --- 清除某个窗体的所有 watch position 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
+ * --- 清除某个窗体的所有 watch position 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余 ---
  * @param formId 窗体 id
  * @param panelId 若指定则只清除当前窗体的某个 panel 的 watch
  */
-export function clearWatchPosition(formId: number | string, panelId?: number): void {
+export function clearWatchPosition(formId: string, panelId?: string): void {
     if (!watchPositionObjects[formId]) {
         return;
     }
     for (const panel in watchPositionObjects[formId]) {
         if (panelId) {
-            if (panel !== panelId.toString()) {
+            if (panel !== panelId) {
                 continue;
             }
         }
@@ -351,15 +364,18 @@ export function clearWatchPosition(formId: number | string, panelId?: number): v
 // -----------------
 
 /** --- 被监视中的元素 --- */
-const watchSizeList: Record<string, types.IWatchSizeItem> = {};
+const watchSizeList: Record<string, IWatchSizeItem> = {};
 
 /**
  * --- 获取当前 watch size 中的元素总数 ---
  * @param taskId 留空则获取全部总数 ---
  */
-export function getWatchSizeCount(taskId?: number): number {
+export function getWatchSizeCount(taskId?: lCore.TCurrent): number {
     if (!taskId) {
         return Object.keys(watchSizeList).length;
+    }
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     let count = 0;
     for (const id in watchSizeList) {
@@ -389,30 +405,32 @@ const resizeObserver = new ResizeObserver(function(entries): void {
         try {
             const r = item.handler();
             if (r instanceof Promise) {
-                r.catch(function(e) {
-                    console.log('ResizeObserver', e);
-                });
+                r.catch(() => {});
             }
         }
-        catch (e) {
-            console.log('ResizeObserver', e);
-        }
+        catch {}
     }
 });
 
 /**
  * --- 添加监视 Element 对象大小，元素移除后自动停止监视（浏览器原生效果），已经监视中的不会再次监视 ---
+ * @param current 当前执行的任务
  * @param el 要监视的大小
  * @param cb 回调函数
  * @param immediate 立刻先执行一次回调
- * @param taskId 归属到一个任务里可留空，App 模式下无效
  */
 export function watchSize(
+    current: lCore.TCurrent,
     el: HTMLElement,
     cb: () => void | Promise<void>,
     immediate: boolean = false,
-    taskId?: number
 ): boolean {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!lTask.getOrigin(current)) {
+        return false;
+    }
     if (isWatchSize(el)) {
         return false;
     }
@@ -420,20 +438,16 @@ export function watchSize(
         try {
             const r = cb();
             if (r instanceof Promise) {
-                r.catch(function(e) {
-                    console.log('dom.watchSize', e);
-                });
+                r.catch(() => {});
             }
         }
-        catch (e) {
-            console.log('dom.watchSize', e);
-        }
+        catch {}
     }
     resizeObserver.observe(el);
     watchSizeList[watchSizeIndex] = {
         'el': el,
         'handler': cb,
-        'taskId': taskId
+        'taskId': current,
     };
     el.dataset.cgRoindex = watchSizeIndex.toString();
     ++watchSizeIndex;
@@ -443,15 +457,10 @@ export function watchSize(
 /**
  * --- 移除监视 Element 对象大小 ---
  * @param el 要移除监视
- * @param taskId 校验任务 id，App 模式下无效
  */
-export function unwatchSize(el: HTMLElement, taskId?: number): void {
+export function unwatchSize(el: HTMLElement): void {
     const index = el.dataset.cgRoindex;
     if (index === undefined) {
-        return;
-    }
-    const item = watchSizeList[index];
-    if (taskId && item.taskId !== taskId) {
         return;
     }
     resizeObserver.unobserve(el);
@@ -468,10 +477,13 @@ export function isWatchSize(el: HTMLElement): boolean {
 }
 
 /**
- * --- 清除某个任务的所有 watch size 监视，App 模式下无效 ---
+ * --- 清除某个任务的所有 watch size 监视 ---
  * @param taskId 任务 id
  */
-export function clearWatchSize(taskId: number): void {
+export function clearWatchSize(taskId: lCore.TCurrent): void {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
     for (const index in watchSizeList) {
         const item = watchSizeList[index];
         if (taskId !== item.taskId) {
@@ -488,13 +500,13 @@ export function clearWatchSize(taskId: number): void {
 // -------------
 
 /** --- 监视 dom 变动中的元素 */
-const watchList: Record<string, types.IWatchItem> = {};
+const watchList: Record<string, IWatchItem> = {};
 
 /**
  * --- 获取当前 watch 中的元素总数 ---
  * @param taskId 留空则获取全部总数 ---
  */
-export function getWatchCount(taskId?: number): number {
+export function getWatchCount(taskId?: string): number {
     if (!taskId) {
         return Object.keys(watchList).length;
     }
@@ -513,12 +525,18 @@ let watchIndex: number = 0;
 
 /**
  * --- 添加 DOM 内容变化监视 ---
+ * @param current 当前任务 id
  * @param el dom 对象
  * @param cb 回调
  * @param mode 监听模式
- * @param taskId 归属到一个任务里可留空，App 模式下无效
  */
-export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'text' | 'default' = 'default', immediate: boolean = false, taskId?: number): boolean {
+export function watch(current: lCore.TCurrent, el: HTMLElement, cb: (mutations: MutationRecord[]) => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'text' | 'default' = 'default', immediate: boolean = false): boolean {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!lTask.getOrigin(current)) {
+        return false;
+    }
     if (isWatch(el)) {
         return false;
     }
@@ -526,14 +544,10 @@ export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void
         try {
             const r = cb([]);
             if (r instanceof Promise) {
-                r.catch(function(e) {
-                    console.log('dom.watch', e);
-                });
+                r.catch(() => {});
             }
         }
-        catch (e) {
-            console.log('dom.watch', e);
-        }
+        catch {}
     }
     const index = watchIndex;
     let moi: MutationObserverInit;
@@ -589,20 +603,16 @@ export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void
         try {
             const r = cb(mutations);
             if (r instanceof Promise) {
-                r.catch(function(e) {
-                    console.log('dom.watch', e);
-                });
+                r.catch(() => {});
             }
         }
-        catch (e) {
-            console.log('dom.watch', e);
-        }
+        catch {}
     });
     mo.observe(el, moi);
     watchList[index] = {
         'el': el,
         'mo': mo,
-        'taskId': taskId
+        'taskId': current,
     };
     el.dataset.cgMoindex = index.toString();
     ++watchIndex;
@@ -620,16 +630,19 @@ export function watch(el: HTMLElement, cb: (mutations: MutationRecord[]) => void
 
 /**
  * --- 移除监视 Element 对象变动 ---
+ * @param taskId 任务 id
  * @param el 要移除监视
- * @param taskId 校验任务 id 可留空，App 模式下无效
  */
-export function unwatch(el: HTMLElement, taskId?: number): void {
+export function unwatch(taskId: lCore.TCurrent, el: HTMLElement): void {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
     const index = el.dataset.cgMoindex;
     if (index === undefined) {
         return;
     }
     const item = watchList[index];
-    if (taskId && item.taskId !== taskId) {
+    if (item.taskId !== taskId) {
         return;
     }
     el.removeAttribute('data-cg-moindex');
@@ -646,10 +659,13 @@ export function isWatch(el: HTMLElement): boolean {
 }
 
 /**
- * --- 清除某个任务下面的所有 watch 监视，App 模式下无效 ---
- * @param taskId 任务 id，App 模式下无效
+ * --- 清除某个任务下面的所有 watch 监视 ---
+ * @param taskId 任务 id
  */
-export function clearWatch(taskId: number): void {
+export function clearWatch(taskId: lCore.TCurrent): void {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
     for (const index in watchList) {
         const item = watchList[index];
         if (taskId !== item.taskId) {
@@ -800,17 +816,17 @@ export function isWatchStyle(el: HTMLElement): boolean {
 }
 
 /**
- * --- 清除某个窗体的所有 watch style 监视，App 模式下无效 ---
+ * --- 清除某个窗体的所有 watch style 监视 ---
  * @param formId 窗体 id
  * @param panelId 若指定则只清除当前窗体的某个 panel 的 watch
  */
-export function clearWatchStyle(formId: number | string, panelId?: number): void {
+export function clearWatchStyle(formId: string, panelId?: string): void {
     if (!watchStyleList[formId]) {
         return;
     }
     for (const panel in watchStyleList[formId]) {
         if (panelId) {
-            if (panel !== panelId.toString()) {
+            if (panel !== panelId) {
                 continue;
             }
         }
@@ -939,17 +955,17 @@ export function isWatchProperty(el: HTMLElement): boolean {
 }
 
 /**
- * --- 清除某个窗体的所有 watch property 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余，App 模式下无效 ---
+ * --- 清除某个窗体的所有 watch property 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余 ---
  * @param formId 窗体 id
  * @param panelId 若指定则只清除当前窗体的某个 panel 的 watch
  */
-export function clearWatchProperty(formId: number | string, panelId?: number): void {
+export function clearWatchProperty(formId: string, panelId?: string): void {
     if (!watchPropertyObjects[formId]) {
         return;
     }
     for (const panel in watchPropertyObjects[formId]) {
         if (panelId) {
-            if (panel !== panelId.toString()) {
+            if (panel !== panelId) {
                 continue;
             }
         }
@@ -969,18 +985,18 @@ export function clearWatchProperty(formId: number | string, panelId?: number): v
 // --- watch timer ---
 // -------------------
 
-export function getWatchInfo(): types.IGetWatchInfoResult {
-    const rtn: types.IGetWatchInfoResult = {
-        'formId': 0,
+export function getWatchInfo(): IGetWatchInfoResult {
+    const rtn: IGetWatchInfoResult = {
+        'formId': '',
         'default': {},
         'panels': {}
     };
-    const formId: number | null = form.getFocus();
+    const formId = lForm.getFocus();
     if (!formId) {
         return rtn;
     }
     rtn.formId = formId;
-    const panelIds = form.getActivePanel(formId);
+    const panelIds = lForm.getActivePanel(formId);
     const handler = (item: {
         'el': HTMLElement;
         'names'?: Record<string, any>;
@@ -1072,13 +1088,12 @@ export function getWatchInfo(): types.IGetWatchInfoResult {
 /** --- watch style 的 timer --- */
 let watchTimer = 0;
 const watchTimerHandler = function(): void {
-    // --- 为什么要判断 form.getFocus 存在否，因为 form 类可能还没加载出来，这个函数就已经开始执行了 ---
-    if (form.getFocus) {
-        /** ---  --- */
-        const formId: number | null = form.getFocus();
+    if (lForm.getFocus) {
+        /** --- 获得当前获得焦点的窗体 --- */
+        const formId = lForm.getFocus();
         if (formId) {
             /** --- 活跃的 panel --- */
-            const panelIds = form.getActivePanel(formId);
+            const panelIds = lForm.getActivePanel(formId);
             if (watchStyleList[formId]) {
                 // --- style ---
                 const handler = (item: IWatchStyleItem, panelId: string, index: string): void => {
@@ -1162,7 +1177,7 @@ const watchTimerHandler = function(): void {
             // --- position ---
             if (watchPositionObjects[formId]) {
                 // --- position ---
-                const handler = (item: types.IWatchPositionItem, panelId: string, index: string): void => {
+                const handler = (item: IWatchPositionItem, panelId: string, index: string): void => {
                     if (!document.body.contains(item.el)) {
                         delete watchPositionObjects[formId][panelId][index];
                         if (!Object.keys(watchPositionObjects[formId][panelId]).length) {
@@ -1210,7 +1225,6 @@ const watchTimerHandler = function(): void {
     }
     watchTimer = requestAnimationFrame(watchTimerHandler);
 };
-watchTimerHandler();
 
 /**
  * --- 鼠标/手指没移动时，click 才生效 ---
@@ -1283,7 +1297,7 @@ export function bindDblClick(
  * @param oe MouseEvent | TouchEvent
  * @param opt 回调选项
  */
-export function bindDown<T extends MouseEvent | TouchEvent>(oe: T, opt: types.IBindDownOptions<T>): void {
+export function bindDown<T extends MouseEvent | TouchEvent>(oe: T, opt: IBindDownOptions<T>): void {
     if (hasTouchButMouse(oe)) {
         return;
     }
@@ -1638,47 +1652,47 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
                 // --- 处理差值 ---
                 if (offset >= 90) {
                     offset = 90;
-                    form.elements.gesture.style.opacity = '1';
-                    form.elements.gesture.classList.add('done');
+                    lForm.elements.gesture.style.opacity = '1';
+                    lForm.elements.gesture.classList.add('done');
                 }
                 else {
-                    form.elements.gesture.classList.remove('done');
+                    lForm.elements.gesture.classList.remove('done');
                     if (offset < 0) {
                         offset = 0;
-                        form.elements.gesture.style.opacity = '0';
+                        lForm.elements.gesture.style.opacity = '0';
                     }
                     else {
-                        form.elements.gesture.style.opacity = '1';
+                        lForm.elements.gesture.style.opacity = '1';
                     }
                 }
-                form.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
+                lForm.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
 
                 // --- 处理标签位置 ---
                 switch (dir) {
                     case 'top':
                     case 'bottom': {
-                        form.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        lForm.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
                         if (dir === 'top') {
-                            form.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
+                            lForm.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
                         }
                         else {
-                            form.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
+                            lForm.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
                         }
                         break;
                     }
                     default: {
-                        form.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        lForm.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
                         if (dir === 'left') {
-                            form.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
+                            lForm.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
                         }
                         else {
-                            form.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
+                            lForm.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
                         }
                     }
                 }
             },
             end: (): void => {
-                form.elements.gesture.style.opacity = '0';
+                lForm.elements.gesture.style.opacity = '0';
                 if (offset < 90) {
                     return;
                 }
@@ -1758,33 +1772,33 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
                     return;
                 }
                 // --- 重置位置 ---
-                form.elements.gesture.style.transform = 'scale(0)';
+                lForm.elements.gesture.style.transform = 'scale(0)';
                 switch (gestureWheel.dir) {
                     case 'top':
                     case 'bottom': {
-                        form.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
+                        lForm.elements.gesture.style.left = (rect.left + ((rect.width - 20) / 2)).toString() + 'px';
                         if (gestureWheel.dir === 'top') {
-                            form.elements.gesture.style.top = (rect.top + 10).toString() + 'px';
+                            lForm.elements.gesture.style.top = (rect.top + 10).toString() + 'px';
                         }
                         else {
-                            form.elements.gesture.style.top = (rect.bottom - 10).toString() + 'px';
+                            lForm.elements.gesture.style.top = (rect.bottom - 10).toString() + 'px';
                         }
                         break;
                     }
                     default: {
-                        form.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
+                        lForm.elements.gesture.style.top = (rect.top + ((rect.height - 20) / 2)).toString() + 'px';
                         if (gestureWheel.dir === 'left') {
-                            form.elements.gesture.style.left = (rect.left + 10).toString() + 'px';
+                            lForm.elements.gesture.style.left = (rect.left + 10).toString() + 'px';
                         }
                         else {
-                            form.elements.gesture.style.left = (rect.right - 10).toString() + 'px';
+                            lForm.elements.gesture.style.left = (rect.right - 10).toString() + 'px';
                         }
                     }
                 }
                 gestureWheel.firstTimer = true;
-                await tool.sleep(30);
+                await lTool.sleep(30);
                 gestureWheel.firstTimer = false;
-                form.elements.gesture.classList.add('ani');
+                lForm.elements.gesture.classList.add('ani');
             }
             // --- 滚动 ---
             switch (gestureWheel.dir) {
@@ -1800,55 +1814,53 @@ export function bindGesture(oe: MouseEvent | TouchEvent | WheelEvent, before: (e
             if (gestureWheel.offset < 0) {
                 // --- 隐藏了，直接 return ---
                 gestureWheel.offset = 0;
-                form.elements.gesture.style.opacity = '0';
+                lForm.elements.gesture.style.opacity = '0';
                 return;
             }
             // --- 显示 gesture 对象 ---
-            form.elements.gesture.style.opacity = '1';
+            lForm.elements.gesture.style.opacity = '1';
             let offset = gestureWheel.offset / 1.38;
             if (offset > 90) {
                 offset = 90;
-                form.elements.gesture.classList.add('done');
+                lForm.elements.gesture.classList.add('done');
             }
             else {
-                form.elements.gesture.classList.remove('done');
+                lForm.elements.gesture.classList.remove('done');
             }
             // --- 处理标签位置（20 像素是 gesture 的宽高） ---
-            form.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
+            lForm.elements.gesture.style.transform = 'scale(' + (offset / 90).toString() + ')';
             switch (gestureWheel.dir) {
                 case 'top': {
-                    form.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
+                    lForm.elements.gesture.style.top = (rect.top + (offset / 1.5)).toString() + 'px';
                     break;
                 }
                 case 'bottom': {
-                    form.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
+                    lForm.elements.gesture.style.top = (rect.bottom - 20 - (offset / 1.5)).toString() + 'px';
                     break;
                 }
                 case 'left': {
-                    form.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
+                    lForm.elements.gesture.style.left = (rect.left + (offset / 1.5)).toString() + 'px';
                     break;
                 }
                 default: {
-                    form.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
+                    lForm.elements.gesture.style.left = (rect.right - 20 - (offset / 1.5)).toString() + 'px';
                 }
             }
             // --- 看是否要响应 ---
             clearTimeout(gestureWheel.timer);
             if (offset < 90) {
                 gestureWheel.timer = window.setTimeout(() => {
-                    form.elements.gesture.style.opacity = '0';
-                    form.elements.gesture.classList.remove('ani');
+                    lForm.elements.gesture.style.opacity = '0';
+                    lForm.elements.gesture.classList.remove('ani');
                 }, 250);
                 return;
             }
             gestureWheel.done = true;
             handler?.(gestureWheel.dir as any) as any;
-            await tool.sleep(500);
-            form.elements.gesture.style.opacity = '0';
-            form.elements.gesture.classList.remove('ani');
-        })().catch((e) => {
-            console.log('error', 'dom.bindGesture', e);
-        });
+            await lTool.sleep(500);
+            lForm.elements.gesture.style.opacity = '0';
+            lForm.elements.gesture.classList.remove('ani');
+        })().catch(() => {});
     }
 }
 
@@ -1939,7 +1951,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: {
     'data'?: any;
 
     'start'?: (x: number, y: number) => any;
-    'move'?: (e: MouseEvent | TouchEvent, opt: types.IBindMoveMoveOptions) => void;
+    'move'?: (e: MouseEvent | TouchEvent, opt: IBindMoveMoveOptions) => void;
     'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
 }): void {
     bindDragData = opt.data;
@@ -1950,8 +1962,10 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: {
         'object': opt.el,
         'start': function(x, y) {
             const rect = opt.el.getBoundingClientRect();
-            form.showDrag();
-            form.moveDrag({
+            lForm.showDrag({
+                'element': opt.el,
+            });
+            lForm.moveDrag({
                 'top': rect.top,
                 'left': rect.left,
                 'width': rect.width,
@@ -1965,7 +1979,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: {
         'move': function(e, o) {
             const ntop = otop + o.oy;
             const nleft = oleft + o.ox;
-            form.moveDrag({
+            lForm.moveDrag({
                 'top': ntop,
                 'left': nleft,
                 'icon': false
@@ -2003,7 +2017,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: {
                 return;
             }
             // --- not found ---
-            form.moveDrag({
+            lForm.moveDrag({
                 'icon': true
             });
             if (nel === null) {
@@ -2019,7 +2033,7 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: {
             opt.move?.(e, o);
         },
         'end': function(moveTimes, e) {
-            form.hideDrag();
+            lForm.hideDrag();
             if (nel === null) {
                 return;
             }
@@ -2036,56 +2050,21 @@ export function bindDrag(e: MouseEvent | TouchEvent, opt: {
 }
 
 /** --- 目前是否已绑定了 bindMove --- */
-export const is = clickgo.vue.reactive({
-    'move': false,
-    'shift': false,
-    'ctrl': false,
-    'meta': false,
-    'full': false,
-    'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
-});
-
-window.addEventListener('keydown', function(e: KeyboardEvent) {
-    switch (e.key) {
-        case 'Shift': {
-            is.shift = true;
-            break;
-        }
-        case 'Control': {
-            is.ctrl = true;
-            break;
-        }
-        case 'Meta': {
-            is.meta = true;
-            break;
-        }
-    }
-    core.trigger('keydown', e);
-});
-window.addEventListener('keyup', function(e: KeyboardEvent) {
-    switch (e.key) {
-        case 'Shift': {
-            is.shift = false;
-            break;
-        }
-        case 'Control': {
-            is.ctrl = false;
-            break;
-        }
-        case 'Meta': {
-            is.meta = false;
-            break;
-        }
-    }
-    core.trigger('keyup', e);
-});
+export let is: {
+    'move': boolean;
+    'shift': boolean;
+    'ctrl': boolean;
+    'meta': boolean;
+    'full': boolean;
+    'dark': boolean;
+};
 
 /**
  * --- 绑定拖动事件 ---
  * @param e mousedown 或 touchstart 的 event
  * @param opt 回调选项
  */
-export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions): types.IBindMoveResult {
+export function bindMove(e: MouseEvent | TouchEvent, opt: IBindMoveOptions): IBindMoveResult {
     if (hasTouchButMouse(e)) {
         return {
             'left': 0,
@@ -2123,7 +2102,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
             + parseFloat(areaStyle.paddingRight));
     }
     else {
-        const area = core.getAvailArea();
+        const area = lCore.getAvailArea();
         left = opt.left ?? area.left;
         top = opt.top ?? area.top;
         right = opt.right ?? area.width;
@@ -2309,7 +2288,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
             }
 
             // --- 检测是否执行 borderIn 事件（是否正在边界上） ---
-            let border: types.TDomBorder = '';
+            let border: TDomBorder = '';
             if (inBorderTop || inBorderRight || inBorderBottom || inBorderLeft) {
                 if (inBorderTop) {
                     if (x - left <= 20) {
@@ -2404,14 +2383,14 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
     });
 
     if (opt.showRect) {
-        form.showRectangle(tx, ty, {
+        lForm.showRectangle(tx, ty, {
             'left': left,
             'top': top,
             'width': right - left,
             'height': bottom - top
         });
         setTimeout(() => {
-            form.hideRectangle();
+            lForm.hideRectangle();
         }, 3000);
     }
 
@@ -2428,7 +2407,7 @@ export function bindMove(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions
  * @param e mousedown 或 touchstart 的 event
  * @param opt 选项，width, height 当前对象宽高
  */
-export function bindResize(e: MouseEvent | TouchEvent, opt: types.IBindResizeOptions): void {
+export function bindResize(e: MouseEvent | TouchEvent, opt: IBindResizeOptions): void {
     if (hasTouchButMouse(e)) {
         return;
     }
@@ -2703,32 +2682,256 @@ export function createElement<T extends keyof HTMLElementTagNameMap>(tagName: T)
     return document.createElement(tagName);
 }
 
-// --- 处理 timer 类，窗体消失时不进行监听 ---
-document.addEventListener('visibilitychange', function() {
-    if (document.hidden) {
-        // --- 隐藏 ---
-        cancelAnimationFrame(watchTimer);
-    }
-    else {
-        // --- 显示 ---
-        watchTimer = requestAnimationFrame(watchTimerHandler);
-    }
-});
+// --- 需要初始化 ---
 
-// --- 监听 fullscreen 情况的变动 ---
-document.addEventListener('fullscreenchange', function() {
-    if ((document as any).webkitFullscreenElement) {
-        is.full = true;
+let inited = false;
+export function init(): void {
+    if (inited) {
         return;
     }
-    if (document.fullscreenElement) {
-        is.full = true;
-        return;
-    }
-    is.full = false;
-});
+    inited = true;
+    is = clickgo.modules.vue.reactive({
+        'move': false,
+        'shift': false,
+        'ctrl': false,
+        'meta': false,
+        'full': false,
+        'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
+    });
+    // --- 处理 timer 类，窗体消失时不进行监听 ---
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            // --- 隐藏 ---
+            cancelAnimationFrame(watchTimer);
+        }
+        else {
+            // --- 显示 ---
+            watchTimer = requestAnimationFrame(watchTimerHandler);
+        }
+    });
+    // --- 监听 fullscreen 情况的变动 ---
+    document.addEventListener('fullscreenchange', function() {
+        if ((document as any).webkitFullscreenElement) {
+            is.full = true;
+            return;
+        }
+        if (document.fullscreenElement) {
+            is.full = true;
+            return;
+        }
+        is.full = false;
+    });
+    // --- 键盘按下 ---
+    window.addEventListener('keydown', function(e: KeyboardEvent) {
+        switch (e.key) {
+            case 'Shift': {
+                is.shift = true;
+                break;
+            }
+            case 'Control': {
+                is.ctrl = true;
+                break;
+            }
+            case 'Meta': {
+                is.meta = true;
+                break;
+            }
+        }
+        lCore.trigger('keydown', e).catch(() => {});
+    });
+    // --- 键盘弹起 ---
+    window.addEventListener('keyup', function(e: KeyboardEvent) {
+        switch (e.key) {
+            case 'Shift': {
+                is.shift = false;
+                break;
+            }
+            case 'Control': {
+                is.ctrl = false;
+                break;
+            }
+            case 'Meta': {
+                is.meta = false;
+                break;
+            }
+        }
+        lCore.trigger('keyup', e).catch(() => {});
+    });
+    // --- 监测暗/亮模式 ---
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        is.dark = e.matches;
+    });
+    // --- 启动 timer ---
+    watchTimerHandler();
+}
 
-// --- 监测暗/亮模式 ---
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    is.dark = e.matches;
-});
+// --- 类型 ---
+
+/** --- 方向类型，从左上开始 --- */
+export type TDomBorder = 'lt' | 't' | 'tr' | 'r' | 'rb' | 'b' | 'bl' | 'l' | '';
+
+export type TDomBorderCustom = TDomBorder | { 'left': number; 'top'?: number; 'width': number; 'height'?: number; };
+
+/** --- Element 的大小 --- */
+export interface IDomSize {
+    'top': number;
+    'right': number;
+    'bottom': number;
+    'left': number;
+    'width': number;
+    'height': number;
+    'padding': {
+        'top': number;
+        'right': number;
+        'bottom': number;
+        'left': number;
+    };
+    'border': {
+        'top': number;
+        'right': number;
+        'bottom': number;
+        'left': number;
+    };
+    'clientHeight': number;
+    'clientWidth': number;
+    'innerWidth': number;
+    'innerHeight': number;
+    'scrollWidth': number;
+    'scrollHeight': number;
+}
+
+/** --- 绑定鼠标事件选项 --- */
+export interface IBindDownOptions<T extends MouseEvent | TouchEvent> {
+    'down'?: (e: T) => void;
+    'start'?: (e: T) => any;
+    'move'?: (
+        e: T,
+        dir: 'top' | 'right' | 'bottom' | 'left'
+    ) => any;
+    'up'?: (e: T) => void | Promise<void>;
+    'end'?: (e: T) => void | Promise<void>;
+}
+
+/** --- 绑定拖动选项 move 回调的回调参数 --- */
+export interface IBindMoveMoveOptions {
+    'ox': number;
+    'oy': number;
+    'x': number;
+    'y': number;
+    'border': TDomBorder;
+    'inBorder': {
+        'top': boolean;
+        'right': boolean;
+        'bottom': boolean;
+        'left': boolean;
+    };
+    'dir': 'top' | 'right' | 'bottom' | 'left';
+}
+
+/** --- 绑定拖动选项 --- */
+export interface IBindMoveOptions {
+    'areaObject'?: HTMLElement | lCore.IVue;
+    'left'?: number;
+    'top'?: number;
+    'right'?: number;
+    'bottom'?: number;
+    'offsetLeft'?: number;
+    'offsetTop'?: number;
+    'offsetRight'?: number;
+    'offsetBottom'?: number;
+    'objectLeft'?: number;
+    'objectTop'?: number;
+    'objectWidth'?: number;
+    'objectHeight'?: number;
+    'object'?: HTMLElement | lCore.IVue;
+    'showRect'?: boolean;
+    'cursor'?: string;
+    'start'?: (x: number, y: number) => any;
+    'move'?: (e: MouseEvent | TouchEvent, opt: IBindMoveMoveOptions) => void;
+    'up'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
+    'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
+    'borderIn'?: (x: number, y: number, border: TDomBorder, e: MouseEvent | TouchEvent) => void;
+    'borderOut'?: () => void;
+}
+
+/** --- 绑定拖动返回值 --- */
+export interface IBindMoveResult {
+    'left': number;
+    'top': number;
+    'right': number;
+    'bottom': number;
+}
+
+/** --- 绑定改变大小选项 --- */
+export interface IBindResizeOptions {
+    'objectLeft'?: number;
+    'objectTop'?: number;
+    'objectWidth'?: number;
+    'objectHeight'?: number;
+    'object'?: HTMLElement | lCore.IVue;
+    'minWidth'?: number;
+    'minHeight'?: number;
+    'maxWidth'?: number;
+    'maxHeight'?: number;
+    'border': TDomBorder;
+    'start'?: (x: number, y: number) => any;
+    'move'?: (left: number, top: number, width: number, height: number, x: number, y: number, border: TDomBorder) => void;
+    'end'?: () => void;
+}
+
+/** --- 监视位置中的元素 --- */
+export interface IWatchPositionItem {
+    'el': HTMLElement;
+    'rect': DOMRect;
+    'handler': (state: {
+        'position': boolean;
+        'size': boolean;
+    }) => void | Promise<void>;
+}
+
+/** --- 监视大小中的元素 --- */
+export interface IWatchSizeItem {
+    'el': HTMLElement;
+    'handler': () => void | Promise<void>;
+    'taskId': string | null;
+}
+
+/** --- 监视变化中的元素 --- */
+export interface IWatchItem {
+    'el': HTMLElement;
+    'mo': MutationObserver;
+    'taskId'?: string;
+}
+
+/** --- 获取当前正在监视中的 property、style 和 position 的元素信息 --- */
+export interface IGetWatchInfoResult {
+    'formId': string;
+    'default': Record<string, {
+        'style': {
+            'list': string[];
+            'count': number;
+        };
+        'property': {
+            'list': string[];
+            'count': number;
+        };
+        'position': {
+            'count': number;
+        };
+    }>;
+    'panels': Record<string,
+        Record<string, {
+            'style': {
+                'list': string[];
+                'count': number;
+            };
+            'property': {
+                'list': string[];
+                'count': number;
+            };
+            'position': {
+                'count': number;
+            };
+        }>
+    >;
+}

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -17,9 +16,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public size = ['m'];
 
-    public async onChange(e: types.ISwitchChangeEvent): Promise<void> {
+    public async onChange(e: clickgo.control.ISwitchChangeEvent): Promise<void> {
         e.preventDefault();
-        await clickgo.form.dialog('v: ' + (e.detail.value ? 'true' : 'false'));
+        await clickgo.form.dialog(this, 'v: ' + (e.detail.value ? 'true' : 'false'));
     }
 
 }

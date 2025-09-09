@@ -112,7 +112,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- 切换层的模式 ---
         await this.nextTick(); // 加这一段代表窗体项目也执行成功后再初始化本控件
         // --- 之前初始化将导致窗体宽度还没重置结束，导致本 nav 会先识别成为 layer 模式，因为太窄 ---
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             if (this.element.offsetWidth < 600) {
                 if (!this.layer) {
                     this.layer = true;
@@ -159,7 +159,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 本 app 包 ---
             const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.logo);
-            const blob = await clickgo.fs.getContent(path);
+            const blob = await clickgo.fs.getContent(this, path);
             if ((count !== this.logoCount) || !blob || typeof blob === 'string') {
                 return;
             }

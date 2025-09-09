@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -50,7 +49,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 有 type ---
         if (this.props.type) {
-            const event: types.IMenulistItemCheckEvent = {
+            const event: clickgo.control.IMenulistItemCheckEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 interface IItem {
     'id'?: string;
@@ -140,9 +139,7 @@ export default class extends clickgo.control.AbstractControl {
                 rowNow = 1;
                 data.push([]);
             }
-            if (item.type === undefined) {
-                item.type = 1;
-            }
+            item.type ??= 1;
             data[data.length - 1].push(item);
         }
         const remain = this.rowCount - rowNow;
@@ -477,7 +474,7 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.bindClick(e, () => {
             this.select(v, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 上报点击事件 ---
-            const event: types.IIconviewItemclickedEvent = {
+            const event: clickgo.control.IIconviewItemclickedEvent = {
                 'detail': {
                     'event': e,
                     'value': value
@@ -510,7 +507,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 双击 ---
         clickgo.dom.bindDblClick(e, () => {
-            const event: types.IIconviewOpenEvent = {
+            const event: clickgo.control.IIconviewOpenEvent = {
                 'detail': {
                     'value': [value]
                 }
@@ -574,7 +571,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.valueData.length) {
                 return;
             }
-            const event: types.IIconviewOpenEvent = {
+            const event: clickgo.control.IIconviewOpenEvent = {
                 'detail': {
                     'value': clickgo.tool.clone(this.valueData)
                 }
@@ -604,7 +601,7 @@ export default class extends clickgo.control.AbstractControl {
             });
         }
         const tov = dindex * this.rowCount + index;
-        const event: types.IIconviewDropEvent = {
+        const event: clickgo.control.IIconviewDropEvent = {
             'detail': {
                 'self': e.detail.value.rand === this.rand ? true : false,
                 'from': list,
@@ -793,7 +790,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.select(area.start * this.rowCount + cellStart, area.shift, area.ctrl);
             }
         }
-        const event: types.IIconviewSelectEvent = {
+        const event: clickgo.control.IIconviewSelectEvent = {
             'detail': {
                 'area': {
                     'x': area.x,
@@ -854,7 +851,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 本 app 包 ---
             const apath = clickgo.tool.urlResolve('/package' + this.path + '/', path);
-            const blob = await clickgo.fs.getContent(apath);
+            const blob = await clickgo.fs.getContent(this, apath);
             if (count !== this.dataCount) {
                 return;
             }
@@ -916,7 +913,7 @@ export default class extends clickgo.control.AbstractControl {
                 const pos = this.refs.flow.getPos(row);
                 if (!pos) {
                     if (count === 0) {
-                        clickgo.task.sleep(() => {
+                        clickgo.task.sleep(this, () => {
                             cb(count + 1);
                         }, 50);
                     }

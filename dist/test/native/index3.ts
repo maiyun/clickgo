@@ -1,17 +1,18 @@
-import * as native from './native';
+import * as native from './native.js';
 
 /**
  * --- 本示例演示内容 ---
- * 显示实体窗体边框，首个任务结束后则软件进程结束
- * 网页运行多个 app
- * 此模式下所有系统效果相同
+ * 不显示实体窗体边框，任务结束后 Node 进程不会结束
+ * 网页运行单个 app
  */
 
 class Boot extends native.AbstractBoot {
 
     public main(): void {
-        this.run('../desktop/index.html', {
-            'frame': true
+        this.run('../desktop/index.html?single', {
+            'frame': false,
+            'quit': false,
+            'background': '#222',
         });
     }
 

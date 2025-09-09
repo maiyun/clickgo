@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -58,22 +23,36 @@ class default_1 extends clickgo.control.AbstractControl {
             'scrollTop': 0
         };
         this.access = {
+            /** --- 选框开始时的鼠标坐标原点相对于元素本身 --- */
             'selectionOrigin': { 'x': 0, 'y': 0 },
+            /** --- 当前画选框时的指针坐标相对于屏幕 --- */
             'selectionCurrent': { 'x': 0, 'y': 0, 'quick': false },
+            /** --- 选框的 timer --- */
             'selectionTimer': 0
         };
+        /** --- 当前框选的部分起终下标 --- */
         this.selectPos = {
             'start': 0,
             'end': 0
         };
     }
+    /**
+     * --- 最大可拖动的 scroll 左侧位置 ---
+     */
     maxScrollLeft() {
         return this.element.scrollWidth - this.element.clientWidth;
     }
+    /**
+     * --- 最大可拖动的 scroll 顶部位置 ---
+     */
     maxScrollTop() {
         return this.element.scrollHeight - this.element.clientHeight;
     }
+    /**
+     * --- wrap 的 scroll 事件 ---
+     */
     onScroll() {
+        // --- scroll left ---
         let sl = Math.round(this.element.scrollLeft);
         const msl = this.maxScrollLeft();
         if (sl > msl) {
@@ -82,6 +61,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propInt('scrollLeft') !== sl) {
             this.emit('update:scrollLeft', sl);
         }
+        // --- scroll top ---
         let st = Math.round(this.element.scrollTop);
         const mst = this.maxScrollTop();
         if (st > mst) {
@@ -95,6 +75,9 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.refreshSelection(clickgo.dom.is.shift, clickgo.dom.is.ctrl);
     }
+    /**
+     * --- 电脑的 wheel 事件，横向滚动不能被屏蔽 ---
+     */
     wheel(e) {
         clickgo.dom.bindGesture(e, (e, dir) => {
             switch (dir) {
@@ -154,6 +137,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.propBoolean('selection')) {
             const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
             const y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+            // --- 鼠标手指只会响应一个，进行建立选区 ---
             clickgo.dom.bindDown(e, {
                 start: () => {
                     const rect = this.element.getBoundingClientRect();
@@ -162,12 +146,17 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.selection.style.opacity = '1';
                     this.access.selectionCurrent.x = x;
                     this.access.selectionCurrent.y = y;
-                    this.access.selectionTimer = clickgo.task.onFrame(() => {
+                    this.access.selectionTimer = clickgo.task.onFrame(this, () => {
                         const rect = this.element.getBoundingClientRect();
+                        // --- 横向 ---
                         if (this.access.selectionCurrent.x < rect.left) {
+                            // --- 向左滚动 ---
                             if (this.element.scrollLeft > 0) {
+                                /** --- 差值 --- */
                                 const x = rect.left - this.access.selectionCurrent.x;
+                                /** --- 移动的距离 --- */
                                 let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
                                 if (this.access.selectionCurrent.quick) {
                                     dist = x / 2;
                                     this.access.selectionCurrent.quick = false;
@@ -184,9 +173,13 @@ class default_1 extends clickgo.control.AbstractControl {
                         }
                         else if (this.access.selectionCurrent.x > rect.right) {
                             const maxLeft = this.maxScrollLeft();
+                            // --- 向右滚动 ---
                             if (this.element.scrollLeft < maxLeft) {
+                                /** --- 差值 --- */
                                 const x = this.access.selectionCurrent.x - rect.right;
+                                /** --- 移动的距离 --- */
                                 let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
                                 if (this.access.selectionCurrent.quick) {
                                     dist = x / 2;
                                     this.access.selectionCurrent.quick = false;
@@ -201,10 +194,15 @@ class default_1 extends clickgo.control.AbstractControl {
                                 this.emit('update:scrollLeft', Math.round(this.element.scrollLeft));
                             }
                         }
+                        // --- 纵向 ---
                         if (this.access.selectionCurrent.y < rect.top) {
+                            // --- 向左滚动 ---
                             if (this.element.scrollTop > 0) {
+                                /** --- 差值 --- */
                                 const x = rect.top - this.access.selectionCurrent.y;
+                                /** --- 移动的距离 --- */
                                 let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
                                 if (this.access.selectionCurrent.quick) {
                                     dist = x / 2;
                                     this.access.selectionCurrent.quick = false;
@@ -221,9 +219,13 @@ class default_1 extends clickgo.control.AbstractControl {
                         }
                         else if (this.access.selectionCurrent.y > rect.bottom) {
                             const maxTop = this.maxScrollTop();
+                            // --- 向右滚动 ---
                             if (this.element.scrollTop < maxTop) {
+                                /** --- 差值 --- */
                                 const x = this.access.selectionCurrent.y - rect.bottom;
+                                /** --- 移动的距离 --- */
                                 let dist = 0;
+                                // --- 判断是否是 quick 模式，将加速滚动 ---
                                 if (this.access.selectionCurrent.quick) {
                                     dist = x / 2;
                                     this.access.selectionCurrent.quick = false;
@@ -246,9 +248,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 move: (ne) => {
                     const nx = (ne instanceof MouseEvent) ? ne.clientX : ne.touches[0].clientX;
                     const ny = (ne instanceof MouseEvent) ? ne.clientY : ne.touches[0].clientY;
+                    // --- 更新自动滚动需要用到的坐标信息 ---
                     this.access.selectionCurrent.x = nx;
                     this.access.selectionCurrent.y = ny;
                     this.access.selectionCurrent.quick = true;
+                    // --- 更新 selection 区域 ---
                     this.refreshSelection(ne.shiftKey, ne.ctrlKey);
                 },
                 end: () => {
@@ -257,7 +261,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.refs.selection.style.top = '0px';
                     this.refs.selection.style.width = '1px';
                     this.refs.selection.style.height = '1px';
-                    clickgo.task.offFrame(this.access.selectionTimer);
+                    clickgo.task.offFrame(this, this.access.selectionTimer);
                     this.access.selectionTimer = 0;
                     this.emit('afterselect');
                 }
@@ -267,6 +271,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (e instanceof MouseEvent) {
                 return;
             }
+            // --- 仅 touch ---
             clickgo.dom.bindGesture(e, (ne, dir) => {
                 switch (dir) {
                     case 'top': {
@@ -319,13 +324,17 @@ class default_1 extends clickgo.control.AbstractControl {
             });
         }
     }
+    // --- 当 scroll 触发或者手动 move 后，需要刷新 selection area 区域 ---
     refreshSelection(shift = false, ctrl = false) {
         if (!this.access.selectionTimer) {
             return;
         }
         const rect = this.element.getBoundingClientRect();
+        /** --- 相对实际内容的 x 坐标 --- */
         const x = this.access.selectionCurrent.x - rect.left + this.element.scrollLeft;
+        /** --- 相对实际内容的 y 坐标 --- */
         const y = this.access.selectionCurrent.y - rect.top + this.element.scrollTop;
+        /** --- 要显示的区域 --- */
         const area = {
             'start': 0,
             'end': 0,
@@ -338,6 +347,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'ctrl': ctrl
         };
         if (x >= this.access.selectionOrigin.x) {
+            // --- 右 ---
             area.x = Math.round(this.access.selectionOrigin.x);
             area.width = Math.round(x - this.access.selectionOrigin.x);
             const maxWidth = this.maxScrollLeft() + this.element.clientWidth - area.x;
@@ -346,13 +356,16 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else {
+            // --- 左 ---
             area.x = Math.round(x);
             if (area.x < 0) {
                 area.x = 0;
             }
             area.width = Math.round(this.access.selectionOrigin.x - area.x);
         }
+        // --- y ---
         if (y >= this.access.selectionOrigin.y) {
+            // --- 下 ---
             area.y = Math.round(this.access.selectionOrigin.y);
             area.height = Math.round(y - this.access.selectionOrigin.y);
             const maxHeight = this.maxScrollTop() + this.element.clientHeight - area.y;
@@ -361,16 +374,19 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else {
+            // --- 上 ---
             area.y = Math.round(y);
             if (area.y < 0) {
                 area.y = 0;
             }
             area.height = Math.round(this.access.selectionOrigin.y - area.y);
         }
+        // --- 更新选框位置和大小 ---
         this.refs.selection.style.left = area.x.toString() + 'px';
         this.refs.selection.style.top = area.y.toString() + 'px';
         this.refs.selection.style.width = area.width.toString() + 'px';
         this.refs.selection.style.height = area.height.toString() + 'px';
+        // --- 查看选中了哪些子项 ---
         const offset = this.props.direction === 'v' ? area.y : area.x;
         const length = this.props.direction === 'v' ? area.height : area.width;
         const rtn = this.getNewPos(this.selectPos, {
@@ -382,8 +398,13 @@ class default_1 extends clickgo.control.AbstractControl {
         area.start = rtn.start;
         area.end = rtn.end;
         area.empty = rtn.empty;
+        // --- 响应 select 事件 ---
         this.emit('select', area);
     }
+    /**
+     * ---- 供外部调用的获取某项的 start 和 end 像素 ---
+     * @param val 项下标
+     */
     getPos(val) {
         const el = this.element.children[val];
         if (!el) {
@@ -400,6 +421,11 @@ class default_1 extends clickgo.control.AbstractControl {
             'end': el.offsetTop + el.offsetHeight
         };
     }
+    /**
+     * --- 判断一个 item 项是否在一个 area 内 ---
+     * @param i 项 index
+     * @param area 区域像素
+     */
     inArea(i, area) {
         const pos = this.getPos(i);
         if (!pos) {
@@ -410,22 +436,34 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return false;
     }
+    /**
+     * --- 根据一个旧 pos 和新 area，来获得一个新在 area 当中的 pos 段 ---
+     * @param pos 旧 pos 的 item index 段
+     * @param area 区域的像素段
+     * @returns 新 pos 的 item index 段
+     */
     getNewPos(pos, area) {
         const rtn = { 'start': -1, 'end': -1, 'empty': false };
+        /** --- 起项是否在新 area 区域内 --- */
         const startShow = this.inArea(pos.start, area);
+        // --- 检测起始 ---
         if (startShow) {
             rtn.start = pos.start;
+            // --- 起项在区域内，则往上找，看看上面还有没有显示 ---
             for (let i = pos.start - 1; i >= 0; --i) {
                 if (this.inArea(i, area)) {
                     rtn.start = i;
                     continue;
                 }
+                // --- 一旦碰到没找到的，意味着到底了 ---
                 break;
             }
         }
         else {
+            // --- 起项不在区域内 ---
             let start = this.getPos(pos.start);
             if (!start) {
+                // --- 起项不存在 ---
                 if (pos.start === 0 || !this.getPos(0)) {
                     return { 'start': 0, 'end': 9, 'empty': true };
                 }
@@ -434,26 +472,34 @@ class default_1 extends clickgo.control.AbstractControl {
                 start = this.getPos(0);
             }
             if (area.start > start.start) {
+                // --- 区域顶部大于原起项的顶部 ---
+                // --- 向下找 ---
                 for (let i = pos.start + 1; i < this.element.children.length - 1; ++i) {
                     if (!this.inArea(i, area)) {
                         continue;
                     }
+                    // --- 找到了，直接结束 ---
                     rtn.start = i;
                     break;
                 }
                 if (rtn.start === -1) {
+                    // --- 找到最后都没找到，应该是 area 的区域远远大于目前存在的所有项的位置 ---
                     return { 'start': 0, 'end': 9, 'empty': true };
                 }
             }
             else {
+                // --- 区域顶部小于等于原起项的顶部 ---
+                // --- 向上找 ---
                 let found = false;
                 for (let i = pos.start - 1; i >= 0; --i) {
                     if (!this.inArea(i, area)) {
                         if (found) {
+                            // --- 找到了后又没找到了意味着到底了 ---
                             break;
                         }
                         continue;
                     }
+                    // --- 找到了 ---
                     if (!found) {
                         found = true;
                     }
@@ -467,40 +513,52 @@ class default_1 extends clickgo.control.AbstractControl {
         if (rtn.end > -1) {
             return rtn;
         }
+        // --- 要找终项 ---
         if (!this.getPos(pos.end)) {
+            // --- 终项不存在，指定为起项 ---
             pos.end = rtn.start;
         }
         const endShow = this.inArea(pos.end, area);
         if (endShow) {
             rtn.end = pos.end;
+            // --- 终项在区域内，则往下找，看看下面还有没有显示 ---
             for (let i = pos.end + 1; i < this.element.children.length - 1; ++i) {
                 if (this.inArea(i, area)) {
                     rtn.end = i;
                     continue;
                 }
+                // --- 一旦碰到没找到的，意味着到底了 ---
                 break;
             }
         }
         else {
+            // --- 终项不在区域内 ---
             const end = this.getPos(pos.end);
             if (area.end < end.end) {
+                // --- 区域底部小于终项的底部 ---
+                // --- 向上找 ---
                 for (let i = pos.end - 1; i >= 0; --i) {
                     if (!this.inArea(i, area)) {
                         continue;
                     }
+                    // --- 找到了，直接结束 ---
                     rtn.end = i;
                     break;
                 }
             }
             else {
+                // --- 区域底部大于等于终项的底部 ---
+                // --- 向下找 ---
                 let found = false;
                 for (let i = pos.end + 1; i < this.element.children.length - 1; ++i) {
                     if (!this.inArea(i, area)) {
                         if (found) {
+                            // --- 找到了后又没找到了意味着到底了 ---
                             break;
                         }
                         continue;
                     }
+                    // --- 找到了 ---
                     if (!found) {
                         found = true;
                     }
@@ -518,6 +576,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.element.scrollLeft = prop;
             if (this.element.scrollLeft !== prop) {
+                // --- 设置失败，提交 element 实际的 scrollLeft ---
                 this.emit('update:scrollLeft', this.element.scrollLeft);
             }
         });
@@ -528,18 +587,21 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.element.scrollTop = prop;
             if (this.element.scrollTop !== prop) {
+                // --- 设置失败，提交 element 实际的 scrollTop ---
                 this.emit('update:scrollTop', this.element.scrollTop);
             }
         });
-        clickgo.dom.watchSize(this.element, () => {
+        // --- 大小改变，会影响 scroll offset、client，也会影响 length ---
+        clickgo.dom.watchSize(this, this.element, () => {
             this.emit('clientwidth', this.element.clientWidth);
             this.emit('clientheight', this.element.clientHeight);
         }, true);
+        // --- 内容改变 ---
         clickgo.dom.watchProperty(this.element, ['scrollWidth', 'scrollHeight'], (name, val) => {
             this.emit(name.toLowerCase(), val);
         }, true);
+        // --- 对 scroll 位置进行归位 ---
         this.element.scrollTop = this.propInt('scrollTop');
         this.element.scrollLeft = this.propInt('scrollLeft');
     }
 }
-exports.default = default_1;

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 import test1Panel from '../../control/panel/test1';
 
 export default class extends clickgo.form.AbstractForm {
@@ -15,19 +14,19 @@ export default class extends clickgo.form.AbstractForm {
         'test2': '../../control/panel/test2'
     };
 
-    public onFormHashChange(taskId: number, formId: number, value: string): void {
+    public onFormHashChange(taskId: string, formId: string, value: string): void {
         if (formId !== this.formId) {
             return;
         }
         this.fh = value;
     }
 
-    public async onSelect(e: types.INavItemSelectEvent): Promise<void> {
+    public async onSelect(e: clickgo.control.INavItemSelectEvent): Promise<void> {
         e.preventDefault();
-        await clickgo.form.dialog('Show form');
+        await clickgo.form.dialog(this, 'Show form');
     }
 
-    public onJumpdataSelect(e: types.INavItemSelectEvent): void {
+    public onJumpdataSelect(e: clickgo.control.INavItemSelectEvent): void {
         e.preventDefault();
         this.formHashData = { 'key': 'form hash data' };
         this.formHash = 'test1';

@@ -1,4 +1,4 @@
-import * as clickgo from '../../index';
+import * as clickgo from 'clickgo';
 
 const state = document.getElementById('state')!;
 const iconwrap = document.getElementById('iconwrap')!;
@@ -15,10 +15,10 @@ class Boot extends clickgo.AbstractBoot {
             (async () => {
                 document.getElementById('download')?.remove();
                 state.insertAdjacentHTML('afterbegin', '<div>Starting download ...</div>');
-                app = await clickgo.core.fetchApp('./app.cga', {
+                app = await clickgo.core.fetchApp(this._sysId, './app.cga', {
                     'progress': (l, t) => {
                         state.insertAdjacentHTML('afterbegin', '<div>Progress ' + l.toString() + ' / ' + t.toString() + ' (' + Math.round(l / t * 100).toString() + '%)</div>');
-                    }
+                    },
                 });
                 if (!app) {
                     state.insertAdjacentHTML('afterbegin', '<div>Network error.</div>');
@@ -27,7 +27,7 @@ class Boot extends clickgo.AbstractBoot {
                 iconwrap.style.display = 'flex';
                 document.getElementById('fl')!.style.display = 'block';
                 document.getElementById('icon')!.style.backgroundImage = 'url(' + app.icon + ')';
-                // eslint-disable-next-line deprecation/deprecation
+                // eslint-disable-next-line @typescript-eslint/no-deprecated
                 document.getElementById('mask')!.style.webkitMaskImage = 'url(' + app.icon + ')';
                 document.getElementById('mask')!.style.maskImage = 'url(' + app.icon + ')';
             })() as any;
@@ -38,10 +38,10 @@ class Boot extends clickgo.AbstractBoot {
             iconwrap.classList.add('selected');
         });
         iconwrap.addEventListener('dblclick', () => {
-            (async function() {
+            (async () => {
                 body.style.cursor = 'progress';
                 iconwrap.classList.remove('selected');
-                await clickgo.task.run(app, {
+                await clickgo.task.run(this._sysId, app, {
                     initProgress: (s) => {
                         state.insertAdjacentHTML('afterbegin', '<div> ' + s + '</div>');
                     }
@@ -55,15 +55,15 @@ class Boot extends clickgo.AbstractBoot {
         });
     }
 
-    public onError(taskId: number, formId: number, error: Error): void {
+    public onError(taskId: string, formId: string, error: Error): void {
         state.insertAdjacentHTML('afterbegin', '<div>Error, Task ID: ' + taskId.toString() + ', Form ID: ' + formId.toString() + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '') + '</div>');
-        clickgo.task.end(taskId);
+        clickgo.task.end(taskId).catch(() => {});
     }
 
-    public onTaskEnded(taskId: number): void {
+    public onTaskEnded(taskId: string): void {
         state.insertAdjacentHTML('afterbegin', '<div>Task ' + taskId.toString() + ' ended.</div>');
     }
 
 }
 
-clickgo.launcher(new Boot());
+await clickgo.launcher(new Boot());

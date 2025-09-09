@@ -30,7 +30,7 @@
         }
 
         &.end {
-            color: var(--success); fill: var(--success); stroke: var(--success);
+            color: var(--success);
             .icon {
                 .num {
                     border-color: var(--success);
@@ -43,7 +43,7 @@
             }
         }
         &.now {
-            color: var(--info); fill: var(--info); stroke: var(--info);
+            color: var(--info);
             .icon {
                 .num {
                     border-color: var(--info);

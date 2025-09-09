@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -177,7 +142,7 @@ class default_1 extends clickgo.control.AbstractControl {
         const num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
-                this.timer = clickgo.task.onFrame(() => {
+                this.timer = clickgo.task.onFrame(this, () => {
                     if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
                         this.refs.tabs[0].scrollLeft += num;
                     }
@@ -187,11 +152,12 @@ class default_1 extends clickgo.control.AbstractControl {
                 });
             },
             up: () => {
-                clickgo.task.offFrame(this.timer);
+                clickgo.task.offFrame(this, this.timer);
                 this.timer = 0;
             }
         });
     }
+    // --- 检测是否显示箭头 ---
     onResize() {
         const tab = this.refs.tabs[0];
         if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
@@ -214,6 +180,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     refreshValue() {
+        // --- 默认选项卡选择 ---
         if (this.value === '') {
             const v = this.values[0] ? this.values[0] : '';
             if (this.value !== v) {
@@ -248,9 +215,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.refreshValue();
             this.nextTick().then(() => {
                 this.onResize();
-            }).catch(function (e) {
-                console.log(e);
-            });
+            }).catch(() => { });
         }, {
             'deep': true
         });
@@ -260,16 +225,16 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             this.oldTabs = this.refs.tabs[0];
-            clickgo.dom.watchSize(this.refs.tabs[0], () => {
+            clickgo.dom.watchSize(this, this.refs.tabs[0], () => {
                 this.onResize();
             });
         });
         this.rand = clickgo.tool.random(16);
+        // --- 检测是否显示箭头 ---
         this.oldTabs = this.refs.tabs[0];
-        clickgo.dom.watchSize(this.refs.tabs[0], () => {
+        clickgo.dom.watchSize(this, this.refs.tabs[0], () => {
             this.onResize();
         });
         this.refreshValue();
     }
 }
-exports.default = default_1;

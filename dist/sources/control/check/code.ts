@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -30,7 +29,7 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     public async click(): Promise<void> {
-        const event: types.ICheckChangeEvent = {
+        const event: clickgo.control.ICheckChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -53,7 +52,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('update:modelValue', this.value);
         }
         await this.nextTick();
-        const event2: types.ICheckChangedEvent = {
+        const event2: clickgo.control.ICheckChangedEvent = {
             'detail': {
                 'value': this.value,
                 'indeterminate': this.indeterminateData

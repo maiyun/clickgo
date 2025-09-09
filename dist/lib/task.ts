@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2007-2025 MAIYUN.NET
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,36 +13,174 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as types from '../../types';
 import * as clickgo from '../clickgo';
-import * as core from './core';
-import * as dom from './dom';
-import * as tool from './tool';
-import * as form from './form';
-import * as control from './control';
-import * as fs from './fs';
-import * as theme from './theme';
-import * as native from './native';
+import * as lCore from './core';
+import * as lDom from './dom';
+import * as lTool from './tool';
+import * as lForm from './form';
+import * as lControl from './control';
+import * as lFs from './fs';
+import * as lTheme from './theme';
+import * as lNative from './native';
 
-/** --- 当前运行的程序，App 模式下无效 --- */
-export const list: Record<number, types.ITask> = {};
+/** --- 系统级 ID --- */
+let sysId = '';
 
-/** --- 最后一个 task id，App 模式下无效 --- */
-export let lastId: number = 0;
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id: string): void {
+    if (sysId) {
+        return;
+    }
+    sysId = id;
+}
+
+/**
+ * --- 判断是否是系统级的 task id ---
+ * @param id 任务 id
+ */
+function isSys(id: string): boolean {
+    return id === sysId;
+}
+
+/** --- 任务启动顺序 --- */
+let index = -1;
+
+/** --- 当前运行的程序 --- */
+const list: Record<string, ITask> = {};
+
+/** --- 任务的 runtime 数据，关闭任务后也需要清除 --- */
+const runtime: Record<string, IRuntime> = {};
+
+/**
+ * --- 获取任务的 runtime 数据，仅系统可以获取 ---
+ * @param current 当前任务 ID
+ * @param taskId 任务 ID
+ */
+export function getRuntime(current: lCore.TCurrent, taskId: string): IRuntime | null {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!isSys(current)) {
+        return null;
+    }
+    return runtime[taskId];
+}
+
+/** --- 获取原始 list --- */
+export async function getOriginList(current: lCore.TCurrent): Promise<Record<string, ITask>> {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (isSys(current)) {
+        return list;
+    }
+    if (!list[current]) {
+        return {};
+    }
+    const p = await checkPermission(current, 'root');
+    if (!p[0]) {
+        return {};
+    }
+    return list;
+}
+
+/** --- get 的重试次数 --- */
+const getRetry: {
+    'hour': string;
+    'count': number;
+} = {
+    'hour': '',
+    'count': 0,
+};
+
+/**
+ * --- 获取任务简略信息 ---
+ * @param tid 任务 id
+ */
+export function get(taskId: lCore.TCurrent): ITaskInfo | null {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
+    const task = getOrigin(taskId);
+    if (!task) {
+        return null;
+    }
+    return {
+        'name': task.app.config.name,
+        'locale': task.locale.lang,
+        'customTheme': task.customTheme,
+        'formCount': Object.keys(task.forms).length,
+        'icon': task.app.icon,
+        'path': task.path,
+        'current': task.current,
+    };
+}
+
+/**
+ * --- 获取任务对象 ---
+ * @param taskId 任务 ID
+ */
+export function getOrigin(taskId: lCore.TCurrent): ITask | null {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
+    if (!list[taskId]) {
+        const now = new Date();
+        const hour = `${now.getUTCFullYear()}${now.getUTCMonth().toString().padStart(2, '0')}${now.getUTCDate().toString().padStart(2, '0')}${now.getUTCHours().toString().padStart(2, '0')}`;
+        if (getRetry.hour !== hour) {
+            getRetry.hour = hour;
+            getRetry.count = 0;
+        }
+        else {
+            ++getRetry.count;
+            if (getRetry.count > 10) {
+                // --- 警告 ---
+                const err = new Error(`task.get retry, ${hour}: ${getRetry.count}`);
+                lCore.trigger('error', '', '', err, err.message).catch(() => {});
+            }
+        }
+        return null;
+    }
+    return list[taskId];
+}
 
 /** --- 当前有焦点的任务 ID --- */
-let focusId: number | null = null;
+let focusId: string | null = null;
 
 /**
  * --- 设置 task focus id ---
- * @param id id 或 null
+ * @param id task id 或 null
  */
-export function setFocus(id?: number): void {
-    focusId = id ?? null;
+export function setFocus(id?: string): boolean {
+    if (!id) {
+        focusId = null;
+        return true;
+    }
+    if (!list[id]) {
+        return false;
+    }
+    focusId = id;
+    return true;
 }
 
 /** --- 获取当前有焦点的任务 ID --- */
-export function getFocus(): number | null {
+export async function getFocus(current: lCore.TCurrent): Promise<string | null> {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (isSys(current)) {
+        return focusId;
+    }
+    if (!list[current]) {
+        return null;
+    }
+    const p = await checkPermission(current, 'root');
+    if (!p[0]) {
+        return null;
+    }
     return focusId;
 }
 
@@ -94,20 +232,22 @@ const frameMaps: Record<string, number> = {};
 
 /**
  * --- 创建 frame 监听，formId 存在则为窗体范围，否则为任务级范围 ---
+ * @param current 当前任务 ID
  * @param fun 监听回调
- * @param opt 选项,count:执行次数，默认无限次,formId:限定在当前任务的某个窗体,taskId:APP模式下无效
+ * @param opt 选项,count:执行次数，默认无限次,formId:限定在当前任务的某个窗体
  */
-export function onFrame(fun: () => void | Promise<void>, opt: {
+export function onFrame(current: lCore.TCurrent, fun: () => void | Promise<void>, opt: {
     'count'?: number;
-    'taskId'?: number;
-    'formId'?: number;
+    'formId'?: string;
 } = {}): number {
-    const taskId = opt.taskId;
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
     const formId = opt.formId;
-    if (!taskId) {
+    if (!current) {
         return 0;
     }
-    const task = list[taskId];
+    const task = list[current];
     if (!task) {
         return 0;
     }
@@ -142,9 +282,7 @@ export function onFrame(fun: () => void | Promise<void>, opt: {
             else {
                 // --- 接着循环 ---
                 timer = requestAnimationFrame(function() {
-                    timerHandler().catch(function(e) {
-                        console.log('task.onFrame: -3', e);
-                    });
+                    timerHandler().catch(() => {});
                 });
                 frameMaps[ft] = timer;
             }
@@ -157,86 +295,63 @@ export function onFrame(fun: () => void | Promise<void>, opt: {
         else {
             // --- 无限循环 ---
             timer = requestAnimationFrame(function() {
-                timerHandler().catch(function(e) {
-                    console.log('task.onFrame: -2', e);
-                });
+                timerHandler().catch(() => {});
             });
             frameMaps[ft] = timer;
         }
     };
     /** --- timer 对象 number --- */
     timer = requestAnimationFrame(function() {
-        timerHandler().catch(function(e) {
-            console.log('task.onFrame: -1', e);
-        });
+        timerHandler().catch(() => {});
     });
     frameMaps[ft] = timer;
-    task.timers['1x' + ft.toString()] = formId ?? 0;
+    task.timers['1x' + ft.toString()] = formId ?? '';
     return ft;
 }
 
 /**
  * --- 移除 frame 监听 ---
+ * @param current 当前任务 ID
  * @param ft 监听 ID
- * @param opt 选项,taskId:APP模式下无效
  */
-export function offFrame(ft: number, opt: {
-    'taskId'?: number;
-} = {}): void {
-    const taskId = opt.taskId;
-    if (!taskId) {
+export function offFrame(current: lCore.TCurrent, ft: number): void {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!list[current]) {
         return;
     }
-    if (!list[taskId]) {
-        return;
-    }
-    const formId = list[taskId].timers['1x' + ft.toString()];
+    const formId = list[current].timers['1x' + ft.toString()];
     if (formId === undefined) {
         return;
     }
     cancelAnimationFrame(frameMaps[ft]);
-    delete list[taskId].timers['1x' + ft.toString()];
+    delete list[current].timers['1x' + ft.toString()];
     delete frameMaps[ft];
 }
 
 /**
- * --- 获取任务当前信息 ---
- * @param tid 任务 id
- */
-export function get(tid: number): types.ITaskInfo | null {
-    if (list[tid] === undefined) {
-        return null;
-    }
-    return {
-        'name': list[tid].app.config.name,
-        'locale': list[tid].locale.lang,
-        'customTheme': list[tid].customTheme,
-        'formCount': Object.keys(list[tid].forms).length,
-        'icon': list[tid].app.icon,
-        'path': list[tid].path,
-        'current': list[tid].current
-    };
-}
-
-/**
  * --- 获取某个任务的已授权权限列表 ---
- * @param tid 任务 id
+ * @param current 当前任务 ID
  */
-export function getPermissions(tid: number): string[] {
-    if (list[tid] === undefined) {
+export function getPermissions(current: lCore.TCurrent): string[] {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (list[current] === undefined) {
         return [];
     }
-    return tool.clone(list[tid].runtime.permissions);
+    return lTool.clone(runtime[current].permissions);
 }
 
 /**
  * --- 获取 task list 的简略情况 ---
  */
-export function getList(): Record<string, types.ITaskInfo> {
-    const rtn: Record<string, types.ITaskInfo> = {};
+export function getList(): ITaskInfo[] {
+    const rtn: ITaskInfo[] = [];
     for (const tid in list) {
         const item = list[tid];
-        rtn[tid] = {
+        rtn.push({
             'name': item.app.config.name,
             'locale': item.locale.lang,
             'customTheme': item.customTheme,
@@ -244,1107 +359,129 @@ export function getList(): Record<string, types.ITaskInfo> {
             'icon': item.app.icon,
             'path': item.path,
             'current': item.current
-        };
+        });
     }
     return rtn;
 }
 
+/** --- initProgress 的 type --- */
+export enum EIPTYPE {
+    'APP',
+    'LOCAL',
+    'CONTROL',
+    'THEME',
+    'STYLE',
+    'PERMISSION',
+    'START',
+    'DONE',
+}
+
 /**
- * --- 运行一个应用，cga 直接文件全部正常加载，url 则静态文件需要去 config 里加载 ---
- * @param url app 路径（以 / 为结尾的路径或以 .cga 结尾的文件），或 APP 包对象
+ * --- 运行一个应用 ---
+ * @param current 当前任务 ID
+ * @param url app 路径（以 .cga 结尾的文件），或 APP 包对象
  * @param opt 选项
- * @param ntid App 模式下无效
+ * @returns 字符串代表成功，否则代表错误代号
  */
-export async function run(url: string | types.IApp, opt: types.ITaskRunOptions = {}, ntid?: number): Promise<number> {
-    let app: types.IApp | null = null;
+export async function run(
+    current: lCore.TCurrent, url: string | lCore.IApp, opt: ITaskRunOptions = {}
+): Promise<string | number> {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!isSys(current) && !list[current]) {
+        return 0;
+    }
+    await opt.initProgress?.(0, 7, EIPTYPE.APP, 'Load app ...');
+    let app: lCore.IApp | null = null;
     if (typeof url === 'string') {
         // --- 检测 url 是否合法 ---
-        if (!url.endsWith('/') && !url.endsWith('.cga')) {
-            return 0;
+        if (!url.endsWith('.cga')) {
+            return -1;
         }
         /** --- 要显示的应用图标 --- */
-        let icon = __dirname + '/../icon.png';
+        let icon = clickgo.getDirname() + '/icon.png';
         if (opt.icon) {
             icon = opt.icon;
         }
         opt.notify ??= true;
-        const notifyId: number | undefined = opt.notify ? form.notify({
-            'title': localeData[core.config.locale]?.loading ?? localeData['en'].loading,
+        const notifyId: number | undefined = opt.notify ? lForm.notify({
+            'title': localeData[lCore.config.locale]?.loading ?? localeData['en'].loading,
             'content': url,
             'icon': icon,
             'timeout': 0,
-            'progress': true
+            'progress': true,
         }) : undefined;
         // --- 非 ntid 模式下 current 以 location 为准 ---
-        if (!ntid &&
+        if (
             !url.startsWith('/clickgo/') &&
             !url.startsWith('/storage/') &&
             !url.startsWith('/mounted/') &&
             !url.startsWith('/package/') &&
             !url.startsWith('/current/')
         ) {
-            url = tool.urlResolve(location.href, url);
+            url = lTool.urlResolve(location.href, url);
         }
         // --- 获取并加载 app 对象 ---
-        app = await core.fetchApp(url, {
+        app = await lCore.fetchApp(current, url, {
             'notifyId': notifyId,
-            'progress': opt.progress,
-            'cache': opt.cache
-        }, ntid);
+            'progress': async (loaded, total) => {
+                await opt.progress?.(loaded, total, 'app', url as string);
+            },
+        });
         // --- 无论是否成功，都可以先隐藏 notify 了 ---
         if (notifyId) {
             setTimeout(function(): void {
-                form.hideNotify(notifyId);
-            }, 3000);
+                lForm.hideNotify(notifyId);
+            }, 3_000);
         }
     }
     else if (url.type !== 'app') {
-        return -1;
+        return -2;
     }
     else {
         app = url;
     }
     if (!app) {
-        return -1;
+        return -3;
     }
-    // --- 申请任务ID ---
-    const taskId = ++lastId;
-    // --- 注入的参数，屏蔽一些全局对象 ---
-    const blocks = ['document', 'localStorage'];
-    /** --- 最终注入的对象 --- */
-    const invoke: Record<string, any> = {};
-    const ks = Object.getOwnPropertyNames(window);
-    invoke.window = {};
-    for (const k of ks) {
-        if (blocks.includes(k)) {
-            continue;
-        }
-        invoke.window[k] = (window as Record<string, any>)[k];
+    /** --- 申请任务ID --- */
+    let taskId = '';
+    do {
+        taskId = lTool.random(8, lTool.RANDOM_LUN);
     }
-    for (const block of blocks) {
-        invoke[block] = undefined;
-    }
-    // --- console ---
-    invoke.console = {
-        assert: function(condition?: boolean, ...data: any[]): void {
-            console.assert(condition, ...data);
-        },
-        clear: function(): void {
-            console.clear();
-        },
-        count: function(label?: string): void {
-            console.count(label);
-        },
-        countReset: function(label?: string): void {
-            console.countReset(label);
-        },
-        debug: function(...data: any[]): void {
-            console.debug(...data);
-        },
-        dir: function(item?: any, options?: any): void {
-            console.dir(item, options);
-        },
-        dirxml: function(...data: any[]): void {
-            console.dirxml(...data);
-        },
-        error: function(...data: any[]): void {
-            console.error(...data);
-        },
-        group: function(...data: any[]): void {
-            console.group(...data);
-        },
-        groupCollapsed: function(...data: any[]): void {
-            console.groupCollapsed(...data);
-        },
-        groupEnd: function(): void {
-            console.groupEnd();
-        },
-        info: function(...data: any[]): void {
-            console.info(...data);
-        },
-        log: function(...data: any[]): void {
-            console.log(...data);
-        },
-        table: function(tabularData?: any, properties?: string[]): void {
-            console.table(tabularData, properties);
-        },
-        time: function(label?: string): void {
-            console.time(label);
-        },
-        timeEnd: function(label?: string): void {
-            console.timeEnd(label);
-        },
-        timeLog: function(label?: string, ...data: any[]): void {
-            console.timeLog(label, ...data);
-        },
-        timeStamp: function(label?: string): void {
-            console.timeStamp(label);
-        },
-        trace: function(...data: any[]): void {
-            console.trace(...data);
-        },
-        warn: function(...data: any[]): void {
-            console.warn(...data);
-        }
-    };
-    // --- loader ---
-    invoke.loader = {
-        require: function(paths: string | string[], files: Record<string, Blob | string>, opt?: {
-            'executed'?: Record<string, any>;
-            'map'?: Record<string, string>;
-            'dir'?: string;
-            'style'?: string;
-            'invoke'?: Record<string, any>;
-            'preprocess'?: (code: string, path: string) => string;
-        }): any[] {
-            return loader.require(paths, files, opt);
-        }
-    };
-    // --- ClickGo 相关 ---
-    invoke.invokeClickgo = {
-        getVersion: (): string => {
-            return clickgo.getVersion();
-        },
-        isNative: (): boolean => {
-            return clickgo.isNative();
-        },
-        getPlatform: (): string => {
-            return clickgo.getPlatform();
-        },
-        getDevice: () => {
-            return clickgo.getDevice();
-        },
-        isImmersion: (): boolean => {
-            return clickgo.isImmersion();
-        },
-        hasFrame: (): boolean => {
-            return clickgo.hasFrame();
-        },
-        'control': {
-            'AbstractControl': class extends control.AbstractControl {
-                public get taskId(): number {
-                    return taskId;
-                }
-            },
-            read: function(blob: Blob): Promise<false | types.TControlPackage> {
-                return control.read(blob);
-            }
-        },
-        'core': {
-            'config': clickgo.core.config,
-            'global': clickgo.tool.clone(clickgo.core.global),
-            'AbstractApp': class extends core.AbstractApp {
-                // eslint-disable-next-line @typescript-eslint/require-await
-                public async main(): Promise<void> {
-                    return;
-                }
-
-                public get taskId(): number {
-                    return taskId;
-                }
-            },
-            getCdn: function() {
-                return core.getCdn();
-            },
-            getModule: function(name: string): null | any {
-                return core.getModule(name);
-            },
-            readApp: function(blob: Blob): Promise<false | types.IApp> {
-                return core.readApp(blob);
-            },
-            getAvailArea: function(): types.IAvailArea {
-                return core.getAvailArea();
-            },
-            hash: function(hash: string): boolean {
-                return core.hash(hash, taskId);
-            },
-            getHash: function(): string {
-                return core.getHash();
-            },
-            getHost: function(): string {
-                return core.getHost();
-            },
-            location: function(url: string): boolean {
-                return core.location(url, taskId);
-            },
-            getLocation: function(): string {
-                return core.getLocation();
-            },
-            back: function(): boolean {
-                return core.back(taskId);
-            },
-            open: function(url: string): void {
-                core.open(url);
-            }
-        },
-        'dom': {
-            inPage: function(el: HTMLElement): boolean {
-                return dom.inPage(el);
-            },
-            'dpi': dom.dpi,
-            setGlobalCursor: function(type?: string): void {
-                dom.setGlobalCursor(type);
-            },
-            hasTouchButMouse: function(e: MouseEvent | TouchEvent | PointerEvent): boolean {
-                return dom.hasTouchButMouse(e);
-            },
-            getStyleCount: function(taskId: number, type: 'theme' | 'control' | 'form'): number {
-                return dom.getStyleCount(taskId, type);
-            },
-            watchPosition: function(el: HTMLElement, cb: (tate: {
-                'position': boolean;
-                'size': boolean;
-            }) => void | Promise<void>, immediate: boolean = false
-            ): boolean {
-                return dom.watchPosition(el, cb, immediate);
-            },
-            unwatchPosition: function(el: HTMLElement): void {
-                dom.unwatchPosition(el);
-            },
-            isWatchPosition: function(el: HTMLElement): boolean {
-                return dom.isWatchPosition(el);
-            },
-            getWatchSizeCount: function(taskId?: number): number {
-                return dom.getWatchSizeCount(taskId);
-            },
-            watchSize: function(
-                el: HTMLElement,
-                cb: () => void | Promise<void>,
-                immediate: boolean = false
-            ): boolean {
-                return dom.watchSize(el, cb, immediate, taskId);
-            },
-            unwatchSize: function(el: HTMLElement): void {
-                dom.unwatchSize(el, taskId);
-            },
-            isWatchSize: function(el: HTMLElement): boolean {
-                return dom.isWatchSize(el);
-            },
-            getWatchCount: function(taskId?: number): number {
-                return dom.getWatchCount(taskId);
-            },
-            watch: function(el: HTMLElement, cb: (mutations: MutationRecord[]) => void | Promise<void>, mode: 'child' | 'childsub' | 'style' | 'default' = 'default', immediate: boolean = false): void {
-                dom.watch(el, cb, mode, immediate, taskId);
-            },
-            unwatch: function(el: HTMLElement): void {
-                dom.unwatch(el, taskId);
-            },
-            isWatch(el: HTMLElement): boolean {
-                return dom.isWatch(el);
-            },
-            watchStyle: function(
-                el: HTMLElement,
-                name: string | string[],
-                cb: (name: string, value: string, old: string) => void | Promise<void>,
-                immediate: boolean = false
-            ): void {
-                dom.watchStyle(el, name, cb, immediate);
-            },
-            isWatchStyle: function(el: HTMLElement): boolean {
-                return dom.isWatchStyle(el);
-            },
-            watchProperty: function(
-                el: HTMLElement,
-                name: string | string[],
-                cb: (name: string, value: any) => void | Promise<void>,
-                immediate: boolean = false
-            ): void {
-                dom.watchProperty(el, name, cb, immediate);
-            },
-            isWatchProperty(el: HTMLElement): boolean {
-                return dom.isWatchProperty(el);
-            },
-            getWatchInfo: function(): types.IGetWatchInfoResult {
-                return dom.getWatchInfo();
-            },
-            bindClick: function(
-                e: MouseEvent | TouchEvent,
-                handler: (e: MouseEvent | TouchEvent, x: number, y: number) => void | Promise<void>
-            ): void {
-                dom.bindClick(e, handler);
-            },
-            bindDblClick: function(
-                e: MouseEvent | TouchEvent,
-                handler: (e: MouseEvent | TouchEvent) => void | Promise<void>
-            ): void {
-                dom.bindDblClick(e, handler);
-            },
-            bindDown: function<T extends MouseEvent | TouchEvent>(oe: T, opt: types.IBindDownOptions<T>) {
-                dom.bindDown(oe, opt);
-            },
-            bindScale: function(oe: MouseEvent | TouchEvent | WheelEvent, handler: (e: MouseEvent | TouchEvent | WheelEvent, scale: number, cpos: { 'x': number; 'y': number; }) => void | Promise<void>): void {
-                dom.bindScale(oe, handler);
-            },
-            bindGesture: function(oe: MouseEvent | TouchEvent | WheelEvent, before: (e: MouseEvent | TouchEvent | WheelEvent, dir: 'top' | 'right' | 'bottom' | 'left') => number, handler: (dir: 'top' | 'right' | 'bottom' | 'left') => void): void {
-                dom.bindGesture(oe, before, handler);
-            },
-            bindLong: function(
-                e: MouseEvent | TouchEvent,
-                long: (e: MouseEvent | TouchEvent) => void | Promise<void>
-            ): void {
-                dom.bindLong(e, long);
-            },
-            setDragData(data?: string | number | boolean | Record<string, any>): void {
-                dom.setDragData(data);
-            },
-            bindDrag: function(e: MouseEvent | TouchEvent, opt: {
-                'el': HTMLElement;
-                'data'?: any;
-
-                'start'?: (x: number, y: number) => any;
-                'move'?: (e: MouseEvent | TouchEvent, opt: types.IBindMoveMoveOptions) => void;
-                'end'?: (moveTimes: Array<{ 'time': number; 'ox': number; 'oy': number; }>, e: MouseEvent | TouchEvent) => void;
-            }): void {
-                dom.bindDrag(e, opt);
-            },
-            'is': dom.is,
-            bindMove: function(e: MouseEvent | TouchEvent, opt: types.IBindMoveOptions): types.IBindMoveResult {
-                return dom.bindMove(e, opt);
-            },
-            bindResize: function(e: MouseEvent | TouchEvent, opt: types.IBindResizeOptions): void {
-                dom.bindResize(e, opt);
-            },
-            findParentByData: function(el: HTMLElement, name: string, value?: string): HTMLElement | null {
-                return dom.findParentByData(el, name, value);
-            },
-            findParentByClass: function(el: HTMLElement, name: string): HTMLElement | null {
-                return dom.findParentByClass(el, name);
-            },
-            findParentByTag: function(el: HTMLElement, name: string): HTMLElement | null {
-                return dom.findParentByTag(el, name);
-            },
-            index: function(el: HTMLElement): number {
-                return dom.index(el);
-            },
-            siblings: function(el: HTMLElement): HTMLElement[] {
-                return dom.siblings(el);
-            },
-            siblingsData: function(el: HTMLElement, name: string): HTMLElement[] {
-                return dom.siblingsData(el, name);
-            },
-            fullscreen: function() {
-                return dom.fullscreen();
-            },
-            exitFullscreen: function() {
-                return dom.exitFullscreen();
-            },
-            createElement: function<T extends keyof HTMLElementTagNameMap>(tagName: T): HTMLElementTagNameMap[T] {
-                return dom.createElement(tagName);
-            }
-        },
-        'form': {
-            'AbstractPanel': class extends form.AbstractPanel {
-                public get taskId(): number {
-                    return taskId;
-                }
-            },
-            'AbstractForm': class extends form.AbstractForm {
-                public get taskId(): number {
-                    return taskId;
-                }
-            },
-            min: function(fid: number): boolean {
-                return form.min(fid);
-            },
-            max: function max(fid: number): boolean {
-                return form.max(fid);
-            },
-            close: function(fid: number): boolean {
-                return form.close(fid);
-            },
-            bindResize: function(e: MouseEvent | TouchEvent, border: types.TDomBorder): void {
-                form.bindResize(e, border);
-            },
-            bindDrag: function(e: MouseEvent | TouchEvent): void {
-                form.bindDrag(e);
-            },
-            getTaskId: function(fid: number): number {
-                return form.getTaskId(fid);
-            },
-            get: function(fid: number): types.IFormInfo | null {
-                return form.get(fid);
-            },
-            getList: function(tid: number): Record<string, types.IFormInfo> {
-                return form.getList(tid);
-            },
-            getFocus: function(): number | null {
-                return form.getFocus();
-            },
-            getActivePanel: function(formId: number): number[] {
-                return form.getActivePanel(formId);
-            },
-            removeActivePanel: function(panelId: number, formId: number): boolean {
-                return form.removeActivePanel(panelId, formId, taskId);
-            },
-            setActivePanel: function(panelId: number, formId: number): boolean {
-                return form.setActivePanel(panelId, formId, taskId);
-            },
-            hash: function(hash: string, formId: number): boolean {
-                return form.hash(hash, formId);
-            },
-            getHash: function(formId: number): string {
-                return form.getHash(formId);
-            },
-            hashBack: function(formId: number): Promise<boolean> {
-                return form.hashBack(formId);
-            },
-            changeFocus: function(fid: number = 0): void {
-                form.changeFocus(fid);
-            },
-            getMaxZIndexID: function(out?: {
-                'taskIds'?: number[];
-                'formIds'?: number[];
-            }): number | null {
-                return form.getMaxZIndexID(out);
-            },
-            getRectByBorder: function(border: types.TDomBorder): { 'width': number; 'height': number; 'left': number; 'top': number; } {
-                return form.getRectByBorder(border);
-            },
-            showCircular: function(x: number, y: number): void {
-                form.showCircular(x, y);
-            },
-            moveRectangle: function(border: types.TDomBorder): void {
-                form.moveRectangle(border);
-            },
-            showRectangle: function(x: number, y: number, border: types.TDomBorder): void {
-                form.showRectangle(x, y, border);
-            },
-            hideRectangle: function(): void {
-                form.hideRectangle();
-            },
-            showDrag: function(): void {
-                form.showDrag();
-            },
-            moveDrag: function(opt: types.IMoveDragOptions): void {
-                form.moveDrag(opt);
-            },
-            hideDrag: function(): void {
-                form.hideDrag();
-            },
-            alert: function(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger'): number {
-                return form.alert(content, type);
-            },
-            notify: function(opt: types.INotifyOptions): number {
-                return form.notify(opt);
-            },
-            notifyProgress: function(notifyId: number, per: number): void {
-                form.notifyProgress(notifyId, per);
-            },
-            notifyContent: function(notifyId: number, opt: types.INotifyContentOptions): void {
-                form.notifyContent(notifyId, opt);
-            },
-            hideNotify: function(notifyId: number): void {
-                form.hideNotify(notifyId);
-            },
-            showPop: function(el: HTMLElement, pop: HTMLElement | undefined, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: {
-                'size'?: { width?: number; height?: number; };
-                'null'?: boolean;
-                'autoPosition'?: boolean;
-                'autoScroll'?: boolean;
-                'flow'?: boolean;
-                'way'?: 'normal' | 'click' | 'hover';
-            } = {}): void {
-                form.showPop(el, pop, direction, opt);
-            },
-            hidePop: function(pop?: HTMLElement): void {
-                form.hidePop(pop);
-            },
-            isJustPop: function(el: HTMLElement): boolean {
-                return form.isJustPop(el);
-            },
-            doFocusAndPopEvent: function(e: MouseEvent | TouchEvent): void {
-                form.doFocusAndPopEvent(e);
-            },
-            removePanel(id: number, vapp: types.IVApp, el: HTMLElement): boolean {
-                return form.removePanel(id, vapp, el);
-            },
-            createPanel<T extends form.AbstractPanel>(
-                rootPanel: control.AbstractControl,
-                cls: string | (new () => T),
-                opt?: {
-                    'layout'?: string;
-                    'style'?: string;
-                    'path'?: string;
-                }
-            ): Promise<{
-                    'vapp': types.IVApp;
-                    'vroot': T;
-                }> {
-                return form.createPanel(rootPanel, cls, opt, taskId);
-            },
-            create: function<T extends form.AbstractForm>(
-                cls: string | (new () => T),
-                data?: Record<string, any>,
-                opt?: {
-                    'layout'?: string;
-                    'style'?: string;
-                    'path'?: string;
-                }
-            ): Promise<T> {
-                return form.create(cls, data, opt, taskId);
-            },
-            dialog: function(opt: string | types.IFormDialogOptions): Promise<string> {
-                if (typeof opt === 'string') {
-                    opt = {
-                        'content': opt
-                    };
-                }
-                opt.taskId = taskId;
-                return form.dialog(opt);
-            },
-            confirm: function(opt: string | types.IFormConfirmOptions): Promise<boolean | number> {
-                if (typeof opt === 'string') {
-                    opt = {
-                        'content': opt
-                    };
-                }
-                opt.taskId = taskId;
-                return form.confirm(opt);
-            },
-            prompt: function(opt: string | types.IFormPromptOptions): Promise<string> {
-                if (typeof opt === 'string') {
-                    opt = {
-                        'content': opt
-                    };
-                }
-                opt.taskId = taskId;
-                return form.prompt(opt);
-            },
-            flash: function(fid: number): void {
-                form.flash(fid, taskId);
-            },
-            showLauncher: function(): void {
-                form.showLauncher();
-            },
-            hideLauncher: function(): void {
-                form.hideLauncher();
-            }
-        },
-        'fs': {
-            mount: function(name: string, handler: types.IMountHandler): boolean {
-                return clickgo.fs.mount(name, handler, taskId);
-            },
-            unmount: function(name: string): Promise<boolean> {
-                return clickgo.fs.unmount(name);
-            },
-            getContent: function(
-                path: string,
-                options: any = {}
-            ): Promise<Blob | string | null> {
-                return fs.getContent(path, options, taskId);
-            },
-            putContent: function(path: string, data: string | Blob, options: any = {}) {
-                return fs.putContent(path, data, options, taskId);
-            },
-            readLink: function(path: string, options: any = {}): Promise<string | null> {
-                return fs.readLink(path, options, taskId);
-            },
-            symlink: function(fPath: string, linkPath: string, options: any = {}): Promise<boolean> {
-                return fs.symlink(fPath, linkPath, options, taskId);
-            },
-            unlink: function(path: string): Promise<boolean> {
-                return fs.unlink(path, taskId);
-            },
-            stats: function(path: string): Promise<types.IStats | null> {
-                return fs.stats(path, taskId);
-            },
-            isDir: function(path: string): Promise<types.IStats | false> {
-                return fs.isDir(path, taskId);
-            },
-            isFile: function(path: string): Promise<types.IStats | false> {
-                return fs.isFile(path, taskId);
-            },
-            mkdir: function(path: string, mode?: number): Promise<boolean> {
-                return fs.mkdir(path, mode, taskId);
-            },
-            rmdir: function(path: string): Promise<boolean> {
-                return fs.rmdir(path, taskId);
-            },
-            rmdirDeep: function(path: string): Promise<boolean> {
-                return fs.rmdirDeep(path, taskId);
-            },
-            chmod: function(path: string, mod: string | number): Promise<boolean> {
-                return fs.chmod(path, mod, taskId);
-            },
-            rename(oldPath: string, newPath: string): Promise<boolean> {
-                return fs.rename(oldPath, newPath, taskId);
-            },
-            readDir(path: string, encoding?: BufferEncoding): Promise<types.IDirent[]> {
-                return fs.readDir(path, encoding, taskId);
-            },
-            copyFolder(from: string, to: string, options: any = {}): Promise<number> {
-                return fs.copyFolder(from, to, options, taskId);
-            },
-            copyFile(src: string, dest: string): Promise<boolean> {
-                return fs.copyFile(src, dest, taskId);
-            }
-        },
-        'native': {
-            on(
-                name: string,
-                handler: (...param: any[]) => any | Promise<any>,
-                once: boolean = false,
-                formId?: number
-            ): void {
-                native.on(name, handler, once, formId, taskId);
-            },
-            once(
-                name: string,
-                handler: (...param: any[]) => any | Promise<any>,
-                formId?: number
-            ): void {
-                native.once(name, handler, formId, taskId);
-            },
-            off(name: string, formId?: number): void {
-                native.off(name, formId, taskId);
-            },
-            clear(formId?: number, taskId?: number): void {
-                native.clear(formId, taskId);
-            },
-            getListenerList(taskId?: number): Record<string, Record<string, Record<string, number>>> {
-                return native.getListenerList(taskId);
-            },
-            invoke: function(name: string, ...param: any[]): Promise<any> {
-                return native.invoke(name, ...param);
-            },
-            size: async function(width: number, height: number): Promise<void> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return;
-                }
-                await native.size(width, height);
-            },
-            max: async function(): Promise<void> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return;
-                }
-                await native.max();
-            },
-            min: async function(): Promise<void> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return;
-                }
-                await native.min();
-            },
-            restore: async function(): Promise<void> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return;
-                }
-                await native.restore();
-            },
-            activate: async function(): Promise<void> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return;
-                }
-                await native.activate();
-            },
-            maximizable: async function(val: boolean): Promise<void> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return;
-                }
-                await native.maximizable(val);
-            },
-            open: async function(options: any): Promise<string[] | null> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return null;
-                }
-                return native.open(options);
-            },
-            save: async function(options: any): Promise<string | null> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return null;
-                }
-                return native.save(options);
-            },
-            dialog: async function(options: any): Promise<number> {
-                const rtn = await checkPermission('native.form', false, undefined, taskId);
-                if (!rtn[0]) {
-                    return -1;
-                }
-                return native.dialog(options);
-            },
-            ping: function(val: string): Promise<string> {
-                return native.ping(val);
-            },
-            isMax: function(): Promise<boolean> {
-                return native.isMax();
-            },
-        },
-        'storage': {
-            get: function(key: string): any {
-                return clickgo.storage.get(key, taskId);
-            },
-            set: function(key: string, val: string | number | any[] | Record<string, any>): boolean {
-                return clickgo.storage.set(key, val, taskId);
-            },
-            remove: function(key: string): boolean {
-                return clickgo.storage.remove(key, taskId);
-            },
-            list: function(): Record<string, number> {
-                return clickgo.storage.list(taskId);
-            },
-            all: function(): Record<string, number> {
-                return clickgo.storage.all();
-            },
-            clear: function(path: string): Promise<number> {
-                return clickgo.storage.clear(path);
-            }
-        },
-        'task': {
-            getFocus: function(): number | null {
-                return focusId;
-            },
-            onFrame: function(fun: () => void | Promise<void>, opt: any = {}): number {
-                opt.taskId = taskId;
-                return onFrame(fun, opt);
-            },
-            offFrame: function(ft: number, opt: {
-                'taskId'?: number;
-            } = {}): void {
-                opt.taskId = taskId;
-                offFrame(ft, opt);
-            },
-            get: function(tid: number): types.ITaskInfo | null {
-                return get(tid);
-            },
-            getPermissions: function(tid: number): string[] {
-                return getPermissions(tid);
-            },
-            getList: function(): Record<string, types.ITaskInfo> {
-                return getList();
-            },
-            run: function(url: string, opt: types.ITaskRunOptions = {}): Promise<number> {
-                if (opt.permissions) {
-                    if (!list[taskId]?.runtime.permissions.includes('root')) {
-                        opt.permissions = undefined;
-                    }
-                }
-                return run(url, opt, taskId);
-            },
-            checkPermission: function(
-                vals: string | string[],
-                apply: boolean = false,
-                applyHandler?: (list: string[]) => void | Promise<void>
-            ): Promise<boolean[]> {
-                return checkPermission(vals, apply, applyHandler, taskId);
-            },
-            end: function(tid: number): boolean {
-                return end(tid ?? taskId);
-            },
-            loadLocaleData: function(lang: string, data: Record<string, any>, pre: string = ''): void {
-                loadLocaleData(lang, data, pre, taskId);
-            },
-            loadLocale: function(lang: string, path: string): Promise<boolean> {
-                return loadLocale(lang, path, taskId);
-            },
-            clearLocale: function(): void {
-                clearLocale(taskId);
-            },
-            setLocale: function(lang: string, path: string): Promise<boolean> {
-                return setLocale(lang, path, taskId);
-            },
-            setLocaleLang: function(lang: string): void {
-                setLocaleLang(lang, taskId);
-            },
-            clearLocaleLang: function(): void {
-                clearLocaleLang(taskId);
-            },
-            createTimer: function(
-                fun: () => void | Promise<void>,
-                delay: number,
-                opt: types.ICreateTimerOptions = {}
-            ): number {
-                opt.taskId = taskId;
-                return createTimer(fun, delay, opt);
-            },
-            removeTimer: function(timer: number): void {
-                removeTimer(timer, taskId);
-            },
-            sleep: function(fun: () => void | Promise<void>, delay: number): number {
-                return sleep(fun, delay, taskId);
-            },
-            'systemTaskInfo': clickgo.task.systemTaskInfo,
-            setSystem: function(fid: number): boolean {
-                return setSystem(fid, taskId);
-            },
-            clearSystem: function(): boolean {
-                return clearSystem(taskId);
-            }
-        },
-        'theme': {
-            read: function(blob: Blob): Promise<types.ITheme | false> {
-                return clickgo.theme.read(blob);
-            },
-            load: async function(theme?: types.ITheme): Promise<boolean> {
-                if (!theme) {
-                    return false;
-                }
-                return clickgo.theme.load(theme, taskId);
-            },
-            remove: function(name: string): Promise<void> {
-                return clickgo.theme.remove(name, taskId);
-            },
-            clear: function(): Promise<void> {
-                return clickgo.theme.clear(taskId);
-            },
-            setGlobal: function(theme: types.ITheme): Promise<void> {
-                return clickgo.theme.setGlobal(theme);
-            },
-            clearGlobal: function(): void {
-                clickgo.theme.clearGlobal();
-            }
-        },
-        'tool': {
-            compressor: function<T extends File | Blob>(file: T, options: {
-                /** --- 最大宽度，默认无限 --- */
-                'maxWidth'?: number;
-                /** --- 最高高度，默认无限 --- */
-                'maxHeight'?: number;
-                /** --- 压缩质量，默认 0.8 --- */
-                'quality'?: number;
-            } = {}): Promise<File | Blob | false> {
-                return tool.compressor(file, options);
-            },
-            blob2ArrayBuffer: function(blob: Blob): Promise<ArrayBuffer> {
-                return tool.blob2ArrayBuffer(blob);
-            },
-            sizeFormat: function(size: number, spliter: string = ' '): string {
-                return tool.sizeFormat(size, spliter);
-            },
-            weightFormat: function(weight: number, spliter: string = ' '): string {
-                return tool.weightFormat(weight, spliter);
-            },
-            clone: function<T>(obj: T): T {
-                return tool.clone(obj);
-            },
-            sleep: function(ms: number = 0): Promise<boolean> {
-                return tool.sleep(ms);
-            },
-            nextFrame(): Promise<void> {
-                return tool.nextFrame();
-            },
-            sleepFrame(count: number): Promise<void> {
-                return tool.sleepFrame(count);
-            },
-            purify: function(text: string): string {
-                return tool.purify(text);
-            },
-            match: function(str: string, regs: RegExp[]): boolean {
-                return tool.match(str, regs);
-            },
-            layoutAddTagClassAndReTagName: function(layout: string, retagname: boolean): string {
-                return tool.layoutAddTagClassAndReTagName(layout, retagname);
-            },
-            layoutClassPrepend: function(layout: string, preps: string[]): string {
-                return tool.layoutClassPrepend(layout, preps);
-            },
-            stylePrepend: function(style: string, prep: string = ''): { 'style': string; 'prep': string; } {
-                return tool.stylePrepend(style, prep);
-            },
-            rand: function(min: number, max: number): number {
-                return tool.rand(min, max);
-            },
-            'RANDOM_N': tool.RANDOM_N,
-            'RANDOM_U': tool.RANDOM_U,
-            'RANDOM_L': tool.RANDOM_L,
-            'RANDOM_UN': tool.RANDOM_UN,
-            'RANDOM_LN': tool.RANDOM_LN,
-            'RANDOM_LU': tool.RANDOM_LU,
-            'RANDOM_LUN': tool.RANDOM_LUN,
-            'RANDOM_V': tool.RANDOM_V,
-            'RANDOM_LUNS': tool.RANDOM_LUNS,
-            random: function(length: number = 8, source: string = tool.RANDOM_LN, block: string = ''): string {
-                return tool.random(length, source, block);
-            },
-            getBoolean: function(param: boolean | string | number): boolean {
-                return tool.getBoolean(param);
-            },
-            getNumber: function(param: string | number): number {
-                return tool.getNumber(param);
-            },
-            getArray(param: string | any[]): any[] {
-                return tool.getArray(param);
-            },
-            escapeHTML: function(html: string): string {
-                return tool.escapeHTML(html);
-            },
-            formatColor: function(color: string): number[] {
-                return tool.formatColor(color);
-            },
-            rgb2hex: function(
-                r: string | number, g?: string | number, b?: string | number, a: string | number = 1
-            ): string {
-                return tool.rgb2hex(r, g, b, a);
-            },
-            hex2rgb: function(hex: string): {
-                'r': number;
-                'g': number;
-                'b': number;
-                'a': number;
-                'rgb': string;
-            } {
-                return tool.hex2rgb(hex);
-            },
-            rgb2hsl: function(
-                r: string | number, g?: string | number, b?: string | number, a: string | number = 1,
-                decimal: boolean = false
-            ): {
-                    'h': number;
-                    's': number;
-                    'l': number;
-                    'a': number;
-                    'hsl': string;
-                } {
-                return tool.rgb2hsl(r, g, b, a, decimal);
-            },
-            hsl2rgb: function(
-                h: string | number, s?: string | number, l?: string | number, a: string | number = 1,
-                decimal: boolean = false
-            ): {
-                    'r': number;
-                    'g': number;
-                    'b': number;
-                    'a': number;
-                    'rgb': string;
-                } {
-                return tool.hsl2rgb(h, s, l, a, decimal);
-            },
-            request: function(url: string, opt: types.IRequestOptions): Promise<null | any> {
-                return tool.request(url, opt);
-            },
-            fetch: function(url: string, init?: RequestInit): Promise<string | Blob | null> {
-                return tool.fetch(url, init);
-            },
-            get: function(url: string, opt?: {
-                'credentials'?: 'include' | 'same-origin' | 'omit';
-                'headers'?: HeadersInit;
-            }) {
-                return tool.get(url, opt);
-            },
-            post: function(url: string, data: Record<string, any> | FormData, opt?: {
-                'credentials'?: 'include' | 'same-origin' | 'omit';
-                'headers'?: HeadersInit;
-            }): Promise<Response | null> {
-                return tool.post(url, data, opt);
-            },
-            getResponseJson: function(url: string, opt?: {
-                'credentials'?: 'include' | 'same-origin' | 'omit';
-                'headers'?: HeadersInit;
-            }): Promise<any | null> {
-                return tool.getResponseJson(url, opt);
-            },
-            postResponseJson: function(url: string, data: Record<string, any> | FormData, opt?: {
-                'credentials'?: 'include' | 'same-origin' | 'omit';
-                'headers'?: HeadersInit;
-            }): Promise<any | null> {
-                return tool.postResponseJson(url, data, opt);
-            },
-            parseUrl: function(url: string): ILoaderUrl {
-                return tool.parseUrl(url);
-            },
-            urlResolve: function(from: string, to: string): string {
-                return tool.urlResolve(from, to);
-            },
-            urlAtom: function(url: string): string {
-                return tool.urlAtom(url);
-            },
-            blob2Text: function(blob: Blob): Promise<string> {
-                return tool.blob2Text(blob);
-            },
-            blob2DataUrl: function(blob: Blob): Promise<string> {
-                return tool.blob2DataUrl(blob);
-            },
-            execCommand: function(ac: string): void {
-                tool.execCommand(ac);
-            },
-            compar: function(before: string[], after: string[]): {
-                'remove': Record<string, number>;
-                'add': Record<string, number>;
-                'length': {
-                    'remove': number;
-                    'add': number;
-                };
-            } {
-                return tool.compar(before, after);
-            },
-            formatSecond: function(second: number): string {
-                return tool.formatSecond(second);
-            },
-            formatTime: function(ts: number | Date, tz?: number): {
-                'date': string;
-                'time': string;
-                'zone': string;
-            } {
-                return tool.formatTime(ts, tz);
-            },
-            isMs: function(time: number): boolean {
-                return tool.isMs(time);
-            },
-            queryStringify: function(query: Record<string, any>): string {
-                return tool.queryStringify(query);
-            },
-            queryParse: function(query: string): Record<string, string | string[]> {
-                return tool.queryParse(query);
-            }
-        },
-        'zip': {
-            get: function(data?: types.TZipInputFileFormat) {
-                return clickgo.zip.get(data);
-            }
-        }
-    };
-    /** --- 加载的 js 文件预处理 --- */
-    const preprocess = function(code: string, path: string): string {
-        // --- 屏蔽 eval 函数 ---
-        const exec = /eval\W/.exec(code);
-        if (exec) {
-            form.notify({
-                'title': 'Error',
-                'content': `The "eval" is prohibited.\nFile: "${path}".`,
-                'type': 'danger'
-            });
-            return '';
-        }
-        // --- 给 form 的 class 增加 filename 的 get ---
-        code = code.replace(/extends[\s\S]+?\.\s*(AbstractApp|AbstractForm|AbstractPanel)\s*{/, (t: string) => {
-            return t + 'get filename() {return __filename;}';
-        });
-        return code;
-    };
-    app.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-    /** --- .cga 文件，或者以 / 结尾的路径 --- */
-    const path = opt.path ?? ((typeof url === 'string') ? url : '/runtime/' + tool.random(8, tool.RANDOM_LUN) + '.cga');
-    const lio = path.endsWith('.cga') ? path.lastIndexOf('/') : path.slice(0, -1).lastIndexOf('/');
-    const current = path.slice(0, lio);
+    while (list[taskId]);
+    /** --- .cga 文件路径 --- */
+    const path = opt.path ?? ((typeof url === 'string') ? url : '/runtime/' + lTool.random(8, lTool.RANDOM_LUN) + '.cga');
+    const lio = path.lastIndexOf('/');
+    const currentPath = path.slice(0, lio);
     // --- 创建任务对象 ---
     list[taskId] = {
         'id': taskId,
         'app': app,
-        // 'class': null,
+        'class': null as any,
         'customTheme': false,
-        'locale': clickgo.vue.reactive({
+        'locale': clickgo.modules.vue.reactive({
             'lang': '',
-            'data': {}
+            'data': {},
         }),
         'path': path,
-        'current': current,
+        'current': currentPath,
 
-        'runtime': clickgo.vue.reactive({
-            'dialogFormIds': [],
-            'permissions': opt.permissions ?? []
-        }),
         'forms': {},
         'controls': {},
         'timers': {},
-        'invoke': invoke
-    } as any;
+    };
+    /** --- 如果当前运行的应用没权限，则不能设置 permissions --- */
+    let permissions = opt.permissions ?? [];
+    if (!(await checkPermission(current, 'root'))[0]) {
+        permissions = [];
+    }
+    runtime[taskId] = clickgo.modules.vue.reactive({
+        'dialogFormIds': [],
+        'permissions': permissions,
+        'index': ++index,
+    });
     // --- locale ---
     if (app.config.locales) {
         for (let path in app.config.locales) {
@@ -1352,101 +489,135 @@ export async function run(url: string | types.IApp, opt: types.ITaskRunOptions =
             if (!path.endsWith('.json')) {
                 path += '.json';
             }
-            await opt.initProgress?.('Load local ' + path + ' ...');
-            const lcontent = await fs.getContent(path, {
-                'encoding': 'utf8'
-            }, taskId);
+            await opt.initProgress?.(1, 7, EIPTYPE.LOCAL, 'Load local ' + path + ' ...');
+            const lcontent = await lFs.getContent(taskId, path, {
+                'encoding': 'utf8',
+            });
             if (!lcontent) {
                 continue;
             }
             try {
                 const data = JSON.parse(lcontent);
-                loadLocaleData(locale, data, '', taskId);
+                loadLocaleData(taskId, locale, data, '');
             }
-            catch {
-                // --- 无所谓 ---
-            }
+            catch {}
         }
     }
     let expo: any = [];
     try {
-        const map = {
-            'clickgo': '/invoke/clickgo'
-        };
-        if (app.config.map) {
-            Object.assign(map, app.config.map);
+        // --- 先检查有没有要加载的通用模块 ---
+        if (app.config.modules?.length) {
+            for (const m of app.config.modules) {
+                if (clickgo.modules[m]) {
+                    continue;
+                }
+                // --- 要加载库 ---
+                if (!lCore.checkModule(m)) {
+                    // --- 没模块，不加载 ---
+                    continue;
+                }
+                if (!(await lCore.loadModule(m))) {
+                    return -4;
+                }
+            }
         }
-        expo = loader.require('/app.js', app.files, {
-            'dir': '/',
-            'invoke': invoke,
-            'preprocess': preprocess,
-            'map': map
-        })[0];
+        const code = app.files['/app.js'];
+        if (typeof code !== 'string') {
+            return -5;
+        }
+        // --- code 用状态机判断敏感函数 ---
+        let goOn = true;
+        lTool.stateMachine(code, 0, (event) => {
+            if (event.state !== lTool.ESTATE.WORD) {
+                return true;
+            }
+            if (!['eval', 'Function'].includes(event.word)) {
+                return true;
+            }
+            lForm.notify({
+                'title': 'Error',
+                'content': `The "${event.word}" is prohibited.\nFile: "${path}".`,
+                'type': 'danger'
+            });
+            goOn = false;
+            return false;
+        });
+        if (!goOn) {
+            return -6;
+        }
+        // --- 判断结束 ---
+        expo = lTool.runIife(code);
+        if (!expo) {
+            return -7;
+        }
     }
     catch (e: any) {
         delete list[taskId];
-        core.trigger('error', taskId, 0, e, e.message + '(-1)');
-        return -2;
-    }
-    if (!expo?.default) {
-        delete list[taskId];
-        return -3;
+        lCore.trigger('error', taskId, '', e, e.message + '(-1)').catch(() => {});
+        return -8;
     }
     // --- 创建 Task 总 style ---
-    dom.createToStyleList(taskId);
+    lDom.createToStyleList(taskId);
     // --- 加载 control ---
-    await opt.initProgress?.('Control initialization ...');
-    const r = await control.init(taskId, invoke, opt.cache);
+    await opt.initProgress?.(2, 7, EIPTYPE.CONTROL, 'Control initialization ...');
+    const r = await lControl.init(taskId, {
+        progress: async (loaded, total, path) => {
+            await opt.progress?.(loaded, total, 'control', path);
+        },
+    });
     if (r < 0) {
-        dom.removeFromStyleList(taskId);
+        lDom.removeFromStyleList(taskId);
         delete list[taskId];
-        return -400 + r;
+        return -900 + r;
     }
     // --- 加载 theme ---
     if (app.config.themes?.length) {
         for (let path of app.config.themes) {
             path += '.cgt';
-            path = tool.urlResolve('/', path);
-            await opt.initProgress?.('Load theme ' + path + ' ...');
-            const file = await fs.getContent(path, undefined, taskId);
+            path = lTool.urlResolve('/', path);
+            await opt.initProgress?.(3, 7, EIPTYPE.THEME, 'Load theme ' + path + ' ...');
+            const file = await lFs.getContent(taskId, path);
             if (file && typeof file !== 'string') {
-                const th = await theme.read(file);
+                const th = await lTheme.read(file);
                 if (th) {
-                    await theme.load(th, taskId);
+                    await lTheme.load(taskId, th);
                 }
             }
         }
     }
     else {
         // --- 加载全局主题 ---
-        if (theme.global) {
-            await opt.initProgress?.('Load global theme ...');
-            await theme.load(undefined, taskId);
+        if (lTheme.global) {
+            await opt.initProgress?.(3, 7, EIPTYPE.THEME, 'Load global theme ...');
+            await lTheme.load(taskId);
         }
     }
     // --- 加载任务级全局样式 ---
     if (app.config.style) {
-        const style = await fs.getContent(app.config.style + '.css', {
+        const style = await lFs.getContent(taskId, app.config.style + '.css', {
             'encoding': 'utf8'
-        }, taskId);
+        });
         if (style) {
-            const r = tool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
-            await opt.initProgress?.('Style initialization ...');
-            dom.pushStyle(taskId, await tool.styleUrl2DataUrl(app.config.style, r.style, app.files));
+            const r = lTool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
+            await opt.initProgress?.(4, 7, EIPTYPE.STYLE, 'Style initialization ...');
+            lDom.pushStyle(taskId, await lTool.styleUrl2DataUrl(app.config.style, r.style, app.files));
         }
     }
     // --- 触发 taskStarted 事件 ---
-    core.trigger('taskStarted', taskId);
+    lCore.trigger('taskStarted', taskId).catch(() => {});
     // --- 请求权限 ---
     if (app.config.permissions) {
-        await opt.initProgress?.('Style initialization ...');
-        await checkPermission(app.config.permissions, true, undefined, taskId);
+        await opt.initProgress?.(5, 7, EIPTYPE.PERMISSION, 'Permission initialization ...');
+        await checkPermission(taskId, app.config.permissions, true, undefined);
     }
     // --- 执行 app ---
-    const appCls: core.AbstractApp = new expo.default();
+    const appCls: lCore.AbstractApp = new expo();
+    appCls.filename = path;
+    appCls.taskId = taskId;
     list[taskId].class = appCls;
-    await opt.initProgress?.('Starting ...');
+    await opt.initProgress?.(6, 7, EIPTYPE.START, 'Starting ...');
     await appCls.main(opt.data ?? {});
+    await opt.initProgress?.(7, 7, EIPTYPE.DONE, 'Done.');
     return taskId;
 }
 
@@ -1589,33 +760,36 @@ const locale: Record<string, {
 // fs.{path}{r/w}，path 以 / 结尾则是路径权限，不以 / 结尾是文件权限
 
 /**
- * --- 检测应用是否有相应的权限 ---
+ * --- 检测应用是否有相应的权限（如果 taskId 是 sysId 则直接成功） ---
+ * @param taskId 要检查的 taskId
  * @param vals 要检测的权限
  * @param apply 如果没有权限是否自动弹出申请，默认为否
  * @param applyHandler 向用户申请成功的权限列表回调
- * @param taskId 要检查的任务 ID，App 模式下无效
  */
 export async function checkPermission(
+    taskId: lCore.TCurrent,
     vals: string | string[],
     apply: boolean = false,
     applyHandler?: (list: string[]) => void | Promise<void>,
-    taskId?: number
 ): Promise<boolean[]> {
-    if (!taskId) {
-        return [false];
-    }
-    const task = list[taskId];
-    if (!task) {
-        return [false];
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     if (typeof vals === 'string') {
         vals = [vals];
+    }
+    if (isSys(taskId)) {
+        return new Array(vals.length).fill(true);
+    }
+    const task = list[taskId];
+    if (!task) {
+        return new Array(vals.length).fill(false);
     }
     const rtn: boolean[] = [];
     /** --- 需要申请的权限 --- */
     const applyList: string[] = [];
     for (const val of vals) {
-        if (task.runtime.permissions.includes('root')) {
+        if (runtime[taskId].permissions.includes('root')) {
             // --- 有 root 权限，一定成功 ---
             rtn.push(true);
             continue;
@@ -1624,7 +798,7 @@ export async function checkPermission(
             // --- fs 判断比较特殊 ---
             let yes = false;
             const path = val.slice(3, -1);
-            for (const v of task.runtime.permissions) {
+            for (const v of runtime[taskId].permissions) {
                 if (!v.startsWith('fs.')) {
                     continue;
                 }
@@ -1657,7 +831,7 @@ export async function checkPermission(
             continue;
         }
         // --- 其他权限判断 ---
-        const result = task.runtime.permissions.includes(val);
+        const result = runtime[taskId].permissions.includes(val);
         if (!result && apply) {
             // --- 要申请权限 ---
             applyList.push(val);
@@ -1666,24 +840,24 @@ export async function checkPermission(
     }
     // --- 申请权限 ---
     if (applyList.length) {
-        let html = '<div>"' + tool.escapeHTML(task.app.config.name) + '" ' + ((locale[core.config.locale]?.['apply-permission'] ?? locale['en']['apply-permission']) + ':') + '</div>';
+        let html = '<div>"' + lTool.escapeHTML(task.app.config.name) + '" ' + ((locale[lCore.config.locale]?.['apply-permission'] ?? locale['en']['apply-permission']) + ':') + '</div>';
         for (const item of applyList) {
             if (item.startsWith('fs.')) {
                 // --- fs 判断比较特殊 ---
                 const path = item.slice(3, -1);
                 html += '<div style="margin-top: 10px;">' +
-                    (locale[core.config.locale]?.fs ?? locale['en'].fs) + ' ' + tool.escapeHTML(path) + ' ' + (item.endsWith('r') ? (locale[core.config.locale]?.readonly ?? locale['en'].readonly) : (locale[core.config.locale]?.['read-write'] ?? locale['en']['read-write'])) +
-                    '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
+                    (locale[lCore.config.locale]?.fs ?? locale['en'].fs) + ' ' + lTool.escapeHTML(path) + ' ' + (item.endsWith('r') ? (locale[lCore.config.locale]?.readonly ?? locale['en'].readonly) : (locale[lCore.config.locale]?.['read-write'] ?? locale['en']['read-write'])) +
+                    '<div style="color: hsl(0,0%,60%);">' + lTool.escapeHTML(item) + '</div>' +
                 '</div>';
                 continue;
             }
-            const lang = (locale as any)[core.config.locale]?.[item] ?? (locale as any)['en'][item];
+            const lang = (locale as any)[lCore.config.locale]?.[item] ?? (locale as any)['en'][item];
             html += '<div style="margin-top: 10px;">' +
-                (lang ?? locale[core.config.locale]?.unknown ?? locale['en'].unknown) +
-                '<div style="color: hsl(0,0%,60%);">' + tool.escapeHTML(item) + '</div>' +
+                (lang ?? locale[lCore.config.locale]?.unknown ?? locale['en'].unknown) +
+                '<div style="color: hsl(0,0%,60%);">' + lTool.escapeHTML(item) + '</div>' +
             '</div>';
         }
-        if (await form.superConfirm(html)) {
+        if (await lForm.superConfirm(sysId, html)) {
             // --- 所有 false 变成 true ---
             for (let i = 0; i < rtn.length; ++i) {
                 if (rtn[i]) {
@@ -1692,14 +866,12 @@ export async function checkPermission(
                 rtn[i] = true;
             }
             for (const item of applyList) {
-                task.runtime.permissions.push(item);
+                runtime[taskId].permissions.push(item);
             }
             try {
-                applyHandler?.(applyList) as any;
+                await applyHandler?.(applyList);
             }
-            catch (e) {
-                console.log('task.checkPermission', e);
-            }
+            catch {}
         }
     }
     return rtn;
@@ -1707,61 +879,55 @@ export async function checkPermission(
 
 /**
  * --- 完全结束任务 ---
- * @param taskId 任务 id
+ * @param taskId 要结束的任务 id
  */
-export function end(taskId: number | string): boolean {
-    if (typeof taskId === 'string') {
-        taskId = parseInt(taskId);
+export async function end(taskId: lCore.TCurrent): Promise<boolean> {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     const task = list[taskId];
     if (!task) {
         return true;
     }
     // --- 如果是 native 模式 ---
-    if (clickgo.isNative() && (taskId === 1)) {
-        native.invoke('cg-close', native.getToken()) as any;
+    if (clickgo.isNative() && (Object.keys(list).length === 1)) {
+        await lNative.close(sysId);
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-    const fid = form.getMaxZIndexID({
-        'taskIds': [task.id]
+    const fid = await lForm.getMaxZIndexID(sysId, {
+        'taskIds': [taskId],
     });
-    if (fid) {
-        form.changeFocus(fid);
-    }
-    else {
-        form.changeFocus();
-    }
+    await lForm.changeFocus(fid ?? undefined);
     // --- 移除窗体 list ---
     for (const fid in task.forms) {
         // --- 结束任务挨个关闭窗体 ---
         const f = task.forms[fid];
-        core.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconDataUrl);
+        lCore.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconDataUrl).catch(() => {});
         try {
             f.vapp.unmount();
         }
         catch (err: any) {
             const msg = `Message: ${err.message}\nTask id: ${task.id}\nForm id: ${fid}\nFunction: task.end, unmount.`;
-            form.notify({
+            lForm.notify({
                 'title': 'Form Unmount Error',
                 'content': msg,
                 'type': 'danger'
             });
-            console.log('Form Unmount Error', msg, err);
         }
         f.vapp._container.remove();
-        form.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
-        dom.clearWatchStyle(fid);
-        dom.clearWatchProperty(fid);
-        dom.clearWatchPosition(fid);
-        delete form.activePanels[fid];
+        lForm.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
+        lDom.clearWatchStyle(fid);
+        lDom.clearWatchProperty(fid);
+        lDom.clearWatchPosition(fid);
+        delete lForm.activePanels[fid];
     }
     // --- 移除可能残留的 form wrap ---
-    const flist = form.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');
+    const flist = lForm.elements.list.querySelectorAll('.cg-form-wrap[data-task-id="' + taskId.toString() + '"]');
     for (const f of flist) {
         f.remove();
     }
     // --- 移除 style ---
-    dom.removeFromStyleList(taskId);
+    lDom.removeFromStyleList(taskId);
     // --- 移除所有 timer ---
     for (const timer in list[taskId].timers) {
         if (timer.startsWith('1x')) {
@@ -1774,26 +940,30 @@ export function end(taskId: number | string): boolean {
         }
     }
     // --- 移除各类监听 ---
-    dom.clearWatchSize(taskId);
-    dom.clearWatch(taskId);
-    native.clear(undefined, taskId);
+    lDom.clearWatchSize(taskId);
+    lDom.clearWatch(taskId);
+    lNative.clear(taskId);
     // --- 移除 task ---
     delete list[taskId];
+    delete runtime[taskId];
     // --- 触发 taskEnded 事件 ---
-    core.trigger('taskEnded', taskId);
+    lCore.trigger('taskEnded', taskId).catch(() => {});
     // --- 移除 task bar ---
-    clearSystem(taskId);
+    await clearSystem(taskId);
     return true;
 }
 
 /**
  * --- 加载 locale data 对象到 task ---
+ * @param taskId 任务 ID
  * @param lang 语言名，如 sc
  * @param data 数据
  * @param pre 前置
- * @param taskId 任务ID，App 模式下无效
  */
-export function loadLocaleData(lang: string, data: Record<string, any>, pre: string = '', taskId?: number): void {
+export function loadLocaleData(taskId: lCore.TCurrent, lang: string, data: Record<string, any>, pre: string = ''): void {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
     if (!taskId) {
         return;
     }
@@ -1803,7 +973,7 @@ export function loadLocaleData(lang: string, data: Record<string, any>, pre: str
     for (const k in data) {
         const v = data[k];
         if (typeof v === 'object') {
-            loadLocaleData(lang, v, pre + k + '.', taskId);
+            loadLocaleData(taskId, lang, v, pre + k + '.');
         }
         else {
             list[taskId].locale.data[lang][pre + k] = v;
@@ -1813,28 +983,28 @@ export function loadLocaleData(lang: string, data: Record<string, any>, pre: str
 
 /**
  * --- 加载 locale 文件 json ---
+ * @param taskId 所属的 taskId
  * @param lang 语言名，如 sc
  * @param path 绝对或者相对 app 路径的地址
- * @param taskId 所属的 taskId，App 模式下无效
  */
-export async function loadLocale(lang: string, path: string, taskId?: number): Promise<boolean> {
-    if (!taskId) {
-        return false;
+export async function loadLocale(taskId: lCore.TCurrent, lang: string, path: string): Promise<boolean> {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     const task = list[taskId];
     if (!task) {
         return false;
     }
     /** --- 获取的语言文件 --- */
-    const fcontent = await fs.getContent(path + '.json', {
-        'encoding': 'utf8'
-    }, taskId);
+    const fcontent = await lFs.getContent(taskId, path + '.json', {
+        'encoding': 'utf8',
+    });
     if (!fcontent) {
         return false;
     }
     try {
         const data = JSON.parse(fcontent);
-        loadLocaleData(lang, data, '', task.id);
+        loadLocaleData(task.id, lang, data, '');
         return true;
     }
     catch {
@@ -1844,11 +1014,11 @@ export async function loadLocale(lang: string, path: string, taskId?: number): P
 
 /**
  * --- 清除任务的所有加载的语言包 ---
- * @param taskId 所属的 taskId，App 模式下无效
+ * @param taskId 要清除的任务 id
  */
-export function clearLocale(taskId?: number): void {
-    if (!taskId) {
-        return;
+export function clearLocale(taskId: lCore.TCurrent): void {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     const task = list[taskId];
     if (!task) {
@@ -1858,26 +1028,26 @@ export function clearLocale(taskId?: number): void {
 }
 
 /**
- * --- 加载全新 locale（老 locale 的所以语言的缓存会被卸载） ---
+ * --- 加载全新 locale（老 locale 的所有语言的缓存会被卸载） ---
+ * @param taskId 要加载的任务 id
  * @param lang 语言名，如 sc
  * @param path 绝对或者相对 app 路径的地址
- * @param taskId 所属的 taskId，App 模式下无效z
  */
-export function setLocale(lang: string, path: string, taskId?: number): Promise<boolean> {
+export function setLocale(taskId: lCore.TCurrent, lang: string, path: string): Promise<boolean> {
     clearLocale(taskId);
-    return loadLocale(lang, path, taskId);
+    return loadLocale(taskId, lang, path);
 }
 
 /**
  * --- 设置本 task 的语言 name ---
+ * @param current 当前任务 id
  * @param lang 语言名，如 sc
- * @param taskId 所属的 taskId，App 模式下无效
  */
-export function setLocaleLang(lang: string, taskId?: number): void {
-    if (!taskId) {
-        return;
+export function setLocaleLang(current: lCore.TCurrent, lang: string): void {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const task = list[taskId];
+    const task = list[current];
     if (!task) {
         return;
     }
@@ -1886,13 +1056,13 @@ export function setLocaleLang(lang: string, taskId?: number): void {
 
 /**
  * --- 清除 task 的语言设置 ---
- * @param taskId 所属的 taskId，App 模式下无效
+ * @param current 当前任务 id
  */
-export function clearLocaleLang(taskId?: number): void {
-    if (!taskId) {
-        return;
+export function clearLocaleLang(current: lCore.TCurrent): void {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const task = list[taskId];
+    const task = list[current];
     if (!task) {
         return;
     }
@@ -1901,21 +1071,22 @@ export function clearLocaleLang(taskId?: number): void {
 
 /**
  * --- 创建 timer ---
+ * @param current 所属的 taskId
  * @param fun 执行函数
  * @param delay 延迟/间隔，毫秒
- * @param opt 选项, taskId: App 模式下无效, formId: 可省略，App 模式下省略代表生命周期为当前整个任务，否则只是当前窗体，immediate: 立即执行，默认 false，count: 执行次数，0 为无限次，默认 0
+ * @param opt 选项, formId: 可省略，省略代表生命周期为当前整个任务，否则只是当前窗体，immediate: 立即执行，默认 false，count: 执行次数，0 为无限次，默认 0
  */
 export function createTimer(
+    current: lCore.TCurrent,
     fun: () => void | Promise<void>,
     delay: number,
-    opt: types.ICreateTimerOptions = {}
+    opt: ICreateTimerOptions = {}
 ): number {
-    const taskId = opt.taskId;
-    const formId = opt.formId;
-    if (!taskId) {
-        return 0;
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const task = list[taskId];
+    const formId = opt.formId;
+    const task = list[current];
     if (!task) {
         return 0;
     }
@@ -1930,9 +1101,7 @@ export function createTimer(
     if (opt.immediate) {
         const r = fun();
         if (r instanceof Promise) {
-            r.catch(function(e) {
-                console.log(e);
-            });
+            r.catch(() => {});
         }
         ++c;
         if (count > 0 && c === count) {
@@ -1950,9 +1119,7 @@ export function createTimer(
         }
         const r = fun();
         if (r instanceof Promise) {
-            r.catch(function(e) {
-                console.log(e);
-            });
+            r.catch(() => {});
         }
         if (count > 0 && c === count) {
             clearTimeout(timer);
@@ -1967,97 +1134,61 @@ export function createTimer(
     else {
         timer = window.setInterval(timerHandler, delay);
     }
-    task.timers[timer] = formId ?? 0;
+    task.timers[timer] = formId ?? '';
     return timer;
 }
 
 /**
  * --- 移除 timer ---
+ * @param current 当前任务 id
  * @param timer ID
- * @param taskId 任务 id，App 模式下无效
  */
-export function removeTimer(timer: number, taskId?: number): void {
-    if (!taskId) {
+export function removeTimer(current: lCore.TCurrent, timer: number): void {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!list[current]) {
         return;
     }
-    if (list[taskId] === undefined) {
-        return;
-    }
-    const formId = list[taskId].timers[timer];
-    if (formId === undefined) {
+    const formId = list[current].timers[timer];
+    if (!formId) {
         return;
     }
     // --- 放在这，防止一个 task 能结束 别的 task 的 timer ---
     clearTimeout(timer);
-    delete list[taskId].timers[timer];
+    delete list[current].timers[timer];
 }
 
 /**
  * --- 暂停一小段时间 ---
+ * @param current 当前任务 id
  * @param fun 回调函数
  * @param delay 暂停时间
- * @param taskId 任务 id，App 模式下无效
  */
-export function sleep(fun: () => void | Promise<void>, delay: number, taskId?: number): number {
-    return createTimer(fun, delay, {
-        'taskId': taskId,
+export function sleep(current: lCore.TCurrent, fun: () => void | Promise<void>, delay: number): number {
+    return createTimer(current, fun, delay, {
         'count': 1
     });
 }
 
-/** --- task 的信息 --- */
-export const systemTaskInfo: types.ISystemTaskInfo = clickgo.vue.reactive({
-    'taskId': 0,
-    'formId': 0,
-    'length': 0
-});
+/** --- systemTaskInfo 原始参考对象 --- */
+const systemTaskInfoOrigin: ISystemTaskInfo = {
+    'taskId': '',
+    'formId': '',
+    'length': 0,
+};
 
-clickgo.vue.watch(systemTaskInfo, function(n: any, o: any) {
-    const originKeys = ['taskId', 'formId', 'length'];
-    // --- 检测有没有缺少的 key ---
-    for (const key of originKeys) {
-        if ((systemTaskInfo as any)[key] !== undefined) {
-            continue;
-        }
-        form.notify({
-            'title': 'Warning',
-            'content': 'There is a software that maliciously removed the system task info item.\nKey: ' + key,
-            'type': 'warning'
-        });
-        (systemTaskInfo as any)[key] = o[key] ?? 0;
-    }
-    for (const key in systemTaskInfo) {
-        if (!['taskId', 'formId', 'length'].includes(key)) {
-            form.notify({
-                'title': 'Warning',
-                'content': 'There is a software that maliciously modifies the system task info item.\nKey: ' + key,
-                'type': 'warning'
-            });
-            delete (systemTaskInfo as any)[key];
-            continue;
-        }
-        if (typeof (systemTaskInfo as any)[key] === 'number') {
-            continue;
-        }
-        form.notify({
-            'title': 'Warning',
-            'content': 'There is a software that maliciously modifies the system task info item.\nKey: ' + key,
-            'type': 'warning'
-        });
-        (systemTaskInfo as any)[key] = o[key] ?? 0;
-    }
-}, {
-    'deep': true
-});
+/** --- task 的信息 --- */
+export let systemTaskInfo: ISystemTaskInfo;
 
 /**
  * --- 将任务注册为系统 task ---
+ * @param taskId task id
  * @param formId task bar 的 form id
- * @param taskId task id，App 模式下无效
  */
-export function setSystem(formId: number, taskId?: number): boolean {
-    if (!taskId) {
-        return false;
+export function setSystem(taskId: lCore.TCurrent, formId: string): boolean {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     const task = list[taskId];
     if (!task) {
@@ -2068,15 +1199,15 @@ export function setSystem(formId: number, taskId?: number): boolean {
         return false;
     }
     if (f.vroot.position === undefined) {
-        form.notify({
+        lForm.notify({
             'title': 'Warning',
             'content': `Task id is "${taskId}" app is not an available task app, position not found.`,
             'type': 'warning'
         });
         return false;
     }
-    if (systemTaskInfo.taskId > 0) {
-        form.notify({
+    if (systemTaskInfo.taskId) {
+        lForm.notify({
             'title': 'Info',
             'content': 'More than 1 system-level task application is currently running.',
             'type': 'info'
@@ -2084,39 +1215,36 @@ export function setSystem(formId: number, taskId?: number): boolean {
     }
     systemTaskInfo.taskId = taskId;
     systemTaskInfo.formId = formId;
-    form.simpleSystemTaskRoot.forms = {};
+    lForm.simpleSystemTaskRoot.forms = {};
     refreshSystemPosition();
     return true;
 }
 
 /**
  * --- 清除系统任务设定 ---
- * @param taskId 清除的 taskid 为 task id 才能清除，App 模式下无效
+ * @param taskId 清除的 taskId
  */
-export function clearSystem(taskId?: number | string): boolean {
-    if (!taskId) {
-        return false;
-    }
-    if (typeof taskId === 'string') {
-        taskId = parseInt(taskId);
+export async function clearSystem(taskId: lCore.TCurrent): Promise<boolean> {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
     if (systemTaskInfo.taskId !== taskId) {
         return false;
     }
-    systemTaskInfo.taskId = 0;
-    systemTaskInfo.formId = 0;
+    systemTaskInfo.taskId = '';
+    systemTaskInfo.formId = '';
     systemTaskInfo.length = 0;
-    core.trigger('screenResize');
+    lCore.trigger('screenResize').catch(() => {});
     // --- 如果此时已经有最小化的窗体，那么他将永远“不见天日”，需要将他们传递给 simpletask ---
-    const tasks = getList();
+    const tasks = await getOriginList(sysId);
     for (const taskId in tasks) {
-        const forms = form.getList(parseInt(taskId));
+        const forms = lForm.getList(taskId);
         for (const formId in forms) {
             const f = forms[formId];
             if (!f.stateMin) {
                 continue;
             }
-            form.simpleSystemTaskRoot.forms[formId] = {
+            lForm.simpleSystemTaskRoot.forms[formId] = {
                 'title': f.title,
                 'icon': f.icon
             };
@@ -2126,13 +1254,13 @@ export function clearSystem(taskId?: number | string): boolean {
 }
 
 /**
- * --- 刷新系统任务的 form 的位置以及 length，App 模式下无效 ---
+ * --- 刷新系统任务的 form 的位置以及 length ---
  */
 export function refreshSystemPosition(): void {
-    if (systemTaskInfo.taskId > 0) {
+    if (systemTaskInfo.taskId) {
         const form = list[systemTaskInfo.taskId].forms[systemTaskInfo.formId];
         // --- 更新 task bar 的位置 ---
-        switch (core.config['task.position']) {
+        switch (lCore.config['task.position']) {
             case 'left':
             case 'right': {
                 form.vroot.$refs.form.setPropData('width', 0);
@@ -2147,7 +1275,7 @@ export function refreshSystemPosition(): void {
             }
         }
         setTimeout(function() {
-            switch (core.config['task.position']) {
+            switch (lCore.config['task.position']) {
                 case 'left': {
                     systemTaskInfo.length = form.vroot.$el.offsetWidth;
                     form.vroot.$refs.form.setPropData('left', 0);
@@ -2173,10 +1301,147 @@ export function refreshSystemPosition(): void {
                     break;
                 }
             }
-            core.trigger('screenResize');
+            lCore.trigger('screenResize').catch(() => {});
         }, 50);
     }
     else {
-        core.trigger('screenResize');
+        lCore.trigger('screenResize').catch(() => {});
     }
+}
+
+// --- 需要初始化 ---
+
+let inited = false;
+export function init(): void {
+    if (inited) {
+        return;
+    }
+    inited = true;
+    systemTaskInfo = clickgo.modules.vue.reactive({
+        'taskId': '',
+        'formId': '',
+        'length': 0,
+    });
+    clickgo.modules.vue.watch(systemTaskInfo, function() {
+        // --- 检测有没有缺少的 key ---
+        for (const key in systemTaskInfoOrigin) {
+            if ((systemTaskInfo as any)[key] !== undefined) {
+                continue;
+            }
+            lForm.notify({
+                'title': 'Warning',
+                'content': 'There is a software that maliciously removed the system task info item.\nKey: ' + key,
+                'type': 'warning',
+            });
+            (systemTaskInfo as any)[key] = (systemTaskInfoOrigin as any)[key] ?? 0;
+        }
+        // --- 有没有多余的或值有问题的 ---
+        for (const key in systemTaskInfo) {
+            if (!Object.keys(systemTaskInfoOrigin).includes(key)) {
+                lForm.notify({
+                    'title': 'Warning',
+                    'content': 'There is a software that maliciously modifies the system task info item.\nKey: ' + key,
+                    'type': 'warning',
+                });
+                delete (systemTaskInfo as any)[key];
+                continue;
+            }
+            if (typeof (systemTaskInfo as any)[key] === typeof (systemTaskInfoOrigin as any)[key]) {
+                continue;
+            }
+            lForm.notify({
+                'title': 'Warning',
+                'content': 'There is a software that maliciously modifies the system task info item.\nKey: ' + key,
+                'type': 'warning'
+            });
+            (systemTaskInfo as any)[key] = (systemTaskInfoOrigin as any)[key];
+        }
+    }, {
+        'deep': true
+    });
+}
+
+// --- 类型 ---
+
+/** --- 运行中的任务对象 --- */
+export interface ITask {
+    'id': string;
+    'app': lCore.IApp;
+    'class': lCore.AbstractApp;
+    'customTheme': boolean;
+    'locale': {
+        'lang': string;
+        'data': Record<string, Record<string, string>>;
+    };
+    /** --- 当前 app 自己的完整路径，如 /x/xx.cga，或 /x/x，末尾不含 / --- */
+    'path': string;
+    /** --- 当前 app 运行路径，末尾不含 / --- */
+    'current': string;
+
+    /** --- 窗体对象列表 --- */
+    'forms': Record<string, lForm.IForm>;
+    /** --- 已解析的控件处理后的对象，任务启动时解析，窗体创建时部分复用 --- */
+    'controls': Record<string, {
+        'layout': string;
+
+        'files': Record<string, Blob | string>;
+        /** --- 控件对象配置文件 --- */
+        'config': lControl.IControlConfig;
+
+        'props': Record<string, any>;
+        'emits': Record<string, any>;
+        'data': Record<string, any>;
+        'access': Record<string, any>;
+        'methods': Record<string, any>;
+        'computed': Record<string, any>;
+    }>;
+    /** --- 任务中的 timer 列表 --- */
+    'timers': Record<string, string>;
+}
+
+export interface IRuntime {
+    'dialogFormIds': string[];
+    'permissions': string[];
+    'index': number;
+}
+
+/** --- 系统任务信息 --- */
+export interface ISystemTaskInfo {
+    'taskId': string;
+    'formId': string;
+    'length': number;
+}
+
+export interface ITaskRunOptions {
+    'icon'?: string;
+    /** --- 初始化进度回调 --- */
+    'initProgress'?: (loaded: number, total: number, type: EIPTYPE, msg: string) => void | Promise<void>;
+    /** --- 加载进度回调（根据 type 分为不同阶段） --- */
+    'progress'?: (loaded: number, total: number, type: 'app' | 'control', path: string) => void | Promise<void>;
+    /** --- 显示 notify 窗口 --- */
+    'notify'?: boolean;
+    /** --- 直接赋予此任务相应权限，有 "root" 权限的应用才能设置 --- */
+    'permissions'?: string[];
+    /** --- 给 task 传值 --- */
+    'data'?: Record<string, any>;
+    /** --- 执行文件的基路径，一般在传入 APP 包时使用，以 .cga 结尾 --- */
+    'path'?: string;
+}
+
+export interface ICreateTimerOptions {
+    'formId'?: string;
+
+    'immediate'?: boolean;
+    'count'?: number;
+}
+
+/** --- Task 的简略情况，通常在 list 当中 --- */
+export interface ITaskInfo {
+    'name': string;
+    'locale': string;
+    'customTheme': boolean;
+    'formCount': number;
+    'icon': string;
+    'path': string;
+    'current': string;
 }

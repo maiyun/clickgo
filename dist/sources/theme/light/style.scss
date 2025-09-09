@@ -26,52 +26,53 @@ global {
 
     // --- 基础颜色 ---
 
-    --face:oklch(.98 .005 265);
-    --face-hover:oklch(.95 .005 265);
-    --face-selected:oklch(.92 .005 265);
-    --g-pop-background:oklch(.98 .005 265 / .6);
+    --g-pure:oklch(.995 0 0);
+    --face:oklch(.98 0 0);
+    --face-hover:oklch(.95 0 0);
+    --face-selected:oklch(.92 0 0);
+    --g-pop-background:oklch(.98 0 0 / .6);
     --g-pop-backdrop:blur(10px) saturate(2);
     --g-pop-border:solid .5px var(--g-border-color);
-    --g-shadow:0 1px 6px oklch(.2 .03 265 / 0.05);
-    --g-outline-shadow:0 0 0 4px oklch(.95 .01 265); 
+    --g-shadow:0 1px 3px oklch(.2 0 0 / 0.05);
+    --g-outline-shadow:0 0 0 4px oklch(.95 0 0); 
 
     // --- 组件默认颜色（如按钮） ---
 
-    --g-background:oklch(1 .005 265);
-    --g-background-hover:oklch(.98 .005 265);
-    --g-background-active:oklch(1 .005 265);
-    --g-background-opacity:oklch(.98 .005 265 / .2);
-    --g-background-focus:oklch(1 .005 265);
-    --g-background-disabled:oklch(1 .005 265);
+    --g-background:oklch(1 0 0);
+    --g-background-hover:oklch(.98 0 0);
+    --g-background-active:oklch(1 0 0);
+    --g-background-opacity:oklch(.98 0 0 / .2);
+    --g-background-focus:oklch(1 0 0);
+    --g-background-disabled:oklch(1 0 0);
 
-    --g-border-color:oklch(.9 .005 265);
-    --g-border-color-hover:oklch(.9 .005 265);
-    --g-border-color-active:oklch(.9 .005 265);
-    --g-border-color-focus:oklch(.9 .005 265);
-    --g-border-color-disabled:oklch(.9 .005 265);
+    --g-border-color:oklch(.9 0 0);
+    --g-border-color-hover:oklch(.9 0 0);
+    --g-border-color-active:oklch(.9 0 0);
+    --g-border-color-focus:oklch(.9 0 0);
+    --g-border-color-disabled:oklch(.9 0 0);
     
     // --- 组件轻量颜色（如文本框） ---
 
-    --g-plain-background:oklch(.995 .005 265);
-    --g-plain-background-hover:oklch(.97 .005 265);
-    --g-plain-background-active:oklch(.995 .005 265);
-    --g-plain-background-focus:oklch(.995 .005 265);
-    --g-plain-background-disabled:oklch(.995 .005 265);
-    --g-plain-background-selected:oklch(.95 .005 265);
+    --g-plain-background:oklch(.995 0 0);
+    --g-plain-background-hover:oklch(.97 0 0);
+    --g-plain-background-active:oklch(.995 0 0);
+    --g-plain-background-focus:oklch(.995 0 0);
+    --g-plain-background-disabled:oklch(.995 0 0);
+    --g-plain-background-selected:oklch(.95 0 0);
 
-    --g-plain-border-color:oklch(.9 .005 265);
-    --g-plain-border-color-hover:oklch(.85 .005 265);
-    --g-plain-border-color-active:oklch(.85 .005 265);
-    --g-plain-border-color-focus:oklch(.85 .005 265);
-    --g-plain-border-color-disabled:oklch(.85 .005 265);
-    --g-plain-border-color-plain:oklch(.92 .005 265);
+    --g-plain-border-color:oklch(.9 0 0);
+    --g-plain-border-color-hover:oklch(.85 0 0);
+    --g-plain-border-color-active:oklch(.85 0 0);
+    --g-plain-border-color-focus:oklch(.85 0 0);
+    --g-plain-border-color-disabled:oklch(.85 0 0);
+    --g-plain-border-color-plain:oklch(.92 0 0);
 
     // --- 特殊组件颜色 ---
 
-    --g-block-background:oklch(.96 .005 265);
-    --g-block-background-hover:oklch(.94 .005 265);
-    --g-block-dark-background:oklch(.04 .005 265);
-    --g-block-dark-background-hover:oklch(.06 .005 265);
+    --g-block-background:oklch(.96 0 0);
+    --g-block-background-hover:oklch(.94 0 0);
+    --g-block-dark-background:oklch(.04 0 0);
+    --g-block-dark-background-hover:oklch(.06 0 0);
 
     ::selection {
         background-color: oklch(0 0 0 / 0.1);
@@ -84,7 +85,7 @@ global {
             &::before {
                 border: solid .5px var(--g-color);
             }
-            color: var(--g-color); fill: var(--g-color); stroke: var(--g-color);
+            color: var(--g-color);
         }
     }
 }
@@ -109,9 +110,9 @@ global {
 // -- CONTROL -- group --
 
 .group_wrap {
-    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px oklch(.2 .03 265 / .08), 0 4px 6px -2px oklch(.2 .03 265 / 0.03);
+    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px oklch(.2 0 0 / .08), 0 4px 6px -2px oklch(.2 0 0 / 0.03);
     &.group_plain {
-        box-shadow: 0px 0px 0px 1px oklch(.2 .03 265 / .04), 0px 3px 16px 0px oklch(.2 .03 265 / .06);
+        box-shadow: 0px 0px 0px 1px oklch(.2 0 0 / .04), 0px 3px 16px 0px oklch(.2 0 0 / .06);
     }
 }
 
@@ -135,12 +136,12 @@ global {
 .nav-item_wrap {
     &:not(.nav-item_selected) {
         > .nav-item_text:hover {
-            color: var(--g-color-hover); stroke: var(--g-color-hover); fill: var(--g-color-hover);
+            color: var(--g-color-hover);
         }
     }
     &.nav-item_selected {
         > .nav-item_text {
-            font-weight: bold; color: var(--g-color-focus); stroke: var(--g-color-focus); fill: var(--g-color-focus);
+            font-weight: bold; color: var(--g-color-focus);
         }
     }
 }
@@ -198,10 +199,10 @@ global {
             background: var(--cg); transition: all .3s var(--g-cubic);
         }
         &:not(.tab_selected):not([data-cg-hover]):hover {
-            background: transparent; color: var(--cg); fill: var(--cg); stroke: var(--cg);
+            background: transparent; color: var(--cg);
         }
         &.tab_selected {
-            background: transparent; font-weight: bold; color: var(--cg); fill: var(--cg); stroke: var(--cg);
+            background: transparent; font-weight: bold; color: var(--cg);
         }
     }
     &.tab_top {

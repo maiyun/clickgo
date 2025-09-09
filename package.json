@@ -1,29 +1,35 @@
 {
   "name": "clickgo",
-  "version": "3.16.28",
+  "version": "4.0.0",
   "description": "Background interface, software interface, mobile phone APP interface operation library.",
+  "type": "module",
   "keywords": [
     "deskrt",
     "ui",
     "clickgo"
   ],
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "author": "hanguoshuai",
   "license": "Apache-2.0",
-  "types": "./types/index.d.ts",
+  "types": "./dist/clickgo.d.ts",
   "scripts": {
     "native": "electron ./dist/test/native",
     "native2": "electron ./dist/test/native/index2",
-    "native3": "electron ./dist/test/native/index3",
-    "native4": "electron ./dist/test/native/index4"
+    "native3": "electron ./dist/test/native/index3"
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.3.1",
-    "@litert/loader": "^3.5.9",
-    "@types/node": "^24.0.3",
-    "electron": "^36.4.0",
+    "@types/clean-css": "^4.2.11",
+    "@types/node": "^24.3.0",
+    "clean-css": "^5.3.3",
+    "commander": "^14.0.0",
+    "compressorjs": "^1.2.1",
+    "echarts": "^6.0.0",
+    "electron": "^37.4.0",
     "jszip": "^3.10.1",
-    "terser": "^5.43.0",
-    "typescript": "^5.8.3"
+    "rollup": "^4.50.0",
+    "terser": "^5.44.0",
+    "typescript": "^5.9.2",
+    "vue": "^3.5.21"
   }
 }

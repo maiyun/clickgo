@@ -14,7 +14,7 @@ export default class extends clickgo.control.AbstractControl {
     } = {
             'disabled': false,
             'data': {},
-            'theme': 'light'
+            'theme': 'light',
         };
 
     public notInit = false;
@@ -25,7 +25,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 图标控件对象 --- */
         'chart': any;
     } = {
-            'chart': undefined
+            'chart': undefined,
         };
 
     public async onMounted(): Promise<void> {
@@ -54,7 +54,7 @@ export default class extends clickgo.control.AbstractControl {
             'deep': true
         });
         // --- 自适应大小 ---
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             this.access.chart.resize();
         }, true);
         // --- 初始化成功 ---

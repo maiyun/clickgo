@@ -9,7 +9,7 @@
         position: relative; overflow: hidden;
         
         .top {
-            pointer-events: none; background: rgba(0, 0, 0, .4); color: #FFF; fill: #FFF; stroke: #FFF; position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; padding: var(--g-padding-s);
+            pointer-events: none; background: rgba(0, 0, 0, .4); color: oklch(1 0 0); position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; padding: var(--g-padding-s);
         }
 
         cg-img {

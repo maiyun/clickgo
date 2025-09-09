@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -48,8 +13,10 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.notInit = false;
         this.isLoading = true;
+        /** --- 用户最后一次活动时间 --- */
         this.lastActive = 0;
-        this.activeTimer = 0;
+        /** --- 定时器 --- */
+        // public activeTimer: number = 0;
         this.access = {
             'novnc': undefined,
             'rfb': undefined,
@@ -62,13 +29,15 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     async onMounted() {
-        const novnc = await clickgo.core.getModule('novnc');
+        const novnc = await clickgo.core.getModule('@novnc/novnc');
         if (!novnc) {
+            // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
-        this.access.novnc = novnc;
+        this.access.novnc = novnc.default.default;
+        // --- 监听上面的值的变动 ---
         this.watch(() => JSON.stringify(this.props.modelValue), (v, o) => {
             if (v === o) {
                 return;
@@ -84,9 +53,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.access.rfb = undefined;
                 return;
             }
+            // --- 开始吧 ---
             this.access.rfb = new this.access.novnc(this.refs.content, this.props.modelValue.url, {
                 'credentials': {
-                    'password': this.props.modelValue.pwd,
+                    'password': clickgo.tool.isTruthy(this.props.modelValue.pwd) ? this.props.modelValue.pwd : undefined,
                 },
                 'viewOnly': this.props.modelValue.view ?? false,
                 'clipViewport': false,
@@ -121,33 +91,62 @@ class default_1 extends clickgo.control.AbstractControl {
             'deep': true,
             'immediate': true,
         });
+        // --- 初始化成功 ---
         this.isLoading = false;
         this.emit('init', this.access.novnc);
-        this.activeTimer = clickgo.task.createTimer(() => {
+        // --- 创建定时器（心跳包RFB一般有） ---
+        /*
+        this.activeTimer = clickgo.task.createTimer(this, () => {
             if (!this.access.rfb) {
                 return;
             }
-            if (Date.now() - this.lastActive < 30_000) {
+            if (Date.now() - this.lastActive < 3_000) {
                 return;
             }
-            this.access.rfb.sendPointer(0, 0, 0);
+            // --- 发送 ---
+            const bcr = this.element.getBoundingClientRect();
+            this.element.dispatchEvent(new PointerEvent('pointermove', {
+                'clientX': bcr.left,
+                'clientY': bcr.top,
+                'buttons': 0,
+            }));
             this.lastActive = Date.now();
         }, 5_000);
+        */
     }
     onUnmounted() {
-        clickgo.task.removeTimer(this.activeTimer);
+        // clickgo.task.removeTimer(this, this.activeTimer);
         if (!this.access.rfb) {
             return;
         }
         this.access.rfb.disconnect();
         this.access.rfb = undefined;
     }
-    mousemove() {
+    /** --- 检测用户是否活动 --- */
+    mousemove(e) {
         if (!this.access.rfb) {
+            return;
+        }
+        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.lastActive = Date.now();
     }
+    // --- 供用户调用的方法 --
+    /**
+     * --- 主动断开 ---
+     */
+    disconnect() {
+        if (!this.access.rfb) {
+            return;
+        }
+        this.access.rfb.disconnect();
+        this.access.rfb = undefined;
+    }
+    /**
+     * --- 发送密码 ---
+     * @param pwd 密码
+     */
     sendPassword(pwd) {
         if (!this.access.rfb) {
             return false;
@@ -157,6 +156,10 @@ class default_1 extends clickgo.control.AbstractControl {
         });
         return true;
     }
+    /**
+     * --- 发送到对方剪贴板 ---
+     * @param text 文本
+     */
     sendClipboard(text) {
         if (!this.access.rfb) {
             return false;
@@ -164,6 +167,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access.rfb.clipboardPasteFrom(text);
         return true;
     }
+    /**
+     * --- 发送 Ctrl + Alt + Del ---
+     */
     sendCtrlAltDel() {
         if (!this.access.rfb) {
             return false;
@@ -172,4 +178,3 @@ class default_1 extends clickgo.control.AbstractControl {
         return true;
     }
 }
-exports.default = default_1;

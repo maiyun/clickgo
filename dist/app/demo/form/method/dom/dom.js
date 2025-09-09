@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.form.AbstractForm {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.watchSizeText = false;
@@ -78,19 +43,19 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.dom.setGlobalCursor(type);
     }
     hasTouchButMouse(e) {
-        clickgo.form.dialog(clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
     }
     getStyleCount() {
-        clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.dom.getStyleCount(this, 'form').toString()).catch((e) => { throw e; });
     }
     async getWatchSizeCount(taskId) {
-        await clickgo.form.dialog(clickgo.dom.getWatchSizeCount(taskId).toString());
+        await clickgo.form.dialog(this, clickgo.dom.getWatchSizeCount(taskId).toString());
     }
     watchSize() {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
-            clickgo.dom.watchSize(this.refs.watchSize.$el, () => {
-                clickgo.form.dialog(JSON.stringify({
+            clickgo.dom.watchSize(this, this.refs.watchSize.$el, () => {
+                clickgo.form.dialog(this, JSON.stringify({
                     'width': this.refs.watchSize.$el.offsetWidth,
                     'height': this.refs.watchSize.$el.offsetHeight
                 })).catch((e) => { throw e; });
@@ -114,19 +79,19 @@ class default_1 extends clickgo.form.AbstractForm {
     wwatch() {
         this.watchText = !this.watchText;
         if (this.watchText) {
-            clickgo.dom.watch(this.refs.watch.$el, () => {
-                clickgo.form.dialog('Changed.').catch((e) => { throw e; });
+            clickgo.dom.watch(this, this.refs.watch.$el, () => {
+                clickgo.form.dialog(this, 'Changed.').catch((e) => { throw e; });
             }, 'text');
         }
         else {
-            clickgo.dom.unwatch(this.refs.watch.$el);
+            clickgo.dom.unwatch(this, this.refs.watch.$el);
         }
     }
     async getWatchCount(taskId) {
-        await clickgo.form.dialog(clickgo.dom.getWatchCount(taskId).toString());
+        await clickgo.form.dialog(this, clickgo.dom.getWatchCount(taskId).toString());
     }
     isWatchStyle() {
-        clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
     }
     async getWatchInfo() {
         this.getWatchInfoDisabled = true;
@@ -162,7 +127,7 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     bindLong() {
-        clickgo.form.dialog('Press and hold this button.').catch((e) => { throw e; });
+        clickgo.form.dialog(this, 'Press and hold this button.').catch((e) => { throw e; });
     }
     bindLongDown(e) {
         clickgo.dom.bindLong(e, async () => {
@@ -221,8 +186,7 @@ class default_1 extends clickgo.form.AbstractForm {
     }
     onMounted() {
         clickgo.dom.watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => {
-            clickgo.form.dialog('name: ' + n + ', value: ' + v).catch((e) => { throw e; });
+            clickgo.form.dialog(this, 'name: ' + n + ', value: ' + v).catch((e) => { throw e; });
         });
     }
 }
-exports.default = default_1;

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -11,7 +10,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 无论是谁，只要 pop 显示就响应 --- */
         'pop': null,
 
-        'update:modelValue': null
+        'update:modelValue': null,
     };
 
     public props: {
@@ -117,7 +116,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:modelValue', val);
     }
 
-    public itemclicked(e: types.IListItemclickedEvent): void {
+    public itemclicked(e: clickgo.control.IListItemclickedEvent): void {
         if (e.detail.arrow) {
             return;
         }
@@ -128,8 +127,8 @@ export default class extends clickgo.control.AbstractControl {
         this.hidePop();
     }
 
-    public onAdd(e: types.IGreatlistAddEvent): void {
-        const event: types.IGreatselectAddEvent = {
+    public onAdd(e: clickgo.control.IGreatlistAddEvent): void {
+        const event: clickgo.control.IGreatselectAddEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -144,8 +143,8 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onRemove(e: types.IGreatlistRemoveEvent): void {
-        const event: types.IGreatselectRemoveEvent = {
+    public onRemove(e: clickgo.control.IGreatlistRemoveEvent): void {
+        const event: clickgo.control.IGreatselectRemoveEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -160,8 +159,8 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onChange(e: types.IGreatlistChangeEvent): void {
-        const event: types.IGreatselectChangeEvent = {
+    public onChange(e: clickgo.control.IGreatlistChangeEvent): void {
+        const event: clickgo.control.IGreatselectChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -176,8 +175,8 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onChanged(e: types.IGreatlistChangedEvent): void {
-        const event: types.IGreatselectChangedEvent = {
+    public onChanged(e: clickgo.control.IGreatlistChangedEvent): void {
+        const event: clickgo.control.IGreatselectChangedEvent = {
             'detail': {
                 'value': e.detail.value
             }

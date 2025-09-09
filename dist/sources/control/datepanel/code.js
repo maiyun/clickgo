@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -66,13 +31,17 @@ class default_1 extends clickgo.control.AbstractControl {
             'clearbtn': true,
             'backbtn': true
         };
+        /** --- 当前 date 对象 --- */
         this.dateObj = new Date();
+        /** --- 当前 date 对象的 utc 值 --- */
         this.dateValue = {
             'year': 0,
             'month': 0,
             'date': 0
         };
+        /** --- 当前选中的真正用户的时间戳 --- */
         this.timestamp = undefined;
+        /** --- 最小时间限制 --- */
         this.startDate = new Date();
         this.startTs = 0;
         this.startValue = {
@@ -80,6 +49,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'month': 0,
             'date': 0
         };
+        /** --- 最大时间限制 --- */
         this.endDate = new Date();
         this.endTs = 0;
         this.endValue = {
@@ -87,7 +57,9 @@ class default_1 extends clickgo.control.AbstractControl {
             'month': 0,
             'date': 0
         };
+        /** --- 当前时区信息（小时） --- */
         this.tzData = 0;
+        /** --- 语言包 --- */
         this.localeData = {
             'en': {
                 'w0': 'Sun',
@@ -390,10 +362,14 @@ class default_1 extends clickgo.control.AbstractControl {
                 'clear': 'Xóa',
             }
         };
+        /** --- 日历视图表 --- */
         this.maps = [];
+        // --- 上面的选项 ---
         this.vyear = [''];
         this.prevNextDate = new Date();
+        /** --- 上个月的年月字符串 --- */
         this.prevYm = '';
+        /** --- 下个月的年月字符串 --- */
         this.nextYm = '';
         this.vmonth = [''];
         this.vhour = [];
@@ -406,9 +382,13 @@ class default_1 extends clickgo.control.AbstractControl {
         this.zones = [];
         this.vzdec = [];
         this.zdecs = ['00', '15', '30', '45'];
+        // --- range ---
+        /** --- 当前鼠标放置的日期无符号 --- */
         this.cursorDate = '';
+        /** --- 另一个参数值 --- */
         this.rangeDate = undefined;
     }
+    /** --- 当前选中的日期的无符号字符串 --- */
     get dateValueStr() {
         return this.dateValue.year.toString() + (this.dateValue.month + 1).toString().padStart(2, '0') + this.dateValue.date.toString().padStart(2, '0');
     }
@@ -452,8 +432,12 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return arr;
     }
+    /**
+     * --- 刷新视图（当时间戳或时区变动时执行） ---
+     */
     refreshView() {
         const now = new Date(Date.UTC(parseInt(this.vyear[0]), parseInt(this.vmonth[0]) - 1, 1));
+        /** --- 当月 1 号在周几，0 代表周日 --- */
         const day1 = now.getUTCDay();
         if (day1 > 0) {
             now.setUTCDate(1 - day1);
@@ -461,6 +445,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.maps.length = 0;
         const zone = this.tzData * 60 * 60_000;
         for (let i = 0; i < 6; ++i) {
+            // --- 生成行列 ---
             this.maps[i] = Array.from({ length: 7 }, () => {
                 const col = {
                     'time': now.getTime() - zone,
@@ -475,11 +460,17 @@ class default_1 extends clickgo.control.AbstractControl {
             });
         }
     }
+    /**
+     * --- 刷新 date value 的数据为最新的 ---
+     */
     refreshDateValue() {
         this.dateValue.date = this.dateObj.getUTCDate();
         this.dateValue.month = this.dateObj.getUTCMonth();
         this.dateValue.year = this.dateObj.getUTCFullYear();
     }
+    /**
+     * --- 更新 time stamp，会自动根据 dateObj 设置时间戳基 ---
+     */
     updateTimestamp() {
         const modelValue = this.props.modelValue === undefined ? undefined : this.propNumber('modelValue');
         if (this.timestamp === undefined) {
@@ -506,6 +497,9 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('changed', event);
         }
     }
+    /**
+     * --- 跳转到当前选中的年份和月份 ---
+     */
     goSelected() {
         let change = false;
         if (parseInt(this.vyear[0]) !== this.dateValue.year) {
@@ -524,10 +518,12 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
+    /** --- col 点击 --- */
     colClick(col) {
         if (this.rangeDate === undefined && (this.timestamp !== undefined) && this.propBoolean('range')) {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (cols === this.dateValueStr) {
+                // --- range 状态，自己点击自己，只选择一天 ---
                 const endDate = new Date(Date.UTC(col.year, col.month, col.date, 23, 59, 59, 0));
                 const event = {
                     'go': true,
@@ -549,10 +545,12 @@ class default_1 extends clickgo.control.AbstractControl {
                 const nhour = parseInt(this.vhour[0] ?? '00');
                 const nminute = parseInt(this.vminute[0] ?? '00');
                 const nseconds = parseInt(this.vseconds[0] ?? '00');
+                /** --- 开始日 --- */
                 const sdate = new Date(this.dateObj.getTime());
                 if (nhour === 23 && nminute === 59 && nseconds === 59) {
                     sdate.setUTCHours(0, 0, 0, 0);
                 }
+                /** --- 截止日 --- */
                 const edate = new Date(Date.UTC(col.year, col.month, col.date, nhour, nminute, nseconds, 0));
                 if (nhour === 0 && nminute === 0 && nseconds === 0) {
                     edate.setUTCHours(23, 59, 59, 0);
@@ -579,6 +577,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.cursorDate = '';
             this.emit('update:cursor', this.cursorDate);
         }
+        // --- 解除 undefined 限制，使选中的时间戳可以 emit 上去 ---
         this.timestamp = 0;
         this.dateObj.setUTCFullYear(col.year, col.month, col.date);
         this.dateObj.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vseconds[0] ?? '00'), 0);
@@ -597,7 +596,9 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.emit('selected', event);
     }
+    /** --- 跳转到今天 --- */
     today() {
+        // --- 解除 undefined 限制，使选中的时间戳可以 emit 上去 ---
         this.timestamp = 0;
         const now = new Date();
         this.dateObj.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
@@ -605,12 +606,14 @@ class default_1 extends clickgo.control.AbstractControl {
         this.updateTimestamp();
         this.goSelected();
     }
+    /** --- 返回选中年月 --- */
     back() {
         this.vyear[0] = this.dateValue.year.toString();
         this.vmonth[0] = (this.dateValue.month + 1).toString();
         this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
         this.emit('yearmonthchanged');
     }
+    // --- 选上个月 ---
     prev() {
         const month = parseInt(this.vmonth[0]);
         if (month === 1) {
@@ -621,6 +624,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.vmonth[0] = (month - 1).toString();
     }
+    // --- 选下个月 ---
     next() {
         const month = parseInt(this.vmonth[0]);
         if (month === 12) {
@@ -632,6 +636,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.vmonth[0] = (month + 1).toString();
     }
     onMounted() {
+        // --- 监听最大最小值限定 ---
         this.watch('start', () => {
             if (this.props.start === undefined) {
                 this.startDate.setUTCFullYear(1900, 0, 1);
@@ -649,6 +654,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.startDate.setMilliseconds(0);
             }
             this.refreshStartValue();
+            // --- 判断选中的是不是小于 start ---
             if (this.timestamp !== undefined && this.timestamp < this.startTs) {
                 this.dateObj.setTime(this.startDate.getTime());
                 this.refreshDateValue();
@@ -675,6 +681,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.endDate.setMilliseconds(0);
             }
             this.refreshEndValue();
+            // --- 判断选中的是不是大于 end ---
             if (this.timestamp !== undefined && this.timestamp > this.endTs) {
                 this.dateObj.setTime(this.endDate.getTime());
                 this.refreshDateValue();
@@ -683,6 +690,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 填充年月日时分秒时区 ---
         for (let i = 0; i <= 23; ++i) {
             this.hours.push(i.toString().padStart(2, '0'));
         }
@@ -695,6 +703,7 @@ class default_1 extends clickgo.control.AbstractControl {
         for (let i = -12; i <= 14; ++i) {
             this.zones.push((i >= 0 ? '+' : '') + i.toString());
         }
+        // --- 检测年月变动 ---
         this.prevNextDate.setUTCHours(0, 0, 0, 0);
         this.watch(() => {
             return this.vyear[0] + '-' + this.vmonth[0];
@@ -706,6 +715,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.prevYm = this.prevNextDate.getUTCFullYear().toString() + (this.prevNextDate.getUTCMonth() + 1).toString().padStart(2, '0');
             this.prevNextDate.setUTCFullYear(parseInt(this.vyear[0]), parseInt(this.vmonth[0]), 1);
             this.nextYm = this.prevNextDate.getUTCFullYear().toString() + (this.prevNextDate.getUTCMonth() + 1).toString().padStart(2, '0');
+            /** --- year + month --- */
             const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
             if (this.props.yearmonth !== ym) {
                 this.emit('update:yearmonth', ym);
@@ -713,12 +723,14 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.refreshView();
         });
+        // --- 检测时分秒变动 ---
         this.watch(() => {
             return (this.vhour[0] ?? '') + ':' + (this.vminute[0] ?? '') + ':' + (this.vseconds[0] ?? '');
         }, () => {
             if (!this.vhour[0] || !this.vminute[0] || !this.vseconds[0]) {
                 return;
             }
+            /** --- hour + minute + seconds --- */
             const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
             if (this.props.hourminute !== hm) {
                 this.emit('update:hourminute', hm);
@@ -726,6 +738,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.dateObj.setUTCHours(parseInt(this.vhour[0]), parseInt(this.vminute[0]), parseInt(this.vseconds[0]));
             this.updateTimestamp();
         });
+        // --- 检测按钮操作的时区变动 ---
         this.watch(() => {
             return this.vzone[0] + ' ' + this.vzdec[0];
         }, () => {
@@ -741,6 +754,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.emit('update:tz', this.tzData);
             this.updateTimestamp();
+            // --- 更新 start 和 end ---
             this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
             this.startDate.setMilliseconds(0);
             this.refreshStartValue();
@@ -748,6 +762,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.endDate.setMilliseconds(0);
             this.refreshEndValue();
         });
+        // --- 监测 prop 时区信息变动 ---
         this.watch('tz', () => {
             if (this.props.tz === undefined) {
                 this.tzData = -(this.dateObj.getTimezoneOffset() / 60);
@@ -763,6 +778,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.vzone[0] = (parseInt(z[0]) >= 0 ? '+' : '') + z[0];
             this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
             this.updateTimestamp();
+            // --- 更新 start 和 end ---
             this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
             this.startDate.setMilliseconds(0);
             this.refreshStartValue();
@@ -777,6 +793,8 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 初始化 ---
+        // --- 监听 modelValue 变动 ---
         let mvfirst = true;
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
@@ -791,6 +809,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
                     this.refreshDateValue();
                     if (!mvfirst) {
+                        // --- 不是第一次 ---
                         const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');
                         if (this.props.yearmonth !== ym) {
                             this.emit('update:yearmonth', ym);
@@ -818,6 +837,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 年月翻页 ---
         this.watch('yearmonth', () => {
             if (!this.props.yearmonth) {
                 this.emit('update:yearmonth', this.vyear[0] + this.vmonth[0].padStart(2, '0'));
@@ -836,6 +856,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 时分秒 ---
         this.watch('hourminute', () => {
             const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
             if (!this.props.hourminute) {
@@ -851,6 +872,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'immediate': true
         });
     }
+    /** --- 鼠标移动到 col 上的事件 --- */
     colenter(e, col) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -864,6 +886,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.cursorDate = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
         this.emit('update:cursor', this.cursorDate);
     }
+    /** --- 当前日期是否可选 --- */
     get isDisabled() {
         return (col) => {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
@@ -875,13 +898,16 @@ class default_1 extends clickgo.control.AbstractControl {
             return cols > this.endYmd || cols < this.startYmd ? '' : undefined;
         };
     }
+    /** --- col 显示的 class 效果，有四种，1: undefined, 2: range, 3: range-left, 4: range-right --- */
     get toclass() {
         return (col) => {
             if (!this.propBoolean('range') || this.cursorDate === '' || this.timestamp === undefined) {
                 return undefined;
             }
+            /** --- cols 是要判断的盒子 --- */
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (this.cursorDate <= this.dateValueStr) {
+                // --- 如果鼠标小于等于选中的位置，那么啥也不管 ---
                 return undefined;
             }
             if (cols > this.cursorDate || cols < this.dateValueStr) {
@@ -896,6 +922,8 @@ class default_1 extends clickgo.control.AbstractControl {
             return 'range';
         };
     }
+    // --- 供用户调用的方法 ---
+    /** --- 清除所有状态 --- */
     clear() {
         const event = {
             'detail': {
@@ -913,4 +941,3 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
 }
-exports.default = default_1;

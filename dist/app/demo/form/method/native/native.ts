@@ -7,15 +7,15 @@ export default class extends clickgo.form.AbstractForm {
     public activating = false;
 
     public async getListenerList(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(clickgo.native.getListenerList()));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.native.getListenerList()));
     }
 
     public async max(): Promise<void> {
-        await clickgo.native.max();
+        await clickgo.native.max(this);
     }
 
     public async min(): Promise<void> {
-        await clickgo.native.min();
+        await clickgo.native.min(this);
     }
 
     public async activate(): Promise<void> {
@@ -24,16 +24,16 @@ export default class extends clickgo.form.AbstractForm {
         }
         this.activating = true;
         await clickgo.tool.sleep(2_000);
-        await clickgo.native.activate();
+        await clickgo.native.activate(this);
         this.activating = false;
     }
 
     public async ping(): Promise<void> {
-        await clickgo.form.dialog(await clickgo.native.ping(this.val) ?? 'undefined');
+        await clickgo.form.dialog(this, await clickgo.native.ping(this.val) ?? 'undefined');
     }
 
     public async isMax(): Promise<void> {
-        await clickgo.form.dialog(await clickgo.native.isMax() ? 'true' : 'false');
+        await clickgo.form.dialog(this, await clickgo.native.isMax() ? 'true' : 'false');
     }
 
     public async open(): Promise<void> {
@@ -45,7 +45,7 @@ export default class extends clickgo.form.AbstractForm {
                 },
             ],
         });
-        await clickgo.form.dialog(JSON.stringify(rtn));
+        await clickgo.form.dialog(this, JSON.stringify(rtn));
     }
 
     public async save(): Promise<void> {
@@ -57,15 +57,15 @@ export default class extends clickgo.form.AbstractForm {
                 },
             ],
         });
-        await clickgo.form.dialog(JSON.stringify(rtn));
+        await clickgo.form.dialog(this, JSON.stringify(rtn));
     }
 
     public async dialog(opts: {
-        'title'?: string,
-        'message'?: string,
-        'type'?: 'info' | 'error' | 'question' | 'warning',
-        'detail'?: string,
-        'buttons'?: string[],
+        'title'?: string;
+        'message'?: string;
+        'type'?: 'info' | 'error' | 'question' | 'warning';
+        'detail'?: string;
+        'buttons'?: string[];
     }): Promise<void> {
         const rtn = await clickgo.native.dialog({
             'title': opts.title,
@@ -74,7 +74,7 @@ export default class extends clickgo.form.AbstractForm {
             'detail': opts.detail,
             'buttons': opts.buttons,
         });
-        await clickgo.form.dialog(JSON.stringify(rtn));
+        await clickgo.form.dialog(this, JSON.stringify(rtn));
     }
 
 }

@@ -1,44 +1,6 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-const text_1 = __importDefault(require("../fs/text"));
-class default_1 extends clickgo.form.AbstractForm {
+import * as clickgo from 'clickgo';
+import testFrm from '../fs/text';
+export default class extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.ppath = '/';
@@ -57,7 +19,7 @@ class default_1 extends clickgo.form.AbstractForm {
         }
         const zip = await clickgo.zip.get(files[0]);
         if (!zip) {
-            await clickgo.form.dialog('File failed to open.');
+            await clickgo.form.dialog(this, 'File failed to open.');
             return;
         }
         this.access.zip = zip;
@@ -89,25 +51,25 @@ class default_1 extends clickgo.form.AbstractForm {
             if (r) {
                 const extlio = this.val[0].lastIndexOf('.');
                 if (extlio === -1) {
-                    await clickgo.form.dialog('This extension is not supported.');
+                    await clickgo.form.dialog(this, 'This extension is not supported.');
                     return;
                 }
                 const ext = this.val[0].toLowerCase().slice(extlio + 1);
                 if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
                     const content = await this.access.zip.getContent(this.val[0]);
                     if (!content) {
-                        await clickgo.form.dialog('This file cannot be opened.');
+                        await clickgo.form.dialog(this, 'This file cannot be opened.');
                         return;
                     }
-                    const f = await clickgo.form.create(text_1.default);
-                    f.show();
+                    const f = await clickgo.form.create(this, testFrm);
+                    await f.show();
                     this.send(f.formId, {
                         'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
                         'content': content
                     });
                     return;
                 }
-                await clickgo.form.dialog('This extension is not supported.');
+                await clickgo.form.dialog(this, 'This extension is not supported.');
                 return;
             }
             this.open(this.val[0]);
@@ -123,4 +85,3 @@ class default_1 extends clickgo.form.AbstractForm {
         this.open(npath);
     }
 }
-exports.default = default_1;

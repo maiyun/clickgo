@@ -61,7 +61,7 @@ export default class extends clickgo.control.AbstractControl {
     // --- 播放状态相关事件 ---
 
     /** --- 正式开始播放 --- */
-    public toPlay() {
+    public toPlay(): void {
         /** --- 要加载的 url --- */
         const url = this.isFull ? (this.props.fsrc || this.props.src) : this.props.src;
         this.access.instance = this.access.mpegts.createPlayer({
@@ -86,7 +86,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 会是啥错误呢 ---
             console.log('[ERROR][CONTROL][MPEGTS]', 'ERROR', e, e2, e3);
             this.capture();
-            this.access.instance.destroy();
+            this.access.instance?.destroy();
             this.toPlay();
         });
         this.access.instance.on(this.access.mpegts.Events.STATISTICS_INFO, () => {
@@ -103,7 +103,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 变暂停 ---
             if (this.access.instance) {
                 this.capture();
-                this.access.instance.destroy();
+                this.access.instance?.destroy();
                 this.access.instance = undefined;
             }
         }
@@ -116,7 +116,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 捕获一帧 --- */
-    public capture() {
+    public capture(): void {
         if (!this.access.instance || !this.refs.video) {
             return;
         }
@@ -131,7 +131,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 清除画布 --- */
-    public clear() {
+    public clear(): void {
         this.access.ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
     }
 
@@ -145,7 +145,7 @@ export default class extends clickgo.control.AbstractControl {
             await clickgo.tool.sleep(150);
             if (this.props.fsrc) {
                 this.capture();
-                this.access.instance.destroy();
+                this.access.instance?.destroy();
                 this.toPlay();
             }
             return;
@@ -158,7 +158,7 @@ export default class extends clickgo.control.AbstractControl {
         await clickgo.tool.sleep(150);
         if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
             this.capture();
-            this.access.instance.destroy();
+            this.access.instance?.destroy();
             this.toPlay();
         }
     }
@@ -178,7 +178,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.isShow = true;
         if (this.hideTimer) {
-            clickgo.task.removeTimer(this.hideTimer);
+            clickgo.task.removeTimer(this, this.hideTimer);
             this.hideTimer = 0;
         }
     }
@@ -190,7 +190,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.propBoolean('controls')) {
             return;
         }
-        this.hideTimer = clickgo.task.sleep(() => {
+        this.hideTimer = clickgo.task.sleep(this, () => {
             this.isShow = false;
         }, 800);
     }
@@ -204,17 +204,18 @@ export default class extends clickgo.control.AbstractControl {
             down: () => {
                 this.isShow = true;
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             },
             up: () => {
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
         });
     }
+
     // --- 当视频可以播放之时要处理的事件 ---
     public onCanplay(): void {
         this.playData = this.propBoolean('play');
@@ -227,51 +228,51 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 等待超过 5 秒就重建 --- */
     private _waitingTimer = 0;
 
-    public onPlaying(): void{
+    public onPlaying(): void {
         this.clear();
         if (!this._waitingTimer) {
             return;
         }
-        clickgo.task.removeTimer(this._waitingTimer);
+        clickgo.task.removeTimer(this, this._waitingTimer);
         this._waitingTimer = 0;
     }
 
     public onPause(): void {
         if (this._waitingTimer) {
-            clickgo.task.removeTimer(this._waitingTimer);
+            clickgo.task.removeTimer(this, this._waitingTimer);
         }
-        this._waitingTimer = clickgo.task.createTimer(() => {
+        this._waitingTimer = clickgo.task.createTimer(this, () => {
             this._waitingTimer = 0;
             if (!this.access.instance) {
                 return;
             }
             this.capture();
-            this.access.instance.destroy();
+            this.access.instance?.destroy();
             this.toPlay();
         }, 5_000, {
             'count': 1,
-        })
+        });
     }
 
     public onWaiting(): void {
         if (this._waitingTimer) {
-            clickgo.task.removeTimer(this._waitingTimer);
+            clickgo.task.removeTimer(this, this._waitingTimer);
         }
-        this._waitingTimer = clickgo.task.createTimer(() => {
+        this._waitingTimer = clickgo.task.createTimer(this, () => {
             this._waitingTimer = 0;
             if (!this.access.instance) {
                 return;
             }
             this.capture();
-            this.access.instance.destroy();
+            this.access.instance?.destroy();
             this.toPlay();
         }, 5_000, {
             'count': 1,
-        })
+        });
     }
 
     /** --- 喇叭事件 --- */
-    public volumeClick() {
+    public volumeClick(): void {
         if (this.volumeData) {
             // --- 有声音变没声音 ---
             this.refs.video.volume = 0;
@@ -315,13 +316,13 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('controls', () => {
             if (this.propBoolean('controls')) {
                 this.isShow = true;
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
             else {
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             }
@@ -340,14 +341,14 @@ export default class extends clickgo.control.AbstractControl {
             }
             else {
                 this.capture();
-                this.access.instance.destroy();
+                this.access.instance?.destroy();
                 this.access.instance = undefined;
             }
         });
         this.playData = this.propBoolean('play');
 
         // --- src 变更和初始化 ---
-        this.watch('src', async (n, o) => {
+        this.watch('src', (n, o) => {
             if (n === o) {
                 return;
             }
@@ -355,13 +356,13 @@ export default class extends clickgo.control.AbstractControl {
                 if (!this.access.instance) {
                     return;
                 }
-                this.access.instance.destroy();
+                this.access.instance?.destroy();
                 this.access.instance = undefined;
                 return;
             }
             // --- 本次不为空，看看是不是还有上次的 ---
             if (this.access.instance) {
-                this.access.instance.destroy();
+                this.access.instance?.destroy();
             }
             if (this.playData) {
                 this.toPlay();
@@ -379,23 +380,23 @@ export default class extends clickgo.control.AbstractControl {
                     // --- 本来就关闭 ---
                     return;
                 }
-                clickgo.task.removeTimer(resetTimer);
+                clickgo.task.removeTimer(this, resetTimer);
                 resetTimer = 0;
                 return;
             }
             // --- 打开 ---
             if (resetTimer) {
-                clickgo.task.removeTimer(resetTimer);
+                clickgo.task.removeTimer(this, resetTimer);
             }
-            resetTimer = clickgo.task.createTimer(() => {
+            resetTimer = clickgo.task.createTimer(this, () => {
                 if (!this.access.instance) {
                     return;
                 }
                 // --- 存在必然在播放状态 ---
                 this.capture();
-                this.access.instance.destroy();
+                this.access.instance?.destroy();
                 this.toPlay();
-            }, this.propInt('reset'))
+            }, this.propInt('reset'));
         }, {
             'immediate': true
         });
@@ -416,7 +417,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.access.instance) {
             return;
         }
-        this.access.instance.destroy();
+        this.access.instance?.destroy();
     }
 
 }

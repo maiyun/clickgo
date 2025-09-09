@@ -228,7 +228,7 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     /** --- 是否没有初始化 --- */
-    public notInit = true;
+    public notInit = false;
 
     /** --- 当前是否加载中 --- */
     public isLoading = false;
@@ -309,17 +309,21 @@ export default class extends clickgo.control.AbstractControl {
         mapEl.id = 'map';
         mapEl.style.height = '100%';
         // --- 绑定 down 事件 ---
-        const down = (e: MouseEvent | TouchEvent): void => {
+        const down = async (e: MouseEvent | TouchEvent): Promise<void> => {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
             }
             // --- 让本窗体获取焦点 ---
-            clickgo.form.changeFocus(this.formId);
+            await clickgo.form.changeFocus(this.formId);
             // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
             clickgo.form.hidePop();
         };
-        mapEl.addEventListener('mousedown', down);
-        mapEl.addEventListener('touchstart', down, {
+        mapEl.addEventListener('mousedown', (e) => {
+            down(e).catch(() => {});
+        });
+        mapEl.addEventListener('touchstart', (e) => {
+            down(e).catch(() => {});
+        }, {
             'passive': true
         });
         idoc.body.append(mapEl);
@@ -468,7 +472,7 @@ export default class extends clickgo.control.AbstractControl {
             case 'tianditu': {
                 // ---- 加载天地图 ---
                 const scriptEl = idoc.createElement('script');
-                scriptEl.src = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.js';
+                scriptEl.src = `${clickgo.getCdn()}/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.js`;
                 scriptEl.addEventListener('load', () => {
                     this.access.lib = this.access.iwindow!.maptalks;
                     const attributions = {
@@ -660,7 +664,7 @@ export default class extends clickgo.control.AbstractControl {
                 idoc.head.append(scriptEl);
                 const linkEl = idoc.createElement('link');
                 linkEl.rel = 'stylesheet';
-                linkEl.href = 'https://js.maiyun.net/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.css';
+                linkEl.href = `${clickgo.getCdn()}/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.css`;
                 idoc.head.append(linkEl);
                 break;
             }
@@ -1045,10 +1049,10 @@ export default class extends clickgo.control.AbstractControl {
                             'symbol': {
                                 'lineColor': line.strokeColor,
                                 'lineOpacity': line.strokeOpacity,
-                                'lineWidth': line.strokeWeight
+                                'lineWidth': line.strokeWeight,
                             },
                             'draggable': line.drag ?? false,
-                            'editable': line.edit ?? false
+                            'editable': line.edit ?? false,
                         });
                         this.access.vectorLayer.addGeometry(obj);
                         if (line.edit) {

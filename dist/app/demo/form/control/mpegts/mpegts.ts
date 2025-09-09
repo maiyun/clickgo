@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -30,7 +29,7 @@ export default class extends clickgo.form.AbstractForm {
     public fsrc: string = '';
 
     /** --- select changed 事件 --- */
-    public changed(e: types.ISelectChangedEvent): void {
+    public changed(e: clickgo.control.ISelectChangedEvent): void {
         const found = this.list.find(item => item.value === e.detail.value[0]);
         if (found?.fval) {
             this.fsrc = found.fval;

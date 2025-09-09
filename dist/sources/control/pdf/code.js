@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -53,8 +18,10 @@ class default_1 extends clickgo.control.AbstractControl {
             'pdf': undefined,
             'context': undefined
         };
+        /** --- watch: src 变更次数 --- */
         this.count = 0;
     }
+    /** --- 供用户调用的 --- */
     async load(buf) {
         if (!this.access.pdfjs) {
             return false;
@@ -66,9 +33,11 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access.pdf = await this.access.pdfjs.getDocument(buf).promise;
         this.isLoading = false;
         await this.go();
+        // --- 加载完成后渲染 ---
         this.emit('loaded', this.access.pdf);
         return true;
     }
+    /** --- 跳转 page --- */
     async go() {
         this.isLoading = true;
         let page = null;
@@ -93,6 +62,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'pxheight': 0,
             }
         };
+        /** --- 重新获取 --- */
         const viewport2 = page.getViewport({
             'scale': event.detail.inwidth * clickgo.dom.dpi / viewport.width
         });
@@ -111,10 +81,12 @@ class default_1 extends clickgo.control.AbstractControl {
     async onMounted() {
         this.access.pdfjs = await clickgo.core.getModule('pdfjs');
         if (!this.access.pdfjs) {
+            // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
+        // --- 监听 src ---
         this.watch('src', async () => {
             const count = ++this.count;
             if (typeof this.props.src !== 'string' || this.props.src === '') {
@@ -129,20 +101,23 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (pre.startsWith('data:')) {
+                // --- TOOD, dataUrl2blob ---
                 this.access.pdf = undefined;
                 this.emit('loaded', this.access.pdf);
                 return;
             }
             let blob = null;
             if (this.props.src.startsWith('/control/')) {
+                // --- 从 rootControl 中读取 ---
                 if (!this.rootControl) {
                     return;
                 }
                 blob = this.rootControl.packageFiles[this.props.src.slice(8)];
             }
             else {
+                // --- 从 app 包、http 中读取 ---
                 const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-                blob = await clickgo.fs.getContent(path);
+                blob = await clickgo.fs.getContent(this, path);
             }
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
@@ -151,6 +126,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true,
         });
+        // --- 监听 page ---
         this.watch('page', async () => {
             if (!this.access.pdf) {
                 return;
@@ -159,7 +135,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'deep': true
         });
+        // --- 初始化成功 ---
         this.isLoading = false;
     }
 }
-exports.default = default_1;

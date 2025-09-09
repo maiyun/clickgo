@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -60,9 +25,11 @@ class default_1 extends clickgo.control.AbstractControl {
             'close': true
         };
         this.dateObj = new Date();
+        /** --- 时间戳基数（真正的选择的时间戳） --- */
         this.timestamp = undefined;
         this.dateStr = '';
         this.timeStr = '';
+        /** --- 当前时区信息（小时） --- */
         this.tzData = 0;
         this.vhour = [];
         this.hours = [];
@@ -74,6 +41,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.zones = [];
         this.vzdec = [];
         this.zdecs = ['00', '15', '30', '45'];
+        /** --- 语言包 --- */
         this.localeData = {
             'en': {
                 'hour': 'Hr',
@@ -106,7 +74,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'hour': '時',
                 'minute': '分',
                 'second': '秒',
-                'zone': '時區',
+                'zone': '時區', // --- タイムゾーン ---
                 'cancel': '取消',
                 'ok': '確定',
                 'please click select': '選択して下さい'
@@ -115,7 +83,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'hour': '시',
                 'minute': '분',
                 'second': '초',
-                'zone': '時區',
+                'zone': '時區', // --- 시간대 ---
                 'cancel': '취소',
                 'ok': '확인',
                 'please click select': '선택 클릭'
@@ -148,7 +116,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 'please click select': 'Klicken Sie wählen'
             },
             'fr': {
-                'hour': 'Hr',
+                'hour': 'Hr', // 或 'H'
                 'minute': 'Min',
                 'second': 'Sec',
                 'zone': 'Zone',
@@ -185,6 +153,7 @@ class default_1 extends clickgo.control.AbstractControl {
             },
         };
     }
+    // --- 单击事件 ---
     click(type) {
         const el = this.refs[type];
         if (el.dataset.cgPopOpen !== undefined) {
@@ -239,10 +208,12 @@ class default_1 extends clickgo.control.AbstractControl {
     cancel() {
         clickgo.form.hidePop();
     }
+    // --- 清除已选中的 ---
     clear() {
         this.timestamp = undefined;
         this.emit('update:modelValue', undefined);
     }
+    // --- date panel 的 changed ---
     changed(e) {
         this.emit('update:modelValue', this.timestamp);
         const event = {
@@ -270,6 +241,7 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.form.hidePop(this.refs.firstpop);
     }
     onMounted() {
+        // --- 填充年时分秒时区 ---
         for (let i = 0; i <= 23; ++i) {
             this.hours.push(i.toString().padStart(2, '0'));
         }
@@ -282,6 +254,7 @@ class default_1 extends clickgo.control.AbstractControl {
         for (let i = -12; i <= 14; ++i) {
             this.zones.push((i >= 0 ? '+' : '') + i.toString());
         }
+        // --- 监测 prop 时区信息变动 ---
         this.watch('tz', () => {
             let tz = 0;
             if (this.props.tz === undefined) {
@@ -298,6 +271,7 @@ class default_1 extends clickgo.control.AbstractControl {
             const z = this.tzData.toString().split('.');
             this.vzone[0] = (parseInt(z[0]) >= 0 ? '+' : '') + z[0];
             this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
+            // --- 更新时间戳 ---
             if (this.timestamp !== undefined) {
                 this.emit('update:modelValue', this.dateObj.getTime() - this.tzData * 60 * 60_000);
             }
@@ -325,6 +299,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 时分秒 ---
         this.watch('hourminute', () => {
             const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
             if (!this.props.hourminute) {
@@ -341,4 +316,3 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
 }
-exports.default = default_1;

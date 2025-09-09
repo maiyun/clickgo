@@ -342,7 +342,7 @@ export default class extends clickgo.control.AbstractControl {
         monacoEl.style.height = '100%';
         idoc.body.append(monacoEl);
         /** --- monaco 的 loader 文件全量 data url --- */
-        const monaco = await clickgo.core.getModule('monaco');
+        const monaco = await clickgo.core.getModule('monaco-editor');
         if (!monaco) {
             // --- 没有成功 ---
             this.isLoading = false;
@@ -354,16 +354,18 @@ export default class extends clickgo.control.AbstractControl {
         loaderEl.addEventListener('load', () => {
             (iwindow as any).require.config({
                 paths: {
-                    'vs': clickgo.core.getCdn() + '/npm/monaco-editor@0.50.0/min/vs'
+                    'vs': clickgo.getCdn() + '/npm/monaco-editor@0.52.2/min/vs'
                 }
             });
             // --- 初始化 Monaco ---
             const proxy = (iwindow as any).URL.createObjectURL(new Blob([`
                 self.MonacoEnvironment = {
-                    baseUrl: '${clickgo.core.getCdn()}/npm/monaco-editor@0.50.0/min/'
+                    baseUrl: '${clickgo.getCdn()}/npm/monaco-editor@0.52.2/min/'
                 };
-                importScripts('${clickgo.core.getCdn()}/npm/monaco-editor@0.50.0/min/vs/base/worker/workerMain.js');
-            `], { type: 'text/javascript' }));
+                importScripts('${clickgo.getCdn()}/npm/monaco-editor@0.52.2/min/vs/base/worker/workerMain.js');
+            `], {
+                'type': 'text/javascript'
+            }));
             (iwindow as any).MonacoEnvironment = {
                 getWorkerUrl: () => proxy
             };
@@ -417,7 +419,7 @@ export default class extends clickgo.control.AbstractControl {
                         });
                     }
                     // --- 让本窗体获取焦点 ---
-                    clickgo.form.changeFocus(this.formId);
+                    clickgo.form.changeFocus(this.formId).catch(() => {});
                     // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
                     clickgo.form.hidePop();
                 };

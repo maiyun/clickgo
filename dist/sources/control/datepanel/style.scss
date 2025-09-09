@@ -4,7 +4,7 @@
         border: solid .5px var(--g-plain-border-color); background: var(--g-plain-background);
     }
     &[data-cg-disabled] {
-        background: var(--g-plain-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+        background: var(--g-plain-background-disabled); color: var(--g-color-disabled);
         > * {
             pointer-events: none;
         }
@@ -62,7 +62,7 @@
                 }
             }
             &[data-cg-disabled] {
-                color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+                color: var(--g-color-disabled);
                 > * {
                     pointer-events: none;
                 }

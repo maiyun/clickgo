@@ -3,10 +3,10 @@
         <button @click="load">Load "/clickgo/theme/blue.cgt"</button>
         <button @click="remove">remove('blue')</button>
         <button @click="clear">clear()</button>
-        <button @click="setGlobal('blue')">setGlobal "/clickgo/theme/blue.cgt"</button>
-        <button @click="setGlobal('byterun')">setGlobal "/clickgo/theme/byterun.cgt"</button>
         <button @click="setGlobal('light')">setGlobal "/clickgo/theme/light.cgt"</button>
         <button @click="setGlobal('dark')">setGlobal "/clickgo/theme/dark.cgt"</button>
         <button @click="clearGlobal">clearGlobal()</button>
+        <button @click="setMain('oklch(.65 .23 28)')" type="cg">setMain('oklch(.65 .23 28)')</button>
+        <button @click="setMain()" type="cg">setMain()</button>
     </layout>
 </form>

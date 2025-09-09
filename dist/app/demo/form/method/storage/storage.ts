@@ -11,21 +11,21 @@ export default class extends clickgo.form.AbstractForm {
     public ppath: string = '';
 
     public async get(): Promise<void> {
-        await clickgo.form.dialog(clickgo.storage.get(this.key) ?? 'null');
+        await clickgo.form.dialog(this, clickgo.storage.get(this, this.key) ?? 'null');
     }
 
     public async set(): Promise<void> {
-        clickgo.storage.set(this.key, this.val);
-        await clickgo.form.dialog('done');
+        clickgo.storage.set(this, this.key, this.val);
+        await clickgo.form.dialog(this, 'done');
     }
 
     public async remove(): Promise<void> {
-        await clickgo.form.dialog(clickgo.storage.remove(this.key) ? 'true' : 'false');
+        await clickgo.form.dialog(this, clickgo.storage.remove(this, this.key) ? 'true' : 'false');
     }
 
     public getlist(): void {
         this.list.length = 0;
-        const obj = clickgo.storage.list();
+        const obj = clickgo.storage.list(this);
         for (const key in obj) {
             this.list.push(key + ': ' + obj[key].toString() + ' Bytes');
         }
@@ -44,7 +44,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async clear(): Promise<void> {
-        await clickgo.form.dialog('Removed ' + (await clickgo.storage.clear(this.ppath)).toString() + ' items.');
+        await clickgo.form.dialog(this, 'Removed ' + (await clickgo.storage.clear(this.ppath)).toString() + ' items.');
     }
 
 }

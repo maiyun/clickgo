@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -48,18 +13,29 @@ class default_1 extends clickgo.control.AbstractControl {
             'show': false
         };
         this.showData = false;
+        /** --- 是否是嵌套中的 nav-item --- */
         this.isChild = false;
+        /** --- nav 控件 --- */
         this.nav = {};
     }
+    /** --- 是否有子项 --- */
     get hasChild() {
         return this.slotsAll('default').length ? true : false;
     }
+    /** --- name 应该值，name 为空则为 label 值 --- */
     get overName() {
         return this.props.name === '' ? this.props.label : this.props.name;
     }
+    /** --- 当前正在选择的 name 字符串 --- */
     get selected() {
         return this.nav.selected ?? '';
     }
+    /**
+     * --- 当前是否是选中状态 ---
+     * --- 如果 name 和 qs 完全相等，则一定选中 ---
+     * --- 当前没有 qs：如果同 name 没有相同 sqs，则本条就被选中，否则不管 ---
+     * --- 当前有 qs：qs 相等，那么选中，不相等，就不会被选中 ---
+     */
     get isSelected() {
         if (this.selected === this.overName) {
             return true;
@@ -70,18 +46,24 @@ class default_1 extends clickgo.control.AbstractControl {
             return false;
         }
         if (namea[1]) {
+            // --- 当前有 qs，上面却没选择自己，那必然不是自己 ---
             return false;
         }
+        // --- 当前没 qs ---
         if (!selecteda[1]) {
+            // --- 选中的也没 qs ---
             return true;
         }
+        // --- 选中的有 qs，那得看有没有带 qs 一致的，有的话，自己不会被选中 ---
         if (this.nav.childs.includes(this.selected)) {
             return false;
         }
         return true;
     }
+    // --- 展开或收缩菜单 ---
     click() {
         if (!this.hasChild) {
+            // --- 没有子项，是选择 ---
             if (this.isSelected) {
                 return;
             }
@@ -113,6 +95,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 监听展示状态 ---
         this.watch('showData', async () => {
             if (!this.hasChild) {
                 return;
@@ -131,9 +114,11 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this.hasChild && !this.showData) {
             this.refs.menu.style.height = '0';
         }
+        // --- 判断是不是子项 ---
         if (this.parentByName('nav-item')) {
             this.isChild = true;
         }
+        // --- 选中状态改变 ---
         this.watch('isSelected', () => {
             if (!this.isSelected) {
                 return;
@@ -147,11 +132,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 parent = parent.parentByName('nav-item');
             }
         });
+        // --- 监听 name 的变动 ---
         this.watch('overName', (n, o) => {
             const io = this.nav.childs.indexOf(o);
             this.nav.childs.splice(io, 1);
             this.nav.childs.push(n);
         });
+        // --- 更新到顶层 ---
         this.nav = this.parentByName('nav');
         this.nav.childs.push(this.overName);
     }
@@ -160,4 +147,3 @@ class default_1 extends clickgo.control.AbstractControl {
         this.nav.childs.splice(io, 1);
     }
 }
-exports.default = default_1;

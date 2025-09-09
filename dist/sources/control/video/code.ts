@@ -91,7 +91,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this._currentTimer) {
             return;
         }
-        this._currentTimer = clickgo.task.onFrame(() => {
+        this._currentTimer = clickgo.task.onFrame(this, () => {
             if (this.currentData === this.refs.video.currentTime) {
                 return;
             }
@@ -106,7 +106,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!this._currentTimer) {
             return;
         }
-        clickgo.task.offFrame(this._currentTimer);
+        clickgo.task.offFrame(this, this._currentTimer);
         this._currentTimer = 0;
     }
 
@@ -172,7 +172,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.isShow = true;
         if (this.hideTimer) {
-            clickgo.task.removeTimer(this.hideTimer);
+            clickgo.task.removeTimer(this, this.hideTimer);
             this.hideTimer = 0;
         }
     }
@@ -184,7 +184,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.propBoolean('controls')) {
             return;
         }
-        this.hideTimer = clickgo.task.sleep(() => {
+        this.hideTimer = clickgo.task.sleep(this, () => {
             this.isShow = false;
         }, 800);
     }
@@ -198,12 +198,12 @@ export default class extends clickgo.control.AbstractControl {
             down: () => {
                 this.isShow = true;
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             },
             up: () => {
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
@@ -304,7 +304,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 本 app 包或 blob 模式的文件 ---
             const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-            const blob = await clickgo.fs.getContent(path);
+            const blob = await clickgo.fs.getContent(this, path);
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
             }
@@ -328,13 +328,13 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('controls', () => {
             if (this.propBoolean('controls')) {
                 this.isShow = true;
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
             else {
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             }

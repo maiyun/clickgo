@@ -1,80 +1,45 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const fs = __importStar(require("fs"));
+import * as fs from 'fs';
 const files = [];
 async function readDir(path) {
     const list = await fs.promises.readdir(path, {
-        'withFileTypes': true
+        'withFileTypes': true,
     });
     for (const item of list) {
         if (item.name === '.' || item.name === '..') {
             continue;
         }
         if (item.isFile()) {
-            if (item.name.endsWith('.ts')) {
-                if (path.startsWith('dist/app/')) {
-                    continue;
-                }
-            }
-            if (item.name.endsWith('.scss')) {
+            if (item.name.endsWith('.ts') && !item.name.endsWith('.d.ts')) {
                 continue;
             }
-            if (item.name === '.DS_Store') {
+            if (['.DS_Store', 'global.scss'].includes(item.name)) {
                 continue;
             }
-            if ((path + item.name).startsWith('dist/build.')) {
+            if ((path + item.name).startsWith('dist/build')) {
                 continue;
             }
-            if ((path + item.name).startsWith('dist/compiler.')) {
+            if ((path + item.name).startsWith('dist/clickgo')) {
                 continue;
             }
-            if ((path + item.name).startsWith('dist/compcga.')) {
+            if ((path + item.name).startsWith('dist/pack')) {
                 continue;
             }
             files.push(path.slice(4) + item.name);
         }
         else {
-            if (path + item.name === 'dist/sources') {
+            const nextPath = path + item.name + '/';
+            if ([
+                'dist/app/demo/',
+                'dist/app/task/',
+                'dist/compiler/',
+                'dist/lib/',
+                'dist/sources/',
+                'dist/test/'
+            ].includes(nextPath)) {
                 continue;
             }
-            if (path + item.name === 'dist/test') {
-                continue;
-            }
-            files.push(path.slice(4) + item.name + '/');
-            await readDir(path + item.name + '/');
+            files.push(nextPath.slice(4));
+            await readDir(nextPath);
         }
     }
 }

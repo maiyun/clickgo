@@ -42,8 +42,7 @@
     }
 
     &[data-cg-disabled] {
-        background: var(--g-plain-background-disabled); color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled); stroke: var(--g-plain-color-disabled);
-        border-color: var(--g-plain-border-color-disabled);
+        background: var(--g-plain-background-disabled); color: var(--g-plain-color-disabled); border-color: var(--g-plain-border-color-disabled);
     }
 
 }

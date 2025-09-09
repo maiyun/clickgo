@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -48,8 +13,11 @@ class default_1 extends clickgo.control.AbstractControl {
             'lib': undefined,
             'instance': undefined,
         };
+        /** --- 是否没有初始化 --- */
         this.notInit = false;
+        /** --- 当前是否加载中 --- */
         this.isLoading = false;
+        /** --- 当前状态 --- */
         this.state = '';
         this.localeData = {
             'en': {
@@ -115,19 +83,24 @@ class default_1 extends clickgo.control.AbstractControl {
         };
     }
     get showMask() {
+        // --- 防止拖动导致卡顿 ---
         return this.isLoading ? true : clickgo.dom.is.move;
     }
+    /** --- 供外部调用的 --- */
     reset() {
         if (this.props.factory === 'tc') {
+            // --- 腾讯云验证码 ---
             this.state = '';
             this.refs.content.innerHTML = this.l('click');
             return;
         }
+        // --- CF 验证码 ---
         if (!this.access.lib || !this.access.instance) {
             return;
         }
         this.access.lib.reset(this.access.instance);
     }
+    /** --- 腾讯云验证码显示 --- */
     click() {
         if (!this.access.instance) {
             return;
@@ -136,8 +109,10 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     async onMounted() {
         if (this.props.factory === 'tc') {
-            const tcc = await clickgo.core.getModule('tcc');
+            // --- 腾讯云验证码 ---
+            const tcc = await clickgo.core.getModule('tjcaptcha');
             if (!tcc) {
+                // --- 没有成功 ---
                 this.isLoading = false;
                 this.notInit = true;
                 return;
@@ -169,11 +144,14 @@ class default_1 extends clickgo.control.AbstractControl {
             catch {
                 return;
             }
+            // --- 初始化成功 ---
             this.isLoading = false;
             return;
         }
-        const cft = await clickgo.core.getModule('cft');
+        // --- CF 验证码 ---
+        const cft = await clickgo.core.getModule('turnstile');
         if (!cft) {
+            // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
@@ -193,6 +171,7 @@ class default_1 extends clickgo.control.AbstractControl {
             },
         });
         this.access.instance = captcha;
+        // --- 初始化成功 ---
         this.isLoading = false;
     }
     onUnmounted() {
@@ -206,4 +185,3 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access.lib.remove(this.access.instance);
     }
 }
-exports.default = default_1;

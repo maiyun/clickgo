@@ -58,7 +58,7 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 // --- 从 app 包中读取 ---
                 const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-                blob = await clickgo.fs.getContent(path);
+                blob = await clickgo.fs.getContent(this, path);
             }
             // --- 本 app 包 ---
             if ((count !== this.count) || !blob || typeof blob === 'string') {

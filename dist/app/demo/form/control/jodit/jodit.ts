@@ -29,7 +29,7 @@ export default class extends clickgo.form.AbstractForm {
         'height'?: number;
         'align'?: string;
     }) => void): Promise<void> {
-        const frm = await clickgo.form.create(imgFrm);
+        const frm = await clickgo.form.create(this, imgFrm);
         const path = await frm.showDialog();
         if (!path) {
             return;

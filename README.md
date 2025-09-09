@@ -198,6 +198,7 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Paste SVG Vector](https://www.svgrepo.com/svg/489767/paste)
 [Sun 2 SVG Vector](https://www.svgrepo.com/svg/529971/sun-2)
 [Moon SVG Vector](https://www.svgrepo.com/svg/529729/moon)
+[Drag Handle SVG Vector](https://www.svgrepo.com/svg/459043/drag-handle)
 
 ### **LICENSE:** CC0 License **UPLOADER:** SVG Repo
 

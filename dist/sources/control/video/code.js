@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -69,17 +34,28 @@ class default_1 extends clickgo.control.AbstractControl {
             'current': 0
         };
         this.srcData = '';
+        /** --- 当前是否加载的 blob 模式文件 --- */
         this.isBlob = false;
+        /** --- watch: src 变更次数 --- */
         this.count = 0;
+        /** --- 媒介长度，秒数 --- */
         this.duration = 0;
+        /** --- 当前鼠标是否在进度条内 --- */
         this.inBar = false;
+        /** --- 将在多久后隐藏 (controls) --- */
         this.hideTimer = 0;
+        /** --- 是否在显示 (controls) --- */
         this.isShow = false;
+        /** --- 当前播放秒数 --- */
         this.currentData = 0;
+        /** --- 用于 current 更新的 timer --- */
         this._currentTimer = 0;
+        // --- 播放状态相关事件 ---
         this.playData = false;
+        // --- 鼠标和 bar 相关 ---
         this.bcurrent = 0;
     }
+    /** --- 媒介长度改变时 video 会触发 --- */
     onDurationchange() {
         if (!this.refs.video) {
             return;
@@ -94,7 +70,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (this._currentTimer) {
             return;
         }
-        this._currentTimer = clickgo.task.onFrame(() => {
+        this._currentTimer = clickgo.task.onFrame(this, () => {
             if (this.currentData === this.refs.video.currentTime) {
                 return;
             }
@@ -108,7 +84,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this._currentTimer) {
             return;
         }
-        clickgo.task.offFrame(this._currentTimer);
+        clickgo.task.offFrame(this, this._currentTimer);
         this._currentTimer = 0;
     }
     get currents() {
@@ -149,9 +125,11 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         await this.element.requestFullscreen();
     }
+    /** --- 当前是否是全屏 --- */
     get isFull() {
         return clickgo.dom.is.full;
     }
+    // --- 进入时保持 controls 常亮 ---
     onMouseEnter(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -161,7 +139,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.isShow = true;
         if (this.hideTimer) {
-            clickgo.task.removeTimer(this.hideTimer);
+            clickgo.task.removeTimer(this, this.hideTimer);
             this.hideTimer = 0;
         }
     }
@@ -172,7 +150,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('controls')) {
             return;
         }
-        this.hideTimer = clickgo.task.sleep(() => {
+        this.hideTimer = clickgo.task.sleep(this, () => {
             this.isShow = false;
         }, 800);
     }
@@ -180,16 +158,17 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('controls')) {
             return;
         }
+        // --- 防止在手机模式按下状态下 controls 被自动隐藏，PC 下有 enter 所以没事 ---
         clickgo.dom.bindDown(e, {
             down: () => {
                 this.isShow = true;
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             },
             up: () => {
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
@@ -198,6 +177,7 @@ class default_1 extends clickgo.control.AbstractControl {
     get bcurrents() {
         return clickgo.tool.formatSecond(this.bcurrent);
     }
+    /** --- 鼠标移动事件 --- */
     onBMove(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -221,6 +201,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refs.video.currentTime = this.currentData;
         this.emit('update:current', this.currentData);
     }
+    /** --- 手指移动事件 --- */
     onBTouch(e) {
         const bcr = this.refs.top.getBoundingClientRect();
         clickgo.dom.bindDown(e, {
@@ -231,12 +212,14 @@ class default_1 extends clickgo.control.AbstractControl {
             },
             up: () => {
                 this.inBar = false;
+                // --- 直接响应 ---
                 this.currentData = this.bcurrent;
                 this.refs.video.currentTime = this.currentData;
                 this.emit('update:current', this.currentData);
             }
         });
     }
+    // --- 当视频可以播放之时要处理的事件 ---
     onCanplay() {
         this.playData = this.propBoolean('play');
         if (this.playData && !this._currentTimer) {
@@ -273,8 +256,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.srcData = this.props.src;
                 return;
             }
+            // --- 本 app 包或 blob 模式的文件 ---
             const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-            const blob = await clickgo.fs.getContent(path);
+            const blob = await clickgo.fs.getContent(this, path);
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;
             }
@@ -286,27 +270,30 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 设置音量 ---
         this.watch('volume', () => {
             this.refs.video.volume = this.propInt('volume') / 100;
         }, {
             'immediate': true
         });
+        // --- 监听控件显示/隐藏状态 ---
         this.watch('controls', () => {
             if (this.propBoolean('controls')) {
                 this.isShow = true;
-                this.hideTimer = clickgo.task.sleep(() => {
+                this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
             else {
                 if (this.hideTimer) {
-                    clickgo.task.removeTimer(this.hideTimer);
+                    clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             }
         }, {
             'immediate': true
         });
+        // --- 检测播放状态 ---
         this.watch('play', () => {
             if (this.playData === this.propBoolean('play')) {
                 return;
@@ -328,4 +315,3 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
 }
-exports.default = default_1;

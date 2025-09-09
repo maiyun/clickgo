@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2007-2025 MAIYUN.NET
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as task from './task';
-import * as form from './form';
-import * as core from './core';
-import * as tool from './tool';
+import * as lTask from './task';
+import * as lForm from './form';
+import * as lCore from './core';
+import * as lTool from './tool';
+
+/** --- 系统级 ID --- */
+let sysId = '';
+
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id: string): void {
+    if (sysId) {
+        return;
+    }
+    sysId = id;
+}
 
 /** --- storage lib 用到的语言包 --- */
 const localeData: Record<string, {
@@ -65,18 +79,18 @@ const textEncoder = new TextEncoder();
 
 /**
  * --- 获取小型存储数据 ---
+ * @param current 当前任务 id
  * @param key 存储键
- * @param taskId 要读取的 task id，APP 模式下无效
  */
-export function get(key: string, taskId?: number): any {
-    if (!taskId) {
+export function get(current: lCore.TCurrent, key: string): any {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return null;
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return null;
-    }
-    const v = localStorage.getItem('clickgo-item-' + t.path + '-' + key);
+    const v = localStorage.getItem('clickgo-item-' + task.path + '-' + key);
     if (v === null) {
         return null;
     }
@@ -90,16 +104,16 @@ export function get(key: string, taskId?: number): any {
 
 /**
  * --- 存储小型存储数据，单应用最大存储 1M ---
+ * @param current 当前任务 id
  * @param key 存储键
  * @param val 存储值
- * @param taskId 要读取的 task id，APP 模式下无效
  */
-export function set(key: string, val: string | number | any[] | Record<string, any>, taskId?: number): boolean {
-    if (!taskId) {
-        return false;
+export function set(current: lCore.TCurrent, key: string, val: string | number | any[] | Record<string, any>): boolean {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const t = task.list[taskId];
-    if (!t) {
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return false;
     }
     if (val === undefined) {
@@ -108,12 +122,12 @@ export function set(key: string, val: string | number | any[] | Record<string, a
     const v = JSON.stringify(val);
     const vsize = textEncoder.encode(v).length;
     /** --- 当前 app 的 key 所占用的 size 列表 --- */
-    const sizes = localStorage.getItem('clickgo-size-' + t.path);
+    const sizes = localStorage.getItem('clickgo-size-' + task.path);
     if (sizes === null) {
         if (vsize > 1048576) {
             return false;
         }
-        localStorage.setItem('clickgo-size-' + t.path, JSON.stringify({
+        localStorage.setItem('clickgo-size-' + task.path, JSON.stringify({
             [key]: vsize
         }));
     }
@@ -124,26 +138,26 @@ export function set(key: string, val: string | number | any[] | Record<string, a
         if (allsize > 1048576) {
             return false;
         }
-        localStorage.setItem('clickgo-size-' + t.path, JSON.stringify(sizeso));
+        localStorage.setItem('clickgo-size-' + task.path, JSON.stringify(sizeso));
     }
-    localStorage.setItem('clickgo-item-' + t.path + '-' + key, v);
+    localStorage.setItem('clickgo-item-' + task.path + '-' + key, v);
     return true;
 }
 
 /**
  * --- 移除某个小型存储数据 ---
+ * @param current 当前 task id
  * @param key 要移除的键
- * @param taskId 要移除的 task id，APP 模式下无效
  */
-export function remove(key: string, taskId?: number): boolean {
-    if (!taskId) {
+export function remove(current: lCore.TCurrent, key: string): boolean {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return false;
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return false;
-    }
-    const sizes = localStorage.getItem('clickgo-size-' + t.path);
+    const sizes = localStorage.getItem('clickgo-size-' + task.path);
     if (sizes === null) {
         return true;
     }
@@ -153,28 +167,28 @@ export function remove(key: string, taskId?: number): boolean {
     }
     delete sizeso[key];
     if (Object.keys(sizeso).length) {
-        localStorage.setItem('clickgo-size-' + t.path, JSON.stringify(sizeso));
+        localStorage.setItem('clickgo-size-' + task.path, JSON.stringify(sizeso));
     }
     else {
-        localStorage.removeItem('clickgo-size-' + t.path);
+        localStorage.removeItem('clickgo-size-' + task.path);
     }
-    localStorage.removeItem('clickgo-item-' + t.path + '-' + key);
+    localStorage.removeItem('clickgo-item-' + task.path + '-' + key);
     return true;
 }
 
 /**
  * --- 获取当前任务的所有存储列表，key: size ---
- * @param taskId 要获取的 task id，APP 模式下无效
+ * @param current 当前任务 id
  */
-export function list(taskId?: number): Record<string, number> {
-    if (!taskId) {
+export function list(current: lCore.TCurrent): Record<string, number> {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return {};
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return {};
-    }
-    const sizes = localStorage.getItem('clickgo-size-' + t.path);
+    const sizes = localStorage.getItem('clickgo-size-' + task.path);
     if (sizes === null) {
         return {};
     }
@@ -210,8 +224,8 @@ export async function clear(path: string): Promise<number> {
     if (!path) {
         return 0;
     }
-    const loc = localeData[core.config.locale]?.['sure-clear'] ?? localeData['en']['sure-clear'];
-    if (!await form.superConfirm(loc.replace('?', tool.escapeHTML(path)))) {
+    const loc = localeData[lCore.config.locale]?.['sure-clear'] ?? localeData['en']['sure-clear'];
+    if (!await lForm.superConfirm(sysId, loc.replace('?', lTool.escapeHTML(path)))) {
         return 0;
     }
     let count = 0;

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -237,14 +236,14 @@ export default class extends clickgo.control.AbstractControl {
             }
             if (!this.element.offsetParent || !this.client) {
                 // --- 隐藏状态，要等等 ---
-                clickgo.task.sleep(() => {
+                clickgo.task.sleep(this, () => {
                     cb(c + 1);
                 }, 100);
                 return;
             }
             const pos = this.refs.flow.getPos(this.shiftStart);
             if (!pos) {
-                clickgo.task.sleep(() => {
+                clickgo.task.sleep(this, () => {
                     cb(c + 1);
                 }, 100);
                 return;
@@ -327,7 +326,7 @@ export default class extends clickgo.control.AbstractControl {
                 // --- 多选模式 ---
                 const res = clickgo.tool.compar(oldValueData, this.valueData);
                 for (const key in res.remove) {
-                    const event: types.IGreatlistRemoveEvent = {
+                    const event: clickgo.control.IGreatlistRemoveEvent = {
                         'go': true,
                         preventDefault: function() {
                             this.go = false;
@@ -340,7 +339,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.emit('remove', event);
                 }
                 for (const key in res.add) {
-                    const event: types.IGreatlistAddEvent = {
+                    const event: clickgo.control.IGreatlistAddEvent = {
                         'go': true,
                         preventDefault: function() {
                             this.go = false;
@@ -355,7 +354,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             else {
                 // --- 单选模式 ---
-                const event: types.IGreatlistChangeEvent = {
+                const event: clickgo.control.IGreatlistChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -365,7 +364,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                 };
                 this.emit('change', event);
-                const event2: types.IGreatlistChangedEvent = {
+                const event2: clickgo.control.IGreatlistChangedEvent = {
                     'detail': {
                         'value': this.valueData,
                     }
@@ -425,7 +424,7 @@ export default class extends clickgo.control.AbstractControl {
                         // --- 多选模式 ---
                         change = true;
                         for (let i = 0; i < this.valueData.length; ++i) {
-                            const event: types.IGreatlistRemoveEvent = {
+                            const event: clickgo.control.IGreatlistRemoveEvent = {
                                 'go': true,
                                 preventDefault: function() {
                                     this.go = false;
@@ -441,7 +440,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     else {
                         // --- 单选模式 ---
-                        const event: types.IGreatlistChangeEvent = {
+                        const event: clickgo.control.IGreatlistChangeEvent = {
                             'go': true,
                             preventDefault: function() {
                                 this.go = false;
@@ -454,7 +453,7 @@ export default class extends clickgo.control.AbstractControl {
                         if (event.go) {
                             change = true;
                             this.valueData = [];
-                            const event: types.IGreatlistChangedEvent = {
+                            const event: clickgo.control.IGreatlistChangedEvent = {
                                 'detail': {
                                     'value': []
                                 }
@@ -476,7 +475,7 @@ export default class extends clickgo.control.AbstractControl {
                             this.valueData = [value];
                             const res = clickgo.tool.compar(oldValueData, this.valueData);
                             for (const key in res.remove) {
-                                const event: types.IGreatlistRemoveEvent = {
+                                const event: clickgo.control.IGreatlistRemoveEvent = {
                                     'go': true,
                                     preventDefault: function() {
                                         this.go = false;
@@ -489,7 +488,7 @@ export default class extends clickgo.control.AbstractControl {
                                 this.emit('remove', event);
                             }
                             for (const key in res.add) {
-                                const event: types.IGreatlistAddEvent = {
+                                const event: clickgo.control.IGreatlistAddEvent = {
                                     'go': true,
                                     preventDefault: function() {
                                         this.go = false;
@@ -505,7 +504,7 @@ export default class extends clickgo.control.AbstractControl {
                         }
                         else {
                             // --- 单选模式 ---
-                            const event: types.IGreatlistChangeEvent = {
+                            const event: clickgo.control.IGreatlistChangeEvent = {
                                 'go': true,
                                 preventDefault: function() {
                                     this.go = false;
@@ -519,7 +518,7 @@ export default class extends clickgo.control.AbstractControl {
                                 change = true;
                                 this.valueData = [value];
                                 this.shiftStart = value;
-                                const event: types.IGreatlistChangedEvent = {
+                                const event: clickgo.control.IGreatlistChangedEvent = {
                                     'detail': {
                                         'value': [value]
                                     }
@@ -540,7 +539,7 @@ export default class extends clickgo.control.AbstractControl {
                                 this.valueData[0] = value;
                                 const res = clickgo.tool.compar(oldValueData, this.valueData);
                                 for (const key in res.remove) {
-                                    const event: types.IGreatlistRemoveEvent = {
+                                    const event: clickgo.control.IGreatlistRemoveEvent = {
                                         'go': true,
                                         preventDefault: function() {
                                             this.go = false;
@@ -553,7 +552,7 @@ export default class extends clickgo.control.AbstractControl {
                                     this.emit('remove', event);
                                 }
                                 for (const key in res.add) {
-                                    const event: types.IGreatlistAddEvent = {
+                                    const event: clickgo.control.IGreatlistAddEvent = {
                                         'go': true,
                                         preventDefault: function() {
                                             this.go = false;
@@ -569,7 +568,7 @@ export default class extends clickgo.control.AbstractControl {
                             }
                             else {
                                 // --- 单选模式 ---
-                                const event: types.IGreatlistChangeEvent = {
+                                const event: clickgo.control.IGreatlistChangeEvent = {
                                     'go': true,
                                     preventDefault: function() {
                                         this.go = false;
@@ -583,7 +582,7 @@ export default class extends clickgo.control.AbstractControl {
                                     change = true;
                                     this.valueData[0] = value;
                                     this.shiftStart = value;
-                                    const event: types.IGreatlistChangedEvent = {
+                                    const event: clickgo.control.IGreatlistChangedEvent = {
                                         'detail': {
                                             'value': [value]
                                         }
@@ -630,7 +629,7 @@ export default class extends clickgo.control.AbstractControl {
                         const rtn = clickgo.tool.compar(this.valueData, valueData);
                         if (rtn.length.add) {
                             for (const name in rtn.add) {
-                                const event: types.IGreatlistAddEvent = {
+                                const event: clickgo.control.IGreatlistAddEvent = {
                                     'go': true,
                                     preventDefault: function() {
                                         this.go = false;
@@ -650,7 +649,7 @@ export default class extends clickgo.control.AbstractControl {
                         }
                         if (rtn.length.remove) {
                             for (const name in rtn.remove) {
-                                const event: types.IGreatlistRemoveEvent = {
+                                const event: clickgo.control.IGreatlistRemoveEvent = {
                                     'go': true,
                                     preventDefault: function() {
                                         this.go = false;
@@ -678,7 +677,7 @@ export default class extends clickgo.control.AbstractControl {
                         // --- 选择已经存在的值 ---
                         if (!this.propBoolean('must') || (this.valueData.length > 1)) {
                             if (this.propBoolean('multi')) {
-                                const event: types.IGreatlistRemoveEvent = {
+                                const event: clickgo.control.IGreatlistRemoveEvent = {
                                     'go': true,
                                     preventDefault: function() {
                                         this.go = false;
@@ -706,7 +705,7 @@ export default class extends clickgo.control.AbstractControl {
                         // --- 选择不存在的值 ---
                         if (canSelect(value)) {
                             if (this.propBoolean('multi')) {
-                                const event: types.IGreatlistAddEvent = {
+                                const event: clickgo.control.IGreatlistAddEvent = {
                                     'go': true,
                                     preventDefault: function() {
                                         this.go = false;
@@ -753,7 +752,7 @@ export default class extends clickgo.control.AbstractControl {
                 clickgo.form.hidePop(current);
             }
             // --- 上报点击事件，true: arrow click ---
-            const clickevent: types.IGreatlistItemclickedEvent = {
+            const clickevent: clickgo.control.IGreatlistItemclickedEvent = {
                 'detail': {
                     'event': e,
                     'value': value,
@@ -762,7 +761,7 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('itemclicked', clickevent);
             // --- 上报双击时间，true: arrow click ---
-            const dblevent: types.IGreatlistItemdblclickedEvent = {
+            const dblevent: clickgo.control.IGreatlistItemdblclickedEvent = {
                 'detail': {
                     'event': e,
                     'value': value,
@@ -790,7 +789,7 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.bindClick(e, () => {
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 上报点击事件，false: arrow click ---
-            const clickevent: types.IGreatlistItemclickedEvent = {
+            const clickevent: clickgo.control.IGreatlistItemclickedEvent = {
                 'detail': {
                     'event': e,
                     'value': value,
@@ -799,7 +798,7 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('itemclicked', clickevent);
             // --- 上报双击时间，false: arrow click ---
-            const dblevent: types.IGreatlistItemdblclickedEvent = {
+            const dblevent: clickgo.control.IGreatlistItemdblclickedEvent = {
                 'detail': {
                     'event': e,
                     'value': value,
@@ -1022,7 +1021,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.valueData = notDisabledIndex > -1 ? [notDisabledIndex] : [];
                     this.shiftStart = this.valueData.length ? this.valueData[0] : 0;
                 }
-                const event: types.IGreatlistChangedEvent = {
+                const event: clickgo.control.IGreatlistChangedEvent = {
                     'detail': {
                         'value': [this.valueData[0]]
                     }

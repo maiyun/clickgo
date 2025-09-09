@@ -93,7 +93,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public async markerAddGaoqiao(wgs: boolean): Promise<void> {
         if (this.markers.length < 3) {
-            await clickgo.form.dialog('Please create at least 3 markers first.');
+            await clickgo.form.dialog(this, 'Please create at least 3 markers first.');
             return;
         }
         const lat = wgs ? 31.354737 : 31.352569;

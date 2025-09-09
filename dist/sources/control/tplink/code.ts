@@ -200,17 +200,23 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 可供外部调用，开始对讲 --- */
     public startTalk(index: number): void {
+        if (!this.access.instance) {
+            return;
+        }
         this.access.instance.StartTalk(index);
     }
 
     /** --- 可供外部调用，停止对讲 --- */
     public stopTalk(index: number): void {
+        if (!this.access.instance) {
+            return;
+        }
         this.access.instance.StopTalk(index);
     }
 
     public async onMounted(): Promise<void> {
         this.rand = clickgo.tool.random(16);
-        const tplink = await clickgo.core.getModule('tplink');
+        const tplink = await clickgo.core.getModule('tplinkhd');
         if (!tplink) {
             // --- 没有成功 ---
             this.isLoading = false;

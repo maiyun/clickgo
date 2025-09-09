@@ -318,6 +318,46 @@
             --shadow:var(--g-shadow);
         }
     }
+    &.cg {
+        &:not(.plain) {
+            --color:hsl(0, 0%, 100%);
+            --color-hover:hsl(0, 0%, 100%);
+            --color-active:hsl(0, 0%, 100%);
+            --color-focus:hsl(0, 0%, 100%);
+            --color-disabled:var(--g-plain-color-disabled);
+
+            --background:var(--cg);
+            --background-hover:var(--cg-hover);
+            --background-active:var(--cg-active);
+            --background-focus:var(--cg-focus);
+            --background-disabled:var(--cg-disabled);
+
+            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --shadow:var(--g-shadow);
+        }
+        &.plain {
+            --color:var(--cg);
+            --color-hover:var(--cg-hover);
+            --color-active:var(--cg-active);
+            --color-focus:var(--cg-focus);
+            --color-disabled:var(--cg-disabled);
+
+            --background:var(--g-plain-background);
+            --background-hover:var(--g-plain-background-hover);
+            --background-active:var(--g-plain-background-active);
+            --background-focus:var(--g-plain-background-focus);
+            --background-disabled:var(--g-plain-background-disabled);
+
+            --border:solid .5px var(--cg);
+            --border-hover:solid .5px var(--cg-hover);
+            --border-active:solid .5px var(--cg-active);
+            --border-focus:solid .5px var(--cg-focus);
+            --border-disabled:solid .5px var(--cg-disabled);
+
+            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --shadow:var(--g-shadow);
+        }
+    }
 
     &::before {                                 // --- 外边框 ---
         border: var(--border);
@@ -326,10 +366,10 @@
         border: var(--focusbox-border);
     }
     color: var(--color);                        // --- 文字色 ---
-    fill: var(--color);
-    stroke: var(--color);
     background: var(--background);              // --- 背景色 ---
-    box-shadow: var(--shadow);
+    &:not(.bgroup) {
+        box-shadow: var(--shadow);
+    }
     &.area-split {
         .inner::before {
             border-right: var(--border);
@@ -344,8 +384,6 @@
             }
             &.area-all, &.area-mark {
                 color: var(--color-focus);
-                fill: var(--color-focus);
-                stroke: var(--color-focus);
                 background: var(--background-focus);
             }
             &.area-split {
@@ -360,8 +398,6 @@
             }
             &.area-all, &.area-mark {
                 color: var(--color-hover);
-                fill: var(--color-hover);
-                stroke: var(--color-hover);
                 background: var(--background-hover);
             }
             &.area-split {
@@ -378,8 +414,6 @@
             }
             &.area-all, &.area-mark {
                 color: var(--color-active);
-                fill: var(--color-active);
-                stroke: var(--color-active);
                 background: var(--background-active);
             }
             &.area-split {
@@ -402,21 +436,15 @@
             .inner, .arrow {
                 &:focus {                       // --- 焦点 ---
                     color: var(--color-focus);
-                    fill: var(--color-focus);
-                    stroke: var(--color-focus);
                     background: var(--background-focus);
                 }
                 &:hover {                       // --- 鼠标悬停 ---
                     color: var(--color-hover);
-                    fill: var(--color-hover);
-                    stroke: var(--color-hover);
                     background: var(--background-hover);
                 }
                 // --- 鼠标按下 ---
                 &:active, &.active, &[data-cg-pop-open] {
                     color: var(--color-active);
-                    fill: var(--color-active);
-                    stroke: var(--color-active);
                     background: var(--background-active);
                 }
             }
@@ -436,12 +464,10 @@
             border: var(--border-disabled);
         }
         color: var(--color-disabled);
-        fill: var(--color-disabled);
-        stroke: var(--color-disabled);
         background: var(--background-disabled);
     }
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
+    color: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

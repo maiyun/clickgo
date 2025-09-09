@@ -1,102 +1,50 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RANDOM_LUNS = exports.RANDOM_V = exports.RANDOM_LUN = exports.RANDOM_LU = exports.RANDOM_LN = exports.RANDOM_UN = exports.RANDOM_L = exports.RANDOM_U = exports.RANDOM_N = void 0;
-exports.compressor = compressor;
-exports.getClassPrototype = getClassPrototype;
-exports.blob2ArrayBuffer = blob2ArrayBuffer;
-exports.sizeFormat = sizeFormat;
-exports.weightFormat = weightFormat;
-exports.clone = clone;
-exports.sleep = sleep;
-exports.nextFrame = nextFrame;
-exports.sleepFrame = sleepFrame;
-exports.purify = purify;
-exports.match = match;
-exports.styleUrl2DataUrl = styleUrl2DataUrl;
-exports.layoutAddTagClassAndReTagName = layoutAddTagClassAndReTagName;
-exports.layoutInsertAttr = layoutInsertAttr;
-exports.layoutClassPrepend = layoutClassPrepend;
-exports.eventsAttrWrap = eventsAttrWrap;
-exports.teleportGlue = teleportGlue;
-exports.stylePrepend = stylePrepend;
-exports.getMimeByPath = getMimeByPath;
-exports.rand = rand;
-exports.random = random;
-exports.getBoolean = getBoolean;
-exports.getNumber = getNumber;
-exports.getArray = getArray;
-exports.escapeHTML = escapeHTML;
-exports.formatColor = formatColor;
-exports.rgb2hex = rgb2hex;
-exports.hex2rgb = hex2rgb;
-exports.rgb2hsl = rgb2hsl;
-exports.hsl2rgb = hsl2rgb;
-exports.request = request;
-exports.fetch = fetch;
-exports.get = get;
-exports.post = post;
-exports.getResponseJson = getResponseJson;
-exports.postResponseJson = postResponseJson;
-exports.parseUrl = parseUrl;
-exports.urlResolve = urlResolve;
-exports.urlAtom = urlAtom;
-exports.blob2Text = blob2Text;
-exports.blob2DataUrl = blob2DataUrl;
-exports.execCommand = execCommand;
-exports.compar = compar;
-exports.formatSecond = formatSecond;
-exports.formatTime = formatTime;
-exports.isMs = isMs;
-exports.queryStringify = queryStringify;
-exports.queryParse = queryParse;
-exports.isEscaped = isEscaped;
-exports.parseArrayString = parseArrayString;
-const core = __importStar(require("./core"));
+/**
+ * Copyright 2007-2025 MAIYUN.NET
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/** --- compressorjs 压缩图片原生类 --- */
 let compressorjs = null;
-async function compressor(file, options = {}) {
+/**
+ * --- 运行 iife 代码 ---
+ * @param code iife 代码
+ * @returns 模块对象
+ */
+export function runIife(code) {
+    const func = new Function(code + '\nreturn emodule;');
+    return func();
+}
+/**
+ * --- 压缩一个图片 ---
+ * @param file 文件或 blob 类型 ---
+ * @param options 参数
+ */
+export async function compressor(file, options = {}) {
     if (!compressorjs) {
         try {
-            compressorjs = await core.getModule('compressorjs');
+            const cdn = window.clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
+            compressorjs = await import(cdn + '/npm/compressorjs@1.2.1/+esm');
         }
         catch {
             return false;
         }
     }
     return new Promise((resolve) => {
-        new compressorjs(file, {
+        if (!compressorjs) {
+            resolve(false);
+            return;
+        }
+        new compressorjs.default(file, {
             'quality': options.quality,
             'maxWidth': options.maxWidth,
             'maxHeight': options.maxHeight,
@@ -109,13 +57,19 @@ async function compressor(file, options = {}) {
         });
     });
 }
-function getClassPrototype(obj, over = [], level = 0) {
+/**
+ * --- 获取 class 的所有 method 和 get/set ---
+ * @param obj 实例化 class 对象
+ * @param over 不传入此参数
+ * @param level 不传入此参数
+ */
+export function getClassPrototype(obj, over = [], level = 0) {
     if (level === 0) {
         return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
     }
     const rtn = {
         'method': {},
-        'access': {}
+        'access': {},
     };
     const names = Object.getOwnPropertyNames(obj);
     if (names.includes('toString')) {
@@ -134,26 +88,29 @@ function getClassPrototype(obj, over = [], level = 0) {
         }
         over.push(item);
         if (des.value) {
+            // --- method ---
             rtn.method[item] = des.value;
         }
         else if (des.get ?? des.set) {
             if (!rtn.access[item]) {
-                rtn.access[item] = {};
-            }
-            if (des.get) {
-                rtn.access[item].get = des.get;
-            }
-            if (des.set) {
-                rtn.access[item].set = des.set;
+                rtn.access[item] = {
+                    'get': des.get ?? (() => { }),
+                    'set': des.set ?? (() => { }),
+                };
             }
         }
     }
+    // --- 往上级检查 ---
     const rtn2 = getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
     Object.assign(rtn.method, rtn2.method);
     Object.assign(rtn.access, rtn2.access);
     return rtn;
 }
-function blob2ArrayBuffer(blob) {
+/**
+ * --- 将 blob 对象转换为 ArrayBuffer ---
+ * @param blob 对象
+ */
+export function blob2ArrayBuffer(blob) {
     return new Promise(function (resove) {
         const fr = new FileReader();
         fr.addEventListener('load', function () {
@@ -162,7 +119,12 @@ function blob2ArrayBuffer(blob) {
         fr.readAsArrayBuffer(blob);
     });
 }
-function sizeFormat(size, spliter = ' ') {
+/**
+ * --- 将文件大小格式化为带单位的字符串 ---
+ * @param size 文件大小
+ * @param spliter 分隔符
+ */
+export function sizeFormat(size, spliter = ' ') {
     const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
     let i = 0;
     for (; i < 6 && size >= 1024.0; ++i) {
@@ -170,7 +132,12 @@ function sizeFormat(size, spliter = ' ') {
     }
     return (Math.round(size * 100) / 100).toString() + spliter + units[i];
 }
-function weightFormat(weight, spliter = ' ') {
+/**
+ * --- 将毫克重量格式化为带单位的字符串 ---
+ * @param weight 毫克重量
+ * @param spliter 分隔符
+ */
+export function weightFormat(weight, spliter = ' ') {
     const units = ['mg', 'g', 'kg'];
     let i = 0;
     for (; i < 3 && weight >= 1000; ++i) {
@@ -178,8 +145,13 @@ function weightFormat(weight, spliter = ' ') {
     }
     return (Math.round(weight * 100) / 100).toString() + spliter + units[i];
 }
-function clone(obj) {
+/**
+ * --- 完整的克隆一份数组/对象 ---
+ * @param obj 要克隆的对象
+ */
+export function clone(obj) {
     if (Array.isArray(obj)) {
+        // --- 数组 ---
         const newObj = [];
         for (let i = 0; i < obj.length; ++i) {
             if (obj[i] instanceof Date) {
@@ -204,6 +176,7 @@ function clone(obj) {
         }
         return newObj;
     }
+    // --- 对象 ---
     const newObj = {};
     for (const key in obj) {
         if (obj[key] instanceof Date) {
@@ -228,7 +201,11 @@ function clone(obj) {
     }
     return newObj;
 }
-function sleep(ms = 0) {
+/**
+ * --- 等待毫秒 ---
+ * @param ms 等待的毫秒，默认 0，最大 30 秒
+ */
+export function sleep(ms = 0) {
     return new Promise(function (resolve) {
         if (ms > 30_000) {
             resolve(false);
@@ -239,14 +216,21 @@ function sleep(ms = 0) {
         }, ms);
     });
 }
-function nextFrame() {
+/**
+ * --- 等待浏览器帧 ---
+ */
+export function nextFrame() {
     return new Promise(function (resolve) {
         requestAnimationFrame(() => {
             resolve();
         });
     });
 }
-async function sleepFrame(count) {
+/**
+ * --- 等待浏览器帧 ---
+ * @param count 等待帧数最高 10 帧
+ */
+export async function sleepFrame(count) {
     if (count > 10) {
         count = 10;
     }
@@ -254,7 +238,11 @@ async function sleepFrame(count) {
         await nextFrame();
     }
 }
-function purify(text) {
+/**
+ * --- 去除 html 的空白符、换行以及注释 ---
+ * @param text 要纯净的字符串
+ */
+export function purify(text) {
     text = '>' + text + '<';
     const scripts = [];
     let num = -1;
@@ -269,7 +257,12 @@ function purify(text) {
     });
     return text.slice(1, -1);
 }
-function match(str, regs) {
+/**
+ * --- 传入正则进行匹配 str 是否有一项满足 ---
+ * @param str 要检测的字符串
+ * @param regs 正则列表
+ */
+export function match(str, regs) {
     for (const reg of regs) {
         if (reg.test(str)) {
             return true;
@@ -277,12 +270,19 @@ function match(str, regs) {
     }
     return false;
 }
-async function styleUrl2DataUrl(path, style, files) {
+/**
+ * --- 将 style 中的 url 转换成 base64 data url ---
+ * @param path 路径基准或以文件的路径为基准，以 / 结尾
+ * @param style 样式表
+ * @param files 在此文件列表中查找
+ */
+export async function styleUrl2DataUrl(path, style, files) {
     const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
     let match = null;
     while ((match = reg.exec(style))) {
         let realPath = urlResolve(path, match[1]);
         if (realPath.startsWith('/package/')) {
+            // --- 处理 form 里面的路径 ---
             realPath = realPath.slice(8);
         }
         if (!files[realPath]) {
@@ -294,20 +294,30 @@ async function styleUrl2DataUrl(path, style, files) {
     }
     return style;
 }
-function layoutAddTagClassAndReTagName(layout, retagname) {
+/**
+ * --- 给标签增加 tag-tagname 的 class，同时给标签增加 cg- 前导（仅字符串，不是操作真实 dom） ---
+ * @param layout layout
+ * @param retagname 是否更改 tagname 为 cg-tagname
+ */
+export function layoutAddTagClassAndReTagName(layout, retagname) {
+    // --- "" '' 引号中的内容先替换为 placeholder 排除掉干扰 ---
     const list = [];
     layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function (t, t1) {
+        // --- t1 不是标签名，而是 attr 名，例如 class="xxx"、style="xxx" ---
         if (t1 === 'class') {
             return t;
         }
         list.push(t);
         return '"CG-PLACEHOLDER"';
     });
+    // --- 开始添加 class tag ---
     layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function (t, t1, t2, t3) {
+        // --- t1 是 /，t2 是 tagname，t3 是标签其他内容 ---
         if (['template', 'slot', 'teleport'].includes(t2)) {
             return t;
         }
         else {
+            // --- 需要给 class 添加 cg-xxx ---
             if (t1 === '/') {
                 if (t2 === 'block') {
                     return '</div' + t3;
@@ -317,9 +327,11 @@ function layoutAddTagClassAndReTagName(layout, retagname) {
                 }
             }
             if (t3.toLowerCase().includes(' class')) {
+                // --- 有 class，前置增加 ---
                 t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
             }
             else {
+                // --- 无 class 的 attr，增加 attr ---
                 t3 = ` class="tag-${t2}"` + t3;
             }
             if (t2 === 'block') {
@@ -330,12 +342,19 @@ function layoutAddTagClassAndReTagName(layout, retagname) {
             }
         }
     });
+    // --- 恢复 placeholder ---
     let i = -1;
     return layout.replace(/"CG-PLACEHOLDER"/g, function () {
         return list[++i];
     });
 }
-function layoutInsertAttr(layout, insert, opt = {}) {
+/**
+ * --- 给标签追加 attr，即使 attr 存在也会追加上一个新的（非真实 DOM 操作，仅仅是对字符串进行处理） ---
+ * @param layout 被追加
+ * @param insert 要追加
+ * @param opt 选项, ignore 忽略的标签，include 包含的标签
+ */
+export function layoutInsertAttr(layout, insert, opt = {}) {
     return layout.replace(/<([\w-]+)[\s\S]*?>/g, function (t, t1) {
         if (opt.ignore) {
             for (const item of opt.ignore) {
@@ -361,9 +380,32 @@ function layoutInsertAttr(layout, insert, opt = {}) {
         });
     });
 }
+/**
+ * --- 对 :class 的对象增加实时 css 的前缀 ---
+ * @param object :class 中的 {'xxx': xxx, [yyy]: yyy} 字符串
+ */
 function layoutClassPrependObject(object) {
     object = object.slice(1, -1).trim();
+    /*
+    return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function(t, t1: string, t2: string, t3: string) {
+        // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
+        t1 = t1.trim();
+        if (t1.startsWith('[')) {
+            t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
+        }
+        else {
+            let sp = '';
+            if (t1.startsWith('\'') || t1.startsWith('"')) {
+                sp = t1[0];
+                t1 = t1.slice(1, -1);
+            }
+            t1 = `[classPrepend(${sp}${t1}${sp})]`;
+        }
+        return t1 + ':' + t2 + t3;
+    }) + '}';
+    //*/
     return '{' + object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, function (t, t1, t2) {
+        // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
         if (t1.startsWith('[')) {
             t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
@@ -379,8 +421,14 @@ function layoutClassPrependObject(object) {
         return t1 + t2;
     }) + '}';
 }
-function layoutClassPrepend(layout, preps) {
+/**
+ * --- 给 class 增加 scope 的随机前缀，给 id 新增前缀 ---
+ * @param layout layout
+ * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
+ */
+export function layoutClassPrepend(layout, preps) {
     const rtn = layout.replace(/ class=["'](.+?)["']/gi, function (t, t1) {
+        // --- t1 为 xxx yyy zzz 这样的 ----
         t1 = t1.trim();
         const classList = t1.split(' ');
         const resultList = [];
@@ -390,10 +438,15 @@ function layoutClassPrepend(layout, preps) {
             }
         }
         return ` class="${resultList.join(' ')}"`;
+        //}).replace(/ :class=(["']).+?>/gi, function(t, sp) {
     }).replace(/ :class=(["']).+?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function (t, sp) {
-        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function (t, t1, t2) {
+        return t.replace(new RegExp(`:class=${sp}([^"]+?)${sp}`, 'gi'), function (t, t1) {
+            // return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
+            // --- t1 为 [] 或 {} ---
             t1 = t1.trim();
             if (t1.startsWith('[')) {
+                // --- ['xxx', yyy && 'yyy', {'zzz': zzz}] ---
+                /** --- 'xxx', yyy && 'yyy', {'zzz': zzz} 的数组 --- */
                 const t1a = parseArrayString(t1);
                 for (let i = 0; i < t1a.length; ++i) {
                     t1a[i] = t1a[i].trim();
@@ -409,12 +462,16 @@ function layoutClassPrepend(layout, preps) {
             else {
                 t1 = layoutClassPrependObject(t1);
             }
-            return ` :class="${t1}"${t2}`;
+            return ` :class="${t1}"`;
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
     return rtn;
 }
-function eventsAttrWrap(layout) {
+/**
+ * --- 对 layout 的 @events 事件进行包裹 ---
+ * @param layout 要包裹的 layout
+ */
+export function eventsAttrWrap(layout) {
     const events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
     const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
     return layout.replace(reg, function (t, t1, t2) {
@@ -424,23 +481,33 @@ function eventsAttrWrap(layout) {
         return `@${t1}=";if(allowEvent($event)){${t2}}"`;
     });
 }
-function teleportGlue(layout, formId) {
-    if (typeof formId !== 'string') {
-        formId = formId.toString();
-    }
-    const fid = formId;
+/**
+ * --- 对 layout 的 teleport 做转义处理为 vue 识别的内容 ---
+ * @param layout 要处理的窗体或控件的 layout
+ * @param formId 要加入的 formId
+ */
+export function teleportGlue(layout, formId) {
     return layout.replace(/<teleport([\s\S]+?)to="(.+?)"([\s\S]+?<[\w-]+)/g, (v, v1, v2, v3) => {
         if (v2 !== 'system') {
             return v;
         }
-        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
+        // --- 给 teleport 的第一个子元素增加 cg-pop、cg-pop-none 的 data ---
+        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + formId + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
     });
 }
-function stylePrepend(style, prep = '') {
+/**
+ * --- 给 class 前部增加唯一标识符 ---
+ * @param style 样式内容
+ * @param prep 给 class、font 等增加前置
+ */
+export function stylePrepend(style, prep = '') {
     if (prep === '') {
         prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000).toString() + '_';
     }
     style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function (t, t1, t2) {
+        // --- xxx { xxx; } ---
+        // --- 将 element 模式的 css 变为 class 模式，如 div 变为 .tag-div ---
+        // --- 这里面遇到了一个 bug， @keyframe 也被转换了，这是不对的，因此在下面修复 ---
         t1 = t1.replace(/(^|[ >,}\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g, function (t, t1, t2) {
             if (t2 === 'global') {
                 return '[CGTMP-GLOBAL]';
@@ -450,22 +517,31 @@ function stylePrepend(style, prep = '') {
         t1 = t1.replace(/keyframes \.tag-([a-zA-Z0-9-_]+)/g, function (t, t1) {
             return 'keyframes ' + t1;
         });
+        // --- 给 style 的 class 前添加 scope ---
         t1 = t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function (t, t1, t2) {
+            /*
+            if (t2.startsWith('cg-')) {
+                return t;
+            }
+            */
             return t1 + prep + t2;
         }) + '{' + t2 + '}';
         return t1;
     });
+    // --- 自定义 font 名添加 scope ---
     const fontList = [];
     style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi, function (t, t1, t2, t3) {
         fontList.push(t2);
         return t1 + prep + t2 + t3;
     });
+    // --- 对自定义 font 进行更名 ---
     for (const font of fontList) {
         const reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
         style = style.replace(reg, function (t, t1, t2) {
             return t1 + prep + t2;
         });
     }
+    // --- keyframes ---
     const keyframeList = [];
     style = style.replace(/([-@]keyframes *["']{0,1})([\w-]+)(["']{0,1}\s*?\{)/gi, function (t, t1, t2, t3) {
         if (!keyframeList.includes(t2)) {
@@ -473,6 +549,7 @@ function stylePrepend(style, prep = '') {
         }
         return t1 + prep + t2 + t3;
     });
+    // --- 对自定义 keyframe 进行更名 ---
     for (const keyframe of keyframeList) {
         let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
         style = style.replace(reg, function (t, t1, t2, t3) {
@@ -482,13 +559,18 @@ function stylePrepend(style, prep = '') {
         style = style.replace(reg, function (t, t1, t2, t3) {
             return t1 + prep + t2 + t3;
         });
+        // --- 为什么分两个呢？一个加 (-name)? 也行，但是后面的 tx 不好合并 ---
     }
     return {
         'prep': prep,
         'style': style
     };
 }
-function getMimeByPath(path) {
+/**
+ * --- 根据后缀、文件名或路径获取 mime 类型（简单版，完整版请使用 @litert/mime.js） ---
+ * @param path 后缀、文件名或路径
+ */
+export function getMimeByPath(path) {
     const lio = path.lastIndexOf('.');
     const ext = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
     const exts = {
@@ -507,22 +589,35 @@ function getMimeByPath(path) {
         'ext': ext
     };
 }
-function rand(min, max) {
+/**
+ * --- 生成范围内的随机数 ---
+ * @param min 最新范围
+ * @param max 最大范围
+ */
+export function rand(min, max) {
     if (min > max) {
         [min, max] = [max, min];
     }
     return min + Math.round(Math.random() * (max - min));
 }
-exports.RANDOM_N = '0123456789';
-exports.RANDOM_U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-exports.RANDOM_L = 'abcdefghijklmnopqrstuvwxyz';
-exports.RANDOM_UN = exports.RANDOM_U + exports.RANDOM_N;
-exports.RANDOM_LN = exports.RANDOM_L + exports.RANDOM_N;
-exports.RANDOM_LU = exports.RANDOM_L + exports.RANDOM_U;
-exports.RANDOM_LUN = exports.RANDOM_L + exports.RANDOM_U + exports.RANDOM_N;
-exports.RANDOM_V = 'ACEFGHJKLMNPRSTWXY34567';
-exports.RANDOM_LUNS = exports.RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]"';
-function random(length = 8, source = exports.RANDOM_LN, block = '') {
+export const RANDOM_N = '0123456789';
+export const RANDOM_U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const RANDOM_L = 'abcdefghijklmnopqrstuvwxyz';
+export const RANDOM_UN = RANDOM_U + RANDOM_N;
+export const RANDOM_LN = RANDOM_L + RANDOM_N;
+export const RANDOM_LU = RANDOM_L + RANDOM_U;
+export const RANDOM_LUN = RANDOM_L + RANDOM_U + RANDOM_N;
+export const RANDOM_V = 'ACEFGHJKLMNPRSTWXY34567';
+export const RANDOM_LUNS = RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]"';
+/**
+ * --- 生成随机字符串 ---
+ * @param length 长度
+ * @param source 字符源
+ * @param block 剔除字符
+ * @returns 随机字符串
+ */
+export function random(length = 8, source = RANDOM_LN, block = '') {
+    // --- 剔除 block 字符 ---
     let len = block.length;
     if (len > 0) {
         for (let i = 0; i < len; ++i) {
@@ -539,7 +634,11 @@ function random(length = 8, source = exports.RANDOM_LN, block = '') {
     }
     return temp;
 }
-function getBoolean(param) {
+/**
+ * --- 根据参数获取最终的布尔值 ---
+ * @param param 参数
+ */
+export function getBoolean(param) {
     const t = typeof param;
     if (t === 'boolean') {
         return param;
@@ -549,13 +648,21 @@ function getBoolean(param) {
     }
     return param ? true : false;
 }
-function getNumber(param) {
+/**
+ * --- 根据参数获取最终的数字型 ---
+ * @param param 参数
+ */
+export function getNumber(param) {
     if (typeof param === 'number') {
         return param;
     }
     return parseFloat(param);
 }
-function getArray(param) {
+/**
+ * --- 根据参数获取最终的数组型，可传入类似 [1,2,3] 或 1,2,3 ---
+ * @param param 参数
+ */
+export function getArray(param) {
     if (typeof param !== 'string') {
         return param;
     }
@@ -575,10 +682,18 @@ function getArray(param) {
     }
     return rtn;
 }
-function escapeHTML(html) {
+/**
+ * --- 转义 HTML ---
+ * @param html HTML 字符
+ */
+export function escapeHTML(html) {
     return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-function formatColor(color) {
+/**
+ * --- 将 rgb 或 hsl 等颜色转换为数字数组 ---
+ * @param color 颜色字符串
+ */
+export function formatColor(color) {
     const matc = /[0-9.%, ]+/.exec(color);
     if (!matc) {
         return [];
@@ -588,7 +703,13 @@ function formatColor(color) {
         return parseFloat(v);
     });
 }
-function rgb2hex(r, g, b, a = 1) {
+/**
+ * --- 将 r, g, b 转换为 hex 字符串，不含 # ---
+ * @param r r 或 rgb 用 , 分隔的字符串
+ * @param g 可留空，g
+ * @param b 可留空，b
+ */
+export function rgb2hex(r, g, b, a = 1) {
     if (g === undefined || b === undefined) {
         if (typeof r !== 'string') {
             return '';
@@ -615,7 +736,11 @@ function rgb2hex(r, g, b, a = 1) {
     }
     return ((r << 16) + (g << 8) + b).toString(16).padStart(6, '0') + (a === 1 ? '' : Math.round(a * 255).toString(16).padStart(2, '0'));
 }
-function hex2rgb(hex) {
+/**
+ * --- hex 转换为 rgba，#27ae60ff, 27ae60 #fff
+ * @param hex hex 字符串，无所谓带不带 #
+ */
+export function hex2rgb(hex) {
     const rgb = {
         'r': 0,
         'g': 0,
@@ -640,7 +765,11 @@ function hex2rgb(hex) {
     rgb.rgb = `${alpha ? 'a' : ''}(${rgb.r},${rgb.g},${rgb.b}${alpha ? ',' + rgb.a : ''})`;
     return rgb;
 }
-function rgb2hsl(r, g, b, a = 1, decimal = false) {
+/**
+ * --- rgb 字符串转 hsl 数组 ---
+ * @param rgb rgb(x, x, x) 或直接 x,x,x
+ */
+export function rgb2hsl(r, g, b, a = 1, decimal = false) {
     const hsl = {
         'h': 0,
         's': 0,
@@ -680,21 +809,28 @@ function rgb2hsl(r, g, b, a = 1, decimal = false) {
     if (delta == 0) {
         h = 0;
     }
+    // --- Red is max ---
     else if (cmax == r) {
         h = ((g - b) / delta) % 6;
     }
+    // --- Green is max ---
     else if (cmax == g) {
         h = (b - r) / delta + 2;
     }
+    // --- Blue is max ---
     else {
         h = (r - g) / delta + 4;
     }
     h = Math.round(h * 60);
+    // --- Make negative hues positive behind 360° ---
     if (h < 0) {
         h += 360;
     }
+    // --- Calculate lightness ---
     l = (cmax + cmin) / 2;
+    // --- Calculate saturation ---
     s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+    // --- Multiply l and s by 100 ---
     s = s * 100;
     l = l * 100;
     hsl.h = h;
@@ -709,7 +845,11 @@ function rgb2hsl(r, g, b, a = 1, decimal = false) {
     hsl.hsl += (hsl.a === 1 ? '' : 'a') + `(${hsl.h},${hsl.s}%,${hsl.l}%${hsl.a === 1 ? '' : ',' + hsl.a})`;
     return hsl;
 }
-function hsl2rgb(h, s, l, a = 1, decimal = false) {
+/**
+ * --- hsl 字符串转 rgb 数组 ---
+ * @param hsl hsl(x, x, x) 或直接 x,x,x
+ */
+export function hsl2rgb(h, s, l, a = 1, decimal = false) {
     const rgb = {
         'r': 0,
         'g': 0,
@@ -758,7 +898,12 @@ function hsl2rgb(h, s, l, a = 1, decimal = false) {
     rgb.rgb += (rgb.a === 1 ? '' : 'a') + `(${rgb.r},${rgb.g},${rgb.b}${rgb.a === 1 ? '' : ',' + rgb.a})`;
     return rgb;
 }
-function request(url, opt) {
+/**
+ * --- 发起一个网络请求，若是返回值是 JSON 则自动解析，否则直接返回字符串 ---
+ * @param url 网址
+ * @param opt 选项
+ */
+export function request(url, opt) {
     return new Promise(function (resove) {
         const xhr = new XMLHttpRequest();
         if (opt.credentials === false) {
@@ -767,49 +912,37 @@ function request(url, opt) {
         xhr.upload.onloadstart = function (e) {
             const r = opt.uploadStart?.(e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function (e1) {
-                    console.log(e1);
-                });
+                r.catch(() => { });
             }
         };
         xhr.upload.onprogress = function (e) {
             const r = opt.uploadProgress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function (e1) {
-                    console.log(e1);
-                });
+                r.catch(() => { });
             }
         };
         xhr.upload.onloadend = function () {
             const r = opt.uploadEnd?.();
             if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
+                r.catch(() => { });
             }
         };
         xhr.onloadstart = function (e) {
             const r = opt.start?.(e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function (e1) {
-                    console.log(e1);
-                });
+                r.catch(() => { });
             }
         };
         xhr.onprogress = function (e) {
             const r = opt.progress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function (e1) {
-                    console.log(e1);
-                });
+                r.catch(() => { });
             }
         };
         xhr.onloadend = function () {
             const r = opt.end?.();
             if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
+                r.catch(() => { });
             }
         };
         xhr.onload = function () {
@@ -824,18 +957,14 @@ function request(url, opt) {
             }
             const r = opt.load?.(res);
             if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
+                r.catch(() => { });
             }
             resove(res);
         };
         xhr.onerror = function () {
             const r = opt.error?.();
             if (r && (r instanceof Promise)) {
-                r.catch(function (e) {
-                    console.log(e);
-                });
+                r.catch(() => { });
             }
             resove(null);
         };
@@ -854,43 +983,323 @@ function request(url, opt) {
         xhr.send(opt.body);
     });
 }
-function fetch(url, init) {
-    return loader.fetch(url, init);
+/**
+ * --- 发起 fetch 请求 ---
+ * @param url 网址
+ * @param init 选项
+ * @returns 文本或二进制数据，失败时返回 null
+ */
+export async function fetch(url, init) {
+    try {
+        const res = await window.fetch(url, init);
+        if (res.status === 200 || res.status === 304) {
+            /** --- 内容类型 --- */
+            const ct = res.headers.get('content-type')?.toLowerCase() ?? '';
+            const types = ['text/', 'javascript', 'json', 'css', 'xml', 'html'];
+            return types.some(item => ct.includes(item)) ? await res.text() : await res.blob();
+        }
+        return null;
+    }
+    catch {
+        return null;
+    }
 }
-function get(url, opt) {
-    return loader.get(url, opt);
+/** --- 重试间隔 --- */
+const retryTimes = [300, 1_000, 2_000];
+/**
+ * --- 发起 GET 请求 ---
+ * @param url 网址
+ * @param init 选项
+ * @param opt 选项
+ * @returns 文本或二进制数据，失败时返回 null
+ */
+export async function get(url, init, opt = {}) {
+    init ??= {};
+    init.method = 'GET';
+    const retry = opt.retry ?? 3;
+    for (let i = 0; i <= retry; ++i) {
+        const res = await fetch(url, init);
+        if (res !== null) {
+            return res;
+        }
+        if (i === retry) {
+            return null;
+        }
+        await sleep(retryTimes[i]);
+    }
+    return null;
 }
-function post(url, data, opt) {
-    return loader.post(url, data, opt);
+/**
+ * --- 发起 POST 请求 ---
+ * @param url 网址
+ * @param data 数据
+ * @param init 选项
+ * @returns 文本或二进制数据，失败时返回 null
+ */
+export async function post(url, data, init) {
+    init ??= {};
+    init.method = 'POST';
+    init.headers ??= {};
+    if (!(data instanceof FormData)) {
+        if (init.headers instanceof Headers) {
+            init.headers.set('content-type', 'application/json');
+        }
+        else {
+            init.headers['content-type'] = 'application/json';
+        }
+    }
+    init.body = data instanceof FormData ? data : JSON.stringify(data);
+    const res = await fetch(url, init);
+    return res;
 }
-async function getResponseJson(url, opt) {
-    return loader.getResponseJson(url, opt);
+/**
+ * --- 发起 GET 请求并解析 JSON 响应 ---
+ * @param url 网址
+ * @param init 选项
+ * @returns JSON 数据，失败时返回 null
+ */
+export async function getResponseJson(url, init) {
+    const res = await get(url, init);
+    if (!res) {
+        return null;
+    }
+    if (typeof res !== 'string') {
+        return null;
+    }
+    try {
+        return JSON.parse(res);
+    }
+    catch {
+        return null;
+    }
 }
-async function postResponseJson(url, data, opt) {
-    return loader.postResponseJson(url, data, opt);
+/**
+ * --- 发起 POST 请求并解析 JSON 响应 ---
+ * @param url 网址
+ * @param data 数据
+ * @param init 选项
+ * @returns JSON 数据，失败时返回 null
+ */
+export async function postResponseJson(url, data, init) {
+    const res = await post(url, data, init);
+    if (!res) {
+        return null;
+    }
+    if (typeof res !== 'string') {
+        return null;
+    }
+    try {
+        return JSON.parse(res);
+    }
+    catch {
+        return null;
+    }
 }
-function parseUrl(url) {
-    return loader.parseUrl(url);
+/**
+ * --- 传输 url 并解析为 IUrl 对象 ---
+ * @param url url 字符串
+ */
+export function parseUrl(url) {
+    // --- test: https://ab-3dc:aak9()$@github.com:80/nodejs/node/blob/master/lib/url.js?mail=abc@def.com#223 ---
+    const rtn = {
+        'protocol': null,
+        'auth': null,
+        'user': null,
+        'pass': null,
+        'host': null,
+        'hostname': null,
+        'port': null,
+        'pathname': '/',
+        'path': null,
+        'query': null,
+        'hash': null
+    };
+    const hash = url.indexOf('#');
+    if (hash > -1) {
+        rtn['hash'] = url.slice(hash + 1);
+        url = url.slice(0, hash);
+    }
+    const query = url.indexOf('?');
+    if (query > -1) {
+        rtn['query'] = url.slice(query + 1);
+        url = url.slice(0, query);
+    }
+    const protocol = url.indexOf(':');
+    if (protocol > -1) {
+        rtn['protocol'] = url.slice(0, protocol + 1).toLowerCase();
+        url = url.slice(protocol + 1);
+        if (url.startsWith('//')) {
+            url = url.slice(2);
+        }
+        let path = url.indexOf('/');
+        if (path === -1) {
+            path = url.indexOf('\\');
+        }
+        if (path > -1) {
+            rtn['pathname'] = url.slice(path);
+            url = url.slice(0, path);
+        }
+        const auth = url.indexOf('@');
+        if (auth > -1) {
+            const authStr = url.slice(0, auth);
+            const authSplit = authStr.indexOf(':');
+            if (authSplit > -1) {
+                // --- 有密码 ---
+                rtn['user'] = authStr.slice(0, authSplit);
+                rtn['pass'] = authStr.slice(authSplit + 1);
+                rtn['auth'] = rtn['user'] + ':' + rtn['pass'];
+            }
+            else {
+                rtn['user'] = authStr;
+                rtn['auth'] = authStr;
+            }
+            url = url.slice(auth + 1);
+        }
+        if (url) {
+            const port = url.indexOf(':');
+            if (port > -1) {
+                rtn['hostname'] = url.slice(0, port).toLowerCase();
+                rtn['port'] = url.slice(port + 1);
+                rtn['host'] = rtn['hostname'] + (rtn['port'] ? ':' + rtn['port'] : '');
+            }
+            else {
+                rtn['hostname'] = url.toLowerCase();
+                rtn['host'] = rtn['hostname'];
+            }
+        }
+    }
+    else {
+        // --- 没有 protocol ---
+        rtn['pathname'] = url;
+    }
+    // --- 组合 ---
+    rtn['path'] = rtn['pathname'] + (rtn['query'] ? '?' + rtn['query'] : '');
+    return rtn;
 }
-function urlResolve(from, to) {
-    return loader.urlResolve(from, to);
+/**
+ * --- 将相对路径根据基准路径进行转换 ---
+ * @param from 基准路径
+ * @param to 相对路径
+ */
+export function urlResolve(from, to) {
+    from = from.replace(/\\/g, '/');
+    to = to.replace(/\\/g, '/');
+    // --- to 为空，直接返回 form ---
+    if (to === '') {
+        return urlAtom(from);
+    }
+    // --- 获取 from 的 scheme, host, path ---
+    const f = parseUrl(from);
+    // --- 以 // 开头的，加上 from 的 protocol 返回 ---
+    if (to.startsWith('//')) {
+        return urlAtom(f.protocol ? f.protocol + to : to);
+    }
+    if (f.protocol) {
+        // --- 获取小写的 protocol ---
+        from = f.protocol + from.slice(f.protocol.length);
+    }
+    // --- 获取 to 的 scheme, host, path ---
+    const t = parseUrl(to);
+    // --- 已经是绝对路径，直接返回 ---
+    if (t.protocol) {
+        // --- 获取小写的 protocol ---
+        return urlAtom(t.protocol + to.slice(t.protocol.length));
+    }
+    // --- # 或 ? 替换后返回 ---
+    if (to.startsWith('#') || to.startsWith('?')) {
+        const sp = from.indexOf(to[0]);
+        if (sp !== -1) {
+            return urlAtom(from.slice(0, sp) + to);
+        }
+        else {
+            return urlAtom(from + to);
+        }
+    }
+    // --- 处理后面的尾随路径 ---
+    let abs = (f.auth ? f.auth + '@' : '') + (f.host ?? '');
+    if (to.startsWith('/')) {
+        // -- abs 类似是 /xx/xx ---
+        abs += to;
+    }
+    else {
+        // --- to 是 xx/xx 这样的 ---
+        // --- 移除基准 path 不是路径的部分，如 /ab/c 变成了 /ab，/ab 变成了 空 ---
+        const path = f.pathname.replace(/\/[^/]*$/g, '');
+        // --- abs 是 /xx/xx 了，因为如果 path 是空，则跟上了 /，如果 path 不为空，也是 / 开头 ---
+        abs += path + '/' + to;
+    }
+    // --- 返回最终结果 ---
+    if (f.protocol && (f.protocol !== 'file:') && !f.host) {
+        // --- 类似 c:/ ---
+        return urlAtom(f.protocol + abs);
+    }
+    else {
+        // --- 类似 http:// ---
+        return urlAtom((f.protocol ? f.protocol + '//' : '') + abs);
+    }
 }
-function urlAtom(url) {
-    return loader.urlAtom(url);
+/** --- 处理 URL 中的 .. / . 等 --- */
+export function urlAtom(url) {
+    // --- 删掉 ./ ---
+    while (url.includes('/./')) {
+        url = url.replace(/\/\.\//g, '/');
+    }
+    // --- 删掉 ../ ---
+    while (/\/(?!\.\.)[^/]+\/\.\.\//.test(url)) {
+        url = url.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, '/');
+    }
+    url = url.replace(/\.\.\//g, '');
+    return url;
 }
-function blob2Text(blob) {
-    return loader.blob2Text(blob);
+/**
+ * --- 将 blob 对象转换为 text ---
+ * @param blob 对象
+ */
+export function blob2Text(blob) {
+    return new Promise(function (resove) {
+        const fr = new FileReader();
+        fr.addEventListener('load', function (e) {
+            if (e.target) {
+                resove(e.target.result);
+            }
+            else {
+                resove('');
+            }
+        });
+        fr.readAsText(blob);
+    });
 }
-function blob2DataUrl(blob) {
-    return loader.blob2DataUrl(blob);
+/**
+ * --- 将 blob 对象转换为 base64 url ---
+ * @param blob 对象
+ */
+export function blob2DataUrl(blob) {
+    return new Promise(function (resove) {
+        const fr = new FileReader();
+        fr.addEventListener('load', function (e) {
+            if (e.target) {
+                resove(e.target.result);
+            }
+            else {
+                resove('');
+            }
+        });
+        fr.readAsDataURL(blob);
+    });
 }
-function execCommand(ac) {
+export function execCommand(ac) {
     if (!['copy', 'cut'].includes(ac)) {
         return;
     }
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     document.execCommand(ac);
 }
-function compar(before, after) {
+/**
+ * ---- 对比老值和新值，看看新值中哪些移除了，哪些新增了 ---
+ * @param before 老值
+ * @param after 新值
+ */
+export function compar(before, after) {
     const rtn = {
         'remove': {},
         'add': {},
@@ -917,22 +1326,30 @@ function compar(before, after) {
     }
     return rtn;
 }
-function formatSecond(second) {
+/** --- 将秒数格式化为 0:0:0 的字符串 --- */
+export function formatSecond(second) {
     const h = Math.floor(second / 3600);
     second = second - h * 3600;
     const m = Math.floor(second / 60);
     const s = Math.floor(second - m * 60);
     return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
 }
-function formatTime(ts, tz) {
+/**
+ * --- 将日期对象或毫秒级时间戳转换为字符串 ---
+ * @param ts 时间戳或日期对象
+ * @param tz 传入要显示的时区，小时，如 8，默认以当前客户端时区为准
+ */
+export function formatTime(ts, tz) {
     const rtn = {
         'date': '',
         'time': '',
         'zone': ''
     };
+    // --- 代码开始 ---
     if (typeof ts === 'number') {
         ts = new Date(ts);
     }
+    /** --- 当前设定的时区 --- */
     const ntz = tz ?? -(ts.getTimezoneOffset() / 60);
     ts.setTime(ts.getTime() + ntz * 60 * 60_000);
     rtn.date = ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0');
@@ -940,18 +1357,39 @@ function formatTime(ts, tz) {
     rtn.zone = 'UTC' + (ntz >= 0 ? '+' : '') + ntz.toString();
     return rtn;
 }
-function isMs(time) {
+/**
+ * --- 是否是毫秒 ---
+ * @param time 要判断的时间戳
+ */
+export function isMs(time) {
     return time > 1000000000000 ? true : false;
 }
-function queryStringify(query) {
+/**
+ * --- 将对象转换为 query string ---
+ * @param query 要转换的对象
+ * @param encode 是否转义
+ */
+export function queryStringify(query, encode = true) {
+    if (encode) {
+        return Object.entries(query).map(([k, v]) => {
+            if (Array.isArray(v)) {
+                return v.map((i) => `${encodeURIComponent(k)}=${encodeURIComponent(i)}`).join('&');
+            }
+            return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+        }).join('&');
+    }
     return Object.entries(query).map(([k, v]) => {
         if (Array.isArray(v)) {
-            return v.map((i) => `${encodeURIComponent(k)}=${encodeURIComponent(`${i}`)}`).join('&');
+            return v.map((i) => `${k}=${i}}`).join('&');
         }
-        return `${encodeURIComponent(k)}=${encodeURIComponent(`${v}`)}`;
+        return `${k}=${v}`;
     }).join('&');
 }
-function queryParse(query) {
+/**
+ * --- 将 query string 转换为对象 ---
+ * @param query 要转换的字符串
+ */
+export function queryParse(query) {
     const ret = {};
     const arrayKeys = {};
     for (const i of query.split('&')) {
@@ -974,22 +1412,39 @@ function queryParse(query) {
     }
     return ret;
 }
-function isEscaped(str, pos) {
+/**
+ * --- 转义字符检查 ---
+ * 检查指定位置的字符是否被转义
+ * @param str 字符串
+ * @param pos 检查位置
+ * @returns 是否被转义
+ */
+export function isEscaped(str, pos) {
     let count = 0;
+    // --- 向前计算反斜杠数量 ---
     for (let i = pos - 1; i >= 0 && str[i] === '\\'; i--) {
         count++;
     }
     return count % 2 !== 0;
 }
-function parseArrayString(arrayStr) {
+/**
+ * --- 数组字符串解析器 ---
+ * 解析数组字符串为各元素组成的字符串数组
+ * @param arrayStr 数组字符串
+ * @returns 解析后的字符串数组
+ */
+export function parseArrayString(arrayStr) {
+    // --- 移除首尾括号，获取内容 ---
     const content = arrayStr.trim().slice(1, -1);
     const result = [];
     let current = '';
     let depth = 0;
     let inString = false;
     let quote = '';
+    // --- 遍历字符串 ---
     for (let i = 0; i < content.length; i++) {
         const char = content[i];
+        // --- 处理引号状态 ---
         if ((char === '"' || char === "'") && !inString) {
             inString = true;
             quote = char;
@@ -998,6 +1453,7 @@ function parseArrayString(arrayStr) {
             inString = false;
             quote = '';
         }
+        // --- 处理括号层级 ---
         if (!inString) {
             if (char === '{' || char === '[' || char === '(') {
                 depth++;
@@ -1006,6 +1462,7 @@ function parseArrayString(arrayStr) {
                 depth--;
             }
             else if (char === ',' && depth === 0) {
+                // --- 最外层逗号分割 ---
                 if (current.trim())
                     result.push(current.trim());
                 current = '';
@@ -1014,8 +1471,830 @@ function parseArrayString(arrayStr) {
         }
         current += char;
     }
+    // --- 添加最后元素 ---
     if (current.trim()) {
         result.push(current.trim());
     }
     return result;
 }
+/**
+ * --- 判断字符是否是转义字符 ---
+ * @param code 字符串
+ * @param index 字符在字符串中的位置
+ * @returns 是否是转义字符
+ */
+export function isEscapeChar(code, index) {
+    let preChar = code[index - 1];
+    let count = 0;
+    while (preChar === '\\') {
+        preChar = code[index - (++count) - 1];
+    }
+    return count % 2 === 0 ? false : true;
+}
+/** --- 状态机状态 --- */
+export var ESTATE;
+(function (ESTATE) {
+    /** --- 普通 --- */
+    ESTATE[ESTATE["NORMAL"] = 0] = "NORMAL";
+    /** --- 单词 --- */
+    ESTATE[ESTATE["WORD"] = 1] = "WORD";
+    /** --- 字符串 --- */
+    ESTATE[ESTATE["STRING"] = 2] = "STRING";
+    /** --- 正则 --- */
+    ESTATE[ESTATE["REG"] = 3] = "REG";
+    /** --- 注释 --- */
+    ESTATE[ESTATE["COMMENT"] = 4] = "COMMENT";
+})(ESTATE || (ESTATE = {}));
+/**
+ * --- 状态机 ---
+ * @param code 代码
+ * @param start 开始位置
+ * @param process 处理函数
+ * @returns 是否继续
+ */
+export function stateMachine(code, start, process) {
+    /** --- 当前状态 --- */
+    let state = ESTATE.NORMAL;
+    code = code.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    /** --- 括号嵌套 --- */
+    const bracket = {
+        's': 0,
+        'm': 0,
+        'l': 0,
+    };
+    /** --- 标记 --- */
+    let marker = '';
+    /** --- 组合 --- */
+    let word = '';
+    /** --- 记录上一个--- */
+    let pre = {
+        'state': ESTATE.NORMAL,
+        'word': '',
+        'nonnull': '',
+    };
+    for (let i = start; i < code.length; ++i) {
+        const char = code[i];
+        switch (state) {
+            case ESTATE.COMMENT: {
+                // --- 注释 ---
+                if (marker === '*') {
+                    // --- 多行注释模式 ---
+                    if ((char === '*') && (code[i + 1] === '/')) {
+                        // --- 结束 ---
+                        word += char + code[++i];
+                        if ((i >= 0) && !process({
+                            'state': state,
+                            'start': i - word.length + 1,
+                            'end': i,
+                            'word': word,
+                            'pre': {
+                                'state': pre.state,
+                                'word': pre.word,
+                                'nonnull': pre.nonnull,
+                            },
+                            'bracket': bracket,
+                        })) {
+                            return;
+                        }
+                        pre.state = state;
+                        pre.word = word;
+                        const wordTrim = word.trim();
+                        if (wordTrim) {
+                            pre.nonnull = wordTrim;
+                        }
+                        state = ESTATE.NORMAL;
+                        word = '';
+                        marker = '';
+                    }
+                    else {
+                        word += char;
+                    }
+                    break;
+                }
+                // --- 单行注释模式 ---
+                if (char === '\n') {
+                    // --- 结束 ---
+                    --i;
+                    if (!process({
+                        'state': state,
+                        'start': i - word.length + 1,
+                        'end': i,
+                        'word': word,
+                        'pre': {
+                            'state': pre.state,
+                            'word': pre.word,
+                            'nonnull': pre.nonnull,
+                        },
+                        'bracket': bracket,
+                    })) {
+                        return;
+                    }
+                    pre.state = state;
+                    pre.word = word;
+                    const wordTrim = word.trim();
+                    if (wordTrim) {
+                        pre.nonnull = wordTrim;
+                    }
+                    state = ESTATE.NORMAL;
+                    word = '';
+                    marker = '';
+                }
+                else {
+                    word += char;
+                }
+                break;
+            }
+            case ESTATE.REG: {
+                // --- 正则 ---
+                switch (char) {
+                    case '[': {
+                        if (!isEscapeChar(code, i)) {
+                            marker = '[';
+                        }
+                        word += char;
+                        break;
+                    }
+                    case ']': {
+                        if (!isEscapeChar(code, i) && (marker === '[')) {
+                            marker = '/';
+                        }
+                        word += char;
+                        break;
+                    }
+                    case '/': {
+                        if (!isEscapeChar(code, i) && (marker === '/')) {
+                            // --- 并不一定结束了，还有后面的如 ig ---
+                            marker = 'e';
+                        }
+                        word += char;
+                        break;
+                    }
+                    default: {
+                        if (marker !== 'e') {
+                            word += char;
+                            break;
+                        }
+                        if (/\w/.test(char)) {
+                            word += char;
+                            break;
+                        }
+                        --i;
+                        if (!process({
+                            'state': state,
+                            'start': i - word.length + 1,
+                            'end': i,
+                            'word': word,
+                            'pre': {
+                                'state': pre.state,
+                                'word': pre.word,
+                                'nonnull': pre.nonnull,
+                            },
+                            'bracket': bracket,
+                        })) {
+                            return;
+                        }
+                        pre.state = state;
+                        pre.word = word;
+                        const wordTrim = word.trim();
+                        if (wordTrim) {
+                            pre.nonnull = wordTrim;
+                        }
+                        state = ESTATE.NORMAL;
+                        word = '';
+                        marker = '';
+                    }
+                }
+                break;
+            }
+            case ESTATE.STRING: {
+                // --- 字符串 ---
+                word += char;
+                if ((char === marker) && !isEscapeChar(code, i)) {
+                    // --- 结束 ---
+                    if (!process({
+                        'state': state,
+                        'start': i - word.length + 1,
+                        'end': i,
+                        'word': word,
+                        'pre': {
+                            'state': pre.state,
+                            'word': pre.word,
+                            'nonnull': pre.nonnull,
+                        },
+                        'bracket': bracket,
+                    })) {
+                        return;
+                    }
+                    pre.state = state;
+                    pre.word = word;
+                    const wordTrim = word.trim();
+                    if (wordTrim) {
+                        pre.nonnull = wordTrim;
+                    }
+                    state = ESTATE.NORMAL;
+                    word = '';
+                    marker = '';
+                }
+                break;
+            }
+            case ESTATE.WORD: {
+                // --- 单词 ---
+                if (!/[$\w]/.test(char)) {
+                    --i;
+                    if (!process({
+                        'state': state,
+                        'start': i - word.length + 1,
+                        'end': i,
+                        'word': word,
+                        'pre': {
+                            'state': pre.state,
+                            'word': pre.word,
+                            'nonnull': pre.nonnull,
+                        },
+                        'bracket': bracket,
+                    })) {
+                        return;
+                    }
+                    pre.state = state;
+                    pre.word = word;
+                    const wordTrim = word.trim();
+                    if (wordTrim) {
+                        pre.nonnull = wordTrim;
+                    }
+                    state = ESTATE.NORMAL;
+                    word = '';
+                    marker = '';
+                    break;
+                }
+                word += char;
+                break;
+            }
+            default: {
+                // --- NORMAL ---
+                switch (char) {
+                    case '"':
+                    case '\'':
+                    case '`': {
+                        // --- 进入字符串模式 ---
+                        if ((i - 1 >= 0) && !process({
+                            'state': state,
+                            'start': i - 1 - word.length + 1,
+                            'end': i - 1,
+                            'word': word,
+                            'pre': {
+                                'state': pre.state,
+                                'word': pre.word,
+                                'nonnull': pre.nonnull,
+                            },
+                            'bracket': bracket,
+                        })) {
+                            return;
+                        }
+                        pre.state = state;
+                        pre.word = word;
+                        const wordTrim = word.trim();
+                        if (wordTrim) {
+                            pre.nonnull = wordTrim;
+                        }
+                        state = ESTATE.STRING;
+                        word = char;
+                        marker = char;
+                        break;
+                    }
+                    case '/': {
+                        if (code[i + 1] === '/') {
+                            // --- 单行注释 ---
+                            if ((i - 1 >= 0) && !process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.state = state;
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            state = ESTATE.COMMENT;
+                            word = char + code[++i];
+                            marker = char;
+                            break;
+                        }
+                        if (code[i + 1] === '*') {
+                            // --- 多行注释 ---
+                            if ((i - 1 >= 0) && !process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.state = state;
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            state = ESTATE.COMMENT;
+                            word = char + code[++i];
+                            marker = code[i];
+                            break;
+                        }
+                        // --- 判断是 reg 还是 / 除号 ---
+                        // --- 如果是 / 号前面必定有变量或数字，否则就是 reg ---
+                        /** --- 除了变量还可能是 return --- */
+                        let tmp = '';
+                        for (let j = i - 1; j >= 0; --j) {
+                            if (!tmp) {
+                                if (/\s/.test(code[j])) {
+                                    // --- 空就跳过 ---
+                                    continue;
+                                }
+                                if (code[j] === ')' || code[j] === ']') {
+                                    // --- 除号（ASI 里也是除号） ---
+                                    break;
+                                }
+                                if (!/[$\w]/.test(code[j])) {
+                                    // --- 不是数字、变量，直接进入正则模式 ---
+                                    if ((i - 1 >= 0) && !process({
+                                        'state': state,
+                                        'start': i - 1 - word.length + 1,
+                                        'end': i - 1,
+                                        'word': word,
+                                        'pre': {
+                                            'state': pre.state,
+                                            'word': pre.word,
+                                            'nonnull': pre.nonnull,
+                                        },
+                                        'bracket': bracket,
+                                    })) {
+                                        return;
+                                    }
+                                    pre.state = state;
+                                    pre.word = word;
+                                    const wordTrim = word.trim();
+                                    if (wordTrim) {
+                                        pre.nonnull = wordTrim;
+                                    }
+                                    state = ESTATE.REG;
+                                    word = char;
+                                    marker = char;
+                                    break;
+                                }
+                                // --- 是变动？还是关键词？ ---
+                                tmp = code[j];
+                                continue;
+                            }
+                            // --- 持续组合，看看到底是啥 ---
+                            if (/[$\w]/.test(code[j])) {
+                                tmp = code[j] + tmp;
+                                continue;
+                            }
+                            // --- 结束 ---
+                            break;
+                        }
+                        if (tmp) {
+                            if (tmp === 'return') {
+                                // --- return 关键字，是正则 ---
+                                if ((i - 1 >= 0) && !process({
+                                    'state': state,
+                                    'start': i - 1 - word.length + 1,
+                                    'end': i - 1,
+                                    'word': word,
+                                    'pre': {
+                                        'state': pre.state,
+                                        'word': pre.word,
+                                        'nonnull': pre.nonnull,
+                                    },
+                                    'bracket': bracket,
+                                })) {
+                                    return;
+                                }
+                                pre.state = state;
+                                pre.word = word;
+                                const wordTrim = word.trim();
+                                if (wordTrim) {
+                                    pre.nonnull = wordTrim;
+                                }
+                                state = ESTATE.REG;
+                                word = char;
+                                marker = char;
+                            }
+                        }
+                        if (state !== ESTATE.REG) {
+                            word += char;
+                        }
+                        break;
+                    }
+                    case '(': {
+                        if (word.includes('(') || word.includes(')')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        ++bracket.s;
+                        break;
+                    }
+                    case ')': {
+                        if (word.includes('(') || word.includes(')')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        --bracket.s;
+                        break;
+                    }
+                    case '[': {
+                        if (word.includes('[') || word.includes(']')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        ++bracket.m;
+                        break;
+                    }
+                    case ']': {
+                        if (word.includes('[') || word.includes(']')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        --bracket.m;
+                        break;
+                    }
+                    case '{': {
+                        if (word.includes('{') || word.includes('}')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        ++bracket.l;
+                        break;
+                    }
+                    case '}': {
+                        if (word.includes('{') || word.includes('}')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        --bracket.l;
+                        break;
+                    }
+                    default: {
+                        if (/[$\w]/.test(char)) {
+                            // --- 进入单词 ---
+                            if ((i - 1 >= 0) && !process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.state = state;
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            state = ESTATE.WORD;
+                            word = char;
+                            marker = char;
+                            break;
+                        }
+                        word += char;
+                    }
+                }
+            }
+        }
+    }
+    // --- 结束 ---
+    if (word) {
+        const i = code.length - 1;
+        process({
+            'state': state,
+            'start': i - word.length + 1,
+            'end': i,
+            'word': word,
+            'pre': {
+                'state': pre.state,
+                'word': pre.word,
+                'nonnull': pre.nonnull,
+            },
+            'bracket': bracket,
+        });
+    }
+}
+let headElement;
+function getHeadElement() {
+    if (!headElement) {
+        const heads = document.querySelectorAll('head');
+        headElement = heads[heads.length - 1];
+    }
+    return headElement;
+}
+/**
+ * --- 加载脚本 ---
+ * @param url 脚本网址
+ */
+export async function loadScript(url) {
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.addEventListener('load', function () {
+            resolve(true);
+        });
+        script.addEventListener('error', function () {
+            resolve(false);
+        });
+        script.src = url;
+        getHeadElement().appendChild(script);
+    });
+}
+/**
+ * --- 批量加载 js 文件 ---
+ * @param urls js 文件列表
+ * @param opt 选项
+ */
+export async function loadScripts(urls, opt = {}) {
+    return new Promise((resolve) => {
+        let count = 0;
+        for (const url of urls) {
+            loadScript(url).then(res => {
+                ++count;
+                if (res) {
+                    opt.loaded?.(url, 1);
+                }
+                else {
+                    opt.loaded?.(url, 0);
+                }
+                if (count === urls.length) {
+                    resolve();
+                }
+            }).catch(() => {
+                ++count;
+                opt.loaded?.(url, -1);
+                if (count === urls.length) {
+                    resolve();
+                }
+            });
+        }
+    });
+}
+/**
+ * --- 加载 css 文件 ---
+ * @param url css 文件网址
+ * @returns 加载是否成功
+ */
+export async function loadLink(url) {
+    return new Promise((resolve) => {
+        const link = document.createElement('link');
+        link.addEventListener('load', function () {
+            resolve(true);
+        });
+        link.addEventListener('error', function () {
+            resolve(false);
+        });
+        link.href = url;
+        link.rel = 'stylesheet';
+        getHeadElement().appendChild(link);
+    });
+}
+/**
+ * --- 批量加载 css 文件 ---
+ * @param urls css 文件列表
+ * @param opt 选项
+ */
+export async function loadLinks(urls, opt = {}) {
+    return new Promise((resolve) => {
+        let count = 0;
+        for (const url of urls) {
+            loadLink(url).then(res => {
+                ++count;
+                if (res) {
+                    opt.loaded?.(url, 1);
+                }
+                else {
+                    opt.loaded?.(url, 0);
+                }
+                if (count === urls.length) {
+                    resolve();
+                }
+            }).catch(() => {
+                ++count;
+                opt.loaded?.(url, -1);
+                if (count === urls.length) {
+                    resolve();
+                }
+            });
+        }
+    });
+}
+/**
+ * --- 加载 css 字符串 ---
+ * @param style css 字符串
+ */
+export function loadStyle(style) {
+    const sel = document.createElement('style');
+    sel.innerHTML = style;
+    getHeadElement().appendChild(sel);
+}
+/**
+ * --- 判断一个值是否是虚假的（为 null/undefined/空字符串/false/0） ---
+ * @param val 要判断的值
+ */
+export function isFalsy(val) {
+    return (val === null) || (val === undefined) || (val === '') || (val === false) || (val === 0);
+}
+/**
+ * --- 判断一个值是否是真实的（不为 null/undefined/空字符串/false/0） ---
+ * @param val 要判断的值
+ */
+export function isTruthy(val) {
+    return !isFalsy(val);
+}
+/**
+ * --- 类似 || 运算符的效果 ---
+ * @param v1 比对值
+ * @param v2 比对值
+ */
+export function logicalOr(v1, v2) {
+    return (isFalsy(v1) ? v2 : v1);
+}
+/** --- 语言相关 --- */
+export const lang = {
+    'codes': [
+        'sc', 'tc', 'ja', 'ko', 'en', 'es', 'th', 'vi',
+        'de', 'fr', 'pt', 'ru', 'ar', 'id', 'it', 'tr',
+    ],
+    'names': [
+        '简体中文', '繁體中文', '日本語', '한국어', 'English', 'Español', 'ไทย', 'Tiếng việt',
+        'Deutsch', 'Français', 'Português', 'Русский', 'العربية', 'Bahasa Indonesia', 'Italiano', 'Türkçe',
+    ],
+    'map': {
+        'cn': 'sc',
+        'zh': 'tc',
+        'ja': 'ja',
+        'ko': 'ko',
+        'en': 'en',
+        'es': 'es',
+        'th': 'th',
+        'vi': 'vi',
+        'de': 'de',
+        'fr': 'fr',
+        'pt': 'pt',
+        'ru': 'ru',
+        'ar': 'ar',
+        'id': 'id',
+        'it': 'it',
+        'tr': 'tr',
+    },
+    getCodeByAccept: (accept) => {
+        accept ??= navigator.language.toLowerCase();
+        if (accept === '*') {
+            return 'sc';
+        }
+        for (const l in lang.map) {
+            if (!accept.includes(l)) {
+                continue;
+            }
+            return lang.map[l];
+        }
+        return 'en';
+    },
+};

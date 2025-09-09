@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -126,7 +125,7 @@ export default class extends clickgo.control.AbstractControl {
     public async onMounted(): Promise<void> {
         if (this.props.factory === 'tc') {
             // --- 腾讯云验证码 ---
-            const tcc = await clickgo.core.getModule('tcc');
+            const tcc = await clickgo.core.getModule('tjcaptcha');
             if (!tcc) {
                 // --- 没有成功 ---
                 this.isLoading = false;
@@ -145,7 +144,7 @@ export default class extends clickgo.control.AbstractControl {
                         this.state = 'failed';
                         this.refs.content.innerHTML = this.l('failed');
                     }
-                    const event: types.ICaptchaResultEvent = {
+                    const event: clickgo.control.ICaptchaResultEvent = {
                         'detail': {
                             'result': (res.ret === 0 && !res.errorCode) ? 1 : 0,
                             'token': res.ticket + '|' + res.randstr,
@@ -165,7 +164,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- CF 验证码 ---
-        const cft = await clickgo.core.getModule('cft');
+        const cft = await clickgo.core.getModule('turnstile');
         if (!cft) {
             // --- 没有成功 ---
             this.isLoading = false;
@@ -177,7 +176,7 @@ export default class extends clickgo.control.AbstractControl {
             'sitekey': this.props.akey,
             'size': 'flexible',
             callback: (token: string) => {
-                const event: types.ICaptchaResultEvent = {
+                const event: clickgo.control.ICaptchaResultEvent = {
                     'detail': {
                         'result': 1,
                         'token': token,

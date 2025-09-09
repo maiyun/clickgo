@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -23,7 +22,7 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     /** ---调色板的 changed --- */
-    public paletteChanged: types.IColoristChangedEvent = {
+    public paletteChanged: clickgo.control.IColoristChangedEvent = {
         'detail': {
             'value': '',
             'hsl': undefined,
@@ -59,7 +58,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 调色板 changed 事件 --- */
-    public changed(e: types.IPaletteChangedEvent): void {
+    public changed(e: clickgo.control.IPaletteChangedEvent): void {
         this.paletteChanged = e;
     }
 

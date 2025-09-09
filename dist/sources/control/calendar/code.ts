@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -577,7 +576,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 周复选框 --- */
-    public weekCheckChanged(e: types.ICheckChangedEvent, col: number): void {
+    public weekCheckChanged(e: clickgo.control.ICheckChangedEvent, col: number): void {
         if (e.detail.value) {
             // --- 不选 -> 选，半选 -> 选 ---
             const newValues = this.weekMaps[col].filter(item => !this.values.includes(item));
@@ -593,7 +592,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 月复选框 --- */
-    public monthCheckChanged(e: types.ICheckChangedEvent): void {
+    public monthCheckChanged(e: clickgo.control.ICheckChangedEvent): void {
         if (e.detail.value) {
             // --- 不选 -> 选，半选 -> 选 ---
             const newValues = this.monthMaps.filter(item => !this.values.includes(item));
@@ -633,7 +632,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 将当前的 select 的日期的情况向上同步 --- */
     public updateSelect(type: 'default' | 'click' = 'default'): void {
         this.emit('update:select', this.dateValueStr === '000' ? undefined : this.dateValueStr);
-        const event: types.ICalendarSelectedEvent = {
+        const event: clickgo.control.ICalendarSelectedEvent = {
             'detail': {
                 'year': this.dateValue.year === '0' ? '' : this.dateValue.year,
                 'month': this.dateValue.month === '0' ? '' : this.dateValue.month,

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -69,7 +68,7 @@ export default class extends clickgo.control.AbstractControl {
         const viewport = page.getViewport({
             'scale': 1
         });
-        const event: types.IPdfViewEvent = {
+        const event: clickgo.control.IPdfViewEvent = {
             'detail': {
                 'width': viewport.width,
                 'height': viewport.height,
@@ -135,7 +134,7 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 // --- 从 app 包、http 中读取 ---
                 const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.src);
-                blob = await clickgo.fs.getContent(path);
+                blob = await clickgo.fs.getContent(this, path);
             }
             if ((count !== this.count) || !blob || typeof blob === 'string') {
                 return;

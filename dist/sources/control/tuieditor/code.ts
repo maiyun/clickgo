@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -125,7 +124,7 @@ export default class extends clickgo.control.AbstractControl {
                                 continue;
                             }
                             // --- 图片文件 ---
-                            const e: types.ITuieditorImguploadEvent = {
+                            const e: clickgo.control.ITuieditorImguploadEvent = {
                                 'detail': {
                                     'file': await item.getType(item.types[0]),
                                     callback: (url: string, opt?: {
@@ -179,14 +178,14 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public async onMounted(): Promise<void> {
-        const tuieditor = await clickgo.core.getModule('tuieditor');
+        const tuieditor = await clickgo.core.getModule('@toast-ui/editor');
         if (!tuieditor) {
             // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
-        this.access.tuieditor = new tuieditor({
+        this.access.tuieditor = new tuieditor.Editor({
             'el': this.refs.content,
             'height': 'initial',
             'previewStyle': 'vertical',
@@ -199,7 +198,7 @@ export default class extends clickgo.control.AbstractControl {
             'usageStatistics': false,
             'hooks': {
                 'addImageBlobHook': (file: File) => {
-                    const e: types.ITuieditorImguploadEvent = {
+                    const e: clickgo.control.ITuieditorImguploadEvent = {
                         'detail': {
                             'file': file,
                             callback: (url: string, opt?: {

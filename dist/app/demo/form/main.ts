@@ -1,11 +1,10 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 import calayout2Frm from './control/alayout2/alayout2';
 import cgridFrm from './control/grid/grid';
 import cboxFrm from './control/box/box';
 import ccaptchaFrm from './control/captcha/captcha';
-import cbuttonFrm from '~c/button/button';
+import cbuttonFrm from './control/button/button';
 import ccheckFrm from './control/check/check';
 import cdatepanelFrm from './control/datepanel/datepanel';
 import ccalendarFrm from './control/calendar/calendar';
@@ -66,6 +65,7 @@ import cdeleteFrm from './control/delete/delete';
 import cpdfFrm from './control/pdf/pdf';
 import cwebFrm from './control/web/web';
 import ctplinkFrm from './control/tplink/tplink';
+import ctumsFrm from './control/tums/tums';
 import cnovncFrm from './control/novnc/novnc';
 
 import eformFrm from './event/form/form';
@@ -97,390 +97,402 @@ export default class extends clickgo.form.AbstractForm {
 
     public async openForm(name: string, data?: Record<string, string>): Promise<void> {
         this.loading = true;
-        let frm: types.AbstractForm;
+        let frm: clickgo.form.AbstractForm;
         switch (name) {
             case 'cblock': {
-                frm = await clickgo.form.create('control/block/block', undefined, {
+                frm = await clickgo.form.create(this, 'control/block/block', undefined, {
                     'path': this.filename
                 });
                 break;
             }
             case 'calayout2': {
-                frm = await clickgo.form.create(calayout2Frm);
+                frm = await clickgo.form.create(this, calayout2Frm);
                 break;
             }
             case 'cgrid': {
-                frm = await clickgo.form.create(cgridFrm);
+                frm = await clickgo.form.create(this, cgridFrm);
                 break;
             }
             case 'cbox': {
-                frm = await clickgo.form.create(cboxFrm);
+                frm = await clickgo.form.create(this, cboxFrm);
                 break;
             }
             case 'cbutton': {
-                frm = await clickgo.form.create(cbuttonFrm);
+                frm = await clickgo.form.create(this, cbuttonFrm);
                 break;
             }
             case 'ccheck': {
-                frm = await clickgo.form.create(ccheckFrm);
+                frm = await clickgo.form.create(this, ccheckFrm);
                 break;
             }
             case 'cdatepanel': {
-                frm = await clickgo.form.create(cdatepanelFrm);
+                frm = await clickgo.form.create(this, cdatepanelFrm);
                 break;
             }
             case 'ccalendar': {
-                frm = await clickgo.form.create(ccalendarFrm);
+                frm = await clickgo.form.create(this, ccalendarFrm);
                 break;
             }
             case 'cdate': {
-                frm = await clickgo.form.create(cdateFrm);
+                frm = await clickgo.form.create(this, cdateFrm);
                 break;
             }
             case 'cdaterange': {
-                frm = await clickgo.form.create(cdaterangeFrm);
+                frm = await clickgo.form.create(this, cdaterangeFrm);
                 break;
             }
             case 'cdesc': {
-                frm = await clickgo.form.create(cdescFrm);
+                frm = await clickgo.form.create(this, cdescFrm);
                 break;
             }
             case 'cdialog': {
-                frm = await clickgo.form.create(cdialogFrm);
+                frm = await clickgo.form.create(this, cdialogFrm);
                 break;
             }
             case 'cdrawer': {
-                frm = await clickgo.form.create(cdrawerFrm);
+                frm = await clickgo.form.create(this, cdrawerFrm);
                 break;
             }
             case 'cecharts': {
-                frm = await clickgo.form.create(cechartsFrm);
+                frm = await clickgo.form.create(this, cechartsFrm);
                 break;
             }
             case 'cempty': {
-                frm = await clickgo.form.create(cemptyFrm);
+                frm = await clickgo.form.create(this, cemptyFrm);
                 break;
             }
             case 'cfile': {
-                frm = await clickgo.form.create(cfileFrm);
+                frm = await clickgo.form.create(this, cfileFrm);
                 break;
             }
             case 'cform': {
-                frm = await clickgo.form.create(cformFrm);
+                frm = await clickgo.form.create(this, cformFrm);
                 break;
             }
             case 'cgroup': {
-                frm = await clickgo.form.create(cgroupFrm);
+                frm = await clickgo.form.create(this, cgroupFrm);
                 break;
             }
             case 'chtml': {
-                frm = await clickgo.form.create(chtmlFrm);
+                frm = await clickgo.form.create(this, chtmlFrm);
                 break;
             }
             case 'cprogress': {
-                frm = await clickgo.form.create(cprogressFrm);
+                frm = await clickgo.form.create(this, cprogressFrm);
                 break;
             }
             case 'ciconview': {
-                frm = await clickgo.form.create(ciconviewFrm);
+                frm = await clickgo.form.create(this, ciconviewFrm);
                 break;
             }
             case 'cvflow': {
-                frm = await clickgo.form.create(cvflowFrm);
+                frm = await clickgo.form.create(this, cvflowFrm);
                 break;
             }
             case 'cimgviewer': {
-                frm = await clickgo.form.create(cimgviewerFrm);
+                frm = await clickgo.form.create(this, cimgviewerFrm);
                 break;
             }
             case 'cvideo': {
-                frm = await clickgo.form.create(cvideoFrm);
+                frm = await clickgo.form.create(this, cvideoFrm);
                 break;
             }
             case 'cmpegts': {
-                frm = await clickgo.form.create(cmpegtsFrm);
+                frm = await clickgo.form.create(this, cmpegtsFrm);
                 break;
             }
             case 'cstep': {
-                frm = await clickgo.form.create(cstepFrm);
+                frm = await clickgo.form.create(this, cstepFrm);
                 break;
             }
             case 'ctag': {
-                frm = await clickgo.form.create(ctagFrm);
+                frm = await clickgo.form.create(this, ctagFrm);
                 break;
             }
             case 'csgroup': {
-                frm = await clickgo.form.create('/form/control/sgroup/sgroup');
+                frm = await clickgo.form.create(this, '/form/control/sgroup/sgroup');
                 break;
             }
             case 'csetting': {
-                frm = await clickgo.form.create('/form/control/setting/setting');
+                frm = await clickgo.form.create(this, '/form/control/setting/setting');
                 break;
             }
             case 'ctip': {
-                frm = await clickgo.form.create(ctipFrm);
+                frm = await clickgo.form.create(this, ctipFrm);
                 break;
             }
             case 'cxterm': {
-                frm = await clickgo.form.create(cxtermFrm);
+                frm = await clickgo.form.create(this, cxtermFrm);
                 break;
             }
             case 'cimg': {
-                frm = await clickgo.form.create('control/img/img', undefined, {
+                frm = await clickgo.form.create(this, 'control/img/img', undefined, {
                     'path': this.filename
                 });
                 break;
             }
             case 'ccircle': {
-                frm = await clickgo.form.create('control/circle/circle', undefined, {
+                frm = await clickgo.form.create(this, 'control/circle/circle', undefined, {
                     'path': this.filename
                 });
                 break;
             }
             case 'ccontent': {
-                frm = await clickgo.form.create(ccontentFrm);
+                frm = await clickgo.form.create(this, ccontentFrm);
                 break;
             }
             case 'calert': {
-                frm = await clickgo.form.create(calertFrm);
+                frm = await clickgo.form.create(this, calertFrm);
                 break;
             }
             case 'clink': {
-                frm = await clickgo.form.create(clinkFrm);
+                frm = await clickgo.form.create(this, clinkFrm);
                 break;
             }
             case 'clabel': {
-                frm = await clickgo.form.create(clabelFrm);
+                frm = await clickgo.form.create(this, clabelFrm);
                 break;
             }
             case 'cpalette': {
-                frm = await clickgo.form.create(cpaletteFrm);
+                frm = await clickgo.form.create(this, cpaletteFrm);
                 break;
             }
             case 'clayout': {
-                frm = await clickgo.form.create(clayoutFrm);
+                frm = await clickgo.form.create(this, clayoutFrm);
                 break;
             }
             case 'chske': {
-                frm = await clickgo.form.create(chskeFrm);
+                frm = await clickgo.form.create(this, chskeFrm);
                 break;
             }
             case 'clist': {
-                frm = await clickgo.form.create(clistFrm);
+                frm = await clickgo.form.create(this, clistFrm);
                 break;
             }
             case 'cloading': {
-                frm = await clickgo.form.create('control/loading/loading', undefined, {
+                frm = await clickgo.form.create(this, 'control/loading/loading', undefined, {
                     'path': this.filename
                 });
                 break;
             }
             case 'cicon': {
-                frm = await clickgo.form.create('control/icon/icon', undefined, {
+                frm = await clickgo.form.create(this, 'control/icon/icon', undefined, {
                     'path': this.filename
                 });
                 break;
             }
             case 'cmap': {
-                frm = await clickgo.form.create(cmapFrm);
+                frm = await clickgo.form.create(this, cmapFrm);
                 break;
             }
             case 'cmarquee': {
-                frm = await clickgo.form.create(cmarqueeFrm);
+                frm = await clickgo.form.create(this, cmarqueeFrm);
                 break;
             }
             case 'cmenu': {
-                frm = await clickgo.form.create(cmenuFrm);
+                frm = await clickgo.form.create(this, cmenuFrm);
                 break;
             }
             case 'cmonaco': {
-                frm = await clickgo.form.create(cmonacoFrm);
+                frm = await clickgo.form.create(this, cmonacoFrm);
                 break;
             }
             case 'cnav': {
-                frm = await clickgo.form.create(cnavFrm);
+                frm = await clickgo.form.create(this, cnavFrm);
                 break;
             }
             case 'cpage': {
-                frm = await clickgo.form.create(cpageFrm);
+                frm = await clickgo.form.create(this, cpageFrm);
                 break;
             }
             case 'cpanel': {
-                frm = await clickgo.form.create(cpanelFrm);
+                frm = await clickgo.form.create(this, cpanelFrm);
                 break;
             }
             case 'cflow': {
-                frm = await clickgo.form.create(cflowFrm);
+                frm = await clickgo.form.create(this, cflowFrm);
                 break;
             }
             case 'cproperty': {
-                frm = await clickgo.form.create(cpropertyFrm);
+                frm = await clickgo.form.create(this, cpropertyFrm);
                 break;
             }
             case 'cqrcode': {
-                frm = await clickgo.form.create(cqrcodeFrm);
+                frm = await clickgo.form.create(this, cqrcodeFrm);
                 break;
             }
             case 'cradio': {
-                frm = await clickgo.form.create(cradioFrm);
+                frm = await clickgo.form.create(this, cradioFrm);
                 break;
             }
             case 'cswitch': {
-                frm = await clickgo.form.create(cswitchFrm);
+                frm = await clickgo.form.create(this, cswitchFrm);
                 break;
             }
             case 'cscroll': {
-                frm = await clickgo.form.create(cscrollFrm);
+                frm = await clickgo.form.create(this, cscrollFrm);
                 break;
             }
             case 'cselect': {
-                frm = await clickgo.form.create(cselectFrm);
+                frm = await clickgo.form.create(this, cselectFrm);
                 break;
             }
             case 'cuploader': {
-                frm = await clickgo.form.create(cuploaderFrm);
+                frm = await clickgo.form.create(this, cuploaderFrm);
                 break;
             }
             case 'csvg': {
-                frm = await clickgo.form.create(csvgFrm);
+                frm = await clickgo.form.create(this, csvgFrm);
                 break;
             }
             case 'ctab': {
-                frm = await clickgo.form.create(ctabFrm);
+                frm = await clickgo.form.create(this, ctabFrm);
                 break;
             }
             case 'ctable': {
-                frm = await clickgo.form.create(ctableFrm);
+                frm = await clickgo.form.create(this, ctableFrm);
                 break;
             }
             case 'ctext': {
-                frm = await clickgo.form.create(ctextFrm);
+                frm = await clickgo.form.create(this, ctextFrm);
                 break;
             }
             case 'ctimeline': {
-                frm = await clickgo.form.create(ctimelineFrm);
+                frm = await clickgo.form.create(this, ctimelineFrm);
                 break;
             }
             case 'cjodit': {
-                frm = await clickgo.form.create(cjoditFrm);
+                frm = await clickgo.form.create(this, cjoditFrm);
                 break;
             }
             case 'ctuieditor': {
-                frm = await clickgo.form.create(ctuieditorFrm);
+                frm = await clickgo.form.create(this, ctuieditorFrm);
                 break;
             }
             case 'ctuiviewer': {
-                frm = await clickgo.form.create(ctuiviewerFrm);
+                frm = await clickgo.form.create(this, ctuiviewerFrm);
                 break;
             }
             case 'carteditor': {
-                frm = await clickgo.form.create(carteditorFrm);
+                frm = await clickgo.form.create(this, carteditorFrm);
                 break;
             }
             case 'cdelete': {
-                frm = await clickgo.form.create(cdeleteFrm);
+                frm = await clickgo.form.create(this, cdeleteFrm);
                 break;
             }
             case 'cpdf': {
-                frm = await clickgo.form.create(cpdfFrm);
+                frm = await clickgo.form.create(this, cpdfFrm);
                 break;
             }
             case 'cweb': {
-                frm = await clickgo.form.create(cwebFrm);
+                frm = await clickgo.form.create(this, cwebFrm);
                 break;
             }
             case 'ctplink': {
-                frm = await clickgo.form.create(ctplinkFrm);
+                frm = await clickgo.form.create(this, ctplinkFrm);
+                break;
+            }
+            case 'ctums': {
+                frm = await clickgo.form.create(this, ctumsFrm);
                 break;
             }
             case 'cnovnc': {
-                frm = await clickgo.form.create(cnovncFrm);
+                frm = await clickgo.form.create(this, cnovncFrm);
                 break;
             }
             case 'ccaptcha': {
-                frm = await clickgo.form.create(ccaptchaFrm);
+                frm = await clickgo.form.create(this, ccaptchaFrm);
                 break;
             }
 
             case 'eform': {
-                frm = await clickgo.form.create(eformFrm);
+                frm = await clickgo.form.create(this, eformFrm);
                 break;
             }
             case 'eother': {
-                frm = await clickgo.form.create(eotherFrm);
+                frm = await clickgo.form.create(this, eotherFrm);
                 break;
             }
             case 'escreen': {
-                frm = await clickgo.form.create(escreenFrm);
+                frm = await clickgo.form.create(this, escreenFrm);
                 break;
             }
             case 'etask': {
-                frm = await clickgo.form.create(etaskFrm);
+                frm = await clickgo.form.create(this, etaskFrm);
                 break;
             }
 
             case 'aform': {
-                frm = await clickgo.form.create(aformFrm);
+                frm = await clickgo.form.create(this, aformFrm);
                 break;
             }
             case 'acontrol': {
-                frm = await clickgo.form.create(acontrolFrm);
+                frm = await clickgo.form.create(this, acontrolFrm);
                 break;
             }
             case 'mcore': {
-                frm = await clickgo.form.create(mcoreFrm);
+                frm = await clickgo.form.create(this, mcoreFrm);
                 break;
             }
             case 'mdom': {
-                frm = await clickgo.form.create(mdomFrm);
+                frm = await clickgo.form.create(this, mdomFrm);
                 break;
             }
             case 'mform': {
-                frm = await clickgo.form.create(mformFrm);
+                frm = await clickgo.form.create(this, mformFrm);
                 break;
             }
             case 'mfs': {
-                frm = await clickgo.form.create(mfsFrm);
+                frm = await clickgo.form.create(this, mfsFrm);
                 break;
             }
             case 'mnative': {
-                frm = await clickgo.form.create(mnativeFrm);
+                frm = await clickgo.form.create(this, mnativeFrm);
                 break;
             }
             case 'mstorage': {
-                frm = await clickgo.form.create(mstorageFrm);
+                frm = await clickgo.form.create(this, mstorageFrm);
                 break;
             }
             case 'msystem': {
-                frm = await clickgo.form.create(msystemFrm);
+                frm = await clickgo.form.create(this, msystemFrm);
                 break;
             }
             case 'mtask': {
-                frm = await clickgo.form.create(mtaskFrm);
+                frm = await clickgo.form.create(this, mtaskFrm);
                 break;
             }
             case 'mtheme': {
-                frm = await clickgo.form.create(mthemeFrm);
+                frm = await clickgo.form.create(this, mthemeFrm);
                 break;
             }
             case 'mtool': {
-                frm = await clickgo.form.create(mtoolFrm);
+                frm = await clickgo.form.create(this, mtoolFrm);
                 break;
             }
             case 'mzip': {
-                frm = await clickgo.form.create(mzipFrm);
+                frm = await clickgo.form.create(this, mzipFrm);
                 break;
             }
             default: {
-                frm = await clickgo.form.create(sbackpanelFrm, data);
+                frm = await clickgo.form.create(this, sbackpanelFrm, data);
             }
         }
         this.loading = false;
-        frm.show();
+        await frm.show();
+    }
+
+    public get language(): string {
+        return clickgo.core.config.locale;
     }
 
     public onMounted(data: Record<string, any>): void {
         this.adata = data;
+    }
+
+    public changeToEn(): void {
+        clickgo.core.config.locale = 'en';
     }
 
 }

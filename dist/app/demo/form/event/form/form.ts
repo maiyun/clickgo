@@ -15,14 +15,14 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public changeFocus(fid: string): void {
-        clickgo.form.changeFocus(parseInt(fid));
+    public async changeFocus(fid: string): Promise<void> {
+        await clickgo.form.changeFocus(fid);
     }
 
     public onMounted(): void {
-        const list = clickgo.task.getList();
+        const list = clickgo.task.getOriginList(this);
         for (const taskId in list) {
-            const flist = clickgo.form.getList(parseInt(taskId));
+            const flist = clickgo.form.getList(taskId);
             for (const fid in flist) {
                 this.flist[fid] = {
                     'title': flist[fid].title,
@@ -38,7 +38,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
-    public onFormCreated(taskId: number, formId: number, title: string, icon: string, showInSystemTask: boolean): void {
+    public onFormCreated(taskId: string, formId: string, title: string, icon: string, showInSystemTask: boolean): void {
         this.flist[formId] = {
             'title': title,
             'icon': icon,
@@ -52,7 +52,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formCreated', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}, sist: ${showInSystemTask ? 'true' : 'false'}`);
     }
 
-    public onFormRemoved(taskId: number, formId: number, title: string, icon: string): void {
+    public onFormRemoved(taskId: string, formId: string, title: string, icon: string): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -61,7 +61,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formRemoved', `taskId: ${taskId}, formId: ${formId}, title: ${title}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     }
 
-    public onFormTitleChanged(taskId: number, formId: number, title: string): void {
+    public onFormTitleChanged(taskId: string, formId: string, title: string): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -69,7 +69,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formTitleChanged', `taskId: ${taskId}, formId: ${formId}, title: ${title}`);
     }
 
-    public onFormIconChanged(taskId: number, formId: number, icon: string): void {
+    public onFormIconChanged(taskId: string, formId: string, icon: string): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -77,7 +77,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formIconChanged', `taskId: ${taskId}, formId: ${formId}, icon: ${icon ? icon.slice(0, 10) + '...' : 'null'}`);
     }
 
-    public onFormStateMinChanged(taskId: number, formId: number, state: boolean): void {
+    public onFormStateMinChanged(taskId: string, formId: string, state: boolean): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -85,7 +85,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formStateMinChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     }
 
-    public onFormStateMaxChanged(taskId: number, formId: number, state: boolean): void {
+    public onFormStateMaxChanged(taskId: string, formId: string, state: boolean): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -93,7 +93,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formStateMaxChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     }
 
-    public onFormShowChanged(taskId: number, formId: number, state: boolean): void {
+    public onFormShowChanged(taskId: string, formId: string, state: boolean): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -101,7 +101,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formShowChanged', `taskId: ${taskId}, formId: ${formId}, state: ${state ? 'true' : 'false'}`);
     }
 
-    public onFormFocused(taskId: number, formId: number): void {
+    public onFormFocused(taskId: string, formId: string): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -109,7 +109,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formFocused', `taskId: ${taskId}, formId: ${formId}`);
     }
 
-    public onFormBlurred(taskId: number, formId: number): void {
+    public onFormBlurred(taskId: string, formId: string): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -117,12 +117,12 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formBlurred', `taskId: ${taskId}, formId: ${formId}`);
     }
 
-    public async onFormFlash(taskId: number, formId: number): Promise<void> {
+    public async onFormFlash(taskId: string, formId: string): Promise<void> {
         if (!this.flist[formId]) {
             return;
         }
         if (this.flist[formId].flash) {
-            clickgo.task.removeTimer(this.flist[formId].flash);
+            clickgo.task.removeTimer(this, this.flist[formId].flash);
         }
         this.pushConsole('formFlash', `taskId: ${taskId}, formId: ${formId}`);
         this.flist[formId].flash = true;
@@ -130,7 +130,7 @@ export default class extends clickgo.form.AbstractForm {
         this.flist[formId].flash = false;
     }
 
-    public onFormShowInSystemTaskChange(taskId: number, formId: number, value: boolean): void {
+    public onFormShowInSystemTaskChange(taskId: string, formId: string, value: boolean): void {
         if (!this.flist[formId]) {
             return;
         }
@@ -138,7 +138,7 @@ export default class extends clickgo.form.AbstractForm {
         this.pushConsole('formShowInSystemTaskChange', `taskId: ${taskId}, formId: ${formId}, value: ${value}`);
     }
 
-    public onFormHashChange(taskId: number, formId: number, value: string, data: Record<string, any>): void {
+    public onFormHashChange(taskId: string, formId: string, value: string, data: Record<string, any>): void {
         if (!this.flist[formId]) {
             return;
         }

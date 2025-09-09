@@ -16,7 +16,7 @@ export default class extends clickgo.control.AbstractControl {
     public direction = 'h';
 
     public onMounted(): void {
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             const w = this.element.offsetWidth;
             if (w >= 600) {
                 // --- 应为横向 ---

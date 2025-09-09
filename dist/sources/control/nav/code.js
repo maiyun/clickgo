@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -50,17 +15,26 @@ class default_1 extends clickgo.control.AbstractControl {
             'show': undefined,
             'logo': ''
         };
+        // --- 菜单是否在显示 ---
         this.showData = true;
+        /** --- logo 的实际图像 --- */
         this.logoData = '';
+        /** --- watch: logo 变更次数 --- */
         this.logoCount = 0;
+        /** --- 当前选中的 name（可能带 qs） --- */
         this.selected = '';
+        /** --- 当前选中的 name 中解析后的 qs 值 --- */
         this.qs = {};
+        /** --- 当前是否是层的模式 --- */
         this.layer = false;
+        /** --- 当前的所有子集列表，['panel', 'order?a=b'] --- */
         this.childs = [];
     }
+    /** --- 当前窗体的 form hash --- */
     get formHash() {
         return this.rootForm.formHash;
     }
+    /** --- 选择一个 name，child 可能也会调用 --- */
     async select(name) {
         if (this.selected === name) {
             return;
@@ -78,11 +52,13 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('update:show', this.showData);
         }
         await this.nextTick();
+        // --- 判断选择的是否在可视区域之外 ---
         const selected = this.refs.flow.element.querySelector('[data-nav-item-selected]');
         if (!selected) {
             return;
         }
         const flowBcr = this.refs.flow.element.getBoundingClientRect();
+        // --- 超出这个，就要滚动了 ---
         const maxBottom = flowBcr.top + flowBcr.height;
         const selBcr = selected.getBoundingClientRect();
         const selBottom = selBcr.top + selBcr.height;
@@ -91,11 +67,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 selBcr.top - flowBcr.top + this.refs.flow.element.scrollTop - flowBcr.height + selBcr.height + 10;
             return;
         }
+        // --- 判断是不是在顶上之外 ---
         if (selBcr.top >= flowBcr.top) {
             return;
         }
         this.refs.flow.element.scrollTop -= flowBcr.top - selBcr.top + 10;
     }
+    /** --- pop 模式点击外边空白处收缩 --- */
     menuwrapClick(e) {
         if (!this.layer) {
             return;
@@ -110,8 +88,10 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:show', this.showData);
     }
     async onMounted() {
-        await this.nextTick();
-        clickgo.dom.watchSize(this.element, () => {
+        // --- 切换层的模式 ---
+        await this.nextTick(); // 加这一段代表窗体项目也执行成功后再初始化本控件
+        // --- 之前初始化将导致窗体宽度还没重置结束，导致本 nav 会先识别成为 layer 模式，因为太窄 ---
+        clickgo.dom.watchSize(this, this.element, () => {
             if (this.element.offsetWidth < 600) {
                 if (!this.layer) {
                     this.layer = true;
@@ -138,6 +118,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.watch('modelValue', async () => {
             await this.select(this.props.modelValue || this.props.default);
         });
+        // --- 监听 logo 是否显示 ---
         this.watch('logo', async () => {
             const count = ++this.logoCount;
             if (typeof this.props.logo !== 'string' || this.props.logo === '') {
@@ -152,8 +133,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.logoData = `url(${this.props.logo})`;
                 return;
             }
+            // --- 本 app 包 ---
             const path = clickgo.tool.urlResolve('/package' + this.path + '/', this.props.logo);
-            const blob = await clickgo.fs.getContent(path);
+            const blob = await clickgo.fs.getContent(this, path);
             if ((count !== this.logoCount) || !blob || typeof blob === 'string') {
                 return;
             }
@@ -169,6 +151,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 监听 formHash ---
         this.watch('formHash', async () => {
             if (!this.propBoolean('hash')) {
                 return;
@@ -178,6 +161,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             await this.select(this.formHash || this.props.default);
         });
+        // --- 监听 hash 属性变动 ---
         this.watch('hash', () => {
             if (!this.propBoolean('hash')) {
                 return;
@@ -187,6 +171,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.rootForm.formHash = this.selected;
         });
+        // --- 初始化初始 nav ---
         if (this.propBoolean('hash')) {
             await this.select(this.formHash || this.props.default);
         }
@@ -195,4 +180,3 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
 }
-exports.default = default_1;

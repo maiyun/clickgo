@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -191,7 +190,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 找到了但不是 sort 和没找到，都要重置 ---
         this.nowSort.index = -1;
-        const event: types.ITableSortEvent = {
+        const event: clickgo.control.ITableSortEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -213,7 +212,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!sort) {
                 return;
             }
-            const event: types.ITableSortEvent = {
+            const event: clickgo.control.ITableSortEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;

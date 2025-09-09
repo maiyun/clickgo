@@ -56,12 +56,13 @@ export default class extends clickgo.form.AbstractForm {
 
     public rand(): void {
         clickgo.form.dialog(
+            this,
             clickgo.tool.rand(parseInt(this.min), parseInt(this.max)).toString()
         ).catch((e) => { throw e; });
     }
 
     public async random(): Promise<void> {
-        await clickgo.form.dialog({
+        await clickgo.form.dialog(this, {
             'direction': 'v',
             'content': '<text modelValue="' + clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LUN, this.block) + '" readonly />',
             'data': {
@@ -72,24 +73,28 @@ export default class extends clickgo.form.AbstractForm {
 
     public escapeHTML(): void {
         clickgo.form.dialog(
+            this,
             clickgo.tool.escapeHTML(this.purifyTxt)
         ).catch((e) => { throw e; });
     }
 
     public rgb2hsl(): void {
         clickgo.form.dialog(
+            this,
             JSON.stringify(clickgo.tool.rgb2hsl('9,105,218'))
         ).catch((e) => { throw e; });
     }
 
     public parseUrl(): void {
         clickgo.form.dialog(
+            this,
             JSON.stringify(clickgo.tool.parseUrl(this.url))
         ).catch((e) => { throw e; });
     }
 
     public urlResolve(): void {
         clickgo.form.dialog(
+            this,
             clickgo.tool.urlResolve(this.url1, this.url2)
         ).catch((e) => { throw e; });
     }
@@ -97,23 +102,23 @@ export default class extends clickgo.form.AbstractForm {
     public second = '4531';
 
     public async formatSecond(): Promise<void> {
-        await clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
+        await clickgo.form.dialog(this, clickgo.tool.formatSecond(parseInt(this.second) || 0));
     }
 
     public weight = '8761';
 
     public async weightFormat(): Promise<void> {
-        await clickgo.form.dialog(clickgo.tool.weightFormat(parseInt(this.weight) || 0));
+        await clickgo.form.dialog(this, clickgo.tool.weightFormat(parseInt(this.weight) || 0));
     }
 
     public qs = 'a=1&b=2&c=3';
 
     public async queryParse(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(clickgo.tool.queryParse(this.qs)));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.tool.queryParse(this.qs)));
     }
 
     public async queryStringify(): Promise<void>  {
-        await clickgo.form.dialog(clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
+        await clickgo.form.dialog(this, clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
     }
 
 }

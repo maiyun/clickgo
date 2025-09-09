@@ -1,10 +1,12 @@
-<form width="350" height="400" title="System">
+<form width="350" height="500" title="System">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
         <button @click="getVersion">clickgo.getVersion()</button>
         <button @click="isNative">clickgo.isNative()</button>
+        <label>global:</label>
+        <text v-model="global" readonly type="multi" style="flex: 1;"></text>
+        <button @click="getCdn">clickgo.getCdn()</button>
         <button @click="getPlatform">clickgo.getPlatform()</button>
         <button @click="getDevice">clickgo.getDevice()</button>
-        <button @click="isImmersion">clickgo.isImmersion()</button>
         <button @click="hasFrame">clickgo.hasFrame()</button>
         <layout gutter="10">
             <button @click="ls" style="flex: 1;">typeof localStorage</button>

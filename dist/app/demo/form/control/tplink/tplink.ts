@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -33,10 +32,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public init = {
         'sid': '',
-        'skey': ''
+        'skey': '',
     };
 
-    public refresh() {
+    public refresh(): void {
         this.refs.tplink.refresh();
     }
 

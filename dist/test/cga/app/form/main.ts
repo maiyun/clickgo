@@ -9,7 +9,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async click(): Promise<void> {
-        await clickgo.form.dialog('OK');
+        await clickgo.form.dialog(this, 'OK');
     }
 
 }

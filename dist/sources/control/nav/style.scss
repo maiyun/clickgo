@@ -44,7 +44,7 @@
     .content {
         flex: 1; width: 0; display: flex; flex-direction: column;
         .header {
-            display: flex; align-items: center; box-shadow: 0px 15px 30px rgba(0,0,0,.07); z-index: 1; padding: var(--g-padding-h);
+            display: flex; align-items: center; box-shadow: 0px 15px 30px rgba(0,0,0,.07); z-index: 1; padding: var(--g-padding-h); background: var(--g-plain-background);
             .mbutton {
                 width: var(--g-boxsize); min-height: var(--g-boxsize); height: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius); border: solid .5px transparent; transition: var(--g-transition);
                 &:hover {

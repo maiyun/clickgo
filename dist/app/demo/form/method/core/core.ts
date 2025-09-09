@@ -10,49 +10,41 @@ export default class extends clickgo.form.AbstractForm {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
     }
 
-    public get global(): string {
-        return JSON.stringify(clickgo.core.global, null, 4);
-    }
-
-    public async getCdn(): Promise<void> {
-        await clickgo.form.dialog(clickgo.core.getCdn());
-    }
-
     public async getAvailArea(): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(clickgo.core.getAvailArea()));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.core.getAvailArea()));
     }
 
     public async hashe(): Promise<void> {
-        if (clickgo.core.hash(this.hash)) {
+        if (await clickgo.core.hash(this, this.hash)) {
             return;
         }
-        await clickgo.form.dialog('No permission.');
+        await clickgo.form.dialog(this, 'No permission.');
     }
 
     public async getHash(): Promise<void> {
-        await clickgo.form.dialog('Hash is: ' + clickgo.core.getHash());
+        await clickgo.form.dialog(this, 'Hash is: ' + clickgo.core.getHash());
     }
 
     public async getHost(): Promise<void> {
-        await clickgo.form.dialog('Host is: ' + clickgo.core.getHost());
+        await clickgo.form.dialog(this, 'Host is: ' + clickgo.core.getHost());
     }
 
     public async locatione(): Promise<void> {
-        if (clickgo.core.location(this.location)) {
+        if (await clickgo.core.location(this, this.location)) {
             return;
         }
-        await clickgo.form.dialog('No permission.');
+        await clickgo.form.dialog(this, 'No permission.');
     }
 
     public async getLocation(): Promise<void> {
-        await clickgo.form.dialog('Location is: ' + clickgo.core.getLocation());
+        await clickgo.form.dialog(this, 'Location is: ' + clickgo.core.getLocation());
     }
 
     public async back(): Promise<void> {
-        if (clickgo.core.back()) {
+        if (await clickgo.core.back(this)) {
             return;
         }
-        await clickgo.form.dialog('No permission.');
+        await clickgo.form.dialog(this, 'No permission.');
     }
 
     public open(): void {

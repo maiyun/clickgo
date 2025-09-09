@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
@@ -47,12 +12,18 @@ class default_1 extends clickgo.control.AbstractControl {
             'sizeh': false,
             'gutter': 0
         };
+        /** --- 当前是否有键盘空格正在按下中 --- */
         this.isSpaceDown = false;
+        /** --- 按钮左侧获得焦点中 --- */
         this.innerFocus = false;
+        /** --- 按钮右侧获得焦点中 --- */
         this.arrowFocus = false;
+        /** --- 当前是第几列，从 0 开始 --- */
         this.index = 0;
+        /** --- 是否在按钮贴贴内部 --- */
         this.inBgroup = false;
     }
+    /** --- 是否禁用状态 --- */
     get isDisabled() {
         if (!this.inBgroup) {
             return this.propBoolean('disabled');
@@ -62,6 +33,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return this.parent.propBoolean('disabled');
     }
+    /** --- 是否朴素模式 --- */
     get isPlain() {
         if (!this.inBgroup) {
             return this.propBoolean('plain');
@@ -71,6 +43,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return this.parent.propBoolean('plain');
     }
+    /** --- type --- */
     get typeComp() {
         if (!this.inBgroup) {
             return this.props.type;
@@ -80,6 +53,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return this.parent.props.type;
     }
+    /** --- size --- */
     get sizeComp() {
         if (!this.inBgroup) {
             return this.props.size;
@@ -89,18 +63,24 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return this.parent.props.size;
     }
+    /** --- 主标签(子标签为左右边栏)是否可获得焦点和操作（all / mark 模式可操作） --- */
     get canDoMain() {
         return (this.props.area === 'all' || this.props.area === 'mark') ? true : false;
     }
+    /** --- 左侧或者右侧正在有焦点 --- */
     get isChildFocus() {
         return this.innerFocus || this.arrowFocus;
     }
+    // --- methods ---
     keydown(e) {
         if (e.key === 'Enter') {
+            // --- 回车 ---
             e.preventDefault();
             if (this.canDoMain) {
+                // --- 在主标签响应 ---
                 this.innerClick(e);
                 if (!this.slots['pop'] || (this.props.area === 'mark')) {
+                    // --- 没有菜单，或者有菜单但是是 mark 模式 ---
                     this.element.click();
                     if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                         clickgo.form.hidePop(this.refs.arrow);
@@ -108,6 +88,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             else {
+                // --- 子标签响应 ---
                 if (this.innerFocus) {
                     this.innerClick(e);
                     this.element.click();
@@ -118,12 +99,14 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else if (e.key === ' ') {
+            // --- 空格 ---
             e.preventDefault();
             if (this.isSpaceDown) {
                 return;
             }
             this.isSpaceDown = true;
             if (this.props.area === 'mark') {
+                // --- mark 模式长按弹出菜单 ---
                 if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
                     clickgo.form.hidePop(this.refs.arrow);
                 }
@@ -133,6 +116,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     this.arrowClick(e);
                 }).catch(() => {
+                    //
                 });
             }
         }
@@ -143,15 +127,19 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.isSpaceDown = false;
         if (this.canDoMain) {
+            // --- 在主标签响应 ---
             if (this.refs.arrow?.dataset.cgPopOpen !== undefined) {
+                // --- 已经显示了 mark 的菜单，则此处不再响应事件 ---
                 return;
             }
             this.innerClick(e);
             if (!this.slots['pop'] || (this.props.area === 'mark')) {
+                // --- 没有菜单，或者有菜单但是是 mark 模式 ---
                 this.element.click();
             }
         }
         else {
+            // --- 子标签响应 ---
             if (this.innerFocus) {
                 this.innerClick(e);
                 this.element.click();
@@ -161,10 +149,12 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
+    // --- 鼠标按下事件 ---
     down(e) {
         if (this.props.area !== 'mark') {
             return;
         }
+        // --- mark 才响应 ---
         clickgo.dom.bindLong(e, () => {
             clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h', {
                 'autoScroll': true,
@@ -172,11 +162,15 @@ class default_1 extends clickgo.control.AbstractControl {
             });
         });
     }
+    // --- 左侧点击 ---
     innerClick(e) {
         if (!this.slots['pop'] || (this.props.area === 'split' || this.props.area === 'mark')) {
+            // --- 没有菜单，或者有菜单，但是是分离或者 mark 模式，则不在左侧点击时响应事件 ---
             return;
         }
+        // --- all 全局模式，要显示/隐藏菜单 ---
         e.stopPropagation();
+        // --- 检测是否显示 pop ---
         if (this.element.dataset.cgPopOpen === undefined) {
             clickgo.form.showPop(this.element, this.refs.pop, 'v', {
                 'autoScroll': true,
@@ -184,8 +178,10 @@ class default_1 extends clickgo.control.AbstractControl {
             });
         }
         else {
+            // clickgo.form.hidePop(this.element);
         }
     }
+    // --- 右侧点击 ---
     arrowClick(e) {
         e.stopPropagation();
         if (this.props.area === 'all') {
@@ -196,9 +192,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 });
             }
             else {
+                // clickgo.form.hidePop(this.element);
             }
         }
         else {
+            // --- mark / split ---
             if (this.refs.arrow?.dataset.cgPopOpen === undefined) {
                 clickgo.form.showPop(this.refs.arrow, this.refs.pop, this.props.area === 'split' ? 'v' : 'h', {
                     'autoScroll': true,
@@ -206,22 +204,28 @@ class default_1 extends clickgo.control.AbstractControl {
                 });
             }
             else {
+                // clickgo.form.hidePop(this.refs.arrow);
             }
         }
     }
+    /** --- 当前按钮在贴贴的位置 --- */
     get bgroupPos() {
         if (!this.inBgroup) {
             return '';
         }
         if (this.index === 0) {
+            // --- 第一个 ---
             if (this.parent.itemsLength === 1) {
+                // --- 只有一个 ---
                 return '';
             }
             return 'first';
         }
         if (this.parent.itemsLength === this.index + 1) {
+            // --- 最后一个 ---
             return 'end';
         }
+        // --- 中间 ---
         return 'center';
     }
     onMounted() {
@@ -242,4 +246,3 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
 }
-exports.default = default_1;

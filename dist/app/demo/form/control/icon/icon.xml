@@ -44,6 +44,9 @@
             <icon name="moon"></icon>
             <icon name="moon" size="m"></icon>
             <label>moon</label>
+            <icon name="drag"></icon>
+            <icon name="drag" size="m"></icon>
+            <label>drag</label>
         </layout>
     </layout>
 </form>

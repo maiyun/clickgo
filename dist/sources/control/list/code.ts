@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -467,7 +466,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.emit('update:modelValue', [item.value]);
                     this.emit('label', [item.label]);
                     this.emit('item', [item]);
-                    const event: types.IListItemclickedEvent = {
+                    const event: clickgo.control.IListItemclickedEvent = {
                         'detail': {
                             'event': e,
                             'value': item.value,
@@ -482,8 +481,8 @@ export default class extends clickgo.control.AbstractControl {
         // --- 其他不存在和加载状态不处理 ---
     }
 
-    public onAdd(e: types.IGreatlistAddEvent): void {
-        const event: types.IListAddEvent = {
+    public onAdd(e: clickgo.control.IGreatlistAddEvent): void {
+        const event: clickgo.control.IListAddEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -499,8 +498,8 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onRemove(e: types.IGreatlistRemoveEvent): void {
-        const event: types.IListRemoveEvent = {
+    public onRemove(e: clickgo.control.IGreatlistRemoveEvent): void {
+        const event: clickgo.control.IListRemoveEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -516,8 +515,8 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onChange(e: types.IGreatlistChangeEvent): void {
-        const event: types.IListChangeEvent = {
+    public onChange(e: clickgo.control.IGreatlistChangeEvent): void {
+        const event: clickgo.control.IListChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -532,8 +531,8 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    public onChanged(e: types.IGreatlistChangedEvent): void {
-        const event: types.IListChangedEvent = {
+    public onChanged(e: clickgo.control.IGreatlistChangedEvent): void {
+        const event: clickgo.control.IListChangedEvent = {
             'detail': {
                 'value': e.detail.value[0] === undefined ? [] : [this.dataGl[e.detail.value[0]].value]
             }
@@ -541,8 +540,8 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('changed', event);
     }
 
-    public onItemclicked(e: types.IGreatlistItemclickedEvent): void {
-        const event: types.IListItemclickedEvent = {
+    public onItemclicked(e: clickgo.control.IGreatlistItemclickedEvent): void {
+        const event: clickgo.control.IListItemclickedEvent = {
             'detail': {
                 'event': e.detail.event,
                 'value': this.dataGl[e.detail.value].value,
@@ -552,8 +551,8 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('itemclicked', event);
     }
 
-    public onItemdblclicked(e: types.IGreatlistItemdblclickedEvent): void {
-        const event: types.IListItemdblclickedEvent = {
+    public onItemdblclicked(e: clickgo.control.IGreatlistItemdblclickedEvent): void {
+        const event: clickgo.control.IListItemdblclickedEvent = {
             'detail': {
                 'event': e.detail.event,
                 'value': this.dataGl[e.detail.value].value,
@@ -568,7 +567,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 选中的项 --- */
     public values: string[] = [];
 
-    public onCheckChange(e: types.ICheckChangeEvent, row: any): void {
+    public onCheckChange(e: clickgo.control.ICheckChangeEvent, row: any): void {
         e.preventDefault();
         if (row.format.children.length) {
             // --- 有下级 ---

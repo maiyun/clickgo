@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -200,7 +199,7 @@ export default class extends clickgo.control.AbstractControl {
         // --- 如果是 number 则要判断数字是否符合 min max，不能在 input 判断，因为会导致用户无法正常输入数字，比如最小值是 10，他在输入 1 的时候就自动重置成 10 了 ---
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
         if (this.checkNumber(target)) {
-            const mxEvent: types.ITextMinMaxChangeEvent = {
+            const mxEvent: clickgo.control.ITextMinMaxChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -212,7 +211,7 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('minmaxchange', mxEvent);
             if (mxEvent.go) {
-                const event: types.ITextBeforeChangeEvent = {
+                const event: clickgo.control.ITextBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -252,7 +251,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 文本框的 input 事件 --- */
     public input(e: InputEvent): void {
         const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-        const event: types.ITextBeforeChangeEvent = {
+        const event: clickgo.control.ITextBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -466,7 +465,7 @@ export default class extends clickgo.control.AbstractControl {
             this.value = '0';
         }
         const n = (parseFloat(this.value) + num).toString();
-        const event: types.ITextBeforeChangeEvent = {
+        const event: clickgo.control.ITextBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -498,7 +497,7 @@ export default class extends clickgo.control.AbstractControl {
             const value = this.value.slice(0, this.refs.text.selectionStart)
             + str
             + this.value.slice(this.refs.text.selectionEnd);
-            const event: types.ITextBeforeChangeEvent = {
+            const event: clickgo.control.ITextBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -563,7 +562,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         }, true);
         // --- 大小改变 ---
-        clickgo.dom.watchSize(this.refs.text, () => {
+        clickgo.dom.watchSize(this, this.refs.text, () => {
             this.size.cw = this.refs.text.clientWidth;
             this.emit('clientwidth', this.refs.text.clientWidth);
             this.size.ch = this.refs.text.clientHeight;
@@ -623,7 +622,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.check();
                 return;
             }
-            const event: types.ITextBeforeChangeEvent = {
+            const event: clickgo.control.ITextBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -651,7 +650,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('type', async (): Promise<void> => {
             await this.nextTick();
             if (this.checkNumber()) {
-                const mxEvent: types.ITextMinMaxChangeEvent = {
+                const mxEvent: clickgo.control.ITextMinMaxChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -663,7 +662,7 @@ export default class extends clickgo.control.AbstractControl {
                 };
                 this.emit('minmaxchange', mxEvent);
                 if (mxEvent.go) {
-                    const event: types.ITextBeforeChangeEvent = {
+                    const event: clickgo.control.ITextBeforeChangeEvent = {
                         'go': true,
                         preventDefault: function() {
                             this.go = false;
@@ -693,7 +692,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('max', async () => {
             await this.nextTick();
             if (this.checkNumber()) {
-                const mxEvent: types.ITextMinMaxChangeEvent = {
+                const mxEvent: clickgo.control.ITextMinMaxChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -708,7 +707,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                const event: types.ITextBeforeChangeEvent = {
+                const event: clickgo.control.ITextBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -732,7 +731,7 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('min', async () => {
             await this.nextTick();
             if (this.checkNumber()) {
-                const mxEvent: types.ITextMinMaxChangeEvent = {
+                const mxEvent: clickgo.control.ITextMinMaxChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -747,7 +746,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.text.value = this.value;
                     return;
                 }
-                const event: types.ITextBeforeChangeEvent = {
+                const event: clickgo.control.ITextBeforeChangeEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -776,7 +775,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             const value = this.value.slice(0, this.propNumber('maxlength'));
-            const event: types.ITextBeforeChangeEvent = {
+            const event: clickgo.control.ITextBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;

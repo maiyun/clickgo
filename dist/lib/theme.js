@@ -1,52 +1,43 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+/**
+ * Copyright 2007-2025 MAIYUN.NET
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import * as lZip from './zip';
+import * as lTool from './tool';
+import * as lTask from './task';
+import * as lDom from './dom';
+import * as lForm from './form';
+/** --- 系统级 ID --- */
+let sysId = '';
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id) {
+    if (sysId) {
+        return;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.global = void 0;
-exports.read = read;
-exports.load = load;
-exports.remove = remove;
-exports.clear = clear;
-exports.setGlobal = setGlobal;
-exports.clearGlobal = clearGlobal;
-const zip = __importStar(require("./zip"));
-const tool = __importStar(require("./tool"));
-const task = __importStar(require("./task"));
-const dom = __importStar(require("./dom"));
-exports.global = null;
-async function read(blob) {
-    const z = await zip.get(blob);
+    sysId = id;
+}
+/** --- 当前全局主题 --- */
+export let global = null;
+/**
+ * --- cgt 文件 blob 转 IThemePkg 对象，会自动创建 object url，请注意释放 ---
+ * @param blob blob 对象
+ */
+export async function read(blob) {
+    const z = await lZip.get(blob);
     if (!z) {
         return false;
     }
@@ -56,11 +47,12 @@ async function read(blob) {
     }
     const config = JSON.parse(configContent);
     const files = {};
+    // --- 读取包文件 ---
     const list = z.readDir('/', {
         'hasChildren': true
     });
     for (const file of list) {
-        const mime = tool.getMimeByPath(file.name);
+        const mime = lTool.getMimeByPath(file.name);
         if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
             const fab = await z.getContent(file.path + file.name, 'string');
             if (!fab) {
@@ -84,93 +76,143 @@ async function read(blob) {
         'files': files
     };
 }
-async function load(theme, taskId) {
-    if (!taskId) {
-        return false;
+/**
+ * --- 加载 theme 给任务 ---
+ * @param taskId 要给某任务 ID 加载主题
+ * @param theme ITheme 对象，undefined 代表加载全局的默认主题
+ */
+export async function load(taskId, theme) {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(taskId);
     if (!t) {
         return false;
     }
+    /** --- 是否加载全局的主题到本任务 --- */
     const isGlobal = theme ? false : true;
+    // --- 如果当前是自定，来设置的是全局，则不修改 ---
     if (t.customTheme && isGlobal) {
         return true;
     }
     if (!theme) {
-        if (!exports.global) {
+        // --- 等同于 if (isGlobal) { ---
+        // --- 设置系统主题 ---
+        if (!global) {
+            // --- 但系统主题不存在，也算设置成功了 ---
             return true;
         }
-        theme = exports.global;
+        // --- 当前任务非自定，可以设置为系统主题 ---
+        theme = global;
     }
     let style = theme.files[theme.config.style + '.css'];
     if (!style) {
         return false;
     }
-    style = tool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
-    style = await tool.styleUrl2DataUrl(theme.config.style, style, theme.files);
+    style = lTool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
+    style = await lTool.styleUrl2DataUrl(theme.config.style, style, theme.files);
+    // --- 替换 [CGTMP-GLOBAL] ---
     style = style.replace(/\[CGTMP-GLOBAL\] +::selection/g, `#cg-form-list > [data-task-id="${taskId}"] ::selection, #cg-pop-list > [data-task-id="${taskId}"] ::selection`);
     style = style.replace(/\[CGTMP-GLOBAL\]/g, `#cg-form-list > [data-task-id="${taskId}"], #cg-pop-list > [data-task-id="${taskId}"]`);
     if (!t.customTheme) {
+        // --- 如果当前 task 不是自定主题 ---
         if (!isGlobal) {
+            // --- 但当前设置为自定，则任务标识设置为自定 ---
             t.customTheme = true;
         }
-        dom.removeStyle(taskId, 'theme');
+        // --- 只要 task 之前是全局主题，本次就要清除原主题所有内容 ---
+        lDom.removeStyle(taskId, 'theme');
     }
-    dom.pushStyle(taskId, style, 'theme', theme.config.name);
+    lDom.pushStyle(taskId, style, 'theme', theme.config.name);
     return true;
 }
-async function remove(name, taskId) {
-    if (!taskId) {
-        return;
+/**
+ * --- 移除当前 task 的 theme（只能移除自定的） ---
+ * @param taskId 任务 ID
+ * @param name 要移除的主题
+ */
+export async function remove(taskId, name) {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(taskId);
     if (!t) {
         return;
     }
     if (!t.customTheme) {
+        // --- 当前是系统主题，无权限移除 ---
         return;
     }
-    dom.removeStyle(taskId, 'theme', name);
-    if (dom.getStyleCount(taskId, 'theme') === 0) {
+    lDom.removeStyle(taskId, 'theme', name);
+    // --- 判断是否所有自定主题都被移除干净 ---
+    if (lDom.getStyleCount(taskId, 'theme') === 0) {
+        // --- 全部干净了，切换为系统主题 ---
         t.customTheme = false;
-        if (exports.global) {
-            await load(undefined, taskId);
+        if (global) {
+            await load(taskId);
         }
     }
 }
-async function clear(taskId) {
-    if (!taskId) {
-        return;
+/**
+ * --- 清除一个 task 中所有加载的 theme（只能清除自定） ---
+ * @param taskId 要清除的任务 id
+ */
+export async function clear(taskId) {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(taskId);
     if (!t) {
         return;
     }
+    // --- 当前自定才可清除 ---
     if (!t.customTheme) {
+        // --- 当前是系统，则不许清除 ---
         return;
     }
-    dom.removeStyle(taskId, 'theme');
+    lDom.removeStyle(taskId, 'theme');
     t.customTheme = false;
-    if (exports.global) {
-        await load(undefined, taskId);
+    if (global) {
+        await load(taskId);
     }
 }
-async function setGlobal(theme) {
-    exports.global = theme;
-    for (const taskId in task.list) {
-        await load(undefined, parseInt(taskId));
+/**
+ * --- 将 cgt 主题设置到全局所有任务 ---
+ * @param theme 主题对象
+ */
+export async function setGlobal(theme) {
+    global = theme;
+    const tlist = await lTask.getOriginList(sysId);
+    for (const taskId in tlist) {
+        await load(taskId);
     }
 }
-function clearGlobal() {
-    if (!exports.global) {
+/**
+ * --- 清除全局主题 ---
+ */
+export async function clearGlobal() {
+    if (!global) {
         return;
     }
-    exports.global = null;
-    for (const taskId in task.list) {
-        const t = task.list[taskId];
+    global = null;
+    const tlist = await lTask.getOriginList(sysId);
+    for (const taskId in tlist) {
+        const t = tlist[taskId];
         if (t.customTheme) {
             continue;
         }
-        dom.removeStyle(t.id, 'theme');
+        lDom.removeStyle(t.id, 'theme');
+    }
+}
+/**
+ * --- 设置全局主色 ---
+ * @param color 如 oklch(.7 .2 43)，留空为还原
+ */
+export function setMain(color) {
+    if (color) {
+        lForm.elements.wrap.style.setProperty('--main', color);
+    }
+    else {
+        lForm.elements.wrap.style.removeProperty('--main');
     }
 }

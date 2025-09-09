@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2007-2025 MAIYUN.NET
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as types from '../../types';
-import * as core from './core';
 
-/** --- compressorjs, mit --- */
-let compressorjs: any = null;
+/** --- compressorjs 压缩图片原生类 --- */
+let compressorjs: typeof import('compressorjs') | null = null;
+
+/**
+ * --- 运行 iife 代码 ---
+ * @param code iife 代码
+ * @returns 模块对象
+ */
+export function runIife(code: string): any {
+    const func = new Function(code + '\nreturn emodule;');
+    return func();
+}
 
 /**
  * --- 压缩一个图片 ---
@@ -34,14 +42,19 @@ export async function compressor<T extends File | Blob>(file: T, options: {
 } = {}): Promise<File | Blob | false> {
     if (!compressorjs) {
         try {
-            compressorjs = await core.getModule('compressorjs');
+            const cdn = (window as any).clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
+            compressorjs = await import(cdn + '/npm/compressorjs@1.2.1/+esm');
         }
         catch {
             return false;
         }
     }
     return new Promise((resolve) => {
-        new compressorjs(file, {
+        if (!compressorjs) {
+            resolve(false);
+            return;
+        }
+        new compressorjs.default(file, {
             'quality': options.quality,
             'maxWidth': options.maxWidth,
             'maxHeight': options.maxHeight,
@@ -58,8 +71,8 @@ export async function compressor<T extends File | Blob>(file: T, options: {
 interface IClassPrototype {
     'method': Record<string, any>;
     'access': Record<string, {
-        'get'?: any;
-        'set'?: any;
+        'get': any;
+        'set': any;
     }>;
 }
 
@@ -75,7 +88,7 @@ export function getClassPrototype(obj: object, over: string[] = [], level: numbe
     }
     const rtn: IClassPrototype = {
         'method': {},
-        'access': {}
+        'access': {},
     };
     const names = Object.getOwnPropertyNames(obj);
     if (names.includes('toString')) {
@@ -99,13 +112,10 @@ export function getClassPrototype(obj: object, over: string[] = [], level: numbe
         }
         else if (des.get ?? des.set) {
             if (!rtn.access[item]) {
-                rtn.access[item] = {};
-            }
-            if (des.get) {
-                rtn.access[item].get = (des as any).get;
-            }
-            if (des.set) {
-                rtn.access[item].set = (des as any).set;
+                rtn.access[item] = {
+                    'get': des.get ?? (() => {}),
+                    'set': des.set ?? (() => {}),
+                };
             }
         }
     }
@@ -467,7 +477,8 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
         return ` class="${resultList.join(' ')}"`;
     //}).replace(/ :class=(["']).+?>/gi, function(t, sp) {
     }).replace(/ :class=(["']).+?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function(t, sp) {
-        return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
+        return t.replace(new RegExp(`:class=${sp}([^"]+?)${sp}`, 'gi'), function(t, t1: string) {
+        // return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
             // --- t1 为 [] 或 {} ---
             t1 = t1.trim();
             if (t1.startsWith('[')) {
@@ -488,7 +499,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
             else {
                 t1 = layoutClassPrependObject(t1);
             }
-            return ` :class="${t1}"${t2}`;
+            return ` :class="${t1}"`;
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
     return rtn;
@@ -514,17 +525,13 @@ export function eventsAttrWrap(layout: string): string {
  * @param layout 要处理的窗体或控件的 layout
  * @param formId 要加入的 formId
  */
-export function teleportGlue(layout: string, formId: number | string): string {
-    if (typeof formId !== 'string') {
-        formId = formId.toString();
-    }
-    const fid = formId;
+export function teleportGlue(layout: string, formId: string): string {
     return layout.replace(/<teleport([\s\S]+?)to="(.+?)"([\s\S]+?<[\w-]+)/g, (v, v1, v2, v3): string => {
         if (v2 !== 'system') {
             return v;
         }
         // --- 给 teleport 的第一个子元素增加 cg-pop、cg-pop-none 的 data ---
-        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + fid + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
+        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + formId + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
     });
 }
 
@@ -652,6 +659,14 @@ export const RANDOM_LU = RANDOM_L + RANDOM_U;
 export const RANDOM_LUN = RANDOM_L + RANDOM_U + RANDOM_N;
 export const RANDOM_V = 'ACEFGHJKLMNPRSTWXY34567';
 export const RANDOM_LUNS = RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]"';
+
+/**
+ * --- 生成随机字符串 ---
+ * @param length 长度
+ * @param source 字符源
+ * @param block 剔除字符
+ * @returns 随机字符串
+ */
 export function random(length: number = 8, source: string = RANDOM_LN, block: string = ''): string {
     // --- 剔除 block 字符 ---
     let len = block.length;
@@ -984,7 +999,7 @@ export function hsl2rgb(
  * @param url 网址
  * @param opt 选项
  */
-export function request(url: string, opt: types.IRequestOptions): Promise<null | any> {
+export function request(url: string, opt: IRequestOptions): Promise<null | any> {
     return new Promise(function(resove) {
         const xhr = new XMLHttpRequest();
         if (opt.credentials === false) {
@@ -993,49 +1008,37 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
         xhr.upload.onloadstart = function(e: ProgressEvent): void {
             const r = opt.uploadStart?.(e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e1) {
-                    console.log(e1);
-                });
+                r.catch(() => {});
             }
         };
         xhr.upload.onprogress = function(e: ProgressEvent): void {
             const r = opt.uploadProgress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e1) {
-                    console.log(e1);
-                });
+                r.catch(() => {});
             }
         };
         xhr.upload.onloadend = function(): void {
             const r = opt.uploadEnd?.();
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
-                });
+                r.catch(() => {});
             }
         };
         xhr.onloadstart = function(e: ProgressEvent): void {
             const r = opt.start?.(e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e1) {
-                    console.log(e1);
-                });
+                r.catch(() => {});
             }
         };
         xhr.onprogress = function(e: ProgressEvent): void {
             const r = opt.progress?.(e.loaded, e.total);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e1) {
-                    console.log(e1);
-                });
+                r.catch(() => {});
             }
         };
         xhr.onloadend = function(): void {
             const r = opt.end?.();
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
-                });
+                r.catch(() => {});
             }
         };
         xhr.onload = function(): void {
@@ -1050,18 +1053,14 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
             }
             const r = opt.load?.(res);
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
-                });
+                r.catch(() => {});
             }
             resove(res);
         };
         xhr.onerror = function(): void {
             const r = opt.error?.();
             if (r && (r instanceof Promise)) {
-                r.catch(function(e) {
-                    console.log(e);
-                });
+                r.catch(() => {});
             }
             resove(null);
         };
@@ -1081,58 +1080,326 @@ export function request(url: string, opt: types.IRequestOptions): Promise<null |
     });
 }
 
-export function fetch(url: string, init?: RequestInit): Promise<string | Blob | null> {
-    return loader.fetch(url, init);
+/**
+ * --- 发起 fetch 请求 ---
+ * @param url 网址
+ * @param init 选项
+ * @returns 文本或二进制数据，失败时返回 null
+ */
+export async function fetch(url: string, init?: RequestInit): Promise<string | Blob | null> {
+    try {
+        const res = await window.fetch(url, init);
+        if (res.status === 200 || res.status === 304) {
+            /** --- 内容类型 --- */
+            const ct = res.headers.get('content-type')?.toLowerCase() ?? '';
+            const types = ['text/', 'javascript', 'json', 'css', 'xml', 'html'];
+            return types.some(item => ct.includes(item)) ? await res.text() : await res.blob();
+        }
+        return null;
+    }
+    catch {
+        return null;
+    }
 }
 
-export function get(url: string, opt?: {
-    'credentials'?: 'include' | 'same-origin' | 'omit';
-    'headers'?: HeadersInit;
-}): Promise<Response | null> {
-    return loader.get(url, opt);
+/** --- 重试间隔 --- */
+const retryTimes = [300, 1_000, 2_000];
+
+/**
+ * --- 发起 GET 请求 ---
+ * @param url 网址
+ * @param init 选项
+ * @param opt 选项
+ * @returns 文本或二进制数据，失败时返回 null
+ */
+export async function get(url: string, init?: RequestInit, opt: {
+    /** --- 重试次数，默认 3 次 --- */
+    'retry'?: number;
+} = {}): Promise<string | Blob | null> {
+    init ??= {};
+    init.method = 'GET';
+    const retry = opt.retry ?? 3;
+    for (let i = 0; i <= retry; ++i) {
+        const res = await fetch(url, init);
+        if (res !== null) {
+            return res;
+        }
+        if (i === retry) {
+            return null;
+        }
+        await sleep(retryTimes[i]);
+    }
+    return null;
 }
 
-export function post(url: string, data: Record<string, any> | FormData, opt?: {
-    'credentials'?: 'include' | 'same-origin' | 'omit';
-    'headers'?: HeadersInit;
-}): Promise<Response | null> {
-    return loader.post(url, data, opt);
+/**
+ * --- 发起 POST 请求 ---
+ * @param url 网址
+ * @param data 数据
+ * @param init 选项
+ * @returns 文本或二进制数据，失败时返回 null
+ */
+export async function post(
+    url: string, data: Record<string, any> | FormData, init?: RequestInit
+): Promise<string | Blob | null> {
+    init ??= {};
+    init.method = 'POST';
+    init.headers ??= {};
+    if (!(data instanceof FormData)) {
+        if (init.headers instanceof Headers) {
+            init.headers.set('content-type', 'application/json');
+        }
+        else {
+            (init.headers as Record<string, string>)['content-type'] = 'application/json';
+        }
+    }
+    init.body = data instanceof FormData ? data : JSON.stringify(data);
+    const res = await fetch(url, init);
+    return res;
 }
 
-/** --- 发送 get 响应为 json 的网络数据，无需 try，失败返回 null */
-export async function getResponseJson(url: string, opt?: {
-    'credentials'?: 'include' | 'same-origin' | 'omit';
-    'headers'?: HeadersInit;
-}): Promise<any | null> {
-    return loader.getResponseJson(url, opt);
+/**
+ * --- 发起 GET 请求并解析 JSON 响应 ---
+ * @param url 网址
+ * @param init 选项
+ * @returns JSON 数据，失败时返回 null
+ */
+export async function getResponseJson(url: string, init?: RequestInit): Promise<any | null> {
+    const res = await get(url, init);
+    if (!res) {
+        return null;
+    }
+    if (typeof res !== 'string') {
+        return null;
+    }
+    try {
+        return JSON.parse(res);
+    }
+    catch {
+        return null;
+    }
 }
 
-/** --- 发送响应为 json 的网络数据，无需 try，失败返回 null --- */
-export async function postResponseJson(url: string, data: Record<string, any> | FormData, opt?: {
-    'credentials'?: 'include' | 'same-origin' | 'omit';
-    'headers'?: HeadersInit;
-}): Promise<any | null> {
-    return loader.postResponseJson(url, data, opt);
+/**
+ * --- 发起 POST 请求并解析 JSON 响应 ---
+ * @param url 网址
+ * @param data 数据
+ * @param init 选项
+ * @returns JSON 数据，失败时返回 null
+ */
+export async function postResponseJson(
+    url: string, data: Record<string, any> | FormData, init?: RequestInit
+): Promise<any | null> {
+    const res = await post(url, data, init);
+    if (!res) {
+        return null;
+    }
+    if (typeof res !== 'string') {
+        return null;
+    }
+    try {
+        return JSON.parse(res);
+    }
+    catch {
+        return null;
+    }
 }
 
-export function parseUrl(url: string): ILoaderUrl {
-    return loader.parseUrl(url);
+/**
+ * --- 传输 url 并解析为 IUrl 对象 ---
+ * @param url url 字符串
+ */
+export function parseUrl(url: string): IUrl {
+    // --- test: https://ab-3dc:aak9()$@github.com:80/nodejs/node/blob/master/lib/url.js?mail=abc@def.com#223 ---
+    const rtn: IUrl = {
+        'protocol': null,
+        'auth': null,
+        'user': null,
+        'pass': null,
+        'host': null,
+        'hostname': null,
+        'port': null,
+        'pathname': '/',
+        'path': null,
+        'query': null,
+        'hash': null
+    };
+    const hash = url.indexOf('#');
+    if (hash > -1) {
+        rtn['hash'] = url.slice(hash + 1);
+        url = url.slice(0, hash);
+    }
+    const query = url.indexOf('?');
+    if (query > -1) {
+        rtn['query'] = url.slice(query + 1);
+        url = url.slice(0, query);
+    }
+    const protocol = url.indexOf(':');
+    if (protocol > -1) {
+        rtn['protocol'] = url.slice(0, protocol + 1).toLowerCase();
+        url = url.slice(protocol + 1);
+        if (url.startsWith('//')) {
+            url = url.slice(2);
+        }
+        let path = url.indexOf('/');
+        if (path === -1) {
+            path = url.indexOf('\\');
+        }
+        if (path > -1) {
+            rtn['pathname'] = url.slice(path);
+            url = url.slice(0, path);
+        }
+        const auth = url.indexOf('@');
+        if (auth > -1) {
+            const authStr = url.slice(0, auth);
+            const authSplit = authStr.indexOf(':');
+            if (authSplit > -1) {
+                // --- 有密码 ---
+                rtn['user'] = authStr.slice(0, authSplit);
+                rtn['pass'] = authStr.slice(authSplit + 1);
+                rtn['auth'] = rtn['user'] + ':' + rtn['pass'];
+            }
+            else {
+                rtn['user'] = authStr;
+                rtn['auth'] = authStr;
+            }
+            url = url.slice(auth + 1);
+        }
+        if (url) {
+            const port = url.indexOf(':');
+            if (port > -1) {
+                rtn['hostname'] = url.slice(0, port).toLowerCase();
+                rtn['port'] = url.slice(port + 1);
+                rtn['host'] = rtn['hostname'] + (rtn['port'] ? ':' + rtn['port'] : '');
+            }
+            else {
+                rtn['hostname'] = url.toLowerCase();
+                rtn['host'] = rtn['hostname'];
+            }
+        }
+    }
+    else {
+        // --- 没有 protocol ---
+        rtn['pathname'] = url;
+    }
+    // --- 组合 ---
+    rtn['path'] = rtn['pathname'] + (rtn['query'] ? '?' + rtn['query'] : '');
+    return rtn;
 }
 
+/**
+ * --- 将相对路径根据基准路径进行转换 ---
+ * @param from 基准路径
+ * @param to 相对路径
+ */
 export function urlResolve(from: string, to: string): string {
-    return loader.urlResolve(from, to);
+    from = from.replace(/\\/g, '/');
+    to = to.replace(/\\/g, '/');
+    // --- to 为空，直接返回 form ---
+    if (to === '') {
+        return urlAtom(from);
+    }
+    // --- 获取 from 的 scheme, host, path ---
+    const f = parseUrl(from);
+    // --- 以 // 开头的，加上 from 的 protocol 返回 ---
+    if (to.startsWith('//')) {
+        return urlAtom(f.protocol ? f.protocol + to : to);
+    }
+    if (f.protocol) {
+        // --- 获取小写的 protocol ---
+        from = f.protocol + from.slice(f.protocol.length);
+    }
+    // --- 获取 to 的 scheme, host, path ---
+    const t = parseUrl(to);
+    // --- 已经是绝对路径，直接返回 ---
+    if (t.protocol) {
+        // --- 获取小写的 protocol ---
+        return urlAtom(t.protocol + to.slice(t.protocol.length));
+    }
+    // --- # 或 ? 替换后返回 ---
+    if (to.startsWith('#') || to.startsWith('?')) {
+        const sp = from.indexOf(to[0]);
+        if (sp !== -1) {
+            return urlAtom(from.slice(0, sp) + to);
+        }
+        else {
+            return urlAtom(from + to);
+        }
+    }
+    // --- 处理后面的尾随路径 ---
+    let abs = (f.auth ? f.auth + '@' : '') + (f.host ?? '');
+    if (to.startsWith('/')) {
+        // -- abs 类似是 /xx/xx ---
+        abs += to;
+    }
+    else {
+        // --- to 是 xx/xx 这样的 ---
+        // --- 移除基准 path 不是路径的部分，如 /ab/c 变成了 /ab，/ab 变成了 空 ---
+        const path = f.pathname.replace(/\/[^/]*$/g, '');
+        // --- abs 是 /xx/xx 了，因为如果 path 是空，则跟上了 /，如果 path 不为空，也是 / 开头 ---
+        abs += path + '/' + to;
+    }
+    // --- 返回最终结果 ---
+    if (f.protocol && (f.protocol !== 'file:') && !f.host) {
+        // --- 类似 c:/ ---
+        return urlAtom(f.protocol + abs);
+    }
+    else {
+        // --- 类似 http:// ---
+        return urlAtom((f.protocol ? f.protocol + '//' : '') + abs);
+    }
 }
 
+/** --- 处理 URL 中的 .. / . 等 --- */
 export function urlAtom(url: string): string {
-    return loader.urlAtom(url);
+    // --- 删掉 ./ ---
+    while (url.includes('/./')) {
+        url = url.replace(/\/\.\//g, '/');
+    }
+    // --- 删掉 ../ ---
+    while (/\/(?!\.\.)[^/]+\/\.\.\//.test(url)) {
+        url = url.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, '/');
+    }
+    url = url.replace(/\.\.\//g, '');
+    return url;
 }
 
+/**
+ * --- 将 blob 对象转换为 text ---
+ * @param blob 对象
+ */
 export function blob2Text(blob: Blob): Promise<string> {
-    return loader.blob2Text(blob);
+    return new Promise(function(resove) {
+        const fr = new FileReader();
+        fr.addEventListener('load', function(e) {
+            if (e.target) {
+                resove(e.target.result as string);
+            }
+            else {
+                resove('');
+            }
+        });
+        fr.readAsText(blob);
+    });
 }
 
+/**
+ * --- 将 blob 对象转换为 base64 url ---
+ * @param blob 对象
+ */
 export function blob2DataUrl(blob: Blob): Promise<string> {
-    return loader.blob2DataUrl(blob);
+    return new Promise(function(resove) {
+        const fr = new FileReader();
+        fr.addEventListener('load', function(e) {
+            if (e.target) {
+                resove(e.target.result as string);
+            }
+            else {
+                resove('');
+            }
+        });
+        fr.readAsDataURL(blob);
+    });
 }
 
 export function execCommand(ac: string): void {
@@ -1238,13 +1505,22 @@ export function isMs(time: number): boolean {
 /**
  * --- 将对象转换为 query string ---
  * @param query 要转换的对象
+ * @param encode 是否转义
  */
-export function queryStringify(query: Record<string, any>): string {
+export function queryStringify(query: Record<string, any>, encode: boolean = true): string {
+    if (encode) {
+        return Object.entries(query).map(([k, v]) => {
+            if (Array.isArray(v)) {
+                return v.map((i) => `${encodeURIComponent(k)}=${encodeURIComponent(i)}`).join('&');
+            }
+            return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+        }).join('&');
+    }
     return Object.entries(query).map(([k, v]) => {
         if (Array.isArray(v)) {
-            return v.map((i) => `${encodeURIComponent(k)}=${encodeURIComponent(`${i}`)}`).join('&');
+            return v.map((i) => `${k}=${i}}`).join('&');
         }
-        return `${encodeURIComponent(k)}=${encodeURIComponent(`${v}`)}`;
+        return `${k}=${v}`;
     }).join('&');
 }
 
@@ -1350,3 +1626,917 @@ export function parseArrayString(arrayStr: string): string[] {
 
     return result;
 }
+
+/**
+ * --- 判断字符是否是转义字符 ---
+ * @param code 字符串
+ * @param index 字符在字符串中的位置
+ * @returns 是否是转义字符
+ */
+export function isEscapeChar(code: string, index: number): boolean {
+    let preChar = code[index - 1];
+    let count = 0;
+    while (preChar === '\\') {
+        preChar = code[index - (++count) - 1];
+    }
+    return count % 2 === 0 ? false : true;
+}
+
+/** --- 状态机状态 --- */
+export enum ESTATE {
+    /** --- 普通 --- */
+    'NORMAL',
+    /** --- 单词 --- */
+    'WORD',
+    /** --- 字符串 --- */
+    'STRING',
+    /** --- 正则 --- */
+    'REG',
+    /** --- 注释 --- */
+    'COMMENT',
+}
+
+/**
+ * --- 状态机 ---
+ * @param code 代码
+ * @param start 开始位置
+ * @param process 处理函数
+ * @returns 是否继续
+ */
+export function stateMachine(
+    code: string, start: number,
+    process: (
+        event: {
+            'state': ESTATE;
+            'start': number;
+            'end': number;
+            'word': string;
+            'pre': {
+                'state': ESTATE;
+                'word': string;
+                'nonnull': string;
+            };
+            'bracket': {
+                's': number;
+                'm': number;
+                'l': number;
+            };
+        }
+    ) => boolean
+): void {
+    /** --- 当前状态 --- */
+    let state: ESTATE = ESTATE.NORMAL;
+    code = code.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    /** --- 括号嵌套 --- */
+    const bracket: {
+        's': number;
+        'm': number;
+        'l': number;
+    } = {
+        's': 0,
+        'm': 0,
+        'l': 0,
+    };
+    /** --- 标记 --- */
+    let marker = '';
+    /** --- 组合 --- */
+    let word = '';
+    /** --- 记录上一个--- */
+    let pre: {
+        'state': ESTATE;
+        'word': string;
+        'nonnull': string;
+    } = {
+        'state': ESTATE.NORMAL,
+        'word': '',
+        'nonnull': '',
+    };
+    for (let i = start; i < code.length; ++i) {
+        const char = code[i];
+        switch (state) {
+            case ESTATE.COMMENT: {
+                // --- 注释 ---
+                if (marker === '*') {
+                    // --- 多行注释模式 ---
+                    if ((char === '*') && (code[i + 1] === '/')) {
+                        // --- 结束 ---
+                        word += char + code[++i];
+                        if ((i >= 0) && !process({
+                            'state': state,
+                            'start': i - word.length + 1,
+                            'end': i,
+                            'word': word,
+                            'pre': {
+                                'state': pre.state,
+                                'word': pre.word,
+                                'nonnull': pre.nonnull,
+                            },
+                            'bracket': bracket,
+                        })) {
+                            return;
+                        }
+                        pre.state = state;
+                        pre.word = word;
+                        const wordTrim = word.trim();
+                        if (wordTrim) {
+                            pre.nonnull = wordTrim;
+                        }
+                        state = ESTATE.NORMAL;
+                        word = '';
+                        marker = '';
+                    }
+                    else {
+                        word += char;
+                    }
+                    break;
+                }
+                // --- 单行注释模式 ---
+                if (char === '\n') {
+                    // --- 结束 ---
+                    --i;
+                    if (!process({
+                        'state': state,
+                        'start': i - word.length + 1,
+                        'end': i,
+                        'word': word,
+                        'pre': {
+                            'state': pre.state,
+                            'word': pre.word,
+                            'nonnull': pre.nonnull,
+                        },
+                        'bracket': bracket,
+                    })) {
+                        return;
+                    }
+                    pre.state = state;
+                    pre.word = word;
+                    const wordTrim = word.trim();
+                    if (wordTrim) {
+                        pre.nonnull = wordTrim;
+                    }
+                    state = ESTATE.NORMAL;
+                    word = '';
+                    marker = '';
+                }
+                else {
+                    word += char;
+                }
+                break;
+            }
+            case ESTATE.REG: {
+                // --- 正则 ---
+                switch (char) {
+                    case '[': {
+                        if (!isEscapeChar(code, i)) {
+                            marker = '[';
+                        }
+                        word += char;
+                        break;
+                    }
+                    case ']': {
+                        if (!isEscapeChar(code, i) && (marker === '[')) {
+                            marker = '/';
+                        }
+                        word += char;
+                        break;
+                    }
+                    case '/': {
+                        if (!isEscapeChar(code, i) && (marker === '/')) {
+                            // --- 并不一定结束了，还有后面的如 ig ---
+                            marker = 'e';
+                        }
+                        word += char;
+                        break;
+                    }
+                    default: {
+                        if (marker !== 'e') {
+                            word += char;
+                            break;
+                        }
+                        if (/\w/.test(char)) {
+                            word += char;
+                            break;
+                        }
+                        --i;
+                        if (!process({
+                            'state': state,
+                            'start': i - word.length + 1,
+                            'end': i,
+                            'word': word,
+                            'pre': {
+                                'state': pre.state,
+                                'word': pre.word,
+                                'nonnull': pre.nonnull,
+                            },
+                            'bracket': bracket,
+                        })) {
+                            return;
+                        }
+                        pre.state = state;
+                        pre.word = word;
+                        const wordTrim = word.trim();
+                        if (wordTrim) {
+                            pre.nonnull = wordTrim;
+                        }
+                        state = ESTATE.NORMAL;
+                        word = '';
+                        marker = '';
+                    }
+                }
+                break;
+            }
+            case ESTATE.STRING: {
+                // --- 字符串 ---
+                word += char;
+                if ((char === marker) && !isEscapeChar(code, i)) {
+                    // --- 结束 ---
+                    if (!process({
+                        'state': state,
+                        'start': i - word.length + 1,
+                        'end': i,
+                        'word': word,
+                        'pre': {
+                            'state': pre.state,
+                            'word': pre.word,
+                            'nonnull': pre.nonnull,
+                        },
+                        'bracket': bracket,
+                    })) {
+                        return;
+                    }
+                    pre.state = state;
+                    pre.word = word;
+                    const wordTrim = word.trim();
+                    if (wordTrim) {
+                        pre.nonnull = wordTrim;
+                    }
+                    state = ESTATE.NORMAL;
+                    word = '';
+                    marker = '';
+                }
+                break;
+            }
+            case ESTATE.WORD: {
+                // --- 单词 ---
+                if (!/[$\w]/.test(char)) {
+                    --i;
+                    if (!process({
+                        'state': state,
+                        'start': i - word.length + 1,
+                        'end': i,
+                        'word': word,
+                        'pre': {
+                            'state': pre.state,
+                            'word': pre.word,
+                            'nonnull': pre.nonnull,
+                        },
+                        'bracket': bracket,
+                    })) {
+                        return;
+                    }
+                    pre.state = state;
+                    pre.word = word;
+                    const wordTrim = word.trim();
+                    if (wordTrim) {
+                        pre.nonnull = wordTrim;
+                    }
+                    state = ESTATE.NORMAL;
+                    word = '';
+                    marker = '';
+                    break;
+                }
+                word += char;
+                break;
+            }
+            default: {
+                // --- NORMAL ---
+                switch (char) {
+                    case '"':
+                    case '\'':
+                    case '`': {
+                        // --- 进入字符串模式 ---
+                        if ((i - 1 >= 0) && !process({
+                            'state': state,
+                            'start': i - 1 - word.length + 1,
+                            'end': i - 1,
+                            'word': word,
+                            'pre': {
+                                'state': pre.state,
+                                'word': pre.word,
+                                'nonnull': pre.nonnull,
+                            },
+                            'bracket': bracket,
+                        })) {
+                            return;
+                        }
+                        pre.state = state;
+                        pre.word = word;
+                        const wordTrim = word.trim();
+                        if (wordTrim) {
+                            pre.nonnull = wordTrim;
+                        }
+                        state = ESTATE.STRING;
+                        word = char;
+                        marker = char;
+                        break;
+                    }
+                    case '/': {
+                        if (code[i + 1] === '/') {
+                            // --- 单行注释 ---
+                            if ((i - 1 >= 0) && !process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.state = state;
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            state = ESTATE.COMMENT;
+                            word = char + code[++i];
+                            marker = char;
+                            break;
+                        }
+                        if (code[i + 1] === '*') {
+                            // --- 多行注释 ---
+                            if ((i - 1 >= 0) && !process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.state = state;
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            state = ESTATE.COMMENT;
+                            word = char + code[++i];
+                            marker = code[i];
+                            break;
+                        }
+                        // --- 判断是 reg 还是 / 除号 ---
+                        // --- 如果是 / 号前面必定有变量或数字，否则就是 reg ---
+                        /** --- 除了变量还可能是 return --- */
+                        let tmp = '';
+                        for (let j = i - 1; j >= 0; --j) {
+                            if (!tmp) {
+                                if (/\s/.test(code[j])) {
+                                    // --- 空就跳过 ---
+                                    continue;
+                                }
+                                if (code[j] === ')' || code[j] === ']') {
+                                    // --- 除号（ASI 里也是除号） ---
+                                    break;
+                                }
+                                if (!/[$\w]/.test(code[j])) {
+                                    // --- 不是数字、变量，直接进入正则模式 ---
+                                    if ((i - 1 >= 0) && !process({
+                                        'state': state,
+                                        'start': i - 1 - word.length + 1,
+                                        'end': i - 1,
+                                        'word': word,
+                                        'pre': {
+                                            'state': pre.state,
+                                            'word': pre.word,
+                                            'nonnull': pre.nonnull,
+                                        },
+                                        'bracket': bracket,
+                                    })) {
+                                        return;
+                                    }
+                                    pre.state = state;
+                                    pre.word = word;
+                                    const wordTrim = word.trim();
+                                    if (wordTrim) {
+                                        pre.nonnull = wordTrim;
+                                    }
+                                    state = ESTATE.REG;
+                                    word = char;
+                                    marker = char;
+                                    break;
+                                }
+                                // --- 是变动？还是关键词？ ---
+                                tmp = code[j];
+                                continue;
+                            }
+                            // --- 持续组合，看看到底是啥 ---
+                            if (/[$\w]/.test(code[j])) {
+                                tmp = code[j] + tmp;
+                                continue;
+                            }
+                            // --- 结束 ---
+                            break;
+                        }
+                        if (tmp) {
+                            if (tmp === 'return') {
+                                // --- return 关键字，是正则 ---
+                                if ((i - 1 >= 0) && !process({
+                                    'state': state,
+                                    'start': i - 1 - word.length + 1,
+                                    'end': i - 1,
+                                    'word': word,
+                                    'pre': {
+                                        'state': pre.state,
+                                        'word': pre.word,
+                                        'nonnull': pre.nonnull,
+                                    },
+                                    'bracket': bracket,
+                                })) {
+                                    return;
+                                }
+                                pre.state = state;
+                                pre.word = word;
+                                const wordTrim = word.trim();
+                                if (wordTrim) {
+                                    pre.nonnull = wordTrim;
+                                }
+                                state = ESTATE.REG;
+                                word = char;
+                                marker = char;
+                            }
+                        }
+                        if (state !== ESTATE.REG) {
+                            word += char;
+                        }
+                        break;
+                    }
+                    case '(': {
+                        if (word.includes('(') || word.includes(')')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        ++bracket.s;
+                        break;
+                    }
+                    case ')': {
+                        if (word.includes('(') || word.includes(')')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        --bracket.s;
+                        break;
+                    }
+                    case '[': {
+                        if (word.includes('[') || word.includes(']')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        ++bracket.m;
+                        break;
+                    }
+                    case ']': {
+                        if (word.includes('[') || word.includes(']')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        --bracket.m;
+                        break;
+                    }
+                    case '{': {
+                        if (word.includes('{') || word.includes('}')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        ++bracket.l;
+                        break;
+                    }
+                    case '}': {
+                        if (word.includes('{') || word.includes('}')) {
+                            if (!process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            word = '';
+                            marker = '';
+                        }
+                        word += char;
+                        --bracket.l;
+                        break;
+                    }
+                    default: {
+                        if (/[$\w]/.test(char)) {
+                            // --- 进入单词 ---
+                            if ((i - 1 >= 0) && !process({
+                                'state': state,
+                                'start': i - 1 - word.length + 1,
+                                'end': i - 1,
+                                'word': word,
+                                'pre': {
+                                    'state': pre.state,
+                                    'word': pre.word,
+                                    'nonnull': pre.nonnull,
+                                },
+                                'bracket': bracket,
+                            })) {
+                                return;
+                            }
+                            pre.state = state;
+                            pre.word = word;
+                            const wordTrim = word.trim();
+                            if (wordTrim) {
+                                pre.nonnull = wordTrim;
+                            }
+                            state = ESTATE.WORD;
+                            word = char;
+                            marker = char;
+                            break;
+                        }
+                        word += char;
+                    }
+                }
+            }
+        }
+    }
+    // --- 结束 ---
+    if (word) {
+        const i = code.length - 1;
+        process({
+            'state': state,
+            'start': i - word.length + 1,
+            'end': i,
+            'word': word,
+            'pre': {
+                'state': pre.state,
+                'word': pre.word,
+                'nonnull': pre.nonnull,
+            },
+            'bracket': bracket,
+        });
+    }
+}
+
+let headElement: HTMLHeadElement;
+function getHeadElement(): HTMLHeadElement {
+    if (!headElement) {
+        const heads = document.querySelectorAll('head');
+        headElement = heads[heads.length - 1];
+    }
+    return headElement;
+}
+
+/**
+ * --- 加载脚本 ---
+ * @param url 脚本网址
+ */
+export async function loadScript(url: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.addEventListener('load', function() {
+            resolve(true);
+        });
+        script.addEventListener('error', function() {
+            resolve(false);
+        });
+        script.src = url;
+        getHeadElement().appendChild(script);
+    });
+}
+
+/**
+ * --- 批量加载 js 文件 ---
+ * @param urls js 文件列表
+ * @param opt 选项
+ */
+export async function loadScripts(urls: string[], opt: {
+    'loaded'?: (url: string, state: number) => void;
+} = {}): Promise<void> {
+    return new Promise((resolve) => {
+        let count = 0;
+        for (const url of urls) {
+            loadScript(url).then(res => {
+                ++count;
+                if (res) {
+                    opt.loaded?.(url, 1);
+                }
+                else {
+                    opt.loaded?.(url, 0);
+                }
+                if (count === urls.length) {
+                    resolve();
+                }
+            }).catch(() => {
+                ++count;
+                opt.loaded?.(url, -1);
+                if (count === urls.length) {
+                    resolve();
+                }
+            });
+        }
+    });
+}
+
+/**
+ * --- 加载 css 文件 ---
+ * @param url css 文件网址
+ * @returns 加载是否成功
+ */
+export async function loadLink(url: string): Promise<boolean> {
+    return new Promise((resolve) => {
+        const link = document.createElement('link');
+        link.addEventListener('load', function() {
+            resolve(true);
+        });
+        link.addEventListener('error', function() {
+            resolve(false);
+        });
+        link.href = url;
+        link.rel = 'stylesheet';
+        getHeadElement().appendChild(link);
+    });
+}
+
+/**
+ * --- 批量加载 css 文件 ---
+ * @param urls css 文件列表
+ * @param opt 选项
+ */
+export async function loadLinks(urls: string[], opt: {
+    'loaded'?: (url: string, state: number) => void;
+} = {}): Promise<void> {
+    return new Promise((resolve) => {
+        let count = 0;
+        for (const url of urls) {
+            loadLink(url).then(res => {
+                ++count;
+                if (res) {
+                    opt.loaded?.(url, 1);
+                }
+                else {
+                    opt.loaded?.(url, 0);
+                }
+                if (count === urls.length) {
+                    resolve();
+                }
+            }).catch(() => {
+                ++count;
+                opt.loaded?.(url, -1);
+                if (count === urls.length) {
+                    resolve();
+                }
+            });
+        }
+    });
+}
+
+/**
+ * --- 加载 css 字符串 ---
+ * @param style css 字符串
+ */
+export function loadStyle(style: string): void {
+    const sel = document.createElement('style');
+    sel.innerHTML = style;
+    getHeadElement().appendChild(sel);
+}
+
+/**
+ * --- 判断一个值是否是虚假的（为 null/undefined/空字符串/false/0） ---
+ * @param val 要判断的值
+ */
+export function isFalsy(val: any): val is TFalsy {
+    return (val === null) || (val === undefined) || (val === '') || (val === false) || (val === 0);
+}
+
+/**
+ * --- 判断一个值是否是真实的（不为 null/undefined/空字符串/false/0） ---
+ * @param val 要判断的值
+ */
+export function isTruthy(val: any): val is Exclude<typeof val, TFalsy> {
+    return !isFalsy(val);
+}
+
+/**
+ * --- 类似 || 运算符的效果 ---
+ * @param v1 比对值
+ * @param v2 比对值
+ */
+export function logicalOr<T, T2>(v1: T, v2: T2): [T] extends [TFalsy] ? T2 : T {
+    return (isFalsy(v1) ? v2 : v1) as any;
+}
+
+/** --- 语言相关 --- */
+export const lang: {
+    /** --- 语言代号 --- */
+    'codes': string[];
+    /** --- 语言名称 --- */
+    'names': string[];
+    /** --- 浏览器常用映射为本语言 --- */
+    'map': Record<string, string>;
+    /**
+     * --- 根据常用语言字符串获取语言 code ---
+     * @param accept 常用字符串，如 zh-cn，或包含 zh-cn 的字符串，默认取浏览器的语言
+     */
+    getCodeByAccept: (accept?: string) => string;
+} = {
+    'codes': [
+        'sc', 'tc', 'ja', 'ko', 'en', 'es', 'th', 'vi',
+        'de', 'fr', 'pt', 'ru', 'ar', 'id', 'it', 'tr',
+    ],
+    'names': [
+        '简体中文', '繁體中文', '日本語', '한국어', 'English', 'Español', 'ไทย', 'Tiếng việt',
+        'Deutsch', 'Français', 'Português', 'Русский', 'العربية', 'Bahasa Indonesia', 'Italiano', 'Türkçe',
+    ],
+    'map': {
+        'cn': 'sc',
+        'zh': 'tc',
+        'ja': 'ja',
+        'ko': 'ko',
+        'en': 'en',
+        'es': 'es',
+        'th': 'th',
+        'vi': 'vi',
+        'de': 'de',
+        'fr': 'fr',
+        'pt': 'pt',
+        'ru': 'ru',
+        'ar': 'ar',
+        'id': 'id',
+        'it': 'it',
+        'tr': 'tr',
+    },
+    getCodeByAccept: (accept?: string): string => {
+        accept ??= navigator.language.toLowerCase();
+        if (accept === '*') {
+            return 'sc';
+        }
+        for (const l in lang.map) {
+            if (!accept.includes(l)) {
+                continue;
+            }
+            return lang.map[l];
+        }
+        return 'en';
+    },
+};
+
+// --- 类型 ---
+
+/** --- 网址对象 --- */
+export interface IUrl {
+    'auth': string | null;
+    'hash': string | null;
+    'host': string | null;
+    'hostname': string | null;
+    'pass': string | null;
+    'path': string | null;
+    'pathname': string;
+    'protocol': string | null;
+    'port': string | null;
+    'query': string | null;
+    'user': string | null;
+}
+
+export interface IRequestOptions {
+    'credentials'?: boolean;
+    'method'?: 'GET' | 'POST';
+    'body'?: FormData;
+    'timeout'?: number;
+    'responseType'?: XMLHttpRequestResponseType;
+    'headers'?: HeadersInit;
+
+    'uploadStart'?: (total: number) => void | Promise<void>;
+    'uploadProgress'?: (loaded: number, total: number) => void | Promise<void>;
+    'uploadEnd'?: () => void | Promise<void>;
+    'start'?: (total: number) => void | Promise<void>;
+    'end'?: () => void | Promise<void>;
+    'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'load'?: (res: any) => void | Promise<void>;
+    'error'?: () => void | Promise<void>;
+}
+
+export type TFalsy = false | '' | 0 | null | undefined | typeof NaN;

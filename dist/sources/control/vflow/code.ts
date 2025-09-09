@@ -364,7 +364,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!el) {
                 return;
             }
-            clickgo.dom.watchSize(el, () => {
+            clickgo.dom.watchSize(this, el, () => {
                 if (el.dataset.cgSize !== 'same') {
                     // --- 虚拟化后有些 dom 被复用可能已经变了不是 same，此段监听无效 ---
                     return;

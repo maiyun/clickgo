@@ -2,9 +2,6 @@
     <layout direction="v" gutter="10" style="flex: 1;">
         <label>config:</label>
         <text v-model="config" readonly type="multi" style="flex: 1;"></text>
-        <label>global:</label>
-        <text v-model="global" readonly type="multi" style="flex: 1;"></text>
-        <button @click="getCdn">getCdn()</button>
         <button @click="getAvailArea">getAvailArea()</button>
         <layout gutter="10">
             <text v-model="hash" style="flex: 1;" />

@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -44,8 +9,11 @@ class default_1 extends clickgo.control.AbstractControl {
             'modelValue': {},
             'selected': []
         };
+        /** --- 是否正在拖动、改变大小的交互 --- */
         this.isInteract = false;
+        /** --- 是否在拖动选择中 --- */
         this.isSelection = false;
+        /** --- 当前选中状态的 id 列表 --- */
         this.selectedData = [];
     }
     get modelValueComp() {
@@ -64,9 +32,11 @@ class default_1 extends clickgo.control.AbstractControl {
             this.selectedData.length = 0;
             this.updateSelected();
         }
+        // --- 选框相关 ---
         const rect = this.element.getBoundingClientRect();
         const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
         const y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+        // --- 鼠标手指只会响应一个，进行建立选区 ---
         clickgo.dom.bindDown(e, {
             start: () => {
                 this.isSelection = true;
@@ -92,6 +62,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             },
             end: (ne) => {
+                // --- 判断要选中 ---
                 const left = Math.round(parseFloat(this.refs.selection.getAttribute('x')));
                 const right = Math.round(parseFloat(this.refs.selection.getAttribute('width'))) + left;
                 const top = Math.round(parseFloat(this.refs.selection.getAttribute('y')));
@@ -113,6 +84,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.selectedData.push(id);
                 }
                 this.updateSelected();
+                // --- 重置 ---
                 this.refs.selection.setAttribute('x', '0');
                 this.refs.selection.setAttribute('y', '0');
                 this.refs.selection.setAttribute('width', '1');
@@ -168,6 +140,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        // --- 判断是否选中 ---
         if (!this.selectedData.includes(id)) {
             if (!e.ctrlKey && !e.metaKey) {
                 this.selectedData.length = 0;
@@ -175,6 +148,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.selectedData.push(id);
         }
         this.updateSelected();
+        // --- 再来看是否拖动 ---
         if (this.props.modelValue[id].move === false) {
             return;
         }
@@ -215,6 +189,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'immediate': true
         });
     }
+    /** --- 向上更新 --- */
     updateSelected() {
         if ((this.selectedData.length === this.propArray('selected').length)
             && this.selectedData.every((item) => this.propArray('selected').includes(item))) {
@@ -223,4 +198,3 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:selected', clickgo.tool.clone(this.selectedData));
     }
 }
-exports.default = default_1;

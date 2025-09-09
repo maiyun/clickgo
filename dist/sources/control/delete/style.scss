@@ -9,7 +9,7 @@
         }
 
         &:hover {
-            background: var(--danger-hover); color: #FFF; stroke: #FFF; fill: #FFF;
+            background: var(--danger-hover); color: oklch(1 0 0);
         }
         &:active {
             background: var(--danger-active);

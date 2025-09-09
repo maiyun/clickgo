@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -46,23 +11,35 @@ class default_1 extends clickgo.control.AbstractControl {
             'plain': false,
             'map': null
         };
+        /** --- 如果有 map，要看当前真实选中的 key 是谁 --- */
         this.mapSelected = '';
         this.loading = false;
+        /** --- 已经加载过的页面列表 --- */
         this.loaded = {};
         this.access = {
+            /** --- nav 控件 --- */
             'nav': null
         };
-        this.activeId = 0;
+        /** --- 当前 active 的 panel id --- */
+        this.activeId = '';
     }
+    /** --- 隐藏老 panel --- */
     async hideActive() {
         if (!this.activeId) {
             return;
         }
-        clickgo.form.removeActivePanel(this.activeId, this.formId);
+        clickgo.form.removeActivePanel(this, this.activeId, this.formId);
         await this.loaded[this.activeId].vroot.onHide();
         const old = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]');
         old.style.display = 'none';
+        /*
+        old.style.opacity = '0';
+        old.style.pointerEvents = 'none';
+        */
     }
+    /**
+     * --- 供上层用户调用的，跳转页面 ---
+     */
     async go(cls, data = {}, opt = {}) {
         if (this.loading) {
             return false;
@@ -89,13 +66,17 @@ class default_1 extends clickgo.control.AbstractControl {
         if (typeof cls === 'string') {
             cls = clickgo.tool.urlResolve(this.path + '/', cls);
         }
+        // --- 检测页面是否被加载过 ---
         for (const id in this.loaded) {
             const item = this.loaded[id];
             if (item.obj !== cls) {
                 continue;
             }
+            // --- 加载过要跳转的就是当前 item ---
             if (this.activeId.toString() === id) {
+                // --- 同一个，也就是仅仅是 qs 变了（也可能就是用户 go 了两次相同的） ---
                 if (this.access.nav) {
+                    // --- 有 nav 的话，就大概率不是用户来 go 的了 ---
                     item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                     await item.vroot.onQsChange();
                     qsChangeShowEvent.detail.qsChange = true;
@@ -104,11 +85,17 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.loading = false;
                 return true;
             }
+            // --- 不是同一个，跳转到现在设置的 ---
             await this.hideActive();
-            this.activeId = parseInt(id);
-            clickgo.form.setActivePanel(this.activeId, this.formId);
+            // --- 显示新的 ---
+            this.activeId = id;
+            clickgo.form.setActivePanel(this, this.activeId, this.formId);
             const n = this.element.querySelector('[data-panel-id="' + id + '"]');
             n.style.display = 'flex';
+            /*
+            n.style.opacity = '1';
+            n.style.pointerEvents = '';
+            */
             if (this.access.nav && (JSON.stringify(item.vroot.qs) !== JSON.stringify(this.access.nav.qs))) {
                 item.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                 await item.vroot.onQsChange();
@@ -120,11 +107,14 @@ class default_1 extends clickgo.control.AbstractControl {
             this.loading = false;
             return true;
         }
+        // --- 要加载 ---
         try {
             const rtn = await clickgo.form.createPanel(this, cls);
+            // --- 隐藏老的 ---
             await this.hideActive();
+            // --- 显示新的 ---
             this.activeId = rtn.id;
-            clickgo.form.setActivePanel(this.activeId, this.formId);
+            clickgo.form.setActivePanel(this, this.activeId, this.formId);
             this.loaded[rtn.id] = {
                 'obj': cls,
                 'vapp': rtn.vapp,
@@ -132,6 +122,10 @@ class default_1 extends clickgo.control.AbstractControl {
             };
             const n = this.element.querySelector('[data-panel-id="' + rtn.id.toString() + '"]');
             n.style.display = 'flex';
+            /*
+            n.style.opacity = '1';
+            n.style.pointerEvents = '';
+            */
             if (this.access.nav) {
                 rtn.vroot.qs = clickgo.tool.clone(this.access.nav.qs);
                 await rtn.vroot.onQsChange();
@@ -147,12 +141,17 @@ class default_1 extends clickgo.control.AbstractControl {
             return false;
         }
     }
+    /**
+     * --- 供上层用户调用，发送给控件一段数据 ---
+     * @param data 要发送的数据
+     */
     send(data) {
         if (!this.activeId) {
             return;
         }
         this.loaded[this.activeId].vroot.onReceive(data);
     }
+    /** --- 根据 name 更新 panel 的方法 --- */
     async mapNameChange(opt = {}) {
         if (!this.props.map) {
             this.mapSelected = '';
@@ -164,6 +163,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         const from = this.mapSelected.split('?');
         const to = name.split('?');
+        // --- 也可能仅仅是 qs 变了 ---
         const event = {
             'go': true,
             preventDefault: function () {
@@ -178,6 +178,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!event.go) {
             return;
         }
+        /** --- went 事件对象 --- */
         const rtn = await this.go(this.props.map[to[0]], this.rootForm.formHashData, {
             'nav': this.access.nav ? true : false,
             'action': opt.action ?? 'forword',
@@ -192,13 +193,16 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.emit('went', wentEvent);
         if (!wentEvent.detail.result) {
+            // --- 跳转失败 ---
             return;
         }
         this.mapSelected = name;
+        // --- 真正跳转成功，执行 panel 的 onShowed ---
         await this.loaded[this.activeId].vroot.onShowed();
     }
     onMounted() {
         this.access.nav = this.parentByName('nav');
+        // --- 等待 rootForm 的 mounted 真正的挂载完成，在执行下面的内容 ---
         this.rootForm.ready(async () => {
             this.watch('modelValue', async () => {
                 await this.mapNameChange();
@@ -230,9 +234,8 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onBeforeUnmount() {
         for (const id in this.loaded) {
-            clickgo.form.removePanel(parseInt(id), this.loaded[id].vapp, this.element);
+            clickgo.form.removePanel(id, this.loaded[id].vapp, this.element);
             delete this.loaded[id];
         }
     }
 }
-exports.default = default_1;

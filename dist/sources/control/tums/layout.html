@@ -1,0 +1,7 @@
+<div class="wrap">
+    <div v-if="notInit" class="notInit">Tums module not found.</div>
+    <div v-else class="content" ref="content"></div>
+    <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
+        <cg-loading v-if="isLoading"></cg-loading>
+    </div>
+</div>

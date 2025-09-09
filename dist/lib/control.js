@@ -1,75 +1,102 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+/**
+ * Copyright 2007-2025 MAIYUN.NET
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import * as clickgo from '../clickgo';
+import * as lCore from './core';
+import * as lZip from './zip';
+import * as lTool from './tool';
+import * as lTask from './task';
+import * as lDom from './dom';
+import * as lForm from './form';
+import * as lFs from './fs';
+/** --- 系统级 ID --- */
+let sysId = '';
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id) {
+    if (sysId) {
+        return;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AbstractControl = void 0;
-exports.read = read;
-exports.init = init;
-exports.buildComponents = buildComponents;
-const core = __importStar(require("./core"));
-const zip = __importStar(require("./zip"));
-const tool = __importStar(require("./tool"));
-const task = __importStar(require("./task"));
-const dom = __importStar(require("./dom"));
-const form = __importStar(require("./form"));
-const fs = __importStar(require("./fs"));
-class AbstractControl {
+    sysId = id;
+}
+/** --- 窗体的抽象类 --- */
+export class AbstractControl {
     constructor() {
+        // --- init 止 ---
+        /** --- root form --- */
         this._rootForm = null;
+        /** --- 当前组件是否是别的组件的子组件，仅仅是包裹在组件的 layout 初始化中的才算 --- */
         this._rootControl = null;
+        // --- 以下为 control 有，但窗体没有 ---
+        /** --- 组件内部文件，由系统重写 --- */
         this.packageFiles = {};
+        /** --- 组件参数，由用户定义重写 --- */
         this.props = {};
+        /** --- 组件参数，由用户定义重写 --- */
         this.emits = {};
+        /** --- 组件的子插槽 --- */
         this.slots = {};
     }
+    /** --- 当前文件在包内的路径 --- */
     get filename() {
+        // --- pack 时系统自动在继承类中重写本函数 ---
         return '';
     }
+    // --- init 中以下参数记得设置 ---
+    /** --- 当前的窗体创建的位数 --- */
+    get findex() {
+        // --- 窗体创建时继承时重写本函数 ---
+        return 0;
+    }
+    /** --- 当前的控件名称 --- */
     get controlName() {
+        // --- init 中系统自动去重写本函数 ---
         return '';
     }
+    /** --- 当前组件所在的任务 ID --- */
     get taskId() {
-        return 0;
+        // ---  init 中系统自动重写本函数 ---
+        return '';
     }
+    /** --- 当前组件所在的窗体 ID --- */
     get formId() {
-        return 0;
+        // --- buildComponents 时会重写本函数 ---
+        return '';
     }
+    /** --- 当前控件所在运行窗体的包内路径不以 / 结尾 --- */
+    get path() {
+        // --- buildComponents 时会重写本函数 ---
+        return '';
+    }
+    /** --- 样式独占前缀 --- */
+    get prep() {
+        // --- init 时会重写本函数 ---
+        return '';
+    }
+    /** --- 获取当前的 HTML DOM --- */
+    get element() {
+        return this.$el;
+    }
+    /** --- 当前控件所在窗体的窗体对象 --- */
     get rootForm() {
         if (!this._rootForm) {
             this._rootForm = this.parentByName('root');
             if (!this._rootForm) {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
                     'content': `The "rootForm" is not ready yet.\nFile: "${this.controlName}".`,
                     'type': 'danger'
@@ -78,21 +105,24 @@ class AbstractControl {
         }
         return this._rootForm;
     }
+    /** --- 当前组件如果在开发控件层面被包裹了，则可以获取到包裹他的组件对象 --- */
     get rootControl() {
         return this._rootControl;
     }
+    /**
+     * --- 当前窗体是否有焦点 ---
+     */
     get formFocus() {
         return this.rootForm?.formFocus ?? false;
     }
-    get path() {
-        return '';
-    }
-    get prep() {
-        return '';
-    }
+    /** --- 获取当前语言名 --- */
     get locale() {
-        return task.list[this.taskId].locale.lang || core.config.locale;
+        const task = lTask.getOrigin(this.taskId);
+        return lTool.logicalOr(task?.locale.lang ?? '', lCore.config.locale);
     }
+    /**
+     * --- 获取语言内容 ---
+     */
     get l() {
         return (key, data) => {
             const loc = this.localeData?.[this.locale][key] ?? '[LocaleError]' + key;
@@ -109,14 +139,17 @@ class AbstractControl {
             });
         };
     }
+    /** --- layout 中 :class 的转义 --- */
     get classPrepend() {
         return (cla) => {
             if (typeof cla !== 'string') {
                 return cla;
             }
+            // --- 控件没有样式表，则除了主题样式外，class 将不进行设置 ---
             return `cg-theme-task${this.taskId}-${this.controlName}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
         };
     }
+    /** --- 获取 alignH 的 css 属性模式，请确保 props.alignH 存在 --- */
     get alignHComp() {
         if (!this.props.alignH) {
             return undefined;
@@ -132,6 +165,7 @@ class AbstractControl {
         }
         return 'flex-end';
     }
+    /** --- 获取 alignH 的 css 属性模式，请确保 props.alignH 存在 --- */
     get alignVComp() {
         if (!this.props.alignV) {
             return undefined;
@@ -147,24 +181,47 @@ class AbstractControl {
         }
         return 'flex-end';
     }
+    /**
+     * --- 监视变动 ---
+     * @param name 监视的属性或 prop 值
+     * @param cb 回调
+     * @param opt 参数
+     */
     watch(name, cb, opt = {}) {
         return this.$watch(name, cb, opt);
     }
+    /**
+     * --- 获取 refs 情况 ---
+     */
     get refs() {
         return this.$refs;
     }
+    /**
+     * --- 等待渲染 ---
+     */
     get nextTick() {
         return this.$nextTick;
     }
+    /**
+     * --- 判断当前事件可否执行 ---
+     * @param e 鼠标、触摸、键盘事件
+     */
     allowEvent(e) {
-        return dom.allowEvent(e);
+        return lDom.allowEvent(e);
     }
-    trigger(name, param1 = '', param2 = '') {
+    /**
+     * --- 触发系统方法 ---
+     * @param name 方法名
+     * @param param1 参数1
+     * @param param2 参数2
+     */
+    async trigger(name, param1 = '', param2 = '') {
         if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
             return;
         }
-        core.trigger(name, this.taskId, this.formId, param1, param2);
+        await lCore.trigger(name, this.taskId, this.formId, param1, param2);
     }
+    /** --- 获取某插槽所有子类 --- */
     get slotsAll() {
         return (name) => {
             if (!this.slots[name]) {
@@ -186,35 +243,47 @@ class AbstractControl {
             return rtn;
         };
     }
+    /** --- 获取 props 中的 boolean 类型的值 --- */
     get propBoolean() {
         return (name) => {
-            return tool.getBoolean(this.props[name]);
+            return lTool.getBoolean(this.props[name]);
         };
     }
+    /** --- 获取 props 中的 number 类型的值 --- */
     get propNumber() {
         return (name) => {
-            return tool.getNumber(this.props[name]);
+            return lTool.getNumber(this.props[name]);
         };
     }
+    /** --- 获取 props 中的 int 类型的值 --- */
     get propInt() {
         return (name) => {
             return Math.round(this.propNumber(name));
         };
     }
+    /** --- 获取 props 中的 array 类型的值 --- */
     get propArray() {
         return (name) => {
-            return tool.getArray(this.props[name]);
+            return lTool.getArray(this.props[name]);
         };
     }
-    get element() {
-        return this.$el;
-    }
+    /**
+     * --- 向上反应事件 ---
+     * @param name 事件名
+     * @param v 事件值
+     */
     emit(name, ...v) {
         this.$emit(name, ...v);
     }
+    /**
+     * --- 获取上层控件 ---
+     */
     get parent() {
         return this.$parent;
     }
+    /**
+    * --- 根据 control name 查询上层控件 ---
+    */
     get parentByName() {
         return (controlName) => {
             let parent = this.$parent;
@@ -229,6 +298,9 @@ class AbstractControl {
             }
         };
     }
+    /**
+    * --- 根据 control access 查询上层控件 ---
+    */
     get parentByAccess() {
         return (name, val) => {
             let parent = this.$parent;
@@ -247,6 +319,7 @@ class AbstractControl {
             }
         };
     }
+    // --- 控件响应事件，都可由用户重写 ---
     onBeforeCreate() {
         return;
     }
@@ -256,6 +329,7 @@ class AbstractControl {
     onBeforeMount() {
         return;
     }
+    /** --- 控件挂载好后触发 --- */
     onMounted() {
         return;
     }
@@ -272,13 +346,18 @@ class AbstractControl {
         return;
     }
 }
-exports.AbstractControl = AbstractControl;
-async function read(blob) {
-    const z = await zip.get(blob);
+/**
+ * --- 将 cgc 文件 blob 转换为 control 对象 ---
+ * @param blob 文件 blob
+ */
+export async function read(blob) {
+    const z = await lZip.get(blob);
     if (!z) {
         return false;
     }
+    /** --- 要返回的 control pkg 对象 --- */
     const controlPkg = {};
+    // --- 读取包 ---
     const list = z.readDir('/');
     for (const sub of list) {
         if (sub.isFile) {
@@ -286,25 +365,27 @@ async function read(blob) {
         }
         const configContent = await z.getContent('/' + sub.name + '/config.json');
         if (!configContent) {
-            form.notify({
+            lForm.notify({
                 'title': 'Error',
                 'content': `Control file not found.\nFile: "${'/' + sub.name + '/config.json'}".`,
                 'type': 'danger'
             });
             continue;
         }
+        // --- 读取本条控件内容 ---
         const config = JSON.parse(configContent);
         controlPkg[config.name] = {
             'type': 'control',
             'config': config,
             'files': {}
         };
+        // --- 读取控件包文件 ---
         const list = z.readDir('/' + sub.name + '/', {
             'hasChildren': true
         });
         for (const file of list) {
             const pre = file.path.slice(config.name.length + 1);
-            const mime = tool.getMimeByPath(file.name);
+            const mime = lTool.getMimeByPath(file.name);
             if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                 const fab = await z.getContent(file.path + file.name, 'string');
                 if (!fab) {
@@ -325,138 +406,181 @@ async function read(blob) {
     }
     return controlPkg;
 }
-async function init(taskId, invoke, cache) {
-    const t = task.list[taskId];
-    if (!t) {
+/**
+ * --- 任务创建过程中，需要对 control 进行先行初始化，并将样式表插入到实际的任务 DOM 中 ---
+ * @param taskId 要处理的任务 ID
+ */
+export async function init(taskId, opt = {}) {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return -1;
     }
-    for (let path of t.app.config.controls) {
+    let loaded = 0;
+    for (let path of task.app.config.controls) {
         if (!path.endsWith('.cgc')) {
             path += '.cgc';
         }
-        path = tool.urlResolve('/', path);
-        const file = await fs.getContent(path, {
-            'cache': cache
-        }, taskId);
+        path = lTool.urlResolve('/', path);
+        const file = await lFs.getContent(taskId, path);
         if (file && typeof file !== 'string') {
             const c = await read(file);
             if (c) {
                 for (const name in c) {
+                    /** --- 控件组件中的单项 --- */
                     const item = c[name];
+                    /** --- 样式唯一前缀 --- */
                     let prep = '';
-                    t.controls[name] = {
+                    // --- 组装预加载 control 对象 ---
+                    task.controls[name] = {
                         'layout': '',
                         'files': item.files,
+                        'config': item.config,
                         'props': {},
                         'emits': {},
                         'data': {},
                         'access': {},
                         'methods': {},
-                        'computed': {}
+                        'computed': {},
                     };
-                    t.controls[name].layout = item.files[item.config.layout + '.html'];
-                    if (t.controls[name].layout === undefined) {
+                    // --- 要创建的控件的 layout ---
+                    task.controls[name].layout = item.files[item.config.layout + '.html'];
+                    if (task.controls[name].layout === undefined) {
+                        // --- 控件没有 layout 那肯定不能用 ---
                         return -2;
                     }
-                    t.controls[name].layout = t.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control="' + name + '"$2');
+                    // --- 给 layout 增加 data-cg-control-xxx ---
+                    task.controls[name].layout = task.controls[name].layout.replace(/^(<[a-zA-Z0-9-]+)( |>)/, '$1 data-cg-control="' + name + '"$2');
+                    /** --- 样式表 --- */
                     const style = item.files[item.config.style + '.css'];
                     if (style) {
-                        const r = tool.stylePrepend(style);
+                        // --- 有样式表，给样式表内的项增加唯一前缀（scope） ---
+                        const r = lTool.stylePrepend(style);
                         prep = r.prep;
-                        dom.pushStyle(t.id, await tool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
+                        lDom.pushStyle(task.id, await lTool.styleUrl2DataUrl(item.config.style, r.style, item.files), 'control', name);
                     }
+                    // --- 给控件的 layout 的 class 增加前置 ---
                     const prepList = [
-                        'cg-theme-task' + t.id.toString() + '-' + name + '_'
+                        'cg-theme-task' + task.id.toString() + '-' + name + '_'
                     ];
                     if (prep !== '') {
                         prepList.push(prep);
                     }
-                    t.controls[name].layout = tool.layoutAddTagClassAndReTagName(t.controls[name].layout, false);
-                    t.controls[name].layout = tool.layoutClassPrepend(t.controls[name].layout, prepList);
-                    t.controls[name].layout = tool.eventsAttrWrap(t.controls[name].layout);
-                    if (t.controls[name].layout.includes('<teleport')) {
-                        t.controls[name].layout = tool.teleportGlue(t.controls[name].layout, '{{{formId}}}');
+                    // --- 增加 class 为 tag-xxx ---
+                    task.controls[name].layout = lTool.layoutAddTagClassAndReTagName(task.controls[name].layout, false);
+                    // --- 给 layout 的 class 增加前置 ---
+                    task.controls[name].layout = lTool.layoutClassPrepend(task.controls[name].layout, prepList);
+                    // --- 给 cg 对象增加 :form-focus 传递 ---
+                    if (task.controls[name].layout.includes('<cg-')) {
+                        task.controls[name].layout = lTool.layoutInsertAttr(task.controls[name].layout, ':form-focus=\'formFocus\'', {
+                            'include': [/^cg-.+/]
+                        });
                     }
-                    t.controls[name].access['cgPCMap'] = tool.random(8, tool.RANDOM_LUNS, '"<>$');
-                    t.controls[name].layout = t.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${t.controls[name].access['cgPCMap']}"`);
+                    // --- 给 event 增加包裹 ---
+                    task.controls[name].layout = lTool.eventsAttrWrap(task.controls[name].layout);
+                    // --- 给 teleport 做处理 ---
+                    if (task.controls[name].layout.includes('<teleport')) {
+                        task.controls[name].layout = lTool.teleportGlue(task.controls[name].layout, '{{{formId}}}');
+                    }
+                    // --- 添加父子组件的映射关系 ---
+                    task.controls[name].access['cgPCMap'] = lTool.random(8, lTool.RANDOM_LUNS, '"<>$');
+                    task.controls[name].layout = task.controls[name].layout.replace(/(<cg-[a-zA-Z0-9-_]+)/g, `$1 data-cg-rootcontrol="${task.controls[name].access['cgPCMap']}"`);
+                    // --- 检测是否有 js ---
                     let cls;
                     if (item.files[item.config.code + '.js']) {
-                        item.files['/invoke/clickgo.js'] = `module.exports = invokeClickgo;`;
-                        let expo = [];
-                        try {
-                            expo = loader.require(item.config.code, item.files, {
-                                'dir': '/',
-                                'invoke': invoke,
-                                'preprocess': function (code, path) {
-                                    const exec = /eval\W/.exec(code);
-                                    if (exec) {
-                                        form.notify({
-                                            'title': 'Error',
-                                            'content': `The "eval" is prohibited.\nFile: "${path}".`,
-                                            'type': 'danger'
-                                        });
-                                        return '';
-                                    }
-                                    code = code.replace(/extends[\s\S]+?\.\s*AbstractControl\s*{/, (t) => {
-                                        return t + 'get filename() {return __filename;}';
-                                    });
-                                    return code;
-                                },
-                                'map': {
-                                    'clickgo': '/invoke/clickgo'
-                                }
-                            })[0];
-                        }
-                        catch (e) {
-                            core.trigger('error', taskId, 0, e, e.message + '(-4)');
+                        const code = item.files[item.config.code + '.js'];
+                        if (typeof code !== 'string') {
                             return -3;
                         }
-                        if (!expo?.default) {
-                            const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
-                            core.trigger('error', taskId, 0, new Error(msg), msg);
-                            return -4;
+                        // --- code 用状态机判断敏感函数 ---
+                        let goOn = true;
+                        lTool.stateMachine(code, 0, (event) => {
+                            if (event.state !== lTool.ESTATE.WORD) {
+                                return true;
+                            }
+                            if (!['eval', 'Function'].includes(event.word)) {
+                                return true;
+                            }
+                            lForm.notify({
+                                'title': 'Error',
+                                'content': `The "${event.word}" is prohibited.\nFile: "${path}".`,
+                                'type': 'danger'
+                            });
+                            goOn = false;
+                            return false;
+                        });
+                        if (!goOn) {
+                            return -6;
                         }
-                        cls = new expo.default();
+                        // --- 加载库 ---
+                        if (item.config.modules?.length) {
+                            for (const m of item.config.modules) {
+                                if (clickgo.modules[m]) {
+                                    continue;
+                                }
+                                // --- 要加载库 ---
+                                if (!lCore.checkModule(m)) {
+                                    // --- 没模块，不加载 ---
+                                    continue;
+                                }
+                                if (!(await lCore.loadModule(m))) {
+                                    // --- 加载失败 ---
+                                    return -4;
+                                }
+                            }
+                        }
+                        // --- 判断结束 ---
+                        const expo = lTool.runIife(code);
+                        if (!expo) {
+                            const msg = '"default" not found on "' + item.config.code + '" of "' + name + '" control.';
+                            await lCore.trigger('error', taskId, '', new Error(msg), msg);
+                            return -7;
+                        }
+                        cls = new expo();
+                        //*/
                     }
                     else {
+                        // --- 没有 js 文件 ---
                         cls = new (class extends AbstractControl {
-                            get taskId() {
-                                return taskId;
+                            get filename() {
+                                return item.config.layout + '.js';
                             }
                         })();
                     }
                     if (cls.props) {
                         for (const key in cls.props) {
-                            t.controls[name].props[key] = {
+                            task.controls[name].props[key] = {
                                 'default': cls.props[key]
                             };
                         }
                     }
                     if (cls.emits) {
                         for (const key in cls.emits) {
-                            t.controls[name].emits[key] = cls.emits[key];
+                            task.controls[name].emits[key] = cls.emits[key];
                         }
                     }
+                    // --- DATA ---
                     const cdata = Object.entries(cls);
                     for (const item of cdata) {
                         if (item[0] === 'files') {
                             continue;
                         }
                         if (item[0] === 'access') {
-                            t.controls[name].access = item[1];
+                            // --- access 属性不放在 data 当中 ---
+                            task.controls[name].access = item[1];
                             continue;
                         }
-                        t.controls[name].data[item[0]] = item[1];
+                        task.controls[name].data[item[0]] = item[1];
                     }
-                    const prot = tool.getClassPrototype(cls);
-                    t.controls[name].methods = prot.method;
-                    Object.assign(t.controls[name].computed, prot.access);
-                    t.controls[name].computed.controlName = {
+                    const prot = lTool.getClassPrototype(cls);
+                    task.controls[name].methods = prot.method;
+                    // --- COMPUTED ---
+                    Object.assign(task.controls[name].computed, prot.access);
+                    task.controls[name].computed.controlName = {
                         get: function () {
                             return name;
                         },
                         set: function () {
-                            form.notify({
+                            lForm.notify({
                                 'title': 'Error',
                                 'content': `The software tries to modify the system variable "controlName".\nControl: ${name}`,
                                 'type': 'danger'
@@ -464,12 +588,25 @@ async function init(taskId, invoke, cache) {
                             return;
                         }
                     };
-                    t.controls[name].computed.prep = {
+                    task.controls[name].computed.taskId = {
+                        get: function () {
+                            return taskId;
+                        },
+                        set: function () {
+                            lForm.notify({
+                                'title': 'Error',
+                                'content': `The software tries to modify the system variable "taskId".\nControl: ${name}`,
+                                'type': 'danger'
+                            });
+                            return;
+                        }
+                    };
+                    task.controls[name].computed.prep = {
                         get: function () {
                             return prep;
                         },
                         set: function () {
-                            form.notify({
+                            lForm.notify({
                                 'title': 'Error',
                                 'content': `The software tries to modify the system variable "prep".\nControl: ${name}`,
                                 'type': 'danger'
@@ -480,32 +617,54 @@ async function init(taskId, invoke, cache) {
                 }
             }
             else {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
-                    'content': 'Control failed to load.\nTask id: ' + t.id.toString() + '\nPath: ' + path,
+                    'content': 'Control failed to load.\nTask id: ' + task.id.toString() + '\nPath: ' + path,
                     'type': 'danger'
                 });
                 return -5;
             }
         }
+        // --- 不能等待他，影响加载效率 ---
+        opt.progress?.(++loaded, task.app.config.controls.length, path);
     }
     return 1;
 }
-function buildComponents(taskId, formId, path) {
-    const t = task.list[taskId];
-    if (!t) {
+/**
+ * --- 初始化获取新窗体的控件 component（init 后执行） ---
+ * @param taskId 任务 id
+ * @param formId 窗体 id
+ * @param path 窗体路径基准（包内路径）不以 / 结尾
+ */
+export function buildComponents(taskId, formId, path) {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return false;
     }
+    /** --- 要返回的控件列表 --- */
     const components = {};
-    for (const name in t.controls) {
-        const control = t.controls[name];
+    for (const name in task.controls) {
+        const control = task.controls[name];
+        // --- 准备相关变量 ---
         const computed = Object.assign({}, control.computed);
+        computed.findex = {
+            get: function () {
+                return task.forms[formId].vroot.findex;
+            },
+            set: function () {
+                lForm.notify({
+                    'title': 'Error',
+                    'content': `The control tries to modify the system variable "findex".\nControl: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
         computed.formId = {
             get: function () {
                 return formId;
             },
             set: function () {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
                     'content': `The control tries to modify the system variable "formId".\nControl: ${name}`,
                     'type': 'danger'
@@ -517,7 +676,7 @@ function buildComponents(taskId, formId, path) {
                 return path;
             },
             set: function () {
-                form.notify({
+                lForm.notify({
                     'title': 'Error',
                     'content': `The control tries to modify the system variable "path".\nControl: ${name}`,
                     'type': 'danger'
@@ -529,7 +688,7 @@ function buildComponents(taskId, formId, path) {
             'props': control.props,
             'emits': control.emits,
             'data': function () {
-                const data = tool.clone(control.data);
+                const data = lTool.clone(control.data);
                 if (data.props) {
                     delete data.props;
                 }
@@ -544,7 +703,7 @@ function buildComponents(taskId, formId, path) {
             created: function () {
                 this.props = this.$props;
                 this.slots = this.$slots;
-                this.access = tool.clone(control.access);
+                this.access = lTool.clone(control.access);
                 this.packageFiles = {};
                 for (const fname in control.files) {
                     this.packageFiles[fname] = control.files[fname];

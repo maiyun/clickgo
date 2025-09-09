@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 interface IDItem {
     'type': 'rect' | 'circle' | 'ellipse' | 'line' | 'polyline' | 'polygon' | 'path';
@@ -115,7 +114,7 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    public resize(e: MouseEvent | TouchEvent, id: string, dir: types.TDomBorder): void {
+    public resize(e: MouseEvent | TouchEvent, id: string, dir: clickgo.dom.TDomBorder): void {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }

@@ -1,4 +1,3 @@
-import * as types from '~/types';
 import * as clickgo from 'clickgo';
 import testFrm from './text';
 
@@ -17,7 +16,7 @@ export default class extends clickgo.form.AbstractForm {
             path += '/';
         }
         this.list = [];
-        const ls = await clickgo.fs.readDir(path);
+        const ls = await clickgo.fs.readDir(this, path);
         for (const item of ls) {
             this.list.push({
                 'label': (item.isDirectory() ? '[FOLD]' : (item.isSymbolicLink() ? '[SYMB]' : '[FILE]')) + ' ' + item.name,
@@ -28,40 +27,40 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async stats(): Promise<void> {
-        const stats = await clickgo.fs.stats(this.val[0]);
-        await clickgo.form.dialog(stats ? JSON.stringify(stats) : 'null');
+        const stats = await clickgo.fs.stats(this, this.val[0]);
+        await clickgo.form.dialog(this, stats ? JSON.stringify(stats) : 'null');
     }
 
     public dblclick(e: MouseEvent | TouchEvent): void {
         clickgo.dom.bindDblClick(e, async () => {
-            const r = await clickgo.fs.isFile(this.val[0]);
+            const r = await clickgo.fs.isFile(this, this.val[0]);
             if (r) {
                 const extlio: number = this.val[0].lastIndexOf('.');
                 if (extlio === -1) {
-                    await clickgo.form.dialog('This extension is not supported.');
+                    await clickgo.form.dialog(this, 'This extension is not supported.');
                     return;
                 }
                 const ext: string = this.val[0].toLowerCase().slice(extlio + 1);
                 if (['xml', 'js', 'ts', 'json', 'css', 'html', 'php', 'txt'].includes(ext)) {
-                    let content = await clickgo.fs.getContent(this.val[0], this.get ? {
+                    let content = await clickgo.fs.getContent(this, this.val[0], this.get ? {
                         'start': 2,
                         'end': 4
                     } : undefined);
                     if (!content) {
-                        await clickgo.form.dialog('This file cannot be opened.');
+                        await clickgo.form.dialog(this, 'This file cannot be opened.');
                         return;
                     }
                     if (content instanceof Blob) {
                         content = await clickgo.tool.blob2Text(content);
                     }
-                    const f = await clickgo.form.create(testFrm, {
+                    const f = await clickgo.form.create(this, testFrm, {
                         'title': this.val[0].slice(this.val[0].lastIndexOf('/') + 1),
                         'content': content
                     });
-                    f.show();
+                    await f.show();
                     return;
                 }
-                await clickgo.form.dialog('The extension "' + ext + '" is not supported.');
+                await clickgo.form.dialog(this, 'The extension "' + ext + '" is not supported.');
                 return;
             }
             await this.open(this.val[0]);
@@ -79,9 +78,9 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async mount(): Promise<void> {
-        await clickgo.form.dialog(clickgo.fs.mount('test', {
+        await clickgo.form.dialog(this, clickgo.fs.mount(this, 'test', {
             readDir: (path: string) => {
-                const list: types.IDirent[] = [];
+                const list: clickgo.fs.IDirent[] = [];
                 switch (path) {
                     case '/': {
                         list.push({
@@ -171,7 +170,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async unmount(): Promise<void> {
-        await clickgo.form.dialog(await clickgo.fs.unmount('test') ? 'true' : 'false');
+        await clickgo.form.dialog(this, await clickgo.fs.unmount('test') ? 'true' : 'false');
     }
 
     public async onMounted(): Promise<void> {

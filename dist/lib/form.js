@@ -1,100 +1,44 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+/**
+ * Copyright 2007-2025 MAIYUN.NET
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import * as clickgo from '../clickgo';
+import * as lCore from './core';
+import * as lTask from './task';
+import * as lTool from './tool';
+import * as lDom from './dom';
+import * as lControl from './control';
+import * as lFs from './fs';
+import * as lNative from './native';
+/** --- 系统级 ID --- */
+let sysId = '';
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id) {
+    if (sysId) {
+        return;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.activePanels = exports.elements = exports.launcherRoot = exports.simpleSystemTaskRoot = exports.AbstractForm = exports.AbstractPanel = void 0;
-exports.superConfirm = superConfirm;
-exports.min = min;
-exports.max = max;
-exports.close = close;
-exports.bindResize = bindResize;
-exports.bindDrag = bindDrag;
-exports.refreshMaxPosition = refreshMaxPosition;
-exports.getTaskId = getTaskId;
-exports.get = get;
-exports.send = send;
-exports.getList = getList;
-exports.getFocus = getFocus;
-exports.getActivePanel = getActivePanel;
-exports.removeActivePanel = removeActivePanel;
-exports.setActivePanel = setActivePanel;
-exports.hash = hash;
-exports.getHash = getHash;
-exports.hashBack = hashBack;
-exports.changeFocus = changeFocus;
-exports.getMaxZIndexID = getMaxZIndexID;
-exports.getRectByBorder = getRectByBorder;
-exports.showCircular = showCircular;
-exports.moveRectangle = moveRectangle;
-exports.showRectangle = showRectangle;
-exports.hideRectangle = hideRectangle;
-exports.showDrag = showDrag;
-exports.moveDrag = moveDrag;
-exports.hideDrag = hideDrag;
-exports.alert = alert;
-exports.notify = notify;
-exports.notifyProgress = notifyProgress;
-exports.notifyContent = notifyContent;
-exports.hideNotify = hideNotify;
-exports.appendToPop = appendToPop;
-exports.removeFromPop = removeFromPop;
-exports.showPop = showPop;
-exports.hidePop = hidePop;
-exports.isJustPop = isJustPop;
-exports.doFocusAndPopEvent = doFocusAndPopEvent;
-exports.remove = remove;
-exports.removePanel = removePanel;
-exports.createPanel = createPanel;
-exports.create = create;
-exports.dialog = dialog;
-exports.confirm = confirm;
-exports.prompt = prompt;
-exports.flash = flash;
-exports.showLauncher = showLauncher;
-exports.hideLauncher = hideLauncher;
-const clickgo = __importStar(require("../clickgo"));
-const core = __importStar(require("./core"));
-const task = __importStar(require("./task"));
-const tool = __importStar(require("./tool"));
-const dom = __importStar(require("./dom"));
-const control = __importStar(require("./control"));
-const fs = __importStar(require("./fs"));
-const native = __importStar(require("./native"));
+    sysId = id;
+}
+/** --- 窗体创建顺序 --- */
+let index = -1;
+/** --- 当前有焦点的窗体 id --- */
 let focusId = null;
+/** --- form 相关信息 --- */
 const info = {
-    'lastId': 0,
-    'lastPanelId': 0,
     'bottomLastZIndex': 999,
     'lastZIndex': 999999,
     'topLastZIndex': 99999999,
@@ -197,46 +141,64 @@ const info = {
         }
     }
 };
+/** --- Panel 与 Form 共用的抽象类 --- */
 class AbstractCommon {
+    /** --- 当前文件在包内的路径 --- */
     get filename() {
+        // --- pack 时系统自动在继承类中重写本函数 ---
         return '';
     }
+    /** --- 当前控件的名字 --- */
     get controlName() {
         return 'root';
     }
     set controlName(v) {
         notify({
             'title': 'Error',
-            'content': `The software tries to modify the system variable "controlName".\nPath: ${this.filename}`,
+            'content': `The software tries to modify the system variable "controlName".\nPath: ${this.path}`,
             'type': 'danger'
         });
         return;
     }
+    /** --- 当前的任务 ID --- */
     get taskId() {
-        return 0;
+        // --- 窗体创建时继承时重写本函数 ---
+        return '';
     }
+    /** --- 当前的窗体 ID --- */
     get formId() {
-        return 0;
+        // --- 窗体创建时 create 系统自动重写本函数 ---
+        return '';
     }
     set formFocus(b) {
         notify({
             'title': 'Error',
-            'content': `The software tries to modify the system variable "formFocus".\nPath: ${this.filename}`,
+            'content': `The software tries to modify the system variable "formFocus".\nPath: ${this.path}`,
             'type': 'danger'
         });
     }
+    /** --- 当前文件的包内路径不以 / 结尾 --- */
     get path() {
+        // --- 将在初始化时系统自动重写本函数 ---
         return '';
     }
+    /** --- 样式独占前缀 --- */
     get prep() {
+        // --- 将在初始化时系统自动重写本函数 ---
         return '';
     }
+    /** --- 当前的语言 --- */
     get locale() {
-        return task.list[this.taskId].locale.lang || core.config.locale;
+        const task = lTask.getOrigin(this.taskId);
+        return lTool.logicalOr(task?.locale.lang ?? '', lCore.config.locale);
     }
+    /**
+     * --- 获取语言内容 ---
+     */
     get l() {
+        const task = lTask.getOrigin(this.taskId);
         return (key, data) => {
-            const loc = task.list[this.taskId].locale.data[this.locale]?.[key] ?? task.list[this.taskId].locale.data['en']?.[key] ?? '[LocaleError]' + key;
+            const loc = task?.locale.data[this.locale]?.[key] ?? task?.locale.data['en']?.[key] ?? '[LocaleError]' + key;
             if (!data) {
                 return loc;
             }
@@ -250,37 +212,71 @@ class AbstractCommon {
             });
         };
     }
+    /** --- layout 中 :class 的转义 --- */
     get classPrepend() {
         return (cla) => {
             if (typeof cla !== 'string') {
                 return cla;
             }
+            // --- 没有单独的窗体样式，则只应用任务级样式 ---
             return `cg-task${this.taskId}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
         };
     }
+    /**
+     * --- 监视变动 ---
+     * @param name 监视的属性
+     * @param cb 回调
+     * @param opt 参数
+     */
     watch(name, cb, opt = {}) {
         return this.$watch(name, cb, opt);
     }
+    /**
+     * --- 获取 refs 情况 ---
+     */
     get refs() {
         return this.$refs;
     }
+    /** --- 获取当前的 HTML DOM --- */
+    get element() {
+        return this.$el;
+    }
+    /**
+     * --- 等待渲染 ---
+     */
     get nextTick() {
         return this.$nextTick;
     }
+    /**
+     * --- 判断当前事件可否执行 ---
+     * @param e 鼠标、触摸、键盘事件
+     */
     allowEvent(e) {
-        return dom.allowEvent(e);
+        return lDom.allowEvent(e);
     }
-    trigger(name, param1 = '', param2 = '') {
+    /**
+     * --- 触发系统方法 ---
+     * @param name 方法名
+     * @param param1 参数1
+     * @param param2 参数2
+     */
+    async trigger(name, param1 = '', param2 = '') {
         if (!['formTitleChanged', 'formIconChanged', 'formStateMinChanged', 'formStateMaxChanged', 'formShowChanged'].includes(name)) {
             return;
         }
-        core.trigger(name, this.taskId, this.formId, param1, param2);
+        await lCore.trigger(name, this.taskId, this.formId, param1, param2);
     }
+    /**
+     * --- 给一个窗体发送一个对象，不会知道成功与失败状态 ---
+     * @param fid formId 要接收对象的 form id
+     * @param obj 要发送的对象
+     */
     send(fid, obj) {
         obj.taskId = this.taskId;
         obj.formId = this.formId;
         send(fid, obj);
     }
+    // --- 控件响应事件，都可由用户重写 ---
     onBeforeCreate() {
         return;
     }
@@ -303,53 +299,69 @@ class AbstractCommon {
         return;
     }
 }
-class AbstractPanel extends AbstractCommon {
+/** --- Panel 控件抽象类 --- */
+export class AbstractPanel extends AbstractCommon {
     constructor() {
         super(...arguments);
+        /** --- 当前的 nav（若有）传递过来的 qs --- */
         this.qs = {};
     }
+    /** --- 当前的 panel ID --- */
     get panelId() {
-        return 0;
+        // --- panel 创建时 createPanel 自动重写本函数 ---
+        return '';
     }
+    /** --- 当前 panel 所在窗体的窗体对象，系统会在创建时重写本函数 --- */
     get rootForm() {
         return {};
     }
+    /** --- 当前 panel 所在的 panel control 对象，系统会在创建时重写本函数 --- */
     get rootPanel() {
         return {};
     }
+    /** --- 获取母窗体的 formHash --- */
     get formHash() {
         return this.rootForm.formHash;
     }
+    /** --- 设置母窗体的 formHash --- */
     set formHash(fh) {
         this.rootForm.formHash = fh;
     }
+    /** --- 获取 form 的 formhash with data 值 --- */
     get formHashData() {
         return this.rootForm.formHashData;
     }
     set formHashData(v) {
         this.rootForm.formHashData = v;
     }
+    /** --- 将母窗体的 form hash 回退 --- */
     async formHashBack() {
         await this.rootForm.formHashBack();
     }
+    /** --- 发送一段数据到自己这个 panel 控件，本质上也是调用的 panel 控件的 send 方法，主要用来实现发送给跳转后的 panel --- */
     sendToRootPanel(data) {
         this.rootPanel.send(data);
     }
+    /** --- 母窗体进入 form hash 为源的步进条 --- */
     async enterStep(list) {
         return this.rootForm.enterStep(list);
     }
+    /** --- 目窗体完成当前步骤 --- */
     async doneStep() {
         await this.rootForm.doneStep();
     }
+    /** --- 确定不再使用 qs 时可调用此方法清空，这样再次通过相同 qs 进入本 panel 依然会响应 qschange 事件 --- */
     clearQs() {
         this.qs = {};
     }
+    /** --- 当前窗体是否是焦点 --- */
     get formFocus() {
         return this.rootForm.formFocus ?? false;
     }
     onShow() {
         return;
     }
+    /** --- panel 已经完全显示后所要执行的 --- */
     onShowed() {
         return;
     }
@@ -362,6 +374,7 @@ class AbstractPanel extends AbstractCommon {
     onReceive() {
         return;
     }
+    /** --- qs 变动时调用，如果只是用来做 qs 数据处理，建议用此方法 --- */
     onQsChange() {
         return;
     }
@@ -369,55 +382,99 @@ class AbstractPanel extends AbstractCommon {
         return;
     }
 }
-exports.AbstractPanel = AbstractPanel;
-class AbstractForm extends AbstractCommon {
+/** --- 窗体的抽象类 --- */
+export class AbstractForm extends AbstractCommon {
     constructor() {
+        // --- 以下为窗体有，但 control 没有 ---
         super(...arguments);
-        this.isNativeSync = false;
+        /** --- 当前是否完全创建完毕 --- */
         this.isReady = false;
+        /** --- 是否是 native 下无边框的第一个窗体 --- */
+        this.isNativeNoFrameFirst = false;
+        /** --- 覆盖整个窗体的 loading（实际值） --- */
         this._loading = false;
+        /** --- 是否阻止任何人修改 loading --- */
         this.lockLoading = false;
+        // --- step 相关 ---
         this._inStep = false;
+        /** --- 序列化后的 step value 值 --- */
         this._stepValues = [];
+        /** --- 当前是不是初次显示 --- */
         this._firstShow = true;
+        /**
+         * --- dialog mask 窗体返回值，在 close 之后会进行传导 ---
+         */
         this.dialogResult = '';
     }
+    /** --- 当前的窗体创建的位数 --- */
+    get findex() {
+        // --- 窗体创建时继承时重写本函数 ---
+        return 0;
+    }
+    /** --- 获取 form 的 hash 值，不是浏览器的 hash --- */
     get formHash() {
         return '';
     }
     set formHash(v) {
+        // --- 会进行重写 ---
     }
+    /** --- 获取 form 的 formhash with data 值 --- */
     get formHashData() {
         return {};
     }
     set formHashData(v) {
+        // --- 会进行重写 ---
     }
+    /** --- 是否是置顶 --- */
     get topMost() {
+        // --- 将在初始化时系统自动重写本函数 ---
         return false;
     }
     set topMost(v) {
+        // --- 会进行重写 ---
     }
+    /** --- 是否是置底 --- */
     get bottomMost() {
+        // --- 将在初始化时系统自动重写本函数 ---
         return false;
     }
     set bottomMost(v) {
+        // --- 会进行重写 ---
     }
+    /**
+     * --- 是否在本窗体上显示遮罩层 ---
+     */
     get isMask() {
-        return !task.list[this.taskId].runtime.dialogFormIds.length ||
-            task.list[this.taskId].runtime.dialogFormIds[task.list[this.taskId].runtime.dialogFormIds.length - 1]
+        if (!lTask.getOrigin(this.taskId)) {
+            return false;
+        }
+        const runtime = lTask.getRuntime(sysId, this.taskId);
+        if (!runtime) {
+            return false;
+        }
+        return !runtime.dialogFormIds.length ||
+            runtime.dialogFormIds[runtime.dialogFormIds.length - 1]
                 === this.formId ? false : true;
     }
+    /** --- 当前窗体是否是焦点 --- */
     get formFocus() {
+        // --- _formFocus 在初始化时由系统设置 ---
         return this._formFocus;
     }
+    /** --- 当前窗体是否显示在任务栏 --- */
     get showInSystemTask() {
+        // --- 将在初始化时系统自动重写本函数 ---
         return false;
     }
     set showInSystemTask(v) {
+        // --- 会进行重写 ---
     }
+    /** --- 将在 form 完全装载完后执行，如果已经装载完则立即执行 --- */
     ready(cb) {
+        // --- 会进行重写 ---
         cb();
     }
+    /** --- form hash 回退 --- */
     async formHashBack() {
         const v = this;
         if (Date.now() - v.$data._lastFormHashData > 300) {
@@ -426,8 +483,7 @@ class AbstractForm extends AbstractCommon {
         if (!v.$data._historyHash.length) {
             if (v.$data._formHash) {
                 if (this.inStep) {
-                    if (!await clickgo.form.confirm({
-                        'taskId': this.taskId,
+                    if (!await confirm(this, {
                         'content': info.locale[this.locale].confirmExitStep
                     })) {
                         return;
@@ -436,7 +492,7 @@ class AbstractForm extends AbstractCommon {
                     this.refs.form.stepHide();
                 }
                 v.$data._formHash = '';
-                core.trigger('formHashChange', this.taskId, this.formId, '', v.$data._formHashData);
+                await lCore.trigger('formHashChange', this.taskId, this.formId, '', v.$data._formHashData);
                 return;
             }
             return;
@@ -447,8 +503,7 @@ class AbstractForm extends AbstractCommon {
                 this.refs.form.stepValue = parent;
             }
             else {
-                if (!await clickgo.form.confirm({
-                    'taskId': this.taskId,
+                if (!await confirm(this, {
                     'content': info.locale[this.locale].confirmExitStep
                 })) {
                     return;
@@ -459,11 +514,13 @@ class AbstractForm extends AbstractCommon {
         }
         v.$data._formHash = parent;
         v.$data._historyHash.splice(-1);
-        core.trigger('formHashChange', this.taskId, this.formId, parent, v.$data._formHashData);
+        await lCore.trigger('formHashChange', this.taskId, this.formId, parent, v.$data._formHashData);
     }
+    /** --- 发送一段数据到 panel 控件，本质上也是调用的 panel 控件的 send 方法 --- */
     sendToPanel(panel, data) {
         panel.send(data);
     }
+    /** --- 覆盖整个窗体的 loading --- */
     get loading() {
         return this._loading;
     }
@@ -473,9 +530,11 @@ class AbstractForm extends AbstractCommon {
         }
         this._loading = val;
     }
+    /** --- 当前是否在 step 环节中 --- */
     get inStep() {
         return this._inStep;
     }
+    /** --- 进入 form hash 为源的步进条 --- */
     async enterStep(list) {
         if (this._inStep) {
             return false;
@@ -483,6 +542,7 @@ class AbstractForm extends AbstractCommon {
         if (list[0].value !== this.formHash) {
             return false;
         }
+        // --- 进入当前页面步骤 ---
         this._inStep = true;
         this._stepValues.length = 0;
         for (const item of list) {
@@ -494,6 +554,7 @@ class AbstractForm extends AbstractCommon {
         this.refs.form.stepShow();
         return true;
     }
+    /** --- 更新步进条，用于动态改变某个项的 hash 值时使用 --- */
     updateStep(index, value) {
         if (this._inStep) {
             return false;
@@ -504,6 +565,7 @@ class AbstractForm extends AbstractCommon {
         this._stepValues[index] = value;
         return true;
     }
+    /** --- 完成当前步骤条 --- */
     async doneStep() {
         if (!this._inStep) {
             return;
@@ -511,29 +573,43 @@ class AbstractForm extends AbstractCommon {
         this._inStep = false;
         await this.refs.form.stepDone();
     }
-    show() {
-        const v = this;
+    /**
+     * --- 显示窗体 ---
+     */
+    async show() {
+        // --- 创建成功的窗体，可以直接显示 ---
         if (this._firstShow) {
             this._firstShow = false;
-            const area = core.getAvailArea();
-            if (!v.$refs.form.stateMaxData) {
-                if (v.$refs.form.left === -1) {
-                    v.$refs.form.setPropData('left', (area.width - v.$el.offsetWidth) / 2);
+            // --- 将窗体居中 ---
+            const area = lCore.getAvailArea();
+            if (!this.refs.form.stateMaxData) {
+                if (this.refs.form.left === -1) {
+                    this.refs.form.setPropData('left', (area.width - this.element.offsetWidth) / 2);
                 }
-                if (v.$refs.form.top === -1) {
-                    v.$refs.form.setPropData('top', (area.height - v.$el.offsetHeight) / 2);
+                if (this.refs.form.top === -1) {
+                    this.refs.form.setPropData('top', (area.height - this.element.offsetHeight) / 2);
                 }
             }
-            v.$refs.form.$data.isShow = true;
-            changeFocus(this.formId);
+            this.refs.form.$data.isShow = true;
+            await changeFocus(this.formId);
         }
         else {
-            v.$refs.form.$data.isShow = true;
+            this.refs.form.$data.isShow = true;
         }
     }
+    /**
+     * --- 显示独占的窗体 ---
+     */
     async showDialog() {
-        task.list[this.taskId].runtime.dialogFormIds.push(this.formId);
-        this.show();
+        if (!lTask.getOrigin(this.taskId)) {
+            return '';
+        }
+        const runtime = lTask.getRuntime(sysId, this.taskId);
+        if (!runtime) {
+            return '';
+        }
+        runtime.dialogFormIds.push(this.formId);
+        await this.show();
         this.topMost = true;
         return new Promise((resolve) => {
             this.cgDialogCallback = () => {
@@ -541,10 +617,16 @@ class AbstractForm extends AbstractCommon {
             };
         });
     }
+    /**
+     * --- 让窗体隐藏 ---
+     */
     hide() {
         const v = this;
         v.$refs.form.$data.isShow = false;
     }
+    /**
+     * --- 关闭当前窗体 ---
+     */
     close() {
         close(this.formId);
     }
@@ -615,7 +697,7 @@ class AbstractForm extends AbstractCommon {
         return;
     }
 }
-exports.AbstractForm = AbstractForm;
+/** --- pop 相关信息 --- */
 const popInfo = {
     'list': [],
     'elList': [],
@@ -623,8 +705,11 @@ const popInfo = {
     'time': [],
     'lastZIndex': 0
 };
+export let simpleSystemTaskRoot;
+export let launcherRoot;
+/** --- 系统级 confirm 的用户回调函数 --- */
 let superConfirmHandler = undefined;
-exports.elements = {
+export const elements = {
     'wrap': document.createElement('div'),
     'list': document.createElement('div'),
     'popList': document.createElement('div'),
@@ -638,20 +723,24 @@ exports.elements = {
     'launcher': document.createElement('div'),
     'confirm': document.createElement('div'),
     'init': function () {
+        /** --- clickgo 所有的 div wrap --- */
         this.wrap.id = 'cg-wrap';
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
         this.wrap.addEventListener('touchmove', function (e) {
-            if (e.target && dom.findParentByData(e.target, 'cg-scroll')) {
+            // --- 防止拖动时整个网页跟着动 ---
+            if (e.target && lDom.findParentByData(e.target, 'cg-scroll')) {
                 return;
             }
             if (e.cancelable) {
                 e.preventDefault();
             }
+            // --- 为啥要在这加，因为有些设备性能不行，在 touchstart 之时添加的 touchmove 不能立马响应，导致网页还是跟着动，所以增加此函数 ---
         }, {
             'passive': false
         });
         this.wrap.addEventListener('wheel', function (e) {
-            if (e.target && ((e.target.dataset.cgScroll !== undefined) || dom.findParentByData(e.target, 'cg-scroll'))) {
+            // --- 防止不小心前进后退，或上下缓动滚动（Mac、触摸板） ---
+            if (e.target && ((e.target.dataset.cgScroll !== undefined) || lDom.findParentByData(e.target, 'cg-scroll'))) {
                 return;
             }
             e.preventDefault();
@@ -661,36 +750,36 @@ exports.elements = {
         this.wrap.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
-        if (clickgo.isImmersion()) {
-            this.wrap.addEventListener('mouseenter', function () {
-                native.invoke('cg-mouse-ignore', native.getToken(), false);
-            });
-            this.wrap.addEventListener('mouseleave', function () {
-                native.invoke('cg-mouse-ignore', native.getToken(), true);
-            });
-        }
+        /** --- form list 的 div --- */
         this.list.id = 'cg-form-list';
         this.wrap.appendChild(this.list);
+        /** --- pop list 的 div --- */
         this.popList.id = 'cg-pop-list';
         this.wrap.appendChild(this.popList);
+        // --- 从鼠标指针处从小到大缩放然后淡化的圆圈动画特效对象 ---=
         this.circular.id = 'cg-circular';
         this.wrap.appendChild(this.circular);
+        // --- 从鼠标指针处开始从小到大缩放并铺满屏幕（或任意大小矩形）的对象 ---
         this.rectangle.setAttribute('data-pos', '');
         this.rectangle.id = 'cg-rectangle';
         this.wrap.appendChild(this.rectangle);
+        // --- 手势有效无效的圆圈 ---
         this.gesture.id = 'cg-gesture';
         this.wrap.appendChild(this.gesture);
+        // --- drag drop 的拖动占位符 ---
         this.drag.id = 'cg-drag';
         this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#FFF" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
         this.wrap.appendChild(this.drag);
+        // --- 添加 cg-system 的 dom ---
         this.notify.id = 'cg-notify';
         this.wrap.appendChild(this.notify);
         this.alert.id = 'cg-alert';
         this.wrap.appendChild(this.alert);
+        // --- 添加 cg-simpletask 的 dom ---
         this.simpletask.id = 'cg-simpletask';
         this.wrap.appendChild(this.simpletask);
-        const simpletaskApp = clickgo.vue.createApp({
-            'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(parseInt(formId))"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
+        const simpletaskApp = clickgo.modules.vue.createApp({
+            'template': '<div v-for="(item, formId) of forms" class="cg-simpletask-item" @click="click(formId)"><div v-if="item.icon" class="cg-simpletask-icon" :style="{\'background-image\': \'url(\' + item.icon + \')\'}"></div><div>{{item.title}}</div></div>',
             'data': function () {
                 return {
                     'forms': {}
@@ -701,41 +790,44 @@ exports.elements = {
                     handler: function () {
                         const length = Object.keys(this.forms).length;
                         if (length > 0) {
-                            if (exports.elements.simpletask.style.bottom !== '0px') {
-                                exports.elements.simpletask.style.bottom = '0px';
-                                core.trigger('screenResize');
+                            if (elements.simpletask.style.bottom !== '0px') {
+                                elements.simpletask.style.bottom = '0px';
+                                lCore.trigger('screenResize').catch(() => { });
                             }
                         }
                         else {
-                            if (exports.elements.simpletask.style.bottom === '0px') {
-                                exports.elements.simpletask.style.bottom = '-46px';
-                                core.trigger('screenResize');
+                            if (elements.simpletask.style.bottom === '0px') {
+                                elements.simpletask.style.bottom = '-46px';
+                                lCore.trigger('screenResize').catch(() => { });
                             }
                         }
                     },
-                    'deep': true
+                    'deep': true,
                 }
             },
             'methods': {
-                click: function (formId) {
-                    changeFocus(formId);
-                }
+                click: async function (formId) {
+                    await changeFocus(formId);
+                },
             },
             'mounted': function () {
-                exports.simpleSystemTaskRoot = this;
+                simpleSystemTaskRoot = this;
             }
         });
         simpletaskApp.mount('#cg-simpletask');
+        // --- cg-launcher ---
         this.launcher.id = 'cg-launcher';
         this.wrap.appendChild(this.launcher);
+        // --- Vue 挂载在这里 ---
         const waiting = function () {
-            if (!core.config) {
+            // --- 必须在这里执行，要不然 computed 无法更新，因为 core 还没加载进来 ---
+            if (!lCore.config) {
                 setTimeout(function () {
                     waiting();
                 }, 150);
                 return;
             }
-            const launcherApp = clickgo.vue.createApp({
+            const launcherApp = clickgo.modules.vue.createApp({
                 'template': `<div class="cg-launcher-search">` +
                     `<input v-if="folderName === ''" class="cg-launcher-sinput" :placeholder="search" v-model="name">` +
                     `<input v-else class="cg-launcher-foldername" :value="folderName" @change="folderNameChange">` +
@@ -769,14 +861,14 @@ exports.elements = {
                 },
                 'computed': {
                     'search': function () {
-                        return info.locale[core.config.locale]?.search ?? info.locale['en'].search;
+                        return info.locale[lCore.config.locale]?.search ?? info.locale['en'].search;
                     },
                     'list': function () {
                         if (this.name === '') {
-                            return core.config['launcher.list'];
+                            return lCore.config['launcher.list'];
                         }
                         const list = [];
-                        for (const item of core.config['launcher.list']) {
+                        for (const item of lCore.config['launcher.list']) {
                             if (item.list && item.list.length > 0) {
                                 for (const sub of item.list) {
                                     if (sub.name.toLowerCase().includes(this.name.toLowerCase())) {
@@ -816,7 +908,7 @@ exports.elements = {
                             return;
                         }
                         hideLauncher();
-                        await clickgo.task.run(item.path, {
+                        await lTask.run(sysId, item.path, {
                             'icon': item.icon
                         });
                     },
@@ -825,11 +917,12 @@ exports.elements = {
                             return;
                         }
                         hideLauncher();
-                        await clickgo.task.run(item.path, {
+                        await lTask.run(sysId, item.path, {
                             'icon': item.icon
                         });
                     },
                     closeFolder: function () {
+                        // --- 关闭文件夹 ---
                         this.folderName = '';
                         const el = this.folderEl;
                         const rect = el.parentNode.getBoundingClientRect();
@@ -880,16 +973,18 @@ exports.elements = {
                             return;
                         }
                         this.folderName = val;
-                        core.trigger('launcherFolderNameChanged', this.folderItem.id ?? '', val);
+                        // --- 触发 folder name change 事件 ---
+                        lCore.trigger('launcherFolderNameChanged', this.folderItem.id ?? '', val).catch(() => { });
                     }
                 },
                 'mounted': function () {
-                    exports.launcherRoot = this;
+                    launcherRoot = this;
                 }
             });
             launcherApp.mount('#cg-launcher');
         };
         waiting();
+        // --- cg-confirm ---
         this.confirm.id = 'cg-confirm';
         this.wrap.appendChild(this.confirm);
         this.confirm.innerHTML = `<div class="cg-confirm-box">` +
@@ -903,41 +998,53 @@ exports.elements = {
         document.getElementById('cg-confirm-cancel').addEventListener('click', () => {
             superConfirmHandler?.(false);
             this.confirm.style.display = 'none';
-            const fid = getMaxZIndexID();
-            if (fid) {
-                changeFocus(fid);
-            }
+            getMaxZIndexID(sysId).then(fid => {
+                if (!fid) {
+                    return;
+                }
+                changeFocus(fid).catch(() => { });
+            }).catch(() => { });
         });
         document.getElementById('cg-confirm-ok').addEventListener('click', () => {
             superConfirmHandler?.(true);
             this.confirm.style.display = 'none';
-            const fid = getMaxZIndexID();
-            if (fid) {
-                changeFocus(fid);
-            }
+            getMaxZIndexID(sysId).then(fid => {
+                if (!fid) {
+                    return;
+                }
+                changeFocus(fid).catch(() => { });
+            }).catch(() => { });
         });
     }
 };
-exports.elements.init();
-function superConfirm(html) {
+/** --- 显示系统级询问框 --- */
+export function superConfirm(current, html) {
     return new Promise((resolve) => {
+        if (current !== sysId) {
+            return;
+        }
         if (superConfirmHandler !== undefined) {
             resolve(false);
             return;
         }
-        exports.elements.confirm.style.display = 'flex';
+        elements.confirm.style.display = 'flex';
         document.getElementById('cg-confirm-content').innerHTML = html;
-        document.getElementById('cg-confirm-cancel').innerHTML = info.locale[core.config.locale]?.cancel ?? info.locale['en'].cancel;
-        document.getElementById('cg-confirm-ok').innerHTML = info.locale[core.config.locale]?.ok ?? info.locale['en'].ok;
+        document.getElementById('cg-confirm-cancel').innerHTML = info.locale[lCore.config.locale]?.cancel ?? info.locale['en'].cancel;
+        document.getElementById('cg-confirm-ok').innerHTML = info.locale[lCore.config.locale]?.ok ?? info.locale['en'].ok;
         superConfirmHandler = (result) => {
             superConfirmHandler = undefined;
             resolve(result);
         };
     });
 }
+/**
+ * --- 修改窗体的最大化、最小化状态，外部或不可调整 state 时才调用 ---
+ * @param state 最大化、最小化或关闭
+ * @param formId 窗体 id
+ */
 function changeState(state, formId) {
     const tid = getTaskId(formId);
-    const t = task.list[tid];
+    const t = lTask.getOrigin(tid);
     if (!t) {
         return false;
     }
@@ -956,17 +1063,34 @@ function changeState(state, formId) {
     }
     return true;
 }
-function min(formId) {
+/**
+ * --- 最小化某个窗体 ---
+ * @param formId 窗体 id
+ */
+export function min(formId) {
     return changeState('min', formId);
 }
-function max(formId) {
+/**
+ * --- 最大化某个窗体 ---
+ * @param formId 窗体 id
+ */
+export function max(formId) {
     return changeState('max', formId);
 }
-function close(formId) {
+/**
+ * --- 关闭一个窗体 ---
+ * @param formId 窗体 id
+ */
+export function close(formId) {
     return changeState('close', formId);
 }
-function bindResize(e, border) {
-    const formWrap = dom.findParentByClass(e.target, 'cg-form-wrap');
+/**
+ * --- 绑定窗体拖动大小事件，在 mousedown、touchstart 中绑定 ---
+ * @param e 事件源
+ * @param border 调整大小的方位
+ */
+export function bindResize(e, border) {
+    const formWrap = lDom.findParentByClass(e.target, 'cg-form-wrap');
     if (!formWrap) {
         return;
     }
@@ -974,16 +1098,19 @@ function bindResize(e, border) {
     if (!formId) {
         return;
     }
-    const fid = parseInt(formId);
-    const tid = getTaskId(fid);
-    const t = task.list[tid];
+    const tid = getTaskId(formId);
+    const t = lTask.getOrigin(tid);
     if (!t) {
         return;
     }
-    t.forms[fid].vroot.$refs.form.resizeMethod(e, border);
+    t.forms[formId].vroot.$refs.form.resizeMethod(e, border);
 }
-function bindDrag(e) {
-    const formWrap = dom.findParentByClass(e.target, 'cg-form-wrap');
+/**
+ * --- 绑定窗体拖动事件，在 mousedown、touchstart 中绑定 ---
+ * @param e 事件源
+ */
+export function bindDrag(e) {
+    const formWrap = lDom.findParentByClass(e.target, 'cg-form-wrap');
     if (!formWrap) {
         return;
     }
@@ -991,60 +1118,78 @@ function bindDrag(e) {
     if (!formId) {
         return;
     }
-    const fid = parseInt(formId);
-    const tid = getTaskId(fid);
-    const t = task.list[tid];
+    const tid = getTaskId(formId);
+    const t = lTask.getOrigin(tid);
     if (!t) {
         return;
     }
-    t.forms[fid].vroot.$refs.form.moveMethod(e, true);
+    t.forms[formId].vroot.$refs.form.moveMethod(e, true);
 }
-function refreshMaxPosition() {
-    const area = core.getAvailArea();
-    for (let i = 0; i < exports.elements.list.children.length; ++i) {
-        const el = exports.elements.list.children.item(i);
+/**
+ *  --- 重置所有已经最大化的窗体大小和位置 ---
+ */
+export function refreshMaxPosition() {
+    const area = lCore.getAvailArea();
+    for (let i = 0; i < elements.list.children.length; ++i) {
+        const el = elements.list.children.item(i);
         const ef = el.children.item(0);
         if (ef.dataset.cgMax === undefined) {
             continue;
         }
-        const taskId = parseInt(el.getAttribute('data-task-id'));
-        const formId = parseInt(el.getAttribute('data-form-id'));
-        if (!task.list[taskId]) {
+        const taskId = el.getAttribute('data-task-id');
+        const formId = el.getAttribute('data-form-id');
+        const task = lTask.getOrigin(taskId);
+        if (!task) {
             continue;
         }
-        const vroot = task.list[taskId].forms[formId].vroot;
+        const vroot = task.forms[formId].vroot;
         if (ef.dataset.cgBottomMost === undefined) {
+            // --- 不是置底窗体 ---
             vroot.$refs.form.setPropData('left', area.left);
             vroot.$refs.form.setPropData('top', area.top);
             vroot.$refs.form.setPropData('width', area.width);
             vroot.$refs.form.setPropData('height', area.height);
         }
         else {
+            // --- 是置底窗体 ---
             vroot.$refs.form.setPropData('width', area.owidth);
             vroot.$refs.form.setPropData('height', area.oheight);
         }
     }
 }
-function getTaskId(formId) {
-    const formElement = exports.elements.list.querySelector(`[data-form-id='${formId}']`);
+/**
+ * --- 根据窗体 id 获取 task id ---
+ * @param formId 窗体 id
+ */
+export function getTaskId(formId) {
+    const formElement = elements.list.querySelector(`[data-form-id='${formId}']`);
     if (!formElement) {
-        return 0;
+        return '';
     }
+    // --- 获取 task id ---
     const taskIdAttr = formElement.getAttribute('data-task-id');
     if (!taskIdAttr) {
-        return 0;
+        return '';
     }
-    return parseInt(taskIdAttr);
+    return taskIdAttr;
 }
-function get(formId) {
+/**
+ * --- 获取窗体信息 ---
+ * @param formId 窗体 id
+ */
+export function get(formId) {
     const taskId = getTaskId(formId);
-    if (taskId === 0) {
+    if (!taskId) {
         return null;
     }
-    if (!task.list[taskId].forms[formId]) {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return null;
     }
-    const item = task.list[taskId].forms[formId];
+    if (!task.forms[formId]) {
+        return null;
+    }
+    const item = task.forms[formId];
     return {
         'taskId': taskId,
         'title': item.vroot.$refs.form.title,
@@ -1056,21 +1201,38 @@ function get(formId) {
         'showInSystemTask': item.vroot.showInSystemTask
     };
 }
-function send(formId, obj) {
+/**
+ * --- 给一个窗体发送一个对象，不会知道成功与失败状态，用 this.send 替代 ---
+ * @param formId 要接收对象的 form id
+ * @param obj 要发送的对象
+ */
+export function send(formId, obj) {
     const taskId = getTaskId(formId);
-    if (taskId === 0) {
+    if (!taskId) {
         return;
     }
-    const item = task.list[taskId].forms[formId];
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
+        return;
+    }
+    const item = task.forms[formId];
     item.vroot.onReceive(obj);
 }
-function getList(taskId) {
-    if (!task.list[taskId]) {
+/**
+ * --- 获取 form list 的简略情况 ---
+ * @param taskId 任务 ID
+ */
+export function getList(taskId) {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
+    }
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return {};
     }
     const list = {};
-    for (const fid in task.list[taskId].forms) {
-        const item = task.list[taskId].forms[fid];
+    for (const fid in task.forms) {
+        const item = task.forms[fid];
         list[fid] = {
             'taskId': taskId,
             'title': item.vroot.$refs.form.title,
@@ -1084,135 +1246,194 @@ function getList(taskId) {
     }
     return list;
 }
-function getFocus() {
+/**
+ * --- 获取当前有焦点的窗体 form id ---
+ */
+export function getFocus() {
     return focusId;
 }
-exports.activePanels = {};
-function getActivePanel(formId) {
-    return exports.activePanels[formId] ?? [];
+/**
+ * --- 当前活跃中的 panelId 列表 ---
+ */
+export const activePanels = {};
+/**
+ * --- 获取窗体当前活跃中的 panelId 列表 ---
+ * @param formId 要获取的窗体 id
+ */
+export function getActivePanel(formId) {
+    return activePanels[formId] ?? [];
 }
-function removeActivePanel(panelId, formId, taskId) {
-    if (!taskId) {
+/**
+ * --- 移除 form 中正在活跃中的 panel id （panel 本身被置于隐藏时）
+ * @param current 当前任务 id
+ * @param formId 所属 form id
+ * @param panelId panel id
+ */
+export function removeActivePanel(current, formId, panelId) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return false;
     }
-    if (!task.list[taskId]) {
+    if (!task.forms[formId]) {
         return false;
     }
-    if (!task.list[taskId].forms[formId]) {
-        return false;
-    }
-    if (!exports.activePanels[formId]) {
+    if (!activePanels[formId]) {
         return true;
     }
-    const io = exports.activePanels[formId].indexOf(panelId);
+    const io = activePanels[formId].indexOf(panelId);
     if (io === -1) {
         return true;
     }
-    exports.activePanels[formId].splice(io, 1);
-    if (!exports.activePanels[formId].length) {
-        delete exports.activePanels[formId];
+    activePanels[formId].splice(io, 1);
+    if (!activePanels[formId].length) {
+        delete activePanels[formId];
     }
     return true;
 }
-function setActivePanel(panelId, formId, taskId) {
-    if (!taskId) {
+/**
+ * --- 将 form 中某个 panel 设置为活动的 ---
+ * @param current 当前任务 id
+ * @param formId 所属 form id
+ * @param panelId panel id
+ */
+export function setActivePanel(current, formId, panelId) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const task = lTask.getOrigin(current);
+    if (!task) {
         return false;
     }
-    if (!task.list[taskId]) {
+    if (!task.forms[formId]) {
         return false;
     }
-    if (!task.list[taskId].forms[formId]) {
-        return false;
+    if (!activePanels[formId]) {
+        activePanels[formId] = [];
     }
-    if (!exports.activePanels[formId]) {
-        exports.activePanels[formId] = [];
-    }
-    const io = exports.activePanels[formId].indexOf(panelId);
+    const io = activePanels[formId].indexOf(panelId);
     if (io !== -1) {
         return true;
     }
-    exports.activePanels[formId].push(panelId);
+    activePanels[formId].push(panelId);
     return true;
 }
-function hash(hash, formId) {
+/**
+ * --- 修改窗体 hash ---
+ * @param formId 要修改的窗体 ID
+ * @param hash 修改的值，不含 #
+ */
+export function hash(formId, hash) {
     const taskId = getTaskId(formId);
-    if (taskId === 0) {
+    if (!taskId) {
         return false;
     }
-    const t = task.list[taskId];
-    if (!t) {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return false;
     }
-    const item = task.list[taskId].forms[formId];
+    const item = task.forms[formId];
     if (!item) {
         return false;
     }
     item.vroot.formHash = hash;
     return true;
 }
-function getHash(formId) {
+/**
+ * --- 获取窗体的 hash ---
+ */
+export function getHash(formId) {
     const taskId = getTaskId(formId);
-    if (taskId === 0) {
+    if (!taskId) {
         return '';
     }
-    const t = task.list[taskId];
-    if (!t) {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return '';
     }
-    const item = task.list[taskId].forms[formId];
+    const item = task.forms[formId];
     if (!item) {
         return '';
     }
     return item.vroot.$data._formHash;
 }
-async function hashBack(formId) {
+/**
+ * --- 将窗体的 hash 退回上一个 ---
+ */
+export async function hashBack(formId) {
     const taskId = getTaskId(formId);
-    if (taskId === 0) {
+    if (!taskId) {
         return false;
     }
-    const t = task.list[taskId];
-    if (!t) {
+    const task = lTask.getOrigin(taskId);
+    if (!task) {
         return false;
     }
-    const item = task.list[taskId].forms[formId];
+    const item = task.forms[formId];
     if (!item) {
         return false;
     }
     await item.vroot.formHashBack();
     return true;
 }
-function changeFocus(formId = 0) {
-    if (typeof formId === 'string') {
-        formId = parseInt(formId);
-    }
+/**
+ * --- 改变 form 的焦点 class ---
+ * @param formId 变更后的 form id
+ */
+export async function changeFocus(formId = '') {
     const dataFormId = getFocus();
     if (dataFormId) {
         if (dataFormId === formId) {
             return;
         }
         else {
-            const t = task.list[task.getFocus()];
+            const f = await lTask.getFocus(sysId);
+            if (!f) {
+                return;
+            }
+            const t = lTask.getOrigin(f);
+            if (!t) {
+                return;
+            }
             t.forms[dataFormId].vapp._container.removeAttribute('data-form-focus');
             t.forms[dataFormId].vroot._formFocus = false;
-            core.trigger('formBlurred', t.id, dataFormId);
+            // --- 触发 formBlurred 事件 ---
+            lCore.trigger('formBlurred', t.id, dataFormId).catch(() => { });
         }
     }
     focusId = null;
-    task.setFocus();
-    if (formId === 0) {
+    lTask.setFocus();
+    if (!formId) {
         return;
     }
-    const el = exports.elements.list.querySelector(`.cg-form-wrap[data-form-id='${formId}']`);
+    const el = elements.list.querySelector(`.cg-form-wrap[data-form-id='${formId}']`);
     if (!el) {
         return;
     }
+    // --- 如果是最小化状态的话，需要还原 ---
     if (el.children.item(0).dataset.cgMin !== undefined) {
         min(formId);
     }
-    const taskId = parseInt(el.getAttribute('data-task-id') ?? '0');
-    const t = task.list[taskId];
-    if (t.runtime.dialogFormIds.length) {
-        const dialogFormId = t.runtime.dialogFormIds[t.runtime.dialogFormIds.length - 1];
+    // --- 获取所属的 taskId ---
+    const taskId = el.getAttribute('data-task-id') ?? '';
+    if (!taskId) {
+        return;
+    }
+    const t = lTask.getOrigin(taskId);
+    if (!t) {
+        return;
+    }
+    const rt = lTask.getRuntime(sysId, taskId);
+    if (!rt) {
+        return;
+    }
+    // --- 检测是否有 dialog mask 层 ---
+    if (rt.dialogFormIds.length) {
+        // --- 有 dialog ---
+        const dialogFormId = rt.dialogFormIds[rt.dialogFormIds.length - 1];
+        // --- 如果是最小化状态的话，需要还原 ---
         if (get(dialogFormId).stateMin) {
             min(dialogFormId);
         }
@@ -1225,16 +1446,21 @@ function changeFocus(formId = 0) {
         else {
             t.forms[dialogFormId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
+        // --- 开启 focus ---
         t.forms[dialogFormId].vapp._container.dataset.formFocus = '';
         t.forms[dialogFormId].vroot._formFocus = true;
         focusId = dialogFormId;
-        task.setFocus(t.id);
-        core.trigger('formFocused', taskId, dialogFormId);
+        lTask.setFocus(t.id);
+        // --- 触发 formFocused 事件 ---
+        lCore.trigger('formFocused', taskId, dialogFormId).catch(() => { });
+        // --- 判断点击的窗体是不是就是 dialog mask 窗体本身 ---
         if (dialogFormId !== formId) {
-            clickgo.form.flash(dialogFormId, taskId);
+            // --- 闪烁 ---
+            await flash(taskId, dialogFormId);
         }
     }
     else {
+        // --- 没有 dialog，才修改 zindex ---
         if (t.forms[formId].vroot._topMost) {
             t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.topLastZIndex;
         }
@@ -1244,37 +1470,55 @@ function changeFocus(formId = 0) {
         else {
             t.forms[formId].vroot.$refs.form.$data.zIndex = ++info.lastZIndex;
         }
+        // --- 正常开启 focus ---
         t.forms[formId].vapp._container.dataset.formFocus = '';
         t.forms[formId].vroot._formFocus = true;
         focusId = formId;
-        task.setFocus(t.id);
-        core.trigger('formFocused', taskId, formId);
+        lTask.setFocus(t.id);
+        // --- 触发 formFocused 事件 ---
+        lCore.trigger('formFocused', taskId, formId).catch(() => { });
     }
 }
-function getMaxZIndexID(out = {}) {
+/**
+ * --- 获取当前 z-index 值最大的 form id（除了 top 模式的窗体和最小化的窗体） ---
+ * @param current 当前任务 id
+ * @param out 排除选项
+ */
+export async function getMaxZIndexID(current, out = {}) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if (!(await lTask.checkPermission(current, 'root'))[0]) {
+        return null;
+    }
     let zIndex = 0;
     let formId = null;
-    for (let i = 0; i < exports.elements.list.children.length; ++i) {
-        const formWrap = exports.elements.list.children.item(i);
+    for (let i = 0; i < elements.list.children.length; ++i) {
+        const formWrap = elements.list.children.item(i);
         const formInner = formWrap.children.item(0);
         if (!formInner) {
             continue;
         }
+        // --- 排除 bottom most 窗体 ---
         const z = parseInt(formInner.style.zIndex);
         if (z < 1000000) {
             continue;
         }
+        // --- 排除最小化窗体 ---
         if (formInner.dataset.cgMin !== undefined) {
             continue;
         }
-        const tid = parseInt(formWrap.getAttribute('data-task-id'));
-        if (tid === task.systemTaskInfo.taskId) {
+        // --- 排除用户定义的 task id 窗体 ---
+        const tid = formWrap.getAttribute('data-task-id');
+        if (tid === lTask.systemTaskInfo.taskId) {
+            // --- 系统任务排除掉 ---
             continue;
         }
         if (out.taskIds?.includes(tid)) {
             continue;
         }
-        const fid = parseInt(formWrap.getAttribute('data-form-id'));
+        // --- 排除用户定义的 form id 窗体 ---
+        const fid = formWrap.getAttribute('data-form-id');
         if (out.formIds?.includes(fid)) {
             continue;
         }
@@ -1285,8 +1529,22 @@ function getMaxZIndexID(out = {}) {
     }
     return formId;
 }
-function getRectByBorder(border) {
-    const area = core.getAvailArea();
+/**
+ * --- 让最大的 z index 窗体获取焦点（不含 top 和最小化的） ---
+ */
+export async function changeFocusMaxZIndex() {
+    const formId = await getMaxZIndexID(sysId);
+    if (!formId) {
+        return;
+    }
+    await changeFocus(formId ?? undefined);
+}
+/**
+ * --- 根据 border 方向 获取理论窗体大小 ---
+ * @param border 显示的位置代号
+ */
+export function getRectByBorder(border) {
+    const area = lCore.getAvailArea();
     let width, height, left, top;
     if (typeof border === 'string') {
         switch (border) {
@@ -1364,124 +1622,165 @@ function getRectByBorder(border) {
         'top': top
     };
 }
-function showCircular(x, y) {
-    exports.elements.circular.style.transition = 'none';
+/**
+ * --- 显示从小到大的圆圈动画特效对象 ---
+ * @param x X 坐标
+ * @param y Y 坐标
+ */
+export function showCircular(x, y) {
+    elements.circular.style.transition = 'none';
     requestAnimationFrame(function () {
-        exports.elements.circular.style.width = '6px';
-        exports.elements.circular.style.height = '6px';
-        exports.elements.circular.style.left = (x - 3).toString() + 'px';
-        exports.elements.circular.style.top = (y - 3).toString() + 'px';
-        exports.elements.circular.style.opacity = '1';
+        elements.circular.style.width = '6px';
+        elements.circular.style.height = '6px';
+        elements.circular.style.left = (x - 3).toString() + 'px';
+        elements.circular.style.top = (y - 3).toString() + 'px';
+        elements.circular.style.opacity = '1';
         requestAnimationFrame(function () {
-            exports.elements.circular.style.transition = 'all .3s var(--g-cubic)';
+            elements.circular.style.transition = 'all .3s var(--g-cubic)';
             requestAnimationFrame(function () {
-                exports.elements.circular.style.width = '60px';
-                exports.elements.circular.style.height = '60px';
-                exports.elements.circular.style.left = (x - 30).toString() + 'px';
-                exports.elements.circular.style.top = (y - 30).toString() + 'px';
-                exports.elements.circular.style.opacity = '0';
+                elements.circular.style.width = '60px';
+                elements.circular.style.height = '60px';
+                elements.circular.style.left = (x - 30).toString() + 'px';
+                elements.circular.style.top = (y - 30).toString() + 'px';
+                elements.circular.style.opacity = '0';
             });
         });
     });
 }
-function moveRectangle(border) {
-    const dataReady = exports.elements.rectangle.getAttribute('data-ready') ?? '0';
+/**
+ * --- 移动矩形到新位置 ---
+ * @param border 显示的位置代号
+ */
+export function moveRectangle(border) {
+    const dataReady = elements.rectangle.getAttribute('data-ready') ?? '0';
     if (dataReady === '0') {
         return;
     }
-    const dataBorder = exports.elements.rectangle.getAttribute('data-border') ?? '';
+    const dataBorder = elements.rectangle.getAttribute('data-border') ?? '';
     const setDataBorder = typeof border === 'string' ? border : `o-${border.left}-${border.top ?? 'n'}-${border.width}-${border.height ?? 'n'}`;
     if (dataBorder === setDataBorder) {
         return;
     }
-    exports.elements.rectangle.setAttribute('data-dir', setDataBorder);
+    elements.rectangle.setAttribute('data-dir', setDataBorder);
     const pos = getRectByBorder(border);
     const width = pos.width - 20;
     const height = pos.height - 20;
     const left = pos.left + 10;
     const top = pos.top + 10;
     if (width !== undefined && height !== undefined && left !== undefined && top !== undefined) {
-        exports.elements.rectangle.style.width = width.toString() + 'px';
-        exports.elements.rectangle.style.height = height.toString() + 'px';
-        exports.elements.rectangle.style.left = left.toString() + 'px';
-        exports.elements.rectangle.style.top = top.toString() + 'px';
+        elements.rectangle.style.width = width.toString() + 'px';
+        elements.rectangle.style.height = height.toString() + 'px';
+        elements.rectangle.style.left = left.toString() + 'px';
+        elements.rectangle.style.top = top.toString() + 'px';
     }
 }
-function showRectangle(x, y, border) {
-    exports.elements.rectangle.style.transition = 'none';
+/**
+ * --- 显示从小到大的矩形动画特效对象 ---
+ * @param x 起始位置
+ * @param y 起始位置
+ * @param border 最大时位置代号
+ */
+export function showRectangle(x, y, border) {
+    elements.rectangle.style.transition = 'none';
     requestAnimationFrame(function () {
-        exports.elements.rectangle.style.width = '5px';
-        exports.elements.rectangle.style.height = '5px';
-        exports.elements.rectangle.style.left = (x - 10).toString() + 'px';
-        exports.elements.rectangle.style.top = (y - 10).toString() + 'px';
-        exports.elements.rectangle.style.opacity = '1';
-        exports.elements.rectangle.setAttribute('data-ready', '0');
-        exports.elements.rectangle.setAttribute('data-dir', '');
+        elements.rectangle.style.width = '5px';
+        elements.rectangle.style.height = '5px';
+        elements.rectangle.style.left = (x - 10).toString() + 'px';
+        elements.rectangle.style.top = (y - 10).toString() + 'px';
+        elements.rectangle.style.opacity = '1';
+        elements.rectangle.setAttribute('data-ready', '0');
+        elements.rectangle.setAttribute('data-dir', '');
         requestAnimationFrame(function () {
-            exports.elements.rectangle.style.transition = 'all .3s var(--g-cubic)';
+            elements.rectangle.style.transition = 'all .3s var(--g-cubic)';
             requestAnimationFrame(function () {
-                exports.elements.rectangle.setAttribute('data-ready', '1');
+                elements.rectangle.setAttribute('data-ready', '1');
                 moveRectangle(border);
             });
         });
     });
 }
-function hideRectangle() {
-    exports.elements.rectangle.style.opacity = '0';
+/**
+ * --- 结束时请隐藏矩形 ---
+ */
+export function hideRectangle() {
+    elements.rectangle.style.opacity = '0';
 }
+// --- DRAG ---
+/** --- 是否马上要隐藏的 timer --- */
 let dragTimeOut = 0;
-function showDrag() {
+/**
+ * --- 显示 drag 虚拟框 ---
+ */
+export function showDrag(opt = {}) {
     if (dragTimeOut) {
         clearTimeout(dragTimeOut);
         dragTimeOut = 0;
     }
-    exports.elements.drag.style.opacity = '1';
-    exports.elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
-    exports.elements.drag.style.borderBottomWidth = '2px';
+    const style = opt.element ? getComputedStyle(opt.element) : undefined;
+    elements.drag.style.opacity = '1';
+    elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
+    elements.drag.style.borderBottomWidth = '2px';
+    elements.drag.style.borderRadius = style?.borderRadius ?? '3px';
 }
-function moveDrag(opt) {
+/**
+ * --- 移动 drag 到新位置 ---
+ * @param opt top:顶部位置,left:左侧位置,width:宽度位置,height:高度位置
+ */
+export function moveDrag(opt) {
     if (opt.top) {
-        exports.elements.drag.style.top = opt.top.toString() + 'px';
+        elements.drag.style.top = opt.top.toString() + 'px';
     }
     if (opt.left) {
-        exports.elements.drag.style.left = opt.left.toString() + 'px';
+        elements.drag.style.left = opt.left.toString() + 'px';
     }
     let perspective = 0;
     if (opt.width) {
-        exports.elements.drag.style.width = opt.width.toString() + 'px';
+        elements.drag.style.width = opt.width.toString() + 'px';
         if (perspective < opt.width) {
             perspective = opt.width;
         }
     }
     if (opt.height) {
-        exports.elements.drag.style.height = opt.height.toString() + 'px';
+        elements.drag.style.height = opt.height.toString() + 'px';
         if (perspective < opt.height) {
             perspective = opt.height;
         }
     }
     if (perspective) {
-        exports.elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)';
+        elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)';
     }
     if (opt.icon) {
-        exports.elements.drag.childNodes[0].style.display = 'block';
+        elements.drag.childNodes[0].style.display = 'block';
     }
     else {
-        exports.elements.drag.childNodes[0].style.display = 'none';
+        elements.drag.childNodes[0].style.display = 'none';
     }
 }
-function hideDrag() {
-    exports.elements.drag.style.transform = 'initial';
-    exports.elements.drag.style.borderBottomWidth = '1px';
+/**
+ * --- 隐藏拖拽框框 ---
+ */
+export function hideDrag() {
+    elements.drag.style.transform = 'initial';
+    elements.drag.style.borderBottomWidth = '1px';
     dragTimeOut = window.setTimeout(() => {
         dragTimeOut = 0;
-        exports.elements.drag.style.opacity = '0';
+        elements.drag.style.opacity = '0';
     }, 300);
 }
+// --- Alert ---
 let alertBottom = 0;
 let alertId = 0;
-function alert(content, type) {
+/**
+ * --- 从下方弹出 alert ---
+ * @param content 内容
+ * @param type 样式，可留空
+ */
+export function alert(content, type) {
+    // --- 申请 aid ---
     const nid = ++alertId;
+    // --- 设置 timeout ---
     const timeout = 3000;
+    // --- 创建 notify element ---
     const el = document.createElement('div');
     const y = alertBottom;
     el.classList.add('cg-alert-wrap');
@@ -1491,14 +1790,15 @@ function alert(content, type) {
     el.style.opacity = '0';
     el.innerHTML = `<div class="cg-alert-content">` +
         `<div class="cg-alert-icon"></div>` +
-        `<div>${tool.escapeHTML(content)}</div>` +
+        `<div>${lTool.escapeHTML(content)}</div>` +
         '</div>';
-    exports.elements.alert.appendChild(el);
+    elements.alert.appendChild(el);
     alertBottom -= el.offsetHeight + 10;
     requestAnimationFrame(function () {
         el.style.transform = `translateY(${y}px)`;
         el.style.opacity = '1';
         const timer = window.setTimeout(function () {
+            // --- 隐藏 alert ---
             clearTimeout(timer);
             const alertHeight = el.offsetHeight;
             el.style.opacity = '0';
@@ -1508,6 +1808,7 @@ function alert(content, type) {
                 let needSub = false;
                 for (const alertElement of alertElementList) {
                     if (alertElement === el) {
+                        // --- el 之后的 alert 都要往下移动 ---
                         needSub = true;
                         continue;
                     }
@@ -1523,11 +1824,19 @@ function alert(content, type) {
     });
     return nid;
 }
+// --- Notify ---
 let notifyBottom = -10;
 let notifyId = 0;
-function notify(opt) {
+/**
+ * --- 弹出右下角信息框 ---
+ * @param opt timeout 默认 5 秒，最大 10 分钟
+ */
+export function notify(opt) {
+    // --- 申请 nid ---
     const nid = ++notifyId;
+    // --- 设置 timeout ---
     let timeout = 5_000;
+    /** --- 限定的最大 maxTimeout --- */
     const maxTimeout = 60_000 * 10;
     if (opt.timeout !== undefined) {
         if (opt.timeout <= 0) {
@@ -1540,18 +1849,20 @@ function notify(opt) {
             timeout = opt.timeout;
         }
     }
+    // --- 设置 type ---
     if (opt.progress && !opt.type) {
         opt.type = 'progress';
     }
+    // --- 创建 notify element ---
     const el = document.createElement('div');
     let y = notifyBottom;
     let x = -10;
-    if (task.systemTaskInfo.taskId > 0) {
-        if (core.config['task.position'] === 'bottom') {
-            y -= task.systemTaskInfo.length;
+    if (lTask.systemTaskInfo.taskId) {
+        if (lCore.config['task.position'] === 'bottom') {
+            y -= lTask.systemTaskInfo.length;
         }
-        else if (core.config['task.position'] === 'right') {
-            x -= task.systemTaskInfo.length;
+        else if (lCore.config['task.position'] === 'right') {
+            x -= lTask.systemTaskInfo.length;
         }
     }
     el.classList.add('cg-notify-wrap');
@@ -1559,17 +1870,17 @@ function notify(opt) {
     el.style.transform = `translateY(${y}px) translateX(280px)`;
     el.style.opacity = '0';
     el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
-    el.innerHTML = `<div class="cg-notify-icon cg-${tool.escapeHTML(opt.type ?? 'primary')}"></div>` +
+    el.innerHTML = `<div class="cg-notify-icon cg-${lTool.escapeHTML(opt.type ?? 'primary')}"></div>` +
         '<div style="flex: 1;">' +
-        (opt.title ? `<div class="cg-notify-title">${tool.escapeHTML(opt.title)}</div>` : '') +
-        (opt.content ? `<div class="cg-notify-content">${tool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>` +
+        (opt.title ? `<div class="cg-notify-title">${lTool.escapeHTML(opt.title)}</div>` : '') +
+        (opt.content ? `<div class="cg-notify-content">${lTool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>` +
             `${opt.progress ? '<div class="cg-notify-progress"></div>' : ''}` : '') +
         '</div>';
     if (opt.icon) {
         el.childNodes.item(0).style.background = 'url(' + opt.icon + ')';
         el.childNodes.item(0).style.backgroundSize = '14px';
     }
-    exports.elements.notify.appendChild(el);
+    elements.notify.appendChild(el);
     notifyBottom -= el.offsetHeight + 10;
     requestAnimationFrame(function () {
         el.style.transform = `translateY(${y}px) translateX(${x}px)`;
@@ -1581,8 +1892,13 @@ function notify(opt) {
     });
     return nid;
 }
-function notifyProgress(notifyId, per) {
-    const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
+/**
+ * --- 修改 notify 的进度条进度 ---
+ * @param notifyId notify id
+ * @param per 进度，0 - 100 或 0% - 100% (0 - 1)
+ */
+export function notifyProgress(notifyId, per) {
+    const el = elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -1604,8 +1920,13 @@ function notifyProgress(notifyId, per) {
     }
     progress.style.width = (per < 1 ? per * 100 : per).toString() + '%';
 }
-function notifyContent(notifyId, opt) {
-    const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
+/**
+ * --- 修改 notify 的提示信息 ---
+ * @param notifyId notify id
+ * @param opt 参数
+ */
+export function notifyContent(notifyId, opt) {
+    const el = elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -1614,18 +1935,22 @@ function notifyContent(notifyId, opt) {
         if (!title) {
             return;
         }
-        title.innerHTML = tool.escapeHTML(opt.title);
+        title.innerHTML = lTool.escapeHTML(opt.title);
     }
     if (opt.content) {
         const content = el.querySelector('.cg-notify-content');
         if (!content) {
             return;
         }
-        content.innerHTML = tool.escapeHTML(opt.content);
+        content.innerHTML = lTool.escapeHTML(opt.content);
     }
 }
-function hideNotify(notifyId) {
-    const el = exports.elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
+/**
+ * --- 隐藏 notify ---
+ * @param notifyId 要隐藏的 notify id
+ */
+export function hideNotify(notifyId) {
+    const el = elements.notify.querySelector(`[data-notifyid="${notifyId}"]`);
     if (!el) {
         return;
     }
@@ -1638,6 +1963,7 @@ function hideNotify(notifyId) {
         let needSub = false;
         for (const notifyElement of notifyElementList) {
             if (notifyElement === el) {
+                // --- el 之后的 notify 都要往下移动 ---
                 needSub = true;
                 continue;
             }
@@ -1650,42 +1976,63 @@ function hideNotify(notifyId) {
         el.remove();
     }, 100);
 }
-function appendToPop(el) {
-    exports.elements.popList.appendChild(el);
+/**
+ * --- 将标签追加到 pop 层 ---
+ * @param el 要追加的标签
+ */
+export function appendToPop(el) {
+    elements.popList.appendChild(el);
 }
-function removeFromPop(el) {
-    exports.elements.popList.removeChild(el);
+/**
+ * --- 将标签从 pop 层移除 ---
+ * @param el 要移除的标签
+ */
+export function removeFromPop(el) {
+    elements.popList.removeChild(el);
 }
+/** --- 重新调整 pop 的位置 --- */
 function refreshPopPosition(el, pop, direction, size = {}) {
+    // --- 最终 pop 的大小 ---
     const width = size.width ?? pop.offsetWidth;
     const height = size.height ?? pop.offsetHeight;
+    // --- 最终显示位置 ---
     let left, top;
     if (typeof direction === 'string') {
+        /** --- 母对象的位置 --- */
         const bcr = el.getBoundingClientRect();
         if (direction === 'v') {
+            // --- 垂直弹出 ---
             left = bcr.left;
             top = bcr.top + bcr.height;
         }
         else if (direction === 'h') {
+            // --- 水平弹出 ---
             left = bcr.left + bcr.width - 2;
             top = bcr.top - 2;
         }
         else {
+            // --- 垂直水平居中 ---
             pop.removeAttribute('data-pop-t-bottom');
             left = bcr.left + bcr.width / 2 - width / 2;
             top = bcr.top - height - 10;
         }
+        // --- 下面检测是否出框 ---
+        // --- 检查水平是否出框 ---
         if (width + left > window.innerWidth) {
             if (direction === 'v') {
+                // --- 垂直弹出 ---
                 left = bcr.left + bcr.width - width;
             }
             else if (direction === 'h') {
+                // --- 水平弹出，右边位置不够弹到左边 ---
                 left = bcr.left - width + 2;
             }
             else {
+                // --- 垂直水平居中，水平超出 ---
                 left = window.innerWidth - width;
             }
         }
+        // --- 检测垂直是否下侧出框 ---
         if (height + top > window.innerHeight) {
             if (direction === 'v') {
                 top = bcr.top - height;
@@ -1694,9 +2041,11 @@ function refreshPopPosition(el, pop, direction, size = {}) {
                 top = bcr.top + bcr.height - height + 2;
             }
             else {
+                // --- 垂直水平居中，下侧出框不管 ---
             }
         }
         else if (top < 0 && direction === 't') {
+            // --- 垂直水平居中，上侧出框 ---
             top = bcr.top + bcr.height + 10;
             pop.dataset.popTBottom = '';
         }
@@ -1718,9 +2067,11 @@ function refreshPopPosition(el, pop, direction, size = {}) {
         }
         left = x + 5;
         top = y + 7;
+        // --- 水平 ---
         if (width + left > window.innerWidth) {
             left = x - width - 5;
         }
+        // --- 垂直 ---
         if (height + top > window.innerHeight) {
             top = y - height - 5;
         }
@@ -1741,8 +2092,16 @@ function refreshPopPosition(el, pop, direction, size = {}) {
         pop.style.height = size.height.toString() + 'px';
     }
 }
+/** --- 最后一次 touchstart 的时间戳 */
 let lastShowPopTime = 0;
-function showPop(el, pop, direction, opt = {}) {
+/**
+ * --- 获取 pop 显示出来的坐标并报系统全局记录 ---
+ * @param el 响应的元素
+ * @param pop 要显示 pop 元素
+ * @param direction 要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
+ * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 因 pop 内部内容变动导致的自动更新 pop 位置，默认 false，autoScroll，因原元素位置变更导致 pop 位置变更，默认 false，flow: 是否加入 pop 流，默认加入，不加入的话将不会自动隐藏
+ */
+export function showPop(el, pop, direction, opt = {}) {
     if (!(el instanceof Element)) {
         if (!el.$el) {
             return;
@@ -1755,55 +2114,65 @@ function showPop(el, pop, direction, opt = {}) {
         }
         pop = pop.$el;
     }
+    // --- opt.null 为 true 代表可为空，为空也会被显示，默认为 false ---
     opt.null ??= false;
     opt.size ??= {};
     opt.flow ??= true;
+    // --- 也可能不执行本次显示 ---
     if (!pop && !opt.null) {
         return;
     }
+    // --- 是否不进入 pop 流 ---
     if (pop && !opt.flow) {
         pop.removeAttribute('data-cg-pop-none');
         pop.dataset.cgFlow = '';
-        clickgo.tool.sleep(34).then(() => {
+        lTool.sleep(34).then(() => {
             if (pop.dataset.cgFlow === undefined) {
+                // --- 已经隐藏掉了 ---
                 return;
             }
             refreshPopPosition(el, pop, direction, opt.size);
             if (opt.autoPosition) {
-                clickgo.dom.watchSize(pop, () => {
+                lDom.watchSize(sysId, pop, () => {
                     refreshPopPosition(el, pop, direction, opt.size);
                 });
             }
             pop.dataset.cgOpen = '';
-        }).catch(() => {
-        });
+        }).catch(() => { });
         return;
     }
+    // --- 如果短时间内已经有了 pop 被展示，则可能是冒泡序列，本次则不展示 ---
     const now = Date.now();
     if (now - lastShowPopTime < 5) {
         lastShowPopTime = now;
         return;
     }
     lastShowPopTime = now;
+    // --- 检测是不是已经显示了 ---
     if (el.dataset.cgPopOpen !== undefined) {
         return;
     }
-    const parentPop = dom.findParentByData(el, 'cg-pop');
+    /** --- 要不要隐藏别的 pop --- */
+    const parentPop = lDom.findParentByData(el, 'cg-pop');
     if (parentPop?.dataset.cgLevel !== undefined) {
         const nextlevel = parseInt(parentPop.dataset.cgLevel) + 1;
         if (popInfo.elList[nextlevel]) {
+            // --- 要隐藏别的 pop ---
             hidePop(popInfo.elList[nextlevel]);
         }
     }
     else {
+        // --- 本层不是 pop，因此要隐藏所有 pop ---
         hidePop();
     }
+    // --- 检测如果 pop 是 undefined 还显示吗 ---
     if (!pop) {
         popInfo.elList.push(el);
         el.dataset.cgPopOpen = '';
         el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
         return;
     }
+    // --- 准备显示 pop ---
     pop.removeAttribute('data-cg-pop-none');
     popInfo.list.push(pop);
     popInfo.elList.push(el);
@@ -1811,27 +2180,33 @@ function showPop(el, pop, direction, opt = {}) {
     popInfo.time.push(Date.now());
     pop.dataset.cgLevel = (popInfo.list.length - 1).toString();
     el.dataset.cgLevel = (popInfo.elList.length - 1).toString();
-    clickgo.tool.sleep(34).then(() => {
+    lTool.sleep(34).then(() => {
         if (pop.dataset.cgLevel === undefined) {
+            // --- 已经隐藏掉了 ---
             return;
         }
+        // --- 设定 pop 位置 ---
         refreshPopPosition(el, pop, direction, opt.size);
         if (opt.autoPosition && typeof direction === 'string') {
-            clickgo.dom.watchSize(pop, () => {
+            // --- 可能要重置 pop 位置 ---
+            lDom.watchSize(sysId, pop, () => {
                 refreshPopPosition(el, pop, direction, opt.size);
             });
         }
         if (opt.autoScroll && typeof direction === 'string') {
-            clickgo.dom.watchPosition(el, () => {
+            // --- 可能根据原元素重置 pop 位置 ---
+            lDom.watchPosition(el, () => {
                 refreshPopPosition(el, pop, direction, opt.size);
             });
         }
         pop.dataset.cgOpen = '';
         el.dataset.cgPopOpen = '';
-    }).catch(() => {
-    });
+    }).catch(() => { });
 }
-function hidePop(pop) {
+/**
+ * --- 隐藏正在显示中的所有 pop，或指定 pop/el ---
+ */
+export function hidePop(pop) {
     if (pop && !(pop instanceof HTMLElement)) {
         if (!pop.$el) {
             return;
@@ -1848,20 +2223,21 @@ function hidePop(pop) {
     if (pop.dataset.cgFlow !== undefined) {
         pop.removeAttribute('data-cg-flow');
         pop.removeAttribute('data-cg-open');
-        clickgo.dom.unwatchSize(pop);
-        clickgo.tool.sleep(334).then(() => {
+        lDom.unwatchSize(pop);
+        lTool.sleep(334).then(() => {
             if (pop.dataset.cgFlow !== undefined) {
                 return;
             }
             pop.dataset.cgPopNone = '';
-        }).catch(() => {
-        });
+        }).catch(() => { });
         return;
     }
     if (pop.dataset.cgLevel === undefined) {
         return;
     }
+    /** --- 是 pop 还是 el 基 --- */
     const isPop = pop.dataset.cgPop !== undefined ? true : false;
+    /** --- 当前层级 --- */
     const level = pop.dataset.cgLevel ? parseInt(pop.dataset.cgLevel) : -1;
     if (level === -1) {
         return;
@@ -1872,31 +2248,34 @@ function hidePop(pop) {
     if (isPop) {
         pop.removeAttribute('data-cg-open');
         pop.removeAttribute('data-cg-level');
-        clickgo.dom.unwatchSize(pop);
-        clickgo.dom.unwatchPosition(popInfo.elList[level]);
+        lDom.unwatchSize(pop);
+        lDom.unwatchPosition(popInfo.elList[level]);
         popInfo.elList[level].removeAttribute('data-cg-pop-open');
         popInfo.elList[level].removeAttribute('data-cg-level');
-        clickgo.tool.sleep(334).then(() => {
+        lTool.sleep(334).then(() => {
             if (pop.dataset.cgLevel !== undefined) {
                 return;
             }
             pop.dataset.cgPopNone = '';
         }).catch(() => {
+            //
         });
     }
     else {
         if (popInfo.list[level]) {
+            /** --- el 对应的 pop --- */
             const opop = popInfo.list[level];
             opop.removeAttribute('data-cg-open');
             opop.removeAttribute('data-cg-level');
-            clickgo.dom.unwatchSize(popInfo.list[level]);
-            clickgo.dom.unwatchPosition(pop);
-            clickgo.tool.sleep(334).then(() => {
+            lDom.unwatchSize(popInfo.list[level]);
+            lDom.unwatchPosition(pop);
+            lTool.sleep(334).then(() => {
                 if (opop.dataset.cgLevel !== undefined) {
                     return;
                 }
                 opop.dataset.cgPopNone = '';
             }).catch(() => {
+                //
             });
         }
         pop.removeAttribute('data-cg-pop-open');
@@ -1907,7 +2286,8 @@ function hidePop(pop) {
     popInfo.wayList.splice(level);
     popInfo.time.splice(level);
 }
-function isJustPop(el) {
+/** --- 检测 pop 是不是刚刚显示的 --- */
+export function isJustPop(el) {
     if (el instanceof HTMLElement) {
         const level = el.dataset.cgLevel;
         if (!level) {
@@ -1921,8 +2301,12 @@ function isJustPop(el) {
     }
     return true;
 }
-function doFocusAndPopEvent(e) {
-    if (dom.hasTouchButMouse(e)) {
+/**
+ * --- 点下 (mousedown / touchstart) 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个 ---
+ * @param e 事件对象
+ */
+export async function doFocusAndPopEvent(e) {
+    if (lDom.hasTouchButMouse(e)) {
         return;
     }
     const target = e.target;
@@ -1930,6 +2314,8 @@ function doFocusAndPopEvent(e) {
         return;
     }
     const paths = e.path ?? (e.composedPath ? e.composedPath() : []);
+    // --- 检测是不是窗体内部点击 ---
+    /** --- 当前点在了触发弹出层的原元素上 --- */
     let isCgPopOpen = null;
     for (const item of paths) {
         if (!item.tagName) {
@@ -1940,8 +2326,9 @@ function doFocusAndPopEvent(e) {
             continue;
         }
         if (item.classList.contains('cg-form-wrap')) {
-            const formId = parseInt(item.getAttribute('data-form-id') ?? '0');
-            changeFocus(formId);
+            // --- 窗体内部点击，转换焦点到当前窗体，但触发隐藏 pop ---
+            const formId = item.getAttribute('data-form-id') ?? '';
+            await changeFocus(formId);
             if (isCgPopOpen) {
                 if (!isJustPop(isCgPopOpen)) {
                     hidePop();
@@ -1956,6 +2343,7 @@ function doFocusAndPopEvent(e) {
             break;
         }
     }
+    // --- 检测是不是弹出层 ---
     for (const item of paths) {
         if (!item.tagName) {
             continue;
@@ -1964,73 +2352,108 @@ function doFocusAndPopEvent(e) {
             break;
         }
         if (item.dataset.cgPop !== undefined) {
+            // --- 弹出层内点击，不触发丢失焦点
+            // --- normal: 不触发隐藏 pop，是否隐藏请自行处理 ---
+            // --- click: 自动隐藏下一层 pop，若有 ---
             if (item.dataset.cgLevel) {
                 const nextlevel = parseInt(item.dataset.cgLevel) + 1;
                 if (popInfo.wayList[nextlevel] === 'click' && !isJustPop(nextlevel)) {
-                    clickgo.form.hidePop(popInfo.list[nextlevel]);
+                    // --- 隐藏 ---
+                    hidePop(popInfo.list[nextlevel]);
                 }
             }
             return;
         }
     }
+    // --- 普罗大众的状态，要隐藏 menu，并且丢失窗体焦点 ---
     hidePop();
-    changeFocus();
+    await changeFocus();
 }
-window.addEventListener('touchstart', doFocusAndPopEvent, {
+window.addEventListener('touchstart', (e) => {
+    doFocusAndPopEvent(e).catch(() => { });
+}, {
     'passive': true
 });
-window.addEventListener('mousedown', doFocusAndPopEvent);
-function remove(formId) {
+window.addEventListener('mousedown', (e) => {
+    doFocusAndPopEvent(e).catch(() => { });
+});
+/**
+ * --- 移除一个 form（关闭窗口） ---
+ * @param formId 要移除的 form id
+ */
+export function remove(formId) {
     const taskId = getTaskId(formId);
-    if (!task.list[taskId].forms[formId]) {
+    const task = lTask.getOrigin(taskId);
+    if (!task?.forms[formId]) {
         return false;
     }
-    if (task.list[taskId].forms[formId].closed) {
+    if (task.forms[formId].closed) {
         return false;
     }
-    task.list[taskId].forms[formId].closed = true;
-    const title = task.list[taskId].forms[formId].vroot.$refs.form.title;
-    const icon = task.list[taskId].forms[formId].vroot.$refs.form.iconDataUrl;
-    const io = task.list[taskId].runtime.dialogFormIds.indexOf(formId);
+    const rt = lTask.getRuntime(sysId, taskId);
+    if (!rt) {
+        return false;
+    }
+    task.forms[formId].closed = true;
+    const title = task.forms[formId].vroot.$refs.form.title;
+    const icon = task.forms[formId].vroot.$refs.form.iconDataUrl;
+    const io = rt.dialogFormIds.indexOf(formId);
     if (io > -1) {
-        task.list[taskId].runtime.dialogFormIds.splice(io, 1);
+        // --- 取消 dialog mask 记录 ---
+        rt.dialogFormIds.splice(io, 1);
     }
-    task.list[taskId].forms[formId].vroot.$refs.form.$data.isShow = false;
-    setTimeout(function () {
-        const fid = getMaxZIndexID({
-            'formIds': [formId]
-        });
-        if (fid) {
-            changeFocus(fid);
-        }
-        else {
-            changeFocus();
-        }
-        if (!task.list[taskId]) {
-            return true;
-        }
-        task.list[taskId].forms[formId].vapp.unmount();
-        task.list[taskId].forms[formId].vapp._container.remove();
-        exports.elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')?.remove();
-        if (io > -1) {
-            task.list[taskId].forms[formId].vroot.cgDialogCallback();
-        }
-        delete task.list[taskId].forms[formId];
-        dom.removeStyle(taskId, 'form', formId);
-        core.trigger('formRemoved', taskId, formId, title, icon);
-        dom.clearWatchStyle(formId);
-        dom.clearWatchProperty(formId);
-        dom.clearWatchPosition(formId);
-        native.clear(formId, taskId);
-        delete exports.activePanels[formId];
-        if (Object.keys(task.list[taskId].forms).length === 0) {
-            task.end(taskId);
-        }
+    task.forms[formId].vroot.$refs.form.$data.isShow = false;
+    setTimeout(() => {
+        (async () => {
+            // --- 获取最大的 z index 窗体，并让他获取焦点 ---
+            const fid = await getMaxZIndexID(sysId, {
+                'formIds': [formId],
+            });
+            if (fid) {
+                await changeFocus(fid);
+            }
+            else {
+                await changeFocus();
+            }
+            // --- 延长 100 秒是为了响应 100 毫秒的动画 ---
+            const task = lTask.getOrigin(taskId);
+            if (!task) {
+                // --- 可能这时候 task 已经被结束了 ---
+                return true;
+            }
+            task.forms[formId].vapp.unmount();
+            task.forms[formId].vapp._container.remove();
+            elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')?.remove();
+            if (io > -1) {
+                // --- 如果是 dialog 则要执行回调 ---
+                task.forms[formId].vroot.cgDialogCallback();
+            }
+            delete task.forms[formId];
+            // --- 移除 form 的 style ---
+            lDom.removeStyle(taskId, 'form', formId);
+            // --- 触发 formRemoved 事件 ---
+            lCore.trigger('formRemoved', taskId, formId, title, icon).catch(() => { });
+            lDom.clearWatchStyle(formId);
+            lDom.clearWatchProperty(formId);
+            lDom.clearWatchPosition(formId);
+            lNative.clear(formId, taskId);
+            delete activePanels[formId];
+            // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
+            if (Object.keys(task.forms).length === 0) {
+                await lTask.end(taskId);
+            }
+        })().catch(() => { });
     }, 300);
     return true;
 }
-function removePanel(id, vapp, el) {
-    const formWrap = dom.findParentByClass(el, 'cg-form-wrap');
+/**
+ * --- 移除 panel 挂载，通常发生在 panel 控件的 onBeforeUnmount 中 ---
+ * @param id panel id
+ * @param vapp panel 的 vapp 对象 ---
+ * @param el panel 控件
+ */
+export function removePanel(id, vapp, el) {
+    const formWrap = lDom.findParentByClass(el, 'cg-form-wrap');
     if (!formWrap) {
         return false;
     }
@@ -2042,27 +2465,33 @@ function removePanel(id, vapp, el) {
     if (!taskId) {
         return false;
     }
-    const tid = parseInt(taskId);
     vapp.unmount();
     vapp._container.remove();
     el.querySelector('[data-panel-id="' + id.toString() + '"]')?.remove();
-    dom.removeStyle(tid, 'form', formId, id);
-    dom.clearWatchStyle(formId, id);
-    dom.clearWatchProperty(formId, id);
-    dom.clearWatchPosition(formId, id);
-    if (exports.activePanels[formId]) {
-        const io = exports.activePanels[formId].indexOf(id);
+    // --- 移除 form 的 style ---
+    lDom.removeStyle(taskId, 'form', formId, id);
+    lDom.clearWatchStyle(formId, id);
+    lDom.clearWatchProperty(formId, id);
+    lDom.clearWatchPosition(formId, id);
+    if (activePanels[formId]) {
+        const io = activePanels[formId].indexOf(id);
         if (io >= 0) {
-            exports.activePanels[formId].splice(io, 1);
+            activePanels[formId].splice(io, 1);
         }
-        if (!exports.activePanels[formId].length) {
-            delete exports.activePanels[formId];
+        if (!activePanels[formId].length) {
+            delete activePanels[formId];
         }
     }
     return true;
 }
+/**
+ * --- 根据任务 id 和 form id 获取 IForm 对象 ---
+ * @param taskId 任务 id
+ * @param formId 窗体 id
+ */
 function getForm(taskId, formId) {
-    const t = task.list[taskId];
+    /** --- 当前的 task 对象 --- */
+    const t = lTask.getOrigin(taskId);
     if (!t) {
         return null;
     }
@@ -2072,82 +2501,88 @@ function getForm(taskId, formId) {
     }
     return form;
 }
-async function createPanel(rootPanel, cls, opt = {}, taskId) {
+/**
+ * --- 创建 panel 对象，一般情况下无需使用 ---
+ * @param rootPanel 根 panel 控件
+ * @param cls 路径字符串或 AbstractPanel 类
+ * @param opt 选项
+ */
+export async function createPanel(rootPanel, cls, opt = {}) {
     if (rootPanel.element.dataset.cgControl !== 'panel') {
         const err = new Error('form.createPanel: -0');
-        core.trigger('error', 0, 0, err, err.message);
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
         throw err;
     }
-    const formWrap = dom.findParentByData(rootPanel.element, 'form-id');
+    const formWrap = lDom.findParentByData(rootPanel.element, 'form-id');
     if (!formWrap) {
         const err = new Error('form.createPanel: -0');
-        core.trigger('error', 0, 0, err, err.message);
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
         throw err;
     }
-    const formId = parseInt(formWrap.dataset.formId);
-    if (!taskId) {
-        const err = new Error('form.createPanel: -1');
-        core.trigger('error', 0, 0, err, err.message);
-        throw err;
-    }
-    const t = task.list[taskId];
+    const formId = formWrap.dataset.formId;
+    /** --- 当前的 task 对象 --- */
+    const t = lTask.getOrigin(rootPanel.taskId);
     if (!t) {
-        const err = new Error('form.createPanel: -2');
-        core.trigger('error', 0, 0, err, err.message);
+        const err = new Error('form.createPanel: -1');
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
         throw err;
     }
+    /** --- 布局内容 --- */
     let layout = '';
     if (opt.layout) {
         layout = opt.layout;
     }
+    /** --- 样式内容 --- */
     let style = '';
+    /** --- 样式前缀 --- */
     let prep = '';
     if (opt.style) {
         style = opt.style;
     }
+    /** --- 文件在包内的路径，不以 / 结尾 --- */
     let filename = '';
     if (typeof cls === 'string') {
-        filename = tool.urlResolve(opt.path ?? '/', cls);
+        filename = lTool.urlResolve(opt.path ?? '/', cls) + '.js';
         if (!layout) {
-            const l = t.app.files[filename + '.xml'];
+            const l = t.app.files[cls + '.xml'];
             if (typeof l !== 'string') {
-                const err = new Error('form.createPanel: -3');
-                core.trigger('error', 0, 0, err, err.message);
+                const err = new Error('form.createPanel: -2');
+                lCore.trigger('error', '', '', err, err.message).catch(() => { });
                 throw err;
             }
             layout = l;
         }
         if (!style) {
-            const s = t.app.files[filename + '.css'];
+            const s = t.app.files[cls + '.css'];
             if (typeof s === 'string') {
                 style = s;
             }
         }
         cls = class extends AbstractPanel {
             get filename() {
-                return filename + '.js';
-            }
-            get taskId() {
-                return t.id;
+                return filename;
             }
         };
     }
-    const panelId = ++info.lastPanelId;
+    // --- 申请 panelId ---
+    const panelId = lTool.random(8, lTool.RANDOM_LUN);
+    /** --- 要新建的 panel 类对象 --- */
     const panel = new cls();
     if (!filename) {
         filename = panel.filename;
     }
-    const lio = filename.lastIndexOf('/');
-    const path = filename.slice(0, lio);
+    const path = filename.slice(0, filename.lastIndexOf('/'));
+    // --- 布局 ---
     if (!layout) {
         const l = t.app.files[filename.slice(0, -2) + 'xml'];
         if (typeof l !== 'string') {
-            const err = new Error('form.createPanel: -4');
-            core.trigger('error', 0, 0, err, err.message);
+            const err = new Error('form.createPanel: -3');
+            lCore.trigger('error', '', '', err, err.message).catch(() => { });
             throw err;
         }
         layout = l;
     }
+    // --- 样式 ---
     if (!style) {
         const s = t.app.files[filename.slice(0, -2) + 'css'];
         if (typeof s === 'string') {
@@ -2155,38 +2590,67 @@ async function createPanel(rootPanel, cls, opt = {}, taskId) {
         }
     }
     if (style) {
-        const r = tool.stylePrepend(style);
+        // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
+        const r = lTool.stylePrepend(style);
         prep = r.prep;
-        style = await tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
+        style = await lTool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
     }
-    layout = tool.purify(layout);
-    layout = tool.layoutAddTagClassAndReTagName(layout, true);
+    // --- 纯净化 ---
+    layout = lTool.purify(layout);
+    // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
+    layout = lTool.layoutAddTagClassAndReTagName(layout, true);
+    // --- 给所有控件传递窗体的 focus 信息 ---
+    /*
+    layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
+        'include': [/^cg-.+/]
+    });
+    */
+    // --- 给 layout 的 class 增加前置 ---
     const prepList = ['cg-task' + t.id.toString() + '_'];
     if (prep !== '') {
         prepList.push(prep);
     }
-    layout = tool.layoutClassPrepend(layout, prepList);
-    layout = tool.eventsAttrWrap(layout);
+    layout = lTool.layoutClassPrepend(layout, prepList);
+    // --- 给 event 增加包裹 ---
+    layout = lTool.eventsAttrWrap(layout);
+    // --- 给 teleport 做处理 ---
     if (layout.includes('<teleport')) {
-        layout = tool.teleportGlue(layout, formId);
+        layout = lTool.teleportGlue(layout, formId);
     }
-    const components = control.buildComponents(t.id, formId, path);
+    // --- 获取要定义的控件列表 ---
+    const components = lControl.buildComponents(t.id, formId, panel.filename);
     if (!components) {
-        const err = new Error('form.createPanel: -5');
-        core.trigger('error', 0, 0, err, err.message);
+        const err = new Error('form.createPanel: -4');
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
         throw err;
     }
+    /** --- class 对象类的属性列表 --- */
     const idata = {};
     const cdata = Object.entries(panel);
     for (const item of cdata) {
         if (item[0] === 'access') {
+            // --- access 属性不放在 data 当中 ---
             continue;
         }
         idata[item[0]] = item[1];
     }
-    const prot = tool.getClassPrototype(panel);
+    /** --- class 对象的方法和 getter/setter 列表 --- */
+    const prot = lTool.getClassPrototype(panel);
     const methods = prot.method;
     const computed = prot.access;
+    computed.taskId = {
+        get: function () {
+            return t.id;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "taskId".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
     computed.formId = {
         get: function () {
             return formId;
@@ -2265,25 +2729,32 @@ async function createPanel(rootPanel, cls, opt = {}, taskId) {
             return;
         }
     };
+    // --- 插入 dom ---
     rootPanel.element.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
     if (style) {
-        dom.pushStyle(t.id, style, 'form', formId, panelId);
+        lDom.pushStyle(t.id, style, 'form', formId, panelId);
     }
+    /** --- panel wrap element 对象 --- */
     const mel = rootPanel.element.children.item(rootPanel.element.children.length - 1);
     mel.style.position = 'absolute';
+    /*
+    mel.style.pointerEvents = 'none';
+    mel.style.opacity = '0';
+    */
     mel.style.display = 'none';
+    // --- 创建 app 对象 ---
     const rtn = await new Promise(function (resolve) {
-        const vapp = clickgo.vue.createApp({
+        const vapp = clickgo.modules.vue.createApp({
             'template': layout.replace(/^<cg-panel([\s\S]+)-panel>$/, '<cg-layout$1-layout>'),
             'data': function () {
-                return tool.clone(idata);
+                return lTool.clone(idata);
             },
             'methods': methods,
             'computed': computed,
             'beforeCreate': panel.onBeforeCreate,
             'created': function () {
                 if (panel.access) {
-                    this.access = tool.clone(panel.access);
+                    this.access = lTool.clone(panel.access);
                 }
                 this.onCreated();
             },
@@ -2293,9 +2764,10 @@ async function createPanel(rootPanel, cls, opt = {}, taskId) {
             'mounted': async function () {
                 await this.$nextTick();
                 mel.children.item(0).style.flex = '1';
+                // --- 完成 ---
                 resolve({
                     'vapp': vapp,
-                    'vroot': this
+                    'vroot': this,
                 });
             },
             'beforeUpdate': function () {
@@ -2313,15 +2785,16 @@ async function createPanel(rootPanel, cls, opt = {}, taskId) {
                 this.onUnmounted();
             }
         });
-        vapp.config.errorHandler = function (err, vm, info) {
+        vapp.config.errorHandler = function (err, instance, info) {
             notify({
                 'title': 'Runtime Error',
-                'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                'content': `Message: ${err.message}\nTask id: ${instance?.taskId ?? ''}\nForm id: ${instance?.formId ?? ''}`,
                 'type': 'danger'
             });
-            console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
-            core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
+            console.error('Runtime Error [form.createPanel.errorHandler]', `Message: ${err.message}\nTask id: ${instance?.taskId ?? ''}\nForm id: ${instance?.formId ?? ''}`, err, info);
+            lCore.trigger('error', instance?.taskId ?? '', instance?.formId ?? '', err, info + '(-3,' + (instance?.taskId ?? '') + ',' + (instance?.formId ?? '') + ')').catch(() => { });
         };
+        // --- 挂载控件对象到 vapp ---
         for (const key in components) {
             vapp.component(key, components[key]);
         }
@@ -2335,15 +2808,17 @@ async function createPanel(rootPanel, cls, opt = {}, taskId) {
                 'type': 'danger'
             });
             console.error('Runtime Error [form.createPanel.mount]', `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`, err);
-            core.trigger('error', t.id, formId, err, err.message);
+            lCore.trigger('error', t.id, formId, err, err.message).catch(() => { });
         }
     });
-    await tool.sleep(34);
+    // --- 执行 mounted ---
+    await lTool.sleep(34);
     try {
         await panel.onMounted.call(rtn.vroot);
     }
     catch (err) {
-        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create panel mounted error: -6.');
+        // --- 创建失败，做垃圾回收 ---
+        lCore.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create panel mounted error: -5.').catch(() => { });
         try {
             rtn.vapp.unmount();
         }
@@ -2354,13 +2829,14 @@ async function createPanel(rootPanel, cls, opt = {}, taskId) {
                 'content': msg,
                 'type': 'danger'
             });
-            console.log('Panel Unmount Error', msg, err);
+            // console.log('Panel Unmount Error', msg, err);
         }
         rtn.vapp._container.remove();
-        dom.clearWatchStyle(rtn.vroot.formId, panelId);
-        dom.clearWatchProperty(rtn.vroot.formId, panelId);
-        dom.clearWatchPosition(rtn.vroot.formId, panelId);
-        dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
+        lDom.clearWatchStyle(rtn.vroot.formId, panelId);
+        lDom.clearWatchProperty(rtn.vroot.formId, panelId);
+        lDom.clearWatchPosition(rtn.vroot.formId, panelId);
+        // --- 移除 style ---
+        lDom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId, panelId);
         throw err;
     }
     return {
@@ -2369,35 +2845,45 @@ async function createPanel(rootPanel, cls, opt = {}, taskId) {
         'vroot': rtn.vroot
     };
 }
-async function create(cls, data, opt = {}, taskId) {
-    if (!taskId) {
-        const err = new Error('form.create: -1');
-        core.trigger('error', 0, 0, err, err.message);
-        throw err;
+/**
+ * --- 创建一个窗体 ---
+ * @param current 当前任务 ID
+ * @param cls 路径字符串或 AbstractForm 类
+ * @param data 要传递的对象
+ * @param opt 其他替换选项
+ */
+export async function create(current, cls, data, opt = {}) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const t = task.list[taskId];
+    /** --- 当前的 task 对象 --- */
+    const t = lTask.getOrigin(current);
     if (!t) {
-        const err = new Error('form.create: -2');
-        core.trigger('error', 0, 0, err, err.message);
+        const err = new Error('form.create: -1');
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
         throw err;
     }
+    /** --- 布局内容 --- */
     let layout = '';
     if (opt.layout) {
         layout = opt.layout;
     }
+    /** --- 样式内容 --- */
     let style = '';
+    /** --- 样式前缀 --- */
     let prep = '';
     if (opt.style) {
         style = opt.style;
     }
+    /** --- 文件在包内的路径，不以 / 结尾 --- */
     let filename = '';
     if (typeof cls === 'string') {
-        filename = tool.urlResolve(opt.path ?? '/', cls);
+        filename = lTool.urlResolve(opt.path ?? '/', cls);
         if (!layout) {
             const l = t.app.files[filename + '.xml'];
             if (typeof l !== 'string') {
-                const err = new Error('form.create: -3');
-                core.trigger('error', 0, 0, err, err.message);
+                const err = new Error('form.create: -2');
+                lCore.trigger('error', '', '', err, err.message).catch(() => { });
                 throw err;
             }
             layout = l;
@@ -2408,31 +2894,33 @@ async function create(cls, data, opt = {}, taskId) {
                 style = s;
             }
         }
+        filename += '.js';
         cls = class extends AbstractForm {
             get filename() {
-                return filename + '.js';
-            }
-            get taskId() {
-                return t.id;
+                return filename;
             }
         };
     }
-    const formId = ++info.lastId;
+    // --- 申请 formId ---
+    const formId = lTool.random(8, lTool.RANDOM_LUN);
+    const findex = ++index;
+    /** --- 要新建的窗体类对象 --- */
     const frm = new cls();
     if (!filename) {
         filename = frm.filename;
     }
-    const lio = filename.lastIndexOf('/');
-    const path = filename.slice(0, lio);
+    const path = filename.slice(0, filename.lastIndexOf('/'));
+    // --- 布局 ---
     if (!layout) {
         const l = t.app.files[filename.slice(0, -2) + 'xml'];
         if (typeof l !== 'string') {
-            const err = new Error('form.create: -4');
-            core.trigger('error', 0, 0, err, err.message);
+            const err = new Error('form.create: -3');
+            lCore.trigger('error', '', '', err, err.message).catch(() => { });
             throw err;
         }
         layout = l;
     }
+    // --- 样式 ---
     if (!style) {
         const s = t.app.files[filename.slice(0, -2) + 'css'];
         if (typeof s === 'string') {
@@ -2440,42 +2928,90 @@ async function create(cls, data, opt = {}, taskId) {
         }
     }
     if (style) {
-        const r = tool.stylePrepend(style);
+        // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
+        const r = lTool.stylePrepend(style);
         prep = r.prep;
-        style = await tool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
+        style = await lTool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
     }
-    layout = tool.purify(layout);
-    layout = tool.layoutAddTagClassAndReTagName(layout, true);
+    // --- 纯净化 ---
+    layout = lTool.purify(layout);
+    // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
+    layout = lTool.layoutAddTagClassAndReTagName(layout, true);
+    // --- 给所有控件传递窗体的 focus 信息 ---
+    /*
+    layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
+        'include': [/^cg-.+/]
+    });
+    */
+    // --- 给 layout 的 class 增加前置 ---
     const prepList = ['cg-task' + t.id.toString() + '_'];
     if (prep !== '') {
         prepList.push(prep);
     }
-    layout = tool.layoutClassPrepend(layout, prepList);
-    layout = tool.eventsAttrWrap(layout);
+    layout = lTool.layoutClassPrepend(layout, prepList);
+    // --- 给 event 增加包裹 ---
+    layout = lTool.eventsAttrWrap(layout);
+    // --- 给 touchstart 增加 .passive 防止 [Violation] Added non-passive event listener to a scroll-blocking ---
+    /*
+    layout = layout.replace(/@(touchstart|touchmove|wheel)=/g, '@$1.passive=');
+    layout = layout.replace(/@(touchstart|touchmove|wheel)\.not=/g, '@$1=');
+    */
+    // --- 给 teleport 做处理 ---
     if (layout.includes('<teleport')) {
-        layout = tool.teleportGlue(layout, formId);
+        layout = lTool.teleportGlue(layout, formId);
     }
-    const components = control.buildComponents(t.id, formId, path);
+    // --- 获取要定义的控件列表 ---
+    const components = lControl.buildComponents(t.id, formId, path);
     if (!components) {
-        const err = new Error('form.create: -5');
-        core.trigger('error', 0, 0, err, err.message);
+        const err = new Error('form.create: -4');
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
         throw err;
     }
+    /** --- class 对象类的属性列表 --- */
     const idata = {};
     const cdata = Object.entries(frm);
     for (const item of cdata) {
         if (item[0] === 'access') {
+            // --- access 属性不放在 data 当中 ---
             continue;
         }
         idata[item[0]] = item[1];
     }
     idata._formFocus = false;
-    if (clickgo.isNative() && (formId === 1) && !clickgo.isImmersion() && !clickgo.hasFrame()) {
-        idata.isNativeSync = true;
+    // --- 判断是否是 native 且无边框的第一个窗体 ---
+    if (clickgo.isNative() && (findex === 0) && !clickgo.hasFrame()) {
+        idata.isNativeNoFrameFirst = true;
     }
-    const prot = tool.getClassPrototype(frm);
+    /** --- class 对象的方法和 getter/setter 列表 --- */
+    const prot = lTool.getClassPrototype(frm);
     const methods = prot.method;
     const computed = prot.access;
+    computed.findex = {
+        get: function () {
+            return findex;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "findex".\nPath: ${this.filename}`,
+                'type': 'danger',
+            });
+            return;
+        }
+    };
+    computed.taskId = {
+        get: function () {
+            return t.id;
+        },
+        set: function () {
+            notify({
+                'title': 'Error',
+                'content': `The software tries to modify the system variable "taskId".\nPath: ${this.filename}`,
+                'type': 'danger'
+            });
+            return;
+        }
+    };
     computed.formId = {
         get: function () {
             return formId;
@@ -2515,6 +3051,7 @@ async function create(cls, data, opt = {}, taskId) {
             return;
         }
     };
+    // --- 是否在底层的窗体 ---
     idata._bottomMost = false;
     computed.bottomMost = {
         get: function () {
@@ -2522,6 +3059,7 @@ async function create(cls, data, opt = {}, taskId) {
         },
         set: function (v) {
             if (v) {
+                // --- 置底 ---
                 this._bottomMost = true;
                 this.$el.dataset.cgBottomMost = '';
                 if (this._topMost) {
@@ -2530,12 +3068,14 @@ async function create(cls, data, opt = {}, taskId) {
                 this.$refs.form.$data.zIndex = ++info.bottomLastZIndex;
             }
             else {
+                // --- 取消置底 ---
                 this._bottomMost = false;
                 this.$el.removeAttribute('data-cg-bottom-most');
                 this.$refs.form.$data.zIndex = ++info.lastZIndex;
             }
         }
     };
+    // --- 是否在顶层的窗体 ---
     idata._topMost = false;
     computed.topMost = {
         get: function () {
@@ -2543,24 +3083,27 @@ async function create(cls, data, opt = {}, taskId) {
         },
         set: function (v) {
             if (v) {
+                // --- 置顶 ---
                 this._topMost = true;
                 if (this._bottomMost) {
                     this._bottomMost = false;
                     this.$el.removeAttribute('data-cg-bottom-most');
                 }
                 if (!this._formFocus) {
-                    changeFocus(this.formId);
+                    changeFocus(this.formId).catch(() => { });
                 }
                 else {
                     this.$refs.form.$data.zIndex = ++info.topLastZIndex;
                 }
             }
             else {
+                // --- 取消置顶 ---
                 this._topMost = false;
                 this.$refs.form.$data.zIndex = ++info.lastZIndex;
             }
         }
     };
+    // --- 获取和设置 form hash ---
     idata._historyHash = [];
     idata._formHash = '';
     computed.formHash = {
@@ -2575,17 +3118,19 @@ async function create(cls, data, opt = {}, taskId) {
                 this._formHashData = {};
             }
             if (this.inStep) {
+                // --- 在 step 中，要判断 step 是否正确 ---
                 (async () => {
                     if (this._stepValues.includes(v)) {
                         this.$refs.form.stepValue = v;
                     }
                     else {
-                        if (!await clickgo.form.confirm({
-                            'taskId': this.taskId,
+                        // --- 不应该 ---
+                        if (!await confirm(current, {
                             'content': info.locale[this.locale].confirmExitStep
                         })) {
                             return;
                         }
+                        // --- 退出了 ---
                         this._inStep = false;
                         this.$refs.form.stepHide();
                     }
@@ -2593,7 +3138,7 @@ async function create(cls, data, opt = {}, taskId) {
                         this._historyHash.push(this._formHash);
                     }
                     this._formHash = v;
-                    core.trigger('formHashChange', t.id, formId, v, this._formHashData);
+                    lCore.trigger('formHashChange', t.id, formId, v, this._formHashData).catch(() => { });
                 })();
                 return;
             }
@@ -2601,9 +3146,10 @@ async function create(cls, data, opt = {}, taskId) {
                 this._historyHash.push(this._formHash);
             }
             this._formHash = v;
-            core.trigger('formHashChange', t.id, formId, v, this._formHashData);
+            lCore.trigger('formHashChange', t.id, formId, v, this._formHashData).catch(() => { });
         }
     };
+    // --- 获取和设置 form hash with data 的数据 ---
     idata._lastFormHashData = 0;
     idata._formHashData = {};
     computed.formHashData = {
@@ -2615,6 +3161,7 @@ async function create(cls, data, opt = {}, taskId) {
             this._lastFormHashData = Date.now();
         }
     };
+    // --- 当前窗体是否显示在任务栏 ---
     idata._showInSystemTask = true;
     computed.showInSystemTask = {
         get: function () {
@@ -2622,9 +3169,10 @@ async function create(cls, data, opt = {}, taskId) {
         },
         set: function (v) {
             this._showInSystemTask = v;
-            core.trigger('formShowInSystemTaskChange', t.id, formId, v);
+            lCore.trigger('formShowInSystemTaskChange', t.id, formId, v).catch(() => { });
         }
     };
+    // --- ready 方法 ---
     const cbs = [];
     methods.ready = function (cb) {
         if (this.isReady) {
@@ -2633,24 +3181,27 @@ async function create(cls, data, opt = {}, taskId) {
         }
         cbs.push(cb);
     };
-    exports.elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
-    exports.elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
+    // --- 插入 dom ---
+    elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
+    elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
     if (style) {
-        dom.pushStyle(t.id, style, 'form', formId);
+        lDom.pushStyle(t.id, style, 'form', formId);
     }
-    const el = exports.elements.list.children.item(exports.elements.list.children.length - 1);
+    /** --- form wrap element 对象 --- */
+    const el = elements.list.children.item(elements.list.children.length - 1);
+    // --- 创建 app 对象 ---
     const rtn = await new Promise(function (resolve) {
-        const vapp = clickgo.vue.createApp({
+        const vapp = clickgo.modules.vue.createApp({
             'template': layout.replace(/^<cg-form/, '<cg-form ref="form"'),
             'data': function () {
-                return tool.clone(idata);
+                return lTool.clone(idata);
             },
             'methods': methods,
             'computed': computed,
             'beforeCreate': frm.onBeforeCreate,
             'created': function () {
                 if (frm.access) {
-                    this.access = tool.clone(frm.access);
+                    this.access = lTool.clone(frm.access);
                 }
                 this.onCreated();
             },
@@ -2659,10 +3210,14 @@ async function create(cls, data, opt = {}, taskId) {
             },
             'mounted': async function () {
                 await this.$nextTick();
+                // --- 判断是否有 icon，对 icon 进行第一次读取 ---
+                // --- 为啥要在这搞，因为 form 控件中读取，将可能导致下方的 formCreate 事件获取不到 icon 图标 ---
+                // --- 而如果用延迟的方式获取，将可能导致 changeFocus 的窗体焦点事件先于 formCreate 触发 ---
                 if (this.$refs.form.icon) {
-                    const icon = await fs.getContent(this.$refs.form.icon, undefined, taskId);
-                    this.$refs.form.iconDataUrl = (icon instanceof Blob) ? await tool.blob2DataUrl(icon) : '';
+                    const icon = await lFs.getContent(current, this.$refs.form.icon);
+                    this.$refs.form.iconDataUrl = (icon instanceof Blob) ? await lTool.blob2DataUrl(icon) : '';
                 }
+                // --- 完成 ---
                 resolve({
                     'vapp': vapp,
                     'vroot': this
@@ -2683,15 +3238,16 @@ async function create(cls, data, opt = {}, taskId) {
                 this.onUnmounted();
             }
         });
-        vapp.config.errorHandler = function (err, vm, info) {
+        vapp.config.errorHandler = function (err, instance, info) {
             notify({
                 'title': 'Runtime Error',
-                'content': `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`,
+                'content': `Message: ${err.message}\nTask id: ${instance?.taskId ?? ''}\nForm id: ${instance?.formId ?? ''}`,
                 'type': 'danger'
             });
-            console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${vm.taskId}\nForm id: ${vm.formId}`, err, info);
-            core.trigger('error', vm.taskId, vm.formId, err, info + '(-3,' + vm.taskId + ',' + vm.formId + ')');
+            console.error('Runtime Error [form.create.errorHandler]', `Message: ${err.message}\nTask id: ${instance?.taskId ?? ''}\nForm id: ${instance?.formId ?? ''}`, err, info);
+            lCore.trigger('error', instance?.taskId ?? 0, instance?.formId ?? 0, err, info + '(-3,' + instance?.taskId + ',' + instance?.formId + ')').catch(() => { });
         };
+        // --- 挂载控件对象到 vapp ---
         for (const key in components) {
             vapp.component(key, components[key]);
         }
@@ -2705,22 +3261,26 @@ async function create(cls, data, opt = {}, taskId) {
                 'type': 'danger'
             });
             console.error('Runtime Error [form.create.mount]', `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`, err);
-            core.trigger('error', t.id, formId, err, err.message);
+            lCore.trigger('error', t.id, formId, err, err.message).catch(() => { });
         }
     });
+    // --- 创建 form 信息对象 ---
     const nform = {
         'id': formId,
         'vapp': rtn.vapp,
         'vroot': rtn.vroot,
         'closed': false
     };
+    // --- 挂载 form ---
     t.forms[formId] = nform;
-    await tool.sleep(34);
+    // --- 执行 mounted ---
+    await lTool.sleep(34);
     try {
         await frm.onMounted.call(rtn.vroot, data ?? {});
     }
     catch (err) {
-        core.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -6.');
+        // --- 窗体创建失败，做垃圾回收 ---
+        lCore.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -6.').catch(() => { });
         delete t.forms[formId];
         try {
             rtn.vapp.unmount();
@@ -2732,51 +3292,59 @@ async function create(cls, data, opt = {}, taskId) {
                 'content': msg,
                 'type': 'danger'
             });
-            console.log('Form Unmount Error', msg, err);
+            // console.log('Form Unmount Error', msg, err);
         }
         rtn.vapp._container.remove();
-        exports.elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
-        dom.clearWatchStyle(rtn.vroot.formId);
-        dom.clearWatchProperty(rtn.vroot.formId);
-        dom.clearWatchPosition(rtn.vroot.formId);
-        native.clear(formId, t.id);
-        dom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
+        elements.popList.querySelector('[data-form-id="' + rtn.vroot.formId + '"]')?.remove();
+        lDom.clearWatchStyle(rtn.vroot.formId);
+        lDom.clearWatchProperty(rtn.vroot.formId);
+        lDom.clearWatchPosition(rtn.vroot.formId);
+        lNative.clear(formId, t.id);
+        // --- 移除 style ---
+        lDom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
         throw err;
     }
-    core.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl, rtn.vroot.showInSystemTask);
-    if (rtn.vroot.isNativeSync) {
-        await native.invoke('cg-set-size', native.getToken(), rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
+    // --- 触发 formCreated 事件 ---
+    lCore.trigger('formCreated', t.id, formId, rtn.vroot.$refs.form.title, rtn.vroot.$refs.form.iconDataUrl, rtn.vroot.showInSystemTask).catch(() => { });
+    // --- 若无边框，且是第一个窗体，则先设置一下实体窗体大小 ---
+    if (rtn.vroot.isNativeNoFrameFirst) {
+        await lNative.invokeSys(sysId, 'cg-set-size', rtn.vroot.$refs.form.$el.offsetWidth, rtn.vroot.$refs.form.$el.offsetHeight);
+        // --- 然后监听外面窗体的大小来设置里面的窗体 ---
         window.addEventListener('resize', function () {
             rtn.vroot.$refs.form.setPropData('width', window.innerWidth);
             rtn.vroot.$refs.form.setPropData('height', window.innerHeight);
         });
     }
+    // --- 完全创建完毕 ---
     rtn.vroot.isReady = true;
     for (const cb of cbs) {
         cb.call(rtn.vroot);
     }
     return rtn.vroot;
 }
-function dialog(opt) {
+/**
+ * --- 显示一个 dialog ---
+ * @param current 当前窗体 id
+ * @param opt 选项或者一段文字
+ */
+export function dialog(current, opt) {
     return new Promise(function (resolve) {
+        if (typeof current !== 'string') {
+            current = current.taskId;
+        }
         if (typeof opt === 'string') {
             opt = {
                 'content': opt
             };
         }
-        const filename = tool.urlResolve(opt.path ?? '/', './tmp' + (Math.random() * 100000000000000).toFixed() + '.js');
+        const filename = lTool.urlResolve(opt.path ?? '/', './tmp' + (Math.random() * 100000000000000).toFixed() + '.js');
         const nopt = opt;
-        const taskId = nopt.taskId;
-        if (!taskId) {
-            resolve('');
-            return;
-        }
-        const t = task.list[taskId];
+        const t = lTask.getOrigin(current);
         if (!t) {
             resolve('');
             return;
         }
-        const locale = t.locale.lang || core.config.locale;
+        const locale = t.locale.lang || lCore.config.locale;
         nopt.buttons ??= [info.locale[locale]?.ok ?? info.locale['en'].ok];
         const cls = class extends AbstractForm {
             constructor() {
@@ -2787,9 +3355,6 @@ function dialog(opt) {
             }
             get filename() {
                 return filename;
-            }
-            get taskId() {
-                return taskId;
             }
             select(button) {
                 const event = {
@@ -2812,10 +3377,10 @@ function dialog(opt) {
                 }
             }
         };
-        create(cls, undefined, {
+        create(current, cls, undefined, {
             'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
-        }, t.id).then((frm) => {
+        }).then((frm) => {
             if (typeof frm === 'number') {
                 resolve('');
                 return;
@@ -2830,30 +3395,33 @@ function dialog(opt) {
         });
     });
 }
-async function confirm(opt) {
+/**
+ * --- 显示一个 confirm ---
+ * @param current 当前任务 id
+ * @param opt 选项或者一段文字
+ */
+export async function confirm(current, opt) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
     if (typeof opt === 'string') {
         opt = {
             'content': opt
         };
     }
-    const taskId = opt.taskId;
-    if (!taskId) {
-        return false;
-    }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(current);
     if (!t) {
         return false;
     }
-    const locale = t.locale.lang || core.config.locale;
+    const locale = t.locale.lang || lCore.config.locale;
     const buttons = [info.locale[locale]?.no ?? info.locale['en'].no, info.locale[locale]?.yes ?? info.locale['en'].yes];
     if (opt.cancel) {
         buttons.unshift(info.locale[locale]?.cancel ?? info.locale['en'].cancel);
     }
-    const res = await dialog({
-        'taskId': taskId,
+    const res = await dialog(current, {
         'title': opt.title,
         'content': opt.content,
-        'buttons': buttons
+        'buttons': buttons,
     });
     if (res === (info.locale[locale]?.yes ?? info.locale['en'].yes)) {
         return true;
@@ -2863,28 +3431,31 @@ async function confirm(opt) {
     }
     return false;
 }
-async function prompt(opt) {
+/**
+ * --- 显示一个输入框 dialog ---
+ * @param current 当前任务 id
+ * @param opt 选项或者提示文字
+ */
+export async function prompt(current, opt) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
     if (typeof opt === 'string') {
         opt = {
             'content': opt
         };
     }
-    const taskId = opt.taskId;
-    if (!taskId) {
-        return '';
-    }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(current);
     if (!t) {
         return '';
     }
-    const locale = t.locale.lang || core.config.locale;
+    const locale = t.locale.lang || lCore.config.locale;
     const buttons = [info.locale[locale]?.ok ?? info.locale['en'].ok];
     const cancelBtn = info.locale[locale]?.cancel ?? info.locale['en'].cancel;
     if (opt.cancel === true || opt.cancel === undefined) {
         buttons.unshift(cancelBtn);
     }
-    const res = await dialog({
-        'taskId': taskId,
+    const res = await dialog(current, {
         'title': opt.title,
         'direction': 'v',
         'gutter': 10,
@@ -2893,17 +3464,18 @@ async function prompt(opt) {
             'text': opt.text ?? ''
         },
         'select': function (e, button) {
+            const isOk = button === (info.locale[locale]?.ok ?? info.locale['en'].ok);
             const event = {
                 'go': true,
                 preventDefault: function () {
                     this.go = false;
                 },
                 'detail': {
-                    'button': button,
+                    'button': isOk,
                     'value': this.data.text
-                }
+                },
             };
-            opt.select?.call(this, event, button);
+            opt.select?.call(this, event, isOk);
             if (!event.go) {
                 e.preventDefault();
             }
@@ -2918,16 +3490,21 @@ async function prompt(opt) {
     });
     return res;
 }
-function flash(formId, taskId) {
-    if (!taskId) {
-        return;
+/**
+ * --- 让窗体闪烁 ---
+ * @param taskId 所属的 taskId
+ * @param formId 要闪烁的窗体 id，必填
+ */
+export async function flash(current, formId) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const form = getForm(taskId, formId);
+    const form = getForm(current, formId);
     if (!form) {
         return;
     }
     if (!form.vroot._formFocus) {
-        changeFocus(form.id);
+        await changeFocus(form.id);
     }
     if (form.vroot.$refs.form.flashTimer) {
         clearTimeout(form.vroot.$refs.form.flashTimer);
@@ -2938,24 +3515,42 @@ function flash(formId, taskId) {
             form.vroot.$refs.form.flashTimer = undefined;
         }
     }, 1000);
-    core.trigger('formFlash', taskId, formId);
+    // --- 触发 formFlash 事件 ---
+    await lCore.trigger('formFlash', current, formId);
 }
-function showLauncher() {
-    exports.elements.launcher.style.display = 'flex';
+/**
+ * --- 显示 launcher 界面 ---
+ */
+export function showLauncher() {
+    elements.launcher.style.display = 'flex';
     requestAnimationFrame(function () {
-        exports.elements.launcher.classList.add('cg-show');
+        elements.launcher.classList.add('cg-show');
     });
 }
-function hideLauncher() {
-    exports.elements.launcher.classList.remove('cg-show');
+/**
+ * --- 隐藏 launcher 界面 ---
+ */
+export function hideLauncher() {
+    elements.launcher.classList.remove('cg-show');
     setTimeout(function () {
-        if (exports.launcherRoot.folderName !== '') {
-            exports.launcherRoot.closeFolder();
+        if (launcherRoot.folderName !== '') {
+            launcherRoot.closeFolder();
         }
-        exports.launcherRoot.name = '';
-        exports.elements.launcher.style.display = 'none';
+        launcherRoot.name = '';
+        elements.launcher.style.display = 'none';
     }, 300);
 }
+// --- 绑定 resize 事件 ---
 window.addEventListener('resize', function () {
-    task.refreshSystemPosition();
+    // --- 触发 screenResize 事件 ---
+    lTask.refreshSystemPosition(); // 会在里面自动触发 screenResize 事件
 });
+// --- 需要初始化 ---
+let inited = false;
+export function init() {
+    if (inited) {
+        return;
+    }
+    inited = true;
+    elements.init();
+}

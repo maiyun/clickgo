@@ -163,7 +163,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.selection.style.opacity = '1';
                     this.access.selectionCurrent.x = x;
                     this.access.selectionCurrent.y = y;
-                    this.access.selectionTimer = clickgo.task.onFrame(() => {
+                    this.access.selectionTimer = clickgo.task.onFrame(this, () => {
                         const rect = this.element.getBoundingClientRect();
                         // --- 横向 ---
                         if (this.access.selectionCurrent.x < rect.left) {
@@ -278,7 +278,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.selection.style.top = '0px';
                     this.refs.selection.style.width = '1px';
                     this.refs.selection.style.height = '1px';
-                    clickgo.task.offFrame(this.access.selectionTimer);
+                    clickgo.task.offFrame(this, this.access.selectionTimer);
                     this.access.selectionTimer = 0;
                     this.emit('afterselect');
                 }
@@ -616,7 +616,7 @@ export default class extends clickgo.control.AbstractControl {
         });
 
         // --- 大小改变，会影响 scroll offset、client，也会影响 length ---
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             this.emit('clientwidth', this.element.clientWidth);
             this.emit('clientheight', this.element.clientHeight);
         }, true);

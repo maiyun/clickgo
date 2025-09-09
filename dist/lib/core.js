@@ -1,59 +1,37 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+/**
+ * Copyright 2007-2025 MAIYUN.NET
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import * as clickgo from '../clickgo';
+import * as lFs from './fs';
+import * as lForm from './form';
+import * as lTask from './task';
+import * as lTool from './tool';
+import * as lZip from './zip';
+/** --- 系统级 ID --- */
+let sysId = '';
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id) {
+    if (sysId) {
+        return;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.boot = exports.AbstractApp = exports.global = exports.config = void 0;
-exports.getCdn = getCdn;
-exports.regModule = regModule;
-exports.getModule = getModule;
-exports.trigger = trigger;
-exports.readApp = readApp;
-exports.fetchApp = fetchApp;
-exports.getAvailArea = getAvailArea;
-exports.hash = hash;
-exports.getHash = getHash;
-exports.getHost = getHost;
-exports.location = location;
-exports.getLocation = getLocation;
-exports.back = back;
-exports.open = open;
-const clickgo = __importStar(require("../clickgo"));
-const fs = __importStar(require("./fs"));
-const form = __importStar(require("./form"));
-const task = __importStar(require("./task"));
-const tool = __importStar(require("./tool"));
-const zip = __importStar(require("./zip"));
+    sysId = id;
+}
+/** --- Config 原始参考对象 --- */
 const configOrigin = {
     'locale': 'en',
     'task.position': 'bottom',
@@ -62,35 +40,24 @@ const configOrigin = {
     'desktop.icon.recycler': true,
     'desktop.wallpaper': null,
     'desktop.path': null,
-    'launcher.list': []
+    'launcher.list': [],
 };
-exports.config = clickgo.vue.reactive({
-    'locale': 'en',
-    'task.position': 'bottom',
-    'task.pin': {},
-    'desktop.icon.storage': true,
-    'desktop.icon.recycler': true,
-    'desktop.wallpaper': null,
-    'desktop.path': null,
-    'launcher.list': []
-});
-exports.global = window.clickgoGlobal ?? {};
-class AbstractApp {
-    get filename() {
-        return '';
+/** --- Config 配置对象 --- */
+export let config;
+/** --- App 抽象类 --- */
+export class AbstractApp {
+    constructor() {
+        /** --- 当前 js 文件在包内的完整路径 --- */
+        this.filename = '';
+        /** --- 系统会自动设置本项 --- */
+        this.taskId = '';
     }
-    get taskId() {
-        return 0;
-    }
-    set taskId(v) {
-        form.notify({
-            'title': 'Error',
-            'content': `The software tries to modify the system variable "taskId" to "${v}".\nPath: ${this.filename}`,
-            'type': 'danger'
-        });
-    }
-    run(form) {
-        form.show();
+    /**
+     * --- 以某个窗体进行正式启动这个 app（入口 form），不启动则任务也启动失败 ---
+     * @param form 窗体对象
+     */
+    async run(form) {
+        await form.show();
     }
     onError() {
         return;
@@ -156,395 +123,86 @@ class AbstractApp {
         return;
     }
 }
-exports.AbstractApp = AbstractApp;
-function getCdn() {
-    return loader.cdn;
-}
-clickgo.vue.watch(exports.config, function () {
-    for (const key in configOrigin) {
-        if (exports.config[key] !== undefined) {
-            continue;
-        }
-        form.notify({
-            'title': 'Warning',
-            'content': 'There is a software that maliciously removed the system config item.\nKey: ' + key,
-            'type': 'warning'
-        });
-        exports.config[key] = configOrigin[key];
-    }
-    for (const key in exports.config) {
-        if (!Object.keys(configOrigin).includes(key)) {
-            form.notify({
-                'title': 'Warning',
-                'content': 'There is a software that maliciously modifies the system config.\nKey: ' + key,
-                'type': 'warning'
-            });
-            delete exports.config[key];
-            continue;
-        }
-        if (key === 'task.pin') {
-            const paths = Object.keys(exports.config['task.pin']).sort().toString();
-            const originPaths = Object.keys(configOrigin['task.pin']).sort().toString();
-            if (paths === originPaths) {
-                continue;
-            }
-            configOrigin['task.pin'] = {};
-            for (const path in exports.config['task.pin']) {
-                configOrigin['task.pin'][path] = exports.config['task.pin'][path];
-            }
-            trigger('configChanged', 'task.pin', exports.config['task.pin']);
-        }
-        else {
-            if (exports.config[key] === configOrigin[key]) {
-                continue;
-            }
-            configOrigin[key] = exports.config[key];
-            if (key === 'task.position') {
-                task.refreshSystemPosition();
-            }
-            trigger('configChanged', key, exports.config[key]);
-        }
-    }
-}, {
-    'deep': true
-});
-const modules = {
-    'monaco': {
-        func: async function () {
-            return new Promise(function (resolve, reject) {
-                fetch(loader.cdn + '/npm/monaco-editor@0.50.0/min/vs/loader.js').then(function (r) {
-                    return r.blob();
-                }).then(function (b) {
-                    return tool.blob2DataUrl(b);
-                }).then(function (d) {
-                    resolve(d);
-                }).catch(function (e) {
-                    reject(e);
-                });
-            });
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'xterm': {
-        func: async function () {
-            await loader.loadScripts([
-                loader.cdn + '/npm/xterm@5.3.0/lib/xterm.js',
-                loader.cdn + '/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js',
-                loader.cdn + '/npm/xterm-addon-webgl@0.16.0/lib/xterm-addon-webgl.js'
-            ]);
-            if (!window.Terminal) {
-                throw Error('Xterm load failed.');
-            }
-            await loader.loadLinks([
-                loader.cdn + '/npm/xterm@5.3.0/css/xterm.min.css'
-            ]);
-            loader.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
-            return [window.Terminal, window.FitAddon.FitAddon, window.WebglAddon.WebglAddon];
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'echarts': {
-        func: async function () {
-            await loader.loadScript(loader.cdn + '/npm/echarts@5.4.2/dist/echarts.min.js');
-            if (!window.echarts) {
-                throw Error('Echarts load failed.');
-            }
-            return window.echarts;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'tuieditor': {
-        func: async function () {
-            await loader.loadScripts([
-                __dirname + '/../ext/toastui-editor-all.min.js'
-            ]);
-            if (!window.toastui.Editor) {
-                throw Error('Tuieditor load failed.');
-            }
-            await loader.loadScripts([
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-cn.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-tw.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ja-jp.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ko-kr.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/es-es.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/de-de.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/fr-fr.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/pt-br.min.js',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/i18n/ru-ru.min.js'
-            ]);
-            await loader.loadLinks([
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css',
-                loader.cdn + '/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css'
-            ]);
-            loader.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}.jodit ::-webkit-scrollbar{width:6px;cursor:default;}.jodit ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px;}.jodit ::-webkit-scrollbar-thumb:hover{background: rgba(0,0,0,.2);}');
-            return window.toastui.Editor;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'jodit': {
-        func: async function () {
-            await loader.loadScripts([
-                loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.js'
-            ]);
-            await loader.loadLinks([
-                loader.cdn + '/npm/jodit@4.2.27/es2015/jodit.fat.min.css'
-            ]);
-            loader.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}.jodit-wysiwyg a{color:unset;}');
-            return window.Jodit;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'compressorjs': {
-        func: async function () {
-            await loader.loadScripts([
-                loader.cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js'
-            ]);
-            if (!window.Compressor) {
-                throw Error('Compressor load failed.');
-            }
-            return [window.Compressor];
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'pdfjs': {
-        func: async function () {
-            await loader.loadScripts([
-                loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.min.mjs'
-            ], {
-                'module': true
-            });
-            if (!window.pdfjsLib) {
-                throw Error('pdf.js load failed.');
-            }
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = loader.cdn + '/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.mjs';
-            return window.pdfjsLib;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'qrcode': {
-        func: async function () {
-            await loader.loadScripts([
-                loader.cdn + '/npm/qrcode@1.5.1/build/qrcode.js'
-            ]);
-            if (!window.QRCode) {
-                throw Error('QRCode load failed.');
-            }
-            return window.QRCode;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'mpegts': {
-        func: async function () {
-            await loader.loadScripts([
-                loader.cdn + '/npm/mpegts.js@1.7.3/dist/mpegts.min.js'
-            ]);
-            if (!window.mpegts) {
-                throw Error('mpegts load failed.');
-            }
-            window.mpegts.LoggingControl.enableAll = false;
-            return window.mpegts;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    },
-    'tplink': {
-        func: async function () {
-            await loader.loadScripts([
-                __dirname + '/../ext/tplinkhd.min.js'
-            ]);
-            if (!window.HDPluginControl) {
-                throw Error('Tplink load failed.');
-            }
-            return window.HDPluginControl;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': [],
-    },
-    'tcc': {
-        func: async function () {
-            await loader.loadScripts([
-                'https://turing.captcha.qcloud.com/TJCaptcha.js'
-            ]);
-            if (!window.TencentCaptcha) {
-                throw Error('tcc load failed.');
-            }
-            return window.TencentCaptcha;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': [],
-    },
-    'cft': {
-        func: async function () {
-            await loader.loadScripts([
-                'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
-            ]);
-            if (!window.turnstile) {
-                throw Error('cft load failed.');
-            }
-            return window.turnstile;
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': [],
-    },
-    'novnc': {
-        func: async function () {
-            console.log('alpha, not use');
-            try {
-                console.log('xxx2');
-                const novnc = await Promise.resolve(`${loader.cdn + '/npm/@novnc/novnc@1.6.0/+esm'}`).then(s => __importStar(require(s)));
-                console.log('xxx', novnc);
-                return novnc.default.default;
-            }
-            catch (e) {
-                console.log('xxx222', e);
-                throw Error('novnc load failed.');
-            }
-        },
-        'obj': null,
-        'loading': false,
-        'resolve': [],
-    },
-};
-function regModule(name, func) {
-    if (modules[name]) {
-        return false;
-    }
-    modules[name] = {
-        func: func,
-        'obj': null,
-        'loading': false,
-        'resolve': []
-    };
-    return true;
-}
-function getModule(name) {
-    return new Promise((resolve) => {
-        if (!modules[name]) {
-            resolve(null);
-            return;
-        }
-        if (!modules[name].obj) {
-            if (modules[name].loading) {
-                modules[name].resolve.push(() => {
-                    resolve(modules[name].obj);
-                });
-            }
-            else {
-                const rtn = modules[name].func();
-                if (rtn instanceof Promise) {
-                    modules[name].loading = true;
-                    rtn.then(function (obj) {
-                        modules[name].obj = obj;
-                        modules[name].loading = false;
-                        resolve(obj);
-                        for (const r of modules[name].resolve) {
-                            r();
-                        }
-                    }).catch(function () {
-                        modules[name].loading = false;
-                        resolve(null);
-                        for (const r of modules[name].resolve) {
-                            r();
-                        }
-                    });
-                }
-                else {
-                    modules[name].obj = rtn;
-                    resolve(rtn);
-                }
-            }
-            return;
-        }
-        resolve(modules[name].obj);
+/** --- boot 类 --- */
+let boot;
+export function setBoot(b) {
+    if (boot) {
         return;
-    });
+    }
+    b.setSysId(sysId);
+    boot = b;
 }
+/** --- 系统要处理的全局响应事件 --- */
 const globalEvents = {
     screenResize: function () {
-        form.refreshMaxPosition();
+        lForm.refreshMaxPosition();
     },
     formRemoved: function (taskId, formId) {
-        if (!form.simpleSystemTaskRoot.forms[formId]) {
+        if (!lForm.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
-        delete form.simpleSystemTaskRoot.forms[formId];
+        delete lForm.simpleSystemTaskRoot.forms[formId];
     },
     formTitleChanged: function (taskId, formId, title) {
-        if (!form.simpleSystemTaskRoot.forms[formId]) {
+        if (!lForm.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
-        form.simpleSystemTaskRoot.forms[formId].title = title;
+        lForm.simpleSystemTaskRoot.forms[formId].title = title;
     },
     formIconChanged: function (taskId, formId, icon) {
-        if (!form.simpleSystemTaskRoot.forms[formId]) {
+        if (!lForm.simpleSystemTaskRoot.forms[formId]) {
             return;
         }
-        form.simpleSystemTaskRoot.forms[formId].icon = icon;
+        lForm.simpleSystemTaskRoot.forms[formId].icon = icon;
     },
     formStateMinChanged: function (taskId, formId, state) {
-        if (task.systemTaskInfo.taskId > 0) {
+        if (lTask.systemTaskInfo.taskId) {
             return;
         }
         if (state) {
-            const item = form.get(formId);
+            const item = lForm.get(formId);
             if (!item) {
                 return;
             }
-            form.simpleSystemTaskRoot.forms[formId] = {
+            lForm.simpleSystemTaskRoot.forms[formId] = {
                 'title': item.title,
                 'icon': item.icon
             };
         }
         else {
-            if (!form.simpleSystemTaskRoot.forms[formId]) {
+            if (!lForm.simpleSystemTaskRoot.forms[formId]) {
                 return;
             }
-            delete form.simpleSystemTaskRoot.forms[formId];
+            delete lForm.simpleSystemTaskRoot.forms[formId];
         }
     }
 };
-function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 = true) {
+/**
+ * --- 主动触发系统级事件，用 this.trigger 替代 ---
+ */
+export async function trigger(name, taskId = '', formId = '', param1 = '', param2 = '', param3 = true) {
+    const taskList = await lTask.getOriginList(sysId);
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
-            if (typeof taskId !== 'number' || typeof formId !== 'number') {
-                break;
-            }
-            exports.boot?.[eventName](taskId, formId, param1, param2);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId, formId, param1, param2);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
+            boot?.[eventName](taskId, formId, param1, param2);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if (!taskId || (taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId, formId, param1, param2);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
+                    }
                 }
             }
             break;
         }
         case 'screenResize': {
             globalEvents.screenResize();
-            exports.boot?.[eventName]();
-            for (const tid in task.list) {
-                const t = task.list[tid];
+            boot?.[eventName]();
+            for (const tid in taskList) {
+                const t = taskList[tid];
                 t.class?.[eventName]();
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.();
@@ -553,12 +211,9 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             break;
         }
         case 'configChanged': {
-            if ((typeof taskId !== 'string') || (typeof formId === 'number')) {
-                break;
-            }
-            exports.boot?.[eventName]();
-            for (const tid in task.list) {
-                const t = task.list[tid];
+            boot?.[eventName]();
+            for (const tid in taskList) {
+                const t = taskList[tid];
                 t.class?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.(taskId, formId);
@@ -569,12 +224,15 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'formCreated':
         case 'formRemoved': {
             globalEvents[name]?.(taskId, formId, param1, param2, param3);
-            exports.boot?.[eventName](taskId, formId, param1, param2, param3);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId, formId, param1, param2, param3);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2, param3);
+            boot?.[eventName](taskId, formId, param1, param2, param3);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId, formId, param1, param2, param3);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2, param3);
+                    }
                 }
             }
             break;
@@ -582,12 +240,15 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'formTitleChanged':
         case 'formIconChanged': {
             globalEvents[name]?.(taskId, formId, param1);
-            exports.boot?.[eventName](taskId, formId, param1);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId, formId, param1);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
+            boot?.[eventName](taskId, formId, param1);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId, formId, param1);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
+                    }
                 }
             }
             break;
@@ -596,12 +257,15 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'formStateMaxChanged':
         case 'formShowChanged': {
             globalEvents[name]?.(taskId, formId, param1);
-            exports.boot?.[eventName](taskId, formId, param1);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId, formId, param1);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
+            boot?.[eventName](taskId, formId, param1);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId, formId, param1);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
+                    }
                 }
             }
             break;
@@ -610,36 +274,45 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'formBlurred':
         case 'formFlash': {
             globalEvents[name]?.(taskId, formId);
-            exports.boot?.[eventName](taskId, formId);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId, formId);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId);
+            boot?.[eventName](taskId, formId);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId, formId);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId, formId);
+                    }
                 }
             }
             break;
         }
         case 'formShowInSystemTaskChange': {
             globalEvents[name]?.(taskId, formId, param1);
-            exports.boot?.[eventName](taskId, formId, param1);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId, formId, param1);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
+            boot?.[eventName](taskId, formId, param1);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId, formId, param1);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId, formId, param1);
+                    }
                 }
             }
             break;
         }
         case 'formHashChange': {
             globalEvents[name]?.(taskId, formId, param1, param2);
-            exports.boot?.[eventName](taskId, formId, param1, param2);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId, formId, param1, param2);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
+            boot?.[eventName](taskId, formId, param1, param2);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId, formId, param1, param2);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
+                    }
                 }
             }
             break;
@@ -647,26 +320,23 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'taskStarted':
         case 'taskEnded': {
             globalEvents[name]?.(taskId, formId);
-            exports.boot?.[eventName](taskId, formId);
-            for (const tid in task.list) {
-                const t = task.list[tid];
-                t.class?.[eventName](taskId);
-                for (const fid in t.forms) {
-                    t.forms[fid].vroot[eventName]?.(taskId);
+            boot?.[eventName](taskId, formId);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId === tid) || rt?.permissions.includes('root')) {
+                    t.class?.[eventName](taskId);
+                    for (const fid in t.forms) {
+                        t.forms[fid].vroot[eventName]?.(taskId);
+                    }
                 }
             }
             break;
         }
         case 'launcherFolderNameChanged': {
-            if (typeof formId !== 'string') {
-                break;
-            }
-            if (typeof taskId !== 'string') {
-                break;
-            }
-            exports.boot?.[eventName](taskId, formId);
-            for (const tid in task.list) {
-                const t = task.list[tid];
+            boot?.[eventName](taskId, formId);
+            for (const tid in taskList) {
+                const t = taskList[tid];
                 t.class?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.(taskId, formId);
@@ -675,12 +345,9 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
             break;
         }
         case 'hashChanged': {
-            if (typeof taskId !== 'string') {
-                break;
-            }
-            exports.boot?.[eventName](taskId);
-            for (const tid in task.list) {
-                const t = task.list[tid];
+            boot?.[eventName](taskId);
+            for (const tid in taskList) {
+                const t = taskList[tid];
                 t.class?.[eventName](taskId);
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.(taskId);
@@ -691,9 +358,9 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         case 'keydown':
         case 'keyup': {
             globalEvents[name]?.(taskId);
-            exports.boot?.[eventName](taskId);
-            for (const tid in task.list) {
-                const t = task.list[tid];
+            boot?.[eventName](taskId);
+            for (const tid in taskList) {
+                const t = taskList[tid];
                 t.class?.[eventName](taskId);
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.(taskId);
@@ -703,8 +370,12 @@ function trigger(name, taskId = 0, formId = 0, param1 = '', param2 = '', param3 
         }
     }
 }
-async function readApp(blob) {
-    const head = await tool.blob2Text(blob.slice(0, 5));
+/**
+ * --- cga blob 文件解包 ---
+ * @param blob blob 对象
+ */
+export async function readApp(blob) {
+    const head = await lTool.blob2Text(blob.slice(0, 5));
     if (head !== '-CGA-') {
         return false;
     }
@@ -712,25 +383,28 @@ async function readApp(blob) {
     if (Number.isNaN(iconLength)) {
         return false;
     }
-    const icon = iconLength ? await tool.blob2DataUrl(blob.slice(28, 28 + iconLength)) : '';
+    const icon = iconLength ? await lTool.blob2DataUrl(blob.slice(28, 28 + iconLength)) : '';
     const nb = new Blob([blob.slice(5, 21), blob.slice(28 + iconLength)], {
         'type': blob.type
     });
-    const z = await zip.get(nb);
+    const z = await lZip.get(nb);
     if (!z) {
         return false;
     }
+    // --- 开始读取文件 ---
     const files = {};
+    /** --- 配置文件 --- */
     const configContent = await z.getContent('/config.json');
     if (!configContent) {
         return false;
     }
     const config = JSON.parse(configContent);
+    // --- 读取包 ---
     const list = z.readDir('/', {
-        'hasChildren': true
+        'hasChildren': true,
     });
     for (const file of list) {
-        const mime = tool.getMimeByPath(file.name);
+        const mime = lTool.getMimeByPath(file.name);
         if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
             const fab = await z.getContent(file.path + file.name, 'string');
             if (!fab) {
@@ -755,17 +429,17 @@ async function readApp(blob) {
         'icon': icon
     };
 }
-async function fetchApp(url, opt = {}, taskId) {
-    let cga = '';
-    if (!url.endsWith('/')) {
-        const lio = url.lastIndexOf('/');
-        cga = lio === -1 ? url : url.slice(lio + 1);
-        if (!cga.endsWith('.cga')) {
-            return null;
-        }
+/**
+ * --- 从网址下载应用 ---
+ * @param url 对于当前网页的相对、绝对路径，以 .cga 结尾的文件 ---
+ * @param opt,notifyId:显示进度条的 notify id,current:设置则以设置的为准，不以 / 结尾，否则以 location 为准 ---
+ * @param taskId 所属任务 ID
+ */
+export async function fetchApp(taskId, url, opt = {}) {
+    if (!url.endsWith('.cga')) {
+        return null;
     }
-    if (!taskId &&
-        !url.startsWith('/clickgo/') &&
+    if (!url.startsWith('/clickgo/') &&
         !url.startsWith('/storage/') &&
         !url.startsWith('/mounted/') &&
         !url.startsWith('/package/') &&
@@ -773,122 +447,36 @@ async function fetchApp(url, opt = {}, taskId) {
         !url.startsWith('http:') &&
         !url.startsWith('https:') &&
         !url.startsWith('file:')) {
-        url = tool.urlResolve(window.location.href, url);
+        url = lTool.urlResolve(window.location.href, url);
     }
-    if (cga) {
-        try {
-            const blob = await fs.getContent(url, {
-                'progress': (loaded, total) => {
-                    if (opt.notifyId) {
-                        form.notifyProgress(opt.notifyId, loaded / total);
-                    }
-                    if (opt.progress) {
-                        opt.progress(loaded, total);
-                    }
-                },
-                'cache': opt.cache
-            }, taskId);
-            if ((blob === null) || typeof blob === 'string') {
-                return null;
-            }
-            if (opt.notifyId) {
-                form.notifyProgress(opt.notifyId, 1);
-            }
-            return await readApp(blob) || null;
-        }
-        catch {
-            return null;
-        }
-    }
-    let config;
-    const files = {};
     try {
-        const blob = await fs.getContent(url + 'config.json', {
-            'cache': opt.cache
-        }, taskId);
-        if (blob === null || typeof blob === 'string') {
+        const blob = await lFs.getContent(taskId, url, {
+            'progress': (loaded, total) => {
+                if (opt.notifyId) {
+                    lForm.notifyProgress(opt.notifyId, loaded / total);
+                }
+                if (opt.progress) {
+                    opt.progress(loaded, total);
+                }
+            },
+        });
+        if ((blob === null) || typeof blob === 'string') {
             return null;
         }
-        config = JSON.parse(await tool.blob2Text(blob));
-        await new Promise(function (resolve) {
-            if (!config.files) {
-                return;
-            }
-            const total = config.files.length;
-            let loaded = 0;
-            if (opt.progress) {
-                opt.progress(loaded + 1, total + 1);
-            }
-            for (const file of config.files) {
-                fs.getContent(url + file.slice(1), {
-                    'cache': opt.cache
-                }, taskId).then(async function (blob) {
-                    if (blob === null || typeof blob === 'string') {
-                        clickgo.form.notify({
-                            'title': 'File not found',
-                            'content': url + file.slice(1),
-                            'type': 'danger'
-                        });
-                        return;
-                    }
-                    const mime = tool.getMimeByPath(file);
-                    if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
-                        files[file] = (await tool.blob2Text(blob)).replace(/^\ufeff/, '');
-                    }
-                    else {
-                        files[file] = blob;
-                    }
-                    ++loaded;
-                    if (opt.notifyId) {
-                        form.notifyProgress(opt.notifyId, loaded / total);
-                    }
-                    if (opt.progress) {
-                        opt.progress(loaded + 1, total + 1);
-                    }
-                    if (loaded < total) {
-                        return;
-                    }
-                    resolve();
-                }).catch(function () {
-                    ++loaded;
-                    if (opt.notifyId) {
-                        form.notifyProgress(opt.notifyId, loaded / total);
-                    }
-                    if (opt.progress) {
-                        opt.progress(loaded + 1, total + 1);
-                    }
-                    if (loaded < total) {
-                        return;
-                    }
-                    resolve();
-                });
-            }
-        });
+        if (opt.notifyId) {
+            lForm.notifyProgress(opt.notifyId, 1);
+        }
+        return await readApp(blob) || null;
     }
-    catch (e) {
-        console.log('core.fetchApp', e);
-        trigger('error', 0, 0, e, e.message);
+    catch {
         return null;
     }
-    let icon = '';
-    if (config.icon && (files[config.icon] instanceof Blob)) {
-        icon = await tool.blob2DataUrl(files[config.icon]);
-    }
-    if (icon === '') {
-        const iconBlob = await fs.getContent('/clickgo/icon.png', undefined, taskId);
-        if (iconBlob instanceof Blob) {
-            icon = await tool.blob2DataUrl(iconBlob);
-        }
-    }
-    return {
-        'type': 'app',
-        'config': config,
-        'files': files,
-        'icon': icon
-    };
 }
-function getAvailArea() {
-    if (Object.keys(form.simpleSystemTaskRoot.forms).length > 0) {
+/**
+ * --- 获取屏幕可用区域 ---
+ */
+export function getAvailArea() {
+    if (Object.keys(lForm.simpleSystemTaskRoot.forms).length > 0) {
         return {
             'left': 0,
             'top': 0,
@@ -903,33 +491,33 @@ function getAvailArea() {
         let top = 0;
         let width = 0;
         let height = 0;
-        switch (exports.config['task.position']) {
+        switch (config['task.position']) {
             case 'left': {
-                left = task.systemTaskInfo.length;
+                left = lTask.systemTaskInfo.length;
                 top = 0;
-                width = window.innerWidth - task.systemTaskInfo.length;
+                width = window.innerWidth - lTask.systemTaskInfo.length;
                 height = window.innerHeight;
                 break;
             }
             case 'right': {
                 left = 0;
                 top = 0;
-                width = window.innerWidth - task.systemTaskInfo.length;
+                width = window.innerWidth - lTask.systemTaskInfo.length;
                 height = window.innerHeight;
                 break;
             }
             case 'top': {
                 left = 0;
-                top = task.systemTaskInfo.length;
+                top = lTask.systemTaskInfo.length;
                 width = window.innerWidth;
-                height = window.innerHeight - task.systemTaskInfo.length;
+                height = window.innerHeight - lTask.systemTaskInfo.length;
                 break;
             }
             case 'bottom': {
                 left = 0;
                 top = 0;
                 width = window.innerWidth;
-                height = window.innerHeight - task.systemTaskInfo.length;
+                height = window.innerHeight - lTask.systemTaskInfo.length;
             }
         }
         return {
@@ -942,64 +530,484 @@ function getAvailArea() {
         };
     }
 }
-function hash(hash, taskId) {
-    if (!taskId) {
-        return false;
+/**
+ * --- 修改浏览器 hash ---
+ * @param taskId 当前任务 id
+ * @param hash 修改的值，不含 #
+ */
+export async function hash(current, hash) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return false;
-    }
-    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('hash')) {
+    const p = await lTask.checkPermission(current, 'hash');
+    if (!p[0]) {
         return false;
     }
     window.location.hash = hash;
     return true;
 }
-function getHash() {
+/**
+ * --- 获取当前浏览器的 hash ---
+ */
+export function getHash() {
     return window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
 }
-function getHost() {
+/**
+ * --- 获取当前浏览器的 host ---
+ */
+export function getHost() {
     const match = /https?:\/\/([-a-zA-Z0-9:.]+)/.exec(window.location.href);
     if (!match) {
         return '';
     }
     return match[1];
 }
-function location(url, taskId) {
-    if (!taskId) {
-        return false;
+/**
+ * --- 对浏览器做跳转操作 ---
+ * @param current 当前任务 id
+ * @param url 要跳转的新 URL
+ */
+export async function location(current, url) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return false;
-    }
-    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('location')) {
+    const p = await lTask.checkPermission(current, 'location');
+    if (!p[0]) {
         return false;
     }
     window.location.href = url;
     return true;
 }
-function getLocation() {
+/**
+ * --- 获取当前的浏览器的 url ---
+ */
+export function getLocation() {
     return window.location.href;
 }
-function back(taskId) {
-    if (!taskId) {
-        return false;
+/**
+ * --- 对浏览器做返回操作 ---
+ * @param current 当前任务 id
+ */
+export async function back(current) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
     }
-    const t = task.list[taskId];
-    if (!t) {
-        return false;
-    }
-    if (!t.runtime.permissions.includes('root') && !t.runtime.permissions.includes('location')) {
+    const p = await lTask.checkPermission(current, 'location');
+    if (!p[0]) {
         return false;
     }
     window.history.back();
     return true;
 }
-function open(url) {
+/**
+ * --- 打开新的标签页
+ * @param url 要访问的网址
+ */
+export function open(url) {
     window.open(url);
 }
 window.addEventListener('hashchange', function () {
-    trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '');
+    trigger('hashChanged', window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '').catch(() => { });
 });
+/** --- 注册的模块列表 --- */
+const modules = {
+    'monaco-editor': {
+        func: async function () {
+            return new Promise(resolve => {
+                fetch(clickgo.getCdn() + '/npm/monaco-editor@0.52.2/min/vs/loader.js')
+                    .then(r => r.blob())
+                    .then(b => lTool.blob2DataUrl(b))
+                    .then(d => {
+                    resolve(d);
+                })
+                    .catch(() => {
+                    resolve(null);
+                });
+            });
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    'xterm': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/xterm@5.3.0/lib/xterm.js`,
+                `${clickgo.getCdn()}/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js`,
+                `${clickgo.getCdn()}/npm/xterm-addon-webgl@0.16.0/lib/xterm-addon-webgl.js`
+            ]);
+            if (!window.Terminal) {
+                throw Error('Xterm load failed.');
+            }
+            await lTool.loadLinks([
+                `${clickgo.getCdn()}/npm/xterm@5.3.0/css/xterm.min.css`
+            ]);
+            lTool.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
+            return {
+                'Terminal': window.Terminal,
+                'FitAddon': window.FitAddon.FitAddon,
+                'WebglAddon': window.WebglAddon.WebglAddon,
+            };
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    'echarts': {
+        func: async function () {
+            await lTool.loadScript(`${clickgo.getCdn()}/npm/echarts@5.4.2/dist/echarts.min.js`);
+            if (!window.echarts) {
+                throw Error('Echarts load failed.');
+            }
+            return window.echarts;
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    '@toast-ui/editor': {
+        func: async function () {
+            await lTool.loadScripts([
+                lTool.urlResolve(clickgo.getDirname() + '/', './ext/toastui-editor-all.min.js'),
+            ]);
+            if (!window.toastui.Editor) {
+                throw Error('Tuieditor load failed.');
+            }
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-cn.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-tw.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ja-jp.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ko-kr.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/es-es.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/de-de.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/fr-fr.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/pt-br.min.js`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ru-ru.min.js`,
+            ]);
+            await lTool.loadLinks([
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css`,
+                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css`,
+            ]);
+            lTool.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}.jodit ::-webkit-scrollbar{width:6px;cursor:default;}.jodit ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px;}.jodit ::-webkit-scrollbar-thumb:hover{background: rgba(0,0,0,.2);}');
+            return window.toastui;
+        },
+        'loading': false,
+        'resolve': []
+    },
+    'jodit': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/jodit@4.2.27/es2015/jodit.fat.min.js`,
+            ]);
+            await lTool.loadLinks([
+                `${clickgo.getCdn()}/npm/jodit@4.2.27/es2015/jodit.fat.min.css`,
+            ]);
+            lTool.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}.jodit-wysiwyg a{color:unset;}');
+            return window.Jodit;
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    'pdfjs': {
+        func: async function () {
+            try {
+                const m = await import(`${clickgo.getCdn()}/npm/pdfjs-dist@5.4.54/+esm`);
+                m.GlobalWorkerOptions.workerSrc = `${clickgo.getCdn()}/npm/pdfjs-dist@5.4.54/build/pdf.worker.min.mjs`;
+                return m;
+            }
+            catch {
+                throw Error('pdf.js load failed.');
+            }
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    'qrcode': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/qrcode@1.5.1/build/qrcode.js`,
+            ]);
+            if (!window.QRCode) {
+                throw Error('QRCode load failed.');
+            }
+            return window.QRCode;
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    'mpegts': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/mpegts.js@1.7.3/dist/mpegts.min.js`,
+            ]);
+            if (!window.mpegts) {
+                throw Error('mpegts load failed.');
+            }
+            window.mpegts.LoggingControl.enableAll = false;
+            return window.mpegts;
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    'tplinkhd': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getDirname()}/ext/tplinkhd.min.js`,
+            ]);
+            if (!window.HDPluginControl) {
+                throw Error('Tplink load failed.');
+            }
+            return window.HDPluginControl;
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    'tums-player': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getDirname()}/ext/tums-player/tums-player.umd.min.js`,
+            ]);
+            if (!window['tums-player']) {
+                throw Error('Tums load failed.');
+            }
+            const div = document.createElement('div');
+            div.style.position = 'absolute';
+            div.style.left = '-9999px';
+            div.style.top = '-9999px';
+            div.style.width = '200px';
+            div.style.height = '100px';
+            document.body.appendChild(div);
+            /** --- tums-player 原生对象 --- */
+            const tp = window['tums-player'].default;
+            /** --- 对讲对象，一个页面只能有一个 --- */
+            let client = null;
+            return {
+                'default': tp,
+                startTalk: (opt) => {
+                    return new Promise(resolve => {
+                        if (client) {
+                            client.stopVoiceIntercom();
+                            client.destroy();
+                            client = null;
+                        }
+                        client = new tp(div, {
+                            'type': 'relay',
+                            'url': 'none',
+                            'pluginPath': clickgo.getDirname() + '/ext',
+                            'talkEnable': true,
+                            'appKey': opt.sid,
+                            'appSecret': opt.skey,
+                        });
+                        client.on('ready', () => {
+                            client.startVoiceIntercom({
+                                'url': opt.url,
+                                'mode': opt.mode,
+                            });
+                            resolve();
+                        });
+                    });
+                },
+                stopTalk: () => {
+                    if (!client) {
+                        return;
+                    }
+                    client.stopVoiceIntercom();
+                    client.destroy();
+                    client = null;
+                },
+            };
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    // --- 腾讯云验证码 ---
+    'tjcaptcha': {
+        func: async function () {
+            await lTool.loadScripts([
+                'https://turing.captcha.qcloud.com/TJCaptcha.js',
+            ]);
+            if (!window.TencentCaptcha) {
+                throw Error('TJCaptcha load failed.');
+            }
+            return window.TencentCaptcha;
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    // --- cf 验证码 ---
+    'turnstile': {
+        func: async function () {
+            await lTool.loadScripts([
+                'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+            ]);
+            if (!window.turnstile) {
+                throw Error('cft load failed.');
+            }
+            return window.turnstile;
+        },
+        'loading': false,
+        'resolve': [],
+    },
+    // --- noVNC ---
+    '@novnc/novnc': {
+        'version': '1.6.0',
+        'loading': false,
+        'resolve': [],
+    },
+};
+/**
+ * --- 注册模块 ---
+ * @param current 当前任务 id
+ * @param name 模块名
+ * @param func 执行加载函数
+ * @param version 版本号，非 ESM 可留空
+ */
+export async function regModule(current, name, opt) {
+    if (!(await lTask.checkPermission(current, 'root'))[0]) {
+        return false;
+    }
+    if (modules[name]) {
+        return false;
+    }
+    if (clickgo.modules[name]) {
+        // --- 已经加载过的也不能注册了 ---
+        return false;
+    }
+    modules[name] = {
+        'version': opt.version,
+        'func': opt.func,
+        'loading': false,
+        'resolve': [],
+    };
+    return true;
+}
+/**
+ * --- 检查特殊模块是否注册 ---
+ * @param name 模块名
+ */
+export function checkModule(name) {
+    return modules[name] !== undefined;
+}
+/**
+ * --- 获取模块内容，通常用于异步加载模块时使用 ---
+ * @param name 模块名
+ * @returns 模块对象
+ */
+export async function getModule(name) {
+    if (!(await loadModule(name))) {
+        return null;
+    }
+    return clickgo.modules[name];
+}
+/**
+ * --- 加载模块，返回 true / false ---
+ * @param name 模块名
+ */
+export async function loadModule(name) {
+    if (!modules[name]) {
+        // --- 未注册的，加载啥 ---
+        return false;
+    }
+    if (clickgo.modules[name]) {
+        // --- 已经加载过了 ---
+        return true;
+    }
+    try {
+        if (modules[name].loading) {
+            // --- 加载中，等待 ---
+            await new Promise(resolve => {
+                modules[name].resolve.push(() => {
+                    resolve();
+                });
+            });
+            return true;
+        }
+        // --- 未加载，走加载流程 ---
+        modules[name].loading = true;
+        if (modules[name].version) {
+            // --- ESM 模块 ---
+            const r = await import(`${clickgo.getCdn()}/npm/${name}@${modules[name].version}/+esm`);
+            clickgo.modules[name] = r;
+        }
+        if (modules[name].func) {
+            const r = await modules[name].func();
+            clickgo.modules[name] = r;
+        }
+        modules[name].loading = false;
+        for (const r of modules[name].resolve) {
+            r();
+        }
+        modules[name].resolve.length = 0;
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+// --- 需要初始化 ---
+let inited = false;
+export function init() {
+    if (inited) {
+        return;
+    }
+    inited = true;
+    config = clickgo.modules.vue.reactive({
+        'locale': lTool.lang.getCodeByAccept(),
+        'task.position': 'bottom',
+        'task.pin': {},
+        'desktop.icon.storage': true,
+        'desktop.icon.recycler': true,
+        'desktop.wallpaper': null,
+        'desktop.path': null,
+        'launcher.list': [],
+    });
+    clickgo.modules.vue.watch(config, async function () {
+        // --- 检测有没有缺少的 config key ---
+        for (const key in configOrigin) {
+            if (config[key] !== undefined) {
+                continue;
+            }
+            lForm.notify({
+                'title': 'Warning',
+                'content': 'There is a software that maliciously removed the system config item.\nKey: ' + key,
+                'type': 'warning'
+            });
+            config[key] = configOrigin[key];
+        }
+        // --- 有没有多余的或值有问题的 ---
+        for (const key in config) {
+            if (!Object.keys(configOrigin).includes(key)) {
+                lForm.notify({
+                    'title': 'Warning',
+                    'content': 'There is a software that maliciously modifies the system config.\nKey: ' + key,
+                    'type': 'warning'
+                });
+                delete config[key];
+                continue;
+            }
+            if (key === 'task.pin') {
+                // --- 如果是 pin，要检查老的和新的的 path 是否相等 ---
+                const paths = Object.keys(config['task.pin']).sort().toString();
+                const originPaths = Object.keys(configOrigin['task.pin']).sort().toString();
+                if (paths === originPaths) {
+                    continue;
+                }
+                configOrigin['task.pin'] = {};
+                for (const path in config['task.pin']) {
+                    configOrigin['task.pin'][path] = config['task.pin'][path];
+                }
+                await trigger('configChanged', 'task.pin', config['task.pin']);
+            }
+            else {
+                // --- 别的要判断值是否和比对组一样 ---
+                if (config[key] === configOrigin[key]) {
+                    continue;
+                }
+                configOrigin[key] = config[key];
+                if (key === 'task.position') {
+                    lTask.refreshSystemPosition();
+                }
+                await trigger('configChanged', key, config[key]);
+            }
+        }
+    }, {
+        'deep': true
+    });
+}

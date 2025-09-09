@@ -3,44 +3,44 @@ import * as fs from 'fs';
 const files: string[] = [];
 async function readDir(path: string): Promise<void> {
     const list = await fs.promises.readdir(path, {
-        'withFileTypes': true
+        'withFileTypes': true,
     });
     for (const item of list) {
         if (item.name === '.' || item.name === '..') {
             continue;
         }
         if (item.isFile()) {
-            if (item.name.endsWith('.ts')) {
-                if (path.startsWith('dist/app/')) {
-                    continue;
-                }
-            }
-            if (item.name.endsWith('.scss')) {
+            if (item.name.endsWith('.ts') && !item.name.endsWith('.d.ts')) {
                 continue;
             }
-            if (item.name === '.DS_Store') {
+            if (['.DS_Store', 'global.scss'].includes(item.name)) {
                 continue;
             }
-            if ((path + item.name).startsWith('dist/build.')) {
+            if ((path + item.name).startsWith('dist/build')) {
                 continue;
             }
-            if ((path + item.name).startsWith('dist/compiler.')) {
+            if ((path + item.name).startsWith('dist/clickgo')) {
                 continue;
             }
-            if ((path + item.name).startsWith('dist/compcga.')) {
+            if ((path + item.name).startsWith('dist/pack')) {
                 continue;
             }
             files.push(path.slice(4) + item.name);
         }
         else {
-            if (path + item.name === 'dist/sources') {
+            const nextPath = path + item.name + '/';
+            if ([
+                'dist/app/demo/',
+                'dist/app/task/',
+                'dist/compiler/',
+                'dist/lib/',
+                'dist/sources/',
+                'dist/test/'
+            ].includes(nextPath)) {
                 continue;
             }
-            if (path + item.name === 'dist/test') {
-                continue;
-            }
-            files.push(path.slice(4) + item.name + '/');
-            await readDir(path + item.name + '/');
+            files.push(nextPath.slice(4));
+            await readDir(nextPath);
         }
     }
 }

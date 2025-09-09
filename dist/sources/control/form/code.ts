@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -70,6 +69,9 @@ export default class extends clickgo.control.AbstractControl {
             'top': -1,
         };
 
+    /** --- 是否是 native 下无边框的第一个窗体 --- */
+    public isNativeNoFrameFirst: boolean = false;
+
     public stateMinData = false;
 
     public stateMaxData = false;
@@ -104,9 +106,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 是否是内联窗体 --- */
     public isInside = false;
 
-    /** --- 当前窗体是否和 native 的实体窗体大小、状态同步 --- */
-    public isNativeSync = false;
-
     public get isMin(): boolean {
         return clickgo.tool.getBoolean(this.props.min);
     }
@@ -120,7 +119,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public get isResize(): boolean {
-        return this.isNativeSync ? false : clickgo.tool.getBoolean(this.props.resize);
+        return this.isNativeNoFrameFirst ? false : clickgo.tool.getBoolean(this.props.resize);
     }
 
     public get isMove(): boolean {
@@ -140,7 +139,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public get taskPosition(): string {
-        return clickgo.task.systemTaskInfo.taskId === 0 ? 'bottom' : clickgo.core.config['task.position'];
+        return !clickgo.task.systemTaskInfo.taskId ? 'bottom' : clickgo.core.config['task.position'];
     }
 
     /**
@@ -177,12 +176,12 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
         /** --- 当前所处边框 --- */
-        let isBorder: types.TDomBorder = '';
+        let isBorder: clickgo.dom.TDomBorder = '';
         clickgo.dom.bindMove(e, {
             'start': (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
-                    const event: types.IFormMaxEvent = {
+                    const event: clickgo.control.IFormMaxEvent = {
                         'detail': {
                             'event': e,
                             'action': 'move',
@@ -191,7 +190,7 @@ export default class extends clickgo.control.AbstractControl {
                                 'width': this.historyLocation.width,
                                 'height': this.historyLocation.height,
                                 'left': this.historyLocation.left,
-                                'top': this.historyLocation.top
+                                'top': this.historyLocation.top,
                             }
                         }
                     };
@@ -410,7 +409,7 @@ export default class extends clickgo.control.AbstractControl {
         */
         if (!this.stateMinData) {
             // --- 当前是正常/最大化状态，需要变成最小化 ---
-            const event: types.IFormMinEvent = {
+            const event: clickgo.control.IFormMinEvent = {
                 'detail': {
                     'event': e ?? null,
                     'action': e ? 'click' : 'method',
@@ -419,10 +418,9 @@ export default class extends clickgo.control.AbstractControl {
                 }
             };
             this.emit('min', event);
-            // --- 不能用 isNativeSync，因为沉浸式也要最小化 ---
-            if (clickgo.isNative() && (this.formId === 1) && !clickgo.hasFrame()) {
-                // --- 最小化不要管是否是沉浸式，沉浸式也要实体最小化 ---
-                clickgo.native.min() as any;
+            // --- native 级别的最小化 ---
+            if (this.isNativeNoFrameFirst) {
+                clickgo.native.min(this) as any;
             }
             else {
                 this.element.dataset.cgMin = '';
@@ -430,23 +428,15 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('update:stateMin', true);
                 // --- 如果当前有焦点，则使别人获取焦点 ---
                 if (this.formFocus) {
-                    const formId = clickgo.form.getMaxZIndexID({
-                        'formIds': [this.formId]
-                    });
                     clickgo.tool.sleep(100).then(() => {
-                        if (formId) {
-                            clickgo.form.changeFocus(formId);
-                        }
-                        else {
-                            clickgo.form.changeFocus();
-                        }
+                        clickgo.form.changeFocusMaxZIndex().catch(() => {});
                     }).catch((e) => { throw e; });
                 }
             }
         }
         else {
             // --- 需要变正常 ---
-            const event: types.IFormMinEvent = {
+            const event: clickgo.control.IFormMinEvent = {
                 'detail': {
                     'event': e ?? null,
                     'action': e ? 'click' : 'method',
@@ -465,7 +455,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('update:stateMin', false);
         }
         // --- 触发 formStateMinChanged 事件 ---
-        this.trigger('formStateMinChanged', this.stateMinData);
+        this.trigger('formStateMinChanged', this.stateMinData).catch(() => {});
         return true;
     }
 
@@ -529,7 +519,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         if (!this.stateMaxData) {
             // --- 当前是正常状态，需要变成最大化 ---
-            const event: types.IFormMaxEvent = {
+            const event: clickgo.control.IFormMaxEvent = {
                 'detail': {
                     'event': e ?? null,
                     'action': e ? 'click' : 'move',
@@ -549,21 +539,20 @@ export default class extends clickgo.control.AbstractControl {
                     'top': this.topData
                 };
             }
-            if (this.isNativeSync) {
-                clickgo.native.max() as any;
+            this.element.dataset.cgMax = '';
+            this.stateMaxData = true;
+            this.emit('update:stateMax', true);
+            if (this.isNativeNoFrameFirst) {
+                // --- 无边框的第一个窗体，则实体窗体也要最大化 ---
+                clickgo.native.max(this).catch(() => {});
             }
             else {
-                this.element.dataset.cgMax = '';
-                this.stateMaxData = true;
-                this.emit('update:stateMax', true);
-            }
-            // --- 变窗体样子 ---
-            if (!this.isNativeSync) {
+                // --- 如果不改实体窗口，那么就要播放动画 ---
                 this.element.style.transition = 'all .3s var(--g-cubic)';
                 this.element.style.transitionProperty = 'left,top,width,height';
                 clickgo.tool.sleep(150).then(() => {
                     this.element.style.transition = '';
-                }).catch((e) => { console.log(e); });
+                }).catch(() => {});
             }
             const area = clickgo.core.getAvailArea();
             if (this.rootForm.bottomMost) {
@@ -591,7 +580,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         else {
             // --- 需要变正常 ---
-            const event: types.IFormMaxEvent = {
+            const event: clickgo.control.IFormMaxEvent = {
                 'detail': {
                     'event': e ?? null,
                     'action': e ? 'click' : 'move',
@@ -606,13 +595,14 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('max', event);
             // --- 变窗体样子 ---
-            if (this.isNativeSync) {
-                clickgo.native.restore() as any;
+            this.element.removeAttribute('data-cg-max');
+            this.stateMaxData = false;
+            this.emit('update:stateMax', false);
+            if (this.isNativeNoFrameFirst) {
+                // --- 无边框的第一个窗体，则实体窗体也要还原 ---
+                clickgo.native.restore(this).catch(() => {});
             }
             else {
-                this.element.removeAttribute('data-cg-max');
-                this.stateMaxData = false;
-                this.emit('update:stateMax', false);
                 // --- 动画效果 ---
                 this.element.style.transition = 'all .3s var(--g-cubic)';
                 this.element.style.transitionProperty = 'left,top,width,height';
@@ -635,21 +625,18 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('update:left', this.historyLocation.left);
             this.topData = this.historyLocation.top;
             this.emit('update:top', this.historyLocation.top);
-            // --- native 模式非 frame、非沉浸模式，要调整 size ---
-            if (this.isNativeSync) {
-                // --- mac 要多处理一步 ---
-                if (clickgo.getPlatform() === 'darwin') {
-                    clickgo.native.size(this.widthData, this.heightData) as any;
-                }
+            // --- native 模式非 frame，要调整 size ---
+            if (this.isNativeNoFrameFirst) {
+                clickgo.native.size(this, this.widthData, this.heightData).catch(() => {});
             }
             else {
                 clickgo.tool.sleep(150).then(() => {
                     this.element.style.transition = '';
-                }).catch((e) => { console.log(e); });
+                }).catch(() => {});
             }
         }
         // --- 触发 formRemoved 事件 ---
-        this.trigger('formStateMaxChanged', this.stateMaxData);
+        this.trigger('formStateMaxChanged', this.stateMaxData).catch(() => {});
         return true;
     }
 
@@ -658,23 +645,28 @@ export default class extends clickgo.control.AbstractControl {
         if (this.isInside) {
             return;
         }
-        const event: types.IFormCloseEvent = {
+        const event: clickgo.control.IFormCloseEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
             },
             'detail': {
                 'event': e
-            }
+            },
         };
         this.emit('close', event);
         if (event.go) {
+            if (this.isNativeNoFrameFirst) {
+                // --- 直接退出应用 ---
+                clickgo.task.end(this).catch(() => {});
+                return;
+            }
             clickgo.form.close(this.formId);
         }
     }
 
     // --- 改变窗体大小 ---
-    public resizeMethod(e: MouseEvent | TouchEvent, border: types.TDomBorder): void {
+    public resizeMethod(e: MouseEvent | TouchEvent, border: clickgo.dom.TDomBorder): void {
         if (this.stateMaxData) {
             return;
         }
@@ -682,7 +674,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         /** --- 拖动过程中贴入的边边 --- */
-        let isBorder: types.TDomBorder = '';
+        let isBorder: clickgo.dom.TDomBorder = '';
         const top = this.topData;
         const left = this.leftData;
         /** --- 真实窗体高度 --- */
@@ -969,11 +961,11 @@ export default class extends clickgo.control.AbstractControl {
                 this.iconDataUrl = '';
             }
             else {
-                const icon = await clickgo.fs.getContent(this.props.icon);
+                const icon = await clickgo.fs.getContent(this, this.props.icon);
                 this.iconDataUrl = (icon instanceof Blob) ? await clickgo.tool.blob2DataUrl(icon) : '';
             }
             // --- 触发 formIconChanged 事件 ---
-            this.trigger('formIconChanged', this.iconDataUrl);
+            this.trigger('formIconChanged', this.iconDataUrl).catch(() => {});
             /*
             if (!first) {
                 // --- 触发 formIconChanged 事件 ---
@@ -983,7 +975,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.watch('title', () => {
             // --- 触发 formTitleChanged 事件 ---
-            this.trigger('formTitleChanged', this.props.title);
+            this.trigger('formTitleChanged', this.props.title).catch(() => {});
         });
 
         this.watch('isStateMin', () => {
@@ -999,7 +991,7 @@ export default class extends clickgo.control.AbstractControl {
             this.maxMethod();
         });
         this.watch('isShow', () => {
-            this.trigger('formShowChanged', this.isShow);
+            this.trigger('formShowChanged', this.isShow).catch(() => {});
         });
         this.watch('width', () => {
             if (this.propInt('width') === this.widthData) {
@@ -1041,22 +1033,22 @@ export default class extends clickgo.control.AbstractControl {
         // --- 监听 native 窗体状态变化 ---
 
         if (this.parent.controlName === 'root') {
-            this.isNativeSync = this.parent.isNativeSync;
-            if (this.isNativeSync) {
-                clickgo.native.on('maximize', () => {
+            this.isNativeNoFrameFirst = this.parent.isNativeNoFrameFirst;
+            if (this.isNativeNoFrameFirst) {
+                clickgo.native.on(this, 'maximize', () => {
                     this.element.dataset.cgMax = '';
                     this.stateMaxData = true;
                     this.emit('update:stateMax', true);
                 }, false, this.formId);
-                clickgo.native.on('unmaximize', () => {
+                clickgo.native.on(this, 'unmaximize', () => {
                     this.element.removeAttribute('data-cg-max');
                     this.stateMaxData = false;
                     this.emit('update:stateMax', false);
                 }, false, this.formId);
                 // --- 同步情况下，需要同步 max 状态到 native ---
                 this.watch('max', () => {
-                    // --- 设置实体窗口是否可以最大化（主要应对的就是双击最大化，毕竟没有最大化按钮） ---
-                    clickgo.native.maximizable(this.propBoolean('max')) as any;
+                    // --- 设置实体窗口是否可以最大化（主要应对的就是双击最大化） ---
+                    clickgo.native.maximizable(this, this.propBoolean('max')).catch(() => {});
                 }, {
                     'immediate': true
                 });

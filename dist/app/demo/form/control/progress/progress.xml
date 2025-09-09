@@ -4,6 +4,6 @@
         <progress v-model="v2" :type="v4[0]"></progress>
         <progress v-model="v3" style="height: 10px;" :type="v4[0]"></progress>
         <button @click="v3 = v3 === 20 ? 60 : 20">Set to {{v3 === 20 ? '60' : '20'}}</button>
-        <select v-model="v4" :data="['default', 'primary', 'info', 'warning', 'danger']"></select>
+        <select v-model="v4" :data="['default', 'primary', 'info', 'warning', 'danger', 'cg']"></select>
     </layout>
 </form>

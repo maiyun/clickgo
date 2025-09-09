@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -105,7 +70,9 @@ class default_1 extends clickgo.control.AbstractControl {
         this.descData = true;
         this.selectedTitle = '';
         this.selectedSub = '';
+        /** --- 已关闭的大类 --- */
         this.bigClosed = [];
+        /** --- 已打开的小类 --- */
         this.opened = [];
         this.title = '';
         this.description = '';
@@ -123,6 +90,7 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     get value() {
         const list = [];
+        // --- 大列表 ---
         const bigList = {};
         const bigTitle = [];
         for (const item of this.props.modelValue) {
@@ -178,6 +146,7 @@ class default_1 extends clickgo.control.AbstractControl {
             clickgo.form.hidePop(this.refs.content);
         }
         if (e instanceof TouchEvent) {
+            // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
                 clickgo.form.showPop(this.refs.content, this.refs.pop, e);
             });
@@ -191,6 +160,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.typeData = type;
         this.emit('update:type', type);
     }
+    // --- 点击选择一个 line ---
     select(e, item2, item3, desc) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -200,6 +170,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.title = item3 ?? item2;
         this.description = desc;
     }
+    // --- 打开/关闭子项 ---
     bigToggle(bigTitle) {
         const io = this.bigClosed.indexOf(bigTitle);
         if (io === -1) {
@@ -216,12 +187,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.opened.splice(io, 1);
     }
+    // --- 项内容更新方法 ---
     update(value) {
         for (const item of this.props.modelValue) {
             if (item.title !== this.selectedTitle) {
                 continue;
             }
             if (!this.selectedSub) {
+                // --- 大级别 ---
                 if (item.value === value) {
                     continue;
                 }
@@ -229,6 +202,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.emit('update:modelValue', this.props.modelValue);
             }
             else {
+                // --- 小级别 ---
                 const arr = item.value.split(',');
                 for (let i = 0; i < arr.length; ++i) {
                     if (typeof arr[i] !== 'string') {
@@ -252,6 +226,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
+    // --- dock ---
     dock(e) {
         if (e.currentTarget.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
@@ -262,9 +237,11 @@ class default_1 extends clickgo.control.AbstractControl {
                 continue;
             }
             if (!this.selectedSub) {
+                // --- 大级别 ---
                 this.dockValue = item.value;
             }
             else {
+                // --- 小级别 ---
                 for (let i = 0; i < item.sub.length; ++i) {
                     const sub = item.sub[i];
                     if (sub.title !== this.selectedSub) {
@@ -280,6 +257,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.update(value);
         clickgo.form.hidePop();
     }
+    // --- 双击 ---
     reset(e) {
         const handler = () => {
             for (const item of this.props.modelValue) {
@@ -287,6 +265,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     continue;
                 }
                 if (!this.selectedSub) {
+                    // --- 大级别 ---
                     if (item.value === item.default) {
                         continue;
                     }
@@ -294,6 +273,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     this.emit('update:modelValue', this.props.modelValue);
                 }
                 else {
+                    // --- 小级别 ---
                     const arr = item.value.split(',');
                     for (let i = 0; i < arr.length; ++i) {
                         if (typeof arr[i] !== 'string') {
@@ -311,6 +291,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         if (val === def) {
                             continue;
                         }
+                        // --- 要 reset ---
                         arr[i] = def;
                         item.value = arr.join(', ');
                         this.emit('update:modelValue', this.props.modelValue);
@@ -342,4 +323,3 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
 }
-exports.default = default_1;

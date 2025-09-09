@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.form.AbstractForm {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.fid = '0';
@@ -61,44 +26,44 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.bindDrag(e);
     }
     getTaskId() {
-        clickgo.form.dialog(clickgo.form.getTaskId(parseInt(this.fid)).toString()).catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.form.getTaskId(this.fid).toString()).catch(() => { });
     }
     get() {
-        clickgo.form.dialog(JSON.stringify(clickgo.form.get(parseInt(this.fid)))).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(clickgo.form.get(this.fid))).catch(() => { });
     }
     async getHash() {
-        await clickgo.form.dialog(JSON.stringify(clickgo.form.getHash(parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.form.getHash(this.fid)));
     }
     async hashBack() {
-        await clickgo.form.dialog(JSON.stringify(await clickgo.form.hashBack(parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(await clickgo.form.hashBack(this.fid)));
     }
     async tohash() {
-        await clickgo.form.dialog(JSON.stringify(clickgo.form.hash(this.hash, parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.form.hash(this.fid, this.hash)));
     }
     async getActivePanel() {
-        await clickgo.form.dialog(JSON.stringify(clickgo.form.getActivePanel(parseInt(this.fid))));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.form.getActivePanel(this.fid)));
     }
     async getFocus() {
         const f = clickgo.form.getFocus();
-        await clickgo.form.dialog(f ? f.toString() : 'null');
+        await clickgo.form.dialog(this, f ? f.toString() : 'null');
     }
-    changeFocus() {
-        clickgo.form.changeFocus(parseInt(this.fid));
+    async changeFocus() {
+        await clickgo.form.changeFocus(this.fid);
     }
     getList() {
-        let str = JSON.stringify(clickgo.form.getList(parseInt(this.tid)));
+        let str = JSON.stringify(clickgo.form.getList(this.tid));
         str = str.replace(/"icon":"(.*?)"/g, function (t, t1) {
             return `"icon":"${t1 ? (t1.slice(0, 10) + '...') : t1}"`;
         });
-        clickgo.form.dialog(`<flow direction="v" style="width: 200px; height: 80px;">${str}</flow>`).catch((e) => { throw e; });
+        clickgo.form.dialog(this, `<flow direction="v" style="width: 200px; height: 80px;">${str}</flow>`).catch(() => { });
     }
-    getMaxZIndexID() {
-        const fid = clickgo.form.getMaxZIndexID();
-        clickgo.form.dialog(JSON.stringify(fid)).catch((e) => { throw e; });
+    async getMaxZIndexID() {
+        const fid = await clickgo.form.getMaxZIndexID(this);
+        clickgo.form.dialog(this, JSON.stringify(fid)).catch(() => { });
     }
     getRectByBorder() {
         const size = clickgo.form.getRectByBorder('rb');
-        clickgo.form.dialog(JSON.stringify(size)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(size)).catch(() => { });
     }
     showCircular(e) {
         clickgo.form.showCircular(e.clientX, e.clientY);
@@ -109,7 +74,9 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.hideRectangle();
     }
     async showDrag() {
-        clickgo.form.showDrag();
+        clickgo.form.showDrag({
+            'element': this.refs.showDrag.$el,
+        });
         const rect = this.refs.showDrag.$el.getBoundingClientRect();
         clickgo.form.moveDrag({
             'left': rect.left,
@@ -123,7 +90,7 @@ class default_1 extends clickgo.form.AbstractForm {
     async notify() {
         let icon = null;
         if (this.progress[0] === 'progress + icon') {
-            icon = await clickgo.fs.getContent('/package/res/icon.svg');
+            icon = await clickgo.fs.getContent(this, '/package/res/icon.svg');
         }
         if (icon instanceof Blob) {
             icon = await clickgo.tool.blob2DataUrl(icon);
@@ -168,31 +135,31 @@ class default_1 extends clickgo.form.AbstractForm {
         clickgo.form.showPop(e.currentTarget, this.refs.pop, 'v');
     }
     async create() {
-        const frm = await clickgo.form.create('test', undefined, {
+        const frm = await clickgo.form.create(this, 'test', undefined, {
             'path': this.filename
         });
-        frm.show();
+        await frm.show();
     }
     async dialog() {
-        this.dr = await clickgo.form.dialog('Hello world!');
+        this.dr = await clickgo.form.dialog(this, 'Hello world!');
     }
     async dialogLong() {
-        this.dr = await clickgo.form.dialog('longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
+        this.dr = await clickgo.form.dialog(this, 'longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong');
     }
     async dialogTitle() {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'title': 'Title',
             'content': 'Hello world!'
         });
     }
     async dialogButtons() {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'content': 'Hello world!',
             'buttons': ['A', 'B', 'C']
         });
     }
     async dialogCannot() {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'content': 'Hello world!',
             'buttons': ['Do not close', 'Close'],
             'select': (e, button) => {
@@ -203,7 +170,7 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     async dialogData() {
-        this.dr = await clickgo.form.dialog({
+        this.dr = await clickgo.form.dialog(this, {
             'direction': 'v',
             'gutter': 10,
             'content': '<block>Hello text!</block><text :modelValue="data.txt" />',
@@ -213,7 +180,7 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     async confirm(cancel) {
-        this.dr = await clickgo.form.confirm({
+        this.dr = await clickgo.form.confirm(this, {
             'content': 'Hello world?',
             'cancel': cancel
         });
@@ -225,20 +192,19 @@ class default_1 extends clickgo.form.AbstractForm {
         }
     }
     async prompt() {
-        this.dr = await clickgo.form.prompt('test');
+        this.dr = await clickgo.form.prompt(this, 'test');
     }
-    flash() {
-        clickgo.form.flash(this.formId);
+    async flash() {
+        await clickgo.form.flash(this, this.formId);
     }
     showLauncher() {
         clickgo.form.showLauncher();
     }
     onReceive(obj) {
-        clickgo.form.dialog(JSON.stringify(obj)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(obj)).catch(() => { });
     }
     onMounted() {
         this.fid = this.formId.toString();
         this.tid = this.taskId.toString();
     }
 }
-exports.default = default_1;

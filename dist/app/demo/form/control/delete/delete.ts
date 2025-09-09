@@ -6,7 +6,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public async check(): Promise<void> {
         const res = this.refs.content.check();
-        await clickgo.form.dialog(res ? 'true' : 'false');
+        await clickgo.form.dialog(this, res ? 'true' : 'false');
     }
 
 }

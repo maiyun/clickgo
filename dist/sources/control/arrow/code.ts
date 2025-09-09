@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -38,7 +37,7 @@ export default class extends clickgo.control.AbstractControl {
     public isSpaceDown = false;
 
     public click(): void {
-        const event: types.ISwitchChangeEvent = {
+        const event: clickgo.control.ISwitchChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;

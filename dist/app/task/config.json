@@ -1,7 +1,7 @@
 {
     "name": "Clickgo Task",
     "ver": 1,
-    "version": "0.1",
+    "version": "1.0",
     "author": "clickgo",
 
     "controls": [
@@ -14,16 +14,5 @@
         "/package/locale/tc": "tc",
         "/package/locale/en": "en",
         "/package/locale/ja": "ja"
-    },
-
-    "files": [
-        "/form/bar/bar.js",
-        "/form/bar/bar.xml",
-        "/form/desktop/desktop.xml",
-        "/locale/en.json",
-        "/locale/ja.json",
-        "/locale/sc.json",
-        "/locale/tc.json",
-        "/app.js"
-    ]
+    }
 }

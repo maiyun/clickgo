@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Han Guoshuai <zohegs@gmail.com>
+ * Copyright 2007-2025 MAIYUN.NET
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as types from '../../types';
-import * as zip from './zip';
-import * as tool from './tool';
-import * as task from './task';
-import * as dom from './dom';
+import * as lZip from './zip';
+import * as lTool from './tool';
+import * as lTask from './task';
+import * as lDom from './dom';
+import * as lCore from './core';
+import * as lForm from './form';
 
-/** --- 当前全局主题，App 模式下无效 --- */
-export let global: types.ITheme | null = null;
+/** --- 系统级 ID --- */
+let sysId = '';
+
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id: string): void {
+    if (sysId) {
+        return;
+    }
+    sysId = id;
+}
+
+/** --- 当前全局主题 --- */
+export let global: ITheme | null = null;
 
 /**
  * --- cgt 文件 blob 转 IThemePkg 对象，会自动创建 object url，请注意释放 ---
  * @param blob blob 对象
  */
-export async function read(blob: Blob): Promise<types.ITheme | false> {
-    const z = await zip.get(blob);
+export async function read(blob: Blob): Promise<ITheme | false> {
+    const z = await lZip.get(blob);
     if (!z) {
         return false;
     }
@@ -35,14 +50,14 @@ export async function read(blob: Blob): Promise<types.ITheme | false> {
     if (!configContent) {
         return false;
     }
-    const config: types.IThemeConfig = JSON.parse(configContent);
+    const config: IThemeConfig = JSON.parse(configContent);
     const files: Record<string, Blob | string> = {};
     // --- 读取包文件 ---
     const list = z.readDir('/', {
         'hasChildren': true
     });
     for (const file of list) {
-        const mime = tool.getMimeByPath(file.name);
+        const mime = lTool.getMimeByPath(file.name);
         if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
             const fab = await z.getContent(file.path + file.name, 'string');
             if (!fab) {
@@ -68,15 +83,15 @@ export async function read(blob: Blob): Promise<types.ITheme | false> {
 }
 
 /**
- * --- 加载 theme 给任务（App 模式下必须设置 theme，不能用来加载所谓的全局主题） ---
- * @param theme ITheme 对象，undefined 代表加载全局的默认主题，但 App 模式下必须设置此项
- * @param taskId 要给某任务 ID 加载主题，App 模式下无效
+ * --- 加载 theme 给任务 ---
+ * @param taskId 要给某任务 ID 加载主题
+ * @param theme ITheme 对象，undefined 代表加载全局的默认主题
  */
-export async function load(theme?: types.ITheme, taskId?: number): Promise<boolean> {
-    if (!taskId) {
-        return false;
+export async function load(taskId: lCore.TCurrent, theme?: ITheme): Promise<boolean> {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(taskId);
     if (!t) {
         return false;
     }
@@ -100,8 +115,8 @@ export async function load(theme?: types.ITheme, taskId?: number): Promise<boole
     if (!style) {
         return false;
     }
-    style = tool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
-    style = await tool.styleUrl2DataUrl(theme.config.style, style, theme.files);
+    style = lTool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
+    style = await lTool.styleUrl2DataUrl(theme.config.style, style, theme.files);
     // --- 替换 [CGTMP-GLOBAL] ---
     style = style.replace(/\[CGTMP-GLOBAL\] +::selection/g, `#cg-form-list > [data-task-id="${taskId}"] ::selection, #cg-pop-list > [data-task-id="${taskId}"] ::selection`);
     style = style.replace(/\[CGTMP-GLOBAL\]/g, `#cg-form-list > [data-task-id="${taskId}"], #cg-pop-list > [data-task-id="${taskId}"]`);
@@ -112,22 +127,22 @@ export async function load(theme?: types.ITheme, taskId?: number): Promise<boole
             t.customTheme = true;
         }
         // --- 只要 task 之前是全局主题，本次就要清除原主题所有内容 ---
-        dom.removeStyle(taskId, 'theme');
+        lDom.removeStyle(taskId, 'theme');
     }
-    dom.pushStyle(taskId, style, 'theme', theme.config.name);
+    lDom.pushStyle(taskId, style, 'theme', theme.config.name);
     return true;
 }
 
 /**
  * --- 移除当前 task 的 theme（只能移除自定的） ---
+ * @param taskId 任务 ID
  * @param name 要移除的主题
- * @param taskId 任务 ID，App 模式下无效
  */
-export async function remove(name: string, taskId?: number): Promise<void> {
-    if (!taskId) {
-        return;
+export async function remove(taskId: lCore.TCurrent, name: string): Promise<void> {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(taskId);
     if (!t) {
         return;
     }
@@ -135,26 +150,26 @@ export async function remove(name: string, taskId?: number): Promise<void> {
         // --- 当前是系统主题，无权限移除 ---
         return;
     }
-    dom.removeStyle(taskId, 'theme', name);
+    lDom.removeStyle(taskId, 'theme', name);
     // --- 判断是否所有自定主题都被移除干净 ---
-    if (dom.getStyleCount(taskId, 'theme') === 0) {
+    if (lDom.getStyleCount(taskId, 'theme') === 0) {
         // --- 全部干净了，切换为系统主题 ---
         t.customTheme = false;
         if (global) {
-            await load(undefined, taskId);
+            await load(taskId);
         }
     }
 }
 
 /**
  * --- 清除一个 task 中所有加载的 theme（只能清除自定） ---
- * @param taskId 要清除的任务 id，App 模式下无效
+ * @param taskId 要清除的任务 id
  */
-export async function clear(taskId?: number): Promise<void> {
-    if (!taskId) {
-        return;
+export async function clear(taskId: lCore.TCurrent): Promise<void> {
+    if (typeof taskId !== 'string') {
+        taskId = taskId.taskId;
     }
-    const t = task.list[taskId];
+    const t = lTask.getOrigin(taskId);
     if (!t) {
         return;
     }
@@ -163,10 +178,10 @@ export async function clear(taskId?: number): Promise<void> {
         // --- 当前是系统，则不许清除 ---
         return;
     }
-    dom.removeStyle(taskId, 'theme');
+    lDom.removeStyle(taskId, 'theme');
     t.customTheme = false;
     if (global) {
-        await load(undefined, taskId);
+        await load(taskId);
     }
 }
 
@@ -174,26 +189,66 @@ export async function clear(taskId?: number): Promise<void> {
  * --- 将 cgt 主题设置到全局所有任务 ---
  * @param theme 主题对象
  */
-export async function setGlobal(theme: types.ITheme): Promise<void> {
+export async function setGlobal(theme: ITheme): Promise<void> {
     global = theme;
-    for (const taskId in task.list) {
-        await load(undefined, parseInt(taskId));
+    const tlist = await lTask.getOriginList(sysId);
+    for (const taskId in tlist) {
+        await load(taskId);
     }
 }
 
 /**
  * --- 清除全局主题 ---
  */
-export function clearGlobal(): void {
+export async function clearGlobal(): Promise<void> {
     if (!global) {
         return;
     }
     global = null;
-    for (const taskId in task.list) {
-        const t = task.list[taskId];
+    const tlist = await lTask.getOriginList(sysId);
+    for (const taskId in tlist) {
+        const t = tlist[taskId];
         if (t.customTheme) {
             continue;
         }
-        dom.removeStyle(t.id, 'theme');
+        lDom.removeStyle(t.id, 'theme');
     }
+}
+
+/**
+ * --- 设置全局主色 ---
+ * @param color 如 oklch(.7 .2 43)，留空为还原
+ */
+export function setMain(color?: string): void {
+    if (color) {
+        lForm.elements.wrap.style.setProperty('--main', color);
+    }
+    else {
+        lForm.elements.wrap.style.removeProperty('--main');
+    }
+}
+
+// --- 类型 ---
+
+/** --- 主题对象 --- */
+export interface ITheme {
+    'type': 'theme';
+    /** --- 主题对象配置文件 --- */
+    'config': IThemeConfig;
+    /** --- 所有已加载的文件内容 --- */
+    'files': Record<string, Blob | string>;
+}
+
+/** --- 主题文件包的 config --- */
+export interface IThemeConfig {
+    'name': string;
+    'ver': number;
+    'version': string;
+    'author': string;
+
+    /** --- 不带扩展名，系统会在末尾添加 .css --- */
+    'style': string;
+
+    /** --- 将要加载的文件 --- */
+    'files': string[];
 }

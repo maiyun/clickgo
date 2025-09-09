@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -47,14 +12,21 @@ class default_1 extends clickgo.control.AbstractControl {
             'mode': 'hsl',
             'ok': false
         };
+        /** --- 最终值 --- */
         this.hsl = {
             'h': 0,
+            /** --- 百分比，如 100 --- */
             's': 0,
+            /** --- 百分比，如 50 --- */
             'l': 100,
+            /** --- 透明度 --- */
             'a': 1
         };
+        /** --- color 文本框的值 --- */
         this.color = '';
+        /** --- 用户的值 --- */
         this.value = '';
+        /** --- 语言包 --- */
         this.localeData = {
             'en': {
                 'clear': 'Clear',
@@ -105,8 +77,12 @@ class default_1 extends clickgo.control.AbstractControl {
                 'ok': 'OK',
             }
         };
+        // --- 左侧 ---
+        /** --- 左侧顶部 --- */
         this.leftTop = 0;
+        /** --- 左侧左侧 --- */
         this.leftLeft = 0;
+        /** --- 右侧顶部 --- */
         this.rightTop = 0;
     }
     refreshLeftPosition(e, rect, maxTop, maxLeft) {
@@ -137,11 +113,14 @@ class default_1 extends clickgo.control.AbstractControl {
         this.hsl.a = 1;
         this.updateModelValue();
     }
+    /** --- sv down --- */
     leftDown(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        /** --- right 的 rect 对象 --- */
         const leftRect = this.refs.left.getBoundingClientRect();
+        /** --- 最大 top --- */
         const maxTop = leftRect.height - 4;
         const maxLeft = leftRect.width - 4;
         this.refreshLeftPosition(e, leftRect, maxTop, maxLeft);
@@ -152,6 +131,7 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
     refreshRightPosition(e, rect, maxTop) {
+        /** --- 上面的位置 --- */
         let top = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) - rect.top;
         if (top < 0) {
             top = 0;
@@ -164,11 +144,14 @@ class default_1 extends clickgo.control.AbstractControl {
         this.hsl.h = Math.round(ratio * 360);
         this.updateModelValue();
     }
+    /** --- h down --- */
     rightDown(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        /** --- right 的 rect 对象 --- */
         const rightRect = this.refs.right.getBoundingClientRect();
+        /** --- 最大 top --- */
         const maxTop = rightRect.height - 4;
         this.refreshRightPosition(e, rightRect, maxTop);
         clickgo.dom.bindDown(e, {
@@ -177,6 +160,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
+    /** --- 更新值 --- */
     updateModelValue() {
         const event = {
             'detail': {
@@ -209,6 +193,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 break;
             }
             default: {
+                // --- hex ---
                 const rgb = clickgo.tool.hsl2rgb(this.hsl.h, this.hsl.s, this.hsl.l, this.hsl.a);
                 const hex = clickgo.tool.rgb2hex(rgb.r, rgb.g, rgb.b, rgb.a);
                 event.detail.value = '#' + hex;
@@ -222,6 +207,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.emit('update:modelValue', event.detail.value);
         this.emit('changed', event);
     }
+    /** --- 用户输入和 modelValue --- */
     formatColor(color) {
         if (!color) {
             const event = {
@@ -254,6 +240,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.hsl.a = hsl.a;
         }
         else {
+            // --- hex ---
             const rgb = clickgo.tool.hex2rgb(v);
             const hsl = clickgo.tool.rgb2hsl(rgb.r, rgb.g, rgb.b, rgb.a, true);
             this.hsl.h = hsl.h;
@@ -261,9 +248,12 @@ class default_1 extends clickgo.control.AbstractControl {
             this.hsl.l = hsl.l;
             this.hsl.a = hsl.a;
         }
+        // --- 将 sl 转换为 x, y 坐标 ---
         const leftRect = this.refs.left.getBoundingClientRect();
+        /** --- 最大 top --- */
         const maxTop = leftRect.height - 4;
         const maxLeft = leftRect.width - 4;
+        // --- 代码 ---
         const hsvV = this.hsl.l + (this.hsl.s / 100) * Math.min(this.hsl.l, 100 - this.hsl.l);
         const hsvS = hsvV === 0 ? 0 : 2 * (1 - this.hsl.l / hsvV) * 100;
         const top = (1 - hsvV / 100) * maxTop;
@@ -272,13 +262,16 @@ class default_1 extends clickgo.control.AbstractControl {
         const left = hsvS / 100 * maxLeft;
         const leftRatio = left / maxLeft;
         this.leftLeft = leftRatio * 100;
+        // --- 再转换 h ---
         this.rightTop = this.hsl.h / 360 * 100;
         this.updateModelValue();
     }
+    /** --- color 文本框输入 --- */
     input() {
         if (this.color === this.value) {
             return;
         }
+        // --- 格式化 ---
         this.formatColor(this.color);
     }
     onMounted() {
@@ -300,4 +293,3 @@ class default_1 extends clickgo.control.AbstractControl {
         });
     }
 }
-exports.default = default_1;

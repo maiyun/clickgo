@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -185,7 +184,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 更新值 --- */
     public updateModelValue(): void {
-        const event: types.IPaletteChangedEvent = {
+        const event: clickgo.control.IPaletteChangedEvent = {
             'detail': {
                 'value': '',
                 'hsl': undefined,
@@ -234,7 +233,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 用户输入和 modelValue --- */
     public formatColor(color: string): void {
         if (!color) {
-            const event: types.IPaletteChangedEvent = {
+            const event: clickgo.control.IPaletteChangedEvent = {
                 'detail': {
                     'value': '',
                     'hsl': undefined,

@@ -18,12 +18,12 @@
 }
 
 .pop {
-    padding: 10px; background: #FFF; color: #000; fill: #000; stroke: #000; border: solid 1px #000; display: flex; align-items: center; gap: 10px;
+    padding: 10px; background: #FFF; color: #000; border: solid 1px #000; display: flex; align-items: center; gap: 10px;
     cg-svg {
         width: 12px; height: 12px;
     }
 
     &:hover {
-        color: red; fill: red; stroke: red; border-color: red;
+        color: red; border-color: red;
     }
 }

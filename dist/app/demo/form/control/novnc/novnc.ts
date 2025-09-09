@@ -2,7 +2,7 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public url = '';
+    public url = 'ws://127.0.0.1:8080/rsocket';
 
     public pwd = '';
 
@@ -15,6 +15,10 @@ export default class extends clickgo.form.AbstractForm {
 
     /** --- 连接 --- */
     public toConnect(): void {
+        if (this.config.url) {
+            this.refs.novnc.disconnect();
+            return;
+        }
         this.config.url = this.url;
         this.config.pwd = this.pwd;
     }
@@ -25,18 +29,41 @@ export default class extends clickgo.form.AbstractForm {
         return `[${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}] `;
     }
 
-    public connect(): void {
-        this.list.unshift(this.date() + 'connect');
+    public connect(data: any): void {
+        this.list.unshift(this.date() + 'connect: ' + JSON.stringify(data));
     }
 
     /** --- 断开 --- */
     public disconnect(): void {
         this.list.unshift(this.date() + 'disconnect');
+        this.config.url = '';
+        this.config.pwd = '';
     }
 
     /** --- 需要密码 --- */
-    public password(): void {
+    public async password(): Promise<void> {
         this.list.unshift(this.date() + 'password');
+        // --- 向用户索要密码 ---
+        const pwd = await clickgo.form.prompt(this, {
+            'content': 'Please input password',
+            select: (e: clickgo.form.IFormPromptSelectEvent, button: boolean) => {
+                if (!button) {
+                    // --- 取消 ---
+                    this.refs.novnc.disconnect();
+                    return;
+                }
+                if (e.detail.value) {
+                    return;
+                }
+                clickgo.form.alert('must input password');
+                e.preventDefault();
+                return;
+            }
+        });
+        if (!pwd) {
+            return;
+        }
+        this.refs.novnc.sendPassword(pwd);
     }
 
     /** --- 失败 --- */

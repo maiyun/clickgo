@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -17,8 +16,8 @@ export default class extends clickgo.form.AbstractForm {
         this.access.pdf = pdf;
     }
 
-    public async onView(e: types.IPdfViewEvent): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(e.detail));
+    public async onView(e: clickgo.control.IPdfViewEvent): Promise<void> {
+        await clickgo.form.dialog(this, JSON.stringify(e.detail));
     }
 
     // --- 加载 pdf ---

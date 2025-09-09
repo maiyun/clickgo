@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.form.AbstractForm {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.sleeping = false;
@@ -83,10 +48,10 @@ class default_1 extends clickgo.form.AbstractForm {
         this.purifyTxt = clickgo.tool.purify(this.purifyTxt);
     }
     rand() {
-        clickgo.form.dialog(clickgo.tool.rand(parseInt(this.min), parseInt(this.max)).toString()).catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.tool.rand(parseInt(this.min), parseInt(this.max)).toString()).catch((e) => { throw e; });
     }
     async random() {
-        await clickgo.form.dialog({
+        await clickgo.form.dialog(this, {
             'direction': 'v',
             'content': '<text modelValue="' + clickgo.tool.random(parseInt(this.length), clickgo.tool.RANDOM_LUN, this.block) + '" readonly />',
             'data': {
@@ -95,28 +60,27 @@ class default_1 extends clickgo.form.AbstractForm {
         });
     }
     escapeHTML() {
-        clickgo.form.dialog(clickgo.tool.escapeHTML(this.purifyTxt)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.tool.escapeHTML(this.purifyTxt)).catch((e) => { throw e; });
     }
     rgb2hsl() {
-        clickgo.form.dialog(JSON.stringify(clickgo.tool.rgb2hsl('9,105,218'))).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(clickgo.tool.rgb2hsl('9,105,218'))).catch((e) => { throw e; });
     }
     parseUrl() {
-        clickgo.form.dialog(JSON.stringify(clickgo.tool.parseUrl(this.url))).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(clickgo.tool.parseUrl(this.url))).catch((e) => { throw e; });
     }
     urlResolve() {
-        clickgo.form.dialog(clickgo.tool.urlResolve(this.url1, this.url2)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.tool.urlResolve(this.url1, this.url2)).catch((e) => { throw e; });
     }
     async formatSecond() {
-        await clickgo.form.dialog(clickgo.tool.formatSecond(parseInt(this.second) || 0));
+        await clickgo.form.dialog(this, clickgo.tool.formatSecond(parseInt(this.second) || 0));
     }
     async weightFormat() {
-        await clickgo.form.dialog(clickgo.tool.weightFormat(parseInt(this.weight) || 0));
+        await clickgo.form.dialog(this, clickgo.tool.weightFormat(parseInt(this.weight) || 0));
     }
     async queryParse() {
-        await clickgo.form.dialog(JSON.stringify(clickgo.tool.queryParse(this.qs)));
+        await clickgo.form.dialog(this, JSON.stringify(clickgo.tool.queryParse(this.qs)));
     }
     async queryStringify() {
-        await clickgo.form.dialog(clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
+        await clickgo.form.dialog(this, clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
     }
 }
-exports.default = default_1;

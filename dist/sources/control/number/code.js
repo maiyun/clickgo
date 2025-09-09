@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -56,8 +21,10 @@ class default_1 extends clickgo.control.AbstractControl {
             'max': undefined,
             'min': undefined
         };
+        // --- 其他 ---
         this.isFocus = false;
         this.value = '';
+        /** --- 语言包 --- */
         this.localeData = {
             'en': {
                 'copy': 'Copy',
@@ -120,20 +87,25 @@ class default_1 extends clickgo.control.AbstractControl {
                 'paste': 'Dán'
             }
         };
+        /** --- 为 true 的话会显示红色边框 --- */
         this.dangerBorder = false;
     }
+    /** --- 供外部调用的使框获取焦点的事件 --- */
     focus() {
         this.refs.text.focus();
     }
+    /** --- wrap 的 down --- */
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
         }
         clickgo.form.hidePop();
     }
+    /** --- 文本框的 focus 事件 --- */
     tfocus() {
         this.isFocus = true;
         this.emit('focus');
@@ -141,7 +113,9 @@ class default_1 extends clickgo.control.AbstractControl {
             this.dangerBorder = false;
         }
     }
+    /** --- 文本框的 blur 事件 --- */
     tblur(e) {
+        // --- 要判断数字是否符合 min max，不能在 input 判断，因为会导致用户无法正常输入数字，比如最小值是 10，他在输入 1 的时候就自动重置成 10 了 ---
         const target = e.target;
         if (this.checkNumber(target)) {
             const mxEvent = {
@@ -168,25 +142,31 @@ class default_1 extends clickgo.control.AbstractControl {
                 };
                 this.emit('beforechange', event);
                 if (event.go) {
+                    // --- 允许 ---
                     if (event.detail.change !== undefined) {
                         target.value = event.detail.change;
                     }
                     this.value = target.value;
                     this.emit('update:modelValue', this.value);
+                    // --- changed ---
                     this.emit('changed');
                 }
                 else {
+                    // --- 禁止 ---
                     target.value = this.value;
                 }
             }
             else {
+                // --- 禁止 ---
                 target.value = this.value;
             }
         }
         this.isFocus = false;
         this.emit('blur');
+        // --- 判断是否显示红色边框 ---
         this.check();
     }
+    /** --- 文本框的 input 事件 --- */
     input(e) {
         const target = e.target;
         const event = {
@@ -209,12 +189,12 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value = target.value;
         this.emit('update:modelValue', this.value);
+        // --- changed ---
         this.emit('changed');
     }
+    /** --- 检测 value 值是否符合 max 和 min --- */
     checkNumber(target) {
-        if (!target) {
-            target = this.refs.text;
-        }
+        target ??= this.refs.text;
         let change = false;
         if (!target.value && this.value) {
             change = true;
@@ -233,12 +213,14 @@ class default_1 extends clickgo.control.AbstractControl {
         return change;
     }
     inputTouch(e) {
+        // --- 长按触发 contextmenu ---
         if (navigator.clipboard) {
             clickgo.dom.bindLong(e, () => {
                 clickgo.form.showPop(this.element, this.refs.pop, e);
             });
         }
     }
+    /** --- input 的 contextmenu --- */
     contextmenu(e) {
         if (!navigator.clipboard) {
             e.stopPropagation();
@@ -252,6 +234,10 @@ class default_1 extends clickgo.control.AbstractControl {
     select(e) {
         e.stopPropagation();
     }
+    /**
+     * --- number 模式下，点击右侧的控制按钮 ---
+     * @param num 增加或者是减少
+     */
     numberClick(num) {
         if (!this.value) {
             this.value = '0';
@@ -273,11 +259,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.value = event.detail.change ?? n;
         this.emit('update:modelValue', this.value);
+        // --- changed ---
         this.emit('changed');
     }
+    /** --- 执行复制粘贴剪切等操作 --- */
     async execCmd(ac) {
         this.refs.text.focus();
         if (ac === 'paste') {
+            // --- 粘贴 ---
             if (this.propBoolean('readonly')) {
                 return;
             }
@@ -298,18 +287,23 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.value = event.detail.change ?? str;
             this.emit('update:modelValue', this.value);
+            // --- changed ---
             this.emit('changed');
         }
         else {
+            // --- 复制、剪切 ---
             clickgo.tool.execCommand(ac);
         }
     }
+    /** --- 文本框的键盘事件 --- */
     keydown(e) {
         if (e.key === 'Enter') {
             this.emit('enter');
         }
     }
+    /** --- 检测 require 和 rule --- */
     check() {
+        // --- 先检测必填 ---
         if (this.propBoolean('require')) {
             if (!this.value) {
                 this.dangerBorder = true;
@@ -319,6 +313,7 @@ class default_1 extends clickgo.control.AbstractControl {
         return true;
     }
     onMounted() {
+        // --- prop 修改值 ---
         this.watch('modelValue', async () => {
             if (this.value === this.props.modelValue) {
                 return;
@@ -329,6 +324,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.value = this.props.modelValue;
             await this.nextTick();
             this.checkNumber();
+            // --- 有可能设置后控件实际值和设置的值不同，所以要重新判断一下 ---
             if (this.refs.text.value === this.value) {
                 this.check();
                 return;
@@ -351,6 +347,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.value = event.detail.change ?? this.refs.text.value;
             this.emit('update:modelValue', this.value);
+            // --- changed ---
             this.emit('changed');
             this.check();
         }, {
@@ -391,6 +388,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                // --- changed ---
                 this.emit('changed');
             }
         });
@@ -429,6 +427,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 this.value = event.detail.change ?? this.refs.text.value;
                 this.emit('update:modelValue', this.value);
+                // --- changed ---
                 this.emit('changed');
             }
         });
@@ -447,4 +446,3 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
 }
-exports.default = default_1;

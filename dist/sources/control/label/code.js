@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
@@ -50,6 +15,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'zone': false,
             'tz': undefined
         };
+        /** --- 语言包 --- */
         this.localeData = {
             'en': {
                 'copy': 'Copy',
@@ -101,6 +67,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         };
     }
+    /** --- 获取 align 的 css 属性模式 --- */
     get alignComp() {
         switch (this.props.align) {
             case 'center': {
@@ -115,6 +82,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
+    /** --- 替换 slot 数据 --- */
     get contentComp() {
         if (this.props.mode !== 'date') {
             return this.props.content;
@@ -136,6 +104,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return rtn.join(' ');
     }
+    /** --- label 点击 --- */
     async click() {
         if (!this.propBoolean('copy')) {
             return;
@@ -143,6 +112,7 @@ class default_1 extends clickgo.control.AbstractControl {
         await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
         clickgo.form.alert(this.l('copied'));
     }
+    /** --- wrap 的 down --- */
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -150,6 +120,7 @@ class default_1 extends clickgo.control.AbstractControl {
         if (!this.propBoolean('copy')) {
             return;
         }
+        // --- 点击复制 ---
         clickgo.dom.bindClick(e, async () => {
             await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
             clickgo.form.alert(this.l('copied'));
@@ -162,11 +133,13 @@ class default_1 extends clickgo.control.AbstractControl {
                 clickgo.form.showPop(this.element, this.refs.pop, e);
             });
         }
+        // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
         }
         clickgo.form.hidePop();
     }
+    /** --- contextmenu --- */
     contextmenu(e) {
         if (!this.propBoolean('copy')) {
             return;
@@ -180,8 +153,8 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         clickgo.form.showPop(this.element, this.refs.pop, e);
     }
+    /** --- 执行复制 --- */
     execCmd(ac) {
         clickgo.tool.execCommand(ac);
     }
 }
-exports.default = default_1;

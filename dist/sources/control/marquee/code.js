@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.props = {
@@ -61,6 +26,7 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
         if (this.length > this.client) {
+            // --- 超出，得滚动 ---
             if (this.timer > 0) {
                 return;
             }
@@ -88,34 +54,37 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else {
+            // --- 未超出、无需滚动 ---
             if (this.timer === 0) {
                 return;
             }
-            clickgo.task.offFrame(this.timer);
+            clickgo.task.offFrame(this, this.timer);
             this.timer = 0;
             this.left = 0;
             this.top = 0;
             return;
         }
-        clickgo.task.sleep(() => {
+        clickgo.task.sleep(this, () => {
             if (this.length <= this.client) {
                 return;
             }
             if (this.timer > 0) {
                 return;
             }
-            this.timer = clickgo.task.onFrame(async () => {
+            // --- 没创建的 timer 的现在创建 timer ---
+            this.timer = clickgo.task.onFrame(this, async () => {
                 if (!clickgo.dom.inPage(this.element)) {
-                    clickgo.task.offFrame(this.timer);
+                    clickgo.task.offFrame(this, this.timer);
                     this.timer = 0;
                     return;
                 }
+                // --- 超出才滚动 ---
                 const xv = this.length - this.client;
                 switch (this.props.direction) {
                     case 'left': {
                         if (this.left === -xv) {
                             this.left = 0;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -133,7 +102,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     case 'right': {
                         if (this.left === 0) {
                             this.left = -xv;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -151,7 +120,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     case 'top': {
                         if (this.top === -xv) {
                             this.top = 0;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -169,7 +138,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     case 'bottom': {
                         if (this.top === 0) {
                             this.top = -xv;
-                            clickgo.task.sleep(() => {
+                            clickgo.task.sleep(this, () => {
                                 this.ani = false;
                             }, 150);
                             await clickgo.tool.sleep(1000);
@@ -210,7 +179,8 @@ class default_1 extends clickgo.control.AbstractControl {
         clickgo.dom.watchStyle(this.element, 'padding', (n, v) => {
             this.padding = v;
         }, true);
-        clickgo.dom.watchSize(this.element, () => {
+        // --- 外部包裹的改变 ---
+        clickgo.dom.watchSize(this, this.element, () => {
             const client = (this.props.direction === 'left' || this.props.direction === 'right') ? this.element.offsetWidth : this.element.offsetHeight;
             if (client === this.client) {
                 return;
@@ -218,7 +188,8 @@ class default_1 extends clickgo.control.AbstractControl {
             this.client = client;
             this.refresh();
         }, true);
-        clickgo.dom.watchSize(this.refs.inner, () => {
+        // --- 内部内容的改变 ---
+        clickgo.dom.watchSize(this, this.refs.inner, () => {
             const length = (this.props.direction === 'left' || this.props.direction === 'right') ? this.refs.inner.offsetWidth : this.refs.inner.offsetHeight;
             if (length === this.length) {
                 return;
@@ -228,4 +199,3 @@ class default_1 extends clickgo.control.AbstractControl {
         }, true);
     }
 }
-exports.default = default_1;

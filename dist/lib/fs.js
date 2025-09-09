@@ -1,62 +1,30 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
+/**
+ * /clickgo/ ClickGo 系统文件目录，永远只读
+ * /storage/ 本地模式可用，用于读取本地用户文件
+ * /mounted/ 挂载目录，可挂载第三方，如 /mounted/clouddrive/
+ * /package/ 包内文件存在时可用，用于读取包内文件，永远只读
+ * /current/ app 运行起来的 task 的当前路径链接，这是个软连接，实际映射到实际的运行目录
+*/
+import * as clickgo from '../clickgo';
+import * as lTool from './tool';
+import * as lTask from './task';
+import * as lForm from './form';
+import * as lCore from './core';
+import * as lNative from './native';
+/** --- 系统级 ID --- */
+let sysId = '';
+/**
+ * --- 初始化系统级 ID，仅能设置一次 ---
+ * @param id 系统级 ID
+ */
+export function initSysId(id) {
+    if (sysId) {
+        return;
     }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.mount = mount;
-exports.unmount = unmount;
-exports.getContent = getContent;
-exports.putContent = putContent;
-exports.readLink = readLink;
-exports.symlink = symlink;
-exports.unlink = unlink;
-exports.stats = stats;
-exports.isDir = isDir;
-exports.isFile = isFile;
-exports.mkdir = mkdir;
-exports.rmdir = rmdir;
-exports.rmdirDeep = rmdirDeep;
-exports.chmod = chmod;
-exports.rename = rename;
-exports.readDir = readDir;
-exports.copyFolder = copyFolder;
-exports.copyFile = copyFile;
-const tool = __importStar(require("./tool"));
-const task = __importStar(require("./task"));
-const form = __importStar(require("./form"));
-const core = __importStar(require("./core"));
-const native = __importStar(require("./native"));
-const clickgoFiles = ['/app/', '/app/demo/', '/app/demo/app.js', '/app/demo/config.json', '/app/demo/form/', '/app/demo/form/control/', '/app/demo/form/control/alayout2/', '/app/demo/form/control/alayout2/alayout2.js', '/app/demo/form/control/alayout2/alayout2.xml', '/app/demo/form/control/alert/', '/app/demo/form/control/alert/alert.js', '/app/demo/form/control/alert/alert.xml', '/app/demo/form/control/arteditor/', '/app/demo/form/control/arteditor/arteditor.js', '/app/demo/form/control/arteditor/arteditor.xml', '/app/demo/form/control/arteditor/img.js', '/app/demo/form/control/arteditor/img.xml', '/app/demo/form/control/block/', '/app/demo/form/control/block/block.css', '/app/demo/form/control/block/block.xml', '/app/demo/form/control/box/', '/app/demo/form/control/box/box.js', '/app/demo/form/control/box/box.xml', '/app/demo/form/control/button/', '/app/demo/form/control/button/button.css', '/app/demo/form/control/button/button.js', '/app/demo/form/control/button/button.xml', '/app/demo/form/control/calendar/', '/app/demo/form/control/calendar/calendar.js', '/app/demo/form/control/calendar/calendar.xml', '/app/demo/form/control/captcha/', '/app/demo/form/control/captcha/captcha.js', '/app/demo/form/control/captcha/captcha.xml', '/app/demo/form/control/check/', '/app/demo/form/control/check/check.js', '/app/demo/form/control/check/check.xml', '/app/demo/form/control/circle/', '/app/demo/form/control/circle/circle.xml', '/app/demo/form/control/content/', '/app/demo/form/control/content/content.js', '/app/demo/form/control/content/content.xml', '/app/demo/form/control/date/', '/app/demo/form/control/date/date.js', '/app/demo/form/control/date/date.xml', '/app/demo/form/control/datepanel/', '/app/demo/form/control/datepanel/datepanel.js', '/app/demo/form/control/datepanel/datepanel.xml', '/app/demo/form/control/daterange/', '/app/demo/form/control/daterange/daterange.js', '/app/demo/form/control/daterange/daterange.xml', '/app/demo/form/control/delete/', '/app/demo/form/control/delete/delete.js', '/app/demo/form/control/delete/delete.xml', '/app/demo/form/control/desc/', '/app/demo/form/control/desc/desc.js', '/app/demo/form/control/desc/desc.xml', '/app/demo/form/control/dialog/', '/app/demo/form/control/dialog/dialog.js', '/app/demo/form/control/dialog/dialog.xml', '/app/demo/form/control/drawer/', '/app/demo/form/control/drawer/drawer.js', '/app/demo/form/control/drawer/drawer.xml', '/app/demo/form/control/echarts/', '/app/demo/form/control/echarts/echarts.js', '/app/demo/form/control/echarts/echarts.xml', '/app/demo/form/control/empty/', '/app/demo/form/control/empty/empty.js', '/app/demo/form/control/empty/empty.xml', '/app/demo/form/control/file/', '/app/demo/form/control/file/file.js', '/app/demo/form/control/file/file.xml', '/app/demo/form/control/flow/', '/app/demo/form/control/flow/flow.css', '/app/demo/form/control/flow/flow.js', '/app/demo/form/control/flow/flow.xml', '/app/demo/form/control/form/', '/app/demo/form/control/form/form.css', '/app/demo/form/control/form/form.js', '/app/demo/form/control/form/form.xml', '/app/demo/form/control/grid/', '/app/demo/form/control/grid/grid.js', '/app/demo/form/control/grid/grid.xml', '/app/demo/form/control/group/', '/app/demo/form/control/group/group.js', '/app/demo/form/control/group/group.xml', '/app/demo/form/control/hske/', '/app/demo/form/control/hske/hske.js', '/app/demo/form/control/hske/hske.xml', '/app/demo/form/control/html/', '/app/demo/form/control/html/html.js', '/app/demo/form/control/html/html.xml', '/app/demo/form/control/icon/', '/app/demo/form/control/icon/icon.xml', '/app/demo/form/control/iconview/', '/app/demo/form/control/iconview/iconview.js', '/app/demo/form/control/iconview/iconview.xml', '/app/demo/form/control/img/', '/app/demo/form/control/img/img.xml', '/app/demo/form/control/imgviewer/', '/app/demo/form/control/imgviewer/imgviewer.js', '/app/demo/form/control/imgviewer/imgviewer.xml', '/app/demo/form/control/jodit/', '/app/demo/form/control/jodit/jodit.js', '/app/demo/form/control/jodit/jodit.xml', '/app/demo/form/control/label/', '/app/demo/form/control/label/label.js', '/app/demo/form/control/label/label.xml', '/app/demo/form/control/layout/', '/app/demo/form/control/layout/layout.js', '/app/demo/form/control/layout/layout.xml', '/app/demo/form/control/link/', '/app/demo/form/control/link/link.js', '/app/demo/form/control/link/link.xml', '/app/demo/form/control/list/', '/app/demo/form/control/list/list.css', '/app/demo/form/control/list/list.js', '/app/demo/form/control/list/list.xml', '/app/demo/form/control/loading/', '/app/demo/form/control/loading/loading.xml', '/app/demo/form/control/map/', '/app/demo/form/control/map/map.js', '/app/demo/form/control/map/map.xml', '/app/demo/form/control/marquee/', '/app/demo/form/control/marquee/marquee.js', '/app/demo/form/control/marquee/marquee.xml', '/app/demo/form/control/menu/', '/app/demo/form/control/menu/menu.js', '/app/demo/form/control/menu/menu.xml', '/app/demo/form/control/monaco/', '/app/demo/form/control/monaco/monaco.js', '/app/demo/form/control/monaco/monaco.xml', '/app/demo/form/control/mpegts/', '/app/demo/form/control/mpegts/mpegts.js', '/app/demo/form/control/mpegts/mpegts.xml', '/app/demo/form/control/nav/', '/app/demo/form/control/nav/nav.js', '/app/demo/form/control/nav/nav.xml', '/app/demo/form/control/novnc/', '/app/demo/form/control/novnc/novnc.js', '/app/demo/form/control/novnc/novnc.xml', '/app/demo/form/control/page/', '/app/demo/form/control/page/page.js', '/app/demo/form/control/page/page.xml', '/app/demo/form/control/palette/', '/app/demo/form/control/palette/palette.js', '/app/demo/form/control/palette/palette.xml', '/app/demo/form/control/panel/', '/app/demo/form/control/panel/panel.js', '/app/demo/form/control/panel/panel.xml', '/app/demo/form/control/panel/test1.js', '/app/demo/form/control/panel/test1.xml', '/app/demo/form/control/panel/test2.xml', '/app/demo/form/control/pdf/', '/app/demo/form/control/pdf/pdf.js', '/app/demo/form/control/pdf/pdf.xml', '/app/demo/form/control/pdf/test.pdf', '/app/demo/form/control/progress/', '/app/demo/form/control/progress/progress.js', '/app/demo/form/control/progress/progress.xml', '/app/demo/form/control/property/', '/app/demo/form/control/property/property.js', '/app/demo/form/control/property/property.xml', '/app/demo/form/control/qrcode/', '/app/demo/form/control/qrcode/qrcode.js', '/app/demo/form/control/qrcode/qrcode.xml', '/app/demo/form/control/radio/', '/app/demo/form/control/radio/radio.js', '/app/demo/form/control/radio/radio.xml', '/app/demo/form/control/scroll/', '/app/demo/form/control/scroll/scroll.js', '/app/demo/form/control/scroll/scroll.xml', '/app/demo/form/control/select/', '/app/demo/form/control/select/select.js', '/app/demo/form/control/select/select.xml', '/app/demo/form/control/setting/', '/app/demo/form/control/setting/setting.xml', '/app/demo/form/control/sgroup/', '/app/demo/form/control/sgroup/sgroup.xml', '/app/demo/form/control/step/', '/app/demo/form/control/step/step.js', '/app/demo/form/control/step/step.xml', '/app/demo/form/control/svg/', '/app/demo/form/control/svg/svg.js', '/app/demo/form/control/svg/svg.xml', '/app/demo/form/control/switch/', '/app/demo/form/control/switch/switch.js', '/app/demo/form/control/switch/switch.xml', '/app/demo/form/control/tab/', '/app/demo/form/control/tab/tab.js', '/app/demo/form/control/tab/tab.xml', '/app/demo/form/control/table/', '/app/demo/form/control/table/table.js', '/app/demo/form/control/table/table.xml', '/app/demo/form/control/tag/', '/app/demo/form/control/tag/tag.js', '/app/demo/form/control/tag/tag.xml', '/app/demo/form/control/text/', '/app/demo/form/control/text/text.js', '/app/demo/form/control/text/text.xml', '/app/demo/form/control/timeline/', '/app/demo/form/control/timeline/timeline.js', '/app/demo/form/control/timeline/timeline.xml', '/app/demo/form/control/tip/', '/app/demo/form/control/tip/tip.js', '/app/demo/form/control/tip/tip.xml', '/app/demo/form/control/tplink/', '/app/demo/form/control/tplink/tplink.js', '/app/demo/form/control/tplink/tplink.xml', '/app/demo/form/control/tuieditor/', '/app/demo/form/control/tuieditor/tuieditor.js', '/app/demo/form/control/tuieditor/tuieditor.xml', '/app/demo/form/control/tuiviewer/', '/app/demo/form/control/tuiviewer/tuiviewer.js', '/app/demo/form/control/tuiviewer/tuiviewer.xml', '/app/demo/form/control/uploader/', '/app/demo/form/control/uploader/uploader.js', '/app/demo/form/control/uploader/uploader.xml', '/app/demo/form/control/vflow/', '/app/demo/form/control/vflow/vflow.css', '/app/demo/form/control/vflow/vflow.js', '/app/demo/form/control/vflow/vflow.xml', '/app/demo/form/control/video/', '/app/demo/form/control/video/video.js', '/app/demo/form/control/video/video.xml', '/app/demo/form/control/web/', '/app/demo/form/control/web/web.js', '/app/demo/form/control/web/web.xml', '/app/demo/form/control/xterm/', '/app/demo/form/control/xterm/xterm.js', '/app/demo/form/control/xterm/xterm.xml', '/app/demo/form/event/', '/app/demo/form/event/form/', '/app/demo/form/event/form/form.css', '/app/demo/form/event/form/form.js', '/app/demo/form/event/form/form.xml', '/app/demo/form/event/other/', '/app/demo/form/event/other/other.js', '/app/demo/form/event/other/other.xml', '/app/demo/form/event/screen/', '/app/demo/form/event/screen/screen.js', '/app/demo/form/event/screen/screen.xml', '/app/demo/form/event/task/', '/app/demo/form/event/task/task.js', '/app/demo/form/event/task/task.xml', '/app/demo/form/main.css', '/app/demo/form/main.js', '/app/demo/form/main.xml', '/app/demo/form/method/', '/app/demo/form/method/acontrol/', '/app/demo/form/method/acontrol/acontrol.js', '/app/demo/form/method/acontrol/acontrol.xml', '/app/demo/form/method/aform/', '/app/demo/form/method/aform/aform.js', '/app/demo/form/method/aform/aform.xml', '/app/demo/form/method/aform/sd.js', '/app/demo/form/method/aform/sd.xml', '/app/demo/form/method/core/', '/app/demo/form/method/core/core.js', '/app/demo/form/method/core/core.xml', '/app/demo/form/method/dom/', '/app/demo/form/method/dom/dom.css', '/app/demo/form/method/dom/dom.js', '/app/demo/form/method/dom/dom.xml', '/app/demo/form/method/form/', '/app/demo/form/method/form/form.js', '/app/demo/form/method/form/form.xml', '/app/demo/form/method/form/test.xml', '/app/demo/form/method/fs/', '/app/demo/form/method/fs/fs.js', '/app/demo/form/method/fs/fs.xml', '/app/demo/form/method/fs/text.js', '/app/demo/form/method/fs/text.xml', '/app/demo/form/method/native/', '/app/demo/form/method/native/native.js', '/app/demo/form/method/native/native.xml', '/app/demo/form/method/storage/', '/app/demo/form/method/storage/storage.js', '/app/demo/form/method/storage/storage.xml', '/app/demo/form/method/system/', '/app/demo/form/method/system/system.js', '/app/demo/form/method/system/system.xml', '/app/demo/form/method/task/', '/app/demo/form/method/task/locale1.json', '/app/demo/form/method/task/locale2.json', '/app/demo/form/method/task/task.js', '/app/demo/form/method/task/task.xml', '/app/demo/form/method/theme/', '/app/demo/form/method/theme/theme.js', '/app/demo/form/method/theme/theme.xml', '/app/demo/form/method/tool/', '/app/demo/form/method/tool/tool.js', '/app/demo/form/method/tool/tool.xml', '/app/demo/form/method/zip/', '/app/demo/form/method/zip/zip.js', '/app/demo/form/method/zip/zip.xml', '/app/demo/form/solution/', '/app/demo/form/solution/backpanel/', '/app/demo/form/solution/backpanel/backpanel.js', '/app/demo/form/solution/backpanel/backpanel.xml', '/app/demo/global.css', '/app/demo/res/', '/app/demo/res/custombtn.cgc', '/app/demo/res/icon.svg', '/app/demo/res/img.jpg', '/app/demo/res/marker.svg', '/app/demo/res/r-1.svg', '/app/demo/res/r-2.svg', '/app/demo/res/sql.svg', '/app/demo/res/txt.svg', '/app/demo/res/video.mp4', '/app/demo/res/zip.svg', '/app/task/', '/app/task/app.js', '/app/task/config.json', '/app/task/form/', '/app/task/form/bar/', '/app/task/form/bar/bar.js', '/app/task/form/bar/bar.xml', '/app/task/form/desktop/', '/app/task/form/desktop/desktop.xml', '/app/task/locale/', '/app/task/locale/en.json', '/app/task/locale/ja.json', '/app/task/locale/sc.json', '/app/task/locale/tc.json', '/clickgo.d.ts', '/clickgo.js', '/clickgo.ts', '/control/', '/control/arteditor.cgc', '/control/box.cgc', '/control/captcha.cgc', '/control/common.cgc', '/control/desc.cgc', '/control/drawer.cgc', '/control/echarts.cgc', '/control/form.cgc', '/control/iconview.cgc', '/control/jodit.cgc', '/control/map.cgc', '/control/monaco.cgc', '/control/mpegts.cgc', '/control/nav.cgc', '/control/novnc.cgc', '/control/page.cgc', '/control/pdf.cgc', '/control/property.cgc', '/control/qrcode.cgc', '/control/table.cgc', '/control/task.cgc', '/control/tplink.cgc', '/control/tuieditor.cgc', '/control/tuiviewer.cgc', '/control/web.cgc', '/control/xterm.cgc', '/ext/', '/ext/toastui-editor-all.min.js', '/ext/tplinkhd.min.js', '/global.css', '/icon.png', '/index.d.ts', '/index.js', '/index.ts', '/lib/', '/lib/control.d.ts', '/lib/control.js', '/lib/control.ts', '/lib/core.d.ts', '/lib/core.js', '/lib/core.ts', '/lib/dom.d.ts', '/lib/dom.js', '/lib/dom.ts', '/lib/form.d.ts', '/lib/form.js', '/lib/form.ts', '/lib/fs.d.ts', '/lib/fs.js', '/lib/fs.ts', '/lib/native.d.ts', '/lib/native.js', '/lib/native.ts', '/lib/storage.d.ts', '/lib/storage.js', '/lib/storage.ts', '/lib/task.d.ts', '/lib/task.js', '/lib/task.ts', '/lib/theme.d.ts', '/lib/theme.js', '/lib/theme.ts', '/lib/tool.d.ts', '/lib/tool.js', '/lib/tool.ts', '/lib/zip.d.ts', '/lib/zip.js', '/lib/zip.ts', '/notosans-regular.ttf', '/theme/', '/theme/blue.cgt', '/theme/byterun.cgt', '/theme/dark.cgt', '/theme/light.cgt'];
+    sysId = id;
+}
+const clickgoFiles = ['/app/', '/app/demo.cga', '/app/task.cga', '/control/', '/control/arteditor.cgc', '/control/box.cgc', '/control/captcha.cgc', '/control/common.cgc', '/control/desc.cgc', '/control/drawer.cgc', '/control/echarts.cgc', '/control/form.cgc', '/control/iconview.cgc', '/control/jodit.cgc', '/control/map.cgc', '/control/monaco.cgc', '/control/mpegts.cgc', '/control/nav.cgc', '/control/novnc.cgc', '/control/page.cgc', '/control/pdf.cgc', '/control/property.cgc', '/control/qrcode.cgc', '/control/table.cgc', '/control/task.cgc', '/control/tplink.cgc', '/control/tuieditor.cgc', '/control/tuiviewer.cgc', '/control/tums.cgc', '/control/web.cgc', '/control/xterm.cgc', '/ext/', '/ext/toastui-editor-all.min.js', '/ext/tplinkhd.min.js', '/ext/tums-player/', '/ext/tums-player/audio.wasm', '/ext/tums-player/decoder.worker.js', '/ext/tums-player/libaudio.js', '/ext/tums-player/libaudio.wasm', '/ext/tums-player/libffmpeg.js', '/ext/tums-player/libffmpeg.wasm', '/ext/tums-player/libs.worker.js', '/ext/tums-player/tums-player.umd.min.js', '/ext/tums-player/webgl.js', '/ext/tums-player/webgl.worker.js', '/global.css', '/icon.png', '/index.js', '/notosans-regular.ttf', '/theme/', '/theme/dark.cgt', '/theme/light.cgt'];
+/** --- fs lib 用到的语言包 --- */
 const localeData = {
     'en': {
         'apply-unmount': 'Are you sure to unmount the "?" mount point?',
@@ -95,24 +63,35 @@ const localeData = {
         'apply-unmount': 'Bạn có chắc chắn muốn tháo dỡ điểm gắn "?" không?'
     }
 };
+/** --- 已经挂载的列表 --- */
 const mounts = {};
+/** --- 根据 mounted 的 path 获取挂载点 name --- */
 function getMountName(path) {
     const io = path.slice(9).indexOf('/');
     return io === -1 ? path.slice(9) : path.slice(9, io + 9);
 }
-function mount(name, handler, taskId) {
+/**
+ * --- 挂载到 mounted 目录下 ---
+ * @param current 当前任务 id
+ * @param name 目录名
+ * @param handler 回调相关
+ */
+export function mount(current, name, handler) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
     if (mounts[name]) {
         return false;
     }
     if (!/^[a-zA-Z][\w]+$/.test(name)) {
         return false;
     }
-    if (taskId) {
-        const t = task.list[taskId];
-        if (t) {
-            const val = 'fs./mounted/' + name + '/w';
-            if (!t.runtime.permissions.includes(val)) {
-                t.runtime.permissions.push(val);
+    if ((current !== sysId) && lTask.getOrigin(current)) {
+        const val = 'fs./mounted/' + name + '/w';
+        const runtime = lTask.getRuntime(sysId, current);
+        if (runtime) {
+            if (!runtime.permissions.includes(val)) {
+                runtime.permissions.push(val);
             }
         }
     }
@@ -120,19 +99,32 @@ function mount(name, handler, taskId) {
     mounts[name] = handler;
     return true;
 }
-async function unmount(name) {
+/**
+ * --- 卸载 mounted ---
+ * @param name 目录名
+ */
+export async function unmount(name) {
     if (!mounts[name]) {
         return true;
     }
-    const loc = localeData[core.config.locale]?.['apply-unmount'] ?? localeData['en']['apply-unmount'];
-    if (!await form.superConfirm(loc.replace('?', '/mount/' + tool.escapeHTML(name) + '/'))) {
+    const loc = localeData[lCore.config.locale]?.['apply-unmount'] ?? localeData['en']['apply-unmount'];
+    if (!await lForm.superConfirm(sysId, loc.replace('?', '/mount/' + lTool.escapeHTML(name) + '/'))) {
         return false;
     }
     delete mounts[name];
     return true;
 }
-async function getContent(path, options, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 读取完整文件或一段 ---
+ * @param current 当前任务 id
+ * @param path 文件路径
+ * @param options 编码或选项
+ */
+export async function getContent(current, path, options) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (typeof options === 'string') {
         options = {
@@ -151,27 +143,26 @@ async function getContent(path, options, taskId) {
             if (!clickgoFiles.includes(fpath)) {
                 return null;
             }
-            ourl = tool.urlResolve(__dirname, './').slice(0, -1) + fpath;
+            ourl = clickgo.getDirname() + fpath;
         }
         else {
             ourl = path;
         }
         try {
-            const rand = '?' + (options.cache ?? Math.random().toString());
             let blob = null;
             const headers = {};
             if (start ?? end) {
                 headers['range'] = `bytes=${start ?? '0'}-${end ?? ''}`;
             }
             if (options.progress) {
-                blob = await tool.request(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
+                blob = await lTool.request(ourl, {
                     'headers': headers,
                     'progress': options.progress,
                     'responseType': 'blob'
                 });
             }
             else {
-                blob = await (await fetch(ourl + (!ourl.startsWith(loader.cdn) ? rand : ''), {
+                blob = await (await fetch(ourl, {
                     'headers': headers
                 })).blob();
             }
@@ -194,7 +185,7 @@ async function getContent(path, options, taskId) {
         }
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'r', false, undefined);
         if (!r[0]) {
             return null;
         }
@@ -206,10 +197,12 @@ async function getContent(path, options, taskId) {
             }
             return hanlder.getContent?.(path.slice(9 + name.length), options) ?? null;
         }
+        // --- storage ---
         if (options.progress) {
+            // --- native 暂不支持 progress ---
             delete options.progress;
         }
-        const rtn = await native.invoke('cg-fs-getContent', native.getToken(), fpath, options);
+        const rtn = await lNative.invokeSys(sysId, 'cg-fs-getContent', fpath, options);
         if (!rtn) {
             return null;
         }
@@ -217,24 +210,27 @@ async function getContent(path, options, taskId) {
             return rtn;
         }
         return new Blob([rtn], {
-            'type': tool.getMimeByPath(path).mime
+            'type': lTool.getMimeByPath(path).mime
         });
     }
     else if (path.startsWith('/package/') || path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return null;
         }
         if (path.startsWith('/current/')) {
-            return getContent(task.list[taskId].current + fpath, options, taskId);
+            return getContent(current, task.current + fpath, options);
         }
-        const file = task.list[taskId].app.files[fpath];
+        const file = task.app.files[fpath];
         if (!file) {
             return null;
         }
         if (typeof file === 'string') {
+            // --- 是文本直接返回 ---
             return file;
         }
         if (!options.encoding) {
+            // --- 没有编码则返回 blob ---
             if (start === undefined && end === undefined) {
                 return file;
             }
@@ -253,14 +249,24 @@ async function getContent(path, options, taskId) {
         return null;
     }
 }
-async function putContent(path, data, options = {}, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 写入文件内容 ---
+ * @param current 当前任务 id
+ * @param path 文件路径
+ * @param data 要写入的内容
+ * @param options 选项
+ */
+export async function putContent(current, path, data, options = {}) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
         return false;
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'w', false, undefined);
         if (!r[0]) {
             return false;
         }
@@ -272,33 +278,44 @@ async function putContent(path, data, options = {}, taskId) {
             }
             return hanlder.putContent?.(path.slice(9 + name.length), data, options) ?? false;
         }
+        // --- storage ---
         let buf = undefined;
         if (data instanceof Blob) {
             buf = new Uint8Array(await data.arrayBuffer());
         }
-        return native.invoke('cg-fs-putContent', native.getToken(), fpath, buf ?? data, options);
+        return lNative.invokeSys(sysId, 'cg-fs-putContent', fpath, buf ?? data, options);
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
-        return putContent(task.list[taskId].current + fpath, data, options, taskId);
+        return putContent(current, task.current + fpath, data, options);
     }
     else {
         return false;
     }
 }
-async function readLink(path, encoding, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 读取链接的 target ---
+ * @param current 当前任务 id
+ * @param path 要读取的路径
+ * @param options 选项
+ */
+export async function readLink(current, path, encoding) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
         return null;
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'r', false);
         if (!r[0]) {
             return null;
         }
@@ -310,29 +327,41 @@ async function readLink(path, encoding, taskId) {
             }
             return hanlder.readLink?.(path.slice(9 + name.length), encoding) ?? null;
         }
-        return native.invoke('cg-fs-readLink', native.getToken(), fpath, encoding);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-readLink', fpath, encoding);
     }
     else if (path.startsWith('/package/')) {
         return null;
     }
     else if (path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return null;
         }
-        return task.list[taskId].current;
+        return task.current;
     }
     else {
         return null;
     }
 }
-async function symlink(filePath, linkPath, type, taskId) {
-    filePath = tool.urlResolve('/', filePath);
-    linkPath = tool.urlResolve('/', linkPath);
+/**
+ * --- 把源文件创建一个 link ---
+ * @param current 当前任务 id
+ * @param filePath 源文件
+ * @param linkPath 连接路径
+ * @param type 选项
+ */
+export async function symlink(current, filePath, linkPath, type) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    filePath = lTool.urlResolve('/', filePath);
+    linkPath = lTool.urlResolve('/', linkPath);
     if (filePath.startsWith('/clickgo/')) {
         return false;
     }
     else if (filePath.startsWith('/storage/') || filePath.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + filePath + 'w', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + filePath + 'w', false);
         if (!r[0]) {
             return false;
         }
@@ -348,32 +377,42 @@ async function symlink(filePath, linkPath, type, taskId) {
             }
             return hanlder.symlink?.(filePath.slice(9 + fname.length), linkPath.slice(9 + fname.length), type) ?? false;
         }
-        return native.invoke('cg-fs-symlink', native.getToken(), filePath.slice(8), linkPath.slice(8), type);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-symlink', filePath.slice(8), linkPath.slice(8), type);
     }
     else if (filePath.startsWith('/package/')) {
         return false;
     }
     else if (filePath.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
         if (linkPath.startsWith('/current/')) {
-            linkPath = task.list[taskId].current + linkPath.slice(8);
+            linkPath = task.current + linkPath.slice(8);
         }
-        return symlink(task.list[taskId].current + filePath.slice(8), linkPath, type, taskId);
+        return symlink(current, task.current + filePath.slice(8), linkPath, type);
     }
     else {
         return false;
     }
 }
-async function unlink(path, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 删除一个文件 ---
+ * @param current 当前任务 id
+ * @param path 要删除的文件路径
+ */
+export async function unlink(current, path) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
         return false;
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'w', false);
         if (!r[0]) {
             return false;
         }
@@ -385,16 +424,18 @@ async function unlink(path, taskId) {
             }
             return hanlder.unlink?.(path.slice(9 + name.length)) ?? false;
         }
-        return native.invoke('cg-fs-unlink', native.getToken(), fpath);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-unlink', fpath);
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
-        return unlink(task.list[taskId].current + fpath, taskId);
+        return unlink(current, task.current + fpath);
     }
     else {
         return false;
@@ -402,6 +443,7 @@ async function unlink(path, taskId) {
 }
 async function getClickGoStats(path) {
     if (path.endsWith('/')) {
+        // --- 文件夹 ---
         const date = new Date();
         const ms = date.getTime();
         return {
@@ -427,8 +469,9 @@ async function getClickGoStats(path) {
         };
     }
     else {
+        // --- 文件 ---
         try {
-            const res = await fetch(tool.urlResolve(__dirname, './').slice(0, -1) + path, {
+            const res = await fetch(clickgo.getDirname() + path, {
                 'headers': {
                     'range': `bytes=0-1`
                 }
@@ -477,8 +520,16 @@ async function getClickGoStats(path) {
         }
     }
 }
-async function stats(path, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 获取对象是否存在，存在则返回 stats 对象，否则返回 null ---
+ * @param current 当前任务 id
+ * @param path 对象路径
+ */
+export async function stats(current, path) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     if (path.endsWith('/')) {
         path = path.slice(0, -1);
     }
@@ -543,11 +594,11 @@ async function stats(path, taskId) {
         return getClickGoStats(fpath);
     }
     else if (path.startsWith('/storage/')) {
-        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'r', false);
         if (!r[0]) {
             return null;
         }
-        const item = await native.invoke('cg-fs-stats', native.getToken(), fpath);
+        const item = await lNative.invokeSys(sysId, 'cg-fs-stats', fpath);
         if (!item) {
             return null;
         }
@@ -603,21 +654,23 @@ async function stats(path, taskId) {
                 'birthtime': hanlder.date
             };
         }
-        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'r', false);
         if (!r[0]) {
             return null;
         }
         return hanlder.stats?.(path.slice(9 + name.length)) ?? null;
     }
     else if (path.startsWith('/package/') || path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return null;
         }
         if (path.startsWith('/current/')) {
-            return stats(task.list[taskId].current + fpath, taskId);
+            return stats(current, task.current + fpath);
         }
-        if (task.list[taskId].app.files[fpath]) {
-            const file = task.list[taskId].app.files[fpath];
+        if (task.app.files[fpath]) {
+            // --- 文件 ---
+            const file = task.app.files[fpath];
             const date = new Date();
             const ms = date.getTime();
             let size = 0;
@@ -649,13 +702,15 @@ async function stats(path, taskId) {
                 'birthtime': date
             };
         }
+        // --- 检测是否是文件夹 ---
         if (!fpath.endsWith('/')) {
             fpath += '/';
         }
-        for (const p in task.list[taskId].app.files) {
+        for (const p in task.app.files) {
             if (!p.startsWith(fpath)) {
                 continue;
             }
+            // --- 文件夹 ---
             const date = new Date();
             const ms = date.getTime();
             return {
@@ -686,23 +741,42 @@ async function stats(path, taskId) {
         return null;
     }
 }
-async function isDir(path, taskId) {
-    const pstats = await stats(path, taskId);
+/**
+ * --- 判断是否是目录或目录是否存在，是的话返回 stats ---
+ * @param current 当前任务 id
+ * @param path 判断路径
+ */
+export async function isDir(current, path) {
+    const pstats = await stats(current, path);
     if (!pstats?.isDirectory()) {
         return false;
     }
     return pstats;
 }
-async function isFile(path, taskId) {
-    const pstats = await stats(path, taskId);
+/**
+ * --- 判断是否是文件或文件是否存在，是的话返回 stats ---
+ * @param current 当前任务 id
+ * @param path 判断路径
+ */
+export async function isFile(current, path) {
+    const pstats = await stats(current, path);
     if (!pstats?.isFile()) {
         return false;
     }
     return pstats;
 }
-async function mkdir(path, mode = 0o755, taskId) {
-    path = tool.urlResolve('/', path);
-    if (await isDir(path, taskId)) {
+/**
+ * --- 深度创建目录，如果最末目录存在，则自动创建成功 ---
+ * @param current 当前任务 id
+ * @param path 要创建的路径，如 /a/b/c/
+ * @param mode 权限
+ */
+export async function mkdir(current, path, mode = 0o755) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
+    if (await isDir(current, path)) {
         return true;
     }
     const fpath = path.slice(8);
@@ -710,7 +784,7 @@ async function mkdir(path, mode = 0o755, taskId) {
         return false;
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'w', false);
         if (!r[0]) {
             return false;
         }
@@ -722,29 +796,39 @@ async function mkdir(path, mode = 0o755, taskId) {
             }
             return hanlder.mkdir?.(path.slice(9 + name.length), mode) ?? false;
         }
-        return native.invoke('cg-fs-mkdir', native.getToken(), fpath, mode);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-mkdir', fpath, mode);
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
-        return mkdir(task.list[taskId].current + fpath, mode, taskId);
+        return mkdir(current, task.current + fpath, mode);
     }
     else {
         return false;
     }
 }
-async function rmdir(path, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 删除空目录 ---
+ * @param current 当前任务 id
+ * @param path 要删除的目录
+ */
+export async function rmdir(current, path) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
         return false;
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'w', false);
         if (!r[0]) {
             return false;
         }
@@ -756,55 +840,76 @@ async function rmdir(path, taskId) {
             }
             return hanlder.rmdir?.(path.slice(9 + name.length)) ?? false;
         }
-        return native.invoke('cg-fs-rmdir', native.getToken(), fpath);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-rmdir', fpath);
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
-        return rmdir(task.list[taskId].current + fpath, taskId);
+        return rmdir(current, task.current + fpath);
     }
     else {
         return false;
     }
 }
-async function rmdirDeep(path, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 删除一个非空目录 ---
+ * --- [ Danger ] [ 危险 ] ---
+ * @param current 当前任务 id
+ * @param path 目录路径
+ */
+export async function rmdirDeep(current, path) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     if (!path.endsWith('/')) {
         path += '/';
     }
-    const list = await readDir(path, undefined, taskId);
+    const list = await readDir(current, path);
     for (const item of list) {
-        const stat = await stats(path + item.name, taskId);
+        const stat = await stats(current, path + item.name);
         if (!stat) {
             return false;
         }
         if (stat.isDirectory()) {
-            const rtn = await rmdirDeep(path + item.name, taskId);
+            // --- 目录 ---
+            const rtn = await rmdirDeep(current, path + item.name);
             if (!rtn) {
                 return false;
             }
         }
         else {
-            const rtn = await unlink(path + item.name, taskId);
+            const rtn = await unlink(current, path + item.name);
             if (!rtn) {
                 return false;
             }
         }
     }
-    return rmdir(path, taskId);
+    return rmdir(current, path);
 }
-async function chmod(path, mod, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 修改权限 ---
+ * @param current 当前任务 id
+ * @param path 要修改的路径
+ * @param mod 权限
+ */
+export async function chmod(current, path, mod) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     const fpath = path.slice(8);
     if (path.startsWith('/clickgo/')) {
         return false;
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
-        const r = await task.checkPermission('fs.' + path + 'w', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'w', false);
         if (!r[0]) {
             return false;
         }
@@ -816,24 +921,35 @@ async function chmod(path, mod, taskId) {
             }
             return hanlder.chmod?.(path.slice(9 + name.length), mod) ?? false;
         }
-        return native.invoke('cg-fs-chmod', native.getToken(), fpath, mod);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-chmod', fpath, mod);
     }
     else if (path.startsWith('/package/')) {
         return false;
     }
     else if (path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
-        return chmod(task.list[taskId].current + fpath, mod, taskId);
+        return chmod(current, task.current + fpath, mod);
     }
     else {
         return false;
     }
 }
-async function rename(oldPath, newPath, taskId) {
-    oldPath = tool.urlResolve('/', oldPath);
-    newPath = tool.urlResolve('/', newPath);
+/**
+ * --- 重命名/移动 文件文件夹 ---
+ * @param current 当前任务 id
+ * @param oldPath 老名
+ * @param newPath 新名
+ */
+export async function rename(current, oldPath, newPath) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    oldPath = lTool.urlResolve('/', oldPath);
+    newPath = lTool.urlResolve('/', newPath);
     if (!oldPath.startsWith(newPath.slice(0, 9))) {
         return false;
     }
@@ -843,11 +959,11 @@ async function rename(oldPath, newPath, taskId) {
         return false;
     }
     else if (oldPath.startsWith('/storage/') || oldPath.startsWith('/mounted/')) {
-        let r = await task.checkPermission('fs.' + oldPath + 'w', false, undefined, taskId);
+        let r = await lTask.checkPermission(current, 'fs.' + oldPath + 'w', false);
         if (!r[0]) {
             return false;
         }
-        r = await task.checkPermission('fs.' + newPath + 'w', false, undefined, taskId);
+        r = await lTask.checkPermission(current, 'fs.' + newPath + 'w', false, undefined);
         if (!r[0]) {
             return false;
         }
@@ -863,23 +979,34 @@ async function rename(oldPath, newPath, taskId) {
             }
             return hanlder.rename?.(oldPath.slice(9 + fname.length), newPath.slice(9 + fname.length)) ?? false;
         }
-        return native.invoke('cg-fs-rename', native.getToken(), ofpath, nfpath);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-rename', ofpath, nfpath);
     }
     else if (oldPath.startsWith('/package/')) {
         return false;
     }
     else if (oldPath.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
-        return rename(task.list[taskId].current + ofpath, task.list[taskId].current + nfpath, taskId);
+        return rename(current, task.current + ofpath, task.current + nfpath);
     }
     else {
         return false;
     }
 }
-async function readDir(path, encoding, taskId) {
-    path = tool.urlResolve('/', path);
+/**
+ * --- 获取文件夹下文件列表 ---
+ * @param current 当前任务 id
+ * @param path 文件夹路径
+ * @param encoding 编码
+ */
+export async function readDir(current, path, encoding) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    path = lTool.urlResolve('/', path);
     if (path === '/') {
         const list = [
             {
@@ -917,10 +1044,8 @@ async function readDir(path, encoding, taskId) {
                     return false;
                 },
                 'name': 'mounted'
-            }
-        ];
-        if (taskId) {
-            list.push({
+            },
+            {
                 isFile: function () {
                     return false;
                 },
@@ -931,10 +1056,8 @@ async function readDir(path, encoding, taskId) {
                     return false;
                 },
                 'name': 'package'
-            });
-        }
-        if (taskId) {
-            list.push({
+            },
+            {
                 isFile: function () {
                     return false;
                 },
@@ -945,8 +1068,8 @@ async function readDir(path, encoding, taskId) {
                     return true;
                 },
                 'name': 'current'
-            });
-        }
+            },
+        ];
         return list;
     }
     if (!path.endsWith('/')) {
@@ -960,12 +1083,16 @@ async function readDir(path, encoding, taskId) {
                 continue;
             }
             if (fpath === item) {
+                // --- 是自己 ---
                 continue;
             }
             const rpath = item.slice(fpath.length);
             if (rpath.includes('/')) {
+                // --- 可能是下级 ---
                 if (rpath.endsWith('/')) {
+                    // --- 是个文件夹 ---
                     if (rpath.slice(0, -1).includes('/')) {
+                        // --- 是好几层下面的文件夹了 ---
                         continue;
                     }
                     list.push({
@@ -983,6 +1110,7 @@ async function readDir(path, encoding, taskId) {
                 }
                 continue;
             }
+            // --- 本层文件 ---
             list.push({
                 isFile: function () {
                     return true;
@@ -1017,7 +1145,7 @@ async function readDir(path, encoding, taskId) {
             }
             return list;
         }
-        const r = await task.checkPermission('fs.' + path + 'r', false, undefined, taskId);
+        const r = await lTask.checkPermission(current, 'fs.' + path + 'r', false);
         if (!r[0]) {
             return [];
         }
@@ -1029,7 +1157,8 @@ async function readDir(path, encoding, taskId) {
             }
             return hanlder.readDir?.(path.slice(9 + name.length), encoding) ?? [];
         }
-        const ls = await native.invoke('cg-fs-readDir', native.getToken(), fpath, encoding);
+        // --- storage ---
+        const ls = await lNative.invokeSys(sysId, 'cg-fs-readDir', fpath, encoding);
         for (const item of ls) {
             list.push({
                 isFile: function () {
@@ -1047,21 +1176,23 @@ async function readDir(path, encoding, taskId) {
         return list;
     }
     else if (path.startsWith('/package/') || path.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return [];
         }
         if (path.startsWith('/current/')) {
-            return readDir(task.list[taskId].current + fpath, encoding, taskId);
+            return readDir(current, task.current + fpath, encoding);
         }
         const list = [];
         const dirs = [];
-        for (const p in task.list[taskId].app.files) {
+        for (const p in task.app.files) {
             if (!p.startsWith(fpath)) {
                 continue;
             }
             const rpath = p.slice(fpath.length);
             const sio = rpath.indexOf('/');
             if (sio !== -1) {
+                // --- 一定是下级文件，因此加入文件夹项目到 dirs ---
                 const name = rpath.slice(0, sio);
                 if (!dirs.includes(name)) {
                     dirs.push(name);
@@ -1080,6 +1211,7 @@ async function readDir(path, encoding, taskId) {
                 }
                 continue;
             }
+            // --- 本层文件 ---
             list.push({
                 isFile: function () {
                     return true;
@@ -1099,16 +1231,29 @@ async function readDir(path, encoding, taskId) {
         return [];
     }
 }
-async function copyFolder(from, to, ignore = [], taskId) {
+/**
+ * --- 复制文件夹里的内容到另一个地方，失败不会回滚 ---
+ * @param current 当前任务 id
+ * @param from 源，末尾加 /
+ * @param to 目标，末尾加 /
+ * @param ignore 忽略的文件
+ */
+export async function copyFolder(current, from, to, ignore = []) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
     let num = 0;
-    if (!await isDir(from, taskId)) {
+    // --- 如果源目录不存在或不是目录，则直接成功 :) ---
+    if (!await isDir(current, from)) {
         return 0;
     }
-    const flist = await readDir(from, undefined, taskId);
+    // --- 遍历源目录文件和文件夹，准备复制 ---
+    const flist = await readDir(current, from);
+    /** --- to 目录是否检查是否存在，空目录不复制，所以确定有 item file 的时候才创建 --- */
     let checkTo = false;
     for (const item of flist) {
         if (item.isDirectory()) {
-            const r = await copyFolder(from + item.name + '/', to + item.name + '/', ignore, taskId);
+            const r = await copyFolder(current, from + item.name + '/', to + item.name + '/', ignore);
             if (r === -1) {
                 return r;
             }
@@ -1117,16 +1262,17 @@ async function copyFolder(from, to, ignore = [], taskId) {
             }
         }
         else if (item.isFile()) {
-            if (ignore.length > 0 && tool.match(item.name, ignore)) {
+            // --- 先判断本文件是否被排除 ---
+            if (ignore.length > 0 && lTool.match(item.name, ignore)) {
                 continue;
             }
             if (!checkTo) {
-                if (!await mkdir(to, undefined, taskId)) {
+                if (!await mkdir(current, to)) {
                     return -1;
                 }
                 checkTo = true;
             }
-            if (!(await copyFile(from + item.name, to + item.name, taskId))) {
+            if (!(await copyFile(current, from + item.name, to + item.name))) {
                 continue;
             }
             ++num;
@@ -1134,9 +1280,18 @@ async function copyFolder(from, to, ignore = [], taskId) {
     }
     return num;
 }
-async function copyFile(src, dest, taskId) {
-    src = tool.urlResolve('/', src);
-    dest = tool.urlResolve('/', dest);
+/**
+ * --- 复制文件 ---
+ * @param current 当前任务 id
+ * @param src 源文件
+ * @param dest 目标文件
+ */
+export async function copyFile(current, src, dest) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    src = lTool.urlResolve('/', src);
+    dest = lTool.urlResolve('/', dest);
     if (!src.startsWith(dest.slice(0, 9))) {
         return false;
     }
@@ -1146,11 +1301,11 @@ async function copyFile(src, dest, taskId) {
         return false;
     }
     else if (src.startsWith('/storage/') || dest.startsWith('/mounted/')) {
-        let r = await task.checkPermission('fs.' + src + 'r', false, undefined, taskId);
+        let r = await lTask.checkPermission(current, 'fs.' + src + 'r', false);
         if (!r[0]) {
             return false;
         }
-        r = await task.checkPermission('fs.' + dest + 'w', false, undefined, taskId);
+        r = await lTask.checkPermission(current, 'fs.' + dest + 'w', false);
         if (!r[0]) {
             return false;
         }
@@ -1166,16 +1321,18 @@ async function copyFile(src, dest, taskId) {
             }
             return hanlder.copyFile?.(src.slice(9 + fname.length), dest.slice(9 + fname.length)) ?? false;
         }
-        return native.invoke('cg-fs-copyFile', native.getToken(), sfpath, dfpath);
+        // --- storage ---
+        return lNative.invokeSys(sysId, 'cg-fs-copyFile', sfpath, dfpath);
     }
     else if (src.startsWith('/package/')) {
         return false;
     }
     else if (src.startsWith('/current/')) {
-        if (!taskId) {
+        const task = lTask.getOrigin(current);
+        if (!task) {
             return false;
         }
-        return copyFile(task.list[taskId].current + sfpath, task.list[taskId].current + dfpath, taskId);
+        return copyFile(current, task.current + sfpath, task.current + dfpath);
     }
     else {
         return false;

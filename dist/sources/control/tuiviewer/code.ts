@@ -24,14 +24,14 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     public async onMounted(): Promise<void> {
-        const tuieditor = await clickgo.core.getModule('tuieditor');
+        const tuieditor = await clickgo.core.getModule('@toast-ui/editor');
         if (!tuieditor) {
             // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
-        this.access.tuieditor = new tuieditor.factory({
+        this.access.tuieditor = new tuieditor.Editor.factory({
             'el': this.refs.content,
             'viewer': true,
             'initialValue': this.props.modelValue,

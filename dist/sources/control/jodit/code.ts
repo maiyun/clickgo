@@ -22,7 +22,7 @@ export default class extends clickgo.control.AbstractControl {
             'placeholder': '',
 
             'modelValue': '',
-            'theme': 'light'
+            'theme': 'light',
         };
 
     public notInit = false;

@@ -55,22 +55,22 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public hasTouchButMouse(e: MouseEvent | TouchEvent): void {
-        clickgo.form.dialog(clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
     }
 
     public getStyleCount(): void {
-        clickgo.form.dialog(clickgo.dom.getStyleCount(this.taskId, 'form').toString()).catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.dom.getStyleCount(this, 'form').toString()).catch((e) => { throw e; });
     }
 
-    public async getWatchSizeCount(taskId?: number): Promise<void> {
-        await clickgo.form.dialog(clickgo.dom.getWatchSizeCount(taskId).toString());
+    public async getWatchSizeCount(taskId?: string): Promise<void> {
+        await clickgo.form.dialog(this, clickgo.dom.getWatchSizeCount(taskId).toString());
     }
 
     public watchSize(): void {
         this.watchSizeText = !this.watchSizeText;
         if (this.watchSizeText) {
-            clickgo.dom.watchSize(this.refs.watchSize.$el, () => {
-                clickgo.form.dialog(JSON.stringify({
+            clickgo.dom.watchSize(this, this.refs.watchSize.$el, () => {
+                clickgo.form.dialog(this, JSON.stringify({
                     'width': this.refs.watchSize.$el.offsetWidth,
                     'height': this.refs.watchSize.$el.offsetHeight
                 })).catch((e) => { throw e; });
@@ -98,21 +98,21 @@ export default class extends clickgo.form.AbstractForm {
     public wwatch(): void {
         this.watchText = !this.watchText;
         if (this.watchText) {
-            clickgo.dom.watch(this.refs.watch.$el, () => {
-                clickgo.form.dialog('Changed.').catch((e) => { throw e; });
+            clickgo.dom.watch(this, this.refs.watch.$el, () => {
+                clickgo.form.dialog(this, 'Changed.').catch((e) => { throw e; });
             }, 'text');
         }
         else {
-            clickgo.dom.unwatch(this.refs.watch.$el);
+            clickgo.dom.unwatch(this, this.refs.watch.$el);
         }
     }
 
-    public async getWatchCount(taskId?: number): Promise<void> {
-        await clickgo.form.dialog(clickgo.dom.getWatchCount(taskId).toString());
+    public async getWatchCount(taskId?: string): Promise<void> {
+        await clickgo.form.dialog(this, clickgo.dom.getWatchCount(taskId).toString());
     }
 
     public isWatchStyle(): void {
-        clickgo.form.dialog(clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
+        clickgo.form.dialog(this, clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
     }
 
     public getWatchInfoDisabled = false;
@@ -156,7 +156,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public bindLong(): void {
-        clickgo.form.dialog('Press and hold this button.').catch((e) => { throw e; });
+        clickgo.form.dialog(this, 'Press and hold this button.').catch((e) => { throw e; });
     }
 
     public bindLongDown(e: MouseEvent | TouchEvent): void {
@@ -231,7 +231,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public onMounted(): void {
         clickgo.dom.watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => {
-            clickgo.form.dialog('name: ' + n + ', value: ' + v).catch((e) => { throw e; });
+            clickgo.form.dialog(this, 'name: ' + n + ', value: ' + v).catch((e) => { throw e; });
         });
     }
 

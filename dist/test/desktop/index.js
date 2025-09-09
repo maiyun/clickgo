@@ -1,89 +1,59 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("../../index"));
+import * as clickgo from 'clickgo';
 const el = document.getElementById('tip');
 el.innerHTML = 'Starting system app...';
 class Boot extends clickgo.AbstractBoot {
     async main() {
         if (!window.location.href.includes('?single')) {
-            const sTaskId = await clickgo.task.run('/clickgo/app/task/');
-            if (sTaskId <= 0) {
-                el.innerHTML = `Star system app failed(${sTaskId.toString()}).`;
+            // --- 启动 task app ---
+            const sTaskId = await clickgo.task.run(this._sysId, '/clickgo/app/task.cga', {
+                'permissions': ['root'],
+            });
+            if (typeof sTaskId !== 'string') {
+                el.innerHTML = `Star system app failed(${sTaskId}).`;
                 return;
             }
+            // --- sapp 启动成功 ---
             el.innerHTML = 'Starting main app...';
         }
-        const taskId = await clickgo.task.run('/clickgo/app/demo/', {
+        const taskId = await clickgo.task.run(this._sysId, '/clickgo/app/demo.cga', {
             'notify': window.location.href.includes('?single') ? false : undefined,
             'permissions': ['native.form'],
             'data': {
-                'param': 'abc'
+                'param': 'abc',
             }
         });
-        if (taskId <= 0) {
+        if (typeof taskId === 'number') {
             el.innerHTML = `Start main app failed(${taskId.toString()}).`;
             return;
         }
-        const icon = await clickgo.fs.getContent('/clickgo/icon.png');
+        const taskList = await clickgo.task.getOriginList(this._sysId);
+        const icon = await clickgo.fs.getContent(this._sysId, '/clickgo/icon.png');
         if (icon instanceof Blob) {
             const du = await clickgo.tool.blob2DataUrl(icon);
             clickgo.core.config['launcher.list'] = [
                 {
-                    'name': clickgo.task.list[taskId].app.config.name + '01',
+                    'name': taskList[taskId].app.config.name + '01',
                     'icon': du,
-                    'path': clickgo.task.list[taskId].path
+                    'path': taskList[taskId].path
                 },
                 {
-                    'name': clickgo.task.list[taskId].app.config.name + '02',
+                    'name': taskList[taskId].app.config.name + '02',
                     'icon': du,
-                    'path': clickgo.task.list[taskId].path
+                    'path': taskList[taskId].path
                 },
                 {
                     'id': '1',
                     'name': 'folder1',
                     'list': [
                         {
-                            'name': clickgo.task.list[taskId].app.config.name + '11',
+                            'name': taskList[taskId].app.config.name + '11',
                             'icon': du,
-                            'path': clickgo.task.list[taskId].path
+                            'path': taskList[taskId].path
                         },
                         {
-                            'name': clickgo.task.list[taskId].app.config.name + '12',
+                            'name': taskList[taskId].app.config.name + '12',
                             'icon': du,
-                            'path': clickgo.task.list[taskId].path
+                            'path': taskList[taskId].path
                         }
                     ]
                 },
@@ -92,17 +62,19 @@ class Boot extends clickgo.AbstractBoot {
                     'name': 'folder2',
                     'list': [
                         {
-                            'name': clickgo.task.list[taskId].app.config.name + '21',
+                            'name': taskList[taskId].app.config.name + '21',
                             'icon': du,
-                            'path': clickgo.task.list[taskId].path
+                            'path': taskList[taskId].path
                         }
                     ]
                 }
             ];
         }
+        //*/
         el.innerHTML = 'Running...';
         const body = document.getElementsByTagName('body')[0];
-        if (clickgo.isNative() && clickgo.isImmersion()) {
+        if (clickgo.isNative() && !clickgo.hasFrame()) {
+            // --- 是否将网页背景设置为透明（仅在 native 且没 frame 时才设置） ---
             body.style.background = 'transparent';
             document.getElementById('spic').style.display = 'none';
         }
@@ -116,12 +88,12 @@ class Boot extends clickgo.AbstractBoot {
         const err = document.getElementById('err');
         err.style.display = 'block';
         err.innerHTML = 'Error, Task ID: ' + taskId.toString() + ', Form ID: ' + formId.toString() + '<br>' + (error.stack ? error.stack.replace(/\n/g, '<br>') : '');
-        clickgo.task.end(taskId);
+        // clickgo.task.end(taskId);
     }
     onTaskEnded(taskId) {
         el.innerHTML = 'Task(' + taskId.toString() + ') ended.';
     }
 }
-clickgo.launcher(new Boot({
-    'debug': true
+await clickgo.launcher(new Boot({
+    'debug': true,
 }));

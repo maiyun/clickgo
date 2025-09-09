@@ -45,7 +45,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void {
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             this.width = this.element.offsetWidth;
         }, true);
     }

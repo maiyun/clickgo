@@ -1,10 +1,9 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public async get(name: 'blue' | 'byterun' | 'light'): Promise<types.ITheme | null> {
-        const f = await clickgo.fs.getContent('/clickgo/theme/' + name + '.cgt');
+    public async get(name: 'blue' | 'byterun' | 'light'): Promise<clickgo.theme.ITheme | null> {
+        const f = await clickgo.fs.getContent(this, '/clickgo/theme/' + name + '.cgt');
         if (!f) {
             return null;
         }
@@ -30,16 +29,16 @@ export default class extends clickgo.form.AbstractForm {
             return;
         }
         clickgo.form.hideNotify(n);
-        const r = await clickgo.theme.load(t);
-        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
+        const r = await clickgo.theme.load(this, t);
+        await clickgo.form.dialog(this, 'Result: ' + (r ? 'true' : 'false'));
     }
 
     public remove(): void {
-        clickgo.theme.remove('blue').catch((e) => { throw e; });
+        clickgo.theme.remove(this, 'blue').catch((e) => { throw e; });
     }
 
     public clear(): void {
-        clickgo.theme.clear().catch((e) => { throw e; });
+        clickgo.theme.clear(this).catch((e) => { throw e; });
     }
 
     public async setGlobal(name: 'blue' | 'byterun' | 'light'): Promise<void> {
@@ -55,11 +54,15 @@ export default class extends clickgo.form.AbstractForm {
         }
         clickgo.form.hideNotify(n);
         await clickgo.theme.setGlobal(t);
-        await clickgo.form.dialog('Done.');
+        await clickgo.form.dialog(this, 'Done.');
     }
 
-    public clearGlobal(): void {
-        clickgo.theme.clearGlobal();
+    public async clearGlobal(): Promise<void> {
+        await clickgo.theme.clearGlobal();
+    }
+
+    public setMain(color?: string): void {
+        clickgo.theme.setMain(color);
     }
 
 }

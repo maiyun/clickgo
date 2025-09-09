@@ -17,7 +17,7 @@ export default class extends clickgo.control.AbstractControl {
     public size = 's';
 
     public onMounted(): void | Promise<void> {
-        clickgo.dom.watchSize(this.element, () => {
+        clickgo.dom.watchSize(this, this.element, () => {
             this.size = this.element.offsetWidth < 600 ? 's' : 'm';
         }, true);
     }

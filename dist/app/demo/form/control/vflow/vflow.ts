@@ -117,7 +117,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async onGesture(dir: string): Promise<void> {
-        await clickgo.form.dialog('onGesture: ' + dir);
+        await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }
 
 }

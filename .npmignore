@@ -1,6 +1,9 @@
+.vscode/
+.VSCodeCounter/
+.vs/
 .git/
 node_modules/
-eslint.config.js
+eslint.config.cjs
 .gitignore
 .npmrc
 .npmignore
@@ -9,12 +12,16 @@ eslint.config.js
 *.ts
 !*.d.ts
 tsconfig.json
+package-lock.json
 
-/dist/app/**/*.ts
+/dist/app/demo/
+/dist/app/task/
+/dist/compiler/
+/dist/lib/
 /dist/sources/
 /dist/test/
 /dist/build*
-/dist/comp*
+/dist/clickgo*
+/dist/pack*
 /dist/global.scss
 /types/dev.d.ts
-/types/loader.d.ts

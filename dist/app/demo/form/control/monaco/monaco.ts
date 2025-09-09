@@ -104,7 +104,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public jump(input: Record<string, any>): void {
-        clickgo.form.dialog({
+        clickgo.form.dialog(this, {
             'content': `<block>Path: ${input.resource.path}</block><block>Line: ${input.options.selection.startLineNumber}</block>`,
             'direction': 'v'
         }).catch((e) => { throw e; });

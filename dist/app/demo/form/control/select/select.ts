@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -181,7 +180,7 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public async onRemote(e: types.ISelectRemoteEvent): Promise<void> {
+    public async onRemote(e: clickgo.control.ISelectRemoteEvent): Promise<void> {
         await clickgo.tool.sleep(300);
         if (!e.detail.value || e.detail.value === '8') {
             await e.detail.callback();
@@ -196,7 +195,7 @@ export default class extends clickgo.form.AbstractForm {
         }]);
     }
 
-    public onGAdd(e: types.IGreatselectAddEvent): void {
+    public onGAdd(e: clickgo.control.IGreatselectAddEvent): void {
         clickgo.form.notify({
             'type': 'info',
             'title': 'Greatselect @add',
@@ -207,7 +206,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
-    public onGRemove(e: types.IGreatselectRemoveEvent): void {
+    public onGRemove(e: clickgo.control.IGreatselectRemoveEvent): void {
         clickgo.form.notify({
             'type': 'info',
             'title': 'Greaselect @remove',
@@ -215,42 +214,42 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public onGChange(e: types.IGreatselectChangeEvent): void {
+    public onGChange(e: clickgo.control.IGreatselectChangeEvent): void {
         console.log('onGChange', e);
     }
 
-    public onGChanged(e: types.IGreatselectChangeEvent): void {
+    public onGChanged(e: clickgo.control.IGreatselectChangeEvent): void {
         console.log('onGChanged', e);
     }
 
-    public onAdd(e: types.ISelectAddEvent): void {
+    public onAdd(e: clickgo.control.ISelectAddEvent): void {
         this.addRemoveList.unshift('@add, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
     }
 
-    public onAdded(e: types.ISelectAddedEvent): void {
+    public onAdded(e: clickgo.control.ISelectAddedEvent): void {
         this.addRemoveList.unshift('@added, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
     }
 
-    public onRemove(e: types.ISelectRemoveEvent): void {
+    public onRemove(e: clickgo.control.ISelectRemoveEvent): void {
         this.addRemoveList.unshift('@remove, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
     }
 
-    public onRemoved(e: types.ISelectRemovedEvent): void {
+    public onRemoved(e: clickgo.control.ISelectRemovedEvent): void {
         this.addRemoveList.unshift('@removed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value + ', mode: ' + e.detail.mode);
     }
 
-    public onChange(e: types.ISelectChangeEvent): void {
+    public onChange(e: clickgo.control.ISelectChangeEvent): void {
         console.log('onChange', e);
         if (e.detail.value[0] === 'title') {
             e.preventDefault();
         }
     }
 
-    public onChanged(e: types.ISelectChangedEvent): void {
+    public onChanged(e: clickgo.control.ISelectChangedEvent): void {
         console.log('onChanged', JSON.stringify(e, null, 4));
     }
 
-    public onTagclick(e: types.ISelectTagclickEvent): void {
+    public onTagclick(e: clickgo.control.ISelectTagclickEvent): void {
         this.addRemoveList.unshift('@tagclick, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
     }
 

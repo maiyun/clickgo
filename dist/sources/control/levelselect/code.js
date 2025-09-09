@@ -1,46 +1,12 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
             'label': null,
             'load': null,
             'loaded': null,
+            /** --- modelValue 变更时同步提交所有层级的 level value/label 值 --- */
             'level': null,
             'update:modelValue': null
         };
@@ -55,6 +21,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'placeholder': '',
             'data': []
         };
+        // --- 本地使用 ---
         this.localeData = {
             'en': {
                 'back': 'Back'
@@ -93,18 +60,27 @@ class default_1 extends clickgo.control.AbstractControl {
                 'back': 'Quay lại'
             }
         };
+        /** --- 当前展示中的层级 --- */
         this.level = 0;
         this.value = [];
         this.label = [];
+        /** --- 输入框 --- */
         this.inputValue = '';
+        /** --- list 的选中值 --- */
         this.listValue = [];
+        /** --- list 的选中的 label --- */
         this.listLabel = [];
+        /** --- select 框框的 loading --- */
         this.oploading = false;
+        /** --- pop 的 loading --- */
         this.loading = false;
+        /** --- 已经装载的每层的数据列表 --- */
         this.lists = [
             []
         ];
+        /** --- 当前层级的 list，含 children --- */
         this.nowlist = [];
+        /** --- 要提交的 level data --- */
         this.levelData = [
             {
                 'label': '',
@@ -119,6 +95,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'levelData': []
         };
     }
+    // --- 传递给 list 的 data ---
     get nowlistComp() {
         if (this.inputValue === '') {
             return this.nowlist;
@@ -133,6 +110,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 if (val.includes(char) || lab.includes(char)) {
                     continue;
                 }
+                // --- 没包含 ---
                 include = false;
                 break;
             }
@@ -143,6 +121,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return searchData;
     }
+    /** --- 向上更新值 --- */
     updateValue() {
         const event = {
             'detail': {
@@ -176,9 +155,12 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.emit('update:modelValue', newval);
     }
+    /** --- 两个函数共用的处理函数，返回 false 代表确实没有下级 --- */
     async _findValueInDataAndSelectValueCheckChildren(nextChildren, autoUpdate = true, hidePop = false) {
         if (!nextChildren) {
+            // --- 选中但无下级 ---
             if (!this.propBoolean('async')) {
+                // --- 无下层，啥也不管 ---
                 if (hidePop) {
                     clickgo.form.hidePop();
                 }
@@ -197,7 +179,9 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 return false;
             }
+            // --- 无下层，但是要异步获取 ---
             this.loading = true;
+            // --- 要远程获取 ---
             const children = await new Promise((resolve) => {
                 this.emit('load', this.value[this.level], (children) => {
                     resolve(children);
@@ -206,6 +190,7 @@ class default_1 extends clickgo.control.AbstractControl {
             });
             this.loading = false;
             if (!children?.length) {
+                // --- 真的没下层，结束 ---
                 if (hidePop) {
                     clickgo.form.hidePop();
                 }
@@ -224,8 +209,10 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
                 return false;
             }
+            // --- 有，那就走跳转模式 ---
             nextChildren = children;
         }
+        // --- 有下层，跳转 ---
         ++this.level;
         this.listValue = [];
         this.setNowList(nextChildren);
@@ -241,6 +228,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return true;
     }
+    /** --- 搜索所有层级中，value 在哪里 --- */
     async findValueInData(value, data) {
         if (!data) {
             data = this.props.data;
@@ -253,6 +241,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     'value': ''
                 }];
         }
+        /** --- 已选 item 的下一层 list --- */
         let nextChildren = null;
         const isArray = Array.isArray(data);
         for (const key in data) {
@@ -282,6 +271,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 --this._fvid.level;
                 continue;
             }
+            // --- 找到了 ---
             nextChildren = item.children ?? null;
             this.level = this._fvid.level;
             this._fvid.value[this._fvid.level] = val;
@@ -300,25 +290,31 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return false;
     }
+    /** --- text 的失去焦点事件 --- */
     async blur() {
         await clickgo.tool.sleep(350);
         this.inputValue = '';
     }
+    /** --- text 的 keydown 事件 --- */
     async keydown(e) {
         if (e.key === 'Backspace') {
             if (this.level > 0) {
+                // --- 判断是否返回上级 ---
                 if (e.target.value === '') {
+                    // --- 返回上级 ---
                     this.back();
                 }
             }
             return;
         }
         if ((e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen === undefined)) {
+            // --- 展开下拉菜单 ---
             this.refs.gs.showPop();
             return;
         }
         if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && (this.element.dataset.cgPopOpen !== undefined)) {
-            e.preventDefault();
+            // --- 展开状态，要键盘上下选择 ---
+            e.preventDefault(); // --- 用来防止光标依浏览器原生要求移动 ---
             switch (e.key) {
                 case 'ArrowUp': {
                     this.refs.list.arrowUp();
@@ -333,12 +329,14 @@ class default_1 extends clickgo.control.AbstractControl {
         if (e.key !== 'Enter') {
             return;
         }
+        // --- enter ---
         if (!this.listValue[0]) {
             return;
         }
-        e.stopPropagation();
+        e.stopPropagation(); // --- 放置响应到 greatselect 的 mode:text enter 导致收不起来 ---
         await this.listItemClicked();
     }
+    // --- text 的值变更事件 ----
     updateInputValue(value) {
         this.inputValue = value.trim();
         this.listValue = [this.inputValue];
@@ -347,6 +345,7 @@ class default_1 extends clickgo.control.AbstractControl {
             return;
         }
     }
+    /** --- 将一个对象克隆，并设置到 nowlist --- */
     setNowList(list) {
         this.nowlist.length = 0;
         const nowlist = clickgo.tool.clone(list);
@@ -363,9 +362,12 @@ class default_1 extends clickgo.control.AbstractControl {
             delete item.children;
         }
     }
+    // --- list 的点击事件 ---
     async listItemClicked() {
         this.inputValue = '';
+        /** --- 已选 item 的下一层 list --- */
         let nextChildren = null;
+        /** --- 当前层是否有选择 --- */
         let isSelected = false;
         const isArray = Array.isArray(this.lists[this.level]);
         for (const key in this.lists[this.level]) {
@@ -376,6 +378,7 @@ class default_1 extends clickgo.control.AbstractControl {
             if (this.listValue[0] !== val) {
                 continue;
             }
+            // --- 有项被选择 ---
             nextChildren = item.children ?? null;
             isSelected = true;
             this.value[this.level] = this.listValue[0];
@@ -386,10 +389,13 @@ class default_1 extends clickgo.control.AbstractControl {
             };
         }
         if (!isSelected) {
+            // --- 没有选中，可能是 enter ---
             return;
         }
+        // --- 有选择 ---
         await this._findValueInDataAndSelectValueCheckChildren(nextChildren, true, true);
     }
+    // --- 返回上级 ---
     back() {
         this.value.splice(-1);
         this.label.splice(-1);
@@ -406,6 +412,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.setNowList(this.lists[this.level]);
         this.updateValue();
     }
+    /** --- 供外部调用的设置层级 value 的函数 --- */
     async selectLevelValue(list) {
         this.level = 0;
         this.listValue = [];
@@ -428,9 +435,12 @@ class default_1 extends clickgo.control.AbstractControl {
                 break;
             }
         }
+        // --- 结束更新 ---
         this.updateValue();
     }
+    /** --- 选择一个值的内部方法，返回 false 代表当前没选中或选中但没有下级了--- */
     async _selectValue(value) {
+        /** --- 已选 item 的下一层 list --- */
         let nextChildren = null;
         let isSelected = false;
         const isArray = Array.isArray(this.lists[this.level]);
@@ -452,8 +462,10 @@ class default_1 extends clickgo.control.AbstractControl {
             };
         }
         if (!isSelected) {
+            // --- 当前未被选中，直接结束 ---
             return false;
         }
+        // --- 选中 ---
         return this._findValueInDataAndSelectValueCheckChildren(nextChildren, false);
     }
     onMounted() {
@@ -491,6 +503,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 return;
             }
             if (this.value.length > 1 && (value === this.value[this.level - 1])) {
+                // --- 当前值和本层的上级值一样，可能仅仅是刚刚 update 的 ---
                 return;
             }
             if (await this._selectValue(value)) {
@@ -518,4 +531,3 @@ class default_1 extends clickgo.control.AbstractControl {
         this.lists[0] = this.props.data;
     }
 }
-exports.default = default_1;

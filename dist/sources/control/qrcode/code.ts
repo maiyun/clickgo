@@ -9,7 +9,9 @@ export default class extends clickgo.control.AbstractControl {
             'scale'?: number;
             'small'?: boolean;
             'width'?: number;
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'color.dark'?: string;
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'color.light'?: string;
         };
     } = {
@@ -17,7 +19,7 @@ export default class extends clickgo.control.AbstractControl {
 
             'options': {}
         };
-    
+
     public access: {
         'qrcode': any;
     } = {

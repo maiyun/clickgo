@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -67,7 +66,7 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
 
-    public onHeaderCheck(e: types.ICheckChangeEvent): void {
+    public onHeaderCheck(e: clickgo.control.ICheckChangeEvent): void {
         if (e.detail.value && !e.detail.indeterminate) {
             // --- 从选中变为不选 ---
             for (const item of this.data) {
@@ -101,7 +100,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async onGesture(dir: string): Promise<void> {
-        await clickgo.form.dialog('onGesture: ' + dir);
+        await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }
 
     public onSelect(area: Record<string, any>): void {
@@ -114,7 +113,7 @@ export default class extends clickgo.form.AbstractForm {
         'sort': 'desc'
     };
 
-    public onSort(e: types.ITableSortEvent): void {
+    public onSort(e: clickgo.control.ITableSortEvent): void {
         this.sortinfo.index = e.detail.index;
         this.sortinfo.sort = e.detail.sort;
         this.refreshSort();
@@ -150,7 +149,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async showIndex(): Promise<void> {
-        await clickgo.form.dialog('Index is ' + this.val[0].toString() + '.');
+        await clickgo.form.dialog(this, 'Index is ' + this.val[0].toString() + '.');
     }
 
     public scrollChange(): void {

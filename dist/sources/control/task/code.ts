@@ -31,7 +31,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public onMounted(): void | Promise<void> {
         const date = new Date();
-        clickgo.task.createTimer(() => {
+        clickgo.task.createTimer(this, () => {
             date.setTime(Date.now());
             const h = date.getHours().toString();
             const m = date.getMinutes().toString();

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -7,12 +6,12 @@ export default class extends clickgo.form.AbstractForm {
 
     public disabled = false;
 
-    public async onChange(e: types.IRadioChangeEvent): Promise<void> {
+    public async onChange(e: clickgo.control.IRadioChangeEvent): Promise<void> {
         if (e.detail.selected !== 'radio2') {
             return;
         }
         e.preventDefault();
-        await clickgo.form.dialog('selected: ' + e.detail.selected + ', value: ' + e.detail.value);
+        await clickgo.form.dialog(this, 'selected: ' + e.detail.selected + ', value: ' + e.detail.value);
     }
 
 }

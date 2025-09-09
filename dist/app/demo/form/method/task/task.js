@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.form.AbstractForm {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
         this.tid = '0';
@@ -70,12 +35,12 @@ class default_1 extends clickgo.form.AbstractForm {
                 break;
             }
         }
-        this.frameTimer = clickgo.task.onFrame(() => {
+        this.frameTimer = clickgo.task.onFrame(this, () => {
             ++this.frameCount;
         }, opt);
     }
     frameEnd() {
-        clickgo.task.offFrame(this.frameTimer);
+        clickgo.task.offFrame(this, this.frameTimer);
         this.frameCount = 0;
         this.frameTimer = 0;
     }
@@ -101,58 +66,58 @@ class default_1 extends clickgo.form.AbstractForm {
                 break;
             }
         }
-        this.timer = clickgo.task.createTimer(() => {
+        this.timer = clickgo.task.createTimer(this, () => {
             ++this.timerCount;
         }, 1, opt);
     }
     timerEnd() {
-        clickgo.task.removeTimer(this.timer);
+        clickgo.task.removeTimer(this, this.timer);
         this.timerCount = 0;
         this.timer = 0;
     }
     get() {
-        const r = clickgo.task.get(parseInt(this.tid));
-        clickgo.form.dialog(r ? JSON.stringify(r).replace(/(data:image\/).+?"/g, '$1..."') : 'null').catch((e) => { throw e; });
+        const r = clickgo.task.get(this);
+        clickgo.form.dialog(this, r ? JSON.stringify(r).replace(/(data:image\/).+?"/g, '$1..."') : 'null').catch(() => { });
     }
     getPermissions() {
-        const r = clickgo.task.getPermissions(parseInt(this.tid));
-        clickgo.form.dialog(JSON.stringify(r)).catch((e) => { throw e; });
+        const r = clickgo.task.getPermissions(this);
+        clickgo.form.dialog(this, JSON.stringify(r)).catch(() => { });
     }
     getList() {
         let msg = JSON.stringify(clickgo.task.getList());
         msg = msg.replace(/(data:image\/).+?"/g, '$1..."');
-        clickgo.form.dialog(msg).catch((e) => { throw e; });
+        clickgo.form.dialog(this, msg).catch(() => { });
     }
     async run() {
-        const tid = await clickgo.task.run('/clickgo/app/demo/');
-        await clickgo.form.dialog('Task ID: ' + tid.toString());
+        const tid = await clickgo.task.run(this, '/clickgo/app/demo/');
+        await clickgo.form.dialog(this, 'Task ID: ' + tid.toString());
     }
     async checkPermission(val) {
-        const rtn = await clickgo.task.checkPermission(val, true);
-        await clickgo.form.dialog(rtn[0] ? 'Succeed' : 'Failed');
+        const rtn = await clickgo.task.checkPermission(this, val, true);
+        await clickgo.form.dialog(this, rtn[0] ? 'Succeed' : 'Failed');
     }
     async end() {
-        await clickgo.form.dialog('Result: ' + (clickgo.task.end(parseInt(this.tid)) ? 'true' : 'false'));
+        await clickgo.form.dialog(this, 'Result: ' + (await clickgo.task.end(this) ? 'true' : 'false'));
     }
     async loadLocale(lang, path) {
-        const r = await clickgo.task.loadLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
-        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
+        const r = await clickgo.task.loadLocale(this, lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
+        await clickgo.form.dialog(this, 'Result: ' + (r ? 'true' : 'false'));
     }
     async setLocale(lang, path) {
-        const r = await clickgo.task.setLocale(lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
-        await clickgo.form.dialog('Result: ' + (r ? 'true' : 'false'));
+        const r = await clickgo.task.setLocale(this, lang, '/package' + clickgo.tool.urlResolve(this.filename, path));
+        await clickgo.form.dialog(this, 'Result: ' + (r ? 'true' : 'false'));
     }
     clearLocale() {
-        clickgo.task.clearLocale();
+        clickgo.task.clearLocale(this);
     }
     loadLocaleData(lang, data) {
-        clickgo.task.loadLocaleData(lang, data);
+        clickgo.task.loadLocaleData(this, lang, data);
     }
     setLocaleLang(lang) {
-        clickgo.task.setLocaleLang(lang);
+        clickgo.task.setLocaleLang(this, lang);
     }
     clearLocaleLang() {
-        clickgo.task.clearLocaleLang();
+        clickgo.task.clearLocaleLang(this);
     }
     changeLocaleLang() {
         clickgo.core.config.locale = this.select[0];
@@ -162,16 +127,15 @@ class default_1 extends clickgo.form.AbstractForm {
             return;
         }
         this.sleeping = true;
-        clickgo.task.sleep(() => {
+        clickgo.task.sleep(this, () => {
             this.sleeping = false;
-        }, 1000);
+        }, 1_000);
     }
     systemTaskInfo() {
-        clickgo.form.dialog(JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
+        clickgo.form.dialog(this, JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
     }
     onMounted() {
         this.tid = this.taskId.toString();
         this.select = [clickgo.core.config.locale];
     }
 }
-exports.default = default_1;

@@ -99,7 +99,7 @@
             background: var(--g-plain-background);
         }
         &[data-cg-hover] {
-            background: var(--g-color); color: var(--face); fill: var(--face); stroke: var(--face);
+            background: var(--g-color); color: var(--face);
         }
 
         .drag {

@@ -21,7 +21,7 @@
     
     &:not(.cg) {
         // --- default ---
-        color: var(--g-plain-border-color); fill: var(--g-plain-border-color); stroke: var(--g-plain-border-color);
+        color: var(--g-plain-border-color);
         svg {
             &:hover {
                 background: var(--g-plain-border-color);
@@ -32,7 +32,7 @@
         }
     }
     &.primary {
-        border-color: var(--success); color: var(--success); fill: var(--success); stroke: var(--success); background: var(--success-bg);
+        border-color: var(--success); color: var(--success); background: var(--success-bg);
         svg {
             &:hover {
                 background: var(--success);
@@ -43,7 +43,7 @@
         }
     }
     &.info {
-        border-color: var(--info); color: var(--info); fill: var(--info); stroke: var(--info); background: var(--info-bg);
+        border-color: var(--info); color: var(--info); background: var(--info-bg);
         svg {
             &:hover {
                 background: var(--info);
@@ -54,7 +54,7 @@
         }
     }
     &.warning {
-        border-color: var(--warning); color: var(--warning); fill: var(--warning); stroke: var(--warning); background: var(--warning-bg);
+        border-color: var(--warning); color: var(--warning); background: var(--warning-bg);
         svg {
             &:hover {
                 background: var(--warning);
@@ -65,7 +65,7 @@
         }
     }
     &.danger {
-        border-color: var(--danger); color: var(--danger); fill: var(--danger); stroke: var(--danger); background: var(--danger-bg);
+        border-color: var(--danger); color: var(--danger); background: var(--danger-bg);
         svg {
             &:hover {
                 background: var(--danger);
@@ -76,12 +76,13 @@
         }
     }
     &.cg {
+        border-color: var(--cg); color: var(--cg); background: var(--cg-bg);
         svg {
             &:hover {
                 background: var(--cg);
             }
             &:active {
-                background: var(--g-color);
+                background: var(--cg-active);
             }
         }
     }

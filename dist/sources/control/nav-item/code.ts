@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -84,7 +83,7 @@ export default class extends clickgo.control.AbstractControl {
             if (this.isSelected) {
                 return;
             }
-            const event: types.INavItemSelectEvent = {
+            const event: clickgo.control.INavItemSelectEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;

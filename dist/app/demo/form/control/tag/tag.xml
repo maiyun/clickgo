@@ -1,4 +1,4 @@
-<form width="550" height="500" title="Tag" padding="10">
+<form width="550" height="600" title="Tag" padding="10">
     <layout direction="v" gutter="10" style="flex: 1;">
         <label>Default:</label>
         <layout gutter="10">
@@ -24,6 +24,7 @@
             <tag :close="vclose" type="primary" plain size="l">l</tag>
             <tag :close="vclose" type="primary" plain size="m">m</tag>
             <tag :close="vclose" type="primary" plain size="s">s</tag>
+            <tag :close="vclose" type="primary" plain size="xs">xs</tag>
         </layout>
         <layout gutter="10" align-v="center">
             <tag :close="vclose" type="primary" plain size="xlh">xlh</tag>
@@ -35,10 +36,10 @@
             <tag :close="vclose" type="primary" plain rsize="l">rsize l</tag>
             <tag :close="vclose" type="primary" plain rsize="xl">rsize xl</tag>
         </layout>
-        <label>Event:</label>
-        <layout gutter="10" align-v="center">
-            <tag :close="vclose" v-for="item, index of list" type="cg" rsize="xl" size="lh" plain @close="list.splice(index, 1)">{{item}}</tag>
-            <button v-if="list.length < 6" @click="list.push('tag' + list.length)">Add</button>
+        <label>close + drag event:</label>
+        <layout gutter="10" align-v="center" wrap>
+            <tag :close="vclose" :drag="vdrag" v-for="item, index of list" rsize="xl" size="lh" plain @close="list.splice(index, 1)" @drop="drop">{{item}}</tag>
+            <button v-if="list.length < 10" @click="list.push('tag' + list.length)">Add</button>
         </layout>
         <label>Inline:</label>
         <layout gutter="10" align-v="center">
@@ -47,6 +48,7 @@
         </layout>
         <layout gutter="10">
             <button @click="vclose = !vclose" style="flex: 1;">{{vclose ? '' : '!'}}close</button>
+            <button @click="vdrag = !vdrag" style="flex: 1;">{{vdrag ? '' : '!'}}drag</button>
         </layout>
     </layout>
 </form>

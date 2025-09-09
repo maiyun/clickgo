@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -75,23 +40,41 @@ class default_1 extends clickgo.control.AbstractControl {
             'scrollLeft': 0,
             'scrollTop': 0
         };
+        /** --- 最近的 table 控件，如果是 table 内部的本控件，才会有此控件 --- */
         this.table = null;
+        /** --- clientWidth --- */
         this.cw = 0;
+        /** --- 可视高度像素 --- */
         this.client = 0;
+        /** --- 总高度 --- */
         this.length = 0;
+        /** --- scrollWidth --- */
         this.sw = 0;
+        /** --- scrollLeft --- */
         this.sl = 0;
+        /** --- 滚动位置 --- */
         this.offset = 0;
+        /** --- 选中的数据 --- */
         this.valueData = [];
+        /** --- shift 多选框原点 index --- */
         this.shiftStart = 0;
+        /** --- 选中框当前已选中的序列列表 --- */
         this.selectValues = [];
+        /** --- 选择之前的数据列表 --- */
         this.beforeSelectValues = [];
+        /** --- 是否正在框选 --- */
         this.isSelectStart = false;
+        /** --- 右侧的 scroll 是否在显示状态 --- */
         this.scrollShow = true;
+        /** --- 重复调用刷新 Offset，只会最后一次生效 --- */
         this.refreshOffsetCount = 0;
+        // --- method ---
+        /** --- 当前队列中的需要 checkValue 的次数 --- */
         this._needCheckValue = 0;
+        /** --- 最后一次响应 cg-glno 标签的时间 --- */
         this.lastGlno = 0;
     }
+    /** --- 如果是嵌套在 table 里的，那么要获取 table 内容的最大宽度（仅 split 模式），不获取的话，split 横线在横向内容内部超出时无法充满整个宽度 --- */
     get tableContentWidth() {
         if (!this.table) {
             return 0;
@@ -105,6 +88,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return w;
     }
+    /** --- 初始化后的 map 对象 --- */
     get mapComp() {
         return {
             'disabled': this.props.map.disabled ?? 'disabled',
@@ -113,6 +97,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'leftline': this.props.map.leftline ?? 'leftline',
         };
     }
+    /** --- 左侧线的颜色 format --- */
     get leftlinecolor() {
         return (text) => {
             if (!text) {
@@ -124,12 +109,15 @@ class default_1 extends clickgo.control.AbstractControl {
             return text;
         };
     }
+    /** --- 判断值是否处于已经被选中的状态 --- */
     get isSelected() {
         return (value) => {
             return this.valueData.includes(value);
         };
     }
+    // --- 外面可调用 ---
     arrowUp() {
+        // --- 选项向上移动 ---
         if (!this.valueData.length) {
             this.select(this.shiftStart);
             return;
@@ -152,6 +140,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
     arrowDown() {
+        // --- 选项向下移动 ---
         if (!this.valueData.length) {
             this.select(this.shiftStart);
             return;
@@ -173,24 +162,29 @@ class default_1 extends clickgo.control.AbstractControl {
             break;
         }
     }
+    /** --- 更新定位，可用于 display：none 显示出来时调用 --- */
     refreshOffset() {
+        /** --- 当前 shiftStart 是第几次 --- */
         const count = ++this.refreshOffsetCount;
         const cb = (c = 0) => {
             if (count < this.refreshOffsetCount) {
+                // --- 已经是下一次的了，不管 ---
                 return;
             }
             if (c > 3) {
+                // --- 重试次数太多 ---
                 return;
             }
             if (!this.element.offsetParent || !this.client) {
-                clickgo.task.sleep(() => {
+                // --- 隐藏状态，要等等 ---
+                clickgo.task.sleep(this, () => {
                     cb(c + 1);
                 }, 100);
                 return;
             }
             const pos = this.refs.flow.getPos(this.shiftStart);
             if (!pos) {
-                clickgo.task.sleep(() => {
+                clickgo.task.sleep(this, () => {
                     cb(c + 1);
                 }, 100);
                 return;
@@ -205,6 +199,9 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         cb();
     }
+    /**
+     * --- 检测 value 是否合法 ---
+     */
     async checkValue() {
         if (!this.props.data.length) {
             return;
@@ -217,17 +214,23 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         --this._needCheckValue;
         let change = false;
+        /** --- 获取一个正常值，作为实在没办法的替补值 --- */
         const notDisabledIndex = this.getFirstNotDisabledIndex();
+        /** --- 当前数据最大的 index --- */
         const dataMaxIndex = this.props.data.length - 1;
+        /** --- 修改前的 value 数据 --- */
         const oldValueData = clickgo.tool.clone(this.valueData);
+        // --- 检测是否是单项，但却包含了多项值 ---
         if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
             change = true;
             this.valueData.splice(1);
             this.shiftStart = this.valueData[0];
         }
+        // --- 检测剔除 disabled 或 split 的值 ---
         for (let i = 0; i < this.valueData.length; ++i) {
             if ((this.valueData[i] > dataMaxIndex) ||
                 (this.props.data[this.valueData[i]]?.[this.mapComp.disabled] || (this.props.data[this.valueData[i]]?.[this.mapComp.control] === 'split'))) {
+                // --- 超出/不可选 ---
                 change = true;
                 if (this.shiftStart === this.valueData[i]) {
                     this.shiftStart = i > 0 ? (this.valueData[0] ?? notDisabledIndex) : notDisabledIndex;
@@ -239,6 +242,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 --i;
             }
         }
+        // --- 检测是否必须，但却没选择（或在上面被剔除了） ---
         if (this.propBoolean('must') && (this.valueData.length === 0)) {
             change = true;
             this.valueData = notDisabledIndex < 0 ? [] : [notDisabledIndex];
@@ -246,6 +250,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         if (change) {
             if (this.propBoolean('multi')) {
+                // --- 多选模式 ---
                 const res = clickgo.tool.compar(oldValueData, this.valueData);
                 for (const key in res.remove) {
                     const event = {
@@ -275,6 +280,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             else {
+                // --- 单选模式 ---
                 const event = {
                     'go': true,
                     preventDefault: function () {
@@ -303,14 +309,29 @@ class default_1 extends clickgo.control.AbstractControl {
         this.sw = sw;
         this.emit('scrollwidth', sw);
     }
+    /**
+     * --- 选择一个值 ---
+     * @param value 值
+     * @param shift 是否 shift
+     * @param ctrl 是否 ctrl
+     */
     select(value, shift = false, ctrl = false) {
         let change = false;
         if (value < -1) {
             value = -1;
         }
         if (this.propBoolean('must') && value === -1) {
+            // --- 必须选择，但是却传入了 -1，则什么也不干 ---
             return;
         }
+        /*
+        // --- 即使是 disabled 也能继续执行，只是 disabled 的项无法被选中，因此注释本段 ---
+        if (this.data[value]) {
+            if (this.data[value].disabled || (this.data[value].control === 'split')) {
+                return;
+            }
+        }
+        */
         const canSelect = (i) => {
             if (!this.props.data[i] || this.props.data[i][this.mapComp.disabled] || (this.props.data[i][this.mapComp.control] === 'split')) {
                 return false;
@@ -318,9 +339,12 @@ class default_1 extends clickgo.control.AbstractControl {
             return true;
         };
         if (!this.propBoolean('multi') || (!shift && !ctrl)) {
+            // --- 选择单项 ---
             if (value === -1) {
+                // --- 清除 ---
                 if (this.valueData.length > 0) {
                     if (this.propBoolean('multi')) {
+                        // --- 多选模式 ---
                         change = true;
                         for (let i = 0; i < this.valueData.length; ++i) {
                             const event = {
@@ -338,6 +362,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         this.valueData = [];
                     }
                     else {
+                        // --- 单选模式 ---
                         const event = {
                             'go': true,
                             preventDefault: function () {
@@ -362,9 +387,12 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             else {
+                // --- 选择单项 ---
                 if (this.valueData.length > 1 || this.valueData.length === 0) {
+                    // --- 只选择一个，但现在有多个或一个都没有，则重置为一个 ---
                     if (canSelect(value)) {
                         if (this.propBoolean('multi')) {
+                            // --- 多选模式 ---
                             change = true;
                             const oldValueData = clickgo.tool.clone(this.valueData);
                             this.valueData = [value];
@@ -398,6 +426,7 @@ class default_1 extends clickgo.control.AbstractControl {
                             this.shiftStart = value;
                         }
                         else {
+                            // --- 单选模式 ---
                             const event = {
                                 'go': true,
                                 preventDefault: function () {
@@ -423,9 +452,11 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
                 else {
+                    // --- 只有一个，看看是不是选择的 ---
                     if (this.valueData[0] !== value) {
                         if (canSelect(value)) {
                             if (this.propBoolean('multi')) {
+                                // --- 多选模式 ---
                                 change = true;
                                 const oldValueData = clickgo.tool.clone(this.valueData);
                                 this.valueData[0] = value;
@@ -459,6 +490,7 @@ class default_1 extends clickgo.control.AbstractControl {
                                 this.shiftStart = value;
                             }
                             else {
+                                // --- 单选模式 ---
                                 const event = {
                                     'go': true,
                                     preventDefault: function () {
@@ -487,10 +519,14 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
         else {
+            // --- 多选 ---
             if (value === -1) {
+                // --- 按住 shift 或 ctrl 时则什么也不处理 ---
             }
             else {
+                // --- 选择值了 ---
                 if (shift) {
+                    // --- 判断要不要改值 ---
                     const valueData = [];
                     if (value > this.shiftStart) {
                         for (let k = this.shiftStart; k <= value; ++k) {
@@ -510,6 +546,7 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                     if ((valueData.length !== this.valueData.length)
                         || !valueData.every((item) => this.valueData.includes(item))) {
+                        // --- 比对 ---
                         const rtn = clickgo.tool.compar(this.valueData, valueData);
                         if (rtn.length.add) {
                             for (const name in rtn.add) {
@@ -519,7 +556,9 @@ class default_1 extends clickgo.control.AbstractControl {
                                         this.go = false;
                                     },
                                     'detail': {
+                                        // --- 当前数组的 index ---
                                         'index': rtn.add[name],
+                                        // --- 原始 data 的 index ---
                                         'value': parseInt(name)
                                     }
                                 };
@@ -553,8 +592,10 @@ class default_1 extends clickgo.control.AbstractControl {
                     }
                 }
                 else {
+                    // --- ctrl ---
                     const indexOf = this.valueData.indexOf(value);
                     if (indexOf > -1) {
+                        // --- 选择已经存在的值 ---
                         if (!this.propBoolean('must') || (this.valueData.length > 1)) {
                             if (this.propBoolean('multi')) {
                                 const event = {
@@ -582,6 +623,7 @@ class default_1 extends clickgo.control.AbstractControl {
                         }
                     }
                     else {
+                        // --- 选择不存在的值 ---
                         if (canSelect(value)) {
                             if (this.propBoolean('multi')) {
                                 const event = {
@@ -615,10 +657,12 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('update:modelValue', this.valueData);
         }
     }
+    // --- arrow 的 click 事件 ---
     arrowDownClick(e, value) {
         clickgo.dom.bindClick(e, () => {
             const hasTouch = clickgo.dom.hasTouchButMouse(e);
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
+            // --- 显示/隐藏 arrow menu ---
             const current = e.target;
             if (current.dataset.cgPopOpen === undefined) {
                 clickgo.form.showPop(current, this.refs.itempop, e);
@@ -626,6 +670,7 @@ class default_1 extends clickgo.control.AbstractControl {
             else {
                 clickgo.form.hidePop(current);
             }
+            // --- 上报点击事件，true: arrow click ---
             const clickevent = {
                 'detail': {
                     'event': e,
@@ -634,6 +679,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             };
             this.emit('itemclicked', clickevent);
+            // --- 上报双击时间，true: arrow click ---
             const dblevent = {
                 'detail': {
                     'event': e,
@@ -644,6 +690,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('itemdblclicked', dblevent);
         });
     }
+    // --- item inner 的 click 事件 ---
     innerDown(e, value) {
         const el = e.target;
         if (el.dataset.cgGlno !== undefined) {
@@ -656,6 +703,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         clickgo.dom.bindClick(e, () => {
             this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
+            // --- 上报点击事件，false: arrow click ---
             const clickevent = {
                 'detail': {
                     'event': e,
@@ -664,6 +712,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             };
             this.emit('itemclicked', clickevent);
+            // --- 上报双击时间，false: arrow click ---
             const dblevent = {
                 'detail': {
                     'event': e,
@@ -674,27 +723,34 @@ class default_1 extends clickgo.control.AbstractControl {
             this.emit('itemdblclicked', dblevent);
         });
     }
+    // --- flow 的鼠标或手指 down 事件 ---
     down(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        // --- 若正在显示菜单则隐藏 ---
         if (this.refs.flow.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
+        // --- click 空白处取消选择 ---
         if (!this.propBoolean('must') && this.propBoolean('ctrl') && !(e instanceof TouchEvent)) {
             const gi = clickgo.dom.findParentByData(e.target, 'cg-size');
             if ((e.target.dataset.cgSize === undefined) && !gi) {
+                // --- 空白处 ---
                 clickgo.dom.bindClick(e, () => {
                     this.select(-1, e.shiftKey, e.ctrlKey);
                 });
             }
         }
+        // --- 手指长安触发菜单 ---
         if (e instanceof TouchEvent) {
+            // --- 长按触发 contextmenu ---
             clickgo.dom.bindLong(e, () => {
                 clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
             });
         }
     }
+    // --- （仅手指）长按 item 选中自己 ---
     itemTouch(e, value) {
         clickgo.dom.bindLong(e, () => {
             if (this.isSelected(value)) {
@@ -703,6 +759,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.select(value, e.shiftKey, this.propBoolean('multi') ? true : e.ctrlKey);
         });
     }
+    // --- （仅鼠标）弹出菜单事件设定选中 ---
     itemContext(e, value) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
@@ -712,12 +769,14 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.select(value, e.shiftKey, e.ctrlKey);
     }
+    // --- （仅鼠标）flow 整体的 contextmenu 事件 ---
     context(e) {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
     }
+    // --- 整个控件的键盘事件 ---
     keydown(e) {
         if ((e.key !== 'ArrowDown') && (e.key !== 'ArrowUp')) {
             return;
@@ -730,6 +789,9 @@ class default_1 extends clickgo.control.AbstractControl {
             this.arrowDown();
         }
     }
+    /**
+     * --- 获取数据中第一个不是 disabled 的 index（data 没值将返回 -1，即使是 must 状态） ---
+     */
     getFirstNotDisabledIndex() {
         let notDisabledIndex = -1;
         for (let i = 0; i < this.props.data.length; ++i) {
@@ -744,6 +806,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         return notDisabledIndex;
     }
+    // --- 当出现了选区 ---
     onBeforeSelect() {
         this.isSelectStart = true;
         this.selectValues = [];
@@ -752,50 +815,67 @@ class default_1 extends clickgo.control.AbstractControl {
     }
     onSelect(area) {
         if (this.propBoolean('multi')) {
+            // --- 多行 ---
             if (area.shift || area.ctrl) {
                 if (area.empty) {
+                    // --- 本次选中的先取消掉 ---
                     for (const item of this.selectValues) {
                         this.select(item, false, true);
                     }
                     this.selectValues = [];
                 }
                 else if (area.shift) {
+                    // --- 先检查要加的 ---
                     for (let i = area.start; i <= area.end; ++i) {
                         if (this.selectValues.includes(i)) {
+                            // --- 已经选中了，不管 ---
                             continue;
                         }
                         if (this.beforeSelectValues.includes(i)) {
+                            // --- 本来就选中状态，不管 ---
                             continue;
                         }
+                        // --- 需要选中 ---
                         this.selectValues.push(i);
                         this.select(i, false, true);
                     }
+                    // --- 再看有没有要减掉的 ---
                     for (let i = 0; i < this.selectValues.length; ++i) {
                         if (this.selectValues[i] >= area.start && this.selectValues[i] <= area.end) {
+                            // --- 正常 ---
                             continue;
                         }
+                        // --- 要剔除 ---
                         this.select(this.selectValues[i], false, true);
                         this.selectValues.splice(i, 1);
                         --i;
                     }
                 }
                 else {
+                    // --- ctrl ---
+                    // --- 先检查要加的 ---
                     for (let i = area.start; i <= area.end; ++i) {
                         if (this.selectValues.includes(i)) {
+                            // --- 已经选中了，不管 ---
                             continue;
                         }
                         if (this.beforeSelectValues.includes(i)) {
+                            // --- 本来是选中状态，则变为不选 ---
                             this.selectValues.push(i);
                             this.select(i, false, true);
                             continue;
                         }
+                        // --- 需要选中 ---
                         this.selectValues.push(i);
                         this.select(i, false, true);
                     }
+                    // --- 再看有没有要减掉的 ---
                     for (let i = 0; i < this.selectValues.length; ++i) {
                         if (this.selectValues[i] >= area.start && this.selectValues[i] <= area.end) {
+                            // --- 正常 ---
                             continue;
                         }
+                        // --- 要剔除/还原 ---
                         this.select(this.selectValues[i], false, true);
                         this.selectValues.splice(i, 1);
                         --i;
@@ -803,16 +883,19 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             }
             else {
+                // --- 没有 ctrl 和 shift ---
                 if (!area.empty) {
                     this.shiftStart = area.start;
                     this.select(area.end, true);
                 }
                 else {
+                    // --- 清空 ---
                     this.select(-1);
                 }
             }
         }
         else {
+            // --- 单行 ---
             if (!area.empty) {
                 this.select(area.start, area.shift, area.ctrl);
             }
@@ -829,7 +912,9 @@ class default_1 extends clickgo.control.AbstractControl {
             this.table = table;
         }
         this.watch('must', () => {
+            // --- 检测是否必须，但却没选择 ---
             if (this.propBoolean('must') && (this.valueData.length === 0)) {
+                // --- 要默认选择一下，先判断 shiftStart 能不能被选择，若能的话，优先选择 ---
                 if (this.props.data[this.shiftStart] &&
                     !this.props.data[this.shiftStart][this.mapComp.disabled] &&
                     (this.props.data[this.shiftStart][this.mapComp.control] !== 'split')) {
@@ -850,32 +935,40 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
         this.watch('multi', () => {
+            // --- 检测是否是单项，但却包含了多项值 ---
             if (!this.propBoolean('multi') && (this.valueData.length > 1)) {
                 this.valueData.splice(1);
                 this.shiftStart = this.valueData[0];
                 this.emit('update:modelValue', this.valueData);
             }
         });
+        // --- shift 原点变了，要监听并移动 scroll ---
         this.watch('shiftStart', () => {
             if (Date.now() - this.lastGlno <= 300) {
+                // --- 鼠标或者点击禁止区域后操作的，不管，不需要移动，例如点击了 tree 的控制按钮 ---
                 return;
             }
             if (this.isSelectStart) {
+                // --- 框选过程中变了，不管 ---
                 return;
             }
             this.refreshOffset();
+            // --- 有可能 shiftStart 是正常的，但是 data 数据还没有响应到 vflow 导致获取不到 pos，所以循环尝试几次 ---
         });
+        // --- 监听 data 变动 ---
         this.watch(() => JSON.stringify(this.props.data), async () => {
             await this.checkValue();
         }, {
             'deep': true
         });
+        // --- 向上更新 scroll top 和 scroll left ---
         this.watch('sl', () => {
             this.emit('update:scrollLeft', this.sl);
         });
         this.watch('offset', () => {
             this.emit('update:scrollTop', this.offset);
         });
+        // --- 监听上级 scroll top 和 scroll left 变化 ---
         this.watch('scrollLeft', () => {
             const sl = this.propNumber('scrollLeft');
             if (sl === this.sl) {
@@ -890,6 +983,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.client = offset;
         });
+        // --- 监听用户设定的值的变更事件 ---
         this.watch('modelValue', () => {
             if ((this.valueData.length === this.props.modelValue.length)
                 && this.valueData.every((item) => this.props.modelValue.includes(item))) {
@@ -898,6 +992,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.valueData = this.props.modelValue;
             this.shiftStart = this.valueData[0] ?? 0;
             this.checkValue().catch(() => {
+                //
             });
         });
         this.valueData = this.props.modelValue;
@@ -905,7 +1000,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.shiftStart = this.valueData[0];
         }
         this.checkValue().catch(() => {
+            //
         });
     }
 }
-exports.default = default_1;

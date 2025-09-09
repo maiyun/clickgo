@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -154,7 +153,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 向上更新值 --- */
     public updateValue(): void {
-        const event: types.ILevelselectLevelEvent = {
+        const event: clickgo.control.ILevelselectLevelEvent = {
             'detail': {
                 'list': [],
                 'values': [],

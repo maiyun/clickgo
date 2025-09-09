@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -277,7 +276,7 @@ export default class extends clickgo.control.AbstractControl {
                     const index = this.value.length - 1;
                     const value = this.value[index];
                     // --- 判断是否可移除 ---
-                    const event: types.ISelectRemoveEvent = {
+                    const event: clickgo.control.ISelectRemoveEvent = {
                         'go': true,
                         preventDefault: function() {
                             this.go = false;
@@ -318,7 +317,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             // --- 判断是否允许新增项 ---
             const addIndex = this.value.length;
-            const event: types.ISelectAddEvent = {
+            const event: clickgo.control.ISelectAddEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -400,7 +399,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 // --- 判断是否允许新增项 ---
                 const addIndex = this.value.length;
-                const event: types.ISelectAddEvent = {
+                const event: clickgo.control.ISelectAddEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -465,7 +464,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 // --- 判断是否允许新增项 ---
                 const addIndex = this.value.length;
-                const event: types.ISelectAddEvent = {
+                const event: clickgo.control.ISelectAddEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -539,7 +538,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             ++this.searching;
-            const event: types.ISelectRemoteEvent = {
+            const event: clickgo.control.ISelectRemoteEvent = {
                 'detail': {
                     'value': searchValue,
                     'callback': async (data?: any[] | Record<string, string>): Promise<void> => {
@@ -628,7 +627,7 @@ export default class extends clickgo.control.AbstractControl {
     public async updateInputValue(value: string): Promise<void> {
         value = value.trim();
         if (this.propBoolean('editable') && !this.propBoolean('multi')) {
-            const event: types.ISelectChangeEvent = {
+            const event: clickgo.control.ISelectChangeEvent = {
                 'go': true,
                 preventDefault: function() {
                     this.go = false;
@@ -680,7 +679,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.updateValue();
         if (this.propBoolean('editable') && !this.propBoolean('multi')) {
-            const event: types.ISelectChangedEvent = {
+            const event: clickgo.control.ISelectChangedEvent = {
                 'detail': {
                     'before': before,
                     'value': [value]
@@ -691,8 +690,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- list 上的点击事件 --- */
-    public async listItemClicked(e: types.IListItemclickedEvent): Promise<void> {
-        const event: types.IListItemclickedEvent = {
+    public async listItemClicked(e: clickgo.control.IListItemclickedEvent): Promise<void> {
+        const event: clickgo.control.IListItemclickedEvent = {
             'detail': {
                 'event': e.detail.event,
                 'value': e.detail.value,
@@ -711,7 +710,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 // --- 判断是否允许新增项 ---
                 const addIndex = this.value.length;
-                const event: types.ISelectAddEvent = {
+                const event: clickgo.control.ISelectAddEvent = {
                     'go': true,
                     preventDefault: function() {
                         this.go = false;
@@ -747,7 +746,7 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 // --- 单选，可能已经实时添加了 ---
                 if (this.inputValue !== v) {
-                    const event: types.ISelectChangeEvent = {
+                    const event: clickgo.control.ISelectChangeEvent = {
                         'go': true,
                         preventDefault: function() {
                             this.go = false;
@@ -766,7 +765,7 @@ export default class extends clickgo.control.AbstractControl {
                         if (this.propBoolean('search')) {
                             await this._search();
                         }
-                        const event: types.ISelectChangedEvent = {
+                        const event: clickgo.control.ISelectChangedEvent = {
                             'detail': {
                                 'before': before,
                                 'value': [v]
@@ -791,7 +790,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                     // --- 判断是否允许新增项 ---
                     const addIndex = this.value.length;
-                    const event: types.ISelectAddEvent = {
+                    const event: clickgo.control.ISelectAddEvent = {
                         'go': true,
                         preventDefault: function() {
                             this.go = false;
@@ -858,7 +857,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.updateValue();
                     this.refs.gs.hidePop();
                 }
-                const event: types.ISelectChangedEvent = {
+                const event: clickgo.control.ISelectChangedEvent = {
                     'detail': {
                         'before': before,
                         'value': this.value
@@ -871,7 +870,7 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- list 的相关事件 ---
 
-    public onAdd(e: types.IListAddEvent): void {
+    public onAdd(e: clickgo.control.IListAddEvent): void {
         if (!this.propBoolean('multi')) {
             return;
         }
@@ -879,7 +878,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         const addIndex = this.value.length;
-        const event: types.ISelectAddEvent = {
+        const event: clickgo.control.ISelectAddEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -902,7 +901,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('added', event);
     }
 
-    public onRemove(e: types.IListAddEvent): void {
+    public onRemove(e: clickgo.control.IListAddEvent): void {
         if (!this.propBoolean('multi')) {
             return;
         }
@@ -910,7 +909,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         const removeIndex = e.detail.index;
-        const event: types.ISelectRemoveEvent = {
+        const event: clickgo.control.ISelectRemoveEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -939,7 +938,7 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    public onChange(e: types.IListChangeEvent): void {
+    public onChange(e: clickgo.control.IListChangeEvent): void {
         if (this.propBoolean('multi')) {
             return;
         }
@@ -949,7 +948,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.propBoolean('editable')) {
             return;
         }
-        const event: types.ISelectChangeEvent = {
+        const event: clickgo.control.ISelectChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -967,7 +966,7 @@ export default class extends clickgo.control.AbstractControl {
     // --- tag 的 label 的点击事件 ---
     public tagClick(index: number): void {
         const value = this.value[index];
-        const event: types.ISelectTagclickEvent = {
+        const event: clickgo.control.ISelectTagclickEvent = {
             'detail': {
                 'index': index,
                 'value': value
@@ -985,7 +984,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         const value = this.value[index];
         // --- 判断是否可移除 ---
-        const event: types.ISelectRemoveEvent = {
+        const event: clickgo.control.ISelectRemoveEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -1022,12 +1021,12 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.tags.scrollLeft += e.deltaY;
     }
 
-    public tagdown(e: MouseEvent | TouchEvent): void {
+    public async tagdown(e: MouseEvent | TouchEvent): Promise<void> {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         e.stopPropagation();
-        clickgo.form.doFocusAndPopEvent(e);
+        await clickgo.form.doFocusAndPopEvent(e);
     }
 
     // --- async 模式的加载事件 ---

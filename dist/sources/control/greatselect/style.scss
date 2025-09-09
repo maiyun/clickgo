@@ -20,7 +20,7 @@
 
     &[data-cg-disabled] {
         // --- 禁用模式 ---
-        background: var(--g-background-disabled); color: var(--g-color-disabled); fill: var(--g-color-disabled); stroke: var(--g-color-disabled);
+        background: var(--g-background-disabled); color: var(--g-color-disabled);
         &:not(.plain) {
             border: solid .5px var(--g-border-color-disabled);
         }
@@ -62,7 +62,7 @@
                 // --- 展开状态 ---
                 box-shadow: var(--g-outline-shadow);
                 &.area-all {
-                    background: var(--g-plain-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
+                    background: var(--g-plain-background-active); color: var(--g-color-hover);
                     .arrow::after {
                         border-color: var(--g-color-active);
                     }
@@ -130,7 +130,7 @@
                 // --- 展开状态 ---
                 box-shadow: var(--g-outline-shadow);
                 &.area-all {
-                    background: var(--g-background-active); color: var(--g-color-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover);
+                    background: var(--g-background-active); color: var(--g-color-hover);
                     .arrow::after {
                         border-color: var(--g-color-active);
                     }
@@ -150,7 +150,7 @@
 }
 
 .pop {
-    width: 800px; display: flex; max-height: 300px; color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
+    width: 800px; display: flex; max-height: 300px; color: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
     > * {
         flex: 1;
     }

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractPanel {
 
@@ -7,7 +6,7 @@ export default class extends clickgo.form.AbstractPanel {
 
     public data: any = {};
 
-    public async onShow(e: types.IAbstractPanelShowEvent): Promise<void> {
+    public async onShow(e: clickgo.form.IAbstractPanelShowEvent): Promise<void> {
         // --- 装作要做一些什么 await 的事件 ---
         await clickgo.tool.sleep(1000);
         ++this.scount;
@@ -21,7 +20,7 @@ export default class extends clickgo.form.AbstractPanel {
 
     public async onReceive(data: Record<string, any>): Promise<void> {
         this.data = data;
-        await clickgo.form.dialog('test1 got data.');
+        await clickgo.form.dialog(this, 'test1 got data.');
     }
 
     public onQsChange(): void {
@@ -31,7 +30,7 @@ export default class extends clickgo.form.AbstractPanel {
         });
     }
 
-    public async onQsChangeShow(e: types.IAbstractPanelQsChangeShowEvent): Promise<void> {
+    public async onQsChangeShow(e: clickgo.form.IAbstractPanelQsChangeShowEvent): Promise<void> {
         // --- 装作要做一些什么 await 的事件 ---
         await clickgo.tool.sleep(500);
         clickgo.form.notify({
@@ -42,12 +41,12 @@ export default class extends clickgo.form.AbstractPanel {
     }
 
     public async click(): Promise<void> {
-        await clickgo.form.dialog('Hello panel!');
+        await clickgo.form.dialog(this, 'Hello panel!');
     }
 
     public async clearQss(): Promise<void> {
         this.clearQs();
-        await clickgo.form.dialog('cleard.');
+        await clickgo.form.dialog(this, 'cleard.');
     }
 
     public jump(): void {

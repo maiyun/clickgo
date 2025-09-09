@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -39,14 +38,14 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     /** --- 当前 active 的 panel id --- */
-    public activeId: number = 0;
+    public activeId: string = '';
 
     /** --- 隐藏老 panel --- */
     public async hideActive(): Promise<void> {
         if (!this.activeId) {
             return;
         }
-        clickgo.form.removeActivePanel(this.activeId, this.formId);
+        clickgo.form.removeActivePanel(this, this.activeId, this.formId);
         await this.loaded[this.activeId].vroot.onHide();
         const old: HTMLElement = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]')!;
         old.style.display = 'none';
@@ -71,7 +70,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.loading) {
             return false;
         }
-        const showEvent: types.IAbstractPanelShowEvent = {
+        const showEvent: clickgo.form.IAbstractPanelShowEvent = {
             'detail': {
                 'data': data,
                 'nav': opt.nav ?? false,
@@ -80,7 +79,7 @@ export default class extends clickgo.control.AbstractControl {
                 'qsChange': false
             }
         };
-        const qsChangeShowEvent: types.IAbstractPanelQsChangeShowEvent = {
+        const qsChangeShowEvent: clickgo.form.IAbstractPanelQsChangeShowEvent = {
             'detail': {
                 'action': opt.action ?? 'forword',
                 'data': data,
@@ -115,8 +114,8 @@ export default class extends clickgo.control.AbstractControl {
             // --- 不是同一个，跳转到现在设置的 ---
             await this.hideActive();
             // --- 显示新的 ---
-            this.activeId = parseInt(id);
-            clickgo.form.setActivePanel(this.activeId, this.formId);
+            this.activeId = id;
+            clickgo.form.setActivePanel(this, this.activeId, this.formId);
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + id + '"]')!;
             n.style.display = 'flex';
             /*
@@ -141,7 +140,7 @@ export default class extends clickgo.control.AbstractControl {
             await this.hideActive();
             // --- 显示新的 ---
             this.activeId = rtn.id;
-            clickgo.form.setActivePanel(this.activeId, this.formId);
+            clickgo.form.setActivePanel(this, this.activeId, this.formId);
             this.loaded[rtn.id] = {
                 'obj': cls,
                 'vapp': rtn.vapp,
@@ -196,7 +195,7 @@ export default class extends clickgo.control.AbstractControl {
         const from = this.mapSelected.split('?');
         const to = name.split('?');
         // --- 也可能仅仅是 qs 变了 ---
-        const event: types.IPanelGoEvent = {
+        const event: clickgo.control.IPanelGoEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -216,7 +215,7 @@ export default class extends clickgo.control.AbstractControl {
             'action': opt.action ?? 'forword',
             'previous': opt.previous ?? ''
         });
-        const wentEvent: types.IPanelWentEvent = {
+        const wentEvent: clickgo.control.IPanelWentEvent = {
             'detail': {
                 'result': rtn,
                 'from': event.detail.from,
@@ -268,7 +267,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public onBeforeUnmount(): void {
         for (const id in this.loaded) {
-            clickgo.form.removePanel(parseInt(id), this.loaded[id].vapp, this.element);
+            clickgo.form.removePanel(id, this.loaded[id].vapp, this.element);
             delete this.loaded[id];
         }
     }

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -85,19 +84,19 @@ export default class extends clickgo.form.AbstractForm {
     public plain = false;
 
     public showIndex(): void {
-        clickgo.form.dialog('Index is ' + this.select.toString() + '.').catch((e: Error) => { throw e; });
+        clickgo.form.dialog(this, 'Index is ' + this.select.toString() + '.').catch((e: Error) => { throw e; });
     }
 
     public showType(): void {
         if (this.select.length === 0) {
-            clickgo.form.dialog('There are currently no selected items.').catch((e: Error) => { throw e; });
+            clickgo.form.dialog(this, 'There are currently no selected items.').catch((e: Error) => { throw e; });
         }
         else {
             const types = [];
             for (const item of this.select) {
                 types.push(this.list[item].type);
             }
-            clickgo.form.dialog(`Type is ${JSON.stringify(types)}.`).catch((e: Error) => { throw e; });
+            clickgo.form.dialog(this, `Type is ${JSON.stringify(types)}.`).catch((e: Error) => { throw e; });
         }
     }
 
@@ -125,22 +124,22 @@ export default class extends clickgo.form.AbstractForm {
 
     public async remove(): Promise<void> {
         if (this.list.length === 3) {
-            await clickgo.form.dialog('It cannot be removed at this time.');
+            await clickgo.form.dialog(this, 'It cannot be removed at this time.');
             return;
         }
         this.list.splice(-1, 1);
     }
 
-    public async drop(e: types.IIconviewDropEvent): Promise<void> {
-        await clickgo.form.dialog(JSON.stringify(e.detail));
+    public async drop(e: clickgo.control.IIconviewDropEvent): Promise<void> {
+        await clickgo.form.dialog(this, JSON.stringify(e.detail));
     }
 
-    public onSelect(e: types.IIconviewSelectEvent): void {
+    public onSelect(e: clickgo.control.IIconviewSelectEvent): void {
         this.selectionArea = e.detail.area;
     }
 
-    public async onOpen(e: types.IIconviewOpenEvent): Promise<void> {
-        await clickgo.form.dialog('onOpen: ' + e.detail.value.toString());
+    public async onOpen(e: clickgo.control.IIconviewOpenEvent): Promise<void> {
+        await clickgo.form.dialog(this, 'onOpen: ' + e.detail.value.toString());
     }
 
     public scrollChange(): void {
@@ -160,7 +159,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public async onGesture(dir: string): Promise<void> {
-        await clickgo.form.dialog('onGesture: ' + dir);
+        await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }
 
 }

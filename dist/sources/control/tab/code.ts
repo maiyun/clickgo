@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -105,7 +104,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public tabClose(e: MouseEvent, index: number, value: string): void {
-        const event: types.ITabCloseEvent = {
+        const event: clickgo.control.ITabCloseEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -136,7 +135,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public tabClick(e: MouseEvent | TouchEvent, item: Record<string, any>): void {
-        const event: types.ITabChangeEvent = {
+        const event: clickgo.control.ITabChangeEvent = {
             'go': true,
             preventDefault: function() {
                 this.go = false;
@@ -151,7 +150,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.value = item.value;
         this.emit('update:modelValue', this.value);
-        const event2: types.ITabChangedEvent = {
+        const event2: clickgo.control.ITabChangedEvent = {
             'detail': {
                 'value': item.value
             }
@@ -166,7 +165,7 @@ export default class extends clickgo.control.AbstractControl {
         const num = type === 'start' ? -5 : 5;
         clickgo.dom.bindDown(e, {
             down: () => {
-                this.timer = clickgo.task.onFrame(() => {
+                this.timer = clickgo.task.onFrame(this, () => {
                     if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
                         this.refs.tabs[0].scrollLeft += num;
                     }
@@ -176,7 +175,7 @@ export default class extends clickgo.control.AbstractControl {
                 });
             },
             up: () => {
-                clickgo.task.offFrame(this.timer);
+                clickgo.task.offFrame(this, this.timer);
                 this.timer = 0;
             }
         });
@@ -242,9 +241,7 @@ export default class extends clickgo.control.AbstractControl {
             this.refreshValue();
             this.nextTick().then(() => {
                 this.onResize();
-            }).catch(function(e) {
-                console.log(e);
-            });
+            }).catch(() => {});
         }, {
             'deep': true
         });
@@ -254,7 +251,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.oldTabs = this.refs.tabs[0];
-            clickgo.dom.watchSize(this.refs.tabs[0], () => {
+            clickgo.dom.watchSize(this, this.refs.tabs[0], () => {
                 this.onResize();
             });
         });
@@ -262,7 +259,7 @@ export default class extends clickgo.control.AbstractControl {
         this.rand = clickgo.tool.random(16);
         // --- 检测是否显示箭头 ---
         this.oldTabs = this.refs.tabs[0];
-        clickgo.dom.watchSize(this.refs.tabs[0], () => {
+        clickgo.dom.watchSize(this, this.refs.tabs[0], () => {
             this.onResize();
         });
         this.refreshValue();

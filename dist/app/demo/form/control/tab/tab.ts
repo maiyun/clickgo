@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types/index';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -22,13 +21,13 @@ export default class extends clickgo.form.AbstractForm {
 
     public cclose = false;
 
-    public async onClose(e: types.ITabCloseEvent): Promise<void> {
+    public async onClose(e: clickgo.control.ITabCloseEvent): Promise<void> {
         if (e.detail.index !== 10) {
-            await clickgo.form.dialog('Closed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
+            await clickgo.form.dialog(this, 'Closed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);
             return;
         }
         e.preventDefault();
-        await clickgo.form.dialog('The tab can not be close.');
+        await clickgo.form.dialog(this, 'The tab can not be close.');
     }
 
     public add(): void {

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -198,7 +197,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:modelValue', []);
     }
 
-    public onRange(e: types.IDatepanelRangeEvent): void {
+    public onRange(e: clickgo.control.IDatepanelRangeEvent): void {
         e.preventDefault();
         const value: number[] = [];
         // --- start ---
@@ -222,7 +221,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 左侧的 changed --- */
-    public firstChanged(e: types.IDatepanelChangedEvent): void {
+    public firstChanged(e: clickgo.control.IDatepanelChangedEvent): void {
         if (e.detail.value === undefined) {
             this.ts2 = undefined;
             return;

@@ -1,54 +1,21 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Zip = void 0;
-exports.get = get;
-const jszip_1 = __importDefault(require("jszip"));
-const tool = __importStar(require("./tool"));
-class Zip {
+import * as clickgo from '../clickgo';
+import * as lTool from './tool';
+export class Zip {
     constructor(zip) {
+        /** --- 当前路径，以 / 开头以 / 结尾 --- */
         this._path = '/';
+        /** --- 目录列表缓存 --- */
         this._list = {};
         this._zip = zip;
         this._refreshList();
     }
+    /**
+     * --- 读取完整文件 ---
+     * @param path 文件路径
+     * @param type 返回类型
+     */
     async getContent(path, type = 'string') {
-        path = tool.urlResolve(this._path, path);
+        path = lTool.urlResolve(this._path, path);
         const f = this._zip.file(path.slice(1));
         if (!f) {
             return null;
@@ -60,8 +27,14 @@ class Zip {
             return f.async(type);
         }
     }
+    /**
+     * --- 写入文件内容 ---
+     * @param path 文件路径
+     * @param data 要写入的内容
+     * @param options 选项
+     */
     putContent(path, data, options = {}) {
-        path = tool.urlResolve(this._path, path);
+        path = lTool.urlResolve(this._path, path);
         this._zip.file(path.slice(1), data, {
             'base64': options.base64,
             'binary': options.binary,
@@ -69,22 +42,34 @@ class Zip {
         });
         this._refreshList();
     }
+    /**
+     * --- 删除一个文件/文件夹（深度删除） ---
+     * @param path 要删除的文件路径
+     */
     unlink(path) {
-        path = tool.urlResolve(this._path, path);
+        path = lTool.urlResolve(this._path, path);
         this._zip.remove(path.slice(1));
         this._refreshList();
     }
+    /**
+     * --- 获取对象是否存在，存在则返回 stats 对象，否则返回 null ---
+     * @param path 对象路径
+     * @param options 选项
+     */
     stats(path) {
-        path = tool.urlResolve(this._path, path);
+        path = lTool.urlResolve(this._path, path);
         let dirpath = path.endsWith('/') ? path : path + '/';
         if (!this._list[dirpath]) {
+            // --- 可能是文件 ---
             if (path.endsWith('/')) {
+                // --- 不可能是文件 ---
                 return null;
             }
             const lio = path.lastIndexOf('/') + 1;
             const dpath = path.slice(0, lio);
             const fname = path.slice(lio);
             if (!this._list[dpath]) {
+                // --- 上层目录不存在 ---
                 return null;
             }
             const file = this._list[dpath][fname];
@@ -100,6 +85,7 @@ class Zip {
             };
         }
         else {
+            // --- 文件夹 ---
             if (dirpath === '/') {
                 return {
                     'compressedSize': 0,
@@ -124,6 +110,10 @@ class Zip {
             };
         }
     }
+    /**
+     * --- 判断是否是目录或目录是否存在，是的话返回 stats ---
+     * @param path 判断路径
+     */
     isDir(path) {
         const pstats = this.stats(path);
         if (!pstats?.isDirectory) {
@@ -131,6 +121,10 @@ class Zip {
         }
         return pstats;
     }
+    /**
+     * --- 判断是否是文件或文件是否存在，是的话返回 stats ---
+     * @param path 判断路径
+     */
     isFile(path) {
         const pstats = this.stats(path);
         if (!pstats?.isFile) {
@@ -138,21 +132,20 @@ class Zip {
         }
         return pstats;
     }
+    /**
+     * --- 获取文件夹下文件列表 ---
+     * @param path 文件夹路径
+     * @param opt 选项
+     */
     readDir(path, opt = {}) {
-        if (opt.hasChildren === undefined) {
-            opt.hasChildren = false;
-        }
-        if (opt.hasDir === undefined) {
-            opt.hasDir = true;
-        }
-        if (opt.pathAsKey === undefined) {
-            opt.pathAsKey = false;
-        }
+        opt.hasChildren ??= false;
+        opt.hasDir ??= true;
+        opt.pathAsKey ??= false;
         if (!path) {
             path = this._path;
         }
         else {
-            path = tool.urlResolve(this._path, path);
+            path = lTool.urlResolve(this._path, path);
         }
         if (!path.endsWith('/')) {
             path += '/';
@@ -174,8 +167,10 @@ class Zip {
             }
             return list;
         }
+        // --- 定义 list ---
         if (opt.pathAsKey) {
             const list = {};
+            // --- 遍历子项 ---
             for (const k in this._list[path]) {
                 const item = this._list[path][k];
                 if (item.isFile || opt.hasDir) {
@@ -192,6 +187,7 @@ class Zip {
         }
         else {
             let list = [];
+            // --- 遍历子项 ---
             for (const k in this._list[path]) {
                 const item = this._list[path][k];
                 if (item.isFile || opt.hasDir) {
@@ -207,6 +203,10 @@ class Zip {
             return list;
         }
     }
+    /**
+     * --- 根据 item 文件夹读取子层及所有子层项 ---
+     * @param item 文件夹
+     */
     _readDir(item, opt) {
         if (opt.pathAsKey) {
             const list = {};
@@ -247,8 +247,12 @@ class Zip {
             return list;
         }
     }
+    /**
+     * --- 重建目录列表缓存 ---
+     */
     _refreshList() {
         const list = {};
+        // eslint-disable-next-line @litert/disable-for-each-method
         this._zip.forEach(function (relativePath, item) {
             if (relativePath.startsWith('/')) {
                 relativePath = relativePath.slice(1);
@@ -287,16 +291,29 @@ class Zip {
         });
         this._list = list;
     }
+    /**
+     * --- 获取当前目录，末尾不带 / ---
+     * @return string
+     */
     pwd() {
         return this._path.slice(0, -1);
     }
+    /**
+     * --- 进入一个目录（不存在也能进入，需要自行判断） ---
+     * --- 返回进入后的路径值 ---
+     * @param dir 相对路径或绝对路径
+     */
     cd(dir) {
-        this._path = tool.urlResolve(this._path, dir);
+        this._path = lTool.urlResolve(this._path, dir);
         if (!this._path.endsWith('/')) {
             this._path += '/';
         }
         return this._path;
     }
+    /**
+     * --- 打包 zip ---
+     * @param options 选项
+     */
     generate(options = {}) {
         const opt = {};
         if (options.type === undefined) {
@@ -318,6 +335,9 @@ class Zip {
             options.onUpdate?.(meta.percent, meta.currentFile);
         });
     }
+    /**
+     * --- 获取 path 和 string/Blob 对应的文件列表 ---
+     */
     getList() {
         return new Promise((resolve) => {
             const files = {};
@@ -327,7 +347,7 @@ class Zip {
             });
             let loaded = 0;
             for (const file of list) {
-                const mime = tool.getMimeByPath(file.name);
+                const mime = lTool.getMimeByPath(file.name);
                 if (['txt', 'json', 'js', 'css', 'xml', 'html'].includes(mime.ext)) {
                     this.getContent(file.path + file.name, 'string').then(function (fb) {
                         if (fb) {
@@ -367,9 +387,12 @@ class Zip {
         });
     }
 }
-exports.Zip = Zip;
-async function get(data) {
-    const z = (0, jszip_1.default)();
+/**
+ * --- 获取 zip 对象 ---
+ * @param data 对象数据
+ */
+export async function get(data) {
+    const z = clickgo.modules.jszip();
     try {
         if (data) {
             await z.loadAsync(data);

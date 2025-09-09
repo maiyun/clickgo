@@ -49,7 +49,7 @@
     }
 
     .text {
-        flex: 1; width: 0; padding: var(--padding); -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; fill: inherit; stroke: inherit; min-height: 100%; background: transparent; transition: var(--g-transition); transition-property: color, background-color, border; font: inherit !important; text-align: inherit;
+        flex: 1; width: 0; padding: var(--padding); -webkit-appearance: none; appearance: none; border: none; margin: 0; outline: none; resize: none; -webkit-overflow-scrolling: touch; color: inherit; min-height: 100%; background: transparent; transition: var(--g-transition); transition-property: color, background-color, border; font: inherit !important; text-align: inherit;
         &::-webkit-scrollbar {
             display: none;
         }
@@ -124,12 +124,12 @@
     }
 
     &[data-cg-disabled] {
-        background: var(--g-plain-background-disabled); color: var(--g-plain-color-disabled); fill: var(--g-plain-color-disabled); stroke: var(--g-plain-color-disabled);
+        background: var(--g-plain-background-disabled); color: var(--g-plain-color-disabled);
         border-color: var(--g-plain-border-color-disabled);
     }
 
 }
 
 .pop {
-    color: var(--g-color); fill: var(--g-color); stroke: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
+    color: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 }

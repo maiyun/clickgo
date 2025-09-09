@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -48,7 +13,7 @@ class default_1 extends clickgo.control.AbstractControl {
             'readonly': false,
             'placeholder': '',
             'modelValue': '',
-            'theme': 'light'
+            'theme': 'light',
         };
         this.notInit = false;
         this.isFocus = false;
@@ -135,6 +100,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         }
     }
+    /** --- 获得语言 --- */
     getLanguage() {
         switch (this.locale) {
             case 'sc': {
@@ -149,10 +115,12 @@ class default_1 extends clickgo.control.AbstractControl {
     async onMounted() {
         const jodit = await clickgo.core.getModule('jodit');
         if (!jodit) {
+            // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
+        /** --- 创建编辑器 --- */
         this.access.editor = jodit.make(this.refs.editor, {
             'height': '100%',
             'removeButtons': ['ai-assistant', 'about', 'speechRecognize', 'ai-commands'],
@@ -185,6 +153,7 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access.editor.events.on('blur', () => {
             this.isFocus = false;
         });
+        // --- 绑定 contextmenu ---
         this.refs.content.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             if (clickgo.dom.hasTouchButMouse(e)) {
@@ -199,6 +168,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             clickgo.form.showPop(this.refs.content, this.refs.pop, e);
         });
+        // --- 绑定 down 事件 ---
         const down = (e) => {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
@@ -211,6 +181,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 clickgo.form.hidePop(this.refs.content);
             }
             if (e instanceof TouchEvent) {
+                // --- touch 长按弹出 ---
                 clickgo.dom.bindLong(e, () => {
                     clickgo.form.showPop(this.refs.content, this.refs.pop, e);
                 });
@@ -220,11 +191,14 @@ class default_1 extends clickgo.control.AbstractControl {
         this.refs.content.addEventListener('touchstart', down, {
             'passive': true
         });
+        // --- 监听语言变动 ---
         this.watch('locale', () => {
             if (!this.access.editor) {
                 return;
             }
+            // --- 暂时无法动态修改语言 ---
         });
+        // --- 监听 readonly 变动 ---
         this.watch('readonly', () => {
             if (!this.access.editor) {
                 return;
@@ -233,6 +207,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
+        // --- 监听上面的值的变动 ---
         this.watch('modelValue', (v) => {
             if (!this.access.editor) {
                 return;
@@ -242,6 +217,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
             this.access.editor.value = v;
         });
+        // --- 初始化成功 ---
         this.isLoading = false;
         this.emit('init', this.access.editor);
         if (this.props.modelValue) {
@@ -249,4 +225,3 @@ class default_1 extends clickgo.control.AbstractControl {
         }
     }
 }
-exports.default = default_1;

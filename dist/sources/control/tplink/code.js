@@ -1,40 +1,5 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-const clickgo = __importStar(require("clickgo"));
-class default_1 extends clickgo.control.AbstractControl {
+import * as clickgo from 'clickgo';
+export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
         this.emits = {
@@ -69,10 +34,14 @@ class default_1 extends clickgo.control.AbstractControl {
         };
         this.notInit = false;
         this.isLoading = true;
+        /** --- 重试次数 --- */
         this.initCount = 0;
+        /** --- 随机种子 --- */
         this.rand = '';
+        /** --- 当前占用的 index --- */
         this.indexs = [];
     }
+    /** --- 初始化控件 --- */
     _init() {
         this.access.instance = new this.access.tplink({
             'szPluginContainer': 'cg-control-tplink-' + this.rand,
@@ -95,6 +64,7 @@ class default_1 extends clickgo.control.AbstractControl {
                 }
             },
             cbConnectError: async () => {
+                // --- 程序未启动时执行 error 函数，采用 wakeup 来启动程序 ---
                 this.access.instance = null;
                 this.access.tplink.WakeUpPlugin('SMBCloudHDPlugin://');
                 ++this.initCount;
@@ -118,6 +88,7 @@ class default_1 extends clickgo.control.AbstractControl {
             }
         });
     }
+    /** --- 清除所有正在播放的 --- */
     _clear() {
         for (const item of this.indexs) {
             if (item.range) {
@@ -129,6 +100,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }
         this.indexs.length = 0;
     }
+    /** --- 播放所有 list 里的 --- */
     _play() {
         for (const item of this.props.list) {
             let qrCode = '';
@@ -158,6 +130,7 @@ class default_1 extends clickgo.control.AbstractControl {
             this.access.instance.SetVolume(item.index, item.volume === false ? 0 : this.propInt('volume'));
         }
     }
+    /** --- 可供外部调用，刷新当前画面，应对可能得网络问题 --- */
     refresh() {
         if (!this.access.instance) {
             return;
@@ -165,22 +138,32 @@ class default_1 extends clickgo.control.AbstractControl {
         this._clear();
         this._play();
     }
+    /** --- 可供外部调用，开始对讲 --- */
     startTalk(index) {
+        if (!this.access.instance) {
+            return;
+        }
         this.access.instance.StartTalk(index);
     }
+    /** --- 可供外部调用，停止对讲 --- */
     stopTalk(index) {
+        if (!this.access.instance) {
+            return;
+        }
         this.access.instance.StopTalk(index);
     }
     async onMounted() {
         this.rand = clickgo.tool.random(16);
-        const tplink = await clickgo.core.getModule('tplink');
+        const tplink = await clickgo.core.getModule('tplinkhd');
         if (!tplink) {
+            // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
         this.access.tplink = tplink;
         this._init();
+        // --- 如果窗口大小、位置改变 ---
         let count = 0;
         clickgo.dom.watchPosition(this.element, async () => {
             if (!this.access.instance) {
@@ -190,11 +173,13 @@ class default_1 extends clickgo.control.AbstractControl {
             const bcr = this.refs.content.getBoundingClientRect();
             this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
             await clickgo.tool.sleep(600);
+            // --- 再执行一次 ---
             if (now < count) {
                 return;
             }
             this.access.instance.Resize(Math.round(bcr.width), Math.round(bcr.height));
         });
+        // --- layout 变更 ---
         this.watch('layout', () => {
             if (!this.access.instance) {
                 return;
@@ -203,6 +188,7 @@ class default_1 extends clickgo.control.AbstractControl {
         }, {
             'deep': true,
         });
+        // --- 监听控件显示/隐藏状态 ---
         this.watch('controls', () => {
             if (!this.access.instance) {
                 return;
@@ -214,21 +200,25 @@ class default_1 extends clickgo.control.AbstractControl {
                 this.access.instance.HideWndToolbar();
             }
         });
+        // --- list 变动，重新加载 ---
         this.watch('list', () => {
             this.refresh();
         }, {
             'deep': true,
         });
+        // --- range 变动，重新加载 ---
         this.watch('range', () => {
             this.refresh();
         }, {
             'deep': true,
         });
+        // --- 音量设置变动 ---
         this.watch('volume', () => {
             for (const item of this.indexs) {
                 this.access.instance.SetVolume(item.index, item.volume ? this.propInt('volume') : 0);
             }
         });
+        // --- 初始化成功 ---
         this.isLoading = false;
         this.emit('init', {
             'tplink': this.access.tplink,
@@ -242,4 +232,3 @@ class default_1 extends clickgo.control.AbstractControl {
         this.access.instance.DestroyWnd();
     }
 }
-exports.default = default_1;

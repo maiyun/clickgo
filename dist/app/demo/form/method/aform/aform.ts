@@ -14,7 +14,7 @@ export default class extends clickgo.form.AbstractForm {
     public hash = 'testhash';
 
     public ssend(): void {
-        this.send(parseInt(this.fid), {
+        this.send(this.fid, {
             'key': this.sendValue
         });
     }
@@ -22,11 +22,11 @@ export default class extends clickgo.form.AbstractForm {
     public async hhide(): Promise<void> {
         this.hide();
         await clickgo.tool.sleep(1000);
-        this.show();
+        await this.show();
     }
 
     public async sshowDialog(): Promise<void> {
-        const frm = await clickgo.form.create(sdFrm);
+        const frm = await clickgo.form.create(this, sdFrm);
         this.dr = await frm.showDialog();
     }
 
@@ -36,7 +36,7 @@ export default class extends clickgo.form.AbstractForm {
         this.loading = false;
     }
 
-    public async showLoadingFast() {
+    public async showLoadingFast(): Promise<void> {
         this.loading = true;
         await clickgo.tool.sleep(1000);
         this.loading = false;
@@ -65,12 +65,12 @@ export default class extends clickgo.form.AbstractForm {
                 'desc': 'qq'
             }
         ]);
-        await clickgo.form.dialog('Result: ' + (rtn ? 'true' : 'false'));
+        await clickgo.form.dialog(this, 'Result: ' + (rtn ? 'true' : 'false'));
     }
 
     public onMounted(): void {
         this.watch('test', async () => {
-            await clickgo.form.dialog('test changed.');
+            await clickgo.form.dialog(this, 'test changed.');
         });
     }
 

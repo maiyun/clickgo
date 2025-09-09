@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -34,11 +33,11 @@ export default class extends clickgo.form.AbstractForm {
         this.ts = clickgo.tool.rand(1504304812000, 1704304812000);
     }
 
-    public onChanged(e: types.IDatepanelChangedEvent): void {
+    public onChanged(e: clickgo.control.IDatepanelChangedEvent): void {
         console.log('onChanged', e, JSON.stringify(e));
     }
 
-    public onRange(e: types.IDatepanelRangeEvent): void {
+    public onRange(e: clickgo.control.IDatepanelRangeEvent): void {
         console.log('onRange', e);
     }
 

@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import * as types from '~/types';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -103,13 +102,13 @@ long`;
     }
 
     public async onGesture(dir: string): Promise<void> {
-        await clickgo.form.dialog('onGesture: ' + dir);
+        await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }
 
     /** --- 是否开启修改拦截 --- */
     public beforechange = false;
 
-    public onBeforechange(e: types.ITextBeforeChangeEvent): void {
+    public onBeforechange(e: clickgo.control.ITextBeforeChangeEvent): void {
         if (!this.beforechange) {
             return;
         }
@@ -122,7 +121,7 @@ long`;
         }
     }
 
-    public onMinMaxChange(e: types.ITextMinMaxChangeEvent): void {
+    public onMinMaxChange(e: clickgo.control.ITextMinMaxChangeEvent): void {
         console.log('onMinMaxChange', e);
     }
 
