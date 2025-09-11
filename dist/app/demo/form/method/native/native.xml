@@ -1,4 +1,4 @@
-<form width="350" height="400" title="Library native" padding="10">
+<form width="350" height="500" title="Library native" padding="10">
     <layout gutter="10" direction="v" style="flex: 1;">
         <button @click="getListenerList">getListenerList</button>
         <button @click="max">max</button>

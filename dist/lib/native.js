@@ -172,7 +172,7 @@ export function getListenerList(taskId) {
  */
 export async function invoke(name, ...param) {
     if (!clickgo.isNative()) {
-        return;
+        return null;
     }
     return window.clickgoNative.invoke(name, ...param);
 }

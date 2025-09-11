@@ -2,7 +2,7 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public async get(name: 'blue' | 'byterun' | 'light'): Promise<clickgo.theme.ITheme | null> {
+    public async get(name: 'dark' | 'light'): Promise<clickgo.theme.ITheme | null> {
         const f = await clickgo.fs.getContent(this, '/clickgo/theme/' + name + '.cgt');
         if (!f) {
             return null;
@@ -23,7 +23,7 @@ export default class extends clickgo.form.AbstractForm {
             'content': 'Theme loading...',
             'type': 'info'
         });
-        const t = await this.get('blue');
+        const t = await this.get('dark');
         if (!t) {
             clickgo.form.hideNotify(n);
             return;
@@ -34,14 +34,14 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public remove(): void {
-        clickgo.theme.remove(this, 'blue').catch((e) => { throw e; });
+        clickgo.theme.remove(this, 'dark').catch((e) => { throw e; });
     }
 
     public clear(): void {
         clickgo.theme.clear(this).catch((e) => { throw e; });
     }
 
-    public async setGlobal(name: 'blue' | 'byterun' | 'light'): Promise<void> {
+    public async setGlobal(name: 'dark' | 'light'): Promise<void> {
         const n = clickgo.form.notify({
             'title': 'Info',
             'content': 'Theme loading...',

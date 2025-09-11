@@ -361,26 +361,38 @@ export async function run(current, url, opt = {}) {
     if (!isSys(current) && !list[current]) {
         return 0;
     }
-    await opt.initProgress?.(0, 7, EIPTYPE.APP, 'Load app ...');
+    /** --- 总步骤 --- */
+    const initTotal = 7;
+    let initMsg = 'Load app ...';
+    await opt.initProgress?.(0, initTotal, EIPTYPE.APP, initMsg);
+    /** --- 要显示的应用图标 --- */
+    let icon = clickgo.getDirname() + '/icon.png';
+    if (opt.icon) {
+        icon = opt.icon;
+    }
+    // -- notify ---
+    opt.notify ??= true;
+    /** --- 弹出 notify 框 --- */
+    const notifyId = opt.notify ? lForm.notify({
+        'title': localeData[lCore.config.locale]?.loading ?? localeData['en'].loading,
+        'content': typeof url === 'string' ? url : url.config.name,
+        'note': initMsg,
+        'icon': icon,
+        'timeout': 0,
+        'progress': true,
+    }) : undefined;
     let app = null;
     if (typeof url === 'string') {
         // --- 检测 url 是否合法 ---
         if (!url.endsWith('.cga')) {
+            if (notifyId) {
+                lForm.notifyContent(notifyId, {
+                    'note': 'Error -1',
+                    'timeout': 3_000,
+                });
+            }
             return -1;
         }
-        /** --- 要显示的应用图标 --- */
-        let icon = clickgo.getDirname() + '/icon.png';
-        if (opt.icon) {
-            icon = opt.icon;
-        }
-        opt.notify ??= true;
-        const notifyId = opt.notify ? lForm.notify({
-            'title': localeData[lCore.config.locale]?.loading ?? localeData['en'].loading,
-            'content': url,
-            'icon': icon,
-            'timeout': 0,
-            'progress': true,
-        }) : undefined;
         // --- 非 ntid 模式下 current 以 location 为准 ---
         if (!url.startsWith('/clickgo/') &&
             !url.startsWith('/storage/') &&
@@ -391,25 +403,36 @@ export async function run(current, url, opt = {}) {
         }
         // --- 获取并加载 app 对象 ---
         app = await lCore.fetchApp(current, url, {
-            'notifyId': notifyId,
-            'progress': async (loaded, total) => {
+            'notify': notifyId ? {
+                'id': notifyId,
+                'loaded': 0,
+                'total': initTotal,
+            } : undefined,
+            'progress': async (loaded, total, per) => {
                 await opt.progress?.(loaded, total, 'app', url);
+                await opt.perProgress?.(per);
             },
         });
-        // --- 无论是否成功，都可以先隐藏 notify 了 ---
-        if (notifyId) {
-            setTimeout(function () {
-                lForm.hideNotify(notifyId);
-            }, 3_000);
-        }
     }
     else if (url.type !== 'app') {
+        if (notifyId) {
+            lForm.notifyContent(notifyId, {
+                'note': 'Error -2',
+                'timeout': 3_000,
+            });
+        }
         return -2;
     }
     else {
         app = url;
     }
     if (!app) {
+        if (notifyId) {
+            lForm.notifyContent(notifyId, {
+                'note': 'Error -3',
+                'timeout': 3_000,
+            });
+        }
         return -3;
     }
     /** --- 申请任务ID --- */
@@ -418,7 +441,7 @@ export async function run(current, url, opt = {}) {
         taskId = lTool.random(8, lTool.RANDOM_LUN);
     } while (list[taskId]);
     /** --- .cga 文件路径 --- */
-    const path = opt.path ?? ((typeof url === 'string') ? url : '/runtime/' + lTool.random(8, lTool.RANDOM_LUN) + '.cga');
+    const path = opt.path ?? ((typeof url === 'string') ? url : '/runtime/' + lTool.random(16, lTool.RANDOM_LN) + '.cga');
     const lio = path.lastIndexOf('/');
     const currentPath = path.slice(0, lio);
     // --- 创建任务对象 ---
@@ -454,7 +477,16 @@ export async function run(current, url, opt = {}) {
             if (!path.endsWith('.json')) {
                 path += '.json';
             }
-            await opt.initProgress?.(1, 7, EIPTYPE.LOCAL, 'Load local ' + path + ' ...');
+            initMsg = `Load local '${path}' ...`;
+            await opt.initProgress?.(1, initTotal, EIPTYPE.LOCAL, initMsg);
+            if (notifyId) {
+                const per = 1 / initTotal;
+                lForm.notifyContent(notifyId, {
+                    'note': initMsg,
+                    'progress': per,
+                });
+                await opt.perProgress?.(per);
+            }
             const lcontent = await lFs.getContent(taskId, path, {
                 'encoding': 'utf8',
             });
@@ -482,12 +514,24 @@ export async function run(current, url, opt = {}) {
                     continue;
                 }
                 if (!(await lCore.loadModule(m))) {
+                    if (notifyId) {
+                        lForm.notifyContent(notifyId, {
+                            'note': 'Error -4',
+                            'timeout': 3_000,
+                        });
+                    }
                     return -4;
                 }
             }
         }
         const code = app.files['/app.js'];
         if (typeof code !== 'string') {
+            if (notifyId) {
+                lForm.notifyContent(notifyId, {
+                    'note': 'Error -5',
+                    'timeout': 3_000,
+                });
+            }
             return -5;
         }
         // --- code 用状态机判断敏感函数 ---
@@ -508,31 +552,73 @@ export async function run(current, url, opt = {}) {
             return false;
         });
         if (!goOn) {
+            if (notifyId) {
+                lForm.notifyContent(notifyId, {
+                    'note': 'Error -6',
+                    'timeout': 3_000,
+                });
+            }
             return -6;
         }
         // --- 判断结束 ---
         expo = lTool.runIife(code);
         if (!expo) {
+            if (notifyId) {
+                lForm.notifyContent(notifyId, {
+                    'note': 'Error -7',
+                    'timeout': 3_000,
+                });
+            }
             return -7;
         }
     }
     catch (e) {
         delete list[taskId];
         lCore.trigger('error', taskId, '', e, e.message + '(-1)').catch(() => { });
+        if (notifyId) {
+            lForm.notifyContent(notifyId, {
+                'note': 'Error -8',
+                'timeout': 3_000,
+            });
+        }
         return -8;
     }
     // --- 创建 Task 总 style ---
     lDom.createToStyleList(taskId);
     // --- 加载 control ---
-    await opt.initProgress?.(2, 7, EIPTYPE.CONTROL, 'Control initialization ...');
+    initMsg = 'Control initialization ...';
+    await opt.initProgress?.(2, initTotal, EIPTYPE.CONTROL, initMsg);
+    if (notifyId) {
+        const per = 2 / initTotal;
+        lForm.notifyContent(notifyId, {
+            'note': initMsg,
+            'progress': 2 / initTotal,
+        });
+        await opt.perProgress?.(per);
+    }
     const r = await lControl.init(taskId, {
         progress: async (loaded, total, path) => {
             await opt.progress?.(loaded, total, 'control', path);
+            if (notifyId) {
+                let per = loaded / total;
+                per = Math.min((2 / initTotal) + (1 / initTotal * per), 1);
+                lForm.notifyContent(notifyId, {
+                    'note': 'Loaded ' + path,
+                    'progress': per,
+                });
+                await opt.perProgress?.(per);
+            }
         },
     });
     if (r < 0) {
         lDom.removeFromStyleList(taskId);
         delete list[taskId];
+        if (notifyId) {
+            lForm.notifyContent(notifyId, {
+                'note': 'Error ' + (-900 + r).toString(),
+                'timeout': 3_000,
+            });
+        }
         return -900 + r;
     }
     // --- 加载 theme ---
@@ -540,7 +626,16 @@ export async function run(current, url, opt = {}) {
         for (let path of app.config.themes) {
             path += '.cgt';
             path = lTool.urlResolve('/', path);
-            await opt.initProgress?.(3, 7, EIPTYPE.THEME, 'Load theme ' + path + ' ...');
+            initMsg = `Load theme '${path}' ...`;
+            await opt.initProgress?.(3, initTotal, EIPTYPE.THEME, initMsg);
+            if (notifyId) {
+                const per = 3 / initTotal;
+                lForm.notifyContent(notifyId, {
+                    'note': initMsg,
+                    'progress': per,
+                });
+                await opt.perProgress?.(per);
+            }
             const file = await lFs.getContent(taskId, path);
             if (file && typeof file !== 'string') {
                 const th = await lTheme.read(file);
@@ -553,7 +648,16 @@ export async function run(current, url, opt = {}) {
     else {
         // --- 加载全局主题 ---
         if (lTheme.global) {
-            await opt.initProgress?.(3, 7, EIPTYPE.THEME, 'Load global theme ...');
+            initMsg = 'Load global theme ...';
+            await opt.initProgress?.(3, initTotal, EIPTYPE.THEME, initMsg);
+            if (notifyId) {
+                const per = 3 / initTotal;
+                lForm.notifyContent(notifyId, {
+                    'note': initMsg,
+                    'progress': per,
+                });
+                await opt.perProgress?.(per);
+            }
             await lTheme.load(taskId);
         }
     }
@@ -564,7 +668,16 @@ export async function run(current, url, opt = {}) {
         });
         if (style) {
             const r = lTool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
-            await opt.initProgress?.(4, 7, EIPTYPE.STYLE, 'Style initialization ...');
+            initMsg = 'Style initialization ...';
+            await opt.initProgress?.(4, initTotal, EIPTYPE.STYLE, initMsg);
+            if (notifyId) {
+                const per = 4 / initTotal;
+                lForm.notifyContent(notifyId, {
+                    'note': initMsg,
+                    'progress': per,
+                });
+                await opt.perProgress?.(per);
+            }
             lDom.pushStyle(taskId, await lTool.styleUrl2DataUrl(app.config.style, r.style, app.files));
         }
     }
@@ -572,7 +685,16 @@ export async function run(current, url, opt = {}) {
     lCore.trigger('taskStarted', taskId).catch(() => { });
     // --- 请求权限 ---
     if (app.config.permissions) {
-        await opt.initProgress?.(5, 7, EIPTYPE.PERMISSION, 'Permission initialization ...');
+        initMsg = 'Permission initialization ...';
+        await opt.initProgress?.(5, initTotal, EIPTYPE.PERMISSION, initMsg);
+        if (notifyId) {
+            const per = 5 / initTotal;
+            lForm.notifyContent(notifyId, {
+                'note': initMsg,
+                'progress': per,
+            });
+            await opt.perProgress?.(per);
+        }
         await checkPermission(taskId, app.config.permissions, true, undefined);
     }
     // --- 执行 app ---
@@ -580,9 +702,28 @@ export async function run(current, url, opt = {}) {
     appCls.filename = path;
     appCls.taskId = taskId;
     list[taskId].class = appCls;
-    await opt.initProgress?.(6, 7, EIPTYPE.START, 'Starting ...');
+    initMsg = 'Starting ...';
+    await opt.initProgress?.(6, initTotal, EIPTYPE.START, initMsg);
+    if (notifyId) {
+        const per = 6 / initTotal;
+        lForm.notifyContent(notifyId, {
+            'note': initMsg,
+            'progress': per,
+        });
+        await opt.perProgress?.(per);
+    }
     await appCls.main(opt.data ?? {});
-    await opt.initProgress?.(7, 7, EIPTYPE.DONE, 'Done.');
+    initMsg = 'Done.';
+    await opt.initProgress?.(7, initTotal, EIPTYPE.DONE, initMsg);
+    if (notifyId) {
+        const per = 7 / initTotal;
+        lForm.notifyContent(notifyId, {
+            'note': initMsg,
+            'progress': per,
+            'timeout': 3_000,
+        });
+        await opt.perProgress?.(per);
+    }
     return taskId;
 }
 /** --- 本页用到的语言包 --- */

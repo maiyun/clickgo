@@ -523,6 +523,12 @@ export async function fetchApp(
     taskId: string, url: string,
     opt: ICoreFetchAppOptions = {},
 ): Promise<null | IApp> {
+    /** --- notify 配置项 --- */
+    const notify = opt.notify ? (typeof opt.notify === 'number' ? {
+        'id': opt.notify,
+        'loaded': 0,
+        'total': 0,
+    } : opt.notify) : null;
     if (!url.endsWith('.cga')) {
         return null;
     }
@@ -541,19 +547,26 @@ export async function fetchApp(
     try {
         const blob = await lFs.getContent(taskId, url, {
             'progress': (loaded: number, total: number): void => {
-                if (opt.notifyId) {
-                    lForm.notifyProgress(opt.notifyId, loaded / total);
+                let per = loaded / total;
+                if (notify) {
+                    /** --- 含偏移进度百分比（0 - 1） --- */
+                    per = notify.total ?
+                        Math.min((notify.loaded / notify.total) + (1 / notify.total * per), 1) :
+                        per;
+                    lForm.notifyProgress(notify.id, per);
                 }
                 if (opt.progress) {
-                    opt.progress(loaded, total) as unknown;
+                    opt.progress(loaded, total, per) as unknown;
                 }
             },
         });
         if ((blob === null) || typeof blob === 'string') {
             return null;
         }
-        if (opt.notifyId) {
-            lForm.notifyProgress(opt.notifyId, 1);
+        if (notify) {
+            lForm.notifyProgress(notify.id,
+                notify.total ? ((notify.loaded + 1) / notify.total) : 1
+            );
         }
         return await readApp(blob) || null;
     }
@@ -1170,8 +1183,21 @@ export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCre
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {
-    'notifyId'?: number;
-    'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    'notify'?: number | {
+        /** --- notify id --- */
+        'id': number;
+        /** --- 偏移基准 --- */
+        'loaded': number;
+        /** --- 偏移总量 --- */
+        'total': number;
+    };
+    /**
+     * --- 下载进度 ---
+     * @param loaded 已下载字节
+     * @param total 总字节
+     * @param per 含偏移进度百分比（0 - 1）
+     */
+    'progress'?: (loaded: number, total: number, per: number) => void | Promise<void>;
 }
 
 /** --- 应用包解包后对象 --- */

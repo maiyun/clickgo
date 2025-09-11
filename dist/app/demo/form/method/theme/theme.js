@@ -20,7 +20,7 @@ export default class extends clickgo.form.AbstractForm {
             'content': 'Theme loading...',
             'type': 'info'
         });
-        const t = await this.get('blue');
+        const t = await this.get('dark');
         if (!t) {
             clickgo.form.hideNotify(n);
             return;
@@ -30,7 +30,7 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(this, 'Result: ' + (r ? 'true' : 'false'));
     }
     remove() {
-        clickgo.theme.remove(this, 'blue').catch((e) => { throw e; });
+        clickgo.theme.remove(this, 'dark').catch((e) => { throw e; });
     }
     clear() {
         clickgo.theme.clear(this).catch((e) => { throw e; });

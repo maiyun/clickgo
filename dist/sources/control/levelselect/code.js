@@ -17,6 +17,7 @@ export default class extends clickgo.control.AbstractControl {
             'virtual': false,
             'map': {},
             'padding': undefined,
+            'minWidth': 0,
             'modelValue': '',
             'placeholder': '',
             'data': []

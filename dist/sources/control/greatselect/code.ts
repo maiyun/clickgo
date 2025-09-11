@@ -23,6 +23,8 @@ export default class extends clickgo.control.AbstractControl {
         'virtual': boolean | string;
         /** --- 0, xs, s, m, l, xl --- */
         'padding'?: string;
+        /** --- 设置弹出层的最低宽度 --- */
+        'minWidth'?: number;
 
         /** --- 映射 disabled、control 的 key --- */
         'map': {
@@ -45,6 +47,7 @@ export default class extends clickgo.control.AbstractControl {
             'plain': false,
             'virtual': false,
             'padding': 'm',
+            'minWidth': 0,
 
             'map': {},
             'data': [],
@@ -60,7 +63,9 @@ export default class extends clickgo.control.AbstractControl {
     public showPop(): void {
         clickgo.form.showPop(this.element, this.refs.pop, 'v', {
             'size': {
-                'width': this.element.offsetWidth
+                'width': this.propNumber('minWidth') ?
+                    Math.max(this.element.offsetWidth, this.propNumber('minWidth')) :
+                    this.element.offsetWidth,
             },
             'autoPosition': true,
             'autoScroll': true,

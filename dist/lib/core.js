@@ -436,6 +436,12 @@ export async function readApp(blob) {
  * @param taskId 所属任务 ID
  */
 export async function fetchApp(taskId, url, opt = {}) {
+    /** --- notify 配置项 --- */
+    const notify = opt.notify ? (typeof opt.notify === 'number' ? {
+        'id': opt.notify,
+        'loaded': 0,
+        'total': 0,
+    } : opt.notify) : null;
     if (!url.endsWith('.cga')) {
         return null;
     }
@@ -452,19 +458,24 @@ export async function fetchApp(taskId, url, opt = {}) {
     try {
         const blob = await lFs.getContent(taskId, url, {
             'progress': (loaded, total) => {
-                if (opt.notifyId) {
-                    lForm.notifyProgress(opt.notifyId, loaded / total);
+                let per = loaded / total;
+                if (notify) {
+                    /** --- 含偏移进度百分比（0 - 1） --- */
+                    per = notify.total ?
+                        Math.min((notify.loaded / notify.total) + (1 / notify.total * per), 1) :
+                        per;
+                    lForm.notifyProgress(notify.id, per);
                 }
                 if (opt.progress) {
-                    opt.progress(loaded, total);
+                    opt.progress(loaded, total, per);
                 }
             },
         });
         if ((blob === null) || typeof blob === 'string') {
             return null;
         }
-        if (opt.notifyId) {
-            lForm.notifyProgress(opt.notifyId, 1);
+        if (notify) {
+            lForm.notifyProgress(notify.id, notify.total ? ((notify.loaded + 1) / notify.total) : 1);
         }
         return await readApp(blob) || null;
     }

@@ -204,7 +204,7 @@ export function getListenerList(taskId?: lCore.TCurrent): Record<string, Record<
  */
 export async function invoke(name: string, ...param: any[]): Promise<any> {
     if (!clickgo.isNative()) {
-        return;
+        return null;
     }
     return (window as any).clickgoNative.invoke(name, ...param) as Promise<any>;
 }

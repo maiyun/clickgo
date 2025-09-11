@@ -934,6 +934,7 @@ export const elements: {
     'rectangle': HTMLDivElement;
     'gesture': HTMLDivElement;
     'drag': HTMLDivElement;
+    'keyboard': HTMLDivElement;
     'notify': HTMLElement;
     'alert': HTMLElement;
     'simpletask': HTMLDivElement;
@@ -948,6 +949,7 @@ export const elements: {
     'rectangle': document.createElement('div'),
     'gesture': document.createElement('div'),
     'drag': document.createElement('div'),
+    'keyboard': document.createElement('div'),
     'notify': document.createElement('div'),
     'alert': document.createElement('div'),
     'simpletask': document.createElement('div'),
@@ -1266,6 +1268,168 @@ export const elements: {
             }).catch(() => {});
         });
 
+        // --- cg-keyboard ---
+        this.keyboard.id = 'cg-keyboard';
+        this.wrap.appendChild(this.keyboard);
+        this.keyboard.innerHTML = `<div v-for="line of list">` +
+    `<div v-for="row of line" :style="{'width': row[2] ? (row[2] * 50 + 'px') : '50px'}" :class="[!row[0]&&'cg-keyboard-null',row[0]==='Caps'&&caps&&'cg-keyboard-checked',row[0]==='Shift'&&shift&&'cg-keyboard-checked']" @click="click(row)">` +
+        `<div v-if="row[1]">{{row[1]}}</div>` +
+        `<svg v-if="row[0] === '[x]'" width="24" height="24" viewBox="0 0 24 24" stroke="none"><path d="m7.53033 6.46967c-.29289-.29289-.76777-.29289-1.06066 0s-.29289.76777 0 1.06066l4.46963 4.46967-4.46963 4.4697c-.29289.2929-.29289.7677 0 1.0606s.76777.2929 1.06066 0l4.46967-4.4696 4.4697 4.4696c.2929.2929.7677.2929 1.0606 0s.2929-.7677 0-1.0606l-4.4696-4.4697 4.4696-4.46967c.2929-.29289.2929-.76777 0-1.06066s-.7677-.29289-1.0606 0l-4.4697 4.46963z" /></svg>` +
+        `<div v-else>{{row[0]}}</div>` +
+    `</div>` +
+`</div>`;
+        const keyboardApp = clickgo.modules.vue.createApp({
+            'data': function() {
+                return {
+                    'caps': false,
+                    'shift': false,
+                    'list': [
+                        [
+                            ['`', '~'],
+                            ['1', '!'],
+                            ['2', '@'],
+                            ['3', '#'],
+                            ['4', '$'],
+                            ['5', '%'],
+                            ['6', '^'],
+                            ['7', '&'],
+                            ['8', '*'],
+                            ['9', '('],
+                            ['0', ')'],
+                            ['-', '_'],
+                            ['=', '+'],
+                            ['Back', '', 1.2],
+                        ],
+                        [
+                            ['Tab', '', 1.2],
+                            ['q', 'Q'],
+                            ['w', 'W'],
+                            ['e', 'E'],
+                            ['r', 'R'],
+                            ['t', 'T'],
+                            ['y', 'Y'],
+                            ['u', 'U'],
+                            ['i', 'I'],
+                            ['o', 'O'],
+                            ['p', 'P'],
+                            ['[', '{'],
+                            [']', '}'],
+                            ['\\', '|'],
+                        ],
+                        [
+                            ['Caps', '', 1.6],
+                            ['a', 'A'],
+                            ['s', 'S'],
+                            ['d', 'D'],
+                            ['f', 'F'],
+                            ['g', 'G'],
+                            ['h', 'H'],
+                            ['j', 'J'],
+                            ['k', 'K'],
+                            ['l', 'L'],
+                            [';', ':'],
+                            ['\'', '"'],
+                            ['Enter', '', 1.6],
+                        ],
+                        [
+                            ['Shift', '', 2],
+                            ['z', 'Z'],
+                            ['x', 'X'],
+                            ['c', 'C'],
+                            ['v', 'V'],
+                            ['b', 'B'],
+                            ['n', 'N'],
+                            ['m', 'M'],
+                            [',', '<'],
+                            ['.', '>'],
+                            ['/', '?'],
+                            ['', '', 2.2]
+                        ],
+                        [
+                            ['', '', 4.2],
+                            [' ', ' ', 5.8],
+                            ['[x]', '', 4.2],
+                        ]
+                    ]
+                };
+            },
+            'methods': {
+                click: function(row: string[]): void {
+                    if (!row[0]) {
+                        return;
+                    }
+                    switch (row[0]) {
+                        case 'Tab': {
+                            document.execCommand('insertText', false, '\t');
+                            break;
+                        }
+                        case 'Back': {
+                            document.execCommand('delete');
+                            break;
+                        }
+                        case 'Caps': {
+                            this.caps = !this.caps;
+                            break;
+                        }
+                        case 'Enter': {
+                            document.execCommand('insertText', false, '\n');
+                            break;
+                        }
+                        case 'Shift': {
+                            this.shift = !this.shift;
+                            break;
+                        }
+                        case '[x]': {
+                            hideKeyboard();
+                            break;
+                        }
+                        case '`':
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                        case '7':
+                        case '8':
+                        case '9':
+                        case '0':
+                        case '-':
+                        case '=': {
+                            document.execCommand('insertText', false, row[this.shift ? 1 : 0]);
+                            if (this.shift) {
+                                this.shift = false;
+                            }
+                            break;
+                        }
+                        default: {
+                            let n1 = this.caps;
+                            if (this.shift) {
+                                n1 = !n1;
+                            }
+                            document.execCommand('insertText', false, row[n1 ? 1 : 0]);
+                            if (this.shift) {
+                                this.shift = false;
+                            }
+                        }
+                    }
+                }
+            },
+        });
+        keyboardApp.mount('#cg-keyboard');
+        const down = (e: MouseEvent | TouchEvent): void => {
+            e.preventDefault();
+            e.stopPropagation();
+            lDom.bindMove(e, {
+                'object': e.currentTarget as HTMLElement,
+                move: (e, o): void => {
+                    this.keyboard.style.left = (parseFloat(this.keyboard.style.left) + o.ox) + 'px';
+                    this.keyboard.style.top = (parseFloat(this.keyboard.style.top) + o.oy) + 'px';
+                }
+            });
+        };
+        this.keyboard.addEventListener('mousedown', down);
+        this.keyboard.addEventListener('touchstart', down);
     }
 };
 
@@ -1288,6 +1452,28 @@ export function superConfirm(current: string, html: string): Promise<boolean> {
             resolve(result);
         };
     });
+}
+
+/** --- 显示系统级虚拟键盘 --- */
+export function showKeyboard(): void {
+    elements.keyboard.style.display = 'flex';
+    requestAnimationFrame(() => {
+        elements.keyboard.style.left = (window.innerWidth - elements.keyboard.offsetWidth) / 2 + 'px';
+        elements.keyboard.style.top = (window.innerHeight - elements.keyboard.offsetHeight) - 50 + 'px';
+        requestAnimationFrame(() => {
+            elements.keyboard.style.opacity = '1';
+            elements.keyboard.style.transform = 'translateY(0)';
+        });
+    });
+}
+
+/** --- 隐藏系统级虚拟键盘 --- */
+export function hideKeyboard(): void {
+    elements.keyboard.style.opacity = '0';
+    elements.keyboard.style.transform = 'translateY(-10px)';
+    window.setTimeout(() => {
+        elements.keyboard.style.display = 'none';
+    }, 300);
 }
 
 /**
@@ -2068,7 +2254,7 @@ let alertId: number = 0;
  * @param content 内容
  * @param type 样式，可留空
  */
-export function alert(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger'): number {
+export function alert(content: string, type?: 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'cg'): number {
     // --- 申请 aid ---
     const nid = ++alertId;
     // --- 设置 timeout ---
@@ -2127,8 +2313,12 @@ let notifyId: number = 0;
 /**
  * --- 弹出右下角信息框 ---
  * @param opt timeout 默认 5 秒，最大 10 分钟
+ * @returns notify id，一定大于 0
  */
 export function notify(opt: INotifyOptions): number {
+    if (opt.note && !opt.content) {
+        opt.content = 'Notify';
+    }
     // --- 申请 nid ---
     const nid = ++notifyId;
     // --- 设置 timeout ---
@@ -2136,10 +2326,10 @@ export function notify(opt: INotifyOptions): number {
     /** --- 限定的最大 maxTimeout --- */
     const maxTimeout = 60_000 * 10;
     if (opt.timeout !== undefined) {
-        if (opt.timeout <= 0) {
+        if (opt.timeout < 0) {
             timeout = 5_000;
         }
-        else if (opt.timeout > maxTimeout) {
+        else if ((opt.timeout === 0) || (opt.timeout > maxTimeout)) {
             timeout = maxTimeout;
         }
         else {
@@ -2169,9 +2359,22 @@ export function notify(opt: INotifyOptions): number {
     el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
     el.innerHTML = `<div class="cg-notify-icon cg-${lTool.escapeHTML(opt.type ?? 'primary')}"></div>` +
     '<div style="flex: 1;">' +
-        (opt.title ? `<div class="cg-notify-title">${lTool.escapeHTML(opt.title)}</div>` : '') +
-        (opt.content ? `<div class="cg-notify-content">${lTool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>` +
-        `${opt.progress ? '<div class="cg-notify-progress"></div>' : ''}` : '') +
+        (opt.title ?
+            `<div class="cg-notify-title">${lTool.escapeHTML(opt.title)}</div>` :
+            ''
+        ) +
+        (opt.content ?
+            `<div class="cg-notify-content">${lTool.escapeHTML(opt.content).replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n/g, '<br>')}</div>` :
+            ''
+        ) +
+        (opt.note ?
+            `<div class="cg-notify-note">${lTool.escapeHTML(opt.note)}</div>` :
+            ''
+        ) +
+        (opt.progress ?
+            '<div class="cg-notify-progress"></div>' :
+            ''
+        ) +
     '</div>';
     if (opt.icon) {
         (el.childNodes.item(0) as HTMLElement).style.background = 'url(' + opt.icon + ')';
@@ -2207,9 +2410,11 @@ export function notifyProgress(notifyId: number, per: number): void {
     if (per > 100) {
         per = 100;
     }
-    if (per === 1) {
+    else if (per === 1) {
+        /** --- 上次的百分比纯数字 --- */
         const o = parseFloat(progress.style.width);
         if (o > 1) {
+            // --- 上次的百分比已经超过 1%，这次又是 1%，则认为是 100% ---
             per = 100;
         }
     }
@@ -2242,6 +2447,21 @@ export function notifyContent(notifyId: number, opt: INotifyContentOptions): voi
             return;
         }
         content.innerHTML = lTool.escapeHTML(opt.content);
+    }
+    if (opt.note) {
+        const note: HTMLElement = el.querySelector('.cg-notify-note')!;
+        if (!note) {
+            return;
+        }
+        note.innerHTML = lTool.escapeHTML(opt.note);
+    }
+    if (opt.progress) {
+        notifyProgress(notifyId, opt.progress);
+    }
+    if (opt.timeout) {
+        setTimeout(function(): void {
+            hideNotify(notifyId);
+        }, opt.timeout);
     }
 }
 
@@ -3705,7 +3925,7 @@ export function dialog(current: lCore.TCurrent, opt: string | IFormDialogOptions
                 'content': opt
             };
         }
-        const filename = lTool.urlResolve(opt.path ?? '/', './tmp' + (Math.random() * 100000000000000).toFixed() + '.js');
+        const filename = lTool.urlResolve(opt.path ?? '/', './tmp' + lTool.random(16, lTool.RANDOM_LN) + '.js');
         const nopt = opt;
         const t = lTask.getOrigin(current);
         if (!t) {
@@ -3994,16 +4214,13 @@ export interface IMoveDragOptions {
     'icon'?: boolean;
 }
 
-/** --- 弹出 alert 框的选项 --- */
-export interface IAlertOptions {
-    'content'?: string;
-    'type'?: 'primary' | 'info' | 'warning' | 'danger' | 'progress';
-}
-
 /** --- 弹出 notify 信息框的选项 --- */
 export interface INotifyOptions {
     'title'?: string;
+    /** --- 正文 --- */
     'content'?: string;
+    /** --- 浅色描述 --- */
+    'note'?: string;
     'icon'?: string | null;
     'timeout'?: number;
     'type'?: 'primary' | 'info' | 'warning' | 'danger' | 'progress';
@@ -4014,6 +4231,11 @@ export interface INotifyOptions {
 export interface INotifyContentOptions {
     'title'?: string;
     'content'?: string;
+    'note'?: string;
+    /** --- 可顺便修改进度 --- */
+    'progress'?: number;
+    /** --- 设置后将在 x 毫秒后隐藏，这不会大于创建时的设置的总时长 --- */
+    'timeout'?: number;
 }
 
 /** --- Dialog 选项 --- */

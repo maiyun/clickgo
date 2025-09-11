@@ -168,6 +168,16 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
 
+#### Icon
+
+[Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
+
+### **LICENSE:** MIT License **AUTHOR:** Sanity.io
+
+### Icon
+
+[Drag Handle SVG Vector](https://www.svgrepo.com/svg/459043/drag-handle)
+
 ### **LICENSE:** CC Attribution License **AUTHOR:** krystonschwarze
 
 #### Uploader
@@ -189,7 +199,7 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Notification Unread Lines SVG](https://www.svgrepo.com/svg/529113/notification-unread-lines)  
 [Bolt SVG Vector](https://www.svgrepo.com/svg/528871/bolt)
 
-### Icon
+#### Icon
 
 [Question Circle SVG Vector](https://www.svgrepo.com/svg/522997/question-circle)  
 [Info Circle SVG Vector](https://www.svgrepo.com/svg/522904/info-circle)
@@ -198,7 +208,14 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Paste SVG Vector](https://www.svgrepo.com/svg/489767/paste)
 [Sun 2 SVG Vector](https://www.svgrepo.com/svg/529971/sun-2)
 [Moon SVG Vector](https://www.svgrepo.com/svg/529729/moon)
-[Drag Handle SVG Vector](https://www.svgrepo.com/svg/459043/drag-handle)
+
+### **LICENSE:** CC Attribution License **AUTHOR:** Dazzle UI
+
+#### Icon
+
+[Keyboard SVG Vector](https://www.svgrepo.com/svg/533083/keyboard)
+[Eye Slash Alt SVG](https://www.svgrepo.com/svg/532463/eye-slash-alt)  
+[Eye Alt SVG Vector ](https://www.svgrepo.com/svg/532492/eye-alt)
 
 ### **LICENSE:** CC0 License **UPLOADER:** SVG Repo
 
@@ -213,10 +230,3 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Bold SVG Vector](https://www.svgrepo.com/svg/501109/bold)  
 [Italic SVG Vector](https://www.svgrepo.com/svg/501238/italic)
-
-### **LICENSE:** CC Attribution License **AUTHOR:** Dazzle UI
-
-#### Text
-
-[Eye Slash Alt SVG](https://www.svgrepo.com/svg/532463/eye-slash-alt)  
-[Eye Alt SVG Vector ](https://www.svgrepo.com/svg/532492/eye-alt)

@@ -602,6 +602,15 @@ export default class extends clickgo.control.AbstractControl {
         return false;
     }
 
+    /** --- 文本框的键盘图标点下事件 --- */
+    public kbdown(e: MouseEvent | TouchEvent): void {
+        e.preventDefault();
+    }
+
+    public showKeyboard(): void {
+        clickgo.form.showKeyboard();
+    }
+
     public onMounted(): void {
         // --- prop 修改值 ---
         this.watch('modelValue', async (): Promise<void> => {

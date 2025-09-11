@@ -31,7 +31,7 @@ export function initSysId(id) {
     sysId = id;
 }
 /** --- style list 的 div --- */
-const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-alert', '#cg-simpletask', '#cg-launcher', '#cg-confirm'];
+const topClass = ['#cg-form-list', '#cg-pop-list', '#cg-notify', '#cg-alert', '#cg-keyboard', '#cg-simpletask', '#cg-launcher', '#cg-confirm'];
 function classUnfold(after, out = []) {
     const arr = [];
     for (const name of topClass) {

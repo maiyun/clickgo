@@ -25,6 +25,8 @@ export default class extends clickgo.control.AbstractControl {
         };
         /** --- 0, xs, s, m, l, xl --- */
         'padding'?: string;
+        /** --- 设置弹出层的最低宽度 --- */
+        'minWidth'?: number;
 
         'modelValue': string;
         'placeholder': string;
@@ -36,6 +38,7 @@ export default class extends clickgo.control.AbstractControl {
             'virtual': false,
             'map': {},
             'padding': undefined,
+            'minWidth': 0,
 
             'modelValue': '',
             'placeholder': '',

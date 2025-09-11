@@ -1,4 +1,4 @@
-<form width="300" height="400" title="Icon" padding="10">
+<form width="300" height="500" title="Icon" padding="10">
     <layout gutter="20" direction="v" style="flex: 1">
         <label>id</label>
         <layout gutter="20" align-v="center">
@@ -47,6 +47,22 @@
             <icon name="drag"></icon>
             <icon name="drag" size="m"></icon>
             <label>drag</label>
+        </layout>
+        <layout gutter="20" align-v="center">
+            <icon name="close"></icon>
+            <icon name="close" size="m"></icon>
+            <label>close</label>
+            <icon name="keyboard"></icon>
+            <icon name="keyboard" size="m"></icon>
+            <label>keyboard</label>
+        </layout>
+        <layout gutter="20" align-v="center">
+            <icon name="eye"></icon>
+            <icon name="eye" size="m"></icon>
+            <label>eye</label>
+            <icon name="eye-slash"></icon>
+            <icon name="eye-slash" size="m"></icon>
+            <label>eye-slash</label>
         </layout>
     </layout>
 </form>

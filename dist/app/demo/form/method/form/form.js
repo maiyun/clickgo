@@ -98,9 +98,10 @@ export default class extends clickgo.form.AbstractForm {
         const nid = clickgo.form.notify({
             'title': this.progress[0] === 'only content' ? undefined : 'Notify',
             'content': this.progress[0] === 'only title' ? undefined : 'Content',
+            'note': this.progress[0] === 'has note' ? 'Note' : undefined,
             'type': this.type[0],
             'progress': (this.progress[0] === 'progress + icon') ? true : false,
-            'icon': icon
+            'icon': icon,
         });
         if (this.progress[0] === 'progress + icon') {
             clickgo.form.notifyProgress(nid, 12);

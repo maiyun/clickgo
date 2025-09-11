@@ -20,7 +20,7 @@
 
     &.selected {
         .radio::after {
-            background: var(--g-plain-color);
+            background: oklch(1 0 0);
         }
     }
 
@@ -28,6 +28,12 @@
         .radio {
             background: var(--g-plain-background);
             border-color: var(--g-plain-border-color);
+        }
+        &.selected {
+            .radio {
+                background: var(--cg-focus);
+                border: solid .5px var(--cg-focus);
+            }
         }
 
         .label {
@@ -45,8 +51,9 @@
                 box-shadow: var(--g-outline-shadow);
             }
             &.selected {
-                .radio::after {
-                    background: var(--g-plain-color-focus);
+                .radio {
+                    background: var(--cg-focus);
+                    border: solid .5px var(--cg-focus);
                 }
             }
 
@@ -65,8 +72,9 @@
                 border-color: var(--g-plain-border-color-hover); background: var(--g-plain-background-hover);
             }
             &.selected {
-                .radio::after {
-                    background: var(--g-plain-color-hover);
+                .radio {
+                    background: var(--cg-hover);
+                    border: solid .5px var(--cg-hover);
                 }
             }
         }
@@ -80,8 +88,9 @@
                 box-shadow: var(--g-outline-shadow);
             }
             &.selected {
-                .radio::after {
-                    background: var(--g-plain-color-active);
+                .radio {
+                    background: var(--cg-active);
+                    border: solid .5px var(--cg-active);
                 }
             }
         }
@@ -95,8 +104,9 @@
             border-color: var(--g-plain-border-color-disabled);
         }
         &.selected {
-            .radio::after {
-                background: var(--g-plain-color-disabled);
+            .radio {
+                background: var(--cg-disabled);
+                border: solid .5px var(--cg-disabled);
             }
         }
     }

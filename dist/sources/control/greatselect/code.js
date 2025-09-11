@@ -20,6 +20,7 @@ export default class extends clickgo.control.AbstractControl {
             'plain': false,
             'virtual': false,
             'padding': 'm',
+            'minWidth': 0,
             'map': {},
             'data': [],
             'sizes': {},
@@ -33,7 +34,9 @@ export default class extends clickgo.control.AbstractControl {
     showPop() {
         clickgo.form.showPop(this.element, this.refs.pop, 'v', {
             'size': {
-                'width': this.element.offsetWidth
+                'width': this.propNumber('minWidth') ?
+                    Math.max(this.element.offsetWidth, this.propNumber('minWidth')) :
+                    this.element.offsetWidth,
             },
             'autoPosition': true,
             'autoScroll': true,

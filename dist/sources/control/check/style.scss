@@ -21,8 +21,10 @@
 
     // --- 半选中模式 ---
     &.indeterminate {
-        .check::after {
-            left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border-radius: var(--g-radius);
+        .check {
+            &::after {
+                left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border-radius: var(--g-radius); background: oklch(1 0 0);
+            }
         }
     }
 
@@ -31,7 +33,7 @@
         &:not(.indeterminate) {
             .check {
                 svg {
-                    display: inline;
+                    display: inline; color: oklch(1 0 0);
                 }
             }
         }
@@ -42,16 +44,16 @@
             background: var(--g-plain-background);
             border: solid .5px var(--g-plain-border-color);
         }
+        &.indeterminate, &.checked {
+            .check {
+                background: var(--cg-focus);
+                border: solid .5px var(--cg-focus);
+            }
+        }
 
         .label {
             &::before {
                 border: dotted .5px var(--g-focusbox-border-color);
-            }
-        }
-
-        &.indeterminate {
-            .check::after {
-                background: var(--g-plain-color);
             }
         }
 
@@ -63,16 +65,16 @@
                 border: solid .5px var(--g-plain-border-color-focus);
                 box-shadow: var(--g-outline-shadow);
             }
+            &.indeterminate, &.checked {
+                .check {
+                    background: var(--cg-focus);
+                    border: solid .5px var(--cg-focus);
+                }
+            }
 
             .label {
                 &::before {
                     display: block;
-                }
-            }
-
-            &.indeterminate {
-                .check::after {
-                    background: var(--g-plain-color-focus);
                 }
             }
         }
@@ -84,10 +86,10 @@
             .check {
                 border: solid .5px var(--g-plain-border-color-hover); background: var(--g-plain-background-hover);
             }
-
-            &.indeterminate {
-                .check::after {
-                    background: var(--g-plain-color-hover);
+            &.indeterminate, &.checked {
+                .check {
+                    border: solid .5px var(--cg-hover);
+                    background: var(--cg-hover);
                 }
             }
         }
@@ -101,10 +103,10 @@
                 border: solid .5px var(--g-plain-border-color-active);
                 box-shadow: var(--g-outline-shadow);
             }
-
-            &.indeterminate {
-                .check::after {
-                    background: var(--g-plain-color-active);
+            &.indeterminate, &.checked {
+                .check {
+                    background: var(--cg-active);
+                    border: solid .5px var(--cg-active);
                 }
             }
         }
@@ -117,10 +119,10 @@
             background: var(--g-plain-background-disabled);
             border: solid .5px var(--g-plain-border-color-disabled);
         }
-
-        &.indeterminate {
-            .check::after {
-                background: var(--g-plain-color-disabled);
+        &.indeterminate, &.checked {
+            .check {
+                background: var(--cg-disabled);
+                border: solid .5px var(--cg-disabled);
             }
         }
     }

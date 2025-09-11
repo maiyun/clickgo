@@ -29,11 +29,8 @@
     .single {
         display: flex; flex: 1; height: 0;
 
-        .pwdicon {
+        .sicon {
             display: flex; align-items: center; padding-right: var(--padding); opacity: .6; transition: var(--g-transition);
-            svg {
-                width: 16px; height: 16px;
-            }
             &:hover {
                 opacity: 1;
             }

@@ -67,7 +67,8 @@ global {
     --g-pop-background:oklch(.15 0 0 / .6);
     --g-pop-backdrop:blur(10px) saturate(2);
     --g-pop-border:solid .5px var(--g-border-color);
-    --g-shadow:0 1px 3px oklch(.9 0 0 / 0.05);
+    --g-shadow:0 1px 3px oklch(.9 0 0 / .05);
+    --g-shadow-d:0 1px 3px oklch(.9 0 0 / .35);
     --g-outline-shadow:0 0 0 4px oklch(.27 0 0); 
 
     // --- 组件默认颜色（如按钮） ---
@@ -198,7 +199,7 @@ global {
     }
     &.nav-item_selected {
         > .nav-item_text {
-            font-weight: bold; color: var(--g-color-focus);
+            color: oklch(1 0 0); background: var(--cg);
         }
     }
 }

@@ -550,6 +550,13 @@ export default class extends clickgo.control.AbstractControl {
         this.dangerBorder = true;
         return false;
     }
+    /** --- 文本框的键盘图标点下事件 --- */
+    kbdown(e) {
+        e.preventDefault();
+    }
+    showKeyboard() {
+        clickgo.form.showKeyboard();
+    }
     onMounted() {
         // --- prop 修改值 ---
         this.watch('modelValue', async () => {
