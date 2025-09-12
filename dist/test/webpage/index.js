@@ -17,7 +17,7 @@ class Boot extends clickgo.AbstractBoot {
             already = true;
             state.innerHTML = 'Task starting...';
             href.removeAttribute('href');
-            clickgo.task.run(this._sysId, '../../app/demo/').then(taskId => {
+            clickgo.task.run(this._sysId, '../../app/demo.cga').then(taskId => {
                 state.innerHTML = 'Task ' + taskId.toString() + ' running...';
             }).catch(() => { });
         });

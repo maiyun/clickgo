@@ -4,7 +4,7 @@ const state = document.getElementById('state')!;
 const iconwrap = document.getElementById('iconwrap')!;
 const body = document.getElementsByTagName('body')[0];
 
-let app: any = null;
+let app: null | clickgo.core.IApp = null;
 
 class Boot extends clickgo.AbstractBoot {
 
@@ -41,9 +41,9 @@ class Boot extends clickgo.AbstractBoot {
             (async () => {
                 body.style.cursor = 'progress';
                 iconwrap.classList.remove('selected');
-                await clickgo.task.run(this._sysId, app, {
-                    initProgress: (s) => {
-                        state.insertAdjacentHTML('afterbegin', '<div> ' + s + '</div>');
+                await clickgo.task.run(this._sysId, app!, {
+                    initProgress: (loaded, total, type, msg) => {
+                        state.insertAdjacentHTML('afterbegin', '<div> [' + type + '] ' + msg + '</div>');
                     }
                 });
                 body.style.cursor = 'default';

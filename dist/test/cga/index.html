@@ -2,7 +2,7 @@
 <head>
 <title>This is cga file test</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.8/dist/loader.min.js?path=index"></script>
+<script type="module" src="./index.pack.js"></script>
 <style>
 #state ::selection {
     background: rgba(255, 255, 255, .3);
@@ -33,7 +33,9 @@
     <div id="fl" style="display: none; margin-top: 20px; color: #000;">
         <a id="fl" href="https://www.flaticon.com/free-icons/shapes" title="shapes icons" target="_blank">Shapes icons created by Freepik - Flaticon</a>, double click the icon above to run task.
     </div>
-    <div id="state" style="margin-top: 20px; background: #000; line-height: 2; padding: 20px; flex: 1; box-sizing: border-box; height: 0; overflow: auto; cursor: text;"></div>
+    <div id="state" style="margin-top: 20px; background: #000; line-height: 2; padding: 20px; flex: 1; box-sizing: border-box; height: 0; overflow: auto; cursor: text;">
+        <div>Loading ...</div>
+    </div>
 </div>
 </body>
 </html>

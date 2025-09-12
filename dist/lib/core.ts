@@ -559,6 +559,7 @@ export async function fetchApp(
                     opt.progress(loaded, total, per) as unknown;
                 }
             },
+            'after': opt.after,
         });
         if ((blob === null) || typeof blob === 'string') {
             return null;
@@ -1191,6 +1192,8 @@ export interface ICoreFetchAppOptions {
         /** --- 偏移总量 --- */
         'total': number;
     };
+    /** --- 网址后面附带的前缀，如 ?123 --- */
+    'after'?: string;
     /**
      * --- 下载进度 ---
      * @param loaded 已下载字节

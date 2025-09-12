@@ -2,7 +2,7 @@
     display: flex; outline: none; position: relative; border-radius: var(--g-radius); overflow: hidden; transition: var(--g-transition); transition-property: color, background-color, box-shadow;
     // --- 外边框 ---
     &::before {
-        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; border-radius: var(--g-radius); transition: var(--g-transition);
+        content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; border-radius: var(--g-radius); transition: var(--g-transition); transition-property: border-color;
     }
     // --- 焦点框 ---
     &::after, .inner::after, .arrow::after {
@@ -391,6 +391,12 @@
                     border-right: var(--border-focus);
                 }
             }
+            &.checked {
+                color: var(--cg-focus);
+                &::before {
+                    border: solid 2px var(--cg-focus);
+                }
+            }
         }
         &:hover {                               // --- 鼠标悬停 ---
             &::before {                         // --- 外边框 ---
@@ -403,6 +409,12 @@
             &.area-split {
                 .inner::before {                // --- 里边框 ---
                     border-right: var(--border-hover);
+                }
+            }
+            &.checked {
+                color: var(--cg-hover);
+                &::before {
+                    border: solid 2px var(--cg-hover);
                 }
             }
         }
@@ -421,17 +433,15 @@
                     border-right: var(--border-active);
                 }
             }
-        }
-        &.checked {
-            z-index: 1;
-            &::before {
-                border: solid .5px var(--g-border-color-active);
-            }
-            &.area-all, &.area-mark {
-                background: var(--g-plain-background);
+            &.checked {
+                color: var(--cg-active);
+                &::before {
+                    border: solid 2px var(--cg-active);
+                }
             }
         }
 
+        // --- 放在后面用来覆盖前面的样式 ---
         &.area-split {
             .inner, .arrow {
                 &:focus {                       // --- 焦点 ---
@@ -449,13 +459,21 @@
                 }
             }
         }
-
         &.area-mark {
             .arrow {
                 position: absolute; right: 3px; bottom: 3px; width: initial;
                 &::before {
                     transform: initial; 
                 }
+            }
+        }
+        &.checked {
+            z-index: 10; color: var(--cg);
+            &::before {
+                border: solid 2px var(--cg);
+            }
+            &.area-all, &.area-mark {
+                background: var(--g-plain-background);
             }
         }
     }
@@ -465,6 +483,12 @@
         }
         color: var(--color-disabled);
         background: var(--background-disabled);
+        &.checked {
+            color: var(--cg-disabled);
+            &::before {
+                border: solid 2px var(--cg-disabled);
+            }
+        }
     }
 }
 

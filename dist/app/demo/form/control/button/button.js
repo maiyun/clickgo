@@ -4,6 +4,7 @@ export default class extends clickgo.form.AbstractForm {
         super(...arguments);
         this.btnChecked = false;
         this.btnRadio = '0';
+        this.bgroupRadio = '0';
         this.type = ['default'];
         this.area = ['all'];
         this.plain = ['not'];

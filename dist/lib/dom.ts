@@ -428,7 +428,7 @@ export function watchSize(
     if (typeof current !== 'string') {
         current = current.taskId;
     }
-    if (!lTask.getOrigin(current)) {
+    if ((current !== sysId) && !lTask.getOrigin(current)) {
         return false;
     }
     if (isWatchSize(el)) {
@@ -534,7 +534,7 @@ export function watch(current: lCore.TCurrent, el: HTMLElement, cb: (mutations: 
     if (typeof current !== 'string') {
         current = current.taskId;
     }
-    if (!lTask.getOrigin(current)) {
+    if ((current !== sysId) && !lTask.getOrigin(current)) {
         return false;
     }
     if (isWatch(el)) {

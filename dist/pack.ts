@@ -198,6 +198,9 @@ console.log('APPLICATION', `[task]`, taskApp);
 const demoApp = await lCompiler.application('dist/app/demo');
 console.log('APPLICATION', `[demo]`, demoApp);
 
+const cgaApp = await lCompiler.application('dist/test/cga/app', 'dist/test/cga/icon.png');
+console.log('APPLICATION', `[cga]`, cgaApp);
+
 // --- 用户使用时的编译，这里面是测试用例 ---
 
 const cacheBoot = await lCompiler.boot('dist/test/cache/index', '../../index.js');

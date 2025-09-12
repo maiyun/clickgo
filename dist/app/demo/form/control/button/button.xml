@@ -127,11 +127,16 @@
                 <button @click="sizeh = !sizeh">{{sizeh ? '' : '!'}}sizeh</button>
             </layout>
             <label>Bgroup:</label>
-            <layout>
+            <layout gutter="10">
                 <bgroup plain>
                     <button>Btn1</button>
                     <button>Btn2</button>
                     <button>Btn3</button>
+                </bgroup>
+                <bgroup plain>
+                    <button :checked="bgroupRadio === '0'" @click="bgroupRadio = '0'">Btn1</button>
+                    <button :checked="bgroupRadio === '1'" @click="bgroupRadio = '1'">Btn2</button>
+                    <button :checked="bgroupRadio === '2'" @click="bgroupRadio = '2'">Btn3</button>
                 </bgroup>
             </layout>
         </layout>

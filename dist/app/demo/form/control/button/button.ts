@@ -6,6 +6,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public btnRadio = '0';
 
+    public bgroupRadio = '0';
+
     public type = ['default'];
 
     public area = ['all'];

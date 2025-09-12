@@ -412,6 +412,7 @@ export async function run(current, url, opt = {}) {
                 await opt.progress?.(loaded, total, 'app', url);
                 await opt.perProgress?.(per);
             },
+            'after': opt.after,
         });
     }
     else if (url.type !== 'app') {

@@ -128,7 +128,7 @@ export async function getContent(current, path, options) {
     const fpath = path.slice(8);
     if (typeof options === 'string') {
         options = {
-            'encoding': options
+            'encoding': options,
         };
     }
     else {
@@ -146,7 +146,7 @@ export async function getContent(current, path, options) {
             ourl = clickgo.getDirname() + fpath;
         }
         else {
-            ourl = path;
+            ourl = path + (options.after ?? '');
         }
         try {
             let blob = null;

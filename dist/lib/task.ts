@@ -445,6 +445,7 @@ export async function run(
                 await opt.progress?.(loaded, total, 'app', url as string);
                 await opt.perProgress?.(per);
             },
+            'after': opt.after,
         });
     }
     else if (url.type !== 'app') {
@@ -1565,6 +1566,8 @@ export interface ITaskRunOptions {
     'notify'?: boolean;
     /** --- 直接赋予此任务相应权限，有 "root" 权限的应用才能设置 --- */
     'permissions'?: string[];
+    /** --- 如果是网络加载 cga，则网址后面会附带，如 ?123 --- */
+    'after'?: string;
     /** --- 给 task 传值 --- */
     'data'?: Record<string, any>;
     /** --- 执行文件的基路径，一般在传入 APP 包时使用，以 .cga 结尾 --- */

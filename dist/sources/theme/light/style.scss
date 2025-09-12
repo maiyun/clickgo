@@ -80,17 +80,6 @@ global {
     }
 }
 
-.button_wrap {
-    &:not([data-cg-disabled]) {
-        &.button_checked {
-            &::before {
-                border: solid .5px var(--g-color);
-            }
-            color: var(--g-color);
-        }
-    }
-}
-
 // -- CONTROL -- form --
 
 .form_wrap {

@@ -377,7 +377,7 @@ export function watchSize(current, el, cb, immediate = false) {
     if (typeof current !== 'string') {
         current = current.taskId;
     }
-    if (!lTask.getOrigin(current)) {
+    if ((current !== sysId) && !lTask.getOrigin(current)) {
         return false;
     }
     if (isWatchSize(el)) {
@@ -475,7 +475,7 @@ export function watch(current, el, cb, mode = 'default', immediate = false) {
     if (typeof current !== 'string') {
         current = current.taskId;
     }
-    if (!lTask.getOrigin(current)) {
+    if ((current !== sysId) && !lTask.getOrigin(current)) {
         return false;
     }
     if (isWatch(el)) {

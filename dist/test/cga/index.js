@@ -38,8 +38,8 @@ class Boot extends clickgo.AbstractBoot {
                 body.style.cursor = 'progress';
                 iconwrap.classList.remove('selected');
                 await clickgo.task.run(this._sysId, app, {
-                    initProgress: (s) => {
-                        state.insertAdjacentHTML('afterbegin', '<div> ' + s + '</div>');
+                    initProgress: (loaded, total, type, msg) => {
+                        state.insertAdjacentHTML('afterbegin', '<div> [' + type + '] ' + msg + '</div>');
                     }
                 });
                 body.style.cursor = 'default';

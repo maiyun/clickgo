@@ -77,7 +77,6 @@ global {
     --g-color-hover:oklch(.95 0 0);
     --g-color-active:oklch(.75 0 0);
     --g-color-focus:oklch(.8 0 0);
-    --g-color-disabled:oklch(.6 0 0);
     --g-color-tip:oklch(.7 0 0);
 
     --g-background:oklch(.2 0 0);
@@ -120,17 +119,6 @@ global {
 
     ::selection {
         background-color: oklch(1 0 0 / 0.15);
-    }
-}
-
-.button_wrap {
-    &:not([data-cg-disabled]) {
-        &.button_checked {
-            &::before {
-                border: solid .5px var(--g-color);
-            }
-            color: var(--g-color); 
-        }
     }
 }
 

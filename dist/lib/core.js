@@ -470,6 +470,7 @@ export async function fetchApp(taskId, url, opt = {}) {
                     opt.progress(loaded, total, per);
                 }
             },
+            'after': opt.after,
         });
         if ((blob === null) || typeof blob === 'string') {
             return null;

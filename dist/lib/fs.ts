@@ -130,6 +130,8 @@ export async function getContent(current: lCore.TCurrent, path: string, options?
     'start'?: number;
     'end'?: number;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    /** --- 网络模式下携带后缀，如 ?123 --- */
+    'after'?: string;
 }): Promise<string | Blob | null>;
 export async function getContent(current: lCore.TCurrent, path: string, options: BufferEncoding | {
     'encoding': BufferEncoding;
@@ -148,6 +150,8 @@ export async function getContent(current: lCore.TCurrent, path: string, options?
     'start'?: number;
     'end'?: number;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
+    /** --- 如果是网络加载的，则会附带后缀，如 ?123 --- */
+    'after'?: string;
 }): Promise<Blob | string | null> {
     if (typeof current !== 'string') {
         current = current.taskId;
@@ -156,7 +160,7 @@ export async function getContent(current: lCore.TCurrent, path: string, options?
     const fpath = path.slice(8);
     if (typeof options === 'string') {
         options = {
-            'encoding': options
+            'encoding': options,
         };
     }
     else {
@@ -174,7 +178,7 @@ export async function getContent(current: lCore.TCurrent, path: string, options?
             ourl = clickgo.getDirname() + fpath;
         }
         else {
-            ourl = path;
+            ourl = path + (options.after ?? '');
         }
         try {
             let blob: Blob | null = null;
