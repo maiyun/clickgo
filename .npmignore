@@ -21,7 +21,8 @@ package-lock.json
 /dist/sources/
 /dist/test/
 /dist/build*
-/dist/clickgo*
+/dist/clickgo.js
+/dist/clickgo.ts
 /dist/pack*
 /dist/global.scss
-/types/dev.d.ts
+/types/
