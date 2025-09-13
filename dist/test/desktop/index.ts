@@ -23,7 +23,13 @@ class Boot extends clickgo.AbstractBoot {
             'permissions': ['native.form'],
             'data': {
                 'param': 'abc',
-            }
+            },
+            initProgress: (loaded, total, type, msg) => {
+                console.log('initProgress', loaded, total, type, msg);
+            },
+            perProgress: (per) => {
+                console.log('perProgress', per);
+            },
         });
         if (typeof taskId === 'number') {
             el.innerHTML = `Start main app failed(${taskId.toString()}).`;
@@ -70,7 +76,7 @@ class Boot extends clickgo.AbstractBoot {
                             'path': taskList[taskId].path
                         }
                     ]
-                }
+                },
             ];
         }
         //*/

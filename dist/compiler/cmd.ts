@@ -11,7 +11,7 @@
  */
 
 import * as cmd from 'commander';
-import * as compiler from './compiler';
+import * as compiler from './compiler.js';
 
 const program = new cmd.Command();
 
@@ -34,25 +34,25 @@ program
         if (opts.boot) {
             // --- boot ---
             compiler.boot(opts.boot, opts.clickgo, opts.save).then((r: any) => {
-                console.log(`${r} boot compiled successfully.`);
+                console.log(`Boot result: ${r}.`);
             }).catch(() => {});
         }
         else if (opts.control) {
             // --- control ---
             compiler.control(opts.control, opts.save).then((r: any) => {
-                console.log(`${r} controls compiled successfully.`);
+                console.log(`Controls result: ${r}.`);
             }).catch(() => {});
         }
         else if (opts.theme) {
             // --- theme ---
             compiler.theme(opts.theme, opts.save).then((r: any) => {
-                console.log(`${r} theme compiled successfully.`);
+                console.log(`Theme result: ${r}.`);
             }).catch(() => {});
         }
         else if (opts.app) {
             // --- application ---
             compiler.application(opts.app, opts.icon, opts.save).then((r: any) => {
-                console.log(`Application result: ${r ? 'true' : 'false'}.`);
+                console.log(`Application result: ${r}.`);
             }).catch(() => {});
         }
     });

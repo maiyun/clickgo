@@ -41,7 +41,7 @@ lNative.initSysId(sysId);
 export const modules = {
     'clickgo': clickgo,
 };
-const version = '4.0.2';
+const version = '4.0.3';
 /** --- 获取当前版本 --- */
 export function getVersion() {
     return version;
@@ -221,17 +221,6 @@ export async function launcher(boot) {
     modules.vue = window.Vue;
     /** --- 加载 jszip --- */
     modules.jszip = (await import(cdn + '/npm/jszip@3.10.1/+esm')).default;
-    // --- 初始化各个模块 ---
-    lForm.init();
-    lCore.init();
-    lDom.init();
-    lTask.init();
-    lNative.init();
-    lCore.setBoot(boot);
-    // --- 判断 TouchEvent 是否存在（例如某些浏览器可能不存在这个对象） ---
-    if (!(window.TouchEvent)) {
-        window.TouchEvent = CustomEvent;
-    }
     // --- 加载 clickgo 的 global css ---
     const globalUrl = `${dirname}/global.css`;
     try {
@@ -246,6 +235,17 @@ export async function launcher(boot) {
     }
     catch {
         alert(`ClickGo: "${globalUrl}" load failed.`);
+    }
+    // --- 初始化各个模块 ---
+    lForm.init();
+    lCore.init();
+    lDom.init();
+    lTask.init();
+    lNative.init();
+    lCore.setBoot(boot);
+    // --- 判断 TouchEvent 是否存在（例如某些浏览器可能不存在这个对象） ---
+    if (!(window.TouchEvent)) {
+        window.TouchEvent = CustomEvent;
     }
     // --- 执行回调 ---
     await boot.main();

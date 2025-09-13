@@ -8,7 +8,7 @@
  * pkgdl dl clickgo@3.2.6 vue@3.5.21 jszip@3.10.0 monaco-editor@0.34.1
  */
 import * as cmd from 'commander';
-import * as compiler from './compiler';
+import * as compiler from './compiler.js';
 const program = new cmd.Command();
 program
     .name('clickgo')
@@ -28,25 +28,25 @@ program
     if (opts.boot) {
         // --- boot ---
         compiler.boot(opts.boot, opts.clickgo, opts.save).then((r) => {
-            console.log(`${r} boot compiled successfully.`);
+            console.log(`Boot result: ${r}.`);
         }).catch(() => { });
     }
     else if (opts.control) {
         // --- control ---
         compiler.control(opts.control, opts.save).then((r) => {
-            console.log(`${r} controls compiled successfully.`);
+            console.log(`Controls result: ${r}.`);
         }).catch(() => { });
     }
     else if (opts.theme) {
         // --- theme ---
         compiler.theme(opts.theme, opts.save).then((r) => {
-            console.log(`${r} theme compiled successfully.`);
+            console.log(`Theme result: ${r}.`);
         }).catch(() => { });
     }
     else if (opts.app) {
         // --- application ---
         compiler.application(opts.app, opts.icon, opts.save).then((r) => {
-            console.log(`Application result: ${r ? 'true' : 'false'}.`);
+            console.log(`Application result: ${r}.`);
         }).catch(() => { });
     }
 });

@@ -480,13 +480,13 @@ export async function run(current, url, opt = {}) {
             }
             initMsg = `Load local '${path}' ...`;
             await opt.initProgress?.(1, initTotal, EIPTYPE.LOCAL, initMsg);
+            const per = 1 / initTotal;
+            await opt.perProgress?.(per);
             if (notifyId) {
-                const per = 1 / initTotal;
                 lForm.notifyContent(notifyId, {
                     'note': initMsg,
                     'progress': per,
                 });
-                await opt.perProgress?.(per);
             }
             const lcontent = await lFs.getContent(taskId, path, {
                 'encoding': 'utf8',
@@ -589,25 +589,25 @@ export async function run(current, url, opt = {}) {
     // --- 加载 control ---
     initMsg = 'Control initialization ...';
     await opt.initProgress?.(2, initTotal, EIPTYPE.CONTROL, initMsg);
+    const per = 2 / initTotal;
+    await opt.perProgress?.(per);
     if (notifyId) {
-        const per = 2 / initTotal;
         lForm.notifyContent(notifyId, {
             'note': initMsg,
             'progress': 2 / initTotal,
         });
-        await opt.perProgress?.(per);
     }
     const r = await lControl.init(taskId, {
         progress: async (loaded, total, path) => {
             await opt.progress?.(loaded, total, 'control', path);
+            let per = loaded / total;
+            per = Math.min((2 / initTotal) + (1 / initTotal * per), 1);
+            await opt.perProgress?.(per);
             if (notifyId) {
-                let per = loaded / total;
-                per = Math.min((2 / initTotal) + (1 / initTotal * per), 1);
                 lForm.notifyContent(notifyId, {
                     'note': 'Loaded ' + path,
                     'progress': per,
                 });
-                await opt.perProgress?.(per);
             }
         },
     });
@@ -629,13 +629,13 @@ export async function run(current, url, opt = {}) {
             path = lTool.urlResolve('/', path);
             initMsg = `Load theme '${path}' ...`;
             await opt.initProgress?.(3, initTotal, EIPTYPE.THEME, initMsg);
+            const per = 3 / initTotal;
+            await opt.perProgress?.(per);
             if (notifyId) {
-                const per = 3 / initTotal;
                 lForm.notifyContent(notifyId, {
                     'note': initMsg,
                     'progress': per,
                 });
-                await opt.perProgress?.(per);
             }
             const file = await lFs.getContent(taskId, path);
             if (file && typeof file !== 'string') {
@@ -651,13 +651,13 @@ export async function run(current, url, opt = {}) {
         if (lTheme.global) {
             initMsg = 'Load global theme ...';
             await opt.initProgress?.(3, initTotal, EIPTYPE.THEME, initMsg);
+            const per = 3 / initTotal;
+            await opt.perProgress?.(per);
             if (notifyId) {
-                const per = 3 / initTotal;
                 lForm.notifyContent(notifyId, {
                     'note': initMsg,
                     'progress': per,
                 });
-                await opt.perProgress?.(per);
             }
             await lTheme.load(taskId);
         }
@@ -671,13 +671,13 @@ export async function run(current, url, opt = {}) {
             const r = lTool.stylePrepend(style, 'cg-task' + taskId.toString() + '_');
             initMsg = 'Style initialization ...';
             await opt.initProgress?.(4, initTotal, EIPTYPE.STYLE, initMsg);
+            const per = 4 / initTotal;
+            await opt.perProgress?.(per);
             if (notifyId) {
-                const per = 4 / initTotal;
                 lForm.notifyContent(notifyId, {
                     'note': initMsg,
                     'progress': per,
                 });
-                await opt.perProgress?.(per);
             }
             lDom.pushStyle(taskId, await lTool.styleUrl2DataUrl(app.config.style, r.style, app.files));
         }
@@ -688,13 +688,13 @@ export async function run(current, url, opt = {}) {
     if (app.config.permissions) {
         initMsg = 'Permission initialization ...';
         await opt.initProgress?.(5, initTotal, EIPTYPE.PERMISSION, initMsg);
+        const per = 5 / initTotal;
+        await opt.perProgress?.(per);
         if (notifyId) {
-            const per = 5 / initTotal;
             lForm.notifyContent(notifyId, {
                 'note': initMsg,
                 'progress': per,
             });
-            await opt.perProgress?.(per);
         }
         await checkPermission(taskId, app.config.permissions, true, undefined);
     }
@@ -705,25 +705,25 @@ export async function run(current, url, opt = {}) {
     list[taskId].class = appCls;
     initMsg = 'Starting ...';
     await opt.initProgress?.(6, initTotal, EIPTYPE.START, initMsg);
+    const per6 = 6 / initTotal;
+    await opt.perProgress?.(per6);
     if (notifyId) {
-        const per = 6 / initTotal;
         lForm.notifyContent(notifyId, {
             'note': initMsg,
-            'progress': per,
+            'progress': per6,
         });
-        await opt.perProgress?.(per);
     }
     await appCls.main(opt.data ?? {});
     initMsg = 'Done.';
     await opt.initProgress?.(7, initTotal, EIPTYPE.DONE, initMsg);
+    const per7 = 7 / initTotal;
+    await opt.perProgress?.(per7);
     if (notifyId) {
-        const per = 7 / initTotal;
         lForm.notifyContent(notifyId, {
             'note': initMsg,
             'progress': per,
             'timeout': 3_000,
         });
-        await opt.perProgress?.(per);
     }
     return taskId;
 }
