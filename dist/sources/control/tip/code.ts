@@ -12,6 +12,29 @@ export default class extends clickgo.control.AbstractControl {
             'class': ''
         };
 
+    /** --- 鼠标在本体或 pop 里 --- */
+    public inTip = false;
+
+    public popEnter(e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.inTip = true;
+    }
+
+    public popLeave(e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        this.inTip = false;
+        clickgo.tool.sleep(150).then(() => {
+            if (this.inTip) {
+                return;
+            }
+            clickgo.form.hidePop(this.refs.pop);
+        }).catch(() => {});
+    }
+
     public onMounted(): void | Promise<void> {
         let el = this.refs.span.previousElementSibling as HTMLElement | null;
         if (!el) {
@@ -28,6 +51,7 @@ export default class extends clickgo.control.AbstractControl {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
             }
+            this.inTip = true;
             clickgo.form.showPop(el, this.refs.pop, 't', {
                 'flow': false
             });
@@ -36,7 +60,14 @@ export default class extends clickgo.control.AbstractControl {
             if (clickgo.dom.hasTouchButMouse(e)) {
                 return;
             }
-            clickgo.form.hidePop(this.refs.pop);
+            // --- 允许 tip 移动上去 ---
+            this.inTip = false;
+            clickgo.tool.sleep(150).then(() => {
+                if (this.inTip) {
+                    return;
+                }
+                clickgo.form.hidePop(this.refs.pop);
+            }).catch(() => {});
         };
         el.addEventListener('mouseenter', enter);
         el.addEventListener('touchstart', enter);

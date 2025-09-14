@@ -14,7 +14,7 @@ const runPath = process.cwd().replace(/\\/g, '/') + '/';
 // -----------
 
 /** --- 匹配 extends 后面的类名，为其增加新的方法 --- */
-const reg = /extends.+?(AbstractForm|AbstractPanel|AbstractControl)\s*{/g;
+const reg = /extends.+?(AbstractForm|AbstractPanel|AbstractControl|AbstractThread)\s*{/g;
 /** --- 增加些必备数据，如 filename --- */
 function preTransformPlugin(base: string): rollup.InputPluginOption {
     return {

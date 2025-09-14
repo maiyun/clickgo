@@ -403,12 +403,12 @@ export async function run(current, url, opt = {}) {
         }
         // --- 获取并加载 app 对象 ---
         app = await lCore.fetchApp(current, url, {
-            'notify': notifyId ? {
+            'notify': {
                 'id': notifyId,
                 'loaded': 0,
                 'total': initTotal,
-            } : undefined,
-            'progress': async (loaded, total, per) => {
+            },
+            progress: async (loaded, total, per) => {
                 await opt.progress?.(loaded, total, 'app', url);
                 await opt.perProgress?.(per);
             },
@@ -460,6 +460,7 @@ export async function run(current, url, opt = {}) {
         'forms': {},
         'controls': {},
         'timers': {},
+        'threads': {},
     };
     /** --- 如果当前运行的应用没权限，则不能设置 permissions --- */
     let permissions = opt.permissions ?? [];
@@ -721,7 +722,7 @@ export async function run(current, url, opt = {}) {
     if (notifyId) {
         lForm.notifyContent(notifyId, {
             'note': initMsg,
-            'progress': per,
+            'progress': per7,
             'timeout': 3_000,
         });
     }
@@ -978,6 +979,10 @@ export async function end(taskId) {
     // --- 如果是 native 模式 ---
     if (clickgo.isNative() && (Object.keys(list).length === 1)) {
         await lNative.close(sysId);
+    }
+    // --- 先把线程移除了 ---
+    for (const path in list[taskId].threads) {
+        await list[taskId].threads[path].end();
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
     const fid = await lForm.getMaxZIndexID(sysId, {
@@ -1424,4 +1429,147 @@ export function init() {
     }, {
         'deep': true
     });
+}
+/** --- 线程抽象类 --- */
+export class AbstractThread {
+    constructor() {
+        /** --- 系统会自动设置本项 --- */
+        this.taskId = '';
+    }
+    /** --- 当前文件在包内的路径 --- */
+    get filename() {
+        // --- pack 时系统自动在继承类中重写本函数 ---
+        return '';
+    }
+    onMessage() {
+        return;
+    }
+    onEnded() {
+        return;
+    }
+    onError() {
+        return;
+    }
+    /** --- 发送数据 --- */
+    send(data) {
+        self.postMessage(data);
+    }
+    /** --- 关闭线程 --- */
+    close() {
+        self.postMessage({
+            'cmd': 'cg-terminate',
+        });
+    }
+}
+/**
+ * --- 运行线程（同一个线程文件只能运行一个） ---
+ * @param current 当前任务 id
+ * @param cls 线程类
+ * @param data 线程初始化数据
+ */
+export function runThread(current, cls, data) {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    /** --- 当前的 task 对象 --- */
+    const t = getOrigin(current);
+    if (!t) {
+        const err = new Error('task.runThread: -1');
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
+        throw err;
+    }
+    /** --- cls 的文本内容 --- */
+    let clsStr = cls.toString();
+    // --- 替换类 ---
+    clsStr = clsStr.replace(/class (\w+) extends.+?AbstractThread *{/, 'class cgCustomThread extends AbstractThread {');
+    /** --- 提取线程文件的 filename --- */
+    const match = /filename *\(\) *{ *return *"(.+?)"/.exec(clsStr);
+    if (!match) {
+        const err = new Error('task.runThread: -2');
+        lCore.trigger('error', '', '', err, err.message).catch(() => { });
+        throw err;
+    }
+    if (t.threads[match[1]]) {
+        return t.threads[match[1]];
+    }
+    const blob = new Blob([`${AbstractThread.toString()}
+${clsStr}
+const threadCls = new cgCustomThread();
+threadCls.taskId = '${t.id}';
+self.onmessage = async function(e) {
+    if (e.data.cmd === 'cg-init') {
+        await threadCls.main(e.data.data);
+        return;
+    }
+    if (e.data.cmd === 'cg-terminate') {
+        await threadCls.onEnded();
+        self.postMessage({
+            'cmd': 'cg-terminate',
+        });
+        return;
+    }
+    threadCls.onMessage(e);
+}
+self.onerror = function(e) {
+    threadCls.onError(e);
+}
+`], { 'type': 'application/javascript' });
+    const burl = URL.createObjectURL(blob);
+    /** --- 线程实体 --- */
+    const worker = new Worker(burl);
+    URL.revokeObjectURL(burl);
+    worker.postMessage({
+        'cmd': 'cg-init',
+        'data': data ?? {},
+    });
+    const messages = [];
+    worker.onmessage = (e) => {
+        if (e.data.cmd === 'cg-terminate') {
+            // --- 有可能是内部主动 close ---
+            worker.terminate();
+            delete t.threads[match[1]];
+            return;
+        }
+        for (const item of messages) {
+            item(e);
+        }
+    };
+    const rtn = {
+        on: (name, handler) => {
+            if (name !== 'message') {
+                return;
+            }
+            messages.push(handler);
+        },
+        off: (name, handler) => {
+            if (name !== 'message') {
+                return;
+            }
+            const index = messages.indexOf(handler);
+            if (index === -1) {
+                return;
+            }
+            messages.splice(index, 1);
+        },
+        /** --- 发送数据 --- */
+        send: (data) => {
+            worker.postMessage(data);
+        },
+        /** --- 结束线程 --- */
+        end: () => {
+            return new Promise(resolve => {
+                worker.postMessage({
+                    'cmd': 'cg-terminate',
+                });
+                worker.onmessage = () => {
+                    // --- 无论返回什么都结束 ---
+                    resolve();
+                    worker.terminate();
+                    delete t.threads[match[1]];
+                };
+            });
+        },
+    };
+    t.threads[match[1]] = rtn;
+    return rtn;
 }

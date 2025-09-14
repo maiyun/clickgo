@@ -19,7 +19,7 @@ class Boot extends clickgo.AbstractBoot {
             'notify': window.location.href.includes('?single') ? false : undefined,
             'permissions': ['native.form'],
             'data': {
-                'param': 'abc',
+                'permissions': ['root'],
             },
             initProgress: (loaded, total, type, msg) => {
                 console.log('initProgress', loaded, total, type, msg);

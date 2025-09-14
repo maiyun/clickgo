@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import tThread from './thread';
 export default class extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
@@ -9,6 +10,8 @@ export default class extends clickgo.form.AbstractForm {
         this.timerCount = 0;
         this.select = [];
         this.sleeping = false;
+        this.threadRunning = false;
+        this.threadList = [];
     }
     get globalLocale() {
         return clickgo.core.config.locale;
@@ -133,6 +136,32 @@ export default class extends clickgo.form.AbstractForm {
     }
     systemTaskInfo() {
         clickgo.form.dialog(this, JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
+    }
+    pushThreadConsole(name, text) {
+        const date = new Date();
+        this.threadList.unshift({
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
+            'name': name,
+            'text': text
+        });
+    }
+    runThread() {
+        this.threadRunning = true;
+        const thread = clickgo.task.runThread(this, tThread, {
+            'sdata': '123',
+        });
+        thread.on('message', (e) => {
+            this.pushThreadConsole('thread', JSON.stringify(e.data));
+        });
+        const msg = {
+            'mcustom': 'test',
+        };
+        this.pushThreadConsole('main', JSON.stringify(msg));
+        thread.send(msg);
+        clickgo.tool.sleep(3_000).then(async () => {
+            await thread.end();
+            this.threadRunning = false;
+        }).catch(() => { });
     }
     onMounted() {
         this.tid = this.taskId.toString();

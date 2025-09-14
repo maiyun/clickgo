@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import tThread from './thread';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -158,6 +159,42 @@ export default class extends clickgo.form.AbstractForm {
 
     public systemTaskInfo(): void {
         clickgo.form.dialog(this, JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
+    }
+
+    public threadRunning = false;
+
+    public threadList: Array<{
+        'time': string;
+        'name': string;
+        'text': string;
+    }> = [];
+
+    public pushThreadConsole(name: string, text: string): void {
+        const date = new Date();
+        this.threadList.unshift({
+            'time': date.getHours().toString() + ':' + date.getMinutes().toString() + ':' + date.getSeconds().toString(),
+            'name': name,
+            'text': text
+        });
+    }
+
+    public runThread(): void {
+        this.threadRunning = true;
+        const thread = clickgo.task.runThread(this, tThread, {
+            'sdata': '123',
+        });
+        thread.on('message', (e) => {
+            this.pushThreadConsole('thread', JSON.stringify(e.data));
+        });
+        const msg = {
+            'mcustom': 'test',
+        };
+        this.pushThreadConsole('main', JSON.stringify(msg));
+        thread.send(msg);
+        clickgo.tool.sleep(3_000).then(async () => {
+            await thread.end();
+            this.threadRunning = false;
+        }).catch(() => {});
     }
 
     public onMounted(): void {

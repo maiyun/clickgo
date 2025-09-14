@@ -33,6 +33,7 @@ export default class extends clickgo.control.AbstractControl {
             'require': false,
             'rule': '',
             'padding': 'm',
+            'keyboard': false,
             'modelValue': '',
             'placeholder': '',
             'selectionStart': 0,
@@ -555,6 +556,10 @@ export default class extends clickgo.control.AbstractControl {
         e.preventDefault();
     }
     showKeyboard() {
+        if (clickgo.dom.is.keyboard) {
+            clickgo.form.hideKeyboard();
+            return;
+        }
         clickgo.form.showKeyboard();
     }
     onMounted() {

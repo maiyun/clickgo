@@ -29,6 +29,7 @@ export default class extends clickgo.form.AbstractForm {
         this.lineHeight = 1;
         this.fontSize = 12;
         this.maxlength = 0;
+        this.keyboard = false;
         this.prepend = false;
         this.append = false;
         this.before = false;

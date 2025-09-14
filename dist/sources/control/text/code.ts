@@ -36,6 +36,7 @@ export default class extends clickgo.control.AbstractControl {
         'rule': string | RegExp;
         /** --- 0, xs, s, m, l, xl --- */
         'padding': string;
+        'keyboard': boolean | string;
 
         'modelValue': string;
         'placeholder': string;
@@ -58,6 +59,7 @@ export default class extends clickgo.control.AbstractControl {
             'require': false,
             'rule': '',
             'padding': 'm',
+            'keyboard': false,
 
             'modelValue': '',
             'placeholder': '',
@@ -608,6 +610,10 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public showKeyboard(): void {
+        if (clickgo.dom.is.keyboard) {
+            clickgo.form.hideKeyboard();
+            return;
+        }
         clickgo.form.showKeyboard();
     }
 

@@ -21,7 +21,7 @@
             <div class="up" @click="numberClick(1)" :data-cg-disabled="(max !== undefined && max !== 'undefined' && (value >= propNumber('max'))) ? '' : undefined"></div>
             <div class="down" @click="numberClick(-1)" :data-cg-disabled="(min !== undefined && min !== 'undefined' && (value <= propNumber('min'))) ? '' : undefined"></div>
         </div>
-        <div class="sicon" @click="showKeyboard" @mousedown="kbdown" @touchstart="kbdown">
+        <div v-if="propBoolean('keyboard')" class="sicon" @click="showKeyboard" @mousedown="kbdown" @touchstart="kbdown">
             <cg-icon name="keyboard" size="m"></cg-icon>
         </div>
         <div v-if="type === 'password'" class="sicon" @click="showPassword=!showPassword">

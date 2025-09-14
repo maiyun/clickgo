@@ -437,11 +437,22 @@ export async function readApp(blob) {
  */
 export async function fetchApp(taskId, url, opt = {}) {
     /** --- notify 配置项 --- */
-    const notify = opt.notify ? (typeof opt.notify === 'number' ? {
-        'id': opt.notify,
-        'loaded': 0,
-        'total': 0,
-    } : opt.notify) : null;
+    const notify = opt.notify ?
+        (typeof opt.notify === 'number' ?
+            {
+                'id': opt.notify,
+                'loaded': 0,
+                'total': 0,
+            } :
+            opt.notify) :
+        {
+            'id': undefined,
+            'loaded': 0,
+            'total': 0,
+        };
+    const notifyId = notify.id;
+    const notifyLoaded = notify.loaded ?? 0;
+    const notifyTotal = notify.total ?? 0;
     if (!url.endsWith('.cga')) {
         return null;
     }
@@ -457,14 +468,13 @@ export async function fetchApp(taskId, url, opt = {}) {
     }
     try {
         const blob = await lFs.getContent(taskId, url, {
-            'progress': (loaded, total) => {
+            progress: (loaded, total) => {
                 let per = loaded / total;
-                if (notify) {
-                    /** --- 含偏移进度百分比（0 - 1） --- */
-                    per = notify.total ?
-                        Math.min((notify.loaded / notify.total) + (1 / notify.total * per), 1) :
-                        per;
-                    lForm.notifyProgress(notify.id, per);
+                per = notifyTotal ?
+                    Math.min((notifyLoaded / notifyTotal) + (1 / notifyTotal * per), 1) :
+                    per;
+                if (notifyId) {
+                    lForm.notifyProgress(notifyId, per);
                 }
                 if (opt.progress) {
                     opt.progress(loaded, total, per);
@@ -475,8 +485,8 @@ export async function fetchApp(taskId, url, opt = {}) {
         if ((blob === null) || typeof blob === 'string') {
             return null;
         }
-        if (notify) {
-            lForm.notifyProgress(notify.id, notify.total ? ((notify.loaded + 1) / notify.total) : 1);
+        if (notifyId) {
+            lForm.notifyProgress(notifyId, notifyTotal ? ((notifyLoaded + 1) / notifyTotal) : 1);
         }
         return await readApp(blob) || null;
     }

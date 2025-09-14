@@ -56,6 +56,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public maxlength = 0;
 
+    public keyboard = false;
+
     public prepend = false;
 
     public append = false;

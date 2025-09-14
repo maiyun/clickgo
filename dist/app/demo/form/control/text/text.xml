@@ -2,7 +2,7 @@
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1; width: 0;">
         <label>Text Length: {{value.length}}, Selection Start: {{selectionStart}}, Selection End: {{selectionEnd}}, Focus: {{isFocus}}</label>
         <label>Scroll Left: {{scrollLeft}}, Scroll Top: {{scrollTop}}, Scroll Height: {{scrollHeight}}, Scroll Width: {{scrollWidth}}, Client Height: {{clientHeight}}, Client Width: {{clientWidth}}</label>
-        <text v-model="value" :placeholder="placeholder" :type="type[0]" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :scroll="scroll" :maxlength="maxlength" :wrap="wrap" :padding="padding[0]" :max="max" :min="min" :plain="plain" :require="require" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" @beforechange="onBeforechange" @minmaxchange="onMinMaxChange" :style="{'flex': (type[0] === 'multi') && (scroll || !wrap) ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': (type[0] === 'multi') && (scroll || !wrap) ? '0' : undefined, 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
+        <text v-model="value" :placeholder="placeholder" :type="type[0]" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :disabled="disabled" :readonly="readonly" :scroll="scroll" :maxlength="maxlength" :keyboard="keyboard" :wrap="wrap" :padding="padding[0]" :max="max" :min="min" :plain="plain" :require="require" v-model:scroll-left="scrollLeft" v-model:scroll-top="scrollTop" v-model:selection-start="selectionStart" v-model:selection-end="selectionEnd" @clientheight="clientHeight = $event" @clientwidth="clientWidth = $event" @scrollheight="scrollHeight = $event" @scrollwidth="scrollWidth = $event" @focus="isFocus = true" @blur="isFocus = false" @beforechange="onBeforechange" @minmaxchange="onMinMaxChange" :style="{'flex': (type[0] === 'multi') && (scroll || !wrap) ? '1' : undefined, 'line-height': lineHeight, 'font-size': fontSize + 'px', 'background': background, 'color': background ? '#FFF' : undefined, 'height': (type[0] === 'multi') && (scroll || !wrap) ? '0' : undefined, 'border-width': textBorder}" :class="[phcolor && ('ph-' + phcolor)]">
             <menulist v-if="menu">
                 <menulist-item>Custom</menulist-item>
             </menulist>
@@ -42,6 +42,7 @@
         <layout gutter="10">
             <select v-model="type" :data="['text', 'password', 'multi', 'number']" style="flex: 1;"></select>
             <button @click="maxlength = maxlength === 0 ? 10 : 0" style="flex: 1;">maxlength to {{maxlength === 0 ? 10 : 0}}</button>
+            <button @click="keyboard = !keyboard" style="flex: 1;">{{keyboard ? '' : '!'}}keyboard</button>
         </layout>
         <layout gutter="10" align-v="center">
             <label>max:</label>

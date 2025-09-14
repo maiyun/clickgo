@@ -2488,6 +2488,7 @@ export function init() {
         'meta': false,
         'full': false,
         'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
+        'keyboard': false,
     });
     // --- 处理 timer 类，窗体消失时不进行监听 ---
     document.addEventListener('visibilitychange', function () {

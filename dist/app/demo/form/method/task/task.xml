@@ -1,4 +1,4 @@
-<form width="350" height="400" title="Library task">
+<form width="350" height="500" title="Library task">
     <flow direction="v" style="flex: 1; padding: 10px;">
         <layout direction="v" gutter="10">
             <label>onFrame(): timer: {{frameTimer}}, count: {{frameCount}}</label>
@@ -56,6 +56,10 @@
             </layout>
             <button @click="sleep">{{sleeping ? 'Waiting...' : 'sleep(() => { ... }, 1000)'}}</button>
             <button @click="systemTaskInfo()">systemTaskInfo</button>
+            <flow direction="v" style="color: #FFF; background: hsl(0, 0%, 20%); line-height: 1.5; padding: 10px; height: 120px">
+                <label v-for="item of threadList">[{{item.time}}] {{item.name}}, {{item.text}}.</label>
+            </flow>
+            <button @click="runThread()" :disabled="threadRunning">runThread</button>
         </layout>
     </flow>
 </form>

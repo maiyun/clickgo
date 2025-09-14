@@ -436,12 +436,12 @@ export async function run(
         }
         // --- 获取并加载 app 对象 ---
         app = await lCore.fetchApp(current, url, {
-            'notify': notifyId ? {
+            'notify': {
                 'id': notifyId,
                 'loaded': 0,
                 'total': initTotal,
-            } : undefined,
-            'progress': async (loaded, total, per) => {
+            },
+            progress: async (loaded, total, per) => {
                 await opt.progress?.(loaded, total, 'app', url as string);
                 await opt.perProgress?.(per);
             },
@@ -495,6 +495,7 @@ export async function run(
         'forms': {},
         'controls': {},
         'timers': {},
+        'threads': {},
     };
     /** --- 如果当前运行的应用没权限，则不能设置 permissions --- */
     let permissions = opt.permissions ?? [];
@@ -756,7 +757,7 @@ export async function run(
     if (notifyId) {
         lForm.notifyContent(notifyId, {
             'note': initMsg,
-            'progress': per,
+            'progress': per7,
             'timeout': 3_000,
         });
     }
@@ -1034,6 +1035,10 @@ export async function end(taskId: lCore.TCurrent): Promise<boolean> {
     // --- 如果是 native 模式 ---
     if (clickgo.isNative() && (Object.keys(list).length === 1)) {
         await lNative.close(sysId);
+    }
+    // --- 先把线程移除了 ---
+    for (const path in list[taskId].threads) {
+        await list[taskId].threads[path].end();
     }
     // --- 获取最大的 z index 窗体，并让他获取焦点 ---
     const fid = await lForm.getMaxZIndexID(sysId, {
@@ -1503,7 +1508,182 @@ export function init(): void {
     });
 }
 
+/** --- 线程抽象类 --- */
+export abstract class AbstractThread {
+
+    /** --- 当前文件在包内的路径 --- */
+    public get filename(): string {
+        // --- pack 时系统自动在继承类中重写本函数 ---
+        return '';
+    }
+
+    /** --- 系统会自动设置本项 --- */
+    public taskId: string = '';
+
+    /** --- 线程入口 --- */
+    public abstract main(data: Record<string, any>): void | Promise<void>;
+
+    /** --- 线程接收事件 --- */
+    public onMessage(e: MessageEvent): void | Promise<void>;
+    public onMessage(): void {
+        return;
+    }
+
+    /** --- 线程结束事件 --- */
+    public onEnded(): void | Promise<void>;
+    public onEnded(): void {
+        return;
+    }
+
+    /** --- 报错 --- */
+    public onError(e: any): void | Promise<void>;
+    public onError(): void {
+        return;
+    }
+
+    /** --- 发送数据 --- */
+    public send(data: Record<string, any>): void {
+        self.postMessage(data);
+    }
+
+    /** --- 关闭线程 --- */
+    public close(): void {
+        self.postMessage({
+            'cmd': 'cg-terminate',
+        });
+    }
+
+}
+
+/**
+ * --- 运行线程（同一个线程文件只能运行一个） ---
+ * @param current 当前任务 id
+ * @param cls 线程类
+ * @param data 线程初始化数据
+ */
+export function runThread(
+    current: lCore.TCurrent,
+    cls: new () => AbstractThread,
+    data?: Record<string, any>,
+): IThread {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    /** --- 当前的 task 对象 --- */
+    const t = getOrigin(current);
+    if (!t) {
+        const err = new Error('task.runThread: -1');
+        lCore.trigger('error', '', '', err, err.message).catch(() => {});
+        throw err;
+    }
+    /** --- cls 的文本内容 --- */
+    let clsStr = cls.toString();
+    // --- 替换类 ---
+    clsStr = clsStr.replace(/class (\w+) extends.+?AbstractThread *{/, 'class cgCustomThread extends AbstractThread {');
+    /** --- 提取线程文件的 filename --- */
+    const match = /filename *\(\) *{ *return *"(.+?)"/.exec(clsStr);
+    if (!match) {
+        const err = new Error('task.runThread: -2');
+        lCore.trigger('error', '', '', err, err.message).catch(() => {});
+        throw err;
+    }
+    if (t.threads[match[1]]) {
+        return t.threads[match[1]];
+    }
+    const blob = new Blob([`${AbstractThread.toString()}
+${clsStr}
+const threadCls = new cgCustomThread();
+threadCls.taskId = '${t.id}';
+self.onmessage = async function(e) {
+    if (e.data.cmd === 'cg-init') {
+        await threadCls.main(e.data.data);
+        return;
+    }
+    if (e.data.cmd === 'cg-terminate') {
+        await threadCls.onEnded();
+        self.postMessage({
+            'cmd': 'cg-terminate',
+        });
+        return;
+    }
+    threadCls.onMessage(e);
+}
+self.onerror = function(e) {
+    threadCls.onError(e);
+}
+`], { 'type': 'application/javascript' });
+    const burl = URL.createObjectURL(blob);
+    /** --- 线程实体 --- */
+    const worker = new Worker(burl);
+    URL.revokeObjectURL(burl);
+    worker.postMessage({
+        'cmd': 'cg-init',
+        'data': data ?? {},
+    });
+    const messages: Array<(ev: MessageEvent) => any | Promise<void>> = [];
+    worker.onmessage = (e) => {
+        if (e.data.cmd === 'cg-terminate') {
+            // --- 有可能是内部主动 close ---
+            worker.terminate();
+            delete t.threads[match[1]];
+            return;
+        }
+        for (const item of messages) {
+            item(e);
+        }
+    };
+    const rtn: IThread = {
+        on: (name: 'message', handler: (e: MessageEvent) => any | Promise<void>): void => {
+            if (name !== 'message') {
+                return;
+            }
+            messages.push(handler);
+        },
+        off: (name: 'message', handler: (e: MessageEvent) => any | Promise<void>): void => {
+            if (name !== 'message') {
+                return;
+            }
+            const index = messages.indexOf(handler);
+            if (index === -1) {
+                return;
+            }
+            messages.splice(index, 1);
+        },
+        /** --- 发送数据 --- */
+        send: (data: Record<string, any>) => {
+            worker.postMessage(data);
+        },
+        /** --- 结束线程 --- */
+        end: (): Promise<void> => {
+            return new Promise<void>(resolve => {
+                worker.postMessage({
+                    'cmd': 'cg-terminate',
+                });
+                worker.onmessage = () => {
+                    // --- 无论返回什么都结束 ---
+                    resolve();
+                    worker.terminate();
+                    delete t.threads[match[1]];
+                };
+            });
+        },
+    };
+    t.threads[match[1]] = rtn;
+    return rtn;
+}
+
 // --- 类型 ---
+
+export interface IThread {
+    /** --- 绑定事件 --- */
+    on: (name: 'message', handler: (e: MessageEvent) => any | Promise<void>) => void;
+    /** --- 移除事件 --- */
+    off: (name: 'message', handler: (e: MessageEvent) => any | Promise<void>) => void;
+    /** --- 发送数据 --- */
+    send: (data: Record<string, any>) => void;
+    /** --- 结束线程 --- */
+    end: () => Promise<void>;
+}
 
 /** --- 运行中的任务对象 --- */
 export interface ITask {
@@ -1539,6 +1719,8 @@ export interface ITask {
     }>;
     /** --- 任务中的 timer 列表 --- */
     'timers': Record<string, string>;
+    /** --- 文件名 -> thread 控制对象 --- */
+    'threads': Record<string, IThread>;
 }
 
 export interface IRuntime {

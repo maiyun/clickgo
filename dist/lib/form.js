@@ -1202,6 +1202,10 @@ export function superConfirm(current, html) {
 }
 /** --- 显示系统级虚拟键盘 --- */
 export function showKeyboard() {
+    if (lDom.is.keyboard) {
+        return;
+    }
+    lDom.is.keyboard = true;
     elements.keyboard.style.display = 'flex';
     requestAnimationFrame(() => {
         elements.keyboard.style.left = (window.innerWidth - elements.keyboard.offsetWidth) / 2 + 'px';
@@ -1218,6 +1222,7 @@ export function hideKeyboard() {
     elements.keyboard.style.transform = 'translateY(-10px)';
     window.setTimeout(() => {
         elements.keyboard.style.display = 'none';
+        lDom.is.keyboard = false;
     }, 300);
 }
 /**

@@ -37,6 +37,12 @@
             </template>
             <button>789</button>
         </tip>
+        <tip>
+            <template v-slot:content>
+                <label copy>copy label</label>
+            </template>
+            <button>test copy label</button>
+        </tip>
         <button @click="change = !change">{{change ? '' : '!'}}change</button>
     </layout>
 </form>
