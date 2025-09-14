@@ -18,7 +18,7 @@
 
 使用 HTML + CSS 构建 Web、Native 应用。
 
-应用可编译为 cga 单文件，即可以在 Web 中运行，也可以借助 [ClickGo Native](https://github.com/maiyun/clickgo-native) 在本地系统运行。可编写图像编辑器、数据库管理工具、文件浏览器等应用软件，也可编写后台管理面板。
+应用编译为 cga 单文件，可以在 Web 中运行，也可以借助 [ClickGo Native](https://github.com/maiyun/clickgo-native) 在本地系统运行。可编写图像编辑器、数据库管理工具、文件浏览器等应用软件，也可编写后台管理面板。
 
 <p align="center">
     <img src="./pic3.jpg" alt="ClickGo">
@@ -28,12 +28,12 @@
 
 ## 使用
 
-首先引入模块加载器，然后使用该模块加载器加载它。
+需要借助 [ClickGo Compiler](https://github.com/maiyun/clickgo-compiler) 将 app 文件夹编译为 cga 文件，然后编译入口文件，并在浏览器中引用入口文件。
 
 **index.html**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.8/dist/loader.min.js?path=index&npm={'clickgo':'3.16.28'}"></script>
+<script type="module" src="index.pack.js"></script>
 ```
 
 **index.js**
@@ -42,7 +42,7 @@
 import * as clickgo from 'clickgo';
 class Boot extends clickgo.AbstractBoot {
     public async main(): Promise<void> {
-        await clickgo.task.run('xxx');
+        await clickgo.task.run(this._sysId, 'xxx.cga');
     }
 }
 clickgo.launcher(new Boot());
@@ -54,13 +54,13 @@ TypeScript 环境下，在使用 NPM 安装后，您将得到代码提示。
 
 ```sh
 $ npm i clickgo --save-dev
-$ npm i @litert/loader --save-dev
 $ npm i jszip --save-dev
+$ npm i vue --save-dev
 ```
 
 ## 注意
 
-ClickGo 会自动加载 Vue、jszip 和 resize-observer 库，所以**请勿**引用这些库的 JS 和 CSS 文件，您只需导入 `ClickGo` 模块即可。
+ClickGo 会自动加载 Vue、jszip 库，所以**请勿**引用这些库的 JS 和 CSS 文件。
 
 ## 示例
 

@@ -20,7 +20,7 @@
 
 Build web and native apps using HTML + CSS.
 
-Apps compile into a single `.cga` file — run it in the browser or locally via [ClickGo Native](https://github.com/maiyun/clickgo-native). Great for image editors, DB tools, file managers, admin panels, and more.
+The app compiles into a single `.cga` file, running in the web or natively via [ClickGo Native](https://github.com/maiyun/clickgo-native). Build image editors, database tools, file browsers, or admin dashboards—all with ease.
 
 <p align="center">
     <img src="./doc/pic3.jpg" alt="ClickGo">
@@ -30,12 +30,12 @@ Apps compile into a single `.cga` file — run it in the browser or locally via 
 
 ## Usage
 
-First, load the module loader, then load your app with it.
+You'll need the [ClickGo Compiler](https://github.com/maiyun/clickgo-compiler) to compile the "app" folder into a .cga file. Then compile the entry file and reference it in the browser.
 
 **index.html**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@litert/loader@3.5.8/dist/loader.min.js?path=index&npm={'clickgo':'3.16.28'}"></script>
+<script type="module" src="index.pack.js"></script>
 ```
 
 **index.js**
@@ -44,7 +44,7 @@ First, load the module loader, then load your app with it.
 import * as clickgo from 'clickgo';
 class Boot extends clickgo.AbstractBoot {
     public async main(): Promise<void> {
-        await clickgo.task.run('xxx');
+        await clickgo.task.run(this._sysId, 'xxx.cga');
     }
 }
 clickgo.launcher(new Boot());
@@ -56,14 +56,13 @@ Use TypeScript? Install via NPM for full IntelliSense support.
 
 ```sh
 $ npm i clickgo --save-dev
-$ npm i @litert/loader --save-dev
 $ npm i jszip --save-dev
+$ npm i vue --save-dev
 ```
 
 ## Notes
 
-ClickGo auto-loads Vue, jszip, and resize-observer.
-**Don't** include them manually — just import the `ClickGo` module.
+ClickGo auto-loads Vue, jszip. **Don't** include them manually.
 
 ## Demo
 
