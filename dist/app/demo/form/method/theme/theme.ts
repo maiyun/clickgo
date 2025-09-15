@@ -57,6 +57,17 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(this, 'Done.');
     }
 
+    public async setGlobalFromFile(path: string): Promise<void> {
+        const n = clickgo.form.notify({
+            'title': 'Info',
+            'content': 'Theme loading...',
+            'type': 'info'
+        });
+        await clickgo.theme.setGlobal(path, this);
+        clickgo.form.hideNotify(n);
+        await clickgo.form.dialog(this, 'Done.');
+    }
+
     public async clearGlobal(): Promise<void> {
         await clickgo.theme.clearGlobal();
     }
