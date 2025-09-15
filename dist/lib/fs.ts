@@ -126,14 +126,14 @@ export async function unmount(name: string): Promise<boolean> {
     return true;
 }
 
-export async function getContent(current: lCore.TCurrent, path: string, options?: {
+export async function getContent(current: lCore.TCurrent | null, path: string, options?: {
     'start'?: number;
     'end'?: number;
     'progress'?: (loaded: number, total: number) => void | Promise<void>;
     /** --- 网络模式下携带后缀，如 ?123 --- */
     'after'?: string;
 }): Promise<string | Blob | null>;
-export async function getContent(current: lCore.TCurrent, path: string, options: BufferEncoding | {
+export async function getContent(current: lCore.TCurrent | null, path: string, options: BufferEncoding | {
     'encoding': BufferEncoding;
     'start'?: number;
     'end'?: number;
@@ -141,11 +141,11 @@ export async function getContent(current: lCore.TCurrent, path: string, options:
 }): Promise<string | null>;
 /**
  * --- 读取完整文件或一段 ---
- * @param current 当前任务 id
+ * @param current 当前任务 id（可传 null 将只读取完全公开数据，如 clickgo 文件夹）
  * @param path 文件路径
  * @param options 编码或选项
  */
-export async function getContent(current: lCore.TCurrent, path: string, options?: BufferEncoding | {
+export async function getContent(current: lCore.TCurrent | null, path: string, options?: BufferEncoding | {
     'encoding'?: BufferEncoding;
     'start'?: number;
     'end'?: number;
@@ -153,7 +153,7 @@ export async function getContent(current: lCore.TCurrent, path: string, options?
     /** --- 如果是网络加载的，则会附带后缀，如 ?123 --- */
     'after'?: string;
 }): Promise<Blob | string | null> {
-    if (typeof current !== 'string') {
+    if (current && (typeof current !== 'string')) {
         current = current.taskId;
     }
     path = lTool.urlResolve('/', path);
@@ -217,6 +217,9 @@ export async function getContent(current: lCore.TCurrent, path: string, options?
         }
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        if (!current) {
+            return null;
+        }
         const r = await lTask.checkPermission(current, 'fs.' + path + 'r', false, undefined);
         if (!r[0]) {
             return null;
@@ -246,6 +249,9 @@ export async function getContent(current: lCore.TCurrent, path: string, options?
         });
     }
     else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+        if (!current) {
+            return null;
+        }
         const task = lTask.getOrigin(current);
         if (!task) {
             return null;

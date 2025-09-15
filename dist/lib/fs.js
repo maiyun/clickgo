@@ -116,12 +116,12 @@ export async function unmount(name) {
 }
 /**
  * --- 读取完整文件或一段 ---
- * @param current 当前任务 id
+ * @param current 当前任务 id（可传 null 将只读取完全公开数据，如 clickgo 文件夹）
  * @param path 文件路径
  * @param options 编码或选项
  */
 export async function getContent(current, path, options) {
-    if (typeof current !== 'string') {
+    if (current && (typeof current !== 'string')) {
         current = current.taskId;
     }
     path = lTool.urlResolve('/', path);
@@ -185,6 +185,9 @@ export async function getContent(current, path, options) {
         }
     }
     else if (path.startsWith('/storage/') || path.startsWith('/mounted/')) {
+        if (!current) {
+            return null;
+        }
         const r = await lTask.checkPermission(current, 'fs.' + path + 'r', false, undefined);
         if (!r[0]) {
             return null;
@@ -214,6 +217,9 @@ export async function getContent(current, path, options) {
         });
     }
     else if (path.startsWith('/package/') || path.startsWith('/current/')) {
+        if (!current) {
+            return null;
+        }
         const task = lTask.getOrigin(current);
         if (!task) {
             return null;

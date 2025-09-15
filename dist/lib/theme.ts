@@ -17,6 +17,7 @@ import * as lZip from './zip';
 import * as lTool from './tool';
 import * as lTask from './task';
 import * as lDom from './dom';
+import * as lFs from './fs';
 import * as lCore from './core';
 import * as lForm from './form';
 
@@ -187,9 +188,25 @@ export async function clear(taskId: lCore.TCurrent): Promise<void> {
 
 /**
  * --- 将 cgt 主题设置到全局所有任务 ---
- * @param theme 主题对象
+ * @param theme 主题对象或路径
+ * @param current 如果要读包内对象，则要传当前任务
  */
-export async function setGlobal(theme: ITheme): Promise<void> {
+export async function setGlobal(theme: ITheme | string, current: lCore.TCurrent | null = null): Promise<void> {
+    if (typeof theme === 'string') {
+        // --- 是个路径 ---
+        const f = await lFs.getContent(current, theme);
+        if (!f) {
+            return;
+        }
+        if (typeof f === 'string') {
+            return;
+        }
+        const t = await read(f);
+        if (!t) {
+            return;
+        }
+        theme = t;
+    }
     global = theme;
     const tlist = await lTask.getOriginList(sysId);
     for (const taskId in tlist) {
