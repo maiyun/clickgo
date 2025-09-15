@@ -63,7 +63,7 @@ export default class extends clickgo.form.AbstractForm {
             'content': 'Theme loading...',
             'type': 'info'
         });
-        await clickgo.theme.setGlobal(path, this);
+        await clickgo.theme.setGlobal(path);
         clickgo.form.hideNotify(n);
         await clickgo.form.dialog(this, 'Done.');
     }

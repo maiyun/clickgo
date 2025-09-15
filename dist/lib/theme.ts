@@ -191,19 +191,19 @@ export async function clear(taskId: lCore.TCurrent): Promise<void> {
  * @param theme 主题对象或路径
  * @param current 如果要读包内对象，则要传当前任务
  */
-export async function setGlobal(theme: ITheme | string, current: lCore.TCurrent | null = null): Promise<void> {
+export async function setGlobal(theme: ITheme | string, current: lCore.TCurrent | null = null): Promise<number> {
     if (typeof theme === 'string') {
         // --- 是个路径 ---
         const f = await lFs.getContent(current, theme);
         if (!f) {
-            return;
+            return 0;
         }
         if (typeof f === 'string') {
-            return;
+            return -1;
         }
         const t = await read(f);
         if (!t) {
-            return;
+            return -2;
         }
         theme = t;
     }
@@ -212,6 +212,7 @@ export async function setGlobal(theme: ITheme | string, current: lCore.TCurrent 
     for (const taskId in tlist) {
         await load(taskId);
     }
+    return 1;
 }
 
 /**

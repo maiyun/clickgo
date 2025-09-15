@@ -187,14 +187,14 @@ export async function setGlobal(theme, current = null) {
         // --- 是个路径 ---
         const f = await lFs.getContent(current, theme);
         if (!f) {
-            return;
+            return 0;
         }
         if (typeof f === 'string') {
-            return;
+            return -1;
         }
         const t = await read(f);
         if (!t) {
-            return;
+            return -2;
         }
         theme = t;
     }
@@ -203,6 +203,7 @@ export async function setGlobal(theme, current = null) {
     for (const taskId in tlist) {
         await load(taskId);
     }
+    return 1;
 }
 /**
  * --- 清除全局主题 ---
