@@ -188,13 +188,13 @@ export async function clear(taskId: lCore.TCurrent): Promise<void> {
 
 /**
  * --- 将 cgt 主题设置到全局所有任务 ---
- * @param theme 主题对象或路径
+ * @param theme 主题对象或主题路径（不带 .cgt）
  * @param current 如果要读包内对象，则要传当前任务
  */
 export async function setGlobal(theme: ITheme | string, current: lCore.TCurrent | null = null): Promise<number> {
     if (typeof theme === 'string') {
         // --- 是个路径 ---
-        const f = await lFs.getContent(current, theme);
+        const f = await lFs.getContent(current, theme + '.cgt');
         if (!f) {
             return 0;
         }
