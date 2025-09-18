@@ -386,7 +386,7 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
                 // --- 为了去除 html 中的空白和注释 ---
                 zipo.file(path + (path ? '/' : '') + item, lTool.purify(buf.toString()));
             }
-            else if (item.endsWith('.js')) {
+            else if (item.endsWith('.js') || item.endsWith('.js.map')) {
                 if (!item.endsWith('.pack.js')) {
                     continue;
                 }

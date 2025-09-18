@@ -2,7 +2,7 @@
     <nav v-model="name" default="Action1" v-model:show="isShow" :logo="logo" @layer="layer = $event" @qs="qs = $event" :hash="hash" style="flex: 1; width: 0;">
         <template v-if="slogo" v-slot:slogo>
             <layout align-h="right" align-v="center" style="flex: 1;">
-                <block style="padding: 5px; border-radius: 3px; background: hsl(220, 20%, 15%); color: #FFF; transform: skew(-7deg);">BYTERUN</block>
+                <block style="padding: 5px; border-radius: 3px; background: var(--cg); color: #FFF; transform: skew(-7deg);">BYTERUN</block>
             </layout>
         </template>
         <nav-item label="Title1">
