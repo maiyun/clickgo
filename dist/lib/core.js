@@ -1032,4 +1032,9 @@ export function init() {
     }, {
         'deep': true
     });
+    // --- 绑定 resize 事件 ---
+    window.addEventListener('resize', function () {
+        // --- 触发 screenResize 事件 ---
+        lTask.refreshSystemPosition(); // --- 会在里面自动触发 screenResize 事件 ---
+    });
 }

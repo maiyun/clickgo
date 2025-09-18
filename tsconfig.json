@@ -10,7 +10,6 @@
         "declaration": true,        // d.ts
         "declarationMap": false,
         "newLine": "LF",
-        "baseUrl": "./",
         "paths": {
             "~/*": ["./*"]
         },

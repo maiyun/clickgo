@@ -5,7 +5,6 @@
 node_modules/
 eslint.config.cjs
 .gitignore
-.npmrc
 .npmignore
 .DS_Store
 /doc/

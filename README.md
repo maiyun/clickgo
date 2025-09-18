@@ -163,10 +163,6 @@ This library is published under [Apache-2.0](./LICENSE) license.
 [Speaker 2 SVG Vector](https://www.svgrepo.com/svg/506329/speaker-2)  
 [Speaker Cross SVG Vector](https://www.svgrepo.com/show/506328/speaker-cross.svg)
 
-#### Select
-
-[Close SVG Vector](https://www.svgrepo.com/svg/446990/close)
-
 #### Icon
 
 [Close SVG Vector](https://www.svgrepo.com/svg/446990/close)

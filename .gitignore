@@ -3,7 +3,6 @@
 .vs/
 .git/
 node_modules/
-.npmrc
 .DS_Store
 *.d.ts
 !/types/*.d.ts

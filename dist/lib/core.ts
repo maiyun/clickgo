@@ -1155,6 +1155,11 @@ export function init(): void {
     }, {
         'deep': true
     });
+    // --- 绑定 resize 事件 ---
+    window.addEventListener('resize', function(): void {
+        // --- 触发 screenResize 事件 ---
+        lTask.refreshSystemPosition();  // --- 会在里面自动触发 screenResize 事件 ---
+    });
 }
 
 // --- 类型 ---
@@ -1272,7 +1277,10 @@ export interface IVue {
         'default': undefined | ((o?: any) => IVNode[]);
         [key: string]: undefined | ((o?: any) => IVNode[]);
     };
-    '$watch': (o: any, cb: (n: any, o: any) => void) => void;
+    '$watch': (o: any, cb: (n: any, o: any) => void, opt?: {
+        'immediate'?: boolean;
+        'deep'?: boolean;
+    }) => void;
 
     [key: string]: any;
 }

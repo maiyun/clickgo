@@ -115,7 +115,7 @@ export default class extends clickgo.control.AbstractControl {
             await this.hideActive();
             // --- 显示新的 ---
             this.activeId = id;
-            clickgo.form.setActivePanel(this, this.activeId, this.formId);
+            clickgo.form.setActivePanel(this, this.formId, this.activeId);
             const n: HTMLElement = this.element.querySelector('[data-panel-id="' + id + '"]')!;
             n.style.display = 'flex';
             /*
@@ -140,7 +140,7 @@ export default class extends clickgo.control.AbstractControl {
             await this.hideActive();
             // --- 显示新的 ---
             this.activeId = rtn.id;
-            clickgo.form.setActivePanel(this, this.activeId, this.formId);
+            clickgo.form.setActivePanel(this, this.formId, this.activeId);
             this.loaded[rtn.id] = {
                 'obj': cls,
                 'vapp': rtn.vapp,

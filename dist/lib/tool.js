@@ -2181,8 +2181,9 @@ export async function loadScripts(urls, opt = {}) {
  * @param url css 文件网址
  * @returns 加载是否成功
  */
-export async function loadLink(url) {
+export async function loadLink(url, pos = 'after') {
     return new Promise((resolve) => {
+        const head = getHeadElement();
         const link = document.createElement('link');
         link.addEventListener('load', function () {
             resolve(true);
@@ -2192,7 +2193,12 @@ export async function loadLink(url) {
         });
         link.href = url;
         link.rel = 'stylesheet';
-        getHeadElement().appendChild(link);
+        if (pos === 'before') {
+            head.insertBefore(link, head.firstChild);
+        }
+        else {
+            head.appendChild(link);
+        }
     });
 }
 /**

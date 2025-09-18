@@ -3184,7 +3184,7 @@ export async function createPanel<T extends AbstractPanel>(
         layout = lTool.teleportGlue(layout, formId);
     }
     // --- 获取要定义的控件列表 ---
-    const components = lControl.buildComponents(t.id, formId, panel.filename);
+    const components = lControl.buildComponents(t.id, formId, path);
     if (!components) {
         const err = new Error('form.createPanel: -4');
         lCore.trigger('error', '', '', err, err.message).catch(() => {});
@@ -4139,12 +4139,6 @@ export function hideLauncher(): void {
         elements.launcher.style.display = 'none';
     }, 300);
 }
-
-// --- 绑定 resize 事件 ---
-window.addEventListener('resize', function(): void {
-    // --- 触发 screenResize 事件 ---
-    lTask.refreshSystemPosition(); // 会在里面自动触发 screenResize 事件
-});
 
 // --- 需要初始化 ---
 

@@ -47,7 +47,7 @@ export default class extends clickgo.control.AbstractControl {
             'children'?: string;
         };
         /** --- 0, xs, s, m, l, xl --- */
-        'padding'?: string;
+        'padding': string;
         'leftlabel'?: boolean | string;
         /** --- 设置弹出层的最低宽度 --- */
         'minWidth'?: number;
@@ -73,7 +73,7 @@ export default class extends clickgo.control.AbstractControl {
             'icon': false,
             'iconDefault': '',
             'map': {},
-            'padding': undefined,
+            'padding': 'm',
             'leftlabel': true,
             'minWidth': 0,
 
