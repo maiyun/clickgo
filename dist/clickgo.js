@@ -41,7 +41,7 @@ lNative.initSysId(sysId);
 export const modules = {
     'clickgo': clickgo,
 };
-const version = '4.0.8';
+const version = '4.0.9';
 /** --- 获取当前版本 --- */
 export function getVersion() {
     return version;
