@@ -216,11 +216,12 @@ export class AbstractBoot {
  * @param boot 启动类
  */
 export async function launcher(boot) {
-    /** --- 加载 Vue --- */
+    // --- 加载 Vue ---
     await lTool.loadScript(`${cdn}/npm/vue@3.5.21/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`);
     modules.vue = window.Vue;
-    /** --- 加载 jszip --- */
-    modules.jszip = (await import(cdn + '/npm/jszip@3.10.1/+esm')).default;
+    // --- 加载 jszip ---
+    await lTool.loadScript(`${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`);
+    modules.jszip = window.JSZip;
     // --- 加载 clickgo 的 global css ---
     const globalUrl = `${dirname}/global.css`;
     try {

@@ -21,6 +21,22 @@ export default class extends clickgo.form.AbstractForm {
         return clickgo.core.config.locale;
     }
 
+    public langSelect = [
+        {
+            'label': 'l:File size',
+        },
+        {
+            'label': 'l:File name',
+        },
+        {
+            'label': 'File size',
+        },
+        {
+            'label': 'l:File size',
+            'value': 'k2',
+        }
+    ];
+
     public frameStart(v: number): void {
         let opt = {};
         switch (v) {

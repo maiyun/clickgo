@@ -197,8 +197,8 @@ class AbstractCommon {
      */
     get l() {
         const task = lTask.getOrigin(this.taskId);
-        return (key, data) => {
-            const loc = task?.locale.data[this.locale]?.[key] ?? task?.locale.data['en']?.[key] ?? '[LocaleError]' + key;
+        return (key, data, origin = false) => {
+            const loc = task?.locale.data[this.locale]?.[key] ?? task?.locale.data['en']?.[key] ?? (origin ? '' : '[LocaleError]') + key;
             if (!data) {
                 return loc;
             }
@@ -2641,7 +2641,7 @@ export function remove(formId) {
             }
             task.forms[formId].vapp.unmount();
             task.forms[formId].vapp._container.remove();
-            elements.popList.querySelector('[data-form-id="' + formId.toString() + '"]')?.remove();
+            elements.popList.querySelector('[data-form-id="' + formId + '"]')?.remove();
             if (io > -1) {
                 // --- 如果是 dialog 则要执行回调 ---
                 task.forms[formId].vroot.cgDialogCallback();
@@ -2685,7 +2685,7 @@ export function removePanel(id, vapp, el) {
     }
     vapp.unmount();
     vapp._container.remove();
-    el.querySelector('[data-panel-id="' + id.toString() + '"]')?.remove();
+    el.querySelector('[data-panel-id="' + id + '"]')?.remove();
     // --- 移除 form 的 style ---
     lDom.removeStyle(taskId, 'form', formId, id);
     lDom.clearWatchStyle(formId, id);
@@ -2784,6 +2784,10 @@ export async function createPanel(rootPanel, cls, opt = {}) {
     }
     // --- 申请 panelId ---
     const panelId = lTool.random(8, lTool.RANDOM_LUN);
+    // --- 其实后面会重写 taskId，这里先提前赋值一下，以使初始化时就能知道 taskId  ---
+    Object.defineProperty(cls.prototype, 'taskId', {
+        get: () => t.id,
+    });
     /** --- 要新建的 panel 类对象 --- */
     const panel = new cls();
     if (!filename) {
@@ -2824,7 +2828,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
     });
     */
     // --- 给 layout 的 class 增加前置 ---
-    const prepList = ['cg-task' + t.id.toString() + '_'];
+    const prepList = ['cg-task' + t.id + '_'];
     if (prep !== '') {
         prepList.push(prep);
     }
@@ -2948,7 +2952,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
         }
     };
     // --- 插入 dom ---
-    rootPanel.element.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId.toString()}"></div>`);
+    rootPanel.element.insertAdjacentHTML('beforeend', `<div data-panel-id="${panelId}"></div>`);
     if (style) {
         lDom.pushStyle(t.id, style, 'form', formId, panelId);
     }
@@ -3122,6 +3126,10 @@ export async function create(current, cls, data, opt = {}) {
     // --- 申请 formId ---
     const formId = lTool.random(8, lTool.RANDOM_LUN);
     const findex = ++index;
+    // --- 其实后面会重写 taskId，这里先提前赋值一下，以使初始化时就能知道 taskId  ---
+    Object.defineProperty(cls.prototype, 'taskId', {
+        get: () => t.id,
+    });
     /** --- 要新建的窗体类对象 --- */
     const frm = new cls();
     if (!filename) {
@@ -3162,7 +3170,7 @@ export async function create(current, cls, data, opt = {}) {
     });
     */
     // --- 给 layout 的 class 增加前置 ---
-    const prepList = ['cg-task' + t.id.toString() + '_'];
+    const prepList = ['cg-task' + t.id + '_'];
     if (prep !== '') {
         prepList.push(prep);
     }
@@ -3400,8 +3408,8 @@ export async function create(current, cls, data, opt = {}) {
         cbs.push(cb);
     };
     // --- 插入 dom ---
-    elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
-    elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId.toString()}" data-task-id="${t.id.toString()}"></div>`);
+    elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId}" data-task-id="${t.id}"></div>`);
+    elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId}" data-task-id="${t.id}"></div>`);
     if (style) {
         lDom.pushStyle(t.id, style, 'form', formId);
     }

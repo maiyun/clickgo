@@ -2,6 +2,7 @@
     <flow direction="v" style="flex: 1; padding: 10px;">
         <layout gutter="10" direction="v" style="flex: 1;">
             <label>This form id: {{formId}}</label>
+            <label>isReady: {{isReady}}</label>
             <button @click="min">min('{{formId}}')</button>
             <button @click="max">max('{{formId}}')</button>
             <button @click="close">close('{{formId}}')</button>
@@ -69,6 +70,11 @@
             <button @click="prompt">prompt('test')</button>
             <button @click="flash">flash('{{formId}}')</button>
             <button @click="showLauncher">showLauncher()</button>
+            <layout gutter="10" align-v="center">
+                <label>cdata.abc:</label>
+                <label style="flex: 1">{{cdatad(cdata.abc)}}</label>
+                <button @click="cdatai = !cdatai">{{cdatai ? '' : '!'}}cdatai</button>
+            </layout>
         </layout>
     </flow>
 </form>

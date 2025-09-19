@@ -139,6 +139,17 @@ export class AbstractControl {
             });
         };
     }
+    /**
+     * --- 获取窗体语言内容 ---
+     */
+    get fl() {
+        return (key, data) => {
+            if (!key.startsWith('l:')) {
+                return key;
+            }
+            return this.rootForm.l(key.slice(2), data, true);
+        };
+    }
     /** --- layout 中 :class 的转义 --- */
     get classPrepend() {
         return (cla) => {

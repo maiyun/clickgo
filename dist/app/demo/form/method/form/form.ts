@@ -249,4 +249,18 @@ export default class extends clickgo.form.AbstractForm {
         this.tid = this.taskId.toString();
     }
 
+    // --- 测试 data ---
+
+    public cdata = {
+        'abc': '123',
+    };
+
+    public cdatai = false;
+
+    public get cdatad(): (t: string) => string {
+        return (t: string) => {
+            return this.cdatai ? t : 'none';
+        };
+    }
+
 }

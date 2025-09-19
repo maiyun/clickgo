@@ -149,6 +149,18 @@ export abstract class AbstractControl {
         };
     }
 
+    /**
+     * --- 获取窗体语言内容 ---
+     */
+    public get fl(): (key: string, data?: string[]) => string {
+        return (key: string, data?: string[]): string => {
+            if (!key.startsWith('l:')) {
+                return key;
+            }
+            return this.rootForm.l(key.slice(2), data, true);
+        };
+    }
+
     /** --- layout 中 :class 的转义 --- */
     public get classPrepend(): (cla: any) => string {
         return (cla: any): string => {

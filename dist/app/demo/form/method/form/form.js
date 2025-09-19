@@ -9,6 +9,11 @@ export default class extends clickgo.form.AbstractForm {
         this.progress = ['noraml'];
         this.dr = '';
         this.hash = 'hash' + clickgo.tool.rand(0, 100).toString();
+        // --- 测试 data ---
+        this.cdata = {
+            'abc': '123',
+        };
+        this.cdatai = false;
     }
     min() {
         clickgo.form.min(this.formId);
@@ -207,5 +212,10 @@ export default class extends clickgo.form.AbstractForm {
     onMounted() {
         this.fid = this.formId.toString();
         this.tid = this.taskId.toString();
+    }
+    get cdatad() {
+        return (t) => {
+            return this.cdatai ? t : 'none';
+        };
     }
 }

@@ -13,7 +13,7 @@
                 <slot name="row" :row="data.row" :index="data.index"></slot>
             </div>
             <cg-marquee v-else scroll="false">
-                <div :class="[data.row.title && 'title']">{{data.row.label === '' ? '　' : data.row.label}}</div>
+                <div :class="[data.row.title && 'title']">{{data.row.label === '' ? '　' : fl(data.row.label)}}</div>
             </cg-marquee>
         </div>
     </template>

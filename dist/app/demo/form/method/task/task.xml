@@ -54,6 +54,7 @@
                 <select v-model="select" :data="['en', 'sc', 'tc', 'ja', 'ko', 'th', 'es', 'de', 'fr', 'pt', 'ru', 'vi']" style="flex: 1; width: 0;"></select>
                 <button @click="changeLocaleLang">Change</button>
             </layout>
+            <select :data="langSelect"></select>
             <button @click="sleep">{{sleeping ? 'Waiting...' : 'sleep(() => { ... }, 1000)'}}</button>
             <button @click="systemTaskInfo()">systemTaskInfo</button>
             <flow direction="v" style="color: #FFF; background: hsl(0, 0%, 20%); line-height: 1.5; padding: 10px; height: 120px">

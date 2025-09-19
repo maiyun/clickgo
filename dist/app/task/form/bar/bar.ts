@@ -19,6 +19,10 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 当前正在运行的 app 列表 --- */
     public apps: IApp[] = [];
 
+    public label2 = {
+        'l': this.l('position'),
+    };
+
     public get position(): string {
         return clickgo.core.config['task.position'];
     }

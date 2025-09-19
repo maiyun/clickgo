@@ -1,5 +1,5 @@
 .wrap {
-    outline: none; max-width: 100%; max-height: 100%; position: relative; min-width: 32px; min-height: 32px; display: flex; border-radius: var(--g-radius);
+    outline: none; max-width: 100%; max-height: 100%; position: relative; min-width: 28px; min-height: 28px; display: flex; border-radius: var(--g-radius);
     &:not(.plain) {
         border: solid .5px var(--g-plain-border-color); background: var(--g-plain-background);
     }

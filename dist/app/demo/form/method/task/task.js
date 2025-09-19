@@ -10,6 +10,21 @@ export default class extends clickgo.form.AbstractForm {
         this.timerCount = 0;
         this.select = [];
         this.sleeping = false;
+        this.langSelect = [
+            {
+                'label': 'l:File size',
+            },
+            {
+                'label': 'l:File name',
+            },
+            {
+                'label': 'File size',
+            },
+            {
+                'label': 'l:File size',
+                'value': 'k2',
+            }
+        ];
         this.threadRunning = false;
         this.threadList = [];
     }
