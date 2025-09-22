@@ -2496,12 +2496,13 @@ export const lang: {
         'tr': 'tr',
     },
     getCodeByAccept: (accept?: string): string => {
-        accept ??= navigator.language.toLowerCase();
+        accept ??= navigator.language;
         if (accept === '*') {
             return 'sc';
         }
+        const ulang = accept.toLowerCase();
         for (const l in lang.map) {
-            if (!accept.includes(l)) {
+            if (!ulang.includes(l)) {
                 continue;
             }
             return lang.map[l];
@@ -2527,6 +2528,7 @@ export interface IUrl {
     'user': string | null;
 }
 
+/** --- 请求选项 --- */
 export interface IRequestOptions {
     'credentials'?: boolean;
     'method'?: 'GET' | 'POST';
@@ -2545,4 +2547,5 @@ export interface IRequestOptions {
     'error'?: () => void | Promise<void>;
 }
 
+/** --- 虚假值类型 --- */
 export type TFalsy = false | '' | 0 | null | undefined | typeof NaN;
