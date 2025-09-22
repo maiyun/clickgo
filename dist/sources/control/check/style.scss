@@ -46,8 +46,8 @@
         }
         &.indeterminate, &.checked {
             .check {
-                background: var(--cg-focus);
-                border: solid .5px var(--cg-focus);
+                background: var(--cg);
+                border: solid .5px var(--cg);
             }
         }
 

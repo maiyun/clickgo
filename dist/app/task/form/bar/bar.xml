@@ -2,7 +2,6 @@
     <task :position="position">
         <task-item @click="showLauncher">
             <img src="/clickgo/icon.png" style="width: 16px; height: 16px;" />
-            [{{label2.l}}]
         </task-item>
         <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @click="itemClick(appIndex)" @mousedown="$event.stopPropagation()" @touchstart="$event.stopPropagation()">
             <img :src="app.icon || '/clickgo/icon.png'" style="width: 16px; height: 16px;" />
