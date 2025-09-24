@@ -2265,38 +2265,39 @@ export function logicalOr(v1, v2) {
 /** --- 语言相关 --- */
 export const lang = {
     'codes': [
-        'sc', 'tc', 'ja', 'ko', 'en', 'es', 'th', 'vi',
-        'de', 'fr', 'pt', 'ru', 'ar', 'id', 'it', 'tr',
+        'sc', 'tc', 'ja', 'ko', 'th', 'vi', 'ar', 'id',
+        'en', 'es', 'de', 'fr', 'pt', 'ru', 'it', 'tr',
     ],
     'names': [
-        '简体中文', '繁體中文', '日本語', '한국어', 'English', 'Español', 'ไทย', 'Tiếng việt',
-        'Deutsch', 'Français', 'Português', 'Русский', 'العربية', 'Bahasa Indonesia', 'Italiano', 'Türkçe',
+        '简体中文', '繁體中文', '日本語', '한국어', 'ไทย', 'Tiếng việt', 'العربية', 'Bahasa Indonesia',
+        'English', 'Español', 'Deutsch', 'Français', 'Português', 'Русский', 'Italiano', 'Türkçe',
     ],
     'map': {
         'cn': 'sc',
         'zh': 'tc',
         'ja': 'ja',
         'ko': 'ko',
-        'en': 'en',
-        'es': 'es',
         'th': 'th',
         'vi': 'vi',
+        'ar': 'ar',
+        'id': 'id',
+        'en': 'en',
+        'es': 'es',
         'de': 'de',
         'fr': 'fr',
         'pt': 'pt',
         'ru': 'ru',
-        'ar': 'ar',
-        'id': 'id',
         'it': 'it',
         'tr': 'tr',
     },
     getCodeByAccept: (accept) => {
-        accept ??= navigator.language.toLowerCase();
+        accept ??= navigator.language;
         if (accept === '*') {
             return 'sc';
         }
+        const ulang = accept.toLowerCase();
         for (const l in lang.map) {
-            if (!accept.includes(l)) {
+            if (!ulang.includes(l)) {
                 continue;
             }
             return lang.map[l];
