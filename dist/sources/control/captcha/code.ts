@@ -119,6 +119,12 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.access.instance) {
             return;
         }
+        if (this.props.factory !== 'tc') {
+            return;
+        }
+        if (this.state === 'successful') {
+            return;
+        }
         this.access.instance.show();
     }
 

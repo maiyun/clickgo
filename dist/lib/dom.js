@@ -85,13 +85,13 @@ export function setGlobalCursor(type) {
         globalCursorStyle.innerHTML = '';
     }
 }
-/** --- 最后一次 touchstart 的时间戳 */
+/** --- 最后一次 touchstart 的时间戳 --- */
 let lastTouchTime = 0;
 // --- 添加 touchstart 事件，既优化了点击行为，也记录了 touch 的时间戳信息 ---
 document.addEventListener('touchstart', function () {
     lastTouchTime = Date.now();
 }, {
-    'passive': true
+    'passive': true,
 });
 /**
  * --- 判断当前的事件是否是含有 touch 的设备触发的，如果当前就是 touch 则直接返回 false（false 代表 OK，true 代表 touch 设备却触发了 mouse 事件） ---

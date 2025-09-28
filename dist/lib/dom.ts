@@ -93,13 +93,13 @@ export function setGlobalCursor(type?: string): void {
     }
 }
 
-/** --- 最后一次 touchstart 的时间戳 */
+/** --- 最后一次 touchstart 的时间戳 --- */
 let lastTouchTime: number = 0;
 // --- 添加 touchstart 事件，既优化了点击行为，也记录了 touch 的时间戳信息 ---
 document.addEventListener('touchstart', function() {
     lastTouchTime = Date.now();
 }, {
-    'passive': true
+    'passive': true,
 });
 
 /**
