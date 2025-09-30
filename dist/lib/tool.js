@@ -33,7 +33,11 @@ export async function compressor(file, options = {}) {
     if (!compressorjs) {
         try {
             const cdn = window.clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
-            compressorjs = await import(cdn + '/npm/compressorjs@1.2.1/+esm');
+            await loadScript(cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js');
+            if (!window.Compressor) {
+                throw Error('Compressor load failed.');
+            }
+            compressorjs = window.Compressor;
         }
         catch {
             return false;
@@ -44,7 +48,7 @@ export async function compressor(file, options = {}) {
             resolve(false);
             return;
         }
-        new compressorjs.default(file, {
+        new compressorjs(file, {
             'quality': options.quality,
             'maxWidth': options.maxWidth,
             'maxHeight': options.maxHeight,

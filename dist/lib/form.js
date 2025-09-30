@@ -2787,6 +2787,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
     // --- 其实后面会重写 taskId，这里先提前赋值一下，以使初始化时就能知道 taskId  ---
     Object.defineProperty(cls.prototype, 'taskId', {
         get: () => t.id,
+        'configurable': true,
     });
     /** --- 要新建的 panel 类对象 --- */
     const panel = new cls();
@@ -3129,6 +3130,7 @@ export async function create(current, cls, data, opt = {}) {
     // --- 其实后面会重写 taskId，这里先提前赋值一下，以使初始化时就能知道 taskId  ---
     Object.defineProperty(cls.prototype, 'taskId', {
         get: () => t.id,
+        'configurable': true,
     });
     /** --- 要新建的窗体类对象 --- */
     const frm = new cls();

@@ -1229,7 +1229,8 @@ export function removeTimer(current, timer) {
         return;
     }
     const formId = list[current].timers[timer];
-    if (!formId) {
+    if (formId === undefined) {
+        // --- undefined 代表 timer 不存在，为空代表不限定 form ---
         return;
     }
     // --- 放在这，防止一个 task 能结束 别的 task 的 timer ---

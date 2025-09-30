@@ -1,5 +1,6 @@
 .wrap {
     border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); box-shadow: var(--g-shadow);
+
     &.size-s {
         width: var(--g-padding-s); height: var(--g-padding-s);
     }
@@ -12,6 +13,7 @@
     &.size-xl {
         width: var(--g-padding-xl); height: var(--g-padding-xl);
     }
+
     &:not(.plain) {
         background-color: var(--g-plain-border-color); color: oklch(1 0 0); border: solid .5px transparent;
         &.primary {

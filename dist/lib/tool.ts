@@ -15,7 +15,7 @@
  */
 
 /** --- compressorjs 压缩图片原生类 --- */
-let compressorjs: typeof import('compressorjs') | null = null;
+let compressorjs: typeof import('compressorjs').default | null = null;
 
 /**
  * --- 运行 iife 代码 ---
@@ -43,7 +43,11 @@ export async function compressor<T extends File | Blob>(file: T, options: {
     if (!compressorjs) {
         try {
             const cdn = (window as any).clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
-            compressorjs = await import(cdn + '/npm/compressorjs@1.2.1/+esm');
+            await loadScript(cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js');
+            if (!(window as any).Compressor) {
+                throw Error('Compressor load failed.');
+            }
+            compressorjs = (window as any).Compressor;
         }
         catch {
             return false;
@@ -54,7 +58,7 @@ export async function compressor<T extends File | Blob>(file: T, options: {
             resolve(false);
             return;
         }
-        new compressorjs.default(file, {
+        new compressorjs(file, {
             'quality': options.quality,
             'maxWidth': options.maxWidth,
             'maxHeight': options.maxHeight,
