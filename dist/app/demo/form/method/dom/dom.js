@@ -14,12 +14,53 @@ export default class extends clickgo.form.AbstractForm {
         this.moveTop = 0;
         this.moveWidth = 25;
         this.moveHeight = 25;
+        this.micWs = 'wss://127.0.0.1:8080/speaker';
+        /** --- 说话中 --- */
+        this.micHuman = false;
+        /** --- rms 值 --- */
+        this.micRms = 0;
+        /** --- 麦克风状态，1-准备中,2-对讲中,3-关闭中 --- */
+        this.micState = 0;
         this.watchPositionText = false;
         this.getWatchInfoDisabled = false;
         this.getWatchInfoText = '{}';
         this.scaleX = 0;
         this.scaleY = 0;
         this.scaleS = 1;
+    }
+    async micClick() {
+        if (this.micState) {
+            this.micState = 3;
+            clickgo.dom.mic.stop();
+            return;
+        }
+        this.micState = 1;
+        // --- 开始对讲 ---
+        const rtn = await clickgo.dom.mic.start(this.micWs, {
+            onStart: () => {
+                this.micState = 2;
+            },
+            onVoiceStart: () => {
+                this.micHuman = true;
+            },
+            onVoiceEnd: () => {
+                this.micHuman = false;
+            },
+            onProcess: (data) => {
+                this.micRms = data.rms;
+            },
+            onStop: () => {
+                this.micState = 0;
+                this.micHuman = false;
+                this.micRms = 0;
+            },
+        });
+        if (rtn) {
+            // --- 正确连接 ---
+            return;
+        }
+        this.micState = 0;
+        await clickgo.form.dialog(this, 'No microphone found.');
     }
     get isMove() {
         return clickgo.dom.is.move;

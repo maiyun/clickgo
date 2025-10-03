@@ -65,6 +65,13 @@
                 <block style="background: #07c160; width: 25px; height: 25px; pointer-events: none;" :style="{'transform': 'translate3d(' + scaleX + 'px, ' + scaleY + 'px, 0) scale(' + scaleS + ')'}"></block>
             </block>
             <button @click="fullscreen" >fullscreen()</button>
+            <layout gutter="10" align-v="center">
+                <circle :type="micHuman ? 'primary' : 'danger'" />
+                <label>Microphone: {{micState}}</label>
+                <label>Rms: {{micRms}}</label>
+            </layout>
+            <text v-model="micWs" placeholader="ws:// wss://"></text>
+            <button @click="micClick" :disabled="micState === 1 || micState === 3">{{micState > 0 ? 'stop' : 'start'}}</button>
             <label>clickgo.dom.is.move: {{isMove ? 'true' : 'false'}}</label>
             <label>clickgo.dom.is.shift: {{isShift ? 'true' : 'false'}}</label>
             <label>clickgo.dom.is.ctrl: {{isCtrl ? 'true' : 'false'}}</label>

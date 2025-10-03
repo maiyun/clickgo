@@ -2474,6 +2474,237 @@ export async function exitFullscreen() {
 export function createElement(tagName) {
     return document.createElement(tagName);
 }
+/** --- 麦克风状态,0-未对讲,1-准备中,2-对讲中 --- */
+let micState = 0;
+/** --- 麦克风通过 WebSocket 对讲的 WebSocket 实例 --- */
+let micWs = null;
+const blob = new Blob([`
+class MicrophoneProcessor extends AudioWorkletProcessor {
+    constructor() {
+        super();
+        this.voice = false;     // --- 当前是否是说话状态 ---
+        this.voiceStart = 0;    // --- 从静音到说话时的开始时间 ---
+        this.voiceLast = 0;     // --- 最后一次说话的时间 ---
+        this.lastPost = 0;      // --- 最后一次发送 buffer 的时间 ---
+    }
+    // --- 计算音频帧的平均音量（均方根） ---
+    // --- 大于等于 .05 代表可能在说话 ---
+    calculateVolume(channel) {
+        let sum = 0;
+        for (let i = 0; i < channel.length; i++) {
+            // --- 平方和 ---
+            sum += channel[i] * channel[i];
+        }
+        // --- 均方根 ---
+        const rms = Math.sqrt(sum / channel.length);
+        return rms;
+    }
+
+    process(inputs, outputs) {
+        // --- 获取输入音频数据（单声道） ---
+        const input = inputs[0];
+        const channel = input[0];
+        const now = Date.now();
+        
+        // --- 计算当前帧的音量 ---
+        const volume = this.calculateVolume(channel);
+        this.port.postMessage({
+            'type': 'process',
+            'rms': volume,
+        });
+        if (volume > .05) {
+            this.voiceLast = now;
+        }
+
+        // --- 判断是否要发送 buffer ---
+        if (this.voice) {
+            // --- 说话中 ---
+            if (volume >= .05) {
+                // --- 继续说话 ---
+            }
+            else {
+                // --- 判断是否说话结束 ---
+                if (now - this.voiceLast >= 1_000) {
+                    // --- 说话结束 ---
+                    this.voice = false;
+                    this.voiceStart = 0;
+                    this.port.postMessage({
+                        'type': 'voice-end'
+                    });
+                }
+                // --- 不结束，等待到 1 秒观察 ---
+            }
+        }
+        else {
+            // --- 静音中 ---
+            if (volume >= .05) {
+                // --- 判断是否要说话开始 ---
+                if (this.voiceStart === 0) {
+                    this.voiceStart = now;
+                }
+                if (now - this.voiceStart >= 300) {
+                    // --- 说话开始 ---
+                    this.voice = true;
+                    this.port.postMessage({
+                        'type': 'voice-start'
+                    });
+                }
+                // --- 不开始，等待到 300ms 观察 ---
+            }
+            else {
+                // --- 当前没声音，判断是否是真的安静了 ---
+                if (now - this.voiceLast > 300) {
+                    // --- 又安静了 ---
+                    this.voiceStart = 0;
+                }
+            }
+        }
+
+        if (
+            (now - this.voiceLast >= 1_000) &&
+            (now - this.lastPost < 30_000)
+        ) {
+            // --- 超过 1 秒没声音直接 buffer 都不发送 ---
+            return true;
+        }
+
+        // --- 转换为 Int16 ---
+        const output = new Int16Array(channel.length);
+        for (let i = 0; i < channel.length; i++) {
+            // --- 限制范围并转换 ---
+            const sample = Math.max(-1, Math.min(1, channel[i]));
+            output[i] = sample < 0 ? sample * 32768 : sample * 32767;
+        }
+
+        // --- 通过消息将处理后的数据发送到主线程 ---
+        this.lastPost = now;
+        this.port.postMessage(output.buffer, [output.buffer]);
+        
+        // --- 保持处理器运行 ---
+        return true;
+    }
+}
+
+// --- 注册处理器 ---
+registerProcessor('microphone-processor', MicrophoneProcessor);
+`], { 'type': 'application/javascript' });
+/** --- 音频处理器 --- */
+const micProcessor = URL.createObjectURL(blob);
+/** --- 麦克风通过 WebSocket 对讲 --- */
+export const mic = {
+    /**
+     * --- 开始对讲 ---
+     * @param ws ws:// wss://
+     * @param opts 选项
+     */
+    start: async function (ws, opts = {}) {
+        if (micState > 0) {
+            return true;
+        }
+        // --- 进入准备状态 ---
+        micState = 1;
+        const rtn = opts.rtn ??= true;
+        try {
+            /** --- 获取设备 --- */
+            const stream = await navigator.mediaDevices.getUserMedia({
+                'audio': true,
+            });
+            micWs = new WebSocket(ws);
+            if (rtn) {
+                micWs.onmessage = async (ev) => {
+                    try {
+                        const json = JSON.parse(ev.data);
+                        if (json.result <= 0) {
+                            mic.stop();
+                            return;
+                        }
+                        micState = 2; // --- 进入对讲状态 ---
+                        await opts.onStart?.();
+                    }
+                    catch {
+                        mic.stop();
+                    }
+                };
+            }
+            micWs.onopen = async () => {
+                if (rtn) {
+                    return;
+                }
+                micState = 2; // --- 进入对讲状态 ---
+                await opts.onStart?.();
+            };
+            micWs.onclose = () => {
+                // --- 可能还没成功就失败了，在这里设置 ---
+                micWs = null;
+                micState = 0;
+            };
+            /** --- 目标采样率 --- */
+            const targetSampleRate = 8000;
+            const audioCtx = new AudioContext({
+                'sampleRate': targetSampleRate,
+            });
+            /** --- 创建音频源节点 --- */
+            const source = audioCtx.createMediaStreamSource(stream);
+            await audioCtx.audioWorklet.addModule(micProcessor);
+            /** --- 创建AudioWorklet节点 --- */
+            const workletNode = new AudioWorkletNode(audioCtx, 'microphone-processor');
+            // --- 连接节点 ---
+            source.connect(workletNode);
+            workletNode.connect(audioCtx.destination);
+            // --- 监听事件 ---
+            workletNode.port.onmessage = async (ev) => {
+                if (!micWs) {
+                    // --- micWs 没了，触发清理 ---
+                    const tracks = stream.getTracks();
+                    for (const track of tracks) {
+                        track.stop();
+                    }
+                    await audioCtx.close();
+                    workletNode.port.close();
+                    workletNode.disconnect();
+                    source.disconnect();
+                    await opts.onStop?.();
+                    return;
+                }
+                if (micState !== 2) {
+                    return;
+                }
+                if (micWs.readyState === WebSocket.CLOSING || micWs.readyState === WebSocket.CLOSED) {
+                    mic.stop();
+                    return;
+                }
+                if (ev.data.type === 'voice-start') {
+                    await opts.onVoiceStart?.();
+                    return;
+                }
+                if (ev.data.type === 'voice-end') {
+                    await opts.onVoiceEnd?.();
+                    return;
+                }
+                if (ev.data.type === 'process') {
+                    await opts.onProcess?.({
+                        'rms': ev.data.rms,
+                    });
+                    return;
+                }
+                micWs.send(ev.data);
+            };
+            return true;
+        }
+        catch {
+            micState = 0;
+            return false;
+        }
+    },
+    /** --- 结束对讲 --- */
+    stop: function () {
+        micState = 0;
+        if (!micWs) {
+            return;
+        }
+        micWs.close();
+    }
+};
 // --- 需要初始化 ---
 let inited = false;
 export function init() {
