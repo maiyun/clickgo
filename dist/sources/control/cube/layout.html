@@ -1,0 +1,12 @@
+<div class="wrap" :class="['size-'+size]" :style="{'--cg-hue':hue,'--cg-width':width+'px','--cg-height':height+'px','width':swidth+'px','height':'calc('+sheight+'px + var(--cg-width) / 2)'}">
+    <div class="content">
+        <!-- 正面 -->
+        <div class="front"></div>
+        <!-- 右侧 -->
+        <div class="right"></div>
+        <!-- 顶部 -->
+        <div class="top" ref="top">
+            <slot></slot>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-<form width="300" height="500" title="Icon" padding="10">
+<form width="450" height="500" title="Icon" padding="10">
     <layout gutter="20" direction="v" style="flex: 1">
         <label>id</label>
         <layout gutter="20" align-v="center">
@@ -23,6 +23,9 @@
             <icon name="info"></icon>
             <icon name="info" size="m"></icon>
             <label>info</label>
+            <icon name="refresh"></icon>
+            <icon name="refresh" size="m"></icon>
+            <label>refresh</label>
         </layout>
         <layout gutter="20" align-v="center">
             <icon name="copy"></icon>
@@ -31,6 +34,9 @@
             <icon name="cut"></icon>
             <icon name="cut" size="m"></icon>
             <label>cut</label>
+            <icon name="plus"></icon>
+            <icon name="plus" size="m"></icon>
+            <label>plus</label>
         </layout>
         <layout gutter="20" align-v="center">
             <icon name="paste"></icon>
@@ -39,6 +45,9 @@
             <icon name="sun"></icon>
             <icon name="sun" size="m"></icon>
             <label>sun</label>
+            <icon name="trash"></icon>
+            <icon name="trash" size="m"></icon>
+            <label>trash</label>
         </layout>
         <layout gutter="20" align-v="center">
             <icon name="moon"></icon>
@@ -47,6 +56,9 @@
             <icon name="drag"></icon>
             <icon name="drag" size="m"></icon>
             <label>drag</label>
+            <icon name="speaker"></icon>
+            <icon name="speaker" size="m"></icon>
+            <label>speaker</label>
         </layout>
         <layout gutter="20" align-v="center">
             <icon name="close"></icon>
@@ -55,6 +67,9 @@
             <icon name="keyboard"></icon>
             <icon name="keyboard" size="m"></icon>
             <label>keyboard</label>
+            <icon name="cpu"></icon>
+            <icon name="cpu" size="m"></icon>
+            <label>cpu</label>
         </layout>
         <layout gutter="20" align-v="center">
             <icon name="eye"></icon>
@@ -63,6 +78,17 @@
             <icon name="eye-slash"></icon>
             <icon name="eye-slash" size="m"></icon>
             <label>eye-slash</label>
+            <icon name="key"></icon>
+            <icon name="key" size="m"></icon>
+            <label>key</label>
+        </layout>
+        <layout gutter="20" align-v="center">
+            <icon name="surveillance"></icon>
+            <icon name="surveillance" size="m"></icon>
+            <label>surveillance</label>
+            <icon name="record"></icon>
+            <icon name="record" size="m"></icon>
+            <label>record</label>
         </layout>
     </layout>
 </form>

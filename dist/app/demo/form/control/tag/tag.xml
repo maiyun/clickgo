@@ -29,7 +29,7 @@
         <layout gutter="10" align-v="center">
             <tag :close="vclose" type="primary" plain size="xlh">xlh</tag>
             <tag :close="vclose" type="primary" plain size="lh">lh</tag>
-            <tag :close="vclose" type="primary" plain size="mh">mh</tag>
+            <tag :close="vclose" type="primary" plain size="mh">mh<circle size="xl" sub>8</circle></tag>
         </layout>
         <layout gutter="10" align-v="center">
             <tag :close="vclose" type="primary" plain rsize="m">rsize m</tag>

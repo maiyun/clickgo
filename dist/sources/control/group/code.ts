@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'title': string;
         'plain': boolean | string;
+        'hover': boolean | string;
 
         'direction': 'h' | 'v';
         'gutter': number | string;
@@ -15,6 +16,7 @@ export default class extends clickgo.control.AbstractControl {
     } = {
             'title': '',
             'plain': false,
+            'hover': false,
 
             'direction': 'h',
             'gutter': '',

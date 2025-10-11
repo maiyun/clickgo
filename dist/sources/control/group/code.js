@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
         this.props = {
             'title': '',
             'plain': false,
+            'hover': false,
             'direction': 'h',
             'gutter': '',
             'alignH': undefined,

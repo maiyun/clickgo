@@ -105,9 +105,19 @@
         .drag {
             cursor: move; padding-left: 8px; font-family: 'ifont'; opacity: .5;
         }
+        
+        .prepend {
+            display: flex; align-items: center; padding-left: var(--g-padding);
+        }
+
         .content {
             padding: var(--g-padding);
         }
+
+        .append {
+            display: flex; align-items: center; padding-right: var(--g-padding);
+        }
+
         .close {
             margin-right: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px; transition: var(--g-transition); border: solid .5px transparent;
             &:hover {

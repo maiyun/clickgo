@@ -445,7 +445,7 @@ export function layoutClassPrepend(layout, preps) {
         //}).replace(/ :class=(["']).+?>/gi, function(t, sp) {
     }).replace(/ :class=(["']).+?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function (t, sp) {
         return t.replace(new RegExp(`:class=${sp}([^"]+?)${sp}`, 'gi'), function (t, t1) {
-            // return t.replace(new RegExp(` :class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
+            // return t.replace(new RegExp(`:class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
             // --- t1 为 [] 或 {} ---
             t1 = t1.trim();
             if (t1.startsWith('[')) {
@@ -466,7 +466,7 @@ export function layoutClassPrepend(layout, preps) {
             else {
                 t1 = layoutClassPrependObject(t1);
             }
-            return ` :class="${t1}"`;
+            return `:class="${t1}"`;
         });
     }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
     return rtn;

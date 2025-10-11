@@ -142,11 +142,6 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Plus SVG Vector](https://www.svgrepo.com/svg/447037/plus)
 
-#### Uploader
-
-[Plus SVG Vector](https://www.svgrepo.com/svg/447037/plus)
-[Trash SVG Vector](https://www.svgrepo.com/svg/447040/trash)
-
 #### Video
 
 [Play SVG Vector](https://www.svgrepo.com/svg/447035/play)  
@@ -173,12 +168,6 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Drag Handle SVG Vector](https://www.svgrepo.com/svg/459043/drag-handle)
 
-### **LICENSE:** CC Attribution License **AUTHOR:** krystonschwarze
-
-#### Uploader
-
-[Drag Vertical SVG Vector](https://www.svgrepo.com/svg/510958/drag-vertical)
-
 ### **LICENSE:** MIT License **AUTHOR:** developmentseed
 
 #### Map
@@ -197,12 +186,15 @@ This library is published under [Apache-2.0](./LICENSE) license.
 #### Icon
 
 [Question Circle SVG Vector](https://www.svgrepo.com/svg/522997/question-circle)  
-[Info Circle SVG Vector](https://www.svgrepo.com/svg/522904/info-circle)
-[Copy SVG Vector](https://www.svgrepo.com/svg/522803/copy)
-[Scissors SVG Vector](https://www.svgrepo.com/svg/523012/scissors)
-[Paste SVG Vector](https://www.svgrepo.com/svg/489767/paste)
-[Sun 2 SVG Vector](https://www.svgrepo.com/svg/529971/sun-2)
-[Moon SVG Vector](https://www.svgrepo.com/svg/529729/moon)
+[Info Circle SVG Vector](https://www.svgrepo.com/svg/522904/info-circle)  
+[Copy SVG Vector](https://www.svgrepo.com/svg/522803/copy)  
+[Scissors SVG Vector](https://www.svgrepo.com/svg/523012/scissors)  
+[Paste SVG Vector](https://www.svgrepo.com/svg/489767/paste)  
+[Sun 2 SVG Vector](https://www.svgrepo.com/svg/529971/sun-2)  
+[Moon SVG Vector](https://www.svgrepo.com/svg/529729/moon)  
+[Cpu Bolt SVG Vector](https://www.svgrepo.com/svg/529532/cpu-bolt)  
+[Key SVG Vector](https://www.svgrepo.com/svg/529040/key)  
+[Videocamera Record SVG Vector](https://www.svgrepo.com/svg/525169/videocamera-record)
 
 ### **LICENSE:** CC Attribution License **AUTHOR:** Dazzle UI
 
@@ -210,7 +202,8 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Keyboard SVG Vector](https://www.svgrepo.com/svg/533083/keyboard)
 [Eye Slash Alt SVG](https://www.svgrepo.com/svg/532463/eye-slash-alt)  
-[Eye Alt SVG Vector ](https://www.svgrepo.com/svg/532492/eye-alt)
+[Eye Alt SVG Vector](https://www.svgrepo.com/svg/532492/eye-alt)
+[Refresh Cw SVG Vector](https://www.svgrepo.com/svg/533701/refresh-cw)
 
 ### **LICENSE:** CC0 License **UPLOADER:** SVG Repo
 
@@ -225,3 +218,18 @@ This library is published under [Apache-2.0](./LICENSE) license.
 
 [Bold SVG Vector](https://www.svgrepo.com/svg/501109/bold)  
 [Italic SVG Vector](https://www.svgrepo.com/svg/501238/italic)
+
+### **LICENSE:** MIT License **AUTHOR:** sigurdarson
+
+#### Icon
+
+[Plus SVG Vector](https://www.svgrepo.com/svg/447037/plus)  
+[Trash SVG Vector](https://www.svgrepo.com/svg/447040/trash)
+
+### **LICENSE:** CC Attribution License **AUTHOR:** Software Mansion
+
+[Speaker 2 SVG Vector](https://www.svgrepo.com/svg/506329/speaker-2)
+
+### **LICENSE:** PD License **AUTHOR:** owlling
+
+[Surveillance O SVG Vector](https://www.svgrepo.com/svg/433802/surveillance-o)

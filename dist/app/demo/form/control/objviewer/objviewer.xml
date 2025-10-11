@@ -1,0 +1,26 @@
+<form width="600" height="700" title="Objviewer">
+    <objviewer direction="v" :plain="plain" gutter="20" style="flex: 1;">
+        <layout gutter="20">
+            <objviewer-item>1</objviewer-item>
+            <objviewer-item hue="230" hover>2</objviewer-item>
+            <objviewer-item hue="200" hover>3</objviewer-item>
+            <objviewer-item hue="160" hover>4</objviewer-item>
+        </layout>
+        <layout gutter="20">
+            <objviewer-item label="label1">1</objviewer-item>
+            <objviewer-item hue="230" label="label2" hover>2</objviewer-item>
+            <objviewer-item hue="200" label="label3" hover>3</objviewer-item>
+            <objviewer-item hue="160" label="label4" hover>4</objviewer-item>
+        </layout>
+        <layout gutter="20">
+            <objviewer-item label="Server" align-v="center">
+                <cube><icon name="cpu" size="m"></icon></cube>
+            </objviewer-item>
+            <objviewer-item hue="230" label="label2">
+                <cube hue="230" size="xl"><icon name="record" size="xxl"></icon></cube>
+            </objviewer-item>
+            <objviewer-item hue="200" label="label3" align-v="center" hover>3</objviewer-item>
+            <objviewer-item hue="160" label="label4" align-v="center" hover>4</objviewer-item>
+        </layout>
+    </objviewer>
+</form>

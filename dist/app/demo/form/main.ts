@@ -67,6 +67,7 @@ import cwebFrm from './control/web/web';
 import ctplinkFrm from './control/tplink/tplink';
 import ctumsFrm from './control/tums/tums';
 import cnovncFrm from './control/novnc/novnc';
+import cobjviewerFrm from './control/objviewer/objviewer';
 
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
@@ -403,6 +404,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ccaptcha': {
                 frm = await clickgo.form.create(this, ccaptchaFrm);
+                break;
+            }
+            case 'cobjviewer': {
+                frm = await clickgo.form.create(this, cobjviewerFrm);
                 break;
             }
 

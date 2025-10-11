@@ -156,9 +156,14 @@ global {
 // -- CONTROL -- group --
 
 .group_wrap {
-    border-radius: var(--g-radius-xl); box-shadow: 0 12px 16px -4px oklch(.2 0 0 / .08), 0 4px 6px -2px oklch(.2 0 0 / 0.03);
+    border-radius: var(--g-radius-xl);
+    &.group_hover:hover, &:not(.group_hover) {
+        box-shadow: 0 12px 16px -4px oklch(.9 0 0 / .08), 0 4px 6px -2px oklch(.9 0 0 / 0.03);
+    }
     &.group_plain {
-        box-shadow: 0px 0px 0px 1px oklch(.2 0 0 / .04), 0px 3px 16px 0px oklch(.2 0 0 / .06);
+        &.group_hover:hover, &:not(.group_hover) {
+            box-shadow: 0px 0px 0px 1px oklch(.9 0 0 / .04), 0px 3px 16px 0px oklch(.9 0 0 / .06);
+        }
     }
 }
 
@@ -333,3 +338,17 @@ global {
 .menulist_wrap {
     background: transparent; padding: 4px;
 }
+
+// --- CONTROL -- cube ---
+
+.cube_wrap {
+    .cube_content {
+        .cube_front {
+            background-color: color-mix(in oklch, oklch(.7 .23 var(--cg-hue)), black 65%);
+        }
+        .cube_right {
+            background-color: color-mix(in oklch, oklch(.7 .23 var(--cg-hue)), black 65%);
+        }
+    }
+}
+

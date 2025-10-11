@@ -1,11 +1,11 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @mousedown="down" @touchstart="down">
-    <div class="minus" @click="numberClick(-1)" :data-cg-disabled="(min !== undefined && min !== 'undefined' && (value <= propNumber('min'))) ? '' : undefined">-</div>
+    <div class="minus" @click="numberClick(-1)" @mousedown="udDown" @touchstart="udDown" :data-cg-disabled="(min !== undefined && min !== 'undefined' && (value <= propNumber('min'))) ? '' : undefined">-</div>
     <div v-if="slots['before']" class="before"><slot name="before"></slot></div>
     <div v-if="slots['prepend']" class="prepend"><slot name="prepend"></slot></div>
     <input ref="text" class="text" :class="[propBoolean('plain')&&'plain',isFocus&&'focus',propBoolean('require')&&!value&&'require',dangerBorder&&'dangerBorder']" type="number" :value="value" :placeholder="placeholder" :readonly="propBoolean('readonly')" :disabled="propBoolean('disabled')" :min="min===undefined?undefined:propNumber('min')" :max="max===undefined?undefined:propNumber('max')" @focus="tfocus" @blur="tblur" @input="input" @touchstart="inputTouch" @change="$event.stopPropagation()" @contextmenu="contextmenu" @select="select" @keydown="keydown">
     <div v-if="slots['append']" class="append"><slot name="append"></slot></div>
     <div v-if="slots['after']" class="after"><slot name="after"></slot></div>
-    <div class="plus" @click="numberClick(1)" :data-cg-disabled="(max !== undefined && max !== 'undefined' && (value >= propNumber('max'))) ? '' : undefined">+</div>
+    <div class="plus" @click="numberClick(1)" @mousedown="udDown" @touchstart="udDown" :data-cg-disabled="(max !== undefined && max !== 'undefined' && (value >= propNumber('max'))) ? '' : undefined">+</div>
     <teleport to="system">
         <div ref="pop" class="pop">
             <slot>

@@ -25,6 +25,21 @@
     &.thru {
         text-decoration: line-through;
     }
+    &.primary {
+        color: var(--success);
+    }
+    &.info {
+        color: var(--info);
+    }
+    &.warning {
+        color: var(--warning);
+    }
+    &.danger {
+        color: var(--danger);
+    }
+    &.cg {
+        color: var(--cg);
+    }
 
     // --- size ---
     &.size-m {

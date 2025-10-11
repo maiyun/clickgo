@@ -133,6 +133,7 @@
                 <layout gutter="10">
                     <button @click="openForm('ctplink')">Tplink</button>
                     <button @click="openForm('ctums')">Tums</button>
+                    <button @click="openForm('cobjviewer')">Objviewer + Cube</button>
                 </layout>
             </layout>
         </flow>

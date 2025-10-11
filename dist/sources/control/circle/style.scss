@@ -1,17 +1,17 @@
 .wrap {
-    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); box-shadow: var(--g-shadow);
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); box-shadow: var(--g-shadow); pointer-events: none; width: var(--cg-width); height: var(--cg-height);
 
     &.size-s {
-        width: var(--g-padding-s); height: var(--g-padding-s);
+        --cg-width:var(--g-padding-s); --cg-height:--g-padding-s;
     }
     &.size-m {
-        width: var(--g-padding); height: var(--g-padding);
+        --cg-width:var(--g-padding); --cg-height:var(--g-padding);
     }
     &.size-l {
-        width: var(--g-padding-l); height: var(--g-padding-l);
+        --cg-width:var(--g-padding-l); --cg-height:var(--g-padding-l);
     }
     &.size-xl {
-        width: var(--g-padding-xl); height: var(--g-padding-xl);
+        --cg-width:var(--g-padding-xl); --cg-height:var(--g-padding-xl);
     }
 
     &:not(.plain) {
@@ -51,5 +51,9 @@
         &.danger {
             border-color: var(--danger); color: var(--danger); background-color: var(--danger-bg);
         }
+    }
+
+    &.sub {
+        position: absolute; z-index: 1; right: calc(-1 * var(--cg-width) / 2); top: calc(-1 * var(--cg-height) / 2);
     }
 }

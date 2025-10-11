@@ -1,0 +1,14 @@
+.wrap {
+    background-image: repeating-linear-gradient(0deg, var(--g-plain-border-color), var(--g-plain-border-color) 1px, transparent 1px, transparent 16px), repeating-linear-gradient(90deg, var(--g-plain-border-color), var(--g-plain-border-color) 1px, transparent 1px, transparent 16px); position: relative;
+
+    .content {
+        position: absolute; display: flex; 
+        &.v {
+            flex-direction: column;
+        }
+    }
+
+    .refresh {
+        position: absolute; right: var(--g-padding-l); bottom: var(--g-padding-l); z-index: 1;
+    }
+}

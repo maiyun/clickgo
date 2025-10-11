@@ -125,6 +125,7 @@
                     </template>
                 </button>
                 <button @click="sizeh = !sizeh">{{sizeh ? '' : '!'}}sizeh</button>
+                <button>circle<circle size="xl" sub>8</circle></button>
             </layout>
             <label>Bgroup:</label>
             <layout gutter="10">

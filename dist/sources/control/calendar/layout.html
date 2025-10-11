@@ -28,7 +28,7 @@
             <slot name="left" :row="row" :index="index"></slot>
         </div>
         <div class="col" v-for="col of row" :style="{'color': col.month !== vmonth[0] ? 'var(--g-color-disabled)' : undefined}" :class="[{'selected': (dateValue.year !== '0') && (dateValue.year === col.year) && (dateValue.month === col.month) && (dateValue.date === col.date), 'mselected': values.includes(col.value)}]" @click="colClick(col)" :data-cg-disabled="isDisabled(col)">
-            <cg-check v-if="col.month === vmonth[0]" :modelValue="values.includes(col.value)" @changed="checkChanged(col)" @click="checkClick"></cg-check>
+            <cg-check v-if="(col.month === vmonth[0]) && (isDisabled(col) === undefined)" :modelValue="values.includes(col.value)" @changed="checkChanged(col)" @click="checkClick"></cg-check>
             <div class="colh">{{col.date}}</div>
             <div class="colb" v-if="slots['default']">
                 <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :value="col.value"></slot>

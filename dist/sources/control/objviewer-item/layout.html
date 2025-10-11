@@ -1,0 +1,6 @@
+<div class="wrap" :style="{'--cg-hue':hue}">
+    <div class="content" :class="[direction,propBoolean('hover')&&'hover']" :style="{'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
+        <slot></slot>
+    </div>
+    <div v-if="label" class="label">{{label}}</div>
+</div>

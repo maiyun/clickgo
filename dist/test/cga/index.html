@@ -2,7 +2,14 @@
 <head>
 <title>This is cga file test</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
-<script type="module" src="./index.pack.js"></script>
+<script type="importmap">
+{
+    "imports": {
+        "clickgo": "../../index.js"
+    }
+}
+</script>
+<script type="module" src="./index.js"></script>
 <style>
 #state ::selection {
     background: rgba(255, 255, 255, .3);

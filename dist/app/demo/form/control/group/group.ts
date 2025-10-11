@@ -4,6 +4,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public plain = false;
 
+    public hover = false;
+
     public padding = true;
 
     public title = 'The title';

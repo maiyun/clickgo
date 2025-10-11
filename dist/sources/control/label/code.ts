@@ -3,7 +3,7 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public props: {
-        'mode': 'default' | 'tip' | 'mtip' | 'date' | 'important' | 'click';
+        'mode': 'default' | 'tip' | 'mtip' | 'date' | 'important' | 'click' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
         'content': string;
         'size': 's' | 'm' | 'l' | 'xl';
         'align': 'left' | 'start' | 'center' | 'right' | 'end';

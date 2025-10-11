@@ -263,6 +263,15 @@ export default class extends clickgo.control.AbstractControl {
         e.stopPropagation();
     }
 
+    /** --- up/down 按钮点击时，阻止默认事件 --- */
+    public udDown(e: MouseEvent | TouchEvent): void {
+        e.preventDefault();
+        if (this.isFocus) {
+            return;
+        }
+        this.refs.text.focus();
+    }
+
     /**
      * --- number 模式下，点击右侧的控制按钮 ---
      * @param num 增加或者是减少

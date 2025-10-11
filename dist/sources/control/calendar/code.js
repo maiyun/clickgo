@@ -458,7 +458,7 @@ export default class extends clickgo.control.AbstractControl {
                 };
                 col.value = `${col.year}${col.month}${col.date}`;
                 // --- 周数组，月数组 ---
-                if (month === this.vmonth[0]) {
+                if ((month === this.vmonth[0]) && (this.isDisabled(col) === undefined)) {
                     if (!this.weekMaps[day]) {
                         this.weekMaps[day] = [];
                     }

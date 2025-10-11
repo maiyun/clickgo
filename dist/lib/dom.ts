@@ -443,7 +443,9 @@ export function watchSize(
         }
         catch {}
     }
-    resizeObserver.observe(el);
+    resizeObserver.observe(el, {
+        'box': 'border-box',
+    });
     watchSizeList[watchSizeIndex] = {
         'el': el,
         'handler': cb,

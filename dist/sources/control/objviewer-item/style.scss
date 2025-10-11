@@ -1,0 +1,20 @@
+.wrap {
+    display: flex; flex-direction: column; color: oklch(.7 .23 var(--cg-hue));
+    
+    .content {
+        display: flex; border: 2px solid oklch(.7 .23 var(--cg-hue)); background-color: oklch(.7 .23 var(--cg-hue) / .1); padding: var(--g-padding-xl); border-radius: var(--g-radius); transition: var(--g-transition); flex: 1;
+        &.v {
+            flex-direction: column;
+        }
+
+        &.hover {
+            &:hover {
+                background-color: oklch(.7 .23 var(--cg-hue) / .3);
+            }
+        }
+    }
+
+    .label {
+        margin-top: var(--g-padding-xs); text-align: center;
+    }
+}

@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
         this.props = {
             'type': 'default',
             'plain': false,
+            'sub': false,
             'size': 's',
         };
     }

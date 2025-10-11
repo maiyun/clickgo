@@ -49,58 +49,6 @@ function terserPlugin(es) {
     };
 }
 /**
- * --- 编译网页上的运行 boot ---
- * @param path 要编译的 js 入口文件，不以 .js 结尾
- * @param clickgo clickgo 的加载路径，相对路径或网址，完整路径（比如要包含 .js）
- * @param save 保存编译后的 js 文件路径，不要带扩展名的文件路径 或 以 / 结尾的存储路径
- */
-export async function boot(path, clickgo, save) {
-    if (path.endsWith('.js')) {
-        path = path.slice(0, -3);
-    }
-    const lio = path.lastIndexOf('/');
-    /** --- 保存的文件名 --- */
-    const name = lio === -1 ? path : path.slice(lio + 1);
-    // --- 保存位置 ---
-    if (save) {
-        if (save.endsWith('/')) {
-            save += name + '.pack';
-        }
-    }
-    else {
-        const lio = path.lastIndexOf('/');
-        if (lio === -1) {
-            save = name + '.pack';
-        }
-        else {
-            save = path.slice(0, lio + 1) + name + '.pack';
-        }
-    }
-    // --- 打包 js ---
-    try {
-        const bundle = await rollup.rollup({
-            'input': `${path}.js`,
-            'external': ['clickgo'],
-            'plugins': [
-                terserPlugin(2020),
-            ],
-        });
-        await bundle.write({
-            'file': `${save}.js`,
-            'format': 'es',
-            'paths': {
-                'clickgo': clickgo,
-            },
-        });
-        await bundle.close();
-        return true;
-    }
-    catch (e) {
-        console.error('[BOOT]', e);
-        return false;
-    }
-}
-/**
  * --- 编译控件源码为 cgc 文件 ---
  * @param paths 控件源码路径列表，后缀无所谓是否 / 结尾，以不以 / 结尾优先
  * @param save 保存文件路径，不要带扩展名的文件路径 或 以 / 结尾的存储路径
