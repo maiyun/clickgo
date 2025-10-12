@@ -1,5 +1,5 @@
-<form width="600" height="700" title="Objviewer">
-    <objviewer direction="v" :plain="plain" gutter="20" style="flex: 1;">
+<form width="600" height="700" title="Objviewer" direction="v">
+    <objviewer direction="v" :plain="plain" :bg="bg" gutter="20" style="flex: 1;">
         <layout gutter="20">
             <objviewer-item>1</objviewer-item>
             <objviewer-item hue="230" hover>2</objviewer-item>
@@ -8,11 +8,11 @@
         </layout>
         <layout gutter="20">
             <objviewer-item label="label1">1</objviewer-item>
-            <objviewer-item hue="230" label="label2" hover>2</objviewer-item>
-            <objviewer-item hue="200" label="label3" hover>3</objviewer-item>
-            <objviewer-item hue="160" label="label4" hover>4</objviewer-item>
+            <objviewer-item hue="230" label="label2" border="ani" hover>2</objviewer-item>
+            <objviewer-item hue="200" label="label3" border="dotted" hover>3</objviewer-item>
+            <objviewer-item hue="160" label="label4" border="dashed" hover>4</objviewer-item>
         </layout>
-        <layout gutter="20">
+        <layout align-v="center" gutter="20">
             <objviewer-item label="Server" align-v="center">
                 <cube><icon name="cpu" size="m"></icon></cube>
             </objviewer-item>
@@ -20,7 +20,11 @@
                 <cube hue="230" size="xl"><icon name="record" size="xxl"></icon></cube>
             </objviewer-item>
             <objviewer-item hue="200" label="label3" align-v="center" hover>3</objviewer-item>
-            <objviewer-item hue="160" label="label4" align-v="center" hover>4</objviewer-item>
+            <cube hue="160" size="xl"><icon name="speaker" size="xxl"></icon></cube>
         </layout>
     </objviewer>
+    <layout gutter="10" align-v="center" style="padding: 10px;">
+        <label>bg:</label>
+        <select v-model="bg" :data="['dot', 'grid']" style="flex: 1;"></select>
+    </layout>
 </form>

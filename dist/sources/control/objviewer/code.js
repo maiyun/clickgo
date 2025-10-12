@@ -2,13 +2,13 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
     constructor() {
         super(...arguments);
-        this.emits = {};
         this.props = {
             'direction': 'h',
+            'bg': 'dot',
             'gutter': '',
             'alignH': undefined,
             'alignV': undefined,
-            'plain': false
+            'lines': [],
         };
         this.scaleS = 1;
         this.scaleX = 0;

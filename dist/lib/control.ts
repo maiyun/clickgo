@@ -1455,3 +1455,10 @@ export interface ITagDropEvent {
         'after': number;
     };
 }
+
+// --- Objviewer Control ---
+
+export interface IObjviewerLineObj {
+    'name': string;
+    'pos': 'lt' | 't' | 'tr' | 'r' | 'rb' | 'b' | 'bl' | 'l';
+}

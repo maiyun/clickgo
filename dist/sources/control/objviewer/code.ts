@@ -2,21 +2,26 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
-    public emits = {
-    };
-
     public props: {
         'direction': 'h' | 'v';
+        'bg': 'dot' | 'grid';
         'gutter': number | string;
         'alignH': string | undefined;
         'alignV': string | undefined;
-        'plain': boolean | string;
+
+        'lines': Array<{
+            'hue': string;
+            'start': clickgo.control.IObjviewerLineObj;
+            'end': clickgo.control.IObjviewerLineObj;
+        }> | string;
     } = {
             'direction': 'h',
+            'bg': 'dot',
             'gutter': '',
             'alignH': undefined,
             'alignV': undefined,
-            'plain': false
+
+            'lines': [],
         };
 
     public scaleS = 1;
