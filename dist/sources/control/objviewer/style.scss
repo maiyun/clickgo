@@ -1,3 +1,14 @@
+@keyframes ani-down {
+    to {
+        stroke-dashoffset: -45;
+    }
+}
+@keyframes ani-up {
+    to {
+        stroke-dashoffset: 45;
+    }
+}
+
 .wrap {
     position: relative; overflow: hidden;
 
@@ -16,6 +27,13 @@
 
         .svg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+
+            .ani-down {
+                animation: ani-down 2s linear infinite;
+            }
+            .ani-up {
+                animation: ani-up 2s linear infinite;
+            }
         }
     }
 

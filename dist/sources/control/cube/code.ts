@@ -2,6 +2,11 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'anistart': null,
+        'aniend': null,
+    };
+
     public props: {
         'hue': string;
         'size': 'xs' | 's' | 'm' | 'mh' | 'l' | 'lh' | 'xl' | 'xlh';
@@ -21,6 +26,42 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 变形后的高度 --- */
     public sheight = 0;
+
+    public aniTimer = 0;
+
+    public hoverstart(e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.aniTimer) {
+            this.emit('anistart');
+        }
+        // --- 动画中重置动画时间/新设动画 ---
+        if (this.aniTimer) {
+            clearTimeout(this.aniTimer);
+        }
+        this.aniTimer = window.setTimeout(() => {
+            this.aniTimer = 0;
+            this.emit('aniend');
+        }, 350);
+    }
+
+    public hoverend(e: MouseEvent | TouchEvent): void {
+        if (clickgo.dom.hasTouchButMouse(e)) {
+            return;
+        }
+        if (!this.aniTimer) {
+            this.emit('anistart');
+        }
+        // --- 动画中重置动画时间/新设动画 ---
+        if (this.aniTimer) {
+            clearTimeout(this.aniTimer);
+        }
+        this.aniTimer = window.setTimeout(() => {
+            this.aniTimer = 0;
+            this.emit('aniend');
+        }, 350);
+    }
 
     public onMounted(): void | Promise<void> {
         clickgo.dom.watchSize(this, this.refs.top, () => {

@@ -1,4 +1,4 @@
-@keyframes move-border {
+@keyframes border-ani {
     100% {
         background-position: 15px 0, -15px 100%, 0 -15px, 100% 15px;
     }
@@ -20,10 +20,10 @@
             border-style: dashed;
         }
         &.border-ani {
-            border-style: none;
+            border-color: transparent;
             &::after {
-                content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(
-90deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-x, linear-gradient(90deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-x, linear-gradient(0deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-y, linear-gradient(0deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-y; animation: move-border 2s 
+                content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; pointer-events: none; background: linear-gradient(
+90deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-x, linear-gradient(90deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-x, linear-gradient(0deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-y, linear-gradient(0deg, oklch(.7 .23 var(--cg-hue)) 50%, transparent 50%) repeat-y; animation: border-ani 2s 
 linear infinite; background-size: 15px 2px, 15px 2px, 2px 15px, 2px 15px; border-radius: var(--g-radius); background-position: 0 0, 0 100%, 0 0, 100% 0;
             }
         }

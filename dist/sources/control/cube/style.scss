@@ -1,5 +1,5 @@
 .wrap {
-    perspective: 1000px; position: relative; filter: drop-shadow(0 0 2px oklch(.7 .23 var(--cg-hue))); transition: transform .3s var(--g-cubic); display: flex; align-items: center; justify-content: center;
+    perspective: 1000px; position: relative; filter: drop-shadow(0 0 2px oklch(.7 .23 var(--cg-hue))); transition: transform .3s var(--g-cubic); display: flex; align-items: center; justify-content: center; color: oklch(.7 .23 var(--cg-hue));
     // --- size ---
     &.size-xs {
         --padding:var(--g-padding-xs);

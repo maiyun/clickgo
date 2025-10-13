@@ -1,4 +1,4 @@
-<div class="wrap" :class="['size-'+size]" :style="{'--cg-hue':hue,'--cg-width':width+'px','--cg-height':height+'px','width':swidth+'px','height':'calc('+sheight+'px + var(--cg-width) / 2)'}">
+<div class="wrap" :class="['size-'+size]" :style="{'--cg-hue':hue,'--cg-width':width+'px','--cg-height':height+'px','width':swidth+'px','height':'calc('+sheight+'px + var(--cg-width) / 2)'}" @mouseenter="hoverstart" @mouseleave="hoverend" @touchstart="hoverstart" @touchend="hoverend">
     <div class="content">
         <!-- 正面 -->
         <div class="front"></div>

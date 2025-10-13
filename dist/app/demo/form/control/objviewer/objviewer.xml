@@ -1,26 +1,26 @@
 <form width="600" height="700" title="Objviewer" direction="v">
-    <objviewer direction="v" :plain="plain" :bg="bg" gutter="20" style="flex: 1;">
+    <objviewer ref="objviewer" direction="v" :plain="plain" :bg="bg" gutter="20" lines="lines" style="flex: 1;">
         <layout gutter="20">
-            <objviewer-item>1</objviewer-item>
-            <objviewer-item hue="230" hover>2</objviewer-item>
+            <objviewer-item ref="objviewer-item-1">1</objviewer-item>
+            <objviewer-item ref="objviewer-item-2" hue="230" hover>2</objviewer-item>
             <objviewer-item hue="200" hover>3</objviewer-item>
-            <objviewer-item hue="160" hover>4</objviewer-item>
+            <objviewer-item ref="objviewer-item-3" hue="160" hover>4</objviewer-item>
         </layout>
         <layout gutter="20">
             <objviewer-item label="label1">1</objviewer-item>
             <objviewer-item hue="230" label="label2" border="ani" hover>2</objviewer-item>
-            <objviewer-item hue="200" label="label3" border="dotted" hover>3</objviewer-item>
+            <objviewer-item ref="objviewer-item-6" hue="200" label="label3" border="dotted" hover>3</objviewer-item>
             <objviewer-item hue="160" label="label4" border="dashed" hover>4</objviewer-item>
         </layout>
-        <layout align-v="center" gutter="20">
+        <layout align-v="center" gutter="20" style="margin-top: 20px;">
             <objviewer-item label="Server" align-v="center">
                 <cube><icon name="cpu" size="m"></icon></cube>
             </objviewer-item>
-            <objviewer-item hue="230" label="label2">
+            <objviewer-item ref="objviewer-item-5" hue="230" label="label2">
                 <cube hue="230" size="xl"><icon name="record" size="xxl"></icon></cube>
             </objviewer-item>
             <objviewer-item hue="200" label="label3" align-v="center" hover>3</objviewer-item>
-            <cube hue="160" size="xl"><icon name="speaker" size="xxl"></icon></cube>
+            <cube ref="objviewer-item-4" hue="160" size="xl" @anistart="anistart" @aniend="aniend" style="margin-left: 50px;"><icon name="speaker" size="xxl"></icon></cube>
         </layout>
     </objviewer>
     <layout gutter="10" align-v="center" style="padding: 10px;">

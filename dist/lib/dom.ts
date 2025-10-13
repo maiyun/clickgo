@@ -2685,6 +2685,64 @@ export function createElement<T extends keyof HTMLElementTagNameMap>(tagName: T)
     return document.createElement(tagName);
 }
 
+/** --- 获取元素的相对位置信息 --- */
+export function getElementRPosition(el: HTMLElement, wrap: HTMLElement): {
+    'left': number;
+    'top': number;
+    'width': number;
+    'height': number;
+} {
+    const rect = el.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+
+    return {
+        'left': rect.left - wrapRect.left,
+        'top': rect.top - wrapRect.top,
+        'width': rect.width,
+        'height': rect.height
+    };
+}
+
+/** --- 根据角位置获取八角坐标 --- */
+export function getRectPoint(el: HTMLElement, wrap: HTMLElement, pos: 'lt' | 't' | 'tr' | 'r' | 'rb' | 'b' | 'bl' | 'l'): {
+    'x': number;
+    'y': number;
+} {
+    const p = getElementRPosition(el, wrap);
+    const centerX = p.left + p.width / 2;
+    const centerY = p.top + p.height / 2;
+
+    switch (pos) {
+        case 't': {
+            return { 'x': centerX, 'y': p.top };
+        }
+        case 'tr': {
+            return { 'x': p.left + p.width, 'y': p.top };
+        }
+        case 'r': {
+            return { 'x': p.left + p.width, 'y': centerY };
+        }
+        case 'rb': {
+            return { 'x': p.left + p.width, 'y': p.top + p.height };
+        }
+        case 'b': {
+            return { 'x': centerX, 'y': p.top + p.height };
+        }
+        case 'bl': {
+            return { 'x': p.left, 'y': p.top + p.height };
+        }
+        case 'l': {
+            return { 'x': p.left, 'y': centerY };
+        }
+        case 'lt': {
+            return { 'x': p.left, 'y': p.top };
+        }
+        default: {
+            return { 'x': centerX, 'y': centerY };
+        }
+    }
+}
+
 /** --- 麦克风状态,0-未对讲,1-准备中,2-对讲中 --- */
 let micState = 0;
 

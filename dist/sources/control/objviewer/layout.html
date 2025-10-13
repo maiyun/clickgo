@@ -2,7 +2,7 @@
     <div class="content" ref="content" :class="[direction,propBoolean('plain')&&'plain']" :style="{'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0', 'transform': 'translate3d(' + scaleX + 'px, ' + scaleY + 'px, 0) scale(' + scaleS + ')'}">
         <slot></slot>
         <svg class="svg">
-            <path v-for="line in lines" fill="none" :stroke="line.hue ?? '255'" stroke-width="2" />
+            <path v-for="line in lines" :class="[['up', 'down'].includes(line.stroke) && ('ani-' + line.stroke)]" fill="none" :stroke="'oklch(.7 .23 ' + line.hue + ')'" stroke-width="2" :stroke-dasharray="line.stroke === 'solid' ? 'none' : '10,5'" :d="line.path" />
         </svg>
     </div>
     <cg-button @click="refresh" class="refresh"><cg-icon name="refresh"></cg-icon></cg-button>

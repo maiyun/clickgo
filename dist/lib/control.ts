@@ -1458,7 +1458,19 @@ export interface ITagDropEvent {
 
 // --- Objviewer Control ---
 
+export interface IObjviewerLine {
+    /** -- 可自定义线段的名称 --- */
+    'name'?: string;
+    'start': clickgo.control.IObjviewerLineObj;
+    'end': clickgo.control.IObjviewerLineObj;
+    /** --- 默认 255 --- */
+    'hue'?: string;
+    'path'?: string;
+    /** --- 默认 solid --- */
+    'stroke'?: 'solid' | 'dashed' | 'up' | 'down';
+}
+
 export interface IObjviewerLineObj {
-    'name': string;
+    'obj': HTMLElement | AbstractControl;
     'pos': 'lt' | 't' | 'tr' | 'r' | 'rb' | 'b' | 'bl' | 'l';
 }
