@@ -12,5 +12,6 @@ export default class extends clickgo.form.AbstractForm {
         this.position = ['top'];
         this.type = ['default'];
         this.warrow = true;
+        this.hue = false;
     }
 }

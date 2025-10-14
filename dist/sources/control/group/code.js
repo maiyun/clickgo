@@ -13,6 +13,7 @@ export default class extends clickgo.control.AbstractControl {
             'padding': true,
             'position': 'top',
             'type': 'default',
+            'hue': undefined,
         };
     }
 }

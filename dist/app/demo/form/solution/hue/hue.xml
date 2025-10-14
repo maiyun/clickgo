@@ -1,0 +1,7 @@
+<form width="800" height="500" title="Hue" padding="10" direction="v">
+    <layout gutter="20" wrap>
+        <layout v-for="i in 32" align-h="center" align-v="center" style="width: 50px; height: 50px; color: oklch(1 0 0);" :style="{'background':'oklch(.7 .23 var(--hue-'+(i-1)+'))'}">
+            <label>{{i - 1}}</label>
+        </layout>
+    </layout>
+</form>

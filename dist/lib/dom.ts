@@ -46,6 +46,16 @@ function classUnfold(after?: string, out: string[] = []): string {
     return arr.join(', ');
 }
 
+// --- hue 色盘 ---
+const hueCount = 360 / 32;
+let hueCssVar = '';
+/** --- hue 色盘 --- */
+export const hues: string[] = [];
+for (let i = 0; i < 32; ++i) {
+    const hue = (i * hueCount).toFixed(2);
+    hueCssVar += `--hue-${i}:${hue}; `;
+    hues.push(hue);
+}
 const styleList: HTMLDivElement = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
@@ -57,6 +67,7 @@ ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
 ${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 ${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size); line-height: 1; -webkit-font-smoothing: antialiased; text-shadow: 0 0 1px color-mix(in srgb, currentColor 40%, transparent); fill: currentColor; stroke: currentColor;}
+#cg-wrap { ${hueCssVar}}
 </style>`);
 
 /**

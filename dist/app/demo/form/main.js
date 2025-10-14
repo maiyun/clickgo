@@ -473,8 +473,14 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create(this, mzipFrm);
                 break;
             }
-            default: {
+            case 'sbackpanel': {
                 frm = await clickgo.form.create(this, sbackpanelFrm, data);
+                break;
+            }
+            default: {
+                frm = await clickgo.form.create(this, 'solution/hue/hue', undefined, {
+                    'path': this.filename
+                });
             }
         }
         this.loading = false;

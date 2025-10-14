@@ -166,6 +166,7 @@
             <layout gutter="10" direction="v">
                 <button @click="openForm('sbackpanel')">Backend panel</button>
                 <button @click="openForm('sbackpanel', {'hash': 'test1?a=1&b=2'})">Backend panel with hash</button>
+                <button @click="openForm('shue')">Hue</button>
             </layout>
         </flow>
     </tab>

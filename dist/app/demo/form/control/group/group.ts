@@ -22,4 +22,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public warrow = true;
 
+    public hue = false;
+
 }

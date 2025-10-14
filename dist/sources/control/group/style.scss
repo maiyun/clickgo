@@ -1,24 +1,24 @@
 .wrap {
-    background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; transition: var(--g-transition); /* overflow: hidden; --- 不能加，否则若有 table 的 scroll 和 header 不固定了 --- */
+    background: var(--g-plain-background); border: solid .5px var(--group-border, var(--g-plain-border-color)); display: flex; transition: var(--g-transition); /* overflow: hidden; --- 不能加，否则若有 table 的 scroll 和 header 不固定了 --- */
     &.padding {
         padding: var(--g-bpadding);
     }
 
     &:not(.plain) {
         &.primary {
-            border-color: var(--success);
+            border-color: var(--group-border, var(--success));
         }
         &.info {
-            border-color: var(--info);
+            border-color: var(--group-border, var(--info));
         }
         &.warning {
-            border-color: var(--warning);
+            border-color: var(--group-border, var(--warning));
         }
         &.danger {
-            border-color: var(--danger);
+            border-color: var(--group-border, var(--danger));
         }
         &.cg {
-            border-color: var(--cg);
+            border-color: var(--group-border, var(--cg));
         }
     }
     &.plain {
@@ -27,19 +27,19 @@
         }
         &.hover:hover {
             &.primary {
-                border-color: var(--success);
+                border-color: var(--group-border, var(--success));
             }
             &.info {
-                border-color: var(--info);
+                border-color: var(--group-border, var(--info));
             }
             &.warning {
-                border-color: var(--warning);
+                border-color: var(--group-border, var(--warning));
             }
             &.danger {
-                border-color: var(--danger);
+                border-color: var(--group-border, var(--danger));
             }
             &.cg {
-                border-color: var(--cg);
+                border-color: var(--group-border, var(--cg));
             }
         }
     }

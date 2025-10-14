@@ -14,6 +14,7 @@ export default class extends clickgo.control.AbstractControl {
         'padding': boolean | string;
         'position': 'top' | 'right' | 'bottom' | 'left';
         'type': 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
+        'hue': string | undefined;
     } = {
             'title': '',
             'plain': false,
@@ -26,6 +27,7 @@ export default class extends clickgo.control.AbstractControl {
             'padding': true,
             'position': 'top',
             'type': 'default',
+            'hue': undefined,
         };
 
 }
