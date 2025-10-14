@@ -175,6 +175,12 @@ export default class extends clickgo.control.AbstractControl {
             line.hue ??= '255';
         }
     }
+    /** --- 重置缩放/定位 --- */
+    refresh() {
+        this.scaleS = 1;
+        this.scaleX = (this.element.offsetWidth - this.refs.content.offsetWidth) / 2;
+        this.scaleY = (this.element.offsetHeight - this.refs.content.offsetHeight) / 2;
+    }
     /** --- 绑定缩放事件 --- */
     scale(oe) {
         clickgo.dom.bindScale(oe, (e, scale, cpos) => {
@@ -190,14 +196,12 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
     }
-    /** --- 重置缩放/定位 --- */
-    refresh() {
-        this.scaleS = 1;
-        this.scaleX = (this.element.offsetWidth - this.refs.content.offsetWidth) / 2;
-        this.scaleY = (this.element.offsetHeight - this.refs.content.offsetHeight) / 2;
-    }
     async onMounted() {
         await clickgo.tool.sleep(34);
+        // --- 初次刷新 ---
+        this.refresh();
+        await clickgo.tool.sleep(300);
+        // --- 有可能相应较慢，补刷新一次 ---
         this.refresh();
     }
 }

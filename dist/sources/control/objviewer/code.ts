@@ -194,6 +194,13 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
+    /** --- 重置缩放/定位 --- */
+    public refresh(): void {
+        this.scaleS = 1;
+        this.scaleX = (this.element.offsetWidth - this.refs.content.offsetWidth) / 2;
+        this.scaleY = (this.element.offsetHeight - this.refs.content.offsetHeight) / 2;
+    }
+
     // --- 供用户调用结束 ---
 
     /** --- 有些时候要刷新 --- */
@@ -215,15 +222,12 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    /** --- 重置缩放/定位 --- */
-    public refresh(): void {
-        this.scaleS = 1;
-        this.scaleX = (this.element.offsetWidth - this.refs.content.offsetWidth) / 2;
-        this.scaleY = (this.element.offsetHeight - this.refs.content.offsetHeight) / 2;
-    }
-
     public async onMounted(): Promise<void> {
         await clickgo.tool.sleep(34);
+        // --- 初次刷新 ---
+        this.refresh();
+        await clickgo.tool.sleep(300);
+        // --- 有可能相应较慢，补刷新一次 ---
         this.refresh();
     }
 

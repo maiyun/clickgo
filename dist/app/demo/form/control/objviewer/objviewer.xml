@@ -1,4 +1,4 @@
-<form width="600" height="700" title="Objviewer" direction="v">
+<form width="800" height="700" title="Objviewer" direction="v">
     <objviewer ref="objviewer" direction="v" :plain="plain" :bg="bg" gutter="20" lines="lines" style="flex: 1;">
         <layout gutter="20">
             <objviewer-item ref="objviewer-item-1">1</objviewer-item>
