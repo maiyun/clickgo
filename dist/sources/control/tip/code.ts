@@ -6,10 +6,16 @@ export default class extends clickgo.control.AbstractControl {
         'label': string;
         'maxwidth': number;
         'class': string;    // --- 用来解决 vue 的一个警告 ---
+
+        'type': 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
+        'plain': boolean | string;
     } = {
             'label': '',
             'maxwidth': 400,
-            'class': ''
+            'class': '',
+
+            'type': 'default',
+            'plain': false,
         };
 
     /** --- 鼠标在本体或 pop 里 --- */

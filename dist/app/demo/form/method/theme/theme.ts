@@ -72,8 +72,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.theme.clearGlobal();
     }
 
-    public setMain(color?: string): void {
-        clickgo.theme.setMain(color);
+    public setMain(color?: string, hue?: number): void {
+        clickgo.theme.setMain(color, hue);
     }
 
 }

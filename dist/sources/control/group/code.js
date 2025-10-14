@@ -12,6 +12,7 @@ export default class extends clickgo.control.AbstractControl {
             'alignV': undefined,
             'padding': true,
             'position': 'top',
+            'type': 'default',
         };
     }
 }

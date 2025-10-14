@@ -2,7 +2,7 @@
     border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); box-shadow: var(--g-shadow); pointer-events: none; width: var(--cg-width); height: var(--cg-height);
 
     &.size-s {
-        --cg-width:var(--g-padding-s); --cg-height:--g-padding-s;
+        --cg-width:var(--g-padding-s); --cg-height:var(--g-padding-s);
     }
     &.size-m {
         --cg-width:var(--g-padding); --cg-height:var(--g-padding);

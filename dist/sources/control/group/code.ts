@@ -13,6 +13,7 @@ export default class extends clickgo.control.AbstractControl {
         'alignV': string | undefined;
         'padding': boolean | string;
         'position': 'top' | 'right' | 'bottom' | 'left';
+        'type': 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
     } = {
             'title': '',
             'plain': false,
@@ -24,6 +25,7 @@ export default class extends clickgo.control.AbstractControl {
             'alignV': undefined,
             'padding': true,
             'position': 'top',
+            'type': 'default',
         };
 
 }

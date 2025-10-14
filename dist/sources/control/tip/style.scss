@@ -5,7 +5,46 @@ span {
 .pop {
     color: var(--g-color); border-radius: var(--g-radius); padding: var(--g-padding); width: max-content; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border); overflow: visible; word-break: break-all;
     &::after {
+        // --- 指向 ---
         content: ''; position: absolute; width: 10px; height: 10px; border: var(--g-pop-border); border-width: 0 .5px .5px 0; transform: rotate(45deg); left: calc(50% - 5px); bottom: -6px; background: var(--g-pop-background);
+    }
+    
+    &:not(.plain) {
+        &:not(.default) {
+            color: oklch(1 0 0);
+        }
+        &.primary, &.primary::after {
+            background: var(--success); border-color: var(--success);
+        }
+        &.info, &.info::after {
+            background: var(--info); border-color: var(--info);
+        }
+        &.warning, &.warning::after {
+            background: var(--warning); border-color: var(--warning);
+        }
+        &.danger, &.danger::after {
+            background: var(--danger); border-color: var(--danger);
+        }
+        &.cg, &.cg::after {
+            background: var(--cg); border-color: var(--cg);
+        }
+    }
+    &.plain {
+        &.primary, &.primary::after {
+            border-color: var(--success); color: var(--success); background: var(--success-bg);
+        }
+        &.info, &.info::after {
+            border-color: var(--info); color: var(--info); background: var(--info-bg);
+        }
+        &.warning, &.warning::after {
+            border-color: var(--warning); color: var(--warning); background: var(--warning-bg);
+        }
+        &.danger, &.danger::after {
+            border-color: var(--danger); color: var(--danger); background: var(--danger-bg);
+        }
+        &.cg, &.cg::after {
+            border-color: var(--cg); color: var(--cg); background: var(--cg-bg);
+        }
     }
 
     &[data-pop-t-bottom] {

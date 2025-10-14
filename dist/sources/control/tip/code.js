@@ -5,7 +5,9 @@ export default class extends clickgo.control.AbstractControl {
         this.props = {
             'label': '',
             'maxwidth': 400,
-            'class': ''
+            'class': '',
+            'type': 'default',
+            'plain': false,
         };
         /** --- 鼠标在本体或 pop 里 --- */
         this.inTip = false;

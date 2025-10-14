@@ -162,7 +162,7 @@ global {
     }
     &.group_plain {
         &.group_hover:hover, &:not(.group_hover) {
-            box-shadow: 0px 0px 0px 1px oklch(.9 0 0 / .04), 0px 3px 16px 0px oklch(.9 0 0 / .06);
+            box-shadow: 0px 3px 16px 0px oklch(.9 0 0 / .06);
         }
     }
 }

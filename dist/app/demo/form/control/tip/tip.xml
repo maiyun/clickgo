@@ -21,7 +21,7 @@
         </tip>
         <layout gutter="5" align-v="center">
             <label>Right</label>
-            <tip label="This is right">
+            <tip label="This is right" type="info">
                 <svg src="../../../res/icon.svg" style="width: 16px; height: 16px;" />
             </tip>
         </layout>
@@ -37,7 +37,7 @@
             </template>
             <button>789</button>
         </tip>
-        <tip>
+        <tip type="warning" plain>
             <template v-slot:content>
                 <label copy>copy label</label>
             </template>

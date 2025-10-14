@@ -1,4 +1,4 @@
-<div class="wrap" :class="[direction,propBoolean('plain')&&'plain',propBoolean('hover')&&'hover',propBoolean('padding')&&'padding',position]">
+<div class="wrap" :class="[direction,type,propBoolean('plain')&&'plain',propBoolean('hover')&&'hover',propBoolean('padding')&&'padding',position]">
     <div class="title" v-if="title || slots['title']">
         <div v-if="title" class="text">{{title}}</div>
         <template v-else>

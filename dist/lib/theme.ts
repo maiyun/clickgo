@@ -236,13 +236,20 @@ export async function clearGlobal(): Promise<void> {
 /**
  * --- 设置全局主色 ---
  * @param color 如 oklch(.7 .2 43)，留空为还原
+ * @param hue 主色的 hue 值，留空为还原
  */
-export function setMain(color?: string): void {
+export function setMain(color?: string, hue?: number): void {
     if (color) {
         lForm.elements.wrap.style.setProperty('--main', color);
     }
     else {
         lForm.elements.wrap.style.removeProperty('--main');
+    }
+    if (hue) {
+        lForm.elements.wrap.style.setProperty('--main-hue', hue.toString());
+    }
+    else {
+        lForm.elements.wrap.style.removeProperty('--main-hue');
     }
 }
 

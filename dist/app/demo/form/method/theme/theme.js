@@ -63,7 +63,7 @@ export default class extends clickgo.form.AbstractForm {
     async clearGlobal() {
         await clickgo.theme.clearGlobal();
     }
-    setMain(color) {
-        clickgo.theme.setMain(color);
+    setMain(color, hue) {
+        clickgo.theme.setMain(color, hue);
     }
 }

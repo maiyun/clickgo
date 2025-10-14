@@ -34,7 +34,9 @@
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
-    --main:oklch(.7 .2 43);
+    --main-hue:43;
+    --main:oklch(.7 .2 var(--main-hue));
+    --cg-hue:var(--main-hue);
     --cg:var(--main);
     --cg-hover:color-mix(in oklch, var(--cg), white 10%);
     --cg-active:color-mix(in oklch, var(--cg), black 10%);
@@ -42,32 +44,36 @@
     --cg-disabled:color-mix(in oklch, var(--cg), oklch(from var(--cg) l 0 none) 100%);
     --cg-bg:color-mix(in oklch, var(--cg), white 85%);
 
-    --success:oklch(.7 .23 150);
-    --success-hover:oklch(.75 .23 150);
-    --success-active:oklch(.6 .23 150);
-    --success-focus:oklch(.65 .23 150);
-    --success-disabled:oklch(.85 0 150);
+    --success-hue:150;
+    --success:oklch(.7 .23 var(--success-hue));
+    --success-hover:oklch(.75 .23 var(--success-hue));
+    --success-active:oklch(.6 .23 var(--success-hue));
+    --success-focus:oklch(.65 .23 var(--success-hue));
+    --success-disabled:oklch(.85 0 var(--success-hue));
     --success-bg:color-mix(in oklch, var(--success), white 85%);
 
-    --info:oklch(.7 .23 255);
-    --info-hover:oklch(.75 .23 255);
-    --info-active:oklch(.6 .23 255);
-    --info-focus:oklch(.65 .23 255);
-    --info-disabled:oklch(.85 0 255);
+    --info-hue:255;
+    --info:oklch(.7 .23 var(--info-hue));
+    --info-hover:oklch(.75 .23 var(--info-hue));
+    --info-active:oklch(.6 .23 var(--info-hue));
+    --info-focus:oklch(.65 .23 var(--info-hue));
+    --info-disabled:oklch(.85 0 var(--info-hue));
     --info-bg:color-mix(in oklch, var(--info), white 85%);
 
-    --warning:oklch(.7 .23 45);
-    --warning-hover:oklch(.75 .23 45);
-    --warning-active:oklch(.6 .23 45);
-    --warning-focus:oklch(.65 .23 45);
-    --warning-disabled:oklch(.85 0 45);
+    --warning-hue:45;
+    --warning:oklch(.7 .23 var(--warning-hue));
+    --warning-hover:oklch(.75 .23 var(--warning-hue));
+    --warning-active:oklch(.6 .23 var(--warning-hue));
+    --warning-focus:oklch(.65 .23 var(--warning-hue));
+    --warning-disabled:oklch(.85 0 var(--warning-hue));
     --warning-bg:color-mix(in oklch, var(--warning), white 85%);
 
-    --danger:oklch(.7 .23 25);
-    --danger-hover:oklch(.75 .23 25);
-    --danger-active:oklch(.6 .23 25);
-    --danger-focus:oklch(.65 .23 25);
-    --danger-disabled:oklch(.85 0 25);
+    --danger-hue:25;
+    --danger:oklch(.7 .23 var(--danger-hue));
+    --danger-hover:oklch(.75 .23 var(--danger-hue));
+    --danger-active:oklch(.6 .23 var(--danger-hue));
+    --danger-focus:oklch(.65 .23 var(--danger-hue));
+    --danger-disabled:oklch(.85 0 var(--danger-hue));
     --danger-bg:color-mix(in oklch, var(--danger), white 85%);
 
     --system-color:oklch(.96 0 0);

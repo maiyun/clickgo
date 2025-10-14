@@ -1,10 +1,47 @@
 .wrap {
     background: var(--g-plain-background); border: solid .5px var(--g-plain-border-color); display: flex; transition: var(--g-transition); /* overflow: hidden; --- 不能加，否则若有 table 的 scroll 和 header 不固定了 --- */
-    &.plain {
-        border: none;
-    }
     &.padding {
         padding: var(--g-bpadding);
+    }
+
+    &:not(.plain) {
+        &.primary {
+            border-color: var(--success);
+        }
+        &.info {
+            border-color: var(--info);
+        }
+        &.warning {
+            border-color: var(--warning);
+        }
+        &.danger {
+            border-color: var(--danger);
+        }
+        &.cg {
+            border-color: var(--cg);
+        }
+    }
+    &.plain {
+        &:not(.hover), &.hover:not(:hover) {
+            border-color: transparent;
+        }
+        &.hover:hover {
+            &.primary {
+                border-color: var(--success);
+            }
+            &.info {
+                border-color: var(--info);
+            }
+            &.warning {
+                border-color: var(--warning);
+            }
+            &.danger {
+                border-color: var(--danger);
+            }
+            &.cg {
+                border-color: var(--cg);
+            }
+        }
     }
 
     .title {

@@ -18,6 +18,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public position = ['top'];
 
+    public type = ['default'];
+
     public warrow = true;
 
 }
