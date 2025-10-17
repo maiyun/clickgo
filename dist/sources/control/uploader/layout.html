@@ -3,7 +3,7 @@
         <div class="top" v-if="item.title">{{item.title}}</div>
         <cg-img :src="pre + (item.src ?? item)"></cg-img>
         <div class="bottom">
-            <div class="bitem" @click="modelValue.splice(index,1);emit('update:modelValue',modelValue);emit('changed')">
+            <div class="bitem" @click="remove(index)">
                 <cg-icon name="trash" size="m"></cg-icon>
             </div>
             <div class="bitem drag" v-if="propBoolean('drag')" @mousedown="down($event, index)" @touchstart="down($event, index)">

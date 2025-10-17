@@ -4,6 +4,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public emits = {
         'select': null,
+        'remove': null,
         'changed': null,
 
         'update:modelValue': null
@@ -63,6 +64,25 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.props.modelValue.splice(index, 0, this.props.modelValue.splice(e.detail.value.index, 1)[0]);
+        this.emit('update:modelValue', this.props.modelValue);
+        this.emit('changed');
+    }
+
+    public remove(index: number): void {
+        const event: clickgo.control.IUploaderRemoveEvent = {
+            'go': true,
+            preventDefault: function() {
+                this.go = false;
+            },
+            'detail': {
+                'index': index,
+            }
+        };
+        this.emit('remove', event);
+        if (!event.go) {
+            return;
+        }
+        this.props.modelValue.splice(index, 1);
         this.emit('update:modelValue', this.props.modelValue);
         this.emit('changed');
     }

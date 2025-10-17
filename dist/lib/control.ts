@@ -1118,6 +1118,14 @@ export interface IPdfViewEvent {
     };
 }
 
+// --- Uploader Control ---
+
+export interface IUploaderRemoveEvent extends ICustomEvent {
+    'detail': {
+        'index': number;
+    };
+}
+
 // --- Iconview Control ---
 
 export interface IIconviewItemclickedEvent {
