@@ -35,6 +35,10 @@
                 <button @click="queryParse">queryParse('{{qs.slice(0, 5)}}...')</button>
             </layout>
             <button @click="queryStringify">queryStringify({'a':1,'b':'c'})</button>
+            <button @click="compressor">
+                compressor
+                <file ref="file" @change="change" :accept="['jpg', 'jpeg', 'png']"></file>
+            </button>
         </layout>
     </flow>
 </form>

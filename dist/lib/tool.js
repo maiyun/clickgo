@@ -43,7 +43,7 @@ export async function compressor(file, options = {}) {
             return false;
         }
     }
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         if (!compressorjs) {
             resolve(false);
             return;
@@ -53,11 +53,19 @@ export async function compressor(file, options = {}) {
             'maxWidth': options.maxWidth,
             'maxHeight': options.maxHeight,
             success: (result) => {
+                if ((file instanceof File) && !(result instanceof File)) {
+                    // --- compressorjs 库的异常情况，手动包装 file ---
+                    resolve(new File([result], file.name, {
+                        'lastModified': file.lastModified,
+                        'type': file.type,
+                    }));
+                    return;
+                }
                 resolve(result);
             },
             error: () => {
                 resolve(false);
-            }
+            },
         });
     });
 }

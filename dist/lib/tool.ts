@@ -39,7 +39,7 @@ export async function compressor<T extends File | Blob>(file: T, options: {
     'maxHeight'?: number;
     /** --- 压缩质量，默认 0.8 --- */
     'quality'?: number;
-} = {}): Promise<File | Blob | false> {
+} = {}): Promise<T | false> {
     if (!compressorjs) {
         try {
             const cdn = (window as any).clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
@@ -53,7 +53,7 @@ export async function compressor<T extends File | Blob>(file: T, options: {
             return false;
         }
     }
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         if (!compressorjs) {
             resolve(false);
             return;
@@ -63,11 +63,19 @@ export async function compressor<T extends File | Blob>(file: T, options: {
             'maxWidth': options.maxWidth,
             'maxHeight': options.maxHeight,
             success: (result: T) => {
+                if ((file instanceof File) && !(result instanceof File)) {
+                    // --- compressorjs 库的异常情况，手动包装 file ---
+                    resolve(new File([result], file.name, {
+                        'lastModified': file.lastModified,
+                        'type': file.type,
+                    }) as T);
+                    return;
+                }
                 resolve(result);
             },
             error: () => {
                 resolve(false);
-            }
+            },
         });
     });
 }

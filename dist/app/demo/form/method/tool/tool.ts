@@ -121,4 +121,23 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(this, clickgo.tool.queryStringify({ 'a': 1, 'b': 'c' }));
     }
 
+    public compressor(): void {
+        this.refs.file.select();
+    }
+
+    public async change(files: FileList | null): Promise<void> {
+        if (!files) {
+            return;
+        }
+        const result = await clickgo.tool.compressor(files[0], {
+            'quality': 0.5,
+            'maxWidth': 2000,
+        });
+        if (!result) {
+            return;
+        }
+        console.log('result', result, result instanceof File);
+        await clickgo.form.dialog(this, 'name: ' + result.name + ', size: ' + clickgo.tool.sizeFormat(result.size) + ', osize: ' + clickgo.tool.sizeFormat(files[0].size));
+    }
+
 }
