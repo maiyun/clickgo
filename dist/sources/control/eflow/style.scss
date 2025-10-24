@@ -1,0 +1,15 @@
+.wrap {
+    display: flex;
+
+    .left {
+        display: flex; -webkit-overflow-scrolling: touch; position: relative; overflow: scroll; flex-direction: column; flex: 1;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    
+    cg-scroll {
+        width: 16px;
+    }
+}

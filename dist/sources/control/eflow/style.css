@@ -1,0 +1,1 @@
+.wrap{display:flex}.wrap .left{display:flex;-webkit-overflow-scrolling:touch;position:relative;overflow:scroll;flex-direction:column;flex:1}.wrap .left::-webkit-scrollbar{display:none}.wrap cg-scroll{width:16px}

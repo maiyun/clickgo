@@ -52,7 +52,7 @@
                 </layout>
                 <layout gutter="10">
                     <button @click="openForm('csvg')">Svg</button>
-                    <button @click="openForm('cflow')">Flow</button>
+                    <button @click="openForm('cflow')">Flow + Eflow</button>
                     <button @click="openForm('cimgviewer')">Imgviewer</button>
                 </layout>
                 <layout gutter="10">

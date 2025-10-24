@@ -2661,7 +2661,7 @@ export function remove(formId) {
                 await lTask.end(taskId);
             }
         })().catch(() => { });
-    }, 300);
+    }, lDom.is.transition ? 300 : 0);
     return true;
 }
 /**

@@ -8,7 +8,7 @@
             <template v-if="app.formCount > 1" v-slot:pop>
                 <menulist>
                     <menulist-item v-for="(form, formId) of app.forms" @click="changeFocus(formId)">
-                        <img :src="form.icon || app.icon" style="width: 16px; height: 16px;" /><label style="margin-left: 10px;">{{form.title}}</label>
+                        <img :src="form.icon || app.icon" style="width: 16px; height: 16px;" :style="{'visibility': (form.icon || app.icon) ? 'visible' : 'hidden'}" /><label style="margin-left: 10px;">{{form.title}}</label>
                     </menulist-item>
                 </menulist>
             </template>

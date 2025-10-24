@@ -1,5 +1,5 @@
 <form title="Flow" width="450" height="450" min-width="300" min-height="400" padding="10">
-    <tab v-model="ntab" :tabs="['normal', 'adaptation', 'beyond', 'nest']" style="flex: 1; width: 0;">
+    <tab v-model="ntab" :tabs="['normal', 'adaptation', 'beyond', 'nest', 'eflow']" style="flex: 1; width: 0;">
         <!-- 默认 -->
         <layout v-if="ntab === 'normal'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
             <!-- v -->
@@ -84,7 +84,7 @@
             <label>Scroll Left / Top: {{sLeft5}} / {{sTop5}}, Client Width / Height: {{cWidth5}} / {{cHeight5}}, Scroll Width / Height: {{sWidth5}} / {{sHeight5}}.</label>
         </layout>
         <!-- 嵌套 -->
-        <layout v-else style="flex: 1; width: 0; padding: 10px;">
+        <layout v-else-if="ntab === 'nest'" style="flex: 1; width: 0; padding: 10px;">
             <flow class="border" direction="v" style="flex: 1; width: 0;">
                 <template v-for="i of 100">
                     <flow v-if="i === 30" class="border" direction="v" style="height: 50px;">
@@ -96,6 +96,17 @@
                     <label v-else>Line {{i}}</label>
                 </template>
             </flow>
+        </layout>
+        <!-- Eflow -->
+        <layout v-else style="flex: 1; width: 0; padding: 10px;">
+            <eflow class="border" style="flex: 1; width: 0;">
+                <template v-for="i of 70">
+                    <eflow v-if="i === 30" class="border" direction="v" style="height: 50px;">
+                        <label v-for="k of 50">Line {{k}}</label>
+                    </eflow>
+                    <label v-else>Line {{i}}</label>
+                </template>
+            </eflow>
         </layout>
     </tab>
 </form>

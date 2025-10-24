@@ -105,7 +105,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public setGlobalTransition(): void {
-        clickgo.dom.setGlobalTransition(this.isTransition);
+        clickgo.dom.setGlobalTransition(!this.isTransition);
     }
 
     public hasTouchButMouse(e: MouseEvent | TouchEvent): void {

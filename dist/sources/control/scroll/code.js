@@ -4,6 +4,8 @@ export default class extends clickgo.control.AbstractControl {
         super(...arguments);
         this.emits = {
             'show': null,
+            /** --- 用户主动滚动事件 --- */
+            'roll': null,
             'update:offset': null
         };
         this.props = {
@@ -103,11 +105,13 @@ export default class extends clickgo.control.AbstractControl {
                             if (this.offsetData !== 0) {
                                 this.offsetData = 0;
                                 this.emit('update:offset', this.offsetData);
+                                this.emit('roll');
                             }
                         }
                         else {
                             this.offsetData -= 10;
                             this.emit('update:offset', this.offsetData);
+                            this.emit('roll');
                         }
                     }
                     else {
@@ -116,11 +120,13 @@ export default class extends clickgo.control.AbstractControl {
                             if (this.offsetData !== this.maxOffset) {
                                 this.offsetData = this.maxOffset;
                                 this.emit('update:offset', this.offsetData);
+                                this.emit('roll');
                             }
                         }
                         else {
                             this.offsetData += 10;
                             this.emit('update:offset', this.offsetData);
+                            this.emit('roll');
                         }
                     }
                 });
@@ -155,6 +161,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.offsetData = Math.round(ratio * this.maxOffset);
                 }
                 this.emit('update:offset', this.offsetData);
+                this.emit('roll');
             }
         });
     }
@@ -187,6 +194,7 @@ export default class extends clickgo.control.AbstractControl {
         const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
         this.offsetData = Math.round(ratio * this.maxOffset);
         this.emit('update:offset', this.offsetData);
+        this.emit('roll');
         this.down(e);
     }
     // --- 进入时保持滚动条常亮 ---
@@ -222,6 +230,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.offsetData = this.maxOffset;
             this.emit('update:offset', this.offsetData);
+            this.emit('roll');
         };
         this.watch('length', checkOffset);
         this.watch('client', checkOffset);

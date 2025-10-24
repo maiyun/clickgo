@@ -110,19 +110,19 @@ let globalTransitionStyle: HTMLStyleElement;
 
 /**
  * ---启用/禁用全局 transition ---
- * @param disabled 是否禁用
+ * @param enable 是否启用
  */
-export function setGlobalTransition(disabled: boolean): void {
+export function setGlobalTransition(enable: boolean): void {
     if (!globalTransitionStyle) {
         globalTransitionStyle = document.getElementById('cg-global-transition') as HTMLStyleElement;
     }
-    if (disabled) {
-        globalTransitionStyle.innerHTML = '*, *::after, *::before {transition: none !important;}';
-    }
-    else {
+    if (enable) {
         globalTransitionStyle.innerHTML = '';
     }
-    clickgo.dom.is.transition = !disabled;
+    else {
+        globalTransitionStyle.innerHTML = '*, *::after, *::before {transition: none !important;}';
+    }
+    clickgo.dom.is.transition = enable;
 }
 
 /** --- 最后一次 touchstart 的时间戳 --- */
