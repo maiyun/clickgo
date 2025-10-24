@@ -54,6 +54,10 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(this, JSON.stringify(clickgo.form.hash(this.fid, this.hash)));
     }
 
+    public onFormHashChange(taskId: string, formId: string, value: string, data: Record<string, any>): void {
+        console.log('onFormHashChange', taskId, formId, value, data);
+    }
+
     public hash: string = 'hash' + clickgo.tool.rand(0, 100).toString();
 
     public async getActivePanel(): Promise<void> {

@@ -100,6 +100,14 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.dom.setGlobalCursor(type);
     }
 
+    public get isTransition(): boolean {
+        return clickgo.dom.is.transition;
+    }
+
+    public setGlobalTransition(): void {
+        clickgo.dom.setGlobalTransition(this.isTransition);
+    }
+
     public hasTouchButMouse(e: MouseEvent | TouchEvent): void {
         clickgo.form.dialog(this, clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
     }

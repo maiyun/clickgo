@@ -56,6 +56,7 @@ const styleList = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
+styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-transition\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
 ${classUnfold()} {-webkit-user-select: none; user-select: none; cursor: default; box-sizing: border-box;}
 ${topClass.slice(0, 4).join(', ')} {left: 0; top: 0; width: 0; height: 0; position: absolute;}
@@ -90,11 +91,29 @@ export function setGlobalCursor(type) {
         globalCursorStyle = document.getElementById('cg-global-cursor');
     }
     if (type) {
-        globalCursorStyle.innerHTML = `* {cursor: ${type} !important;}`;
+        globalCursorStyle.innerHTML = `*, *::after, *::before {cursor: ${type} !important;}`;
     }
     else {
         globalCursorStyle.innerHTML = '';
     }
+}
+/** --- 全局 transition 设置的 style 标签 --- */
+let globalTransitionStyle;
+/**
+ * ---启用/禁用全局 transition ---
+ * @param disabled 是否禁用
+ */
+export function setGlobalTransition(disabled) {
+    if (!globalTransitionStyle) {
+        globalTransitionStyle = document.getElementById('cg-global-transition');
+    }
+    if (disabled) {
+        globalTransitionStyle.innerHTML = '*, *::after, *::before {transition: none !important;}';
+    }
+    else {
+        globalTransitionStyle.innerHTML = '';
+    }
+    clickgo.dom.is.transition = !disabled;
 }
 /** --- 最后一次 touchstart 的时间戳 --- */
 let lastTouchTime = 0;
@@ -2779,6 +2798,7 @@ export function init() {
         'full': false,
         'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
         'keyboard': false,
+        'transition': true,
     });
     // --- 处理 timer 类，窗体消失时不进行监听 ---
     document.addEventListener('visibilitychange', function () {

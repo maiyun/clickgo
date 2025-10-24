@@ -3,6 +3,7 @@
         <layout gutter="10" direction="v" style="flex: 1;">
             <button @click="setGlobalCursor('wait')" >setGlobalCursor('wait')</button>
             <button @click="setGlobalCursor" >setGlobalCursor()</button>
+            <button @click="setGlobalTransition()" >setGlobalTransition({{!isTransition}})</button>
             <button @click="hasTouchButMouse" >hasTouchButMouse()</button>
             <button @click="getStyleCount" >getStyleCount({{taskId}}, 'form')</button>
             <layout gutter="10">

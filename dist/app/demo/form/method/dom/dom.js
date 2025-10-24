@@ -83,6 +83,12 @@ export default class extends clickgo.form.AbstractForm {
     setGlobalCursor(type) {
         clickgo.dom.setGlobalCursor(type);
     }
+    get isTransition() {
+        return clickgo.dom.is.transition;
+    }
+    setGlobalTransition() {
+        clickgo.dom.setGlobalTransition(this.isTransition);
+    }
     hasTouchButMouse(e) {
         clickgo.form.dialog(this, clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
     }

@@ -60,6 +60,7 @@ const styleList: HTMLDivElement = document.createElement('div');
 styleList.style.display = 'none';
 document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
+styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-transition\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
 ${classUnfold()} {-webkit-user-select: none; user-select: none; cursor: default; box-sizing: border-box;}
 ${topClass.slice(0, 4).join(', ')} {left: 0; top: 0; width: 0; height: 0; position: absolute;}
@@ -97,11 +98,31 @@ export function setGlobalCursor(type?: string): void {
         globalCursorStyle = document.getElementById('cg-global-cursor') as HTMLStyleElement;
     }
     if (type) {
-        globalCursorStyle.innerHTML = `* {cursor: ${type} !important;}`;
+        globalCursorStyle.innerHTML = `*, *::after, *::before {cursor: ${type} !important;}`;
     }
     else {
         globalCursorStyle.innerHTML = '';
     }
+}
+
+/** --- 全局 transition 设置的 style 标签 --- */
+let globalTransitionStyle: HTMLStyleElement;
+
+/**
+ * ---启用/禁用全局 transition ---
+ * @param disabled 是否禁用
+ */
+export function setGlobalTransition(disabled: boolean): void {
+    if (!globalTransitionStyle) {
+        globalTransitionStyle = document.getElementById('cg-global-transition') as HTMLStyleElement;
+    }
+    if (disabled) {
+        globalTransitionStyle.innerHTML = '*, *::after, *::before {transition: none !important;}';
+    }
+    else {
+        globalTransitionStyle.innerHTML = '';
+    }
+    clickgo.dom.is.transition = !disabled;
 }
 
 /** --- 最后一次 touchstart 的时间戳 --- */
@@ -2068,9 +2089,14 @@ export let is: {
     'shift': boolean;
     'ctrl': boolean;
     'meta': boolean;
+    /** --- 当前是否是全屏 --- */
     'full': boolean;
+    /** --- 是否是黑暗模式 --- */
     'dark': boolean;
+    /** --- 虚拟键盘是否正在显示 --- */
     'keyboard': boolean;
+    /** --- 动画开启状态 --- */
+    'transition': boolean;
 };
 
 /**
@@ -3020,6 +3046,7 @@ export function init(): void {
         'full': false,
         'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
         'keyboard': false,
+        'transition': true,
     });
     // --- 处理 timer 类，窗体消失时不进行监听 ---
     document.addEventListener('visibilitychange', function() {
