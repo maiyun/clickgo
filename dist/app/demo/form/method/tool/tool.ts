@@ -2,6 +2,12 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
+    public access: {
+        'sseabort': AbortController | null;
+    } = {
+            'sseabort': null,
+        };
+
     public sleeping = false;
 
     public purifyTxt = `<html>
@@ -69,6 +75,40 @@ export default class extends clickgo.form.AbstractForm {
                 'txt': 'Text\nLine 2.'
             }
         });
+    }
+
+    // --- SSE ---
+
+    public sseurl = 'http://127.0.0.1:8081/test/ai-stream1';
+
+    public sse = false;
+
+    public ssecontent = 'How are you';
+
+    public sseres = '';
+
+    public ssedo(): void {
+        if (this.sse) {
+            this.sse = false;
+            this.access.sseabort?.abort();
+            return;
+        }
+        this.sse = true;
+        this.access.sseabort = clickgo.tool.postResponseEventStream(this.sseurl, {
+            'content': this.ssecontent,
+        }, {
+            onData: (chunk) => {
+                this.sseres += chunk;
+            },
+            onEnd: () => {
+                this.sse = false;
+            },
+            onTimeout: () => {
+                this.sse = false;
+            },
+        });
+        this.ssecontent = '';
+        this.sseres = '';
     }
 
     public escapeHTML(): void {

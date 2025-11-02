@@ -12,6 +12,13 @@ export default class extends clickgo.control.AbstractControl {
         if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
+        const el = e.target as HTMLElement;
+        if (el.dataset.cgEfno !== undefined) {
+            return;
+        }
+        if (clickgo.dom.findParentByData(el, 'cg-efno')) {
+            return;
+        }
         e.stopPropagation();
         clickgo.dom.bindMove(e, {
             'object': e.currentTarget as HTMLElement,

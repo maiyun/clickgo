@@ -1,6 +1,6 @@
-<form width="350" height="500" title="Library tool">
-    <flow direction="v" style="flex: 1; padding: 10px;">
-        <layout direction="v" gutter="10">
+<form width="350" height="550" title="Library tool">
+    <eflow direction="v" style="flex: 1;">
+        <layout direction="v" gutter="10" style="padding: 10px;">
             <button @click="sleep">{{sleeping ? 'Waiting...' : 'sleep(1000)'}}</button>
             <text v-model="purifyTxt" type="multi" style="height: 100px;"></text>
             <button @click="purify">purify('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
@@ -14,6 +14,15 @@
                 <text v-model="block" style="flex: 1;"></text>
                 <button @click="random">random({{length}}, RANDOM_LUN, '{{block}}')</button>
             </layout>
+            <layout gutter="10" align-v="center">
+                <label>SSE:</label>
+                <text v-model="sseurl" style="flex: 1"></text>
+            </layout>
+            <layout gutter="10">
+                <text v-model="ssecontent" style="flex: 1"></text>
+                <button @click="ssedo">{{sse ? 'stop' : 'start'}}</button>
+            </layout>
+            <text v-model="sseres" style="height: 100px;" type="multi" readonly></text>
             <button @click="escapeHTML">escapeHTML('{{purifyTxt.slice(0, 5).replace("'", "\\'")}}...')</button>
             <button @click="rgb2hsl">rgb2hsl('9,105,218')</button>
             <text v-model="url"></text>
@@ -40,5 +49,5 @@
                 <file ref="file" @change="change" :accept="['jpg', 'jpeg', 'png']"></file>
             </button>
         </layout>
-    </flow>
+    </eflow>
 </form>

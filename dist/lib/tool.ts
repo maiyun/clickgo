@@ -1145,7 +1145,7 @@ export async function get(url: string, init?: RequestInit, opt: {
 }
 
 /**
- * --- 发起 POST 请求 ---
+ * --- 发起 POST 请求（除 FormData 外都会转换为 JSON 提交） ---
  * @param url 网址
  * @param data 数据
  * @param init 选项
@@ -1190,6 +1190,75 @@ export async function getResponseJson(url: string, init?: RequestInit): Promise<
     catch {
         return null;
     }
+}
+
+/**
+ * --- 发起 JSON 请求并获得文本 SSE 响应 ---
+ * @param url 网址
+ * @param data 数据
+ * @param opts 选项
+ * @returns 返回可随时中止的控制器
+ */
+export function postResponseEventStream(url: string, data: Record<string, any>, opts: {
+    'init'?: RequestInit;
+    /** --- 连接成功建立的回调 --- */
+    onStart?: () => void | Promise<void>;
+    /** --- 来数据了 --- */
+    onData?: (chunk: string) => void | Promise<void>;
+    /** --- 结束事件回调，主动结束、错误也会回调 --- */
+    onEnd?: () => void | Promise<void>;
+    /** --- 连接失败（onStart 前调用） --- */
+    onTimeout?: () => void | Promise<void>;
+} = {}): AbortController {
+    const controller = new AbortController();
+    setTimeout(() => {
+        (async () => {
+            try {
+                const res = await window.fetch(url, {
+                    'method': 'POST',
+                    'headers': { 'content-type': 'application/json' },
+                    'body': JSON.stringify(data),
+                    'signal': controller.signal,
+                });
+                const body = res.body;
+                if (!body) {
+                    await opts.onTimeout?.();
+                    return;
+                }
+                await opts.onStart?.();
+                const reader = body.getReader();
+                const decoder = new TextDecoder('utf8');
+                let buf = '';
+                while (true) {
+                    try {
+                        const { value, done } = await reader.read();
+                        if (done) {
+                            break;
+                        }
+                        buf += decoder.decode(value, { 'stream': true, });
+                        if (!buf.includes('\n\n')) {
+                            // --- 还没接收完 ---
+                            continue;
+                        }
+                        const events = buf.split('\n\n');
+                        buf = events.pop() ?? ''; // --- 最后一个可能不完整 ---
+                        for (const ev of events) {
+                            await opts.onData?.(JSON.parse(ev.slice(5).trim()));
+                        }
+                    }
+                    catch {
+                        break;
+                    }
+                }
+                await opts.onEnd?.();
+            }
+            catch {
+                await opts.onTimeout?.();
+                return;
+            }
+        })().catch(() => {});
+    }, 0);
+    return controller;
 }
 
 /**

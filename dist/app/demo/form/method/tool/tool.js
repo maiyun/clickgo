@@ -2,6 +2,9 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
     constructor() {
         super(...arguments);
+        this.access = {
+            'sseabort': null,
+        };
         this.sleeping = false;
         this.purifyTxt = `<html>
     <head>
@@ -32,6 +35,11 @@ export default class extends clickgo.form.AbstractForm {
         this.url = 'HtTp://uSer:pAss@sUBDom.TopdOm23.CoM:29819/Admxw2Ksiz/dszas?Mdi=KdiMs1&a=JDd#hehHe';
         this.url1 = '/abc/def/hehe';
         this.url2 = '../bb.index';
+        // --- SSE ---
+        this.sseurl = 'http://127.0.0.1:8081/test/ai-stream1';
+        this.sse = false;
+        this.ssecontent = 'How are you';
+        this.sseres = '';
         this.second = '4531';
         this.weight = '8761';
         this.qs = 'a=1&b=2&c=3';
@@ -58,6 +66,29 @@ export default class extends clickgo.form.AbstractForm {
                 'txt': 'Text\nLine 2.'
             }
         });
+    }
+    ssedo() {
+        if (this.sse) {
+            this.sse = false;
+            this.access.sseabort?.abort();
+            return;
+        }
+        this.sse = true;
+        this.access.sseabort = clickgo.tool.postResponseEventStream(this.sseurl, {
+            'content': this.ssecontent,
+        }, {
+            onData: (chunk) => {
+                this.sseres += chunk;
+            },
+            onEnd: () => {
+                this.sse = false;
+            },
+            onTimeout: () => {
+                this.sse = false;
+            },
+        });
+        this.ssecontent = '';
+        this.sseres = '';
     }
     escapeHTML() {
         clickgo.form.dialog(this, clickgo.tool.escapeHTML(this.purifyTxt)).catch((e) => { throw e; });

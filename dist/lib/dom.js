@@ -2557,6 +2557,8 @@ let micState = 0;
 /** --- 麦克风通过 WebSocket 对讲的 WebSocket 实例 --- */
 let micWs = null;
 const blob = new Blob([`
+const minRms = .2;
+
 class MicrophoneProcessor extends AudioWorkletProcessor {
     constructor() {
         super();
@@ -2566,7 +2568,7 @@ class MicrophoneProcessor extends AudioWorkletProcessor {
         this.lastPost = 0;      // --- 最后一次发送 buffer 的时间 ---
     }
     // --- 计算音频帧的平均音量（均方根） ---
-    // --- 大于等于 .05 代表可能在说话 ---
+    // --- 大于等于 minRms 代表可能在说话 ---
     calculateVolume(channel) {
         let sum = 0;
         for (let i = 0; i < channel.length; i++) {
@@ -2590,14 +2592,14 @@ class MicrophoneProcessor extends AudioWorkletProcessor {
             'type': 'process',
             'rms': volume,
         });
-        if (volume > .05) {
+        if (volume > minRms) {
             this.voiceLast = now;
         }
 
         // --- 判断是否要发送 buffer ---
         if (this.voice) {
             // --- 说话中 ---
-            if (volume >= .05) {
+            if (volume >= minRms) {
                 // --- 继续说话 ---
             }
             else {
@@ -2615,7 +2617,7 @@ class MicrophoneProcessor extends AudioWorkletProcessor {
         }
         else {
             // --- 静音中 ---
-            if (volume >= .05) {
+            if (volume >= minRms) {
                 // --- 判断是否要说话开始 ---
                 if (this.voiceStart === 0) {
                     this.voiceStart = now;
@@ -2639,10 +2641,10 @@ class MicrophoneProcessor extends AudioWorkletProcessor {
         }
 
         if (
-            (now - this.voiceLast >= 1_000) &&
-            (now - this.lastPost < 30_000)
+            (now - this.voiceLast >= 3_000) &&
+            (now - this.lastPost < 15_000)
         ) {
-            // --- 超过 1 秒没声音直接 buffer 都不发送 ---
+            // --- 超过 3 秒没声音直接 buffer 都不发送 ---
             return true;
         }
 
@@ -2769,7 +2771,8 @@ export const mic = {
             };
             return true;
         }
-        catch {
+        catch (err) {
+            console.error('[LIB][DOM]', err);
             micState = 0;
             return false;
         }
