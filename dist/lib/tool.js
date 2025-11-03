@@ -1126,7 +1126,8 @@ export function postResponseEventStream(url, data, opts = {}) {
                         const events = buf.split('\n\n');
                         buf = events.pop() ?? ''; // --- 最后一个可能不完整 ---
                         for (const ev of events) {
-                            await opts.onData?.(JSON.parse(ev.slice(5).trim()));
+                            const line = JSON.parse(ev.slice(5).trim());
+                            await opts.onData?.(typeof line === 'string' ? line : (line.choices?.[0]?.delta?.content ?? ''));
                         }
                     }
                     catch {
