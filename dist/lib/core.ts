@@ -983,6 +983,20 @@ const modules: Record<string, {
         'loading': false,
         'resolve': [],
     },
+    // --- marked ---
+    'marked': {
+        func: async function() {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/marked@17.0.0/lib/marked.umd.min.js`
+            ]);
+            if (!(window as any).marked) {
+                throw Error('marked load failed.');
+            }
+            return (window as any).marked;
+        },
+        'loading': false,
+        'resolve': [],
+    },
 };
 
 /**

@@ -1203,6 +1203,13 @@ export function postResponseEventStream(url: string, data: Record<string, any>, 
     'init'?: RequestInit;
     /** --- 连接成功建立的回调 --- */
     onStart?: () => void | Promise<void>;
+    /** --- 初始化回调（不一定会有） --- */
+    onInit?: (data: {
+        /** --- chat uid --- */
+        'uid': string;
+        /** --- chat name --- */
+        'name': string;
+    }) => void | Promise<void>;
     /** --- 来数据了 --- */
     onData?: (chunk: string) => void | Promise<void>;
     /** --- 结束事件回调，主动结束、错误也会回调 --- */
@@ -1244,6 +1251,10 @@ export function postResponseEventStream(url: string, data: Record<string, any>, 
                         buf = events.pop() ?? ''; // --- 最后一个可能不完整 ---
                         for (const ev of events) {
                             const line = JSON.parse(ev.slice(5).trim());
+                            if (line.init) {
+                                await opts.onInit?.(line.init);
+                                continue;
+                            }
                             await opts.onData?.(typeof line === 'string' ? line : (line.choices?.[0]?.delta?.content ?? ''));
                         }
                     }

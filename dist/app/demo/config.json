@@ -32,7 +32,8 @@
         "/clickgo/control/tums",
         "/clickgo/control/novnc",
         "/clickgo/control/objviewer",
-        "/clickgo/control/cube"
+        "/clickgo/control/cube",
+        "/clickgo/control/marked"
     ],
     "style": "/package/global"
 }

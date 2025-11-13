@@ -1,5 +1,4 @@
 import * as clickgo from 'clickgo';
-import imgFrm from '../arteditor/img';
 
 export default class extends clickgo.form.AbstractForm {
 

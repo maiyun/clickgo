@@ -67,6 +67,7 @@ import ctplinkFrm from './control/tplink/tplink';
 import ctumsFrm from './control/tums/tums';
 import cnovncFrm from './control/novnc/novnc';
 import cobjviewerFrm from './control/objviewer/objviewer';
+import cmarkedFrm from './control/marked/marked';
 import eformFrm from './event/form/form';
 import eotherFrm from './event/other/other';
 import escreenFrm from './event/screen/screen';
@@ -403,6 +404,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cobjviewer': {
                 frm = await clickgo.form.create(this, cobjviewerFrm);
+                break;
+            }
+            case 'cmarked': {
+                frm = await clickgo.form.create(this, cmarkedFrm);
                 break;
             }
             case 'eform': {

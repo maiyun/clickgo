@@ -873,6 +873,20 @@ const modules = {
         'loading': false,
         'resolve': [],
     },
+    // --- marked ---
+    'marked': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/marked@17.0.0/lib/marked.umd.min.js`
+            ]);
+            if (!window.marked) {
+                throw Error('marked load failed.');
+            }
+            return window.marked;
+        },
+        'loading': false,
+        'resolve': [],
+    },
 };
 /**
  * --- 注册模块 ---
