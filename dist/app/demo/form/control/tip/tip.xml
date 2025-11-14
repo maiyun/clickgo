@@ -20,9 +20,12 @@
             <link>456</link>
         </tip>
         <layout gutter="5" align-v="center">
-            <label>Right</label>
-            <tip label="This is right" type="info">
+            <label>svg</label>
+            <tip label="This is svg" type="info">
                 <svg src="../../../res/icon.svg" style="width: 16px; height: 16px;" />
+            </tip>
+            <tip label="This is icon">
+                <icon name="info" size="m"></icon>
             </tip>
         </layout>
         <tip>
