@@ -18,6 +18,8 @@ Defined in: [dist/lib/task.ts:103](https://github.com/maiyun/clickgo/blob/master
 
 [`TCurrent`](../../core/type-aliases/TCurrent.md)
 
+任务 id
+
 ## Returns
 
 [`ITaskInfo`](../interfaces/ITaskInfo.md) \| `null`

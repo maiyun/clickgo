@@ -10,7 +10,7 @@
 
 Defined in: [dist/lib/tool.ts:524](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L524)
 
-对 layout 的
+对 layout 的 events 事件进行包裹
 
 ## Parameters
 
@@ -23,7 +23,3 @@ Defined in: [dist/lib/tool.ts:524](https://github.com/maiyun/clickgo/blob/master
 ## Returns
 
 `string`
-
-## Events
-
-事件进行包裹

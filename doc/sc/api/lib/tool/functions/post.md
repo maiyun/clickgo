@@ -8,7 +8,7 @@
 
 > **post**(`url`, `data`, `init?`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [dist/lib/tool.ts:1154](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1154)
+Defined in: [dist/lib/tool.ts:1162](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1162)
 
 发起 POST 请求（除 FormData 外都会转换为 JSON 提交）
 

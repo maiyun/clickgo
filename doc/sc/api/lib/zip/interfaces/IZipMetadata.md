@@ -6,7 +6,7 @@
 
 # Interface: IZipMetadata
 
-Defined in: [dist/lib/zip.ts:484](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L484)
+Defined in: [dist/lib/zip.ts:483](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L483)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/zip.ts:484](https://github.com/maiyun/clickgo/blob/master/
 
 > **currentFile**: `string` \| `null`
 
-Defined in: [dist/lib/zip.ts:486](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L486)
+Defined in: [dist/lib/zip.ts:485](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L485)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [dist/lib/zip.ts:486](https://github.com/maiyun/clickgo/blob/master/
 
 > **percent**: `number`
 
-Defined in: [dist/lib/zip.ts:485](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L485)
+Defined in: [dist/lib/zip.ts:484](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L484)

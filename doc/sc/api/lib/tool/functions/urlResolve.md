@@ -8,7 +8,7 @@
 
 > **urlResolve**(`from`, `to`): `string`
 
-Defined in: [dist/lib/tool.ts:1388](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1388)
+Defined in: [dist/lib/tool.ts:1396](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1396)
 
 将相对路径根据基准路径进行转换
 

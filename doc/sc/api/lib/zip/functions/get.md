@@ -8,7 +8,7 @@
 
 > **get**(`data?`): `Promise`\<[`Zip`](../classes/Zip.md) \| `null`\>
 
-Defined in: [dist/lib/zip.ts:427](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L427)
+Defined in: [dist/lib/zip.ts:426](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L426)
 
 获取 zip 对象
 

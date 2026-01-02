@@ -30,6 +30,8 @@ Defined in: [dist/lib/fs.ts:352](https://github.com/maiyun/clickgo/blob/master/d
 
 `BufferEncoding`
 
+编码
+
 ## Returns
 
 `Promise`\<`string` \| `null`\>

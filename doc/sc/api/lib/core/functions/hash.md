@@ -18,6 +18,8 @@ Defined in: [dist/lib/core.ts:655](https://github.com/maiyun/clickgo/blob/master
 
 [`TCurrent`](../type-aliases/TCurrent.md)
 
+当前任务 id
+
 ### hash
 
 `string`

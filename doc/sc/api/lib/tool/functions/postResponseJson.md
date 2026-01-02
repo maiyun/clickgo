@@ -8,7 +8,7 @@
 
 > **postResponseJson**(`url`, `data`, `init?`): `Promise`\<`any`\>
 
-Defined in: [dist/lib/tool.ts:1283](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1283)
+Defined in: [dist/lib/tool.ts:1291](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1291)
 
 发起 POST 请求并解析 JSON 响应
 

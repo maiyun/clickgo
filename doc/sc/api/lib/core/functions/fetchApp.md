@@ -30,6 +30,8 @@ Defined in: [dist/lib/core.ts:523](https://github.com/maiyun/clickgo/blob/master
 
 [`ICoreFetchAppOptions`](../interfaces/ICoreFetchAppOptions.md) = `{}`
 
+选项
+
 ## Returns
 
 `Promise`\<[`IApp`](../interfaces/IApp.md) \| `null`\>

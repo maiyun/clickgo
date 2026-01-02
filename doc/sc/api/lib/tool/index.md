@@ -12,6 +12,7 @@
 
 ## Interfaces
 
+- [IClassPrototype](interfaces/IClassPrototype.md)
 - [IRequestOptions](interfaces/IRequestOptions.md)
 - [IUrl](interfaces/IUrl.md)
 

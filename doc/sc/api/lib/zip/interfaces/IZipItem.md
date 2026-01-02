@@ -6,7 +6,7 @@
 
 # Interface: IZipItem
 
-Defined in: [dist/lib/zip.ts:442](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L442)
+Defined in: [dist/lib/zip.ts:441](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L441)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/zip.ts:442](https://github.com/maiyun/clickgo/blob/master/
 
 > **compressedSize**: `number`
 
-Defined in: [dist/lib/zip.ts:444](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L444)
+Defined in: [dist/lib/zip.ts:443](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L443)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [dist/lib/zip.ts:444](https://github.com/maiyun/clickgo/blob/master/
 
 > **date**: `Date`
 
-Defined in: [dist/lib/zip.ts:446](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L446)
+Defined in: [dist/lib/zip.ts:445](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L445)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [dist/lib/zip.ts:446](https://github.com/maiyun/clickgo/blob/master/
 
 > **isDirectory**: `boolean`
 
-Defined in: [dist/lib/zip.ts:448](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L448)
+Defined in: [dist/lib/zip.ts:447](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L447)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [dist/lib/zip.ts:448](https://github.com/maiyun/clickgo/blob/master/
 
 > **isFile**: `boolean`
 
-Defined in: [dist/lib/zip.ts:447](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L447)
+Defined in: [dist/lib/zip.ts:446](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L446)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [dist/lib/zip.ts:447](https://github.com/maiyun/clickgo/blob/master/
 
 > **name**: `string`
 
-Defined in: [dist/lib/zip.ts:443](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L443)
+Defined in: [dist/lib/zip.ts:442](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L442)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [dist/lib/zip.ts:443](https://github.com/maiyun/clickgo/blob/master/
 
 > **path**: `string`
 
-Defined in: [dist/lib/zip.ts:449](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L449)
+Defined in: [dist/lib/zip.ts:448](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L448)
 
 ***
 
@@ -62,4 +62,4 @@ Defined in: [dist/lib/zip.ts:449](https://github.com/maiyun/clickgo/blob/master/
 
 > **uncompressedSize**: `number`
 
-Defined in: [dist/lib/zip.ts:445](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L445)
+Defined in: [dist/lib/zip.ts:444](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L444)

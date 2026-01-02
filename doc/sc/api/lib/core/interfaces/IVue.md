@@ -6,7 +6,7 @@
 
 # Interface: IVue
 
-Defined in: [dist/lib/core.ts:1280](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1280)
+Defined in: [dist/lib/core.ts:1279](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1279)
 
 Vue 实例
 
@@ -20,7 +20,7 @@ Vue 实例
 
 > **$attrs**: `Record`\<`string`, `string`\>
 
-Defined in: [dist/lib/core.ts:1281](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1281)
+Defined in: [dist/lib/core.ts:1280](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1280)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [dist/lib/core.ts:1281](https://github.com/maiyun/clickgo/blob/maste
 
 > **$data**: `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/core.ts:1282](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1282)
+Defined in: [dist/lib/core.ts:1281](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1281)
 
 ***
 
@@ -36,7 +36,7 @@ Defined in: [dist/lib/core.ts:1282](https://github.com/maiyun/clickgo/blob/maste
 
 > **$el**: `HTMLElement`
 
-Defined in: [dist/lib/core.ts:1283](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1283)
+Defined in: [dist/lib/core.ts:1282](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1282)
 
 ***
 
@@ -44,7 +44,7 @@ Defined in: [dist/lib/core.ts:1283](https://github.com/maiyun/clickgo/blob/maste
 
 > **$options**: `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/core.ts:1287](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1287)
+Defined in: [dist/lib/core.ts:1286](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1286)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [dist/lib/core.ts:1287](https://github.com/maiyun/clickgo/blob/maste
 
 > **$parent**: `IVue` \| `null`
 
-Defined in: [dist/lib/core.ts:1288](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1288)
+Defined in: [dist/lib/core.ts:1287](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1287)
 
 ***
 
@@ -60,7 +60,7 @@ Defined in: [dist/lib/core.ts:1288](https://github.com/maiyun/clickgo/blob/maste
 
 > **$props**: `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/core.ts:1289](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1289)
+Defined in: [dist/lib/core.ts:1288](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1288)
 
 ***
 
@@ -68,7 +68,7 @@ Defined in: [dist/lib/core.ts:1289](https://github.com/maiyun/clickgo/blob/maste
 
 > **$refs**: `Record`\<`string`, `HTMLElement` & `IVue`\>
 
-Defined in: [dist/lib/core.ts:1290](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1290)
+Defined in: [dist/lib/core.ts:1289](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1289)
 
 ***
 
@@ -76,7 +76,7 @@ Defined in: [dist/lib/core.ts:1290](https://github.com/maiyun/clickgo/blob/maste
 
 > **$root**: `IVue`
 
-Defined in: [dist/lib/core.ts:1291](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1291)
+Defined in: [dist/lib/core.ts:1290](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1290)
 
 ***
 
@@ -84,7 +84,7 @@ Defined in: [dist/lib/core.ts:1291](https://github.com/maiyun/clickgo/blob/maste
 
 > **$slots**: `object`
 
-Defined in: [dist/lib/core.ts:1292](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1292)
+Defined in: [dist/lib/core.ts:1291](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1291)
 
 #### Index Signature
 
@@ -100,7 +100,7 @@ Defined in: [dist/lib/core.ts:1292](https://github.com/maiyun/clickgo/blob/maste
 
 > **$watch**: (`o`, `cb`, `opt?`) => `void`
 
-Defined in: [dist/lib/core.ts:1296](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1296)
+Defined in: [dist/lib/core.ts:1295](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1295)
 
 #### Parameters
 
@@ -132,7 +132,7 @@ Defined in: [dist/lib/core.ts:1296](https://github.com/maiyun/clickgo/blob/maste
 
 > **$emit**(`name`, ...`arg`): `void`
 
-Defined in: [dist/lib/core.ts:1284](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1284)
+Defined in: [dist/lib/core.ts:1283](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1283)
 
 #### Parameters
 
@@ -154,7 +154,7 @@ Defined in: [dist/lib/core.ts:1284](https://github.com/maiyun/clickgo/blob/maste
 
 > **$forceUpdate**(): `void`
 
-Defined in: [dist/lib/core.ts:1285](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1285)
+Defined in: [dist/lib/core.ts:1284](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1284)
 
 #### Returns
 
@@ -166,7 +166,7 @@ Defined in: [dist/lib/core.ts:1285](https://github.com/maiyun/clickgo/blob/maste
 
 > **$nextTick**(): `Promise`\<`void`\>
 
-Defined in: [dist/lib/core.ts:1286](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1286)
+Defined in: [dist/lib/core.ts:1285](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1285)
 
 #### Returns
 

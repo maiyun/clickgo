@@ -6,7 +6,7 @@
 
 # Interface: IZipInputByType
 
-Defined in: [dist/lib/zip.ts:471](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L471)
+Defined in: [dist/lib/zip.ts:470](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L470)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/zip.ts:471](https://github.com/maiyun/clickgo/blob/master/
 
 > **array**: `number`[]
 
-Defined in: [dist/lib/zip.ts:474](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L474)
+Defined in: [dist/lib/zip.ts:473](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L473)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [dist/lib/zip.ts:474](https://github.com/maiyun/clickgo/blob/master/
 
 > **arraybuffer**: `ArrayBuffer`
 
-Defined in: [dist/lib/zip.ts:476](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L476)
+Defined in: [dist/lib/zip.ts:475](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L475)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [dist/lib/zip.ts:476](https://github.com/maiyun/clickgo/blob/master/
 
 > **base64**: `string`
 
-Defined in: [dist/lib/zip.ts:472](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L472)
+Defined in: [dist/lib/zip.ts:471](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L471)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [dist/lib/zip.ts:472](https://github.com/maiyun/clickgo/blob/master/
 
 > **blob**: `Blob`
 
-Defined in: [dist/lib/zip.ts:477](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L477)
+Defined in: [dist/lib/zip.ts:476](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L476)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [dist/lib/zip.ts:477](https://github.com/maiyun/clickgo/blob/master/
 
 > **string**: `string`
 
-Defined in: [dist/lib/zip.ts:473](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L473)
+Defined in: [dist/lib/zip.ts:472](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L472)
 
 ***
 
@@ -54,4 +54,4 @@ Defined in: [dist/lib/zip.ts:473](https://github.com/maiyun/clickgo/blob/master/
 
 > **uint8array**: `Uint8Array`
 
-Defined in: [dist/lib/zip.ts:475](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L475)
+Defined in: [dist/lib/zip.ts:474](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L474)

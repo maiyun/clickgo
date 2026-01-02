@@ -32,7 +32,7 @@ Defined in: [dist/lib/zip.ts:13](https://github.com/maiyun/clickgo/blob/master/d
 
 > **cd**(`dir`): `string`
 
-Defined in: [dist/lib/zip.ts:335](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L335)
+Defined in: [dist/lib/zip.ts:334](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L334)
 
 进入一个目录（不存在也能进入，需要自行判断）
 返回进入后的路径值
@@ -55,7 +55,7 @@ Defined in: [dist/lib/zip.ts:335](https://github.com/maiyun/clickgo/blob/master/
 
 > **generate**\<`T`\>(`options`): `Promise`\<[`IZipOutputByType`](../interfaces/IZipOutputByType.md)\[`T`\]\>
 
-Defined in: [dist/lib/zip.ts:347](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L347)
+Defined in: [dist/lib/zip.ts:346](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L346)
 
 打包 zip
 
@@ -149,7 +149,7 @@ Defined in: [dist/lib/zip.ts:19](https://github.com/maiyun/clickgo/blob/master/d
 
 > **getList**(): `Promise`\<`Record`\<`string`, `string` \| `Blob`\>\>
 
-Defined in: [dist/lib/zip.ts:372](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L372)
+Defined in: [dist/lib/zip.ts:371](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L371)
 
 获取 path 和 string/Blob 对应的文件列表
 
@@ -163,7 +163,7 @@ Defined in: [dist/lib/zip.ts:372](https://github.com/maiyun/clickgo/blob/master/
 
 > **isDir**(`path`): `false` \| [`IZipStats`](../interfaces/IZipStats.md)
 
-Defined in: [dist/lib/zip.ts:131](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L131)
+Defined in: [dist/lib/zip.ts:130](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L130)
 
 判断是否是目录或目录是否存在，是的话返回 stats
 
@@ -185,7 +185,7 @@ Defined in: [dist/lib/zip.ts:131](https://github.com/maiyun/clickgo/blob/master/
 
 > **isFile**(`path`): `false` \| [`IZipStats`](../interfaces/IZipStats.md)
 
-Defined in: [dist/lib/zip.ts:143](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L143)
+Defined in: [dist/lib/zip.ts:142](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L142)
 
 判断是否是文件或文件是否存在，是的话返回 stats
 
@@ -257,7 +257,7 @@ Defined in: [dist/lib/zip.ts:47](https://github.com/maiyun/clickgo/blob/master/d
 
 > **pwd**(): `string`
 
-Defined in: [dist/lib/zip.ts:326](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L326)
+Defined in: [dist/lib/zip.ts:325](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L325)
 
 获取当前目录，末尾不带 /
 
@@ -285,7 +285,7 @@ string
 
 > **readDir**(`path?`, `opt?`): [`IZipItem`](../interfaces/IZipItem.md)[]
 
-Defined in: [dist/lib/zip.ts:152](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L152)
+Defined in: [dist/lib/zip.ts:151](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L151)
 
 读取目录，hasChildren: false, hasDir: true, pathAsKey: false
 
@@ -317,7 +317,7 @@ Defined in: [dist/lib/zip.ts:152](https://github.com/maiyun/clickgo/blob/master/
 
 > **readDir**(`path?`, `opt?`): `Record`\<`string`, [`IZipItem`](../interfaces/IZipItem.md)\>
 
-Defined in: [dist/lib/zip.ts:153](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L153)
+Defined in: [dist/lib/zip.ts:152](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L152)
 
 读取目录，hasChildren: false, hasDir: true, pathAsKey: false
 
@@ -351,7 +351,7 @@ Defined in: [dist/lib/zip.ts:153](https://github.com/maiyun/clickgo/blob/master/
 
 > **stats**(`path`): [`IZipStats`](../interfaces/IZipStats.md) \| `null`
 
-Defined in: [dist/lib/zip.ts:72](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L72)
+Defined in: [dist/lib/zip.ts:71](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L71)
 
 获取对象是否存在，存在则返回 stats 对象，否则返回 null
 
