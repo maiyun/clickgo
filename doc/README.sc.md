@@ -26,6 +26,36 @@
     <img src="./pic2.jpg" alt="ClickGo">
 </p>
 
+## 安装
+
+首先，设置 ClickGo 模块的加载路径，然后导入您的入口文件。
+
+**index.html**
+
+```html
+<script type="importmap">
+{
+    "imports": {
+        "clickgo": "https://cdn.jsdelivr.net/npm/clickgo@x.x.x/dist/index.js"
+    }
+}
+</script>
+<script type="module" src="index.js"></script>
+```
+
+它还可以携带参数和全局变量。
+
+```html
+<script>
+clickgo = {
+    'config': {
+        'cdn': 'https://cdn.jsdelivr.net',
+    },
+    'global': {},
+};
+</script>
+```
+
 ## 使用
 
 需要借助 [ClickGo Compiler](https://github.com/maiyun/clickgo-compiler) 将 app 文件夹编译为 cga 文件，然后编译入口文件，并在浏览器中引用入口文件。

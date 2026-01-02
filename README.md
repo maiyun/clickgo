@@ -28,6 +28,36 @@ The app compiles into a single `.cga` file, running in the web or natively via [
     <img src="./doc/pic2.jpg" alt="ClickGo">
 </p>
 
+## Installation
+
+To get started, set the loading path for the ClickGo module, then import your entry file.
+
+**index.html**
+
+```html
+<script type="importmap">
+{
+    "imports": {
+        "clickgo": "https://cdn.jsdelivr.net/npm/clickgo@x.x.x/dist/index.js"
+    }
+}
+</script>
+<script type="module" src="index.js"></script>
+```
+
+It can also carry parameters and global variables.
+
+```html
+<script>
+clickgo = {
+    'config': {
+        'cdn': 'https://cdn.jsdelivr.net',
+    },
+    'global': {},
+};
+</script>
+```
+
 ## Usage
 
 You'll need the [ClickGo Compiler](https://github.com/maiyun/clickgo-compiler) to compile the "app" folder into a .cga file. Then compile the entry file and reference it in the browser.
