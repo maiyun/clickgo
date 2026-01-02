@@ -16,7 +16,8 @@
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
     "native": "electron ./dist/test/native",
     "native2": "electron ./dist/test/native/index2",
-    "native3": "electron ./dist/test/native/index3"
+    "native3": "electron ./dist/test/native/index3",
+    "build-doc": "bash ./utils/build-doc.sh"
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.3.1",
@@ -33,6 +34,8 @@
     "mpegts.js": "^1.8.0",
     "rollup": "^4.54.0",
     "terser": "^5.44.1",
+    "typedoc": "^0.28.15",
+    "typedoc-plugin-markdown": "^4.9.0",
     "typescript": "^5.9.3",
     "vue": "^3.5.26"
   }
