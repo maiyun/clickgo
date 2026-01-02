@@ -122,6 +122,10 @@ export function hasFrame() {
 }
 /** --- 全局类 --- */
 export class AbstractBoot {
+    /** --- 当前是否是 debug 模式 --- */
+    _debug = false;
+    /** --- 切勿传给 App --- */
+    _sysId = '';
     setSysId(sysId) {
         if (this._sysId) {
             return;
@@ -133,10 +137,6 @@ export class AbstractBoot {
         return this._debug;
     }
     constructor(opt = {}) {
-        /** --- 当前是否是 debug 模式 --- */
-        this._debug = false;
-        /** --- 切勿传给 App --- */
-        this._sysId = '';
         if (opt.debug) {
             this._debug = true;
         }
@@ -216,12 +216,23 @@ export class AbstractBoot {
  * @param boot 启动类
  */
 export async function launcher(boot) {
-    // --- 加载 Vue ---
-    await lTool.loadScript(`${cdn}/npm/vue@3.5.21/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`);
+    await lTool.loadScripts([
+        // --- 加载 Vue ---
+        `${cdn}/npm/vue@3.5.25/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`,
+        // --- 加载 jszip ---
+        `${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`,
+        // --- 加载 pointer ---
+        `${cdn}/npm/@litert/pointer@1.6.0/dist/index.umd.min.js`,
+    ]);
     modules.vue = window.Vue;
-    // --- 加载 jszip ---
-    await lTool.loadScript(`${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`);
     modules.jszip = window.JSZip;
+    modules.pointer = window.pointer;
+    modules.pointer.addMoveHook('down', () => {
+        lDom.is.move = true;
+    });
+    modules.pointer.addMoveHook('up', () => {
+        lDom.is.move = false;
+    });
     // --- 加载 clickgo 的 global css ---
     const globalUrl = `${dirname}/global.css`;
     try {

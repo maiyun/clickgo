@@ -91,39 +91,12 @@ export default class extends clickgo.control.AbstractControl {
         return this.outBlockPx * this.offsetRatio;
     }
 
-    /**
-     * ---- wrap 的 touchstart 事件 ---
-     */
-    public wrapTouch(e: TouchEvent): void {
-        // --- 防止在手机模式按下的状态下滚动条被自动隐藏，PC 下有 enter 所以没事 ---
-        clickgo.dom.bindDown(e, {
-            down: () => {
-                this.isEnter = true;
-                if (this.propBoolean('float')) {
-                    this.isShow = true;
-                    if (this.hideTimer) {
-                        clickgo.task.removeTimer(this, this.hideTimer);
-                        this.hideTimer = 0;
-                    }
-                }
-            },
-            up: () => {
-                this.isEnter = false;
-                if (this.propBoolean('float')) {
-                    this.hideTimer = clickgo.task.sleep(this, () => {
-                        this.isShow = false;
-                    }, 800);
-                }
-            }
-        });
-    }
-
     /** --- 上下控制按钮按下事件 --- */
-    public controlDown(e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
+    public controlDown(e: PointerEvent, type: 'start' | 'end'): void {
         if (this.props.client >= this.props.length) {
             return;
         }
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             down: () => {
                 this.tran = clickgo.task.onFrame(this, () => {
                     if (type === 'start') {
@@ -168,11 +141,8 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- block 的 down 事件 ---
      */
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.dom.bindMove(e, {
+    public down(e: PointerEvent): void {
+        clickgo.modules.pointer.move(e, {
             'areaObject': this.refs.bar,
             'object': this.refs.block,
             'move': (e, o) => {
@@ -197,10 +167,7 @@ export default class extends clickgo.control.AbstractControl {
     /**
      * --- bar 的空白区域（非 down 区域）按下事件 ---
      */
-    public barDown(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public barDown(e: PointerEvent): void {
         if (e.currentTarget !== e.target) {
             return;
         }
@@ -209,7 +176,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- bar inner 对应的 left 或 top 位置 --- */
         const barOffsetPx = this.props.direction === 'v' ? barRect.top : barRect.left;
         /** --- 鼠标点击在 bar 中的位置 --- */
-        let eOffsetPx = this.props.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
+        let eOffsetPx = this.props.direction === 'v' ? e.clientY : e.clientX;
         eOffsetPx = eOffsetPx - barOffsetPx;
         // --- 计算 offset px 位置 ---
         let offsetPx = eOffsetPx - this.blockPx / 2;
@@ -228,31 +195,27 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 进入时保持滚动条常亮 ---
-    public enter(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.isEnter = true;
-        if (this.propBoolean('float')) {
-            this.isShow = true;
-            if (this.hideTimer) {
-                clickgo.task.removeTimer(this, this.hideTimer);
-                this.hideTimer = 0;
-            }
-        }
-    }
-
-    // --- 移出后十滚动条隐藏 ---
-    public leave(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.isEnter = false;
-        if (this.propBoolean('float')) {
-            this.hideTimer = clickgo.task.sleep(this, () => {
-                this.isShow = false;
-            }, 800);
-        }
+    public enter(oe: PointerEvent): void {
+        clickgo.modules.pointer.hover(oe, {
+            enter: () => {
+                this.isEnter = true;
+                if (this.propBoolean('float')) {
+                    this.isShow = true;
+                    if (this.hideTimer) {
+                        clickgo.task.removeTimer(this, this.hideTimer);
+                        this.hideTimer = 0;
+                    }
+                }
+            },
+            leave: () => {
+                this.isEnter = false;
+                if (this.propBoolean('float')) {
+                    this.hideTimer = clickgo.task.sleep(this, () => {
+                        this.isShow = false;
+                    }, 800);
+                }
+            },
+        });
     }
 
     public onMounted(): void {

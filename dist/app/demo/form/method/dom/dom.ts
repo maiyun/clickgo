@@ -12,12 +12,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public watchStyleChange = true;
 
-    public bindGestureText = '';
-
-    public bindGestureWheelText = '';
-
-    public bindLongText = false;
-
     public moveLeft = 0;
 
     public moveTop = 0;
@@ -108,10 +102,6 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.dom.setGlobalTransition(!this.isTransition);
     }
 
-    public hasTouchButMouse(e: MouseEvent | TouchEvent): void {
-        clickgo.form.dialog(this, clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
-    }
-
     public getStyleCount(): void {
         clickgo.form.dialog(this, clickgo.dom.getStyleCount(this, 'form').toString()).catch((e) => { throw e; });
     }
@@ -183,48 +173,59 @@ export default class extends clickgo.form.AbstractForm {
         this.getWatchInfoDisabled = false;
     }
 
-    public bindGesture(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
+    public async fullscreen(): Promise<void> {
+        await clickgo.dom.fullscreen();
+    }
+
+    // --- pointer ---
+
+    public gestureText = '';
+
+    public gestureWheelText = '';
+
+    public longText = false;
+
+    public gesture(e: PointerEvent): void {
+        clickgo.modules.pointer.gesture(e, (ne, dir) => {
             if (['top', 'bottom'].includes(dir)) {
                 return 1;
             }
             return 0;
         }, async (dir): Promise<void> => {
-            this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            this.gestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             await clickgo.tool.sleep(500);
-            this.bindGestureText = '';
+            this.gestureText = '';
         });
     }
 
-    public bindGestureWheel(e: WheelEvent): void {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
+    public gestureWheel(e: WheelEvent): void {
+        clickgo.modules.pointer.gesture(e, (ne, dir) => {
             if (['top', 'bottom', 'left', 'right'].includes(dir)) {
                 return 1;
             }
             return 0;
         }, async (dir) => {
-            this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            this.gestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             await clickgo.tool.sleep(500);
-            this.bindGestureWheelText = '';
+            this.gestureWheelText = '';
         });
     }
 
-    public bindLong(): void {
+    public long(): void {
         clickgo.form.dialog(this, 'Press and hold this button.').catch((e) => { throw e; });
     }
 
-    public bindLongDown(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindLong(e, async () => {
-            this.bindLongText = true;
+    public longDown(e: PointerEvent): void {
+        clickgo.modules.pointer.long(e, async () => {
+            this.longText = true;
             await clickgo.tool.sleep(500);
-            this.bindLongText = false;
+            this.longText = false;
         });
     }
 
-    public bindDragDown(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindDrag(e, {
-            'el': this.refs.bindDrag,
-            'data': 'bindDragDownTest'
+    public dragDown(e: PointerEvent): void {
+        clickgo.modules.pointer.drag(e, this.refs.drag, {
+            'data': ' dragDownTest'
         });
     }
 
@@ -246,8 +247,8 @@ export default class extends clickgo.form.AbstractForm {
         (e.target as HTMLElement).innerText = '';
     }
 
-    public bindMoveDown(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindMove(e, {
+    public moveDown(e: PointerEvent): void {
+        clickgo.modules.pointer.move(e, {
             'areaObject': e.currentTarget as HTMLElement,
             'object': this.refs.move,
             move: (e, o): void => {
@@ -257,8 +258,8 @@ export default class extends clickgo.form.AbstractForm {
         });
     }
 
-    public moveDown(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindDblClick(e, () => {
+    public dblClickDown(e: PointerEvent): void {
+        clickgo.modules.pointer.dblClick(e, () => {
             this.moveWidth = this.moveWidth === 25 ? 50 : 25;
             this.moveHeight = this.moveHeight === 25 ? 50 : 25;
         });
@@ -270,17 +271,13 @@ export default class extends clickgo.form.AbstractForm {
 
     public scaleS = 1;
 
-    public bindScaleDown(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindScale(e, (e, scale, cpos) => {
+    public scaleDown(e: PointerEvent): void {
+        clickgo.modules.pointer.scale(e, (e, scale, cpos) => {
             e.preventDefault();
             this.scaleX += cpos.x;
             this.scaleY += cpos.y;
             this.scaleS *= scale;
         });
-    }
-
-    public async fullscreen(): Promise<void> {
-        await clickgo.dom.fullscreen();
     }
 
     public onMounted(): void {

@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import * as terser from 'terser';
 import * as lCompiler from './compiler/compiler.js';
 
-// -----------
+// ------------
 // --- 插件 ---
-// -----------
+// ------------
 
 /** --- 压缩 --- */
 function terserPlugin(): rollup.InputPluginOption {
@@ -23,9 +23,131 @@ function terserPlugin(): rollup.InputPluginOption {
     };
 }
 
-// -------------------------
+// ---------------------------------------------
+// ------- 检查控件的 info.md 文件是否缺少 -------
+// --- 以及文件内的参数与事件是否与实际安全一致 ---
+// ---------------------------------------------
+
+const checkList = await fs.promises.readdir('dist/sources/control/', {
+    'withFileTypes': true,
+});
+
+for (const item of checkList) {
+    if (item.name.startsWith('.')) {
+        continue;
+    }
+    const name = item.name;
+    const path = 'dist/sources/control/' + name;
+
+    // --- 检查 info.md 是否存在 ---
+    try {
+        await fs.promises.access(path + '/info.md');
+    }
+    catch {
+        console.log(`[${name}] info.md missing`);
+        continue;
+    }
+
+    // --- 读取文件 ---
+    const info = await fs.promises.readFile(path + '/info.md', 'utf8');
+    let code = '';
+    try {
+        code = await fs.promises.readFile(path + '/code.ts', 'utf8');
+    }
+    catch {
+        // code.ts missing
+    }
+
+    // --- 解析 code.ts ---
+    let propsMatch = /public\s+props:\s*\{([\s\S]+?)\}\s*=/.exec(code);
+    propsMatch ??= /public\s+props\s*=\s*\{([\s\S]+?)\}/.exec(code);
+    const emitsMatch = /public\s+emits\s*=\s*\{([\s\S]+?)\}/.exec(code);
+
+    const codeProps: string[] = [];
+    if (propsMatch) {
+        let propStr = propsMatch[1];
+        // --- 移除嵌套对象 ---
+        let oldStr = '';
+        while (propStr !== oldStr) {
+            oldStr = propStr;
+            propStr = propStr.replace(/\{[^{}]*?\}/g, '');
+        }
+
+        const matches = propStr.matchAll(/'(.+?)'\s*\??:/g);
+        for (const match of matches) {
+            codeProps.push(match[1]);
+        }
+    }
+
+    const codeEmits: string[] = [];
+    if (emitsMatch) {
+        const matches = emitsMatch[1].matchAll(/'(.+?)'\s*\??:/g);
+        for (const match of matches) {
+            if (match[1].startsWith('update:')) {
+                continue;
+            }
+            codeEmits.push(match[1]);
+        }
+    }
+
+    // --- 解析 info.md ---
+    const infoProps: string[] = [];
+    const infoEmits: string[] = [];
+    const lines = info.split('\n');
+    let mode: 'props' | 'emits' | '' = '';
+
+    for (const line of lines) {
+        if (line.startsWith('### 参数')) {
+            mode = 'props';
+            continue;
+        }
+        if (line.startsWith('### 事件')) {
+            mode = 'emits';
+            continue;
+        }
+        if (line.startsWith('### ')) {
+            mode = '';
+            continue;
+        }
+        if (mode === '' || !line.startsWith('#### ')) {
+            continue;
+        }
+        const key = line.slice(5).trim();
+        if (mode === 'props') {
+            infoProps.push(key);
+        }
+        else {
+            infoEmits.push(key);
+        }
+    }
+
+    // --- 比对 ---
+    for (const prop of codeProps) {
+        if (!infoProps.includes(prop)) {
+            console.log(`[${name}] Prop '${prop}' not documented in info.md`);
+        }
+    }
+    for (const prop of infoProps) {
+        if (!codeProps.includes(prop)) {
+            console.log(`[${name}] Documented prop '${prop}' not found in code.ts`);
+        }
+    }
+
+    for (const emit of codeEmits) {
+        if (!infoEmits.includes(emit)) {
+            console.log(`[${name}] Event '${emit}' not documented in info.md`);
+        }
+    }
+    for (const emit of infoEmits) {
+        if (!codeEmits.includes(emit)) {
+            console.log(`[${name}] Documented event '${emit}' not found in code.ts`);
+        }
+    }
+}
+
+// --------------------------
 // --- 先编译 ClickGo 核心 ---
-// -------------------------
+// --------------------------
 
 const clickgoBundle = await rollup.rollup({
     'input': './dist/clickgo.js',
@@ -44,6 +166,7 @@ await clickgoBundle.write({
     'format': 'es',
 });
 await clickgoBundle.close();
+console.log('CLICKGO CORE');
 
 // ---------------
 // --- 编译控件 ---

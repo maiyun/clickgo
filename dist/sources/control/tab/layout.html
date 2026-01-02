@@ -1,10 +1,10 @@
 <div class="wrap" :class="[tabPosition]">
     <template v-for="i of 2">
         <div v-if="(i === 1 && (tabPosition === 'top' || tabPosition === 'left')) || (i === 2 && (tabPosition === 'right' || tabPosition === 'bottom'))" class="tabs-wrap">
-            <div v-show="arrow" class="arrow start" @mousedown="longDown($event, 'start')" @touchstart="longDown($event, 'start')"></div>
+            <div v-show="arrow" class="arrow start" @pointerdown="longDown($event, 'start')"></div>
             <div ref="tabs" class="tabs" @wheel="wheel" data-cg-scroll>
-                <div v-for="item, index of tabsComp" class="tab" :class="[value === item.value ? 'selected' : undefined]" @click="tabClick($event, item)" data-cg-drop @drop="drop($event, index)">
-                    <div v-if="item.drag" class="drag" @mousedown="down($event, index)" @touchstart="down($event, index)">&#xea02;</div>
+                <div v-for="item, index of tabsComp" class="tab" :class="[value === item.value ? 'selected' : undefined]" @click="tabClick($event, item)" data-drop @drop="drop($event, index)">
+                    <div v-if="item.drag" class="drag" @pointerdown="down($event, index)">&#xea02;</div>
                     <template v-if="slots['before']"><slot name="before" :item="item" :index="index"></slot></template>
                     <div v-if="slots['prepend']" class="prepend"><slot name="prepend" :item="item" :index="index"></slot></div>
                     <div class="content">{{item.label}}</div>
@@ -13,7 +13,7 @@
                     <div v-if="item.close" class="close" @click="tabClose($event, index, item.value)">&#xea01;</div>
                 </div>
             </div>
-            <div v-show="arrow" class="arrow end" @mousedown="longDown($event, 'end')" @touchstart="longDown($event, 'end')"></div>
+            <div v-show="arrow" class="arrow end" @pointerdown="longDown($event, 'end')"></div>
         </div>
         <div v-else class="panel">
             <slot></slot>

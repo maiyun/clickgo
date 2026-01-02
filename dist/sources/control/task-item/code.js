@@ -1,13 +1,10 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'selected': false,
-            'opened': false,
-            'multi': false
-        };
-    }
+    props = {
+        'selected': false,
+        'opened': false,
+        'multi': false
+    };
     get isSelected() {
         return clickgo.tool.getBoolean(this.props.selected);
     }
@@ -20,29 +17,7 @@ export default class extends clickgo.control.AbstractControl {
     get position() {
         return this.parentByName('task')?.position ?? 'bottom';
     }
-    click() {
-        if (!this.slots['pop']) {
-            return;
-        }
-        if (this.element.dataset.cgPopOpen !== undefined) {
-            clickgo.form.hidePop();
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, 'v');
-    }
-    contextmenu(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (!this.slots['contextmenu']) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');
-    }
     down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (this.element.dataset.cgPopOpen !== undefined) {
             // --- 是否要隐藏 ---
             if (e instanceof MouseEvent && e.button === 2) {
@@ -57,13 +32,23 @@ export default class extends clickgo.control.AbstractControl {
                 }
             }
         }
-        if (e instanceof TouchEvent) {
-            clickgo.dom.bindLong(e, () => {
-                if (this.refs.pop?.dataset.cgOpen !== undefined) {
-                    clickgo.form.hidePop();
-                }
-                clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');
-            });
-        }
+        // --- 右键菜单 ---
+        clickgo.modules.pointer.menu(e, () => {
+            if (this.refs.pop?.dataset.cgOpen !== undefined) {
+                clickgo.form.hidePop();
+            }
+            clickgo.form.showPop(this.element, this.refs.contextmenu, 'v');
+        });
+        // --- 直接菜单 ---
+        clickgo.modules.pointer.click(e, () => {
+            if (!this.slots['pop']) {
+                return;
+            }
+            if (this.element.dataset.cgPopOpen !== undefined) {
+                clickgo.form.hidePop();
+                return;
+            }
+            clickgo.form.showPop(this.element, this.refs.pop, 'v');
+        });
     }
 }

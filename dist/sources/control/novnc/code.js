@@ -1,33 +1,30 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'init': null,
-            'connect': null,
-            'disconnect': null,
-            'password': null,
-            'fail': null,
-            'desktopresize': null,
-            'clipboard': null,
-        };
-        this.notInit = false;
-        this.isLoading = true;
-        /** --- 用户最后一次活动时间 --- */
-        this.lastActive = 0;
-        /** --- 定时器 --- */
-        // public activeTimer: number = 0;
-        this.access = {
-            'novnc': undefined,
-            'rfb': undefined,
-        };
-        this.props = {
-            'modelValue': {
-                'url': '',
-                'pwd': '',
-            },
-        };
-    }
+    emits = {
+        'init': null,
+        'connect': null,
+        'disconnect': null,
+        'password': null,
+        'fail': null,
+        'desktopresize': null,
+        'clipboard': null,
+    };
+    notInit = false;
+    isLoading = true;
+    /** --- 用户最后一次活动时间 --- */
+    lastActive = 0;
+    /** --- 定时器 --- */
+    // public activeTimer: number = 0;
+    access = {
+        'novnc': undefined,
+        'rfb': undefined,
+    };
+    props = {
+        'modelValue': {
+            'url': '',
+            'pwd': '',
+        },
+    };
     async onMounted() {
         const novnc = await clickgo.core.getModule('@novnc/novnc');
         if (!novnc) {
@@ -123,11 +120,8 @@ export default class extends clickgo.control.AbstractControl {
         this.access.rfb = undefined;
     }
     /** --- 检测用户是否活动 --- */
-    mousemove(e) {
+    pointermove() {
         if (!this.access.rfb) {
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.lastActive = Date.now();

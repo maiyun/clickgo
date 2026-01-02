@@ -1,19 +1,16 @@
 import * as clickgo from 'clickgo';
 import imgFrm from '../arteditor/img';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.theme = ['light'];
-        this.themes = ['light', 'dark'];
-        this.disabled = false;
-        this.readonly = false;
-        this.size = ['12px'];
-        this.family = false;
-        this.visual = false;
-        this.text = '';
-        this.html = '<p align="center">123</p>';
-        this.htmlc = '';
-    }
+    theme = ['light'];
+    themes = ['light', 'dark'];
+    disabled = false;
+    readonly = false;
+    size = ['12px'];
+    family = false;
+    visual = false;
+    text = '';
+    html = '<p align="center">123</p>';
+    htmlc = '';
     async imgselect(cb) {
         const frm = await clickgo.form.create(this, imgFrm);
         const path = await frm.showDialog();

@@ -1,11 +1,8 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.tlist = [];
-        this.list = [];
-        this.tid = [];
-    }
+    tlist = [];
+    list = [];
+    tid = [];
     pushConsole(name, text) {
         const date = new Date();
         this.list.unshift({

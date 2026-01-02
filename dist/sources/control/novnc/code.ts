@@ -141,11 +141,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 检测用户是否活动 --- */
-    public mousemove(e: MouseEvent | TouchEvent): void {
+    public pointermove(): void {
         if (!this.access.rfb) {
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         this.lastActive = Date.now();

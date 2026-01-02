@@ -1,37 +1,41 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'direction': 'h',
-            'gutter': 0,
-            'itemGutter': 0,
-            'alignH': undefined,
-            'alignV': undefined,
-            'sizeM': 0,
-            'sizeL': 0,
-        };
-        /** --- 整个宽度 --- */
-        this.width = 0;
-        /** --- 当前的大小模式 --- */
-        this.size = 's';
+    props = {
+        'direction': 'h',
+        'gutter': 0,
+        'itemGutter': 0,
+        'alignH': undefined,
+        'alignV': undefined,
+        'dense': true,
+    };
+    /** --- 整个宽度 --- */
+    width = 0;
+    /** --- 最大横跨列数 --- */
+    get maxSpan() {
+        return Math.floor(this.width / 250) || 1;
     }
-    /** --- 一行排几列 --- */
-    get columns() {
-        if (this.width >= 1000) {
-            this.size = 'l';
-            return this.propInt('sizeL') || 4;
-        }
-        if (this.width >= 600) {
-            this.size = 'm';
-            return this.propInt('sizeM') || 2;
-        }
-        this.size = 's';
-        return 1;
-    }
+    /** --- 最后一个元素横跨的列数 --- */
+    last = 1;
     onMounted() {
         clickgo.dom.watchSize(this, this.element, () => {
+            // --- 宽度变化 ---
             this.width = this.element.offsetWidth;
+            // --- 更新最后一个元素横跨的列数 ---
+            /** --- 总 span --- */
+            let spanCount = 0;
+            /** --- 每行最大列数 --- */
+            const lineCell = Math.floor(this.width / 250);
+            for (const cell of this.element.children) {
+                if (!cell.nextElementSibling) {
+                    // --- 最后一个元素，不计入 ---
+                    break;
+                }
+                const span = parseInt(cell.dataset.cgSpan ?? '0');
+                if (span > 0) {
+                    spanCount += span;
+                }
+            }
+            this.last = lineCell - (spanCount % lineCell);
         }, true);
     }
 }

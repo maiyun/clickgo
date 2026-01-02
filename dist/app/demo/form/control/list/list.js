@@ -1,131 +1,125 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.ntab = '';
-        // --- greatlist ---
-        this.slist = [
-            {
-                'type': 0,
-                'name': 'Appraise',
-                'path': 'Bob >> folder >> Appraise',
-                'src': '/package/res/r-1.svg'
-            },
-            {
-                'type': 0,
-                'name': 'Card',
-                'path': 'Bob >> folder >> Card',
-                'src': '/package/res/r-2.svg',
-                'menu': true,
-                'leftline': 'warning'
-            },
-            {
-                'type': 0,
-                'name': 'Appraise2',
-                'path': 'Bob >> folder >> Appraise2',
-                'src': '/package/res/r-1.svg',
-                'disabled': true,
-                'leftline': 'warning'
-            },
-            {
-                'type': 0,
-                'name': 'Appraise3',
-                'path': 'Bob >> folder >> Appraise3',
-                'src': '/package/res/r-2.svg',
-                'unavailable': true
-            },
-            {
-                'control': 'split'
-            },
-            {
-                'type': 1
-            },
-            {
-                'type': 1
-            },
-            {
-                'type': 1
-            },
-            {
-                'type': 1
-            },
-            {
-                'type': 1
-            },
-            {
-                'type': 1
-            },
-            {
-                'type': 1
-            }
-        ];
-        this.select = [11];
-        // --- list ---
-        this.select2 = ['Appraise'];
-        this.label2 = [''];
-        this.listData5 = [
-            {
-                'name': 'hi',
-                'name2': 'xhi',
-                'id': '1'
-            },
-            {
-                'name': 'hi2dis',
-                'name2': 'xhi2dis',
-                'id': '2',
-                'disabled': true,
-                'count': 2
-            },
-            {
-                'name': 'hi2',
-                'name2': 'xhi2',
-                'id': '3',
-                'sub': [
-                    {
-                        'name': 'hi3',
-                        'name2': 'xhi3',
-                        'id': '4'
-                    }
-                ]
-            }
-        ];
-        this.listData6 = ['1', '2', '3', '4', '5'];
-        this.listMap5 = undefined;
-        this.listData5Index = false;
-        this.disabledList = [];
-        // --- obejct ---
-        this.selectObject = ['test'];
-        this.listDataObject = {
-            'test': 'This is test',
-            '-1': 'This is number',
-            'other': 'This is other',
-            'same': 'same'
-        };
-        // --- async ---
-        this.sub6children = [];
-        this.select3 = [0];
-        this.listData3 = [];
-        this.select4 = [];
-        this.listData4 = [];
-        // --- 操作 ---
-        this.disabled = false;
-        this.must = true;
-        this.multi = false;
-        this.ctrl = true;
-        this.selection = false;
-        this.gesture = false;
-        this.selectionArea = {};
-        this.tree = false;
-        this.async = false;
-        this.icon = false;
-        this.scroll = 'auto';
-        this.virtual = false;
-        this.check = false;
-        this.mode = ['default'];
-        // --- list ---
-        this.listDataEmpty = false;
-        this.glNone = false;
-    }
+    ntab = '';
+    // --- greatlist ---
+    slist = [
+        {
+            'type': 0,
+            'name': 'Appraise',
+            'path': 'Bob >> folder >> Appraise',
+            'src': '/package/res/r-1.svg'
+        },
+        {
+            'type': 0,
+            'name': 'Card',
+            'path': 'Bob >> folder >> Card',
+            'src': '/package/res/r-2.svg',
+            'menu': true,
+            'leftline': 'warning'
+        },
+        {
+            'type': 0,
+            'name': 'Appraise2',
+            'path': 'Bob >> folder >> Appraise2',
+            'src': '/package/res/r-1.svg',
+            'disabled': true,
+            'leftline': 'warning'
+        },
+        {
+            'type': 0,
+            'name': 'Appraise3',
+            'path': 'Bob >> folder >> Appraise3',
+            'src': '/package/res/r-2.svg',
+            'unavailable': true
+        },
+        {
+            'control': 'split'
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        },
+        {
+            'type': 1
+        }
+    ];
+    select = [11];
+    // --- list ---
+    select2 = ['Appraise'];
+    label2 = [''];
+    listData5 = [
+        {
+            'name': 'hi',
+            'name2': 'xhi',
+            'id': '1'
+        },
+        {
+            'name': 'hi2dis',
+            'name2': 'xhi2dis',
+            'id': '2',
+            'disabled': true,
+            'count': 2
+        },
+        {
+            'name': 'hi2',
+            'name2': 'xhi2',
+            'id': '3',
+            'sub': [
+                {
+                    'name': 'hi3',
+                    'name2': 'xhi3',
+                    'id': '4'
+                }
+            ]
+        }
+    ];
+    listData6 = ['1', '2', '3', '4', '5'];
+    listMap5 = undefined;
+    listData5Index = false;
+    disabledList = [];
+    // --- obejct ---
+    selectObject = ['test'];
+    listDataObject = {
+        'test': 'This is test',
+        '-1': 'This is number',
+        'other': 'This is other',
+        'same': 'same'
+    };
+    // --- async ---
+    sub6children = [];
+    select3 = [0];
+    listData3 = [];
+    select4 = [];
+    listData4 = [];
+    // --- 操作 ---
+    disabled = false;
+    must = true;
+    multi = false;
+    ctrl = true;
+    selection = false;
+    gesture = false;
+    selectionArea = {};
+    tree = false;
+    async = false;
+    icon = false;
+    scroll = 'auto';
+    virtual = false;
+    check = false;
+    mode = ['default'];
     // --- size 高度 ---
     get sizes() {
         const rtn = {};
@@ -153,6 +147,8 @@ export default class extends clickgo.form.AbstractForm {
         }
         return data;
     }
+    // --- list ---
+    listDataEmpty = false;
     get listData() {
         const data = ['Item1', {
                 'label': 'Tip',
@@ -342,6 +338,7 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.tool.sleep(300);
         resolve();
     }
+    glNone = false;
     onMounted() {
         /*
         clickgo.task.sleep(() => {

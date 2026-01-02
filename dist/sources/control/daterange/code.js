@@ -1,131 +1,125 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'changed': null,
-            'update:modelValue': null,
-            'update:tz': null,
-        };
-        this.props = {
-            'disabled': false,
-            'modelValue': [],
-            'tz': undefined,
-            'start': undefined,
-            'end': undefined,
-            'time': true,
-            'zone': false,
-            'close': true,
-        };
-        this.dateObj = [
-            new Date(), new Date()
-        ];
-        this.cursor = '';
-        /** --- first 的 ts --- */
-        this.ts = undefined;
-        /** --- end 的 ts --- */
-        this.ts2 = undefined;
-        this.dateStr = ['', ''];
-        this.timeStr = ['', ''];
-        /** --- 当前时区信息（小时） --- */
-        this.tzData = 0;
-        this.vzone = [];
-        this.zones = [];
-        this.vzdec = [];
-        this.zdecs = ['00', '15', '30', '45'];
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'minute': 'Min',
-                'zone': 'Zone',
-                'cancel': 'Cancel',
-                'ok': 'OK',
-                'please click select': 'Click to select'
-            },
-            'sc': {
-                'minute': '分',
-                'zone': '时区',
-                'cancel': '取消',
-                'ok': '确定',
-                'please click select': '请点击选择'
-            },
-            'tc': {
-                'minute': '分',
-                'zone': '時區',
-                'cancel': '取消',
-                'ok': '確定',
-                'please click select': '請點擊選擇'
-            },
-            'ja': {
-                'minute': '分',
-                'zone': '時區', // --- タイムゾーン ---
-                'cancel': '取消',
-                'ok': '確定',
-                'please click select': '選択して下さい'
-            },
-            'ko': {
-                'minute': '분',
-                'zone': '時區', // --- 시간대 ---
-                'cancel': '취소',
-                'ok': '확인',
-                'please click select': '선택 클릭'
-            },
-            'th': {
-                'minute': 'น.',
-                'zone': 'เขต',
-                'cancel': 'ยกเลิก',
-                'ok': 'ตกลง',
-                'please click select': 'คลิกเลือก'
-            },
-            'es': {
-                'minute': 'Min',
-                'zone': 'Zona',
-                'cancel': 'Cancelar',
-                'ok': 'OK',
-                'please click select': 'Clic para elegir'
-            },
-            'de': {
-                'minute': 'Min',
-                'zone': 'Zone',
-                'cancel': 'Abbr.',
-                'ok': 'OK',
-                'please click select': 'Klicken Sie wählen'
-            },
-            'fr': {
-                'minute': 'Min',
-                'zone': 'Zone',
-                'cancel': 'Annul.',
-                'ok': 'OK',
-                'please click select': 'Cliquer choisir'
-            },
-            'pt': {
-                'minute': 'Min',
-                'zone': 'Fuso',
-                'cancel': 'Cancelar',
-                'ok': 'OK',
-                'please click select': 'Clique para sel.'
-            },
-            'ru': {
-                'minute': 'Мин',
-                'zone': 'Зона',
-                'cancel': 'Отмена',
-                'ok': 'ОК',
-                'please click select': 'Нажмите выбрать'
-            },
-            'vi': {
-                'minute': 'Phút',
-                'zone': 'Múi',
-                'cancel': 'Hủy',
-                'ok': 'OK',
-                'please click select': 'Nhấn chọn'
-            }
-        };
-        /** --- 小屏不显示两个 --- */
-        this.showTwoDatePanel = false;
-        // --- yearmonth 处理 ---
-        this.firstym = '';
-        this.endym = '';
-    }
+    emits = {
+        'changed': null,
+        'update:modelValue': null,
+        'update:tz': null,
+    };
+    props = {
+        'disabled': false,
+        'modelValue': [],
+        'tz': undefined,
+        'start': undefined,
+        'end': undefined,
+        'time': true,
+        'zone': false,
+        'close': true,
+    };
+    dateObj = [
+        new Date(), new Date()
+    ];
+    cursor = '';
+    /** --- first 的 ts --- */
+    ts = undefined;
+    /** --- end 的 ts --- */
+    ts2 = undefined;
+    dateStr = ['', ''];
+    timeStr = ['', ''];
+    /** --- 当前时区信息（小时） --- */
+    tzData = 0;
+    vzone = [];
+    zones = [];
+    vzdec = [];
+    zdecs = ['00', '15', '30', '45'];
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'minute': 'Min',
+            'zone': 'Zone',
+            'cancel': 'Cancel',
+            'ok': 'OK',
+            'please click select': 'Click to select'
+        },
+        'sc': {
+            'minute': '分',
+            'zone': '时区',
+            'cancel': '取消',
+            'ok': '确定',
+            'please click select': '请点击选择'
+        },
+        'tc': {
+            'minute': '分',
+            'zone': '時區',
+            'cancel': '取消',
+            'ok': '確定',
+            'please click select': '請點擊選擇'
+        },
+        'ja': {
+            'minute': '分',
+            'zone': '時區', // --- タイムゾーン ---
+            'cancel': '取消',
+            'ok': '確定',
+            'please click select': '選択して下さい'
+        },
+        'ko': {
+            'minute': '분',
+            'zone': '時區', // --- 시간대 ---
+            'cancel': '취소',
+            'ok': '확인',
+            'please click select': '선택 클릭'
+        },
+        'th': {
+            'minute': 'น.',
+            'zone': 'เขต',
+            'cancel': 'ยกเลิก',
+            'ok': 'ตกลง',
+            'please click select': 'คลิกเลือก'
+        },
+        'es': {
+            'minute': 'Min',
+            'zone': 'Zona',
+            'cancel': 'Cancelar',
+            'ok': 'OK',
+            'please click select': 'Clic para elegir'
+        },
+        'de': {
+            'minute': 'Min',
+            'zone': 'Zone',
+            'cancel': 'Abbr.',
+            'ok': 'OK',
+            'please click select': 'Klicken Sie wählen'
+        },
+        'fr': {
+            'minute': 'Min',
+            'zone': 'Zone',
+            'cancel': 'Annul.',
+            'ok': 'OK',
+            'please click select': 'Cliquer choisir'
+        },
+        'pt': {
+            'minute': 'Min',
+            'zone': 'Fuso',
+            'cancel': 'Cancelar',
+            'ok': 'OK',
+            'please click select': 'Clique para sel.'
+        },
+        'ru': {
+            'minute': 'Мин',
+            'zone': 'Зона',
+            'cancel': 'Отмена',
+            'ok': 'ОК',
+            'please click select': 'Нажмите выбрать'
+        },
+        'vi': {
+            'minute': 'Phút',
+            'zone': 'Múi',
+            'cancel': 'Hủy',
+            'ok': 'OK',
+            'please click select': 'Nhấn chọn'
+        }
+    };
+    /** --- 小屏不显示两个 --- */
+    showTwoDatePanel = false;
     // --- 单击事件 ---
     click(type) {
         const el = this.refs[type];
@@ -153,6 +147,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.dateObj[0].getTime() - this.tzData * 60 * 60_000,
                 this.dateObj[1].getTime() - this.tzData * 60 * 60_000
             ]);
+            this.emit('changed');
         }
         clickgo.form.hidePop();
     }
@@ -164,6 +159,7 @@ export default class extends clickgo.control.AbstractControl {
         this.ts = undefined;
         this.dateStr.length = 0;
         this.emit('update:modelValue', []);
+        this.emit('changed');
     }
     onRange(e) {
         e.preventDefault();
@@ -182,6 +178,7 @@ export default class extends clickgo.control.AbstractControl {
         this.dateObj[1].setTime(e.detail.end + this.tzData * 60 * 60_000);
         // --- 提交数据 ---
         this.emit('update:modelValue', value);
+        this.emit('changed');
         clickgo.form.hidePop(this.refs.firstpop);
         // --- 清空选中 ---
         this.refs.firstpanel.clear();
@@ -197,6 +194,9 @@ export default class extends clickgo.control.AbstractControl {
         date.setUTCHours(23, 59, 59, 0);
         this.ts2 = date.getTime() - this.tzData * 60 * 60_000;
     }
+    // --- yearmonth 处理 ---
+    firstym = '';
+    endym = '';
     onYmChange() {
         if (this.endym > this.firstym) {
             return;
@@ -228,6 +228,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.dateObj[0].getTime() - this.tzData * 60 * 60_000,
                     this.dateObj[1].getTime() - this.tzData * 60 * 60_000
                 ]);
+                this.emit('changed');
             }
         }, {
             'immediate': true

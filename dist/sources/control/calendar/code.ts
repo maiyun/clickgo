@@ -15,6 +15,7 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'disabled': boolean | string;
         'plain': boolean | string;
+        /** --- 禁用日期列表，如 20200101 --- */
         'disabledList': string[] | string;
 
         /** --- 当前选中的日期字符串数组 --- */

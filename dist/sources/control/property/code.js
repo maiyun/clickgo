@@ -1,83 +1,80 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'update:sort': null,
-            'update:type': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'sort': 'kind',
-            'type': 'property',
-            'desc': true,
-            'modelValue': []
-        };
-        this.direction = 'h';
-        this.localeData = {
-            'en': {
-                'reset': 'Reset',
-                'description': 'Description'
-            },
-            'sc': {
-                'reset': '重置',
-                'description': '说明'
-            },
-            'tc': {
-                'reset': '重置',
-                'description': '說明'
-            },
-            'ja': {
-                'reset': 'リセット',
-                'description': '説明'
-            },
-            'ko': {
-                'reset': '재설정',
-                'description': '설명'
-            },
-            'th': {
-                'reset': 'รีเซ็ต',
-                'description': 'คำอธิบาย'
-            },
-            'es': {
-                'reset': 'Reiniciar',
-                'description': 'Descripción'
-            },
-            'de': {
-                'reset': 'Zurücksetzen',
-                'description': 'Beschreibung'
-            },
-            'fr': {
-                'reset': 'Réinitialiser',
-                'description': 'Description'
-            },
-            'pt': {
-                'reset': 'Redefinir',
-                'description': 'Descrição'
-            },
-            'ru': {
-                'reset': 'Сбросить',
-                'description': 'Описание'
-            },
-            'vi': {
-                'reset': 'Đặt lại',
-                'description': 'Mô tả'
-            }
-        };
-        this.sortData = 'kind';
-        this.typeData = 'property';
-        this.descData = true;
-        this.selectedTitle = '';
-        this.selectedSub = '';
-        /** --- 已关闭的大类 --- */
-        this.bigClosed = [];
-        /** --- 已打开的小类 --- */
-        this.opened = [];
-        this.title = '';
-        this.description = '';
-        this.dockValue = '';
-    }
+    emits = {
+        'update:sort': null,
+        'update:type': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'sort': 'kind',
+        'type': 'property',
+        'desc': true,
+        'modelValue': []
+    };
+    direction = 'h';
+    localeData = {
+        'en': {
+            'reset': 'Reset',
+            'description': 'Description'
+        },
+        'sc': {
+            'reset': '重置',
+            'description': '说明'
+        },
+        'tc': {
+            'reset': '重置',
+            'description': '說明'
+        },
+        'ja': {
+            'reset': 'リセット',
+            'description': '説明'
+        },
+        'ko': {
+            'reset': '재설정',
+            'description': '설명'
+        },
+        'th': {
+            'reset': 'รีเซ็ต',
+            'description': 'คำอธิบาย'
+        },
+        'es': {
+            'reset': 'Reiniciar',
+            'description': 'Descripción'
+        },
+        'de': {
+            'reset': 'Zurücksetzen',
+            'description': 'Beschreibung'
+        },
+        'fr': {
+            'reset': 'Réinitialiser',
+            'description': 'Description'
+        },
+        'pt': {
+            'reset': 'Redefinir',
+            'description': 'Descrição'
+        },
+        'ru': {
+            'reset': 'Сбросить',
+            'description': 'Описание'
+        },
+        'vi': {
+            'reset': 'Đặt lại',
+            'description': 'Mô tả'
+        }
+    };
+    sortData = 'kind';
+    typeData = 'property';
+    descData = true;
+    selectedTitle = '';
+    selectedSub = '';
+    /** --- 已关闭的大类 --- */
+    bigClosed = [];
+    /** --- 已打开的小类 --- */
+    opened = [];
+    title = '';
+    description = '';
+    dockValue = '';
     get subValue() {
         return (item2, i3, isDefault = false) => {
             if (isDefault) {
@@ -132,25 +129,13 @@ export default class extends clickgo.control.AbstractControl {
         }
         return list;
     }
-    contextmenu(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-    }
     down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (this.refs.content.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.refs.content);
         }
-        if (e instanceof TouchEvent) {
-            // --- 长按触发 contextmenu ---
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-            });
-        }
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.refs.content, this.refs.pop, e);
+        });
     }
     changeSort(sort) {
         this.sortData = sort;
@@ -161,10 +146,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:type', type);
     }
     // --- 点击选择一个 line ---
-    select(e, item2, item3, desc) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    select(item2, item3, desc) {
         this.selectedTitle = item2;
         this.selectedSub = item3;
         this.title = item3 ?? item2;
@@ -300,7 +282,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         };
         if (e) {
-            clickgo.dom.bindDblClick(e, handler);
+            clickgo.modules.pointer.dblClick(e, handler);
             return;
         }
         handler();

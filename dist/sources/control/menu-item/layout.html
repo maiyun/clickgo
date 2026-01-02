@@ -1,4 +1,4 @@
-<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @mouseenter="enter" @click="click">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @pointerdown="down" @pointerenter="enter">
     <div class="inner">
         <slot></slot>
     </div>

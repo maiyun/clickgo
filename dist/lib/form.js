@@ -252,7 +252,7 @@ class AbstractCommon {
      * @param e 鼠标、触摸、键盘事件
      */
     allowEvent(e) {
-        return lDom.allowEvent(e);
+        return clickgo.modules.pointer.allowEvent(e);
     }
     /**
      * --- 触发系统方法 ---
@@ -301,11 +301,6 @@ class AbstractCommon {
 }
 /** --- Panel 控件抽象类 --- */
 export class AbstractPanel extends AbstractCommon {
-    constructor() {
-        super(...arguments);
-        /** --- 当前的 nav（若有）传递过来的 qs --- */
-        this.qs = {};
-    }
     /** --- 当前的 panel ID --- */
     get panelId() {
         // --- panel 创建时 createPanel 自动重写本函数 ---
@@ -350,6 +345,8 @@ export class AbstractPanel extends AbstractCommon {
     async doneStep() {
         await this.rootForm.doneStep();
     }
+    /** --- 当前的 nav（若有）传递过来的 qs --- */
+    qs = {};
     /** --- 确定不再使用 qs 时可调用此方法清空，这样再次通过相同 qs 进入本 panel 依然会响应 qschange 事件 --- */
     clearQs() {
         this.qs = {};
@@ -384,28 +381,11 @@ export class AbstractPanel extends AbstractCommon {
 }
 /** --- 窗体的抽象类 --- */
 export class AbstractForm extends AbstractCommon {
-    constructor() {
-        // --- 以下为窗体有，但 control 没有 ---
-        super(...arguments);
-        /** --- 当前是否完全创建完毕 --- */
-        this.isReady = false;
-        /** --- 是否是 native 下无边框的第一个窗体 --- */
-        this.isNativeNoFrameFirst = false;
-        /** --- 覆盖整个窗体的 loading（实际值） --- */
-        this._loading = false;
-        /** --- 是否阻止任何人修改 loading --- */
-        this.lockLoading = false;
-        // --- step 相关 ---
-        this._inStep = false;
-        /** --- 序列化后的 step value 值 --- */
-        this._stepValues = [];
-        /** --- 当前是不是初次显示 --- */
-        this._firstShow = true;
-        /**
-         * --- dialog mask 窗体返回值，在 close 之后会进行传导 ---
-         */
-        this.dialogResult = '';
-    }
+    // --- 以下为窗体有，但 control 没有 ---
+    /** --- 当前是否完全创建完毕 --- */
+    isReady = false;
+    /** --- 是否是 native 下无边框的第一个窗体 --- */
+    isNativeNoFrameFirst = false;
     /** --- 当前的窗体创建的位数 --- */
     get findex() {
         // --- 窗体创建时继承时重写本函数 ---
@@ -520,6 +500,8 @@ export class AbstractForm extends AbstractCommon {
     sendToPanel(panel, data) {
         panel.send(data);
     }
+    /** --- 覆盖整个窗体的 loading（实际值） --- */
+    _loading = false;
     /** --- 覆盖整个窗体的 loading --- */
     get loading() {
         return this._loading;
@@ -530,10 +512,16 @@ export class AbstractForm extends AbstractCommon {
         }
         this._loading = val;
     }
+    /** --- 是否阻止任何人修改 loading --- */
+    lockLoading = false;
+    // --- step 相关 ---
+    _inStep = false;
     /** --- 当前是否在 step 环节中 --- */
     get inStep() {
         return this._inStep;
     }
+    /** --- 序列化后的 step value 值 --- */
+    _stepValues = [];
     /** --- 进入 form hash 为源的步进条 --- */
     async enterStep(list) {
         if (this._inStep) {
@@ -573,6 +561,8 @@ export class AbstractForm extends AbstractCommon {
         this._inStep = false;
         await this.refs.form.stepDone();
     }
+    /** --- 当前是不是初次显示 --- */
+    _firstShow = true;
     /**
      * --- 显示窗体 ---
      */
@@ -630,6 +620,10 @@ export class AbstractForm extends AbstractCommon {
     close() {
         close(this.formId);
     }
+    /**
+     * --- dialog mask 窗体返回值，在 close 之后会进行传导 ---
+     */
+    dialogResult = '';
     onMounted() {
         return;
     }
@@ -715,8 +709,6 @@ export const elements = {
     'popList': document.createElement('div'),
     'circular': document.createElement('div'),
     'rectangle': document.createElement('div'),
-    'gesture': document.createElement('div'),
-    'drag': document.createElement('div'),
     'keyboard': document.createElement('div'),
     'notify': document.createElement('div'),
     'alert': document.createElement('div'),
@@ -764,13 +756,6 @@ export const elements = {
         this.rectangle.setAttribute('data-pos', '');
         this.rectangle.id = 'cg-rectangle';
         this.wrap.appendChild(this.rectangle);
-        // --- 手势有效无效的圆圈 ---
-        this.gesture.id = 'cg-gesture';
-        this.wrap.appendChild(this.gesture);
-        // --- drag drop 的拖动占位符 ---
-        this.drag.id = 'cg-drag';
-        this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#FFF" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
-        this.wrap.appendChild(this.drag);
         // --- 添加 cg-system 的 dom ---
         this.notify.id = 'cg-notify';
         this.wrap.appendChild(this.notify);
@@ -833,7 +818,7 @@ export const elements = {
                     `<input v-if="folderName === ''" class="cg-launcher-sinput" :placeholder="search" v-model="name">` +
                     `<input v-else class="cg-launcher-foldername" :value="folderName" @change="folderNameChange">` +
                     `</div>` +
-                    `<div class="cg-launcher-list" @mousedown="mousedown" @click="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
+                    `<div class="cg-launcher-list" @pointerdown="down" @click="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
                     `<div v-for="item of list" class="cg-launcher-item">` +
                     `<div class="cg-launcher-inner">` +
                     `<div v-if="!item.list || item.list.length === 0" class="cg-launcher-icon" :style="{'background-image': 'url(' + item.icon + ')'}" @click="iconClick($event, item)"></div>` +
@@ -887,7 +872,7 @@ export const elements = {
                     }
                 },
                 'methods': {
-                    mousedown: function (e) {
+                    down: function (e) {
                         this.md = e.pageX + e.pageY;
                     },
                     listClick: function (e) {
@@ -1168,16 +1153,15 @@ export const elements = {
         const down = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            lDom.bindMove(e, {
+            clickgo.modules.pointer.move(e, {
                 'object': e.currentTarget,
                 move: (e, o) => {
                     this.keyboard.style.left = (parseFloat(this.keyboard.style.left) + o.ox) + 'px';
                     this.keyboard.style.top = (parseFloat(this.keyboard.style.top) + o.oy) + 'px';
-                }
+                },
             });
         };
-        this.keyboard.addEventListener('mousedown', down);
-        this.keyboard.addEventListener('touchstart', down);
+        this.keyboard.addEventListener('pointerdown', down);
     }
 };
 /** --- 显示系统级询问框 --- */
@@ -1273,7 +1257,7 @@ export function close(formId) {
     return changeState('close', formId);
 }
 /**
- * --- 绑定窗体拖动大小事件，在 mousedown、touchstart 中绑定 ---
+ * --- 绑定窗体拖动大小事件，在 pointerdown 中绑定 ---
  * @param e 事件源
  * @param border 调整大小的方位
  */
@@ -1294,7 +1278,7 @@ export function bindResize(e, border) {
     t.forms[formId].vroot.$refs.form.resizeMethod(e, border);
 }
 /**
- * --- 绑定窗体拖动事件，在 mousedown、touchstart 中绑定 ---
+ * --- 绑定窗体拖动事件，在 pointerdown 中绑定 ---
  * @param e 事件源
  */
 export function bindDrag(e) {
@@ -1893,68 +1877,6 @@ export function showRectangle(x, y, border) {
 export function hideRectangle() {
     elements.rectangle.style.opacity = '0';
 }
-// --- DRAG ---
-/** --- 是否马上要隐藏的 timer --- */
-let dragTimeOut = 0;
-/**
- * --- 显示 drag 虚拟框 ---
- */
-export function showDrag(opt = {}) {
-    if (dragTimeOut) {
-        clearTimeout(dragTimeOut);
-        dragTimeOut = 0;
-    }
-    const style = opt.element ? getComputedStyle(opt.element) : undefined;
-    elements.drag.style.opacity = '1';
-    elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
-    elements.drag.style.borderBottomWidth = '2px';
-    elements.drag.style.borderRadius = style?.borderRadius ?? '3px';
-}
-/**
- * --- 移动 drag 到新位置 ---
- * @param opt top:顶部位置,left:左侧位置,width:宽度位置,height:高度位置
- */
-export function moveDrag(opt) {
-    if (opt.top) {
-        elements.drag.style.top = opt.top.toString() + 'px';
-    }
-    if (opt.left) {
-        elements.drag.style.left = opt.left.toString() + 'px';
-    }
-    let perspective = 0;
-    if (opt.width) {
-        elements.drag.style.width = opt.width.toString() + 'px';
-        if (perspective < opt.width) {
-            perspective = opt.width;
-        }
-    }
-    if (opt.height) {
-        elements.drag.style.height = opt.height.toString() + 'px';
-        if (perspective < opt.height) {
-            perspective = opt.height;
-        }
-    }
-    if (perspective) {
-        elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)';
-    }
-    if (opt.icon) {
-        elements.drag.childNodes[0].style.display = 'block';
-    }
-    else {
-        elements.drag.childNodes[0].style.display = 'none';
-    }
-}
-/**
- * --- 隐藏拖拽框框 ---
- */
-export function hideDrag() {
-    elements.drag.style.transform = 'initial';
-    elements.drag.style.borderBottomWidth = '1px';
-    dragTimeOut = window.setTimeout(() => {
-        dragTimeOut = 0;
-        elements.drag.style.opacity = '0';
-    }, 300);
-}
 // --- Alert ---
 let alertBottom = 0;
 let alertId = 0;
@@ -2271,13 +2193,9 @@ function refreshPopPosition(el, pop, direction, size = {}) {
     else {
         let x;
         let y;
-        if (direction instanceof MouseEvent || direction.type === 'mousedown') {
+        if (direction instanceof PointerEvent) {
             x = direction.clientX;
             y = direction.clientY;
-        }
-        else if (direction instanceof TouchEvent || direction.type === 'touchstart') {
-            x = direction.touches[0].clientX;
-            y = direction.touches[0].clientY;
         }
         else {
             x = direction.x;
@@ -2520,13 +2438,10 @@ export function isJustPop(el) {
     return true;
 }
 /**
- * --- 点下 (mousedown / touchstart) 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个 ---
+ * --- 点下 pointerdown 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个 ---
  * @param e 事件对象
  */
 export async function doFocusAndPopEvent(e) {
-    if (lDom.hasTouchButMouse(e)) {
-        return;
-    }
     const target = e.target;
     if (!target) {
         return;
@@ -2587,13 +2502,10 @@ export async function doFocusAndPopEvent(e) {
     hidePop();
     await changeFocus();
 }
-window.addEventListener('touchstart', (e) => {
+window.addEventListener('pointerdown', (e) => {
     doFocusAndPopEvent(e).catch(() => { });
 }, {
     'passive': true
-});
-window.addEventListener('mousedown', (e) => {
-    doFocusAndPopEvent(e).catch(() => { });
 });
 /**
  * --- 移除一个 form（关闭窗口） ---
@@ -3575,12 +3487,9 @@ export function dialog(current, opt) {
         const locale = t.locale.lang || lCore.config.locale;
         nopt.buttons ??= [info.locale[locale]?.ok ?? info.locale['en'].ok];
         const cls = class extends AbstractForm {
-            constructor() {
-                super(...arguments);
-                this.buttons = nopt.buttons;
-                this.data = nopt.data ?? {};
-                this.methods = nopt.methods ?? {};
-            }
+            buttons = nopt.buttons;
+            data = nopt.data ?? {};
+            methods = nopt.methods ?? {};
             get filename() {
                 return filename;
             }

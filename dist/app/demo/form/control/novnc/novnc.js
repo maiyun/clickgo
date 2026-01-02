@@ -1,15 +1,12 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.url = 'ws://127.0.0.1:8080/rsocket';
-        this.pwd = '';
-        this.config = {
-            'url': '',
-            'pwd': '',
-        };
-        this.list = [];
-    }
+    url = 'ws://127.0.0.1:8080/rsocket';
+    pwd = '';
+    config = {
+        'url': '',
+        'pwd': '',
+    };
+    list = [];
     /** --- 连接 --- */
     toConnect() {
         if (this.config.url) {

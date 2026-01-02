@@ -6,8 +6,8 @@
             <button @click="min">min('{{formId}}')</button>
             <button @click="max">max('{{formId}}')</button>
             <button @click="close">close('{{formId}}')</button>
-            <label @mousedown="bindResize" @touchstart="bindResize" style="padding: 20px; background: rgba(0, 0, 0, .1); cursor: se-resize;">bindResize(e, 'rb')</label>
-            <label @mousedown="bindDrag" @touchstart="bindDrag" style="padding: 20px; background: rgba(0, 0, 0, .1); cursor: move;">bindDrag(e)</label>
+            <label @pointerdown="bindResize" style="padding: 20px; background: rgba(0, 0, 0, .1); cursor: se-resize;">bindResize(e, 'rb')</label>
+            <label @pointerdown="bindDrag" style="padding: 20px; background: rgba(0, 0, 0, .1); cursor: move;">bindDrag(e)</label>
             <layout gutter="10" align-v="center">
                 <label>Form ID:</label>
                 <text v-model="fid" style="flex: 1; width: 0;"></text>
@@ -37,7 +37,6 @@
             <button @click="getRectByBorder">getRectByBorder('rb')</button>
             <button @click="showCircular">showCircular(x, y)</button>
             <button @click="showRectangle">showRectangle(x, y, 'rb')</button>
-            <button @click="showDrag" ref="showDrag">showDrag()</button>
             <layout gutter="10">
                 <select v-model="type" :data="['primary', 'info', 'warning', 'danger', 'cg']"></select>
                 <select v-model="progress" :data="['normal', 'progress + icon', 'only title', 'only content', 'has note']" style="flex: 1; width: 0;"></select>

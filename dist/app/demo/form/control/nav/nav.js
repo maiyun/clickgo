@@ -1,15 +1,12 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.layer = false;
-        this.qs = {};
-        this.name = '';
-        this.isShow = true;
-        this.logo = '';
-        this.slogo = false;
-        this.hash = false;
-    }
+    layer = false;
+    qs = {};
+    name = '';
+    isShow = true;
+    logo = '';
+    slogo = false;
+    hash = false;
     async onSelect(e) {
         e.preventDefault();
         await clickgo.form.dialog(this, 'Not nav, selected: ' + e.detail.selected + ', name: ' + e.detail.name);

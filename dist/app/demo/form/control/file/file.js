@@ -1,13 +1,10 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.accept = 'txt';
-        this.multi = 'false';
-        this.dir = 'false';
-        this.list = [];
-        this.fd = new FormData();
-    }
+    accept = 'txt';
+    multi = 'false';
+    dir = 'false';
+    list = [];
+    fd = new FormData();
     select() {
         this.refs.file.select();
     }

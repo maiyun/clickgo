@@ -1,0 +1,369 @@
+global {
+    --g-padding-xs:3px;
+    --g-padding-s:6px;
+    --g-padding:12px;
+    --g-padding-h:6px var(--g-padding);
+    --g-padding-l:18px;
+    --g-padding-l-h:12px var(--g-padding-l);
+    --g-padding-xl:28px;
+    --g-padding-xl-h:14px var(--g-padding-xl);
+    --g-bpadding:25px;
+    --g-margin:7px;
+    --g-radius:0px;
+    --g-radius-l:2px;
+    --g-radius-xl:4px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:20px;
+    --g-size-l:28px;
+    --g-size-xl:38px;
+    --g-control:18px;
+    --g-control-m:22px;
+    --g-control-l:26px;
+    --g-transition:all .3s var(--g-cubic);
+    --g-line:1.5;
+    --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
+
+    // --- 基础颜色 ---
+    --main: oklch(.7 .15 220);
+    --cg:color-mix(in oklch, var(--main), black 15%);
+    --cg-hover:color-mix(in oklch, var(--cg), white 10%);
+    --cg-active:color-mix(in oklch, var(--cg), black 10%);
+    --cg-focus:color-mix(in oklch, var(--cg), black 5%);
+    --cg-disabled:color-mix(in oklch, var(--cg), oklch(from var(--cg) l 0 none) 100%);
+    --cg-bg:color-mix(in oklch, var(--cg), black 65%);
+
+    --success:oklch(.6 .15 150);
+    --success-hover:oklch(.65 .15 150);
+    --success-active:oklch(.5 .15 150);
+    --success-focus:oklch(.55 .15 150);
+    --success-disabled:oklch(.7 0 150);
+    --success-bg:color-mix(in oklch, var(--success), black 65%);
+
+    --info:oklch(.6 .15 255);
+    --info-hover:oklch(.65 .15 255);
+    --info-active:oklch(.5 .15 255);
+    --info-focus:oklch(.55 .15 255);
+    --info-disabled:oklch(.7 0 255);
+    --info-bg:color-mix(in oklch, var(--info), black 65%);
+
+    --warning:oklch(.6 .15 45);
+    --warning-hover:oklch(.65 .15 45);
+    --warning-active:oklch(.5 .15 45);
+    --warning-focus:oklch(.55 .15 45);
+    --warning-disabled:oklch(.7 0 45);
+    --warning-bg:color-mix(in oklch, var(--warning), black 65%);
+
+    --danger:oklch(.6 .15 25);
+    --danger-hover:oklch(.65 .15 25);
+    --danger-active:oklch(.5 .15 25);
+    --danger-focus:oklch(.55 .15 25);
+    --danger-disabled:oklch(.7 0 25);
+    --danger-bg:color-mix(in oklch, var(--danger), black 65%);
+
+    --g-pure:oklch(.15 .05 280);
+    --face:oklch(.18 .05 280);
+    --face-hover:oklch(.25 .05 280);
+    --face-selected:oklch(.35 .05 280);
+    --g-pop-background:oklch(.15 .05 280 / .8);
+    --g-pop-backdrop:blur(10px) saturate(2);
+    --g-pop-border:solid 1px var(--g-border-color);
+    --g-shadow:0 0 10px oklch(.7 .15 220 / .2);
+    --g-shadow-d:0 0 20px oklch(.7 .15 220 / .4);
+    --g-outline-shadow:0 0 0 2px oklch(.7 .15 220); 
+
+    // --- 组件默认颜色（如按钮） ---
+
+    --g-color:oklch(.9 .02 220);
+    --g-color-hover:oklch(1 .02 220);
+    --g-color-active:oklch(.8 .02 220);
+    --g-color-focus:oklch(.85 .02 220);
+    --g-color-tip:oklch(.7 .02 220);
+
+    --g-background:oklch(.2 .05 280);
+    --g-background-hover:oklch(.25 .05 280);
+    --g-background-active:oklch(.2 .05 280);
+    --g-background-opacity:oklch(.25 .05 280 / .2);
+    --g-background-focus:oklch(.2 .05 280);
+    --g-background-disabled:oklch(.2 .05 280);
+
+    --g-border-color:oklch(.4 .1 220);
+    --g-border-color-hover:oklch(.5 .1 220);
+    --g-border-color-active:oklch(.6 .1 220);
+    --g-border-color-focus:oklch(.5 .1 220);
+    --g-border-color-disabled:oklch(.3 .05 220);
+    
+    // --- 组件轻量颜色（如文本框） ---
+
+    --g-plain-background:oklch(.18 .05 280);
+    --g-plain-background-hover:oklch(.22 .05 280);
+    --g-plain-background-active:oklch(.18 .05 280);
+    --g-plain-background-focus:oklch(.18 .05 280);
+    --g-plain-background-disabled:oklch(.18 .05 280);
+    --g-plain-background-selected:oklch(.3 .05 280);
+
+    --g-plain-border-color:oklch(.4 .1 220);
+    --g-plain-border-color-hover:oklch(.5 .1 220);
+    --g-plain-border-color-active:oklch(.6 .1 220);
+    --g-plain-border-color-focus:oklch(.5 .1 220);
+    --g-plain-border-color-disabled:oklch(.3 .05 220);
+    --g-plain-border-color-plain:oklch(.3 .05 280);
+
+    // --- 特殊组件颜色 ---
+
+    --g-block-background:oklch(.22 .05 280);
+    --g-block-background-hover:oklch(.25 .05 280);
+    --g-block-dark-background:oklch(.1 .05 280);
+    --g-block-dark-background-hover:oklch(.15 .05 280);
+
+    ::selection {
+        background-color: oklch(.7 .15 220 / 0.3);
+        color: white;
+    }
+}
+
+// -- CONTROL -- form --
+
+.form_wrap {
+    // --- 内部 ---
+    .form_inner {
+        // --- 头部 ---
+        .form_header {
+            // --- 控制按钮 ---
+            .form_controls {
+                .form_min, .form_max {
+                    &:hover {
+                        background: oklch(1 0 0 / .15);
+                    }
+                    &:active {
+                        background: oklch(1 0 0 / .25);
+                    }
+                }
+            }
+        }
+        // --- 主体内容 ---
+        .form_content {
+            .form_loading {
+                background: radial-gradient(circle, oklch(.7 .15 220 / .9) 10%, oklch(.7 .15 220 / .4) 80%);
+                &:not(.form_show) {
+                    transform: scale(1.3);
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- group --
+
+.group_wrap {
+    border-radius: var(--g-radius-xl);
+    border: 1px solid var(--g-border-color);
+    &.group_hover:hover, &:not(.group_hover) {
+        box-shadow: 0 0 10px oklch(.7 .15 220 / .2);
+    }
+    &.group_plain {
+        &.group_hover:hover, &:not(.group_hover) {
+            box-shadow: 0 0 10px oklch(.7 .15 220 / .1);
+        }
+    }
+}
+
+// --- CONTROL -- levelselect ---
+
+.levelselect_tag-cg-greatselect {
+    .levelselect_op {
+        .levelselect_oploading {
+            background: radial-gradient(circle, oklch(.7 .15 220 / .9) 10%, oklch(.7 .15 220 / .4) 80%);
+        }
+    }
+}
+.levelselect_pop {
+    .levelselect_loading {
+        background: radial-gradient(circle, oklch(.7 .15 220 / .9) 10%, oklch(.7 .15 220 / .4) 80%);
+    }
+}
+
+// -- CONTROL -- nav-item --
+
+.nav-item_wrap {
+    &:not(.nav-item_selected) {
+        > .nav-item_text:hover {
+            color: var(--g-color-hover);
+            text-shadow: 0 0 5px var(--g-color-hover);
+        }
+    }
+    &.nav-item_selected {
+        > .nav-item_text {
+            color: oklch(1 0 0); background: var(--cg);
+            box-shadow: 0 0 10px var(--cg);
+        }
+    }
+}
+
+// -- CONTROL -- property --
+
+.property_wrap {
+    .property_controls {
+        .property_tag-cg-button {
+            margin-right: 5px;
+        }
+        .property_split {
+            margin: 0 5px 0 0;
+        }
+    }
+}
+
+// -- CONTROL -- scroll --
+
+.scroll_wrap {
+    background-color: transparent;
+    .scroll_start, .scroll_end {
+        display: none;
+    }
+    .scroll_bar {
+        .scroll_block {
+            transition-property: background-color;
+            background-color: var(--g-border-color);
+            &:hover {
+                background-color: var(--g-border-color-hover);
+                box-shadow: 0 0 5px var(--g-border-color-hover);
+            }
+        }
+    }
+}
+
+// -- CONTROL -- select --
+
+.select_tag-cg-greatselect {
+    .select_op {
+        .select_tags {
+            .select_tag {
+                .select_label {
+                    padding: 0 10px;
+                }
+                .select_close {
+                    width: 22px; height: 22px;
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- tab --
+
+.tab_wrap {
+    .tab_tab {
+        background: transparent; border: none;
+        &::after {
+            background: var(--cg); transition: all .3s var(--g-cubic);
+            box-shadow: 0 0 5px var(--cg);
+        }
+        &:not(.tab_selected):not([data-hover]):hover {
+            background: transparent; color: var(--cg);
+            text-shadow: 0 0 5px var(--cg);
+        }
+        &.tab_selected {
+            background: transparent; font-weight: bold; color: var(--cg);
+            text-shadow: 0 0 5px var(--cg);
+        }
+    }
+    &.tab_top {
+        .tab_tabs {
+            .tab_tab {
+                padding-bottom: 2px;
+                &.tab_selected {
+                    padding-bottom: 2px;
+                    &::after {
+                        top: initial; bottom: 0; height: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-right: var(--g-padding);
+            }
+        }
+    }
+    &.tab_bottom {
+        .tab_tabs {
+            .tab_tab {
+                padding-top: 2px;
+                &.tab_selected {
+                    padding-top: 2px;
+                    &::after {
+                        top: 0; height: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-right: var(--g-padding);
+            }
+        }
+    }
+    &.tab_left {
+        .tab_tabs {
+            .tab_tab {
+                padding-right: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: initial; right: 0; width: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-bottom: var(--g-padding);
+            }
+        }
+    }
+    &.tab_right {
+        .tab_tabs {
+            .tab_tab {
+                padding-left: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: 0; width: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-bottom: var(--g-padding);
+            }
+        }
+    }
+
+    .tab_panel {
+        background: transparent; border: none;
+    }
+}
+
+// -- CONTROL -- task --
+
+.task_wrap {
+    background: var(--g-pop-background);
+    border: 1px solid var(--g-border-color);
+    box-shadow: 0 0 10px oklch(.7 .15 220 / .2);
+    .task_date {
+        color: var(--g-color)
+    }
+}
+
+// --- CONTROL -- menulist ---
+
+.menulist_wrap {
+    background: transparent; padding: 4px;
+}
+
+// --- CONTROL -- cube ---
+
+.cube_wrap {
+    .cube_content {
+        .cube_front {
+            background-color: color-mix(in oklch, oklch(.7 .23 220), black 65%);
+            border: 1px solid var(--g-border-color);
+            box-shadow: 0 0 10px var(--g-border-color);
+        }
+        .cube_right {
+            background-color: color-mix(in oklch, oklch(.7 .23 220), black 65%);
+            border: 1px solid var(--g-border-color);
+        }
+    }
+}

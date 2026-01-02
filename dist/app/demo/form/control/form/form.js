@@ -1,27 +1,24 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.width = 300;
-        this.height = 520;
-        this.icon = '';
-        this.title = 'Form';
-        this.min = true;
-        this.max = true;
-        this.cclose = true;
-        this.stateMax = false;
-        this.stateMin = false;
-        this.minWidth = 200;
-        this.minHeight = 100;
-        this.resize = true;
-        this.border = 'normal';
-        this.banClose = false;
-    }
+    width = 300;
+    height = 520;
+    icon = '';
+    title = 'Form';
+    min = true;
+    max = true;
+    cclose = true;
+    stateMax = false;
+    stateMin = false;
+    minWidth = 200;
+    minHeight = 100;
+    resize = true;
+    border = 'normal';
     async showLoading() {
         this.loading = true;
         await clickgo.tool.sleep(1000);
         this.loading = false;
     }
+    banClose = false;
     onClose(e) {
         if (this.banClose) {
             e.preventDefault();

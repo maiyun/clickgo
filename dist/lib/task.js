@@ -1433,15 +1433,13 @@ export function init() {
 }
 /** --- 线程抽象类 --- */
 export class AbstractThread {
-    constructor() {
-        /** --- 系统会自动设置本项 --- */
-        this.taskId = '';
-    }
     /** --- 当前文件在包内的路径 --- */
     get filename() {
         // --- pack 时系统自动在继承类中重写本函数 ---
         return '';
     }
+    /** --- 系统会自动设置本项 --- */
+    taskId = '';
     onMessage() {
         return;
     }

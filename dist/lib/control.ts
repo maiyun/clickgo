@@ -241,8 +241,8 @@ export abstract class AbstractControl {
      * --- 判断当前事件可否执行 ---
      * @param e 鼠标、触摸、键盘事件
      */
-    public allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
-        return lDom.allowEvent(e);
+    public allowEvent(e: PointerEvent | KeyboardEvent): boolean {
+        return clickgo.modules.pointer.allowEvent(e);
     }
 
     /**

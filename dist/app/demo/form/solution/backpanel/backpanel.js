@@ -1,16 +1,13 @@
 import * as clickgo from 'clickgo';
 import test1Panel from '../../control/panel/test1';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.fh = '';
-        this.name = '';
-        this.mountData = 'none';
-        this.map = {
-            'test1': test1Panel,
-            'test2': '../../control/panel/test2'
-        };
-    }
+    fh = '';
+    name = '';
+    mountData = 'none';
+    map = {
+        'test1': test1Panel,
+        'test2': '../../control/panel/test2'
+    };
     onFormHashChange(taskId, formId, value) {
         if (formId !== this.formId) {
             return;

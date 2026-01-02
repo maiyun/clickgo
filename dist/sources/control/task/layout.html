@@ -1,4 +1,4 @@
-<div ref="wrap" class="wrap" :class="[position]" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
+<div ref="wrap" class="wrap" :class="[position]" @pointerdown="down">
     <div ref="task" class="task">
         <slot></slot>
     </div>

@@ -1,22 +1,19 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'changed': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'modelValue': false,
-            'title': '',
-            'width': '35%',
-            'direction': 'h',
-            'gutter': '',
-            'alignH': undefined,
-            'alignV': undefined,
-            'close': false
-        };
-    }
+    emits = {
+        'changed': null,
+        'update:modelValue': null
+    };
+    props = {
+        'modelValue': false,
+        'title': '',
+        'width': '35%',
+        'direction': 'h',
+        'gutter': '',
+        'alignH': undefined,
+        'alignV': undefined,
+        'close': false
+    };
     get widthComp() {
         if (typeof this.props.width === 'number') {
             return this.props.width.toString() + 'px';

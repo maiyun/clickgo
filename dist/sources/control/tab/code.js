@@ -1,28 +1,25 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'close': null,
-            'change': null,
-            'changed': null,
-            'update:tabs': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'tabPosition': 'top',
-            'drag': false,
-            'close': false,
-            'tabs': [],
-            'modelValue': ''
-        };
-        this.arrow = false;
-        this.timer = 0;
-        this.tabsData = [];
-        this.oldTabs = undefined;
-        this.value = '';
-        this.rand = '';
-    }
+    emits = {
+        'close': null,
+        'change': null,
+        'changed': null,
+        'update:tabs': null,
+        'update:modelValue': null
+    };
+    props = {
+        'tabPosition': 'top',
+        'drag': false,
+        'close': false,
+        'tabs': [],
+        'modelValue': ''
+    };
+    arrow = false;
+    timer = 0;
+    tabsData = [];
+    oldTabs = undefined;
+    value = '';
+    rand = '';
     get isDrag() {
         return clickgo.tool.getBoolean(this.props.drag);
     }
@@ -75,8 +72,7 @@ export default class extends clickgo.control.AbstractControl {
             this.value = nval;
             this.emit('update:modelValue', this.value);
         }
-        clickgo.dom.bindDrag(e, {
-            'el': e.currentTarget.parentNode,
+        clickgo.modules.pointer.drag(e, e.currentTarget.parentNode, {
             'data': {
                 'index': index,
                 'tab': this.rand
@@ -136,11 +132,8 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('changed', event2);
     }
     longDown(e, type) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         const num = type === 'start' ? -5 : 5;
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             down: () => {
                 this.timer = clickgo.task.onFrame(this, () => {
                     if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {

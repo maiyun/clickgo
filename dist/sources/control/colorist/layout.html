@@ -1,4 +1,4 @@
-<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @mousedown="down" @touchstart="down">
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="(!propBoolean('disabled') && formFocus) ? '0' : undefined" @pointerdown="down">
     <div class="color" :style="{'background': value}"></div>
     <teleport to="system">
         <div ref="pop" class="pop">

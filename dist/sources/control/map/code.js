@@ -20,125 +20,122 @@ function isPointInPolygon(point, polygon) {
     return isInside;
 }
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emtis = {
-            'mapClick': null,
-            'init': null,
-            'markerClick': null,
-            'markerDrag': null,
-            'markerDragend': null,
-            'markerUpdate': null,
-            'overlayClick': null,
-            'lineClick': null,
-            'lineDrag': null,
-            'ineDragend': null,
-            'lineUpdate': null,
-            'lineInsert': null,
-            'lineRemove': null,
-            'polygonClick': null,
-            'polygonDrag': null,
-            'polygonDragend': null,
-            'polygonUpdate': null,
-            'polygonInsert': null,
-            'polygonRemove': null,
-            'update:zoom': null,
-            'update:lat': null,
-            'update:lng': null,
-            'update:markers': null,
-            'update:lines': null,
-            'update:polygon': null,
-            'update:polygons': null
-        };
-        this.props = {
-            'disabled': false,
-            'factory': 'google',
-            'akey': '',
-            'css': '',
-            'tdurlcn': undefined,
-            'tdurlintl': undefined,
-            'lat': 31.223704,
-            'lng': 121.366077,
-            'zoom': 10,
-            'zoomControl': false,
-            'markers': {},
-            'lines': {},
-            'polygons': {},
-            'overlays': {}
-        };
-        /** --- 如果 markerImg 还没加载就执行了 updateMakers（天地图），那么加载后需要重新执行一遍 updateMarkers --- */
-        this.needReUpdateMarkers = false;
-        this.access = {
-            'lib': undefined,
-            'map': undefined,
-            'overlay': undefined,
-            'markerImg': '',
-            'zoom': undefined,
-            'vectorLayer': undefined,
-            'iframe': undefined,
-            'iwindow': undefined,
-            'markers': {},
-            'lines': {},
-            'polygons': {},
-            'overlays': {}
-        };
-        /** --- 是否没有初始化 --- */
-        this.notInit = false;
-        /** --- 当前是否加载中 --- */
-        this.isLoading = false;
-        /** --- 当前地图的缩放级别 --- */
-        this.zoomData = 10;
-        this.latData = 0;
-        this.lngData = 0;
-        /** --- 当前选中对象情况 --- */
-        this.selectedObject = {
-            'type': 'line',
-            'key': '',
-            'index': 0
-        };
-        this.localeData = {
-            'en': {
-                'remove node': 'Remove node'
-            },
-            'sc': {
-                'remove node': '移除节点'
-            },
-            'tc': {
-                'remove node': '移除節點'
-            },
-            'ja': {
-                'remove node': 'ノードを削除'
-            },
-            'ko': {
-                'remove node': '노드 제거'
-            },
-            'th': {
-                'remove node': 'ลบโหนด'
-            },
-            'es': {
-                'remove node': 'Eliminar nodo'
-            },
-            'de': {
-                'remove node': 'Knoten entfernen'
-            },
-            'fr': {
-                'remove node': 'Supprimer le nœud'
-            },
-            'pt': {
-                'remove node': 'Remover nó'
-            },
-            'ru': {
-                'remove node': 'Удалить узел'
-            },
-            'vi': {
-                'remove node': 'Xóa nút'
-            }
-        };
-    }
+    emits = {
+        'mapClick': null,
+        'init': null,
+        'markerClick': null,
+        'markerDrag': null,
+        'markerDragend': null,
+        'markerUpdate': null,
+        'overlayClick': null,
+        'lineClick': null,
+        'lineDrag': null,
+        'lineDragend': null,
+        'lineUpdate': null,
+        'lineInsert': null,
+        'lineRemove': null,
+        'polygonClick': null,
+        'polygonDrag': null,
+        'polygonDragend': null,
+        'polygonUpdate': null,
+        'polygonInsert': null,
+        'polygonRemove': null,
+        'update:zoom': null,
+        'update:lat': null,
+        'update:lng': null,
+        'update:markers': null,
+        'update:lines': null,
+        'update:polygon': null,
+        'update:polygons': null
+    };
+    props = {
+        'disabled': false,
+        'factory': 'google',
+        'akey': '',
+        'css': '',
+        'tdurlcn': undefined,
+        'tdurlintl': undefined,
+        'lat': 31.223704,
+        'lng': 121.366077,
+        'zoom': 10,
+        'zoomControl': false,
+        'markers': {},
+        'lines': {},
+        'polygons': {},
+        'overlays': {}
+    };
     get showMask() {
         // --- 防止拖动导致卡顿 ---
         return this.isLoading ? true : clickgo.dom.is.move;
     }
+    /** --- 如果 markerImg 还没加载就执行了 updateMakers（天地图），那么加载后需要重新执行一遍 updateMarkers --- */
+    needReUpdateMarkers = false;
+    access = {
+        'lib': undefined,
+        'map': undefined,
+        'overlay': undefined,
+        'markerImg': '',
+        'zoom': undefined,
+        'vectorLayer': undefined,
+        'iframe': undefined,
+        'iwindow': undefined,
+        'markers': {},
+        'lines': {},
+        'polygons': {},
+        'overlays': {}
+    };
+    /** --- 是否没有初始化 --- */
+    notInit = false;
+    /** --- 当前是否加载中 --- */
+    isLoading = false;
+    /** --- 当前地图的缩放级别 --- */
+    zoomData = 10;
+    latData = 0;
+    lngData = 0;
+    /** --- 当前选中对象情况 --- */
+    selectedObject = {
+        'type': 'line',
+        'key': '',
+        'index': 0
+    };
+    localeData = {
+        'en': {
+            'remove node': 'Remove node'
+        },
+        'sc': {
+            'remove node': '移除节点'
+        },
+        'tc': {
+            'remove node': '移除節點'
+        },
+        'ja': {
+            'remove node': 'ノードを削除'
+        },
+        'ko': {
+            'remove node': '노드 제거'
+        },
+        'th': {
+            'remove node': 'ลบโหนด'
+        },
+        'es': {
+            'remove node': 'Eliminar nodo'
+        },
+        'de': {
+            'remove node': 'Knoten entfernen'
+        },
+        'fr': {
+            'remove node': 'Supprimer le nœud'
+        },
+        'pt': {
+            'remove node': 'Remover nó'
+        },
+        'ru': {
+            'remove node': 'Удалить узел'
+        },
+        'vi': {
+            'remove node': 'Xóa nút'
+        }
+    };
     // --- iframe ---
     iframeLoad(e) {
         this.access.iframe = e.currentTarget;
@@ -158,22 +155,14 @@ export default class extends clickgo.control.AbstractControl {
         mapEl.id = 'map';
         mapEl.style.height = '100%';
         // --- 绑定 down 事件 ---
-        const down = async (e) => {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
+        const down = async () => {
             // --- 让本窗体获取焦点 ---
             await clickgo.form.changeFocus(this.formId);
             // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
             clickgo.form.hidePop();
         };
-        mapEl.addEventListener('mousedown', (e) => {
-            down(e).catch(() => { });
-        });
-        mapEl.addEventListener('touchstart', (e) => {
-            down(e).catch(() => { });
-        }, {
-            'passive': true
+        mapEl.addEventListener('pointerdown', () => {
+            down().catch(() => { });
         });
         idoc.body.append(mapEl);
         // --- 加载 script ---
@@ -187,19 +176,24 @@ export default class extends clickgo.control.AbstractControl {
                 idoc.head.append(scriptEl);
                 this.access.iwindow.initMap = async () => {
                     await this.access.iwindow.google.maps.importLibrary('maps');
-                    this.access.lib = this.access.iwindow.google.maps;
+                    const lib = this.access.iwindow.google.maps;
                     const props = this.props;
-                    const access = this.access;
-                    class Overlay extends this.access.lib.OverlayView {
+                    class Overlay extends lib.OverlayView {
+                        _key;
+                        _position;
+                        _el;
                         constructor(opt) {
                             super();
                             this._key = opt.key;
                             this._position =
-                                new access.lib.LatLng(props.overlays[opt.key].lat, props.overlays[opt.key].lng);
+                                new lib.LatLng(props.overlays[opt.key].lat, props.overlays[opt.key].lng);
                             this.setMap(opt.map);
                         }
                         onAdd() {
                             const panes = this.getPanes();
+                            if (!panes) {
+                                return;
+                            }
                             const tel = idoc.createElement('div');
                             tel.innerHTML = props.overlays[this._key].html;
                             this._el = tel.firstChild;
@@ -210,6 +204,9 @@ export default class extends clickgo.control.AbstractControl {
                                 return;
                             }
                             const pixel = this.getProjection().fromLatLngToDivPixel(this._position);
+                            if (!pixel) {
+                                return;
+                            }
                             this._el.style.left = pixel.x + 'px';
                             this._el.style.top = pixel.y + 'px';
                         }
@@ -226,8 +223,11 @@ export default class extends clickgo.control.AbstractControl {
                                 return;
                             }
                             this._position =
-                                new access.lib.LatLng(props.overlays[this._key].lat, props.overlays[this._key].lng);
+                                new lib.LatLng(props.overlays[this._key].lat, props.overlays[this._key].lng);
                             const pixel = this.getProjection().fromLatLngToDivPixel(this._position);
+                            if (!pixel) {
+                                return;
+                            }
                             this._el.style.left = pixel.x + 'px';
                             this._el.style.top = pixel.y + 'px';
                         }
@@ -238,6 +238,9 @@ export default class extends clickgo.control.AbstractControl {
                             this._el.parentNode.removeChild(this._el);
                             // --- 移除老的后添加新的 ---
                             const panes = this.getPanes();
+                            if (!panes) {
+                                return;
+                            }
                             const tel = idoc.createElement('div');
                             tel.innerHTML = props.overlays[this._key].html;
                             this._el = tel.firstChild;
@@ -245,7 +248,7 @@ export default class extends clickgo.control.AbstractControl {
                         }
                     }
                     this.access.overlay = Overlay;
-                    this.access.map = new this.access.lib.Map(idoc.getElementById('map'), {
+                    const map = new lib.Map(idoc.getElementById('map'), {
                         'center': {
                             'lat': this.propNumber('lat'),
                             'lng': this.propNumber('lng')
@@ -261,20 +264,20 @@ export default class extends clickgo.control.AbstractControl {
                     this.lngData = this.propNumber('lng');
                     this.zoomData = this.propNumber('zoom');
                     // --- 绑定事件 ---
-                    this.access.map.addListener('click', (e) => {
+                    map.addListener('click', (e) => {
                         this.emit('mapClick', {
                             'lat': e.latLng.lat(),
                             'lng': e.latLng.lng()
                         });
                     });
-                    this.access.map.addListener('zoom_changed', () => {
-                        this.zoomData = this.access.map.getZoom();
-                        this.emit('update:zoom', this.access.map.getZoom());
+                    map.addListener('zoom_changed', () => {
+                        this.zoomData = map.getZoom() ?? 0;
+                        this.emit('update:zoom', this.zoomData);
                     });
-                    this.access.map.addListener('center_changed', () => {
-                        const center = this.access.map.getCenter();
-                        const lat = center.lat();
-                        const lng = center.lng();
+                    map.addListener('center_changed', () => {
+                        const center = map.getCenter();
+                        const lat = center?.lat() ?? 0;
+                        const lng = center?.lng() ?? 0;
                         if (lat !== this.latData) {
                             this.latData = lat;
                             this.emit('update:lat', lat);
@@ -284,6 +287,9 @@ export default class extends clickgo.control.AbstractControl {
                             this.emit('update:lng', lng);
                         }
                     });
+                    // --- 更新 ---
+                    this.access.lib = lib;
+                    this.access.map = map;
                     // --- 更新覆盖物 ---
                     this.updateMarkers();
                     this.updateLines();
@@ -323,17 +329,18 @@ export default class extends clickgo.control.AbstractControl {
                                     return `https://t${s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX=${z}&TILEROW=${y}&TILECOL=${x}&tk=${this.props.akey}`;
                                 }
                             }
-                            // 计算瓦片左上角和右下角的经纬度坐标
+                            // --- 计算瓦片左上角和右下角的经纬度坐标 ---
                             const ltLng = (x / Math.pow(2, z)) * 360 - 180;
                             const ltLat = Math.atan(Math.sinh(Math.PI * (1 - 2 * y / Math.pow(2, z)))) * 180 / Math.PI;
                             const rbLng = ((x + 1) / Math.pow(2, z)) * 360 - 180;
                             const rbLat = Math.atan(Math.sinh(Math.PI * (1 - 2 * (y + 1) / Math.pow(2, z)))) * 180 / Math.PI;
-                            // 计算瓦片中心点的经纬度坐标
-                            const centerLng = (ltLng + rbLng) / 2;
-                            const centerLat = (ltLat + rbLat) / 2;
+                            // --- 左上或右下只要有一个在，就使用天地图 ---
                             if (isPointInPolygon({
-                                'lat': centerLat,
-                                'lng': centerLng
+                                'lat': ltLat,
+                                'lng': ltLng
+                            }, tdpolygon) || isPointInPolygon({
+                                'lat': rbLat,
+                                'lng': rbLng
                             }, tdpolygon)) {
                                 if (this.props.tdurlcn) {
                                     return this.props.tdurlcn.replace(/{x}/g, x.toString())
@@ -556,8 +563,8 @@ export default class extends clickgo.control.AbstractControl {
                         });
                         obj.addListener('position_changed', () => {
                             const pos = obj.getPosition();
-                            const lat = pos.lat();
-                            const lng = pos.lng();
+                            const lat = pos?.lat() ?? 0;
+                            const lng = pos?.lng() ?? 0;
                             this.access.markers[key].lat = lat;
                             this.access.markers[key].lng = lng;
                             // --- 更新到上级 ---
@@ -770,39 +777,19 @@ export default class extends clickgo.control.AbstractControl {
                             this.emit('lineDragend', key);
                         });
                         // --- 其他事件 ---
-                        obj.addListener('contextmenu', (e) => {
-                            if (e.vertex === undefined) {
-                                return;
-                            }
-                            e.domEvent.preventDefault();
-                            if (clickgo.dom.hasTouchButMouse(e.domEvent)) {
+                        obj.addListener('mousedown', (oe) => {
+                            if (oe.vertex === undefined) {
                                 return;
                             }
                             this.selectedObject.type = 'line';
                             this.selectedObject.key = key;
-                            this.selectedObject.index = e.vertex;
-                            const rect = this.element.getBoundingClientRect();
-                            clickgo.form.showPop(this.element, this.refs.pop, {
-                                'x': rect.left + e.domEvent.clientX,
-                                'y': rect.top + e.domEvent.clientY
-                            });
-                        });
-                        obj.addListener('mousedown', (e) => {
-                            if (e.domEvent.type !== 'touchstart') {
-                                return;
-                            }
-                            if (e.vertex === undefined) {
-                                return;
-                            }
-                            this.selectedObject.type = 'line';
-                            this.selectedObject.key = key;
-                            this.selectedObject.index = e.vertex;
-                            // --- touch 长按弹出 ---
-                            clickgo.dom.bindLong(e.domEvent, () => {
+                            this.selectedObject.index = oe.vertex;
+                            // --- 长按弹出 ---
+                            clickgo.modules.pointer.menu(oe.domEvent, (e) => {
                                 const rect = this.element.getBoundingClientRect();
                                 clickgo.form.showPop(this.element, this.refs.pop, {
-                                    'x': rect.left + e.domEvent.touches[0].clientX,
-                                    'y': rect.top + e.domEvent.touches[0].clientY
+                                    'x': rect.left + e.clientX,
+                                    'y': rect.top + e.clientY
                                 });
                             });
                         });
@@ -1086,39 +1073,19 @@ export default class extends clickgo.control.AbstractControl {
                             this.emit('polygonDragend', key);
                         });
                         // --- 其他事件 ---
-                        obj.addListener('contextmenu', (e) => {
-                            if (e.vertex === undefined) {
-                                return;
-                            }
-                            e.domEvent.preventDefault();
-                            if (clickgo.dom.hasTouchButMouse(e.domEvent)) {
+                        obj.addListener('mousedown', (oe) => {
+                            if (oe.vertex === undefined) {
                                 return;
                             }
                             this.selectedObject.type = 'polygon';
                             this.selectedObject.key = key;
-                            this.selectedObject.index = e.vertex;
-                            const rect = this.element.getBoundingClientRect();
-                            clickgo.form.showPop(this.element, this.refs.pop, {
-                                'x': rect.left + e.domEvent.clientX,
-                                'y': rect.top + e.domEvent.clientY
-                            });
-                        });
-                        obj.addListener('mousedown', (e) => {
-                            if (e.domEvent.type !== 'touchstart') {
-                                return;
-                            }
-                            if (e.vertex === undefined) {
-                                return;
-                            }
-                            this.selectedObject.type = 'polygon';
-                            this.selectedObject.key = key;
-                            this.selectedObject.index = e.vertex;
-                            // --- touch 长按弹出 ---
-                            clickgo.dom.bindLong(e.domEvent, () => {
+                            this.selectedObject.index = oe.vertex;
+                            // --- 弹出菜单 ---
+                            clickgo.modules.pointer.menu(oe.domEvent, (e) => {
                                 const rect = this.element.getBoundingClientRect();
                                 clickgo.form.showPop(this.element, this.refs.pop, {
-                                    'x': rect.left + e.domEvent.touches[0].clientX,
-                                    'y': rect.top + e.domEvent.touches[0].clientY
+                                    'x': rect.left + e.clientX,
+                                    'y': rect.top + e.clientY
                                 });
                             });
                         });

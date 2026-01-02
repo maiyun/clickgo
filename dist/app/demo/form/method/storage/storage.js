@@ -1,12 +1,9 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.key = 'test';
-        this.val = 'val';
-        this.list = [];
-        this.ppath = '';
-    }
+    key = 'test';
+    val = 'val';
+    list = [];
+    ppath = '';
     async get() {
         await clickgo.form.dialog(this, clickgo.storage.get(this, this.key) ?? 'null');
     }

@@ -1,25 +1,20 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'select': null,
-            'remove': null,
-            'changed': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'length': 6,
-            'drag': false,
-            'pre': '',
-            'multi': false,
-            'progress': undefined,
-            'modelValue': []
-        };
-        // --- drag / drop ---
-        this.rand = '';
-    }
+    emits = {
+        'select': null,
+        'remove': null,
+        'changed': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'length': 6,
+        'drag': false,
+        'pre': '',
+        'multi': false,
+        'progress': undefined,
+        'modelValue': []
+    };
     /** --- 发出 select 事件 --- */
     select() {
         if (this.props.progress !== undefined) {
@@ -27,9 +22,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.emit('select');
     }
+    // --- drag / drop ---
+    rand = '';
     down(e, index) {
-        clickgo.dom.bindDrag(e, {
-            'el': e.currentTarget.parentNode?.parentNode,
+        clickgo.modules.pointer.drag(e, e.currentTarget.parentNode?.parentNode, {
             'data': {
                 'index': index,
                 'tab': this.rand

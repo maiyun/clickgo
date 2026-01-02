@@ -174,25 +174,7 @@ export default class extends clickgo.control.AbstractControl {
             this.isFocus = false;
         });
         // --- 绑定 contextmenu ---
-        this.refs.content.addEventListener('contextmenu', (e: MouseEvent) => {
-            e.preventDefault();
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
-            if (!e.target) {
-                return;
-            }
-            const target = (e.target as HTMLElement);
-            if (!target.classList.contains('jodit-workplace') && !clickgo.dom.findParentByClass(target, 'jodit-workplace')) {
-                return;
-            }
-            clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-        });
-        // --- 绑定 down 事件 ---
-        const down = (e: MouseEvent | TouchEvent): void => {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
+        this.refs.content.addEventListener('pointerdown', (e: PointerEvent): void => {
             const target = (e.target as HTMLElement);
             if (!target.classList.contains('jodit-workplace') && !clickgo.dom.findParentByClass(target, 'jodit-workplace')) {
                 return;
@@ -200,16 +182,9 @@ export default class extends clickgo.control.AbstractControl {
             if (this.refs.content.cgPopOpen !== undefined) {
                 clickgo.form.hidePop(this.refs.content);
             }
-            if (e instanceof TouchEvent) {
-                // --- touch 长按弹出 ---
-                clickgo.dom.bindLong(e, () => {
-                    clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-                });
-            }
-        };
-        this.refs.content.addEventListener('mousedown', down);
-        this.refs.content.addEventListener('touchstart', down, {
-            'passive': true
+            clickgo.modules.pointer.menu(e, () => {
+                clickgo.form.showPop(this.refs.content, this.refs.pop, e);
+            });
         });
         // --- 监听语言变动 ---
         this.watch('locale', () => {

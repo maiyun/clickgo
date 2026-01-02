@@ -8,20 +8,15 @@ export default class extends clickgo.control.AbstractControl {
         'alignH': string | undefined;
         'alignV': string | undefined;
 
-        /** --- 默认跨行，不用写 1，s 时强制所有 span 为 1 --- */
-        'span': number | string;
-        /** --- size m 时跨的列数 --- */
-        'sizeM': number | string;
-        'sizeL': number | string;
+        /** --- 横跨几列，-1 代表横跨所有列 --- */
+        'span'?: number | string;
     } = {
             'direction': undefined,
             'gutter': 0,
             'alignH': undefined,
             'alignV': undefined,
 
-            'span': 0,
-            'sizeM': 0,
-            'sizeL': 0,
+            'span': undefined,
         };
 
     public grid: any = null;
@@ -39,29 +34,39 @@ export default class extends clickgo.control.AbstractControl {
         return this.propNumber('gutter') ? this.propNumber('gutter') : (this.grid?.propNumber('itemGutter') ?? 0);
     }
 
+    /** --- 横向对齐方式 --- */
     public get alignHComp2(): string | undefined {
         return this.alignHComp ?? this.grid?.alignHComp;
     }
 
+    /** --- 纵向对齐方式 --- */
     public get alignVComp2(): string | undefined {
         return this.alignVComp ?? this.grid?.alignVComp;
     }
 
-    /** --- 当前单元格横跨的列 --- */
+    /** --- 横跨几列数字 --- */
     public get spanNum(): number {
-        const size = this.grid?.size ?? 's';
-        if (size === 's') {
+        if (this.props.span === undefined) {
             return 1;
         }
-        if (size === 'm') {
-            return this.propInt('sizeM') === -1 ? 1 : (this.propInt('sizeM') || this.propInt('span') || 1);
+        const span = this.propInt('span');
+        if (span === -1) {
+            return -1;
         }
-        return this.propInt('sizeL') === -1 ? 1 : (this.propInt('sizeL') || this.propInt('span') || 1);
+        /** --- grid max span --- */
+        const maxSpan = this.grid?.maxSpan ?? 12;
+        return (span > maxSpan) ? maxSpan : span;
     }
 
-    /** --- 横跨几行 --- */
+    /** --- 横跨几列 css 模式 --- */
     public get spanComp(): string | undefined {
-        return this.spanNum > 1 ? 'span ' + this.spanNum.toString() : undefined;
+        if (this.props.span === undefined) {
+            return undefined;
+        }
+        if (this.spanNum === -1) {
+            return '1 / -1';
+        }
+        return 'span ' + this.spanNum.toString();
     }
 
     public onMounted(): void {

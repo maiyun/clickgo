@@ -2,7 +2,7 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
-    public async get(name: 'dark' | 'light'): Promise<clickgo.theme.ITheme | null> {
+    public async get(name: 'dark' | 'light' | 'cyber'): Promise<clickgo.theme.ITheme | null> {
         const f = await clickgo.fs.getContent(this, '/clickgo/theme/' + name + '.cgt');
         if (!f) {
             return null;
@@ -41,7 +41,7 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.theme.clear(this).catch((e) => { throw e; });
     }
 
-    public async setGlobal(name: 'dark' | 'light'): Promise<void> {
+    public async setGlobal(name: 'dark' | 'light' | 'cyber'): Promise<void> {
         const n = clickgo.form.notify({
             'title': 'Info',
             'content': 'Theme loading...',

@@ -1,15 +1,12 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'url': '',
-            'line': false,
-            'align': 'left',
-            'disabled': false,
-            'type': 'info'
-        };
-    }
+    props = {
+        'url': '',
+        'line': false,
+        'align': 'left',
+        'disabled': false,
+        'type': 'info'
+    };
     /** --- 获取 align 的 css 属性模式 --- */
     get alignComp() {
         switch (this.props.align) {
@@ -33,10 +30,7 @@ export default class extends clickgo.control.AbstractControl {
         e.preventDefault();
         this.element.click();
     }
-    down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    down() {
         if (this.element.dataset.cgPopOpen !== undefined) {
             return;
         }

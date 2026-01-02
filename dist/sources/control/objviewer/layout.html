@@ -1,4 +1,4 @@
-<div class="wrap" :class="['bg-' + bg]" @touchstart="scale" @touchmove="scale" @touchend="scale" @wheel="scale" @mousedown="scale">
+<div class="wrap" :class="['bg-' + bg]" @wheel="scale" @pointerdown="scale">
     <div class="content" ref="content" :class="[direction,propBoolean('plain')&&'plain']" :style="{'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0', 'transform': 'translate3d(' + scaleX + 'px, ' + scaleY + 'px, 0) scale(' + scaleS + ')'}">
         <slot></slot>
         <svg class="svg">

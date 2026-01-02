@@ -1,46 +1,43 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'init': null,
-        };
-        this.props = {
-            'init': {
-                'sid': '',
-                'skey': '',
-            },
-            'controls': true,
-            'layout': [
-                {
-                    'cellNum': 4,
-                    'rows': 2,
-                    'columns': 2,
-                    'cellList': [
-                        [0, 0],
-                        [1, 1],
-                        [2, 2],
-                        [3, 3]
-                    ]
-                }
-            ],
-            'list': [],
-            'range': null,
-            'volume': 10,
-        };
-        this.access = {
-            'tplink': undefined,
-            'instance': undefined,
-        };
-        this.notInit = false;
-        this.isLoading = true;
-        /** --- 重试次数 --- */
-        this.initCount = 0;
-        /** --- 随机种子 --- */
-        this.rand = '';
-        /** --- 当前占用的 index --- */
-        this.indexs = [];
-    }
+    emits = {
+        'init': null,
+    };
+    props = {
+        'init': {
+            'sid': '',
+            'skey': '',
+        },
+        'controls': true,
+        'layout': [
+            {
+                'cellNum': 4,
+                'rows': 2,
+                'columns': 2,
+                'cellList': [
+                    [0, 0],
+                    [1, 1],
+                    [2, 2],
+                    [3, 3]
+                ]
+            }
+        ],
+        'list': [],
+        'range': null,
+        'volume': 10,
+    };
+    access = {
+        'tplink': undefined,
+        'instance': undefined,
+    };
+    notInit = false;
+    isLoading = true;
+    /** --- 重试次数 --- */
+    initCount = 0;
+    /** --- 随机种子 --- */
+    rand = '';
+    /** --- 当前占用的 index --- */
+    indexs = [];
     /** --- 初始化控件 --- */
     _init() {
         this.access.instance = new this.access.tplink({

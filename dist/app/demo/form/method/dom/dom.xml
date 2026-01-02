@@ -4,7 +4,6 @@
             <button @click="setGlobalCursor('wait')" >setGlobalCursor('wait')</button>
             <button @click="setGlobalCursor" >setGlobalCursor()</button>
             <button @click="setGlobalTransition()" >setGlobalTransition({{!isTransition}})</button>
-            <button @click="hasTouchButMouse" >hasTouchButMouse()</button>
             <button @click="getStyleCount" >getStyleCount({{taskId}}, 'form')</button>
             <layout gutter="10">
                 <button @click="watchSize" ref="watchSize" :style="{'height': (watchSizeHeight ? 30 : 50) + 'px'}" style="flex: 1;">{{watchSizeText ? '' : '!'}}watchSize</button>
@@ -32,37 +31,37 @@
             <!-- getWatchInfo -->
             <text :model-value="getWatchInfoText" readonly type="multi" style="height: 300px;"></text>
             <button @click="getWatchInfo" :disabled="getWatchInfoDisabled">getWatchInfo 20s</button>
-            <block @mousedown="bindGesture" @touchstart="bindGesture" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureText ? bindGestureText : 'bindGesture(e: Touch | Mouse, { ... })'}}</block>
-            <block @wheel="bindGestureWheel" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{bindGestureWheelText ? bindGestureWheelText : 'bindGesture(e: Wheel, { ... })'}}</block>
-            <button @click="bindLong" ref="bindLong" @mousedown="bindLongDown" @touchstart="bindLongDown" >{{bindLongText ? 'Yeah!' : 'bindLong(e, () => { ... })'}}</button>
+            <block @pointerdown="gesture" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{gestureText ? gestureText : 'pointer.gesture(e: Pointer, { ... })'}}</block>
+            <block @wheel="gestureWheel" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">{{gestureWheelText ? gestureWheelText : 'pointer.gesture(e: Wheel, { ... })'}}</block>
+            <button @click="long" ref="long" @pointerdown="longDown">{{longText ? 'Yeah!' : 'long(e, () => { ... })'}}</button>
             <block style="height: 100px; display: flex; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">
                 <block style="flex: 1; display: flex; justify-content: center; align-items: center;">
-                    <block @mousedown="bindDragDown" @touchstart="bindDragDown" ref="bindDrag" style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border: solid 1px var(--g-plain-border-color);">Drag</block>
+                    <block @pointerdown="dragDown" ref="drag" style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; border: solid 1px var(--g-plain-border-color);">Drag</block>
                 </block>
                 <block style="margin-left: 10px; flex: 1; display: flex; flex-direction: column; padding: 5px 0 0 5px;">
                     <block class="dropLine">
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
                     </block>
                     <block class="dropLine">
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
                     </block>
                     <block class="dropLine">
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
-                        <block data-cg-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
+                        <block data-drop @dragenter="dragEnter" @dragleave="dragLeave" @drop="drop"></block>
                     </block>
                 </block>
             </block>
-            <block @mousedown="bindMoveDown" @touchstart="bindMoveDown" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; position: relative; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">
-                <label>bindMove(e, { ... })</label>
-                <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @touchstart="moveDown" @mousedown="moveDown"></block>
+            <block @pointerdown="moveDown" style="height: 50px; display: flex; justify-content: center; align-items: center; font-size: 14px; position: relative; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color);">
+                <label>pointer.move(e, { ... })</label>
+                <block ref="move" style="background: #07c160; position: absolute;" :style="{'left': moveLeft + 'px', 'top': moveTop + 'px', 'width': moveWidth + 'px', 'height': moveHeight + 'px'}" @pointerdown="dblClickDown"></block>
             </block>
             <!-- 双指缩放 -->
-            <block @mousedown="bindScaleDown" @touchstart="bindScaleDown" @touchmove="bindScaleDown" @touchend="bindScaleDown" @wheel="bindScaleDown" style="height: 200px; display: flex; justify-content: center; align-items: center; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color); overflow: hidden;">
+            <block @pointerdown="scaleDown" @wheel="scaleDown" style="height: 200px; display: flex; justify-content: center; align-items: center; background: var(--g-plain-background); border: solid 1px var(--g-plain-border-color); overflow: hidden;">
                 <block style="background: #07c160; width: 25px; height: 25px; pointer-events: none;" :style="{'transform': 'translate3d(' + scaleX + 'px, ' + scaleY + 'px, 0) scale(' + scaleS + ')'}"></block>
             </block>
             <button @click="fullscreen" >fullscreen()</button>

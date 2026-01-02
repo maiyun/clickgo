@@ -296,8 +296,8 @@ abstract class AbstractCommon {
      * --- 判断当前事件可否执行 ---
      * @param e 鼠标、触摸、键盘事件
      */
-    public allowEvent(e: MouseEvent | TouchEvent | KeyboardEvent): boolean {
-        return lDom.allowEvent(e);
+    public allowEvent(e: PointerEvent | KeyboardEvent): boolean {
+        return clickgo.modules.pointer.allowEvent(e);
     }
 
     /**
@@ -932,8 +932,6 @@ export const elements: {
     'popList': HTMLDivElement;
     'circular': HTMLDivElement;
     'rectangle': HTMLDivElement;
-    'gesture': HTMLDivElement;
-    'drag': HTMLDivElement;
     'keyboard': HTMLDivElement;
     'notify': HTMLElement;
     'alert': HTMLElement;
@@ -947,8 +945,6 @@ export const elements: {
     'popList': document.createElement('div'),
     'circular': document.createElement('div'),
     'rectangle': document.createElement('div'),
-    'gesture': document.createElement('div'),
-    'drag': document.createElement('div'),
     'keyboard': document.createElement('div'),
     'notify': document.createElement('div'),
     'alert': document.createElement('div'),
@@ -1000,15 +996,6 @@ export const elements: {
         this.rectangle.setAttribute('data-pos', '');
         this.rectangle.id = 'cg-rectangle';
         this.wrap.appendChild(this.rectangle);
-
-        // --- 手势有效无效的圆圈 ---
-        this.gesture.id = 'cg-gesture';
-        this.wrap.appendChild(this.gesture);
-
-        // --- drag drop 的拖动占位符 ---
-        this.drag.id = 'cg-drag';
-        this.drag.innerHTML = '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="#FFF" xmlns="http://www.w3.org/2000/svg"><path d="M8 8L40 40" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/><path d="M8 40L40 8" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter"/></svg>';
-        this.wrap.appendChild(this.drag);
 
         // --- 添加 cg-system 的 dom ---
         this.notify.id = 'cg-notify';
@@ -1074,7 +1061,7 @@ export const elements: {
     `<input v-if="folderName === ''" class="cg-launcher-sinput" :placeholder="search" v-model="name">` +
     `<input v-else class="cg-launcher-foldername" :value="folderName" @change="folderNameChange">` +
 `</div>` +
-`<div class="cg-launcher-list" @mousedown="mousedown" @click="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
+`<div class="cg-launcher-list" @pointerdown="down" @click="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
     `<div v-for="item of list" class="cg-launcher-item">` +
         `<div class="cg-launcher-inner">` +
             `<div v-if="!item.list || item.list.length === 0" class="cg-launcher-icon" :style="{'background-image': 'url(' + item.icon + ')'}" @click="iconClick($event, item)"></div>` +
@@ -1128,7 +1115,7 @@ export const elements: {
                     }
                 },
                 'methods': {
-                    mousedown: function(this: any, e: MouseEvent): void {
+                    down: function(this: any, e: PointerEvent): void {
                         this.md = e.pageX + e.pageY;
                     },
                     listClick: function(this: any, e: MouseEvent) {
@@ -1417,19 +1404,18 @@ export const elements: {
             },
         });
         keyboardApp.mount('#cg-keyboard');
-        const down = (e: MouseEvent | TouchEvent): void => {
+        const down = (e: PointerEvent): void => {
             e.preventDefault();
             e.stopPropagation();
-            lDom.bindMove(e, {
+            clickgo.modules.pointer.move(e, {
                 'object': e.currentTarget as HTMLElement,
                 move: (e, o): void => {
                     this.keyboard.style.left = (parseFloat(this.keyboard.style.left) + o.ox) + 'px';
                     this.keyboard.style.top = (parseFloat(this.keyboard.style.top) + o.oy) + 'px';
-                }
+                },
             });
         };
-        this.keyboard.addEventListener('mousedown', down);
-        this.keyboard.addEventListener('touchstart', down);
+        this.keyboard.addEventListener('pointerdown', down);
     }
 };
 
@@ -1533,11 +1519,11 @@ export function close(formId: string):  boolean {
 }
 
 /**
- * --- 绑定窗体拖动大小事件，在 mousedown、touchstart 中绑定 ---
+ * --- 绑定窗体拖动大小事件，在 pointerdown 中绑定 ---
  * @param e 事件源
  * @param border 调整大小的方位
  */
-export function bindResize(e: MouseEvent | TouchEvent, border: lDom.TDomBorder): void {
+export function bindResize(e: PointerEvent, border: lDom.TDomBorder): void {
     const formWrap = lDom.findParentByClass(e.target as HTMLElement, 'cg-form-wrap');
     if (!formWrap) {
         return;
@@ -1555,10 +1541,10 @@ export function bindResize(e: MouseEvent | TouchEvent, border: lDom.TDomBorder):
 }
 
 /**
- * --- 绑定窗体拖动事件，在 mousedown、touchstart 中绑定 ---
+ * --- 绑定窗体拖动事件，在 pointerdown 中绑定 ---
  * @param e 事件源
  */
-export function bindDrag(e: MouseEvent | TouchEvent): void {
+export function bindDrag(e: PointerEvent): void {
     const formWrap = lDom.findParentByClass(e.target as HTMLElement, 'cg-form-wrap');
     if (!formWrap) {
         return;
@@ -2179,76 +2165,6 @@ export function hideRectangle(): void {
     elements.rectangle.style.opacity = '0';
 }
 
-// --- DRAG ---
-
-/** --- 是否马上要隐藏的 timer --- */
-let dragTimeOut: number = 0;
-
-/**
- * --- 显示 drag 虚拟框 ---
- */
-export function showDrag(opt: {
-    /** --- 传入要拖动的对象，让系统仿照他的圆角等形象 --- */
-    'element'?: HTMLElement;
-} = {}): void {
-    if (dragTimeOut) {
-        clearTimeout(dragTimeOut);
-        dragTimeOut = 0;
-    }
-    const style = opt.element ? getComputedStyle(opt.element) : undefined;
-    elements.drag.style.opacity = '1';
-    elements.drag.style.transform = 'perspective(100px) rotateX(15deg) translateZ(15px)';
-    elements.drag.style.borderBottomWidth = '2px';
-    elements.drag.style.borderRadius = style?.borderRadius ?? '3px';
-}
-
-/**
- * --- 移动 drag 到新位置 ---
- * @param opt top:顶部位置,left:左侧位置,width:宽度位置,height:高度位置
- */
-export function moveDrag(opt: IMoveDragOptions): void {
-    if (opt.top) {
-        elements.drag.style.top = opt.top.toString() + 'px';
-    }
-    if (opt.left) {
-        elements.drag.style.left = opt.left.toString() + 'px';
-    }
-    let perspective = 0;
-    if (opt.width) {
-        elements.drag.style.width = opt.width.toString() + 'px';
-        if (perspective < opt.width) {
-            perspective = opt.width;
-        }
-    }
-    if (opt.height) {
-        elements.drag.style.height = opt.height.toString() + 'px';
-        if (perspective < opt.height) {
-            perspective = opt.height;
-        }
-    }
-    if (perspective) {
-        elements.drag.style.transform = 'perspective(' + (perspective + 50) + 'px) rotateX(15deg) translateZ(15px)';
-    }
-    if (opt.icon) {
-        (elements.drag.childNodes[0] as HTMLElement).style.display = 'block';
-    }
-    else {
-        (elements.drag.childNodes[0] as HTMLElement).style.display = 'none';
-    }
-}
-
-/**
- * --- 隐藏拖拽框框 ---
- */
-export function hideDrag(): void {
-    elements.drag.style.transform = 'initial';
-    elements.drag.style.borderBottomWidth = '1px';
-    dragTimeOut = window.setTimeout(() => {
-        dragTimeOut = 0;
-        elements.drag.style.opacity = '0';
-    }, 300);
-}
-
 // --- Alert ---
 
 let alertBottom: number = 0;
@@ -2521,7 +2437,7 @@ export function removeFromPop(el: HTMLElement): void {
 }
 
 /** --- 重新调整 pop 的位置 --- */
-function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}): void {
+function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 'v' | 't' | PointerEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}): void {
     // --- 最终 pop 的大小 ---
     const width = size.width ?? pop.offsetWidth;
     const height = size.height ?? pop.offsetHeight;
@@ -2583,13 +2499,9 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
     else {
         let x: number;
         let y: number;
-        if (direction instanceof MouseEvent || (direction as any).type === 'mousedown') {
-            x = (direction as MouseEvent).clientX;
-            y = (direction as MouseEvent).clientY;
-        }
-        else if (direction instanceof TouchEvent || (direction as any).type === 'touchstart') {
-            x = (direction as TouchEvent).touches[0].clientX;
-            y = (direction as TouchEvent).touches[0].clientY;
+        if (direction instanceof PointerEvent) {
+            x = direction.clientX;
+            y = direction.clientY;
         }
         else {
             x = direction.x;
@@ -2633,7 +2545,7 @@ let lastShowPopTime: number = 0;
  * @param direction 要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
  * @param opt width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 因 pop 内部内容变动导致的自动更新 pop 位置，默认 false，autoScroll，因原元素位置变更导致 pop 位置变更，默认 false，flow: 是否加入 pop 流，默认加入，不加入的话将不会自动隐藏
  */
-export function showPop(el: HTMLElement | lCore.IVue, pop: HTMLElement | lCore.IVue | undefined, direction: 'h' | 'v' | 't' | MouseEvent | TouchEvent | { x: number; y: number; }, opt: {
+export function showPop(el: HTMLElement | lCore.IVue, pop: HTMLElement | lCore.IVue | undefined, direction: 'h' | 'v' | 't' | PointerEvent | { x: number; y: number; }, opt: {
     'size'?: { width?: number; height?: number; };
     'null'?: boolean;
     'autoPosition'?: boolean;
@@ -2845,13 +2757,10 @@ export function isJustPop(el: HTMLElement | number): boolean {
 }
 
 /**
- * --- 点下 (mousedown / touchstart) 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个 ---
+ * --- 点下 pointerdown 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个 ---
  * @param e 事件对象
  */
-export async function doFocusAndPopEvent(e: MouseEvent | TouchEvent): Promise<void> {
-    if (lDom.hasTouchButMouse(e)) {
-        return;
-    }
+export async function doFocusAndPopEvent(e: PointerEvent): Promise<void> {
     const target = e.target;
     if (!target) {
         return;
@@ -2912,13 +2821,10 @@ export async function doFocusAndPopEvent(e: MouseEvent | TouchEvent): Promise<vo
     hidePop();
     await changeFocus();
 }
-window.addEventListener('touchstart', (e) => {
+window.addEventListener('pointerdown', (e) => {
     doFocusAndPopEvent(e).catch(() => {});
 }, {
     'passive': true
-});
-window.addEventListener('mousedown', (e) => {
-    doFocusAndPopEvent(e).catch(() => {});
 });
 
 /**

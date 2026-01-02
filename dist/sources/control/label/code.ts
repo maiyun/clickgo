@@ -132,46 +132,26 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- wrap 的 down --- */
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(e: PointerEvent): void {
         if (!this.propBoolean('copy')) {
             return;
         }
         // --- 点击复制 ---
-        clickgo.dom.bindClick(e, async (): Promise<void> => {
+        clickgo.modules.pointer.click(e, async (): Promise<void> => {
             await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
             clickgo.form.alert(this.l('copied'));
         });
         if (!navigator.clipboard) {
             return;
         }
-        if (e instanceof TouchEvent) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-        }
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
         // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
         }
         clickgo.form.hidePop();
-    }
-
-    /** --- contextmenu --- */
-    public contextmenu(e: MouseEvent): void {
-        if (!this.propBoolean('copy')) {
-            return;
-        }
-        if (!navigator.clipboard) {
-            e.stopPropagation();
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, e);
     }
 
     /** --- 执行复制 --- */

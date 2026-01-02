@@ -1,12 +1,9 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.tcResult = 'waiting...';
-        this.cfResult = 'waiting...';
-        this.tcKey = '';
-        this.cfKey = '';
-    }
+    tcResult = 'waiting...';
+    cfResult = 'waiting...';
+    tcKey = '';
+    cfKey = '';
     tcOnResult(res) {
         this.tcResult = res;
     }

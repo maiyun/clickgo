@@ -35,7 +35,7 @@
         }
 
         // --- drop ---
-        &[data-cg-hover] {
+        &[data-hover] {
             &::after {
                 content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: .7; background: var(--g-color);
             }

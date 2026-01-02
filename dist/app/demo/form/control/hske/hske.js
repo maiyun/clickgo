@@ -1,8 +1,5 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.direction = ['h'];
-        this.gutter = [0];
-    }
+    direction = ['h'];
+    gutter = [0];
 }

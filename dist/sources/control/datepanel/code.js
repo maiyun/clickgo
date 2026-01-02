@@ -1,397 +1,56 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'changed': null,
-            'yearmonthchanged': null,
-            'selected': null,
-            'range': null,
-            'update:modelValue': null,
-            'update:tz': null,
-            'update:yearmonth': null,
-            'update:hourminute': null,
-            'update:cursor': null
-        };
-        this.props = {
-            'disabled': false,
-            'plain': false,
-            'disabledList': [],
-            'modelValue': undefined,
-            'start': undefined,
-            'end': undefined,
-            'tz': undefined,
-            'yearmonth': '',
-            'hourminute': '',
-            'cursor': '',
-            'jump': true,
-            'time': true,
-            'zone': false,
-            'range': false,
-            'clearbtn': true,
-            'backbtn': true
-        };
-        /** --- 当前 date 对象 --- */
-        this.dateObj = new Date();
-        /** --- 当前 date 对象的 utc 值 --- */
-        this.dateValue = {
-            'year': 0,
-            'month': 0,
-            'date': 0
-        };
-        /** --- 当前选中的真正用户的时间戳 --- */
-        this.timestamp = undefined;
-        /** --- 最小时间限制 --- */
-        this.startDate = new Date();
-        this.startTs = 0;
-        this.startValue = {
-            'year': 0,
-            'month': 0,
-            'date': 0
-        };
-        /** --- 最大时间限制 --- */
-        this.endDate = new Date();
-        this.endTs = 0;
-        this.endValue = {
-            'year': 0,
-            'month': 0,
-            'date': 0
-        };
-        /** --- 当前时区信息（小时） --- */
-        this.tzData = 0;
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'w0': 'Sun',
-                'w1': 'Mon',
-                'w2': 'Tue',
-                'w3': 'Wed',
-                'w4': 'Thu',
-                'w5': 'Fri',
-                'w6': 'Sat',
-                'm1': 'Jan',
-                'm2': 'Feb',
-                'm3': 'Mar',
-                'm4': 'Apr',
-                'm5': 'May',
-                'm6': 'Jun',
-                'm7': 'Jul',
-                'm8': 'Aug',
-                'm9': 'Sep',
-                'm10': 'Oct',
-                'm11': 'Nov',
-                'm12': 'Dec',
-                'year': 'Year',
-                'today': 'Today',
-                'back': 'Back',
-                'clear': 'Clear'
-            },
-            'sc': {
-                'w0': '日',
-                'w1': '一',
-                'w2': '二',
-                'w3': '三',
-                'w4': '四',
-                'w5': '五',
-                'w6': '六',
-                'm1': '1月',
-                'm2': '2月',
-                'm3': '3月',
-                'm4': '4月',
-                'm5': '5月',
-                'm6': '6月',
-                'm7': '7月',
-                'm8': '8月',
-                'm9': '9月',
-                'm10': '10月',
-                'm11': '11月',
-                'm12': '12月',
-                'year': '年',
-                'today': '今天',
-                'back': '返回',
-                'clear': '清除',
-            },
-            'tc': {
-                'w0': '日',
-                'w1': '一',
-                'w2': '二',
-                'w3': '三',
-                'w4': '四',
-                'w5': '五',
-                'w6': '六',
-                'm1': '1月',
-                'm2': '2月',
-                'm3': '3月',
-                'm4': '4月',
-                'm5': '5月',
-                'm6': '6月',
-                'm7': '7月',
-                'm8': '8月',
-                'm9': '9月',
-                'm10': '10月',
-                'm11': '11月',
-                'm12': '12月',
-                'year': '年',
-                'today': '今天',
-                'back': '返回',
-                'clear': '清除',
-            },
-            'ja': {
-                'w0': '日',
-                'w1': '月',
-                'w2': '火',
-                'w3': '水',
-                'w4': '木',
-                'w5': '金',
-                'w6': '土',
-                'm1': '1月',
-                'm2': '2月',
-                'm3': '3月',
-                'm4': '4月',
-                'm5': '5月',
-                'm6': '6月',
-                'm7': '7月',
-                'm8': '8月',
-                'm9': '9月',
-                'm10': '10月',
-                'm11': '11月',
-                'm12': '12月',
-                'year': '年',
-                'today': '今日',
-                'back': '戻る',
-                'clear': 'クリア',
-            },
-            'ko': {
-                'w0': '일',
-                'w1': '월',
-                'w2': '화',
-                'w3': '수',
-                'w4': '목',
-                'w5': '금',
-                'w6': '토',
-                'm1': '1월',
-                'm2': '2월',
-                'm3': '3월',
-                'm4': '4월',
-                'm5': '5월',
-                'm6': '6월',
-                'm7': '7월',
-                'm8': '8월',
-                'm9': '9월',
-                'm10': '10월',
-                'm11': '11월',
-                'm12': '12월',
-                'year': '년',
-                'today': '오늘',
-                'back': '뒤로',
-                'clear': '지우기',
-            },
-            'th': {
-                'w0': 'อา',
-                'w1': 'จ',
-                'w2': 'อ',
-                'w3': 'พ',
-                'w4': 'พฤ',
-                'w5': 'ศ',
-                'w6': 'ส',
-                'm1': 'ม.ค.',
-                'm2': 'ก.พ.',
-                'm3': 'มี.ค.',
-                'm4': 'เม.ย.',
-                'm5': 'พ.ค.',
-                'm6': 'มิ.ย.',
-                'm7': 'ก.ค.',
-                'm8': 'ส.ค.',
-                'm9': 'ก.ย.',
-                'm10': 'ต.ค.',
-                'm11': 'พ.ย.',
-                'm12': 'ธ.ค.',
-                'year': 'ปี',
-                'today': 'วันนี้',
-                'back': 'กลับ',
-                'clear': 'ล้าง',
-            },
-            'es': {
-                'w0': 'Dom',
-                'w1': 'Lun',
-                'w2': 'Mar',
-                'w3': 'Mié',
-                'w4': 'Jue',
-                'w5': 'Vie',
-                'w6': 'Sáb',
-                'm1': 'Ene',
-                'm2': 'Feb',
-                'm3': 'Mar',
-                'm4': 'Abr',
-                'm5': 'May',
-                'm6': 'Jun',
-                'm7': 'Jul',
-                'm8': 'Ago',
-                'm9': 'Sep',
-                'm10': 'Oct',
-                'm11': 'Nov',
-                'm12': 'Dic',
-                'year': 'Año',
-                'today': 'Hoy',
-                'back': 'Volver',
-                'clear': 'Claro',
-            },
-            'de': {
-                'w0': 'So',
-                'w1': 'Mo',
-                'w2': 'Di',
-                'w3': 'Mi',
-                'w4': 'Do',
-                'w5': 'Fr',
-                'w6': 'Sa',
-                'm1': 'Jan',
-                'm2': 'Feb',
-                'm3': 'Mär',
-                'm4': 'Apr',
-                'm5': 'Mai',
-                'm6': 'Jun',
-                'm7': 'Jul',
-                'm8': 'Aug',
-                'm9': 'Sep',
-                'm10': 'Okt',
-                'm11': 'Nov',
-                'm12': 'Dez',
-                'year': 'Jahr',
-                'today': 'Heute',
-                'back': 'Zurück',
-                'clear': 'Löschen',
-            },
-            'fr': {
-                'w0': 'Dim',
-                'w1': 'Lun',
-                'w2': 'Mar',
-                'w3': 'Mer',
-                'w4': 'Jeu',
-                'w5': 'Ven',
-                'w6': 'Sam',
-                'm1': 'Jan',
-                'm2': 'Fév',
-                'm3': 'Mar',
-                'm4': 'Avr',
-                'm5': 'Mai',
-                'm6': 'Juin',
-                'm7': 'Juil',
-                'm8': 'Aoû',
-                'm9': 'Sep',
-                'm10': 'Oct',
-                'm11': 'Nov',
-                'm12': 'Déc',
-                'year': 'Année',
-                'today': 'Aujourd\'hui',
-                'back': 'Retour',
-                'clear': 'Effacer',
-            },
-            'pt': {
-                'w0': 'Dom',
-                'w1': 'Seg',
-                'w2': 'Ter',
-                'w3': 'Qua',
-                'w4': 'Qui',
-                'w5': 'Sex',
-                'w6': 'Sáb',
-                'm1': 'Jan',
-                'm2': 'Fev',
-                'm3': 'Mar',
-                'm4': 'Abr',
-                'm5': 'Mai',
-                'm6': 'Jun',
-                'm7': 'Jul',
-                'm8': 'Ago',
-                'm9': 'Set',
-                'm10': 'Out',
-                'm11': 'Nov',
-                'm12': 'Dez',
-                'year': 'Ano',
-                'today': 'Hoje',
-                'back': 'Voltar',
-                'clear': 'Limpar',
-            },
-            'ru': {
-                'w0': 'Вс',
-                'w1': 'Пн',
-                'w2': 'Вт',
-                'w3': 'Ср',
-                'w4': 'Чт',
-                'w5': 'Пт',
-                'w6': 'Сб',
-                'm1': 'Янв',
-                'm2': 'Фев',
-                'm3': 'Мар',
-                'm4': 'Апр',
-                'm5': 'Май',
-                'm6': 'Июн',
-                'm7': 'Июл',
-                'm8': 'Авг',
-                'm9': 'Сен',
-                'm10': 'Окт',
-                'm11': 'Ноя',
-                'm12': 'Дек',
-                'year': 'Год',
-                'today': 'Сегодня',
-                'back': 'Назад',
-                'clear': 'Очистить',
-            },
-            'vi': {
-                'w0': 'CN',
-                'w1': 'T2',
-                'w2': 'T3',
-                'w3': 'T4',
-                'w4': 'T5',
-                'w5': 'T6',
-                'w6': 'T7',
-                'm1': 'Th1',
-                'm2': 'Th2',
-                'm3': 'Th3',
-                'm4': 'Th4',
-                'm5': 'Th5',
-                'm6': 'Th6',
-                'm7': 'Th7',
-                'm8': 'Th8',
-                'm9': 'Th9',
-                'm10': 'Th10',
-                'm11': 'Th11',
-                'm12': 'Th12',
-                'year': 'Năm',
-                'today': 'Hôm nay',
-                'back': 'Trở lại',
-                'clear': 'Xóa',
-            }
-        };
-        /** --- 日历视图表 --- */
-        this.maps = [];
-        // --- 上面的选项 ---
-        this.vyear = [''];
-        this.prevNextDate = new Date();
-        /** --- 上个月的年月字符串 --- */
-        this.prevYm = '';
-        /** --- 下个月的年月字符串 --- */
-        this.nextYm = '';
-        this.vmonth = [''];
-        this.vhour = [];
-        this.hours = [];
-        this.vminute = [];
-        this.minutes = [];
-        this.vseconds = [];
-        this.seconds = [];
-        this.vzone = [];
-        this.zones = [];
-        this.vzdec = [];
-        this.zdecs = ['00', '15', '30', '45'];
-        // --- range ---
-        /** --- 当前鼠标放置的日期无符号 --- */
-        this.cursorDate = '';
-        /** --- 另一个参数值 --- */
-        this.rangeDate = undefined;
-    }
+    emits = {
+        'changed': null,
+        'yearmonthchanged': null,
+        'selected': null,
+        'range': null,
+        'update:modelValue': null,
+        'update:tz': null,
+        'update:yearmonth': null,
+        'update:hourminute': null,
+        'update:cursor': null
+    };
+    props = {
+        'disabled': false,
+        'plain': false,
+        'disabledList': [],
+        'modelValue': undefined,
+        'start': undefined,
+        'end': undefined,
+        'tz': undefined,
+        'yearmonth': '',
+        'hourminute': '',
+        'cursor': '',
+        'jump': true,
+        'time': true,
+        'zone': false,
+        'range': false,
+        'clearbtn': true,
+        'backbtn': true
+    };
+    /** --- 当前 date 对象 --- */
+    dateObj = new Date();
+    /** --- 当前 date 对象的 utc 值 --- */
+    dateValue = {
+        'year': 0,
+        'month': 0,
+        'date': 0
+    };
     /** --- 当前选中的日期的无符号字符串 --- */
     get dateValueStr() {
         return this.dateValue.year.toString() + (this.dateValue.month + 1).toString().padStart(2, '0') + this.dateValue.date.toString().padStart(2, '0');
     }
+    /** --- 当前选中的真正用户的时间戳 --- */
+    timestamp = undefined;
+    /** --- 最小时间限制 --- */
+    startDate = new Date();
+    startTs = 0;
+    startValue = {
+        'year': 0,
+        'month': 0,
+        'date': 0
+    };
     refreshStartValue() {
         this.startValue.date = this.startDate.getUTCDate();
         this.startValue.month = this.startDate.getUTCMonth();
@@ -403,6 +62,14 @@ export default class extends clickgo.control.AbstractControl {
     get startYmd() {
         return this.startYm + this.startValue.date.toString().padStart(2, '0');
     }
+    /** --- 最大时间限制 --- */
+    endDate = new Date();
+    endTs = 0;
+    endValue = {
+        'year': 0,
+        'month': 0,
+        'date': 0
+    };
     refreshEndValue() {
         this.endValue.date = this.endDate.getUTCDate();
         this.endValue.month = this.endDate.getUTCMonth();
@@ -414,12 +81,327 @@ export default class extends clickgo.control.AbstractControl {
     get endYmd() {
         return this.endYm + this.endValue.date.toString().padStart(2, '0');
     }
+    /** --- 当前时区信息（小时） --- */
+    tzData = 0;
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'w0': 'Sun',
+            'w1': 'Mon',
+            'w2': 'Tue',
+            'w3': 'Wed',
+            'w4': 'Thu',
+            'w5': 'Fri',
+            'w6': 'Sat',
+            'm1': 'Jan',
+            'm2': 'Feb',
+            'm3': 'Mar',
+            'm4': 'Apr',
+            'm5': 'May',
+            'm6': 'Jun',
+            'm7': 'Jul',
+            'm8': 'Aug',
+            'm9': 'Sep',
+            'm10': 'Oct',
+            'm11': 'Nov',
+            'm12': 'Dec',
+            'year': 'Year',
+            'today': 'Today',
+            'back': 'Back',
+            'clear': 'Clear'
+        },
+        'sc': {
+            'w0': '日',
+            'w1': '一',
+            'w2': '二',
+            'w3': '三',
+            'w4': '四',
+            'w5': '五',
+            'w6': '六',
+            'm1': '1月',
+            'm2': '2月',
+            'm3': '3月',
+            'm4': '4月',
+            'm5': '5月',
+            'm6': '6月',
+            'm7': '7月',
+            'm8': '8月',
+            'm9': '9月',
+            'm10': '10月',
+            'm11': '11月',
+            'm12': '12月',
+            'year': '年',
+            'today': '今天',
+            'back': '返回',
+            'clear': '清除',
+        },
+        'tc': {
+            'w0': '日',
+            'w1': '一',
+            'w2': '二',
+            'w3': '三',
+            'w4': '四',
+            'w5': '五',
+            'w6': '六',
+            'm1': '1月',
+            'm2': '2月',
+            'm3': '3月',
+            'm4': '4月',
+            'm5': '5月',
+            'm6': '6月',
+            'm7': '7月',
+            'm8': '8月',
+            'm9': '9月',
+            'm10': '10月',
+            'm11': '11月',
+            'm12': '12月',
+            'year': '年',
+            'today': '今天',
+            'back': '返回',
+            'clear': '清除',
+        },
+        'ja': {
+            'w0': '日',
+            'w1': '月',
+            'w2': '火',
+            'w3': '水',
+            'w4': '木',
+            'w5': '金',
+            'w6': '土',
+            'm1': '1月',
+            'm2': '2月',
+            'm3': '3月',
+            'm4': '4月',
+            'm5': '5月',
+            'm6': '6月',
+            'm7': '7月',
+            'm8': '8月',
+            'm9': '9月',
+            'm10': '10月',
+            'm11': '11月',
+            'm12': '12月',
+            'year': '年',
+            'today': '今日',
+            'back': '戻る',
+            'clear': 'クリア',
+        },
+        'ko': {
+            'w0': '일',
+            'w1': '월',
+            'w2': '화',
+            'w3': '수',
+            'w4': '목',
+            'w5': '금',
+            'w6': '토',
+            'm1': '1월',
+            'm2': '2월',
+            'm3': '3월',
+            'm4': '4월',
+            'm5': '5월',
+            'm6': '6월',
+            'm7': '7월',
+            'm8': '8월',
+            'm9': '9월',
+            'm10': '10월',
+            'm11': '11월',
+            'm12': '12월',
+            'year': '년',
+            'today': '오늘',
+            'back': '뒤로',
+            'clear': '지우기',
+        },
+        'th': {
+            'w0': 'อา',
+            'w1': 'จ',
+            'w2': 'อ',
+            'w3': 'พ',
+            'w4': 'พฤ',
+            'w5': 'ศ',
+            'w6': 'ส',
+            'm1': 'ม.ค.',
+            'm2': 'ก.พ.',
+            'm3': 'มี.ค.',
+            'm4': 'เม.ย.',
+            'm5': 'พ.ค.',
+            'm6': 'มิ.ย.',
+            'm7': 'ก.ค.',
+            'm8': 'ส.ค.',
+            'm9': 'ก.ย.',
+            'm10': 'ต.ค.',
+            'm11': 'พ.ย.',
+            'm12': 'ธ.ค.',
+            'year': 'ปี',
+            'today': 'วันนี้',
+            'back': 'กลับ',
+            'clear': 'ล้าง',
+        },
+        'es': {
+            'w0': 'Dom',
+            'w1': 'Lun',
+            'w2': 'Mar',
+            'w3': 'Mié',
+            'w4': 'Jue',
+            'w5': 'Vie',
+            'w6': 'Sáb',
+            'm1': 'Ene',
+            'm2': 'Feb',
+            'm3': 'Mar',
+            'm4': 'Abr',
+            'm5': 'May',
+            'm6': 'Jun',
+            'm7': 'Jul',
+            'm8': 'Ago',
+            'm9': 'Sep',
+            'm10': 'Oct',
+            'm11': 'Nov',
+            'm12': 'Dic',
+            'year': 'Año',
+            'today': 'Hoy',
+            'back': 'Volver',
+            'clear': 'Claro',
+        },
+        'de': {
+            'w0': 'So',
+            'w1': 'Mo',
+            'w2': 'Di',
+            'w3': 'Mi',
+            'w4': 'Do',
+            'w5': 'Fr',
+            'w6': 'Sa',
+            'm1': 'Jan',
+            'm2': 'Feb',
+            'm3': 'Mär',
+            'm4': 'Apr',
+            'm5': 'Mai',
+            'm6': 'Jun',
+            'm7': 'Jul',
+            'm8': 'Aug',
+            'm9': 'Sep',
+            'm10': 'Okt',
+            'm11': 'Nov',
+            'm12': 'Dez',
+            'year': 'Jahr',
+            'today': 'Heute',
+            'back': 'Zurück',
+            'clear': 'Löschen',
+        },
+        'fr': {
+            'w0': 'Dim',
+            'w1': 'Lun',
+            'w2': 'Mar',
+            'w3': 'Mer',
+            'w4': 'Jeu',
+            'w5': 'Ven',
+            'w6': 'Sam',
+            'm1': 'Jan',
+            'm2': 'Fév',
+            'm3': 'Mar',
+            'm4': 'Avr',
+            'm5': 'Mai',
+            'm6': 'Juin',
+            'm7': 'Juil',
+            'm8': 'Aoû',
+            'm9': 'Sep',
+            'm10': 'Oct',
+            'm11': 'Nov',
+            'm12': 'Déc',
+            'year': 'Année',
+            'today': 'Aujourd\'hui',
+            'back': 'Retour',
+            'clear': 'Effacer',
+        },
+        'pt': {
+            'w0': 'Dom',
+            'w1': 'Seg',
+            'w2': 'Ter',
+            'w3': 'Qua',
+            'w4': 'Qui',
+            'w5': 'Sex',
+            'w6': 'Sáb',
+            'm1': 'Jan',
+            'm2': 'Fev',
+            'm3': 'Mar',
+            'm4': 'Abr',
+            'm5': 'Mai',
+            'm6': 'Jun',
+            'm7': 'Jul',
+            'm8': 'Ago',
+            'm9': 'Set',
+            'm10': 'Out',
+            'm11': 'Nov',
+            'm12': 'Dez',
+            'year': 'Ano',
+            'today': 'Hoje',
+            'back': 'Voltar',
+            'clear': 'Limpar',
+        },
+        'ru': {
+            'w0': 'Вс',
+            'w1': 'Пн',
+            'w2': 'Вт',
+            'w3': 'Ср',
+            'w4': 'Чт',
+            'w5': 'Пт',
+            'w6': 'Сб',
+            'm1': 'Янв',
+            'm2': 'Фев',
+            'm3': 'Мар',
+            'm4': 'Апр',
+            'm5': 'Май',
+            'm6': 'Июн',
+            'm7': 'Июл',
+            'm8': 'Авг',
+            'm9': 'Сен',
+            'm10': 'Окт',
+            'm11': 'Ноя',
+            'm12': 'Дек',
+            'year': 'Год',
+            'today': 'Сегодня',
+            'back': 'Назад',
+            'clear': 'Очистить',
+        },
+        'vi': {
+            'w0': 'CN',
+            'w1': 'T2',
+            'w2': 'T3',
+            'w3': 'T4',
+            'w4': 'T5',
+            'w5': 'T6',
+            'w6': 'T7',
+            'm1': 'Th1',
+            'm2': 'Th2',
+            'm3': 'Th3',
+            'm4': 'Th4',
+            'm5': 'Th5',
+            'm6': 'Th6',
+            'm7': 'Th7',
+            'm8': 'Th8',
+            'm9': 'Th9',
+            'm10': 'Th10',
+            'm11': 'Th11',
+            'm12': 'Th12',
+            'year': 'Năm',
+            'today': 'Hôm nay',
+            'back': 'Trở lại',
+            'clear': 'Xóa',
+        }
+    };
+    /** --- 日历视图表 --- */
+    maps = [];
+    // --- 上面的选项 ---
+    vyear = [''];
     get years() {
         return Array.from({ 'length': this.endValue.year - this.startValue.year + 1 }, (_, i) => ({
             'label': (this.startValue.year + i).toString(),
             'value': (this.startValue.year + i).toString(),
         }));
     }
+    prevNextDate = new Date();
+    /** --- 上个月的年月字符串 --- */
+    prevYm = '';
+    /** --- 下个月的年月字符串 --- */
+    nextYm = '';
+    vmonth = [''];
     get months() {
         const arr = [];
         for (let i = 1; i <= 12; ++i) {
@@ -432,6 +414,16 @@ export default class extends clickgo.control.AbstractControl {
         }
         return arr;
     }
+    vhour = [];
+    hours = [];
+    vminute = [];
+    minutes = [];
+    vseconds = [];
+    seconds = [];
+    vzone = [];
+    zones = [];
+    vzdec = [];
+    zdecs = ['00', '15', '30', '45'];
     /**
      * --- 刷新视图（当时间戳或时区变动时执行） ---
      */
@@ -872,19 +864,25 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
     }
+    // --- range ---
+    /** --- 当前鼠标放置的日期无符号 --- */
+    cursorDate = '';
+    /** --- 另一个参数值 --- */
+    rangeDate = undefined;
     /** --- 鼠标移动到 col 上的事件 --- */
     colenter(e, col) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (!this.propBoolean('range')) {
             return;
         }
         if (this.rangeDate) {
             return;
         }
-        this.cursorDate = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
-        this.emit('update:cursor', this.cursorDate);
+        clickgo.modules.pointer.hover(e, {
+            'enter': () => {
+                this.cursorDate = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
+                this.emit('update:cursor', this.cursorDate);
+            },
+        });
     }
     /** --- 当前日期是否可选 --- */
     get isDisabled() {

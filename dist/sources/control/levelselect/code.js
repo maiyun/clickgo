@@ -1,101 +1,91 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'label': null,
-            'load': null,
-            'loaded': null,
-            /** --- modelValue 变更时同步提交所有层级的 level value/label 值 --- */
-            'level': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'async': false,
-            'plain': false,
-            'virtual': false,
-            'map': {},
-            'padding': undefined,
-            'minWidth': 0,
-            'modelValue': '',
-            'placeholder': '',
-            'data': []
-        };
-        // --- 本地使用 ---
-        this.localeData = {
-            'en': {
-                'back': 'Back'
-            },
-            'sc': {
-                'back': '返回'
-            },
-            'tc': {
-                'back': '返回'
-            },
-            'ja': {
-                'back': '戻る'
-            },
-            'ko': {
-                'back': '뒤로'
-            },
-            'th': {
-                'back': 'ย้อนกลับ'
-            },
-            'es': {
-                'back': 'Volver'
-            },
-            'de': {
-                'back': 'Zurück'
-            },
-            'fr': {
-                'back': 'Retour'
-            },
-            'pt': {
-                'back': 'Voltar'
-            },
-            'ru': {
-                'back': 'Назад'
-            },
-            'vi': {
-                'back': 'Quay lại'
-            }
-        };
-        /** --- 当前展示中的层级 --- */
-        this.level = 0;
-        this.value = [];
-        this.label = [];
-        /** --- 输入框 --- */
-        this.inputValue = '';
-        /** --- list 的选中值 --- */
-        this.listValue = [];
-        /** --- list 的选中的 label --- */
-        this.listLabel = [];
-        /** --- select 框框的 loading --- */
-        this.oploading = false;
-        /** --- pop 的 loading --- */
-        this.loading = false;
-        /** --- 已经装载的每层的数据列表 --- */
-        this.lists = [
-            []
-        ];
-        /** --- 当前层级的 list，含 children --- */
-        this.nowlist = [];
-        /** --- 要提交的 level data --- */
-        this.levelData = [
-            {
-                'label': '',
-                'value': ''
-            }
-        ];
-        this._fvid = {
-            'level': 0,
-            'value': [],
-            'label': [],
-            'lists': [],
-            'levelData': []
-        };
-    }
+    emits = {
+        'label': null,
+        'load': null,
+        'loaded': null,
+        /** --- modelValue 变更时同步提交所有层级的 level value/label 值 --- */
+        'level': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'async': false,
+        'plain': false,
+        'virtual': false,
+        'map': {},
+        'padding': undefined,
+        'minWidth': 0,
+        'modelValue': '',
+        'placeholder': '',
+        'data': []
+    };
+    // --- 本地使用 ---
+    localeData = {
+        'en': {
+            'back': 'Back'
+        },
+        'sc': {
+            'back': '返回'
+        },
+        'tc': {
+            'back': '返回'
+        },
+        'ja': {
+            'back': '戻る'
+        },
+        'ko': {
+            'back': '뒤로'
+        },
+        'th': {
+            'back': 'ย้อนกลับ'
+        },
+        'es': {
+            'back': 'Volver'
+        },
+        'de': {
+            'back': 'Zurück'
+        },
+        'fr': {
+            'back': 'Retour'
+        },
+        'pt': {
+            'back': 'Voltar'
+        },
+        'ru': {
+            'back': 'Назад'
+        },
+        'vi': {
+            'back': 'Quay lại'
+        }
+    };
+    /** --- 当前展示中的层级 --- */
+    level = 0;
+    value = [];
+    label = [];
+    /** --- 输入框 --- */
+    inputValue = '';
+    /** --- list 的选中值 --- */
+    listValue = [];
+    /** --- list 的选中的 label --- */
+    listLabel = [];
+    /** --- select 框框的 loading --- */
+    oploading = false;
+    /** --- pop 的 loading --- */
+    loading = false;
+    /** --- 已经装载的每层的数据列表 --- */
+    lists = [
+        []
+    ];
+    /** --- 当前层级的 list，含 children --- */
+    nowlist = [];
+    /** --- 要提交的 level data --- */
+    levelData = [
+        {
+            'label': '',
+            'value': ''
+        }
+    ];
     // --- 传递给 list 的 data ---
     get nowlistComp() {
         if (this.inputValue === '') {
@@ -229,6 +219,13 @@ export default class extends clickgo.control.AbstractControl {
         }
         return true;
     }
+    _fvid = {
+        'level': 0,
+        'value': [],
+        'label': [],
+        'lists': [],
+        'levelData': []
+    };
     /** --- 搜索所有层级中，value 在哪里 --- */
     async findValueInData(value, data) {
         if (!data) {

@@ -1,16 +1,13 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'direction': null
-        };
-        this.props = {
-            'gutter': 0,
-        };
-        /** --- 当前的方向 --- */
-        this.direction = 'h';
-    }
+    emits = {
+        'direction': null
+    };
+    props = {
+        'gutter': 0,
+    };
+    /** --- 当前的方向 --- */
+    direction = 'h';
     onMounted() {
         clickgo.dom.watchSize(this, this.element, () => {
             const w = this.element.offsetWidth;

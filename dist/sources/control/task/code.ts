@@ -8,25 +8,13 @@ export default class extends clickgo.control.AbstractControl {
 
     public date: string = '00:00';
 
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(e: PointerEvent): void {
         if (this.element.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
         }
-        if (e instanceof TouchEvent) {
-            clickgo.dom.bindLong(e, (e) => {
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-        }
-    }
-
-    public contextmenu(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, e);
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
     }
 
     public onMounted(): void | Promise<void> {

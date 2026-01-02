@@ -1,4 +1,4 @@
-<div class="wrap" :class="[position, isSelected && 'selected', isOpened && 'opened', isMulti && 'multi']" @mousedown="down" @touchstart="down" @contextmenu="contextmenu" @click="click">
+<div class="wrap" :class="[position, isSelected && 'selected', isOpened && 'opened', isMulti && 'multi']" @pointerdown="down">
     <slot></slot>
     <div class="line"></div>
     <teleport to="system">

@@ -1,10 +1,7 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.hash = 'test';
-        this.location = 'https://www.maiyun.net';
-    }
+    hash = 'test';
+    location = 'https://www.maiyun.net';
     get config() {
         return JSON.stringify(clickgo.core.config, null, 4).replace(/"icon": "([\s\S]+?)"/g, '"icon": "data:image/..."');
     }

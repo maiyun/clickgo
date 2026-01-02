@@ -6,7 +6,7 @@
         </button>
         <label>Double click the item below:</label>
         <block style="background: #000; color: #FFF; padding: 5px;">{{ppath}}</block>
-        <list v-model="val" :data="list" @mousedown="dblclick" @touchstart="dblclick" style="flex: 1; height: 0;"></list>
+        <list v-model="val" :data="list" @pointerdown="dblclick" style="flex: 1; height: 0;"></list>
         <button @click="up">Up</button>
     </layout>
 </form>

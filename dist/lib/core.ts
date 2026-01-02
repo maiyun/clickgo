@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as mpegts from 'mpegts.js';
 import * as clickgo from '../clickgo';
 import * as lFs from './fs';
 import * as lForm from './form';
@@ -785,7 +786,7 @@ const modules: Record<string, {
     },
     'echarts': {
         func: async function() {
-            await lTool.loadScript(`${clickgo.getCdn()}/npm/echarts@5.4.2/dist/echarts.min.js`);
+            await lTool.loadScript(`${clickgo.getCdn()}/npm/echarts@6.0.0/dist/echarts.min.js`);
             if (!(window as any).echarts) {
                 throw Error('Echarts load failed.');
             }
@@ -1040,6 +1041,7 @@ export function checkModule(name: string): boolean {
 }
 
 export async function getModule(name: 'tums-player'): Promise<ITumsPlayer | null>;
+export async function getModule(name: 'mpegts'): Promise<typeof mpegts.default | null>;
 export async function getModule(name: string): Promise<any | null>;
 /**
  * --- 获取模块内容，通常用于异步加载模块时使用 ---

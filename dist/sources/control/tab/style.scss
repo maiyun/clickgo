@@ -92,13 +92,13 @@
         &::after {
             content: ' '; pointer-events: none; position: absolute; background: var(--g-plain-background); transition: var(--g-transition); opacity: 0;
         }
-        &:not(.selected):not([data-cg-hover]):hover {
+        &:not(.selected):not([data-hover]):hover {
             background: var(--g-background-hover);
         }
         &.selected {
             background: var(--g-plain-background);
         }
-        &[data-cg-hover] {
+        &[data-hover] {
             background: var(--g-color); color: var(--face);
         }
 

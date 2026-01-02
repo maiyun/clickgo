@@ -21,24 +21,20 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 鼠标在本体或 pop 里 --- */
     public inTip = false;
 
-    public popEnter(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.inTip = true;
-    }
-
-    public popLeave(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.inTip = false;
-        clickgo.tool.sleep(150).then(() => {
-            if (this.inTip) {
-                return;
-            }
-            clickgo.form.hidePop(this.refs.pop);
-        }).catch(() => {});
+    public popEnter(e: PointerEvent): void {
+        clickgo.modules.pointer.hover(e, {
+            enter: () => {
+                this.inTip = true;
+            },
+            leave: async () => {
+                this.inTip = false;
+                await clickgo.tool.sleep(150);
+                if (this.inTip) {
+                    return;
+                }
+                clickgo.form.hidePop(this.refs.pop);
+            },
+        });
     }
 
     public onMounted(): void | Promise<void> {
@@ -53,32 +49,27 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         this.refs.span.remove();
-        const enter = (e: MouseEvent | TouchEvent): void => {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
-            this.inTip = true;
-            clickgo.form.showPop(el, this.refs.pop, 't', {
-                'flow': false
+        const enter = (e: PointerEvent): void => {
+            clickgo.modules.pointer.hover(e, {
+                enter: () => {
+                    this.inTip = true;
+                    clickgo.form.showPop(el, this.refs.pop, 't', {
+                        'flow': false
+                    });
+                },
+                leave: async () => {
+                    // --- 允许 tip 移动上去 ---
+                    this.inTip = false;
+                    await clickgo.tool.sleep(150);
+                    if (this.inTip) {
+                        return;
+                    }
+                    clickgo.form.hidePop(this.refs.pop);
+                }
             });
         };
-        const leave = (e: MouseEvent | TouchEvent): void => {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
-            // --- 允许 tip 移动上去 ---
-            this.inTip = false;
-            clickgo.tool.sleep(150).then(() => {
-                if (this.inTip) {
-                    return;
-                }
-                clickgo.form.hidePop(this.refs.pop);
-            }).catch(() => {});
-        };
-        el.addEventListener('mouseenter', enter);
-        el.addEventListener('touchstart', enter);
-        el.addEventListener('mouseleave', leave);
-        el.addEventListener('touchend', leave);
+        el.addEventListener('pointerenter', enter);
+        el.addEventListener('pointerdown', enter);
     }
 
 }

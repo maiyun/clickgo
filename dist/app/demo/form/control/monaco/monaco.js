@@ -1,11 +1,9 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.npath = ['/index.html'];
-        this.file = '';
-        this.files = {
-            '/index.html': `<html>
+    npath = ['/index.html'];
+    file = '';
+    files = {
+        '/index.html': `<html>
     <head>
         <title>Monaco</title>
     </head>
@@ -13,7 +11,7 @@ export default class extends clickgo.form.AbstractForm {
         Hello Monaco Editor!
     </body>
 </html>`,
-            '/index.ts': 'export' + ` let props = {
+        '/index.ts': 'export' + ` let props = {
 };\n\nexport` + ` let methods = {
     hehe: function(): string {
         return str() + ', en.';
@@ -22,44 +20,43 @@ export default class extends clickgo.form.AbstractForm {
         return str2() + ', o.';
     }
 };\n`,
-            '/index.css': `.red {
+        '/index.css': `.red {
     color: red;
 }`,
-            '/index.scss': `.red {
+        '/index.scss': `.red {
     color: red;
     span {
         color: blue;
     }
 }`
-        };
-        this.list = [
-            {
-                'label': 'HTML',
-                'value': '/index.html'
-            },
-            {
-                'label': 'TypeScript',
-                'value': '/index.ts'
-            },
-            {
-                'label': 'CSS',
-                'value': '/index.css'
-            },
-            {
-                'label': 'SCSS',
-                'value': '/index.scss'
-            }
-        ];
-        this.theme = ['vs'];
-        this.themes = ['vs', 'vs-dark', 'hc-black'];
-        this.language = '';
-        this.globali = false;
-        this.newi = false;
-        this.readonly = false;
-        this.disabled = false;
-        this.size = ['12px'];
-        this.family = false;
-    }
+    };
+    list = [
+        {
+            'label': 'HTML',
+            'value': '/index.html'
+        },
+        {
+            'label': 'TypeScript',
+            'value': '/index.ts'
+        },
+        {
+            'label': 'CSS',
+            'value': '/index.css'
+        },
+        {
+            'label': 'SCSS',
+            'value': '/index.scss'
+        }
+    ];
+    theme = ['vs'];
+    themes = ['vs', 'vs-dark', 'hc-black'];
+    language = '';
+    globali = false;
+    newi = false;
+    readonly = false;
+    disabled = false;
+    size = ['12px'];
+    family = false;
     get filesName() {
         const names = [];
         for (const name in this.files) {

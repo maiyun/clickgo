@@ -1,11 +1,7 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractPanel {
-    constructor() {
-        super(...arguments);
-        this.scount = 0;
-        this.data = {};
-        this.rootMountData = 'none';
-    }
+    scount = 0;
+    data = {};
     async onShow(e) {
         // --- 装作要做一些什么 await 的事件 ---
         await clickgo.tool.sleep(1000);
@@ -45,6 +41,7 @@ export default class extends clickgo.form.AbstractPanel {
     jump() {
         this.rootForm.formHash = 'test1?a=1&b=3';
     }
+    rootMountData = 'none';
     onMounted() {
         this.rootMountData = this.rootForm.mountData;
     }

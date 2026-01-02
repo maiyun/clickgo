@@ -1,12 +1,9 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.width = 0;
-        this.height = 0;
-        this.scale = 4;
-        this.list = [];
-    }
+    width = 0;
+    height = 0;
+    scale = 4;
+    list = [];
     onScreenResize() {
         const area = clickgo.core.getAvailArea();
         this.width = area.width;

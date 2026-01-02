@@ -1,85 +1,22 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'change': null,
-            'countchange': null,
-            'countchanged': null,
-            'update:modelValue': null,
-            'update:count': null
-        };
-        this.props = {
-            'modelValue': 1,
-            'max': 0,
-            'total': 0,
-            'count': 10,
-            'counts': [],
-            'control': 2
-        };
-        /** --- 每页多少条 --- */
-        this.countSelect = ['0'];
-        this.svg = '<svg width="14" height="14" viewBox="0 0 24 24" stroke="none"><path d="m6 10.25c-.9665 0-1.75.7835-1.75 1.75s.7835 1.75 1.75 1.75h.01c.9665 0 1.75-.7835 1.75-1.75s-.7835-1.75-1.75-1.75zm4.25 1.75c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75zm6 0c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75z" /></svg>';
-        /** --- 上面页面序列 --- */
-        this.prevs = [];
-        /** --- 下面页面序列 --- */
-        this.nexts = [];
-        /** --- 当前页面 --- */
-        this.page = 0;
-        /** --- 最大页数，如果用户传入了 max 则以 max 为准，否则以 total 和 count 计算最大页面值 --- */
-        this.maxPage = 0;
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'total-of': 'Total of ? items',
-                'page': 'Page'
-            },
-            'sc': {
-                'total-of': '共 ? 条',
-                'page': '页'
-            },
-            'tc': {
-                'total-of': '共 ? 條',
-                'page': '頁'
-            },
-            'ja': {
-                'total-of': '? 件の合計',
-                'page': 'ページ'
-            },
-            'ko': {
-                'total-of': '? 개 항목 총계',
-                'page': '페이지'
-            },
-            'th': {
-                'total-of': 'ทั้งหมด ? รายการ',
-                'page': 'หน้า'
-            },
-            'es': {
-                'total-of': 'Total de ? elementos',
-                'page': 'Página'
-            },
-            'de': {
-                'total-of': 'Insgesamt ?',
-                'page': 'Seite'
-            },
-            'fr': {
-                'total-of': 'Total de ?',
-                'page': 'Page'
-            },
-            'pt': {
-                'total-of': 'Total de ?',
-                'page': 'Página'
-            },
-            'ru': {
-                'total-of': 'Всего ?',
-                'page': 'Страница'
-            },
-            'vi': {
-                'total-of': 'Tổng cộng ?',
-                'page': 'Trang'
-            }
-        };
-    }
+    emits = {
+        'change': null,
+        'countchange': null,
+        'countchanged': null,
+        'update:modelValue': null,
+        'update:count': null
+    };
+    props = {
+        'modelValue': 1,
+        'max': 0,
+        'total': 0,
+        'count': 10,
+        'counts': [],
+        'control': 2
+    };
+    /** --- 每页多少条 --- */
+    countSelect = ['0'];
     /** --- 格式化每页多少条 counts --- */
     get countsComp() {
         const counts = this.propArray('counts');
@@ -92,6 +29,66 @@ export default class extends clickgo.control.AbstractControl {
         }
         return list;
     }
+    svg = '<svg width="14" height="14" viewBox="0 0 24 24" stroke="none"><path d="m6 10.25c-.9665 0-1.75.7835-1.75 1.75s.7835 1.75 1.75 1.75h.01c.9665 0 1.75-.7835 1.75-1.75s-.7835-1.75-1.75-1.75zm4.25 1.75c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75zm6 0c0-.9665.7835-1.75 1.75-1.75h.01c.9665 0 1.75.7835 1.75 1.75s-.7835 1.75-1.75 1.75h-.01c-.9665 0-1.75-.7835-1.75-1.75z" /></svg>';
+    /** --- 上面页面序列 --- */
+    prevs = [];
+    /** --- 下面页面序列 --- */
+    nexts = [];
+    /** --- 当前页面 --- */
+    page = 0;
+    /** --- 最大页数，如果用户传入了 max 则以 max 为准，否则以 total 和 count 计算最大页面值 --- */
+    maxPage = 0;
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'total-of': 'Total of ? items',
+            'page': 'Page'
+        },
+        'sc': {
+            'total-of': '共 ? 条',
+            'page': '页'
+        },
+        'tc': {
+            'total-of': '共 ? 條',
+            'page': '頁'
+        },
+        'ja': {
+            'total-of': '? 件の合計',
+            'page': 'ページ'
+        },
+        'ko': {
+            'total-of': '? 개 항목 총계',
+            'page': '페이지'
+        },
+        'th': {
+            'total-of': 'ทั้งหมด ? รายการ',
+            'page': 'หน้า'
+        },
+        'es': {
+            'total-of': 'Total de ? elementos',
+            'page': 'Página'
+        },
+        'de': {
+            'total-of': 'Insgesamt ?',
+            'page': 'Seite'
+        },
+        'fr': {
+            'total-of': 'Total de ?',
+            'page': 'Page'
+        },
+        'pt': {
+            'total-of': 'Total de ?',
+            'page': 'Página'
+        },
+        'ru': {
+            'total-of': 'Всего ?',
+            'page': 'Страница'
+        },
+        'vi': {
+            'total-of': 'Tổng cộng ?',
+            'page': 'Trang'
+        }
+    };
     // --- 刷新重置界面 ---
     refresh() {
         this.prevs.length = 0;

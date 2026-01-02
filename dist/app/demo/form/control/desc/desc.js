@@ -1,26 +1,23 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.border = true;
-        this.collapse = true;
-        this.data = [
-            {
-                'name': 'name1',
-                'child': ['val1', 'val2']
-            },
-            {
-                'name': 'name2',
-                'child': ['val1', 'val2', 'val3']
-            },
-            {
-                'name': 'name3',
-                'child': ['val1', 'val2', 'val3', 'val4']
-            }
-        ];
-        this.plain = false;
-        this.size = ['m'];
-    }
+    border = true;
+    collapse = true;
+    data = [
+        {
+            'name': 'name1',
+            'child': ['val1', 'val2']
+        },
+        {
+            'name': 'name2',
+            'child': ['val1', 'val2', 'val3']
+        },
+        {
+            'name': 'name3',
+            'child': ['val1', 'val2', 'val3', 'val4']
+        }
+    ];
+    plain = false;
+    size = ['m'];
     /** --- 最大行数 --- */
     get maxLine() {
         let len = 0;

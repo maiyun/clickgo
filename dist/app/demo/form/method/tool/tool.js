@@ -1,12 +1,10 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.access = {
-            'sseabort': null,
-        };
-        this.sleeping = false;
-        this.purifyTxt = `<html>
+    access = {
+        'sseabort': null,
+    };
+    sleeping = false;
+    purifyTxt = `<html>
     <head>
         <title>Hello world!</title>
     </head>
@@ -28,22 +26,13 @@ export default class extends clickgo.form.AbstractForm {
         </script>
     </body>
 </html>`;
-        this.min = '10';
-        this.max = '30';
-        this.length = '8';
-        this.block = '';
-        this.url = 'HtTp://uSer:pAss@sUBDom.TopdOm23.CoM:29819/Admxw2Ksiz/dszas?Mdi=KdiMs1&a=JDd#hehHe';
-        this.url1 = '/abc/def/hehe';
-        this.url2 = '../bb.index';
-        // --- SSE ---
-        this.sseurl = 'http://127.0.0.1:8081/test/ai-stream1';
-        this.sse = false;
-        this.ssecontent = 'How are you';
-        this.sseres = '';
-        this.second = '4531';
-        this.weight = '8761';
-        this.qs = 'a=1&b=2&c=3';
-    }
+    min = '10';
+    max = '30';
+    length = '8';
+    block = '';
+    url = 'HtTp://uSer:pAss@sUBDom.TopdOm23.CoM:29819/Admxw2Ksiz/dszas?Mdi=KdiMs1&a=JDd#hehHe';
+    url1 = '/abc/def/hehe';
+    url2 = '../bb.index';
     async sleep() {
         if (this.sleeping) {
             return;
@@ -67,6 +56,11 @@ export default class extends clickgo.form.AbstractForm {
             }
         });
     }
+    // --- SSE ---
+    sseurl = 'http://127.0.0.1:8081/test/ai-stream1';
+    sse = false;
+    ssecontent = 'How are you';
+    sseres = '';
     ssedo() {
         if (this.sse) {
             this.sse = false;
@@ -102,12 +96,15 @@ export default class extends clickgo.form.AbstractForm {
     urlResolve() {
         clickgo.form.dialog(this, clickgo.tool.urlResolve(this.url1, this.url2)).catch((e) => { throw e; });
     }
+    second = '4531';
     async formatSecond() {
         await clickgo.form.dialog(this, clickgo.tool.formatSecond(parseInt(this.second) || 0));
     }
+    weight = '8761';
     async weightFormat() {
         await clickgo.form.dialog(this, clickgo.tool.weightFormat(parseInt(this.weight) || 0));
     }
+    qs = 'a=1&b=2&c=3';
     async queryParse() {
         await clickgo.form.dialog(this, JSON.stringify(clickgo.tool.queryParse(this.qs)));
     }

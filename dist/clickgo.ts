@@ -47,6 +47,8 @@ export const modules: {
     'vue': typeof import('vue');
     /** --- 原生 jszip --- */
     'jszip': typeof import('jszip');
+    /** --- 原生 pointer --- */
+    'pointer': typeof import('@litert/pointer');
     /** --- 原生 tums-player 对象（在 default 里） --- */
     'tums-player': lCore.ITumsPlayer;
 
@@ -336,12 +338,23 @@ export abstract class AbstractBoot {
  * @param boot 启动类
  */
 export async function launcher(boot: AbstractBoot): Promise<void> {
-    // --- 加载 Vue ---
-    await lTool.loadScript(`${cdn}/npm/vue@3.5.21/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`);
+    await lTool.loadScripts([
+        // --- 加载 Vue ---
+        `${cdn}/npm/vue@3.5.25/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`,
+        // --- 加载 jszip ---
+        `${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`,
+        // --- 加载 pointer ---
+        `${cdn}/npm/@litert/pointer@1.6.0/dist/index.umd.min.js`,
+    ]);
     modules.vue = (window as any).Vue;
-    // --- 加载 jszip ---
-    await lTool.loadScript(`${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`);
     modules.jszip = (window as any).JSZip;
+    modules.pointer = (window as any).pointer;
+    modules.pointer.addMoveHook('down', () => {
+        lDom.is.move = true;
+    });
+    modules.pointer.addMoveHook('up', () => {
+        lDom.is.move = false;
+    });
     // --- 加载 clickgo 的 global css ---
     const globalUrl = `${dirname}/global.css`;
     try {

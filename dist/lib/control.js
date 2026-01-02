@@ -35,22 +35,6 @@ export function initSysId(id) {
 }
 /** --- 窗体的抽象类 --- */
 export class AbstractControl {
-    constructor() {
-        // --- init 止 ---
-        /** --- root form --- */
-        this._rootForm = null;
-        /** --- 当前组件是否是别的组件的子组件，仅仅是包裹在组件的 layout 初始化中的才算 --- */
-        this._rootControl = null;
-        // --- 以下为 control 有，但窗体没有 ---
-        /** --- 组件内部文件，由系统重写 --- */
-        this.packageFiles = {};
-        /** --- 组件参数，由用户定义重写 --- */
-        this.props = {};
-        /** --- 组件参数，由用户定义重写 --- */
-        this.emits = {};
-        /** --- 组件的子插槽 --- */
-        this.slots = {};
-    }
     /** --- 当前文件在包内的路径 --- */
     get filename() {
         // --- pack 时系统自动在继承类中重写本函数 ---
@@ -91,6 +75,9 @@ export class AbstractControl {
     get element() {
         return this.$el;
     }
+    // --- init 止 ---
+    /** --- root form --- */
+    _rootForm = null;
     /** --- 当前控件所在窗体的窗体对象 --- */
     get rootForm() {
         if (!this._rootForm) {
@@ -105,6 +92,8 @@ export class AbstractControl {
         }
         return this._rootForm;
     }
+    /** --- 当前组件是否是别的组件的子组件，仅仅是包裹在组件的 layout 初始化中的才算 --- */
+    _rootControl = null;
     /** --- 当前组件如果在开发控件层面被包裹了，则可以获取到包裹他的组件对象 --- */
     get rootControl() {
         return this._rootControl;
@@ -218,7 +207,7 @@ export class AbstractControl {
      * @param e 鼠标、触摸、键盘事件
      */
     allowEvent(e) {
-        return lDom.allowEvent(e);
+        return clickgo.modules.pointer.allowEvent(e);
     }
     /**
      * --- 触发系统方法 ---
@@ -232,6 +221,15 @@ export class AbstractControl {
         }
         await lCore.trigger(name, this.taskId, this.formId, param1, param2);
     }
+    // --- 以下为 control 有，但窗体没有 ---
+    /** --- 组件内部文件，由系统重写 --- */
+    packageFiles = {};
+    /** --- 组件参数，由用户定义重写 --- */
+    props = {};
+    /** --- 组件参数，由用户定义重写 --- */
+    emits = {};
+    /** --- 组件的子插槽 --- */
+    slots = {};
     /** --- 获取某插槽所有子类 --- */
     get slotsAll() {
         return (name) => {

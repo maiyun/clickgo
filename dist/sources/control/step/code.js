@@ -1,16 +1,13 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'update:modelValue': null
-        };
-        this.props = {
-            'data': [],
-            'plain': false,
-            'modelValue': ''
-        };
-    }
+    emits = {
+        'update:modelValue': null
+    };
+    props = {
+        'data': [],
+        'plain': false,
+        'modelValue': ''
+    };
     get dataComp() {
         const data = [];
         for (const item of this.props.data) {

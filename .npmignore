@@ -1,3 +1,5 @@
+.github/
+.playwright-mcp/
 .vscode/
 .VSCodeCounter/
 .vs/

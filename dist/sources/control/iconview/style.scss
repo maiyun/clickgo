@@ -45,7 +45,7 @@
                 &.shift {
                     border-color: var(--g-plain-border-color);
                 }
-                &[data-cg-hover] {
+                &[data-hover] {
                     background: var(--g-plain-background-selected); color: var(--g-color);
                 }
             };

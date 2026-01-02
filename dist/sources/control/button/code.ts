@@ -170,13 +170,13 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    // --- 鼠标按下事件 ---
-    public down(e: MouseEvent | TouchEvent): void {
+    // --- 按下事件 ---
+    public down(e: PointerEvent): void {
         if (this.props.area !== 'mark') {
             return;
         }
         // --- mark 才响应 ---
-        clickgo.dom.bindLong(e, () => {
+        clickgo.modules.pointer.long(e, () => {
             clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h', {
                 'autoScroll': true,
                 'way': 'click'

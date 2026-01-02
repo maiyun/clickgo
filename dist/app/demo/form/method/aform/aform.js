@@ -1,14 +1,11 @@
 import * as clickgo from 'clickgo';
 import sdFrm from './sd';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.fid = '0';
-        this.sendValue = 'sendValue';
-        this.test = 'A';
-        this.dr = '';
-        this.hash = 'testhash';
-    }
+    fid = '0';
+    sendValue = 'sendValue';
+    test = 'A';
+    dr = '';
+    hash = 'testhash';
     ssend() {
         this.send(this.fid, {
             'key': this.sendValue

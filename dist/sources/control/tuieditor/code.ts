@@ -268,21 +268,6 @@ export default class extends clickgo.control.AbstractControl {
             'el': cgimage,
             'tooltip': this.access.tuieditor.i18n.get('Insert image')
         });
-        // --- 绑定 contextmenu ---
-        this.element.addEventListener('contextmenu', (e: MouseEvent) => {
-            e.preventDefault();
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
-            const target = e.target as HTMLElement;
-            if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
-                return;
-            }
-            if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
-                return;
-            }
-            clickgo.form.showPop(this.element, this.refs.pop, e);
-        });
         // --- 绑定 paste ---
         this.element.addEventListener('paste', (e: ClipboardEvent) => {
             if (!e.clipboardData) {
@@ -303,10 +288,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
         // --- 绑定 down 事件 ---
-        const down = (e: MouseEvent | TouchEvent): void => {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
+        const down = (e: PointerEvent): void => {
             if (this.element.dataset.cgPopOpen !== undefined) {
                 clickgo.form.hidePop(this.element);
             }
@@ -314,15 +296,15 @@ export default class extends clickgo.control.AbstractControl {
             if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
                 return;
             }
-            if (e instanceof TouchEvent) {
-                // --- touch 长按弹出 ---
-                clickgo.dom.bindLong(e, () => {
-                    clickgo.form.showPop(this.element, this.refs.pop, e);
-                });
+            if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
+                return;
             }
+            // --- 弹出菜单 ---
+            clickgo.modules.pointer.menu(e, () => {
+                clickgo.form.showPop(this.element, this.refs.pop, e);
+            });
         };
-        this.element.addEventListener('mousedown', down);
-        this.element.addEventListener('touchstart', down, {
+        this.element.addEventListener('pointerdown', down, {
             'passive': true
         });
         // --- 监听语言变动 ---

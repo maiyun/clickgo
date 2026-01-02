@@ -1,59 +1,51 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'sort': null,
-            'select': null,
-            'itemclicked': null,
-            'gesture': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'must': true,
-            'multi': false,
-            'ctrl': true,
-            'selection': false,
-            'gesture': [],
-            'scroll': 'auto',
-            'sort': false,
-            'split': false,
-            'virtual': false,
-            'fixed': undefined,
-            'map': {},
-            'data': [],
-            'sizes': {},
-            'modelValue': [],
-            'mode': 'default'
-        };
-        /** --- 列头信息 --- */
-        this.items = [];
-        /** --- item width 的映射 --- */
-        this.widthMap = [];
-        /** --- item min width 的映射 --- */
-        this.minWidthMap = [];
-        /** --- 当前的滚动位置 --- */
-        this.scrollLeft = 0;
-        /** --- 当前总宽度 --- */
-        this.scrollWidth = 0;
-        /** --- 当前可视宽度 --- */
-        this.clientWidth = 0;
-        /** --- 当前是否排序中，-1 为没有排序中 --- */
-        this.nowSort = {
-            'index': -1,
-            'sort': 'desc'
-        };
-        /** --- 当前列是否是固定模式，是的话当前列是固定在左侧还是右侧 --- */
-        this.isFixed = {
-            'left': undefined,
-            'right': undefined,
-        };
-    }
+    emits = {
+        'sort': null,
+        'select': null,
+        'itemclicked': null,
+        'gesture': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'must': true,
+        'multi': false,
+        'ctrl': true,
+        'selection': false,
+        'gesture': [],
+        'scroll': 'auto',
+        'sort': false,
+        'split': false,
+        'virtual': false,
+        'fixed': undefined,
+        'map': {},
+        'data': [],
+        'sizes': {},
+        'modelValue': [],
+        'mode': 'default'
+    };
+    /** --- 列头信息 --- */
+    items = [];
     /** --- 计算属性，获取 items 的总数 --- */
     get itemsLength() {
         return this.items.length;
     }
+    /** --- item width 的映射 --- */
+    widthMap = [];
+    /** --- item min width 的映射 --- */
+    minWidthMap = [];
+    /** --- 当前的滚动位置 --- */
+    scrollLeft = 0;
+    /** --- 当前总宽度 --- */
+    scrollWidth = 0;
+    /** --- 当前可视宽度 --- */
+    clientWidth = 0;
+    /** --- 当前是否排序中，-1 为没有排序中 --- */
+    nowSort = {
+        'index': -1,
+        'sort': 'desc'
+    };
     /**
      * --- 最大可拖动的 scroll 左侧位置 ---
      */
@@ -151,7 +143,7 @@ export default class extends clickgo.control.AbstractControl {
     }
     // --- 头部项点击事件 ---
     headerClick(e, i) {
-        clickgo.dom.bindClick(e, () => {
+        clickgo.modules.pointer.click(e, () => {
             const item = this.items[i];
             const sort = item.sort ?? this.propBoolean('sort');
             if (!sort) {
@@ -199,15 +191,20 @@ export default class extends clickgo.control.AbstractControl {
     // --- 绑定拖动改变列宽 ---
     bindResize(e, i) {
         const el = e.currentTarget.parentNode;
-        clickgo.dom.bindResize(e, {
+        clickgo.modules.pointer.resize(e, {
             'object': el,
             'border': 'r',
             'minWidth': this.minWidthMap[i],
             'move': (left, top, width) => {
                 this.widthMap[i] = width;
-            }
+            },
         });
     }
+    /** --- 当前列是否是固定模式，是的话当前列是固定在左侧还是右侧 --- */
+    isFixed = {
+        'left': undefined,
+        'right': undefined,
+    };
     onMounted() {
         this.watch('sort', () => {
             this.checkNowSort();

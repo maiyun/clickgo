@@ -1,33 +1,30 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'remove': null,
-            'add': null,
-            'change': null,
-            'changed': null,
-            /** --- 无论是谁，只要 pop 显示就响应 --- */
-            'pop': null,
-            'update:modelValue': null,
-        };
-        this.props = {
-            'disabled': false,
-            'multi': false,
-            'direction': 'h',
-            'area': 'all',
-            'pop': 'greatlist',
-            'plain': false,
-            'virtual': false,
-            'padding': 'm',
-            'minWidth': 0,
-            'map': {},
-            'data': [],
-            'sizes': {},
-            'modelValue': []
-        };
-        this.isSpaceDown = false;
-    }
+    emits = {
+        'remove': null,
+        'add': null,
+        'change': null,
+        'changed': null,
+        /** --- 无论是谁，只要 pop 显示就响应 --- */
+        'pop': null,
+        'update:modelValue': null,
+    };
+    props = {
+        'disabled': false,
+        'multi': false,
+        'direction': 'h',
+        'area': 'all',
+        'pop': 'greatlist',
+        'plain': false,
+        'virtual': false,
+        'padding': 'm',
+        'minWidth': 0,
+        'map': {},
+        'data': [],
+        'sizes': {},
+        'modelValue': []
+    };
+    isSpaceDown = false;
     /**
      * --- 显示 pop，可供别人调用 ---
      */
@@ -69,9 +66,6 @@ export default class extends clickgo.control.AbstractControl {
         this.down(e, 'arrow');
     }
     down(e, area) {
-        if (!(e instanceof KeyboardEvent) && clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (this.element.dataset.cgPopOpen !== undefined) {
             // this.hidePop();
             return;

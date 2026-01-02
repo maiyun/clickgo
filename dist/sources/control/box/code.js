@@ -1,30 +1,24 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'update:selected': null,
-        };
-        this.props = {
-            'modelValue': {},
-            'selected': []
-        };
-        /** --- 是否正在拖动、改变大小的交互 --- */
-        this.isInteract = false;
-        /** --- 是否在拖动选择中 --- */
-        this.isSelection = false;
-        /** --- 当前选中状态的 id 列表 --- */
-        this.selectedData = [];
-    }
+    emits = {
+        'update:selected': null,
+    };
+    props = {
+        'modelValue': {},
+        'selected': []
+    };
+    /** --- 是否正在拖动、改变大小的交互 --- */
+    isInteract = false;
+    /** --- 是否在拖动选择中 --- */
+    isSelection = false;
+    /** --- 当前选中状态的 id 列表 --- */
+    selectedData = [];
     get modelValueComp() {
         const arr = Object.keys(this.props.modelValue).map(key => ({ 'id': key, ...this.props.modelValue[key] }));
         arr.sort((a, b) => (a.index ?? 1) - (b.index ?? 1));
         return arr;
     }
     wrapDown(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (e.target !== e.currentTarget) {
             return;
         }
@@ -34,10 +28,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 选框相关 ---
         const rect = this.element.getBoundingClientRect();
-        const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-        const y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
-        // --- 鼠标手指只会响应一个，进行建立选区 ---
-        clickgo.dom.bindDown(e, {
+        const x = e.clientX;
+        const y = e.clientY;
+        // --- 进行建立选区 ---
+        clickgo.modules.pointer.down(e, {
             start: () => {
                 this.isSelection = true;
             },
@@ -94,10 +88,7 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
     resize(e, id, dir) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.dom.bindResize(e, {
+        clickgo.modules.pointer.resize(e, {
             'objectLeft': this.props.modelValue[id].x,
             'objectTop': this.props.modelValue[id].y,
             'objectWidth': this.props.modelValue[id].width,
@@ -137,9 +128,6 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
     down(e, id) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         // --- 判断是否选中 ---
         if (!this.selectedData.includes(id)) {
             if (!e.ctrlKey && !e.metaKey) {
@@ -152,7 +140,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.props.modelValue[id].move === false) {
             return;
         }
-        clickgo.dom.bindMove(e, {
+        clickgo.modules.pointer.move(e, {
             'areaObject': this.element,
             'object': e.currentTarget,
             'cursor': 'auto',

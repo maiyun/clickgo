@@ -205,8 +205,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 头部项点击事件 ---
-    public headerClick(e: MouseEvent | TouchEvent, i: number): void {
-        clickgo.dom.bindClick(e, () => {
+    public headerClick(e: PointerEvent, i: number): void {
+        clickgo.modules.pointer.click(e, () => {
             const item = this.items[i];
             const sort = item.sort ?? this.propBoolean('sort');
             if (!sort) {
@@ -253,15 +253,15 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 绑定拖动改变列宽 ---
-    public bindResize(e: MouseEvent | TouchEvent, i: number): void {
+    public bindResize(e: PointerEvent, i: number): void {
         const el = (e.currentTarget as HTMLElement).parentNode as HTMLElement;
-        clickgo.dom.bindResize(e, {
+        clickgo.modules.pointer.resize(e, {
             'object': el,
             'border': 'r',
             'minWidth': this.minWidthMap[i],
             'move': (left, top, width) => {
                 this.widthMap[i] = width;
-            }
+            },
         });
     }
 

@@ -26,11 +26,11 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.close(this.formId);
     }
 
-    public bindResize(e: MouseEvent | TouchEvent): void {
+    public bindResize(e: PointerEvent): void {
         clickgo.form.bindResize(e, 'rb');
     }
 
-    public bindDrag(e: MouseEvent | TouchEvent): void {
+    public bindDrag(e: PointerEvent): void {
         clickgo.form.bindDrag(e);
     }
 
@@ -99,21 +99,6 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.showRectangle(e.clientX, e.clientY, 'rb');
         await clickgo.tool.sleep(1000);
         clickgo.form.hideRectangle();
-    }
-
-    public async showDrag(): Promise<void> {
-        clickgo.form.showDrag({
-            'element': this.refs.showDrag.$el,
-        });
-        const rect = this.refs.showDrag.$el.getBoundingClientRect();
-        clickgo.form.moveDrag({
-            'left': rect.left,
-            'top': rect.top,
-            'width': rect.width,
-            'height': rect.height
-        });
-        await clickgo.tool.sleep(1000);
-        clickgo.form.hideDrag();
     }
 
     public async notify(): Promise<void> {

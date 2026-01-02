@@ -1,70 +1,65 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'check': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'alt': '',
-            'type': '',
-            'label': '',
-            'modelValue': ''
-        };
-        /** --- 当前本地的值 --- */
-        this.value = '';
-        /** --- 设备信息 ---· */
-        this.device = clickgo.getDevice();
-    }
-    enter(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, 'h');
-    }
-    touch() {
-        // --- 只有 touchstart 才显示，因为 PC 的 mouseenter 已经显示过了 ---
-        clickgo.form.showPop(this.element, this.refs.pop, 'h');
-    }
-    click() {
-        if (!this.props.type) {
-            if (!this.slots['pop']) {
-                // --- 没有下层，则隐藏所有 pop ---
-                clickgo.form.hidePop();
-            }
-            return;
-        }
-        // --- 有 type ---
-        if (this.props.type) {
-            const event = {
-                'go': true,
-                preventDefault: function () {
-                    this.go = false;
-                },
-                'detail': {
-                    'value': this.value,
-                    'label': undefined
+    emits = {
+        'check': null,
+        'update:modelValue': null,
+    };
+    props = {
+        'disabled': false,
+        'alt': '',
+        'type': '',
+        'label': '',
+        'modelValue': ''
+    };
+    /** --- 当前本地的值 --- */
+    value = '';
+    down(oe) {
+        this.enter(oe);
+        clickgo.modules.pointer.click(oe, () => {
+            if (!this.props.type) {
+                if (!this.slots['pop']) {
+                    // --- 没有下层，则隐藏所有 pop ---
+                    clickgo.form.hidePop();
                 }
-            };
-            if (this.props.type === 'radio') {
-                event.detail.label = this.props.label;
-                this.emit('check', event, this.value, this.props.label);
-                if (event.go) {
-                    this.value = this.props.label;
-                    this.emit('update:modelValue', this.value);
+                return;
+            }
+            // --- 有 type ---
+            if (this.props.type) {
+                const event = {
+                    'go': true,
+                    preventDefault: function () {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': this.value,
+                        'label': undefined
+                    }
+                };
+                if (this.props.type === 'radio') {
+                    event.detail.label = this.props.label;
+                    this.emit('check', event, this.value, this.props.label);
+                    if (event.go) {
+                        this.value = this.props.label;
+                        this.emit('update:modelValue', this.value);
+                    }
+                }
+                else if (this.props.type === 'check') {
+                    this.emit('check', event, this.value);
+                    if (event.go) {
+                        this.value = !this.value;
+                        this.emit('update:modelValue', this.value);
+                    }
                 }
             }
-            else if (this.props.type === 'check') {
-                this.emit('check', event, this.value);
-                if (event.go) {
-                    this.value = !this.value;
-                    this.emit('update:modelValue', this.value);
-                }
-            }
-        }
-        clickgo.form.hidePop();
+            clickgo.form.hidePop();
+        });
+    }
+    enter(oe) {
+        clickgo.modules.pointer.hover(oe, {
+            enter: () => {
+                clickgo.form.showPop(this.element, this.refs.pop, 'h');
+            },
+        });
     }
     /** --- 显示右侧的快捷键 --- */
     get skeys() {
@@ -83,6 +78,8 @@ export default class extends clickgo.control.AbstractControl {
             --menulist.hasTypeItemsCount;
         }
     }
+    /** --- 设备信息 ---· */
+    device = clickgo.getDevice();
     onMounted() {
         this.watch('type', () => {
             const menulist = this.parentByName('menulist');

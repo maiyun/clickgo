@@ -1,13 +1,10 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'html': '',
-            'css': ''
-        };
-        this.htmlPrep = '';
-    }
+    props = {
+        'html': '',
+        'css': ''
+    };
+    htmlPrep = '';
     // --- 编译后的布局标签列 ---
     get layout() {
         let layout = this.props.html;

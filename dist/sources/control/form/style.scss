@@ -60,7 +60,7 @@
 
     /* --- 改变大小 --- */
     .pop-resize-lt, .pop-resize-t, .pop-resize-tr, .pop-resize-r, .pop-resize-rb, .pop-resize-b, .pop-resize-bl, .pop-resize-l {
-        position: absolute; z-index: 11;
+        position: absolute; z-index: 12;
     }
     .pop-resize-lt, .pop-resize-t, .pop-resize-tr {
         top: -10px; height: 20px;
@@ -106,7 +106,7 @@
     }
     // --- 遮罩 ---  
     .mask {
-        position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: var(--g-background-opacity); z-index: 9;
+        position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-color: var(--g-background-opacity); z-index: 10;
     }
     // --- 内部 ---
     .inner {
@@ -169,7 +169,7 @@
             
             /* --- Loading 遮罩 --- */
             .loading {
-                position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, .3); display: flex; justify-content: center; align-items: center; z-index: 10; transition: all .3s var(--g-cubic);
+                position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, .3); display: flex; justify-content: center; align-items: center; z-index: 11; transition: all .3s var(--g-cubic);
                 &:not(.show) {
                     opacity: 0; pointer-events: none;
                 }

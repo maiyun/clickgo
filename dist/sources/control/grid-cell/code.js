@@ -1,18 +1,13 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'direction': undefined,
-            'gutter': 0,
-            'alignH': undefined,
-            'alignV': undefined,
-            'span': 0,
-            'sizeM': 0,
-            'sizeL': 0,
-        };
-        this.grid = null;
-    }
+    props = {
+        'direction': undefined,
+        'gutter': 0,
+        'alignH': undefined,
+        'alignV': undefined,
+        'span': undefined,
+    };
+    grid = null;
     /** --- 方向 --- */
     get directionComp() {
         return this.props.direction ?? this.grid?.direction ?? 'h';
@@ -24,26 +19,36 @@ export default class extends clickgo.control.AbstractControl {
         }
         return this.propNumber('gutter') ? this.propNumber('gutter') : (this.grid?.propNumber('itemGutter') ?? 0);
     }
+    /** --- 横向对齐方式 --- */
     get alignHComp2() {
         return this.alignHComp ?? this.grid?.alignHComp;
     }
+    /** --- 纵向对齐方式 --- */
     get alignVComp2() {
         return this.alignVComp ?? this.grid?.alignVComp;
     }
-    /** --- 当前单元格横跨的列 --- */
+    /** --- 横跨几列数字 --- */
     get spanNum() {
-        const size = this.grid?.size ?? 's';
-        if (size === 's') {
+        if (this.props.span === undefined) {
             return 1;
         }
-        if (size === 'm') {
-            return this.propInt('sizeM') === -1 ? 1 : (this.propInt('sizeM') || this.propInt('span') || 1);
+        const span = this.propInt('span');
+        if (span === -1) {
+            return -1;
         }
-        return this.propInt('sizeL') === -1 ? 1 : (this.propInt('sizeL') || this.propInt('span') || 1);
+        /** --- grid max span --- */
+        const maxSpan = this.grid?.maxSpan ?? 12;
+        return (span > maxSpan) ? maxSpan : span;
     }
-    /** --- 横跨几行 --- */
+    /** --- 横跨几列 css 模式 --- */
     get spanComp() {
-        return this.spanNum > 1 ? 'span ' + this.spanNum.toString() : undefined;
+        if (this.props.span === undefined) {
+            return undefined;
+        }
+        if (this.spanNum === -1) {
+            return '1 / -1';
+        }
+        return 'span ' + this.spanNum.toString();
     }
     onMounted() {
         this.grid = this.parentByName('grid');

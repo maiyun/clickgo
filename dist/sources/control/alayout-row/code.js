@@ -1,9 +1,6 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.alayout = null;
-    }
+    alayout = null;
     get gap() {
         if (!this.alayout?.propNumber) {
             return '0';

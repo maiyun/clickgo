@@ -1,16 +1,13 @@
 import * as clickgo from 'clickgo';
 import test1 from './test1';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.selected = ['none'];
-        /** --- panel de mv --- */
-        this.panelv = '';
-        this.parentData = 'yeah!';
-        this.plain = false;
-        /** --- 当前的 map 模式 --- */
-        this.map = null;
-    }
+    selected = ['none'];
+    /** --- panel de mv --- */
+    panelv = '';
+    parentData = 'yeah!';
+    plain = false;
+    /** --- 当前的 map 模式 --- */
+    map = null;
     async go() {
         this.loading = true;
         await this.refs.panel.go(test1, {

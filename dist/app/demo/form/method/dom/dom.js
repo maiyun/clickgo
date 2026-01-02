@@ -1,33 +1,21 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.watchSizeText = false;
-        this.watchSizeHeight = true;
-        this.watchText = false;
-        this.watchInner = true;
-        this.watchStyleChange = true;
-        this.bindGestureText = '';
-        this.bindGestureWheelText = '';
-        this.bindLongText = false;
-        this.moveLeft = 0;
-        this.moveTop = 0;
-        this.moveWidth = 25;
-        this.moveHeight = 25;
-        this.micWs = 'wss://127.0.0.1:8080/speaker';
-        /** --- 说话中 --- */
-        this.micHuman = false;
-        /** --- rms 值 --- */
-        this.micRms = 0;
-        /** --- 麦克风状态，1-准备中,2-对讲中,3-关闭中 --- */
-        this.micState = 0;
-        this.watchPositionText = false;
-        this.getWatchInfoDisabled = false;
-        this.getWatchInfoText = '{}';
-        this.scaleX = 0;
-        this.scaleY = 0;
-        this.scaleS = 1;
-    }
+    watchSizeText = false;
+    watchSizeHeight = true;
+    watchText = false;
+    watchInner = true;
+    watchStyleChange = true;
+    moveLeft = 0;
+    moveTop = 0;
+    moveWidth = 25;
+    moveHeight = 25;
+    micWs = 'wss://127.0.0.1:8080/speaker';
+    /** --- 说话中 --- */
+    micHuman = false;
+    /** --- rms 值 --- */
+    micRms = 0;
+    /** --- 麦克风状态，1-准备中,2-对讲中,3-关闭中 --- */
+    micState = 0;
     async micClick() {
         if (this.micState) {
             this.micState = 3;
@@ -89,9 +77,6 @@ export default class extends clickgo.form.AbstractForm {
     setGlobalTransition() {
         clickgo.dom.setGlobalTransition(!this.isTransition);
     }
-    hasTouchButMouse(e) {
-        clickgo.form.dialog(this, clickgo.dom.hasTouchButMouse(e) ? 'true' : 'false').catch((e) => { throw e; });
-    }
     getStyleCount() {
         clickgo.form.dialog(this, clickgo.dom.getStyleCount(this, 'form').toString()).catch((e) => { throw e; });
     }
@@ -112,6 +97,7 @@ export default class extends clickgo.form.AbstractForm {
             clickgo.dom.unwatchSize(this.refs.watchSize.$el);
         }
     }
+    watchPositionText = false;
     watchPosition() {
         this.watchPositionText = !this.watchPositionText;
         if (this.watchPositionText) {
@@ -140,6 +126,8 @@ export default class extends clickgo.form.AbstractForm {
     isWatchStyle() {
         clickgo.form.dialog(this, clickgo.dom.isWatchStyle(this.refs.watchStyle.$el) ? 'true' : 'false').catch((e) => { throw e; });
     }
+    getWatchInfoDisabled = false;
+    getWatchInfoText = '{}';
     async getWatchInfo() {
         this.getWatchInfoDisabled = true;
         for (let i = 0; i < 40; ++i) {
@@ -149,44 +137,50 @@ export default class extends clickgo.form.AbstractForm {
         }
         this.getWatchInfoDisabled = false;
     }
-    bindGesture(e) {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
+    async fullscreen() {
+        await clickgo.dom.fullscreen();
+    }
+    // --- pointer ---
+    gestureText = '';
+    gestureWheelText = '';
+    longText = false;
+    gesture(e) {
+        clickgo.modules.pointer.gesture(e, (ne, dir) => {
             if (['top', 'bottom'].includes(dir)) {
                 return 1;
             }
             return 0;
         }, async (dir) => {
-            this.bindGestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            this.gestureText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             await clickgo.tool.sleep(500);
-            this.bindGestureText = '';
+            this.gestureText = '';
         });
     }
-    bindGestureWheel(e) {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
+    gestureWheel(e) {
+        clickgo.modules.pointer.gesture(e, (ne, dir) => {
             if (['top', 'bottom', 'left', 'right'].includes(dir)) {
                 return 1;
             }
             return 0;
         }, async (dir) => {
-            this.bindGestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
+            this.gestureWheelText = dir.slice(0, 1).toUpperCase() + dir.slice(1);
             await clickgo.tool.sleep(500);
-            this.bindGestureWheelText = '';
+            this.gestureWheelText = '';
         });
     }
-    bindLong() {
+    long() {
         clickgo.form.dialog(this, 'Press and hold this button.').catch((e) => { throw e; });
     }
-    bindLongDown(e) {
-        clickgo.dom.bindLong(e, async () => {
-            this.bindLongText = true;
+    longDown(e) {
+        clickgo.modules.pointer.long(e, async () => {
+            this.longText = true;
             await clickgo.tool.sleep(500);
-            this.bindLongText = false;
+            this.longText = false;
         });
     }
-    bindDragDown(e) {
-        clickgo.dom.bindDrag(e, {
-            'el': this.refs.bindDrag,
-            'data': 'bindDragDownTest'
+    dragDown(e) {
+        clickgo.modules.pointer.drag(e, this.refs.drag, {
+            'data': ' dragDownTest'
         });
     }
     async dragEnter(e) {
@@ -204,8 +198,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.tool.sleep(500);
         e.target.innerText = '';
     }
-    bindMoveDown(e) {
-        clickgo.dom.bindMove(e, {
+    moveDown(e) {
+        clickgo.modules.pointer.move(e, {
             'areaObject': e.currentTarget,
             'object': this.refs.move,
             move: (e, o) => {
@@ -214,22 +208,22 @@ export default class extends clickgo.form.AbstractForm {
             }
         });
     }
-    moveDown(e) {
-        clickgo.dom.bindDblClick(e, () => {
+    dblClickDown(e) {
+        clickgo.modules.pointer.dblClick(e, () => {
             this.moveWidth = this.moveWidth === 25 ? 50 : 25;
             this.moveHeight = this.moveHeight === 25 ? 50 : 25;
         });
     }
-    bindScaleDown(e) {
-        clickgo.dom.bindScale(e, (e, scale, cpos) => {
+    scaleX = 0;
+    scaleY = 0;
+    scaleS = 1;
+    scaleDown(e) {
+        clickgo.modules.pointer.scale(e, (e, scale, cpos) => {
             e.preventDefault();
             this.scaleX += cpos.x;
             this.scaleY += cpos.y;
             this.scaleS *= scale;
         });
-    }
-    async fullscreen() {
-        await clickgo.dom.fullscreen();
     }
     onMounted() {
         clickgo.dom.watchStyle(this.refs.watchStyle.$el, 'font-size', (n, v) => {

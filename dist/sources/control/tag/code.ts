@@ -26,9 +26,8 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     /** --- 拖动提出 --- */
-    public down(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindDrag(e, {
-            'el': this.element,
+    public down(oe: PointerEvent): void {
+        clickgo.modules.pointer.drag(oe, this.element, {
             'data': {
                 'index': clickgo.dom.index(this.element),
                 'tag': 'cg-tag',

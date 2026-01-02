@@ -87,11 +87,8 @@ import mtoolFrm from './method/tool/tool';
 import mzipFrm from './method/zip/zip';
 import sbackpanelFrm from './solution/backpanel/backpanel';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.ntab = '';
-        this.adata = {};
-    }
+    ntab = '';
+    adata = {};
     async openForm(name, data) {
         this.loading = true;
         let frm;

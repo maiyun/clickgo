@@ -1,18 +1,15 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'change': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'value': '',
-            'modelValue': ''
-        };
-        this.isSpaceDown = false;
-    }
+    emits = {
+        'change': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'value': '',
+        'modelValue': ''
+    };
+    isSpaceDown = false;
     click() {
         const event = {
             'go': true,

@@ -1,23 +1,17 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'direction': 'h',
-            'bg': 'dot',
-            'gutter': '',
-            'alignH': undefined,
-            'alignV': undefined,
-        };
-        this.scaleS = 1;
-        this.scaleX = 0;
-        this.scaleY = 0;
-        /** --- 当前有的线段 --- */
-        this.lines = [];
-        // --- 供用户调用结束 ---
-        /** --- 有些时候要刷新 --- */
-        this.refreshLineTimer = 0;
-    }
+    props = {
+        'direction': 'h',
+        'bg': 'dot',
+        'gutter': '',
+        'alignH': undefined,
+        'alignV': undefined,
+    };
+    scaleS = 1;
+    scaleX = 0;
+    scaleY = 0;
+    /** --- 当前有的线段 --- */
+    lines = [];
     // --- 供用户调用 ---
     /** --- 添加连接线 --- */
     addLine(line) {
@@ -181,9 +175,12 @@ export default class extends clickgo.control.AbstractControl {
         this.scaleX = (this.element.offsetWidth - this.refs.content.offsetWidth) / 2;
         this.scaleY = (this.element.offsetHeight - this.refs.content.offsetHeight) / 2;
     }
+    // --- 供用户调用结束 ---
+    /** --- 有些时候要刷新 --- */
+    refreshLineTimer = 0;
     /** --- 绑定缩放事件 --- */
     scale(oe) {
-        clickgo.dom.bindScale(oe, (e, scale, cpos) => {
+        clickgo.modules.pointer.scale(oe, (e, scale, cpos) => {
             e.preventDefault();
             this.scaleX += cpos.x;
             this.scaleY += cpos.y;

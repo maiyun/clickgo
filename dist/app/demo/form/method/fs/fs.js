@@ -1,13 +1,10 @@
 import * as clickgo from 'clickgo';
 import testFrm from './text';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.ppath = '/';
-        this.list = [];
-        this.val = [];
-        this.get = false;
-    }
+    ppath = '/';
+    list = [];
+    val = [];
+    get = false;
     async open(path) {
         if (!path.endsWith('/')) {
             path += '/';
@@ -27,7 +24,7 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(this, stats ? JSON.stringify(stats) : 'null');
     }
     dblclick(e) {
-        clickgo.dom.bindDblClick(e, async () => {
+        clickgo.modules.pointer.dblClick(e, async () => {
             const r = await clickgo.fs.isFile(this, this.val[0]);
             if (r) {
                 const extlio = this.val[0].lastIndexOf('.');

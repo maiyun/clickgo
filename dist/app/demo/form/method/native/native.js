@@ -1,10 +1,7 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.val = 'test';
-        this.activating = false;
-    }
+    val = 'test';
+    activating = false;
     async getListenerList() {
         await clickgo.form.dialog(this, JSON.stringify(clickgo.native.getListenerList()));
     }

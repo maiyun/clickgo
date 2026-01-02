@@ -1,19 +1,16 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.mv = [];
-        this.ym = '';
-        this.bottom = false;
-        this.left = false;
-        this.disabled = false;
-        this.plain = false;
-        this.start = false;
-        this.end = false;
-        this.dlist = false;
-        this.selected = '';
-        this.select = '';
-    }
+    mv = [];
+    ym = '';
+    bottom = false;
+    left = false;
+    disabled = false;
+    plain = false;
+    start = false;
+    end = false;
+    dlist = false;
+    selected = '';
+    select = '';
     onChanged() {
         console.log('onChanged', JSON.stringify(this.mv));
     }

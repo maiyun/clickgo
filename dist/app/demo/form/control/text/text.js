@@ -1,50 +1,45 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.value = '';
-        this.nvalue = '';
-        this.isFocus = false;
-        this.nisFocus = false;
-        // --- 属性 ---
-        this.selectionStart = 0;
-        this.selectionEnd = 0;
-        this.scrollLeft = 0;
-        this.scrollTop = 0;
-        this.clientHeight = 0;
-        this.clientWidth = 0;
-        this.scrollHeight = 0;
-        this.scrollWidth = 0;
-        // --- 操作 ---
-        this.type = ['text'];
-        this.disabled = false;
-        this.placeholder = 'placeholder';
-        this.readonly = false;
-        this.scroll = true;
-        this.wrap = true;
-        this.menu = false;
-        this.gesture = false;
-        this.long = false;
-        // --- 样式 ---
-        this.lineHeight = 1;
-        this.fontSize = 12;
-        this.maxlength = 0;
-        this.keyboard = false;
-        this.prepend = false;
-        this.append = false;
-        this.before = false;
-        this.after = false;
-        this.border = 'solid';
-        this.background = undefined;
-        this.phcolor = undefined;
-        this.max = undefined;
-        this.min = undefined;
-        this.plain = false;
-        this.require = false;
-        this.padding = ['m'];
-        /** --- 是否开启修改拦截 --- */
-        this.beforechange = false;
-    }
+    value = '';
+    nvalue = '';
+    isFocus = false;
+    nisFocus = false;
+    // --- 属性 ---
+    selectionStart = 0;
+    selectionEnd = 0;
+    scrollLeft = 0;
+    scrollTop = 0;
+    clientHeight = 0;
+    clientWidth = 0;
+    scrollHeight = 0;
+    scrollWidth = 0;
+    // --- 操作 ---
+    type = ['text'];
+    disabled = false;
+    placeholder = 'placeholder';
+    readonly = false;
+    scroll = true;
+    wrap = true;
+    menu = false;
+    gesture = false;
+    long = false;
+    // --- 样式 ---
+    lineHeight = 1;
+    fontSize = 12;
+    maxlength = 0;
+    keyboard = false;
+    prepend = false;
+    append = false;
+    before = false;
+    after = false;
+    border = 'solid';
+    background = undefined;
+    phcolor = undefined;
+    max = undefined;
+    min = undefined;
+    plain = false;
+    require = false;
+    padding = ['m'];
     get textBorder() {
         switch (this.border) {
             case 'underline': {
@@ -67,6 +62,8 @@ long`;
     async onGesture(dir) {
         await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }
+    /** --- 是否开启修改拦截 --- */
+    beforechange = false;
     onBeforechange(e) {
         if (!this.beforechange) {
             return;

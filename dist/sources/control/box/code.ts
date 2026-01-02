@@ -40,10 +40,7 @@ export default class extends clickgo.control.AbstractControl {
         return arr;
     }
 
-    public wrapDown(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public wrapDown(e: PointerEvent): void {
         if (e.target !== e.currentTarget) {
             return;
         }
@@ -53,10 +50,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 选框相关 ---
         const rect = this.element.getBoundingClientRect();
-        const x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-        const y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
-        // --- 鼠标手指只会响应一个，进行建立选区 ---
-        clickgo.dom.bindDown(e, {
+        const x: number = e.clientX;
+        const y: number = e.clientY;
+        // --- 进行建立选区 ---
+        clickgo.modules.pointer.down(e, {
             start: (): void => {
                 this.isSelection = true;
             },
@@ -114,11 +111,8 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    public resize(e: MouseEvent | TouchEvent, id: string, dir: clickgo.dom.TDomBorder): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.dom.bindResize(e, {
+    public resize(e: PointerEvent, id: string, dir: clickgo.dom.TDomBorder): void {
+        clickgo.modules.pointer.resize(e, {
             'objectLeft': this.props.modelValue[id].x,
             'objectTop': this.props.modelValue[id].y,
             'objectWidth': this.props.modelValue[id].width,
@@ -163,10 +157,7 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    public down(e: MouseEvent | TouchEvent, id: string): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(e: PointerEvent, id: string): void {
         // --- 判断是否选中 ---
         if (!this.selectedData.includes(id)) {
             if (!e.ctrlKey && !e.metaKey) {
@@ -179,7 +170,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.props.modelValue[id].move === false) {
             return;
         }
-        clickgo.dom.bindMove(e, {
+        clickgo.modules.pointer.move(e, {
             'areaObject': this.element,
             'object': e.currentTarget as HTMLElement,
             'cursor': 'auto',

@@ -113,10 +113,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- wrap 的 down --- */
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(): void {
         // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
@@ -238,25 +235,14 @@ export default class extends clickgo.control.AbstractControl {
         return change;
     }
 
-    public inputTouch(e: TouchEvent): void {
-        // --- 长按触发 contextmenu ---
-        if (navigator.clipboard) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-        }
-    }
-
-    /** --- input 的 contextmenu --- */
-    public contextmenu(e: MouseEvent): void {
+    public inputDown(e: PointerEvent): void {
+        // --- 触发 contextmenu ---
         if (!navigator.clipboard) {
-            e.stopPropagation();
             return;
         }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, e);
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
     }
 
     public select(e: InputEvent): void {
@@ -264,7 +250,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- up/down 按钮点击时，阻止默认事件 --- */
-    public udDown(e: MouseEvent | TouchEvent): void {
+    public udDown(e: PointerEvent): void {
         e.preventDefault();
         if (this.isFocus) {
             return;

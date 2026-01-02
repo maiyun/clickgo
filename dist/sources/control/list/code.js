@@ -1,48 +1,42 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'remove': null,
-            'add': null,
-            'change': null,
-            'changed': null,
-            'itemclicked': null,
-            'itemdblclicked': null,
-            'label': null,
-            'item': null,
-            'load': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'must': true,
-            'multi': false,
-            'ctrl': true,
-            'selection': false,
-            'gesture': [],
-            'scroll': 'auto',
-            'virtual': false,
-            'plain': false,
-            'tree': false,
-            'treeDefault': 0,
-            'async': false,
-            'icon': false,
-            'iconDefault': '',
-            'check': false,
-            'map': {},
-            'mode': 'default',
-            'data': [],
-            'disabledList': [],
-            'unavailableList': [],
-            'modelValue': []
-        };
-        /** --- 预先格式化用户传入后的数据为 greatlist 可以识别的结构 --- */
-        this.dataFormat = [];
-        // --- 下面是 check 模式 ---
-        /** --- 选中的项 --- */
-        this.values = [];
-    }
+    emits = {
+        'remove': null,
+        'add': null,
+        'change': null,
+        'changed': null,
+        'itemclicked': null,
+        'itemdblclicked': null,
+        'label': null,
+        'item': null,
+        'load': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'must': true,
+        'multi': false,
+        'ctrl': true,
+        'selection': false,
+        'gesture': [],
+        'scroll': 'auto',
+        'virtual': false,
+        'plain': false,
+        'tree': false,
+        'treeDefault': 0,
+        'async': false,
+        'icon': false,
+        'iconDefault': '',
+        'check': false,
+        'map': {},
+        'mode': 'default',
+        'data': [],
+        'disabledList': [],
+        'unavailableList': [],
+        'modelValue': []
+    };
+    /** --- 预先格式化用户传入后的数据为 greatlist 可以识别的结构 --- */
+    dataFormat = [];
     /** --- 传输给 greatlist 的 value --- */
     get value() {
         if (this.propBoolean('check')) {
@@ -470,6 +464,9 @@ export default class extends clickgo.control.AbstractControl {
         };
         this.emit('itemdblclicked', event);
     }
+    // --- 下面是 check 模式 ---
+    /** --- 选中的项 --- */
+    values = [];
     onCheckChange(e, row) {
         e.preventDefault();
         if (row.format.children.length) {

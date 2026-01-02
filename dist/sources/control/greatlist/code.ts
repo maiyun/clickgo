@@ -739,10 +739,9 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- arrow 的 click 事件 ---
-    public arrowDownClick(e: MouseEvent | TouchEvent, value: number): void {
-        clickgo.dom.bindClick(e, () => {
-            const hasTouch = clickgo.dom.hasTouchButMouse(e);
-            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || hasTouch) && this.propBoolean('multi')) ? true : e.ctrlKey);
+    public arrowDownClick(e: PointerEvent, value: number): void {
+        clickgo.modules.pointer.click(e, () => {
+            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || clickgo.modules.pointer.isTouch(e)) && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 显示/隐藏 arrow menu ---
             const current = e.target as HTMLElement;
             if (current.dataset.cgPopOpen === undefined) {
@@ -776,7 +775,7 @@ export default class extends clickgo.control.AbstractControl {
     public lastGlno = 0;
 
     // --- item inner 的 click 事件 ---
-    public innerDown(e: MouseEvent | TouchEvent, value: number): void {
+    public innerDown(e: PointerEvent, value: number): void {
         const el = e.target as HTMLElement;
         if (el.dataset.cgGlno !== undefined) {
             this.lastGlno = Date.now();
@@ -786,8 +785,8 @@ export default class extends clickgo.control.AbstractControl {
             this.lastGlno = Date.now();
             return;
         }
-        clickgo.dom.bindClick(e, () => {
-            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || e instanceof TouchEvent) && this.propBoolean('multi')) ? true : e.ctrlKey);
+        clickgo.modules.pointer.click(e, () => {
+            this.select(value, e.shiftKey, ((!this.propBoolean('ctrl') || clickgo.modules.pointer.isTouch(e)) && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 上报点击事件，false: arrow click ---
             const clickevent: clickgo.control.IGreatlistItemclickedEvent = {
                 'detail': {
@@ -810,10 +809,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- flow 的鼠标或手指 down 事件 ---
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(e: PointerEvent): void {
         // --- 若正在显示菜单则隐藏 ---
         if (this.refs.flow.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
@@ -823,47 +819,24 @@ export default class extends clickgo.control.AbstractControl {
             const gi = clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-size');
             if (((e.target as HTMLElement).dataset.cgSize === undefined) && !gi) {
                 // --- 空白处 ---
-                clickgo.dom.bindClick(e, () => {
+                clickgo.modules.pointer.click(e, () => {
                     this.select(-1, e.shiftKey, e.ctrlKey);
                 });
             }
         }
-        // --- 手指长安触发菜单 ---
-        if (e instanceof TouchEvent) {
-            // --- 长按触发 contextmenu ---
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
-            });
-        }
+        // --- 触发 contextmenu ---
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
+        });
     }
 
-    // --- （仅手指）长按 item 选中自己 ---
-    public itemTouch(e: TouchEvent, value: number): void {
-        clickgo.dom.bindLong(e, () => {
+    public itemDown(e: PointerEvent, value: number): void {
+        clickgo.modules.pointer.menu(e, () => {
             if (this.isSelected(value)) {
                 return;
             }
             this.select(value, e.shiftKey, this.propBoolean('multi') ? true : e.ctrlKey);
         });
-    }
-
-    // --- （仅鼠标）弹出菜单事件设定选中 ---
-    public itemContext(e: MouseEvent, value: number): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (this.isSelected(value)) {
-            return;
-        }
-        this.select(value, e.shiftKey, e.ctrlKey);
-    }
-
-    // --- （仅鼠标）flow 整体的 contextmenu 事件 ---
-    public context(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
     }
 
     // --- 整个控件的键盘事件 ---

@@ -1,90 +1,85 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'changed': null,
-            'ok': null,
-            'update:modelValue': null,
-        };
-        this.props = {
-            'modelValue': '',
-            'mode': 'hsl',
-            'ok': false
-        };
-        /** --- 最终值 --- */
-        this.hsl = {
-            'h': 0,
-            /** --- 百分比，如 100 --- */
-            's': 0,
-            /** --- 百分比，如 50 --- */
-            'l': 100,
-            /** --- 透明度 --- */
-            'a': 1
-        };
-        /** --- color 文本框的值 --- */
-        this.color = '';
-        /** --- 用户的值 --- */
-        this.value = '';
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'clear': 'Clear',
-                'ok': 'OK',
-            },
-            'sc': {
-                'clear': '清除',
-                'ok': '确定',
-            },
-            'tc': {
-                'clear': '清除',
-                'ok': '確定',
-            },
-            'ja': {
-                'clear': 'クリア',
-                'ok': 'OK',
-            },
-            'ko': {
-                'clear': '지우기',
-                'ok': '확인',
-            },
-            'th': {
-                'clear': 'ล้าง',
-                'ok': 'ตกลง',
-            },
-            'es': {
-                'clear': 'Claro',
-                'ok': 'Aceptar',
-            },
-            'de': {
-                'clear': 'Löschen',
-                'ok': 'OK',
-            },
-            'fr': {
-                'clear': 'Effacer',
-                'ok': 'Valider',
-            },
-            'pt': {
-                'clear': 'Limpar',
-                'ok': 'OK',
-            },
-            'ru': {
-                'clear': 'Очистить',
-                'ok': 'ОК',
-            },
-            'vi': {
-                'clear': 'Xóa',
-                'ok': 'OK',
-            }
-        };
-        // --- 左侧 ---
-        /** --- 左侧顶部 --- */
-        this.leftTop = 0;
-        /** --- 左侧左侧 --- */
-        this.leftLeft = 0;
-        /** --- 右侧顶部 --- */
-        this.rightTop = 0;
-    }
+    emits = {
+        'changed': null,
+        'ok': null,
+        'update:modelValue': null,
+    };
+    props = {
+        'modelValue': '',
+        'mode': 'hsl',
+        'ok': false
+    };
+    /** --- 最终值 --- */
+    hsl = {
+        'h': 0,
+        /** --- 百分比，如 100 --- */
+        's': 0,
+        /** --- 百分比，如 50 --- */
+        'l': 100,
+        /** --- 透明度 --- */
+        'a': 1
+    };
+    /** --- color 文本框的值 --- */
+    color = '';
+    /** --- 用户的值 --- */
+    value = '';
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'clear': 'Clear',
+            'ok': 'OK',
+        },
+        'sc': {
+            'clear': '清除',
+            'ok': '确定',
+        },
+        'tc': {
+            'clear': '清除',
+            'ok': '確定',
+        },
+        'ja': {
+            'clear': 'クリア',
+            'ok': 'OK',
+        },
+        'ko': {
+            'clear': '지우기',
+            'ok': '확인',
+        },
+        'th': {
+            'clear': 'ล้าง',
+            'ok': 'ตกลง',
+        },
+        'es': {
+            'clear': 'Claro',
+            'ok': 'Aceptar',
+        },
+        'de': {
+            'clear': 'Löschen',
+            'ok': 'OK',
+        },
+        'fr': {
+            'clear': 'Effacer',
+            'ok': 'Valider',
+        },
+        'pt': {
+            'clear': 'Limpar',
+            'ok': 'OK',
+        },
+        'ru': {
+            'clear': 'Очистить',
+            'ok': 'ОК',
+        },
+        'vi': {
+            'clear': 'Xóa',
+            'ok': 'OK',
+        }
+    };
+    // --- 左侧 ---
+    /** --- 左侧顶部 --- */
+    leftTop = 0;
+    /** --- 左侧左侧 --- */
+    leftLeft = 0;
     refreshLeftPosition(e, rect, maxTop, maxLeft) {
         let top = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) - rect.top;
         if (top < 0) {
@@ -115,21 +110,20 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- sv down --- */
     leftDown(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         /** --- right 的 rect 对象 --- */
         const leftRect = this.refs.left.getBoundingClientRect();
         /** --- 最大 top --- */
         const maxTop = leftRect.height - 4;
         const maxLeft = leftRect.width - 4;
         this.refreshLeftPosition(e, leftRect, maxTop, maxLeft);
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             'move': (ne) => {
                 this.refreshLeftPosition(ne, leftRect, maxTop, maxLeft);
             }
         });
     }
+    /** --- 右侧顶部 --- */
+    rightTop = 0;
     refreshRightPosition(e, rect, maxTop) {
         /** --- 上面的位置 --- */
         let top = (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) - rect.top;
@@ -146,15 +140,12 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- h down --- */
     rightDown(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         /** --- right 的 rect 对象 --- */
         const rightRect = this.refs.right.getBoundingClientRect();
         /** --- 最大 top --- */
         const maxTop = rightRect.height - 4;
         this.refreshRightPosition(e, rightRect, maxTop);
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             'move': (ne) => {
                 this.refreshRightPosition(ne, rightRect, maxTop);
             }

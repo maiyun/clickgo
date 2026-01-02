@@ -1,19 +1,16 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.r = {
-            'cols': 0,
-            'rows': 0,
-            'width': 0,
-            'height': 0
-        };
-        this.access = {
-            'term': undefined
-        };
-        /** --- input --- */
-        this.input = '';
-    }
+    r = {
+        'cols': 0,
+        'rows': 0,
+        'width': 0,
+        'height': 0
+    };
+    access = {
+        'term': undefined
+    };
+    /** --- input --- */
+    input = '';
     onData(data) {
         switch (data) {
             case '\u0003': { // Ctrl+C

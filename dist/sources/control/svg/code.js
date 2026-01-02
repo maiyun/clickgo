@@ -1,24 +1,21 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'viewBox': '0 0 24 24',
-            'fill': '',
-            'stroke': '',
-            /** --- 直接插入 svg 内部标签，有的话优先显示本图形 --- */
-            'layout': '',
-            /** --- 或者从文件中读取 --- */
-            'src': ''
-        };
-        this.fileViewBox = '';
-        this.fileFill = '';
-        this.fileStroke = '';
-        /** --- 文件中读取的 layout --- */
-        this.fileLayout = '';
-        /** --- watch: src 变更次数 --- */
-        this.count = 0;
-    }
+    props = {
+        'viewBox': '0 0 24 24',
+        'fill': '',
+        'stroke': '',
+        /** --- 直接插入 svg 内部标签，有的话优先显示本图形 --- */
+        'layout': '',
+        /** --- 或者从文件中读取 --- */
+        'src': ''
+    };
+    fileViewBox = '';
+    fileFill = '';
+    fileStroke = '';
+    /** --- 文件中读取的 layout --- */
+    fileLayout = '';
+    /** --- watch: src 变更次数 --- */
+    count = 0;
     onMounted() {
         this.watch('src', async () => {
             const count = ++this.count;

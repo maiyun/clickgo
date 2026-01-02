@@ -3,7 +3,7 @@
         <task-item @click="showLauncher">
             <img src="/clickgo/icon.png" style="width: 16px; height: 16px;" />
         </task-item>
-        <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @click="itemClick(appIndex)" @mousedown="$event.stopPropagation()" @touchstart="$event.stopPropagation()">
+        <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @click="itemClick(appIndex)" @pointerdown="$event.stopPropagation()">
             <img :src="app.icon || '/clickgo/icon.png'" style="width: 16px; height: 16px;" />
             <template v-if="app.formCount > 1" v-slot:pop>
                 <menulist>

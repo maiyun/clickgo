@@ -1,26 +1,23 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'loaded': null,
-            'view': null
-        };
-        this.props = {
-            'disabled': false,
-            'src': '',
-            'page': 1
-        };
-        this.notInit = false;
-        this.isLoading = true;
-        this.access = {
-            'pdfjs': undefined,
-            'pdf': undefined,
-            'context': undefined
-        };
-        /** --- watch: src 变更次数 --- */
-        this.count = 0;
-    }
+    emits = {
+        'loaded': null,
+        'view': null
+    };
+    props = {
+        'disabled': false,
+        'src': '',
+        'page': 1
+    };
+    notInit = false;
+    isLoading = true;
+    access = {
+        'pdfjs': undefined,
+        'pdf': undefined,
+        'context': undefined
+    };
+    /** --- watch: src 变更次数 --- */
+    count = 0;
     /** --- 供用户调用的 --- */
     async load(buf) {
         if (!this.access.pdfjs) {

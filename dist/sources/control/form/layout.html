@@ -1,19 +1,19 @@
 <div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, stateMinData ? 'state-min-' + taskPosition : undefined, isShow && 'show', isInside && 'inside', !heightData && 'height-auto', !widthData && 'width-auto', formFocus && 'focus']" :style="{'width': widthData ? (widthData + 'px') : undefined, 'height': heightData ? (heightData + 'px') : undefined, 'left': isNativeNoFrameFirst ? '0' : (Math.round(leftData) + 'px'), 'top': isNativeNoFrameFirst ? 0 : (Math.round(topData) + 'px'), 'z-index': zIndex}">
     <template v-if="!stateMaxData && !stateMinData && !isMask && isResize">
-        <div class="pop-resize-lt" @mousedown="resizeMethod($event, 'lt')" @touchstart="resizeMethod($event, 'lt')"></div>
-        <div class="pop-resize-t" @mousedown="resizeMethod($event, 't')" @touchstart="resizeMethod($event, 't')"></div>
-        <div class="pop-resize-tr" @mousedown="resizeMethod($event, 'tr')" @touchstart="resizeMethod($event, 'tr')"></div>
-        <div class="pop-resize-r" @mousedown="resizeMethod($event, 'r')" @touchstart="resizeMethod($event, 'r')"></div>
-        <div class="pop-resize-rb" @mousedown="resizeMethod($event, 'rb')" @touchstart="resizeMethod($event, 'rb')"></div>
-        <div class="pop-resize-b" @mousedown="resizeMethod($event, 'b')" @touchstart="resizeMethod($event, 'b')"></div>
-        <div class="pop-resize-bl" @mousedown="resizeMethod($event, 'bl')" @touchstart="resizeMethod($event, 'bl')"></div>
-        <div class="pop-resize-l" @mousedown="resizeMethod($event, 'l')" @touchstart="resizeMethod($event, 'l')"></div>
+        <div class="pop-resize-lt" @pointerdown="resizeMethod($event, 'lt')"></div>
+        <div class="pop-resize-t" @pointerdown="resizeMethod($event, 't')"></div>
+        <div class="pop-resize-tr" @pointerdown="resizeMethod($event, 'tr')"></div>
+        <div class="pop-resize-r" @pointerdown="resizeMethod($event, 'r')"></div>
+        <div class="pop-resize-rb" @pointerdown="resizeMethod($event, 'rb')"></div>
+        <div class="pop-resize-b" @pointerdown="resizeMethod($event, 'b')"></div>
+        <div class="pop-resize-bl" @pointerdown="resizeMethod($event, 'bl')"></div>
+        <div class="pop-resize-l" @pointerdown="resizeMethod($event, 'l')"></div>
     </template>
     <div v-if="isMask" class="mask"></div>
     <div class="inner">
         <div class="header" v-if="border !== 'none' && border !== 'plain'">
             <div class="icon"><img v-if="border !== 'thin' && iconDataUrl !== ''" :src="iconDataUrl" width="16" height="16" @dragstart="$event.preventDefault();"></div>
-            <div class="title" :class="[isNativeNoFrameFirst && 'native-drag']" @mousedown="moveMethod($event)" @touchstart="moveMethod($event)">{{title}}</div>
+            <div class="title" :class="[isNativeNoFrameFirst && 'native-drag']" @pointerdown="moveMethod($event)">{{title}}</div>
             <div class="controls">
                 <div v-if="isMin" class="min" @click="minMethod">
                     <svg width="18" height="18" viewBox="0 0 24 24" stroke="none"><path d="m4.25 12c0-.4142.33579-.75.75-.75h14c.4142 0 .75.3358.75.75s-.3358.75-.75.75h-14c-.41421 0-.75-.3358-.75-.75z" /></svg>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="content" ref="content" :class="[direction, !(border !== 'none' && border !== 'plain') && 'noheader']" :style="{'background': background, 'padding': padding ? padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined}">
-            <div class="step" :class="[stepShowData && 'show']" ref="step" @mousedown="stepDown" @touchstart="stepDown">
+            <div class="step" :class="[stepShowData && 'show']" ref="step" @pointerdown="stepDown">
                 <cg-step :data="stepData" :modelValue="stepValue" plain></cg-step>
             </div>
             <div class="loading" :class="[isLoading&&'show']">

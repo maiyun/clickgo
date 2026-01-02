@@ -1,21 +1,18 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'src': '',
-            'mode': 'default',
-            'direction': 'h',
-            'gutter': '',
-            'alignH': undefined,
-            'alignV': undefined
-        };
-        this.imgData = '';
-        this.width = 0;
-        this.height = 0;
-        /** --- watch: src 变更次数 --- */
-        this.count = 0;
-    }
+    props = {
+        'src': '',
+        'mode': 'default',
+        'direction': 'h',
+        'gutter': '',
+        'alignH': undefined,
+        'alignV': undefined
+    };
+    imgData = '';
+    width = 0;
+    height = 0;
+    /** --- watch: src 变更次数 --- */
+    count = 0;
     get backgroundSize() {
         if (this.props.mode === 'default') {
             return this.width.toString() + 'px ' + this.height.toString() + 'px';

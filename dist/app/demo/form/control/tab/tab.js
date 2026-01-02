@@ -1,19 +1,16 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.ntab = 'ok';
-        this.tabs = ['tab1', {
-                'label': 'haha',
-                'value': 'ok'
-            }];
-        this.tindex = 1;
-        this.tabPosition = 'top';
-        this.color = undefined;
-        this.size = undefined;
-        this.drag = false;
-        this.cclose = false;
-    }
+    ntab = 'ok';
+    tabs = ['tab1', {
+            'label': 'haha',
+            'value': 'ok'
+        }];
+    tindex = 1;
+    tabPosition = 'top';
+    color = undefined;
+    size = undefined;
+    drag = false;
+    cclose = false;
     async onClose(e) {
         if (e.detail.index !== 10) {
             await clickgo.form.dialog(this, 'Closed, index: ' + e.detail.index.toString() + ', value: ' + e.detail.value);

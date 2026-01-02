@@ -1,19 +1,16 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.init = {
-            'url': '',
-            'sid': '',
-            'skey': '',
-        };
-        this.talk = {
-            'url': '',
-            'sid': '',
-            'skey': '',
-        };
-        this.volume = [80];
-    }
+    init = {
+        'url': '',
+        'sid': '',
+        'skey': '',
+    };
+    talk = {
+        'url': '',
+        'sid': '',
+        'skey': '',
+    };
+    volume = [80];
     start() {
         this.refs.tums.start();
     }

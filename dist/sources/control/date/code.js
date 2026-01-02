@@ -1,158 +1,155 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'changed': null,
-            'yearmonthchanged': null,
-            'update:modelValue': null,
-            'update:tz': null,
-            'update:yearmonth': null,
-            'update:hourminute': null,
-        };
-        this.props = {
-            'disabled': false,
-            'disabledList': [],
-            'modelValue': undefined,
-            'tz': undefined,
-            'yearmonth': '',
-            'hourminute': '',
-            'start': undefined,
-            'end': undefined,
-            'date': true,
-            'time': true,
-            'zone': false,
-            'close': true
-        };
-        this.dateObj = new Date();
-        /** --- 时间戳基数（真正的选择的时间戳） --- */
-        this.timestamp = undefined;
-        this.dateStr = '';
-        this.timeStr = '';
-        /** --- 当前时区信息（小时） --- */
-        this.tzData = 0;
-        this.vhour = [];
-        this.hours = [];
-        this.vminute = [];
-        this.minutes = [];
-        this.vseconds = [];
-        this.seconds = [];
-        this.vzone = [];
-        this.zones = [];
-        this.vzdec = [];
-        this.zdecs = ['00', '15', '30', '45'];
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'hour': 'Hr',
-                'minute': 'Min',
-                'second': 'Sec',
-                'zone': 'Zone',
-                'cancel': 'Cancel',
-                'ok': 'OK',
-                'please click select': 'Click to select'
-            },
-            'sc': {
-                'hour': '时',
-                'minute': '分',
-                'second': '秒',
-                'zone': '时区',
-                'cancel': '取消',
-                'ok': '确定',
-                'please click select': '请点击选择'
-            },
-            'tc': {
-                'hour': '時',
-                'minute': '分',
-                'second': '秒',
-                'zone': '時區',
-                'cancel': '取消',
-                'ok': '確定',
-                'please click select': '請點擊選擇'
-            },
-            'ja': {
-                'hour': '時',
-                'minute': '分',
-                'second': '秒',
-                'zone': '時區', // --- タイムゾーン ---
-                'cancel': '取消',
-                'ok': '確定',
-                'please click select': '選択して下さい'
-            },
-            'ko': {
-                'hour': '시',
-                'minute': '분',
-                'second': '초',
-                'zone': '時區', // --- 시간대 ---
-                'cancel': '취소',
-                'ok': '확인',
-                'please click select': '선택 클릭'
-            },
-            'th': {
-                'hour': 'ชม.',
-                'minute': 'น.',
-                'second': 'วิ',
-                'zone': 'เขต',
-                'cancel': 'ยกเลิก',
-                'ok': 'ตกลง',
-                'please click select': 'คลิกเลือก'
-            },
-            'es': {
-                'hour': 'Hr',
-                'minute': 'Min',
-                'second': 'Seg',
-                'zone': 'Zona',
-                'cancel': 'Cancelar',
-                'ok': 'OK',
-                'please click select': 'Clic para elegir'
-            },
-            'de': {
-                'hour': 'Std',
-                'minute': 'Min',
-                'second': 'Sek',
-                'zone': 'Zone',
-                'cancel': 'Abbr.',
-                'ok': 'OK',
-                'please click select': 'Klicken Sie wählen'
-            },
-            'fr': {
-                'hour': 'Hr', // 或 'H'
-                'minute': 'Min',
-                'second': 'Sec',
-                'zone': 'Zone',
-                'cancel': 'Annul.',
-                'ok': 'OK',
-                'please click select': 'Cliquer choisir'
-            },
-            'pt': {
-                'hour': 'Hr',
-                'minute': 'Min',
-                'second': 'Seg',
-                'zone': 'Fuso',
-                'cancel': 'Cancelar',
-                'ok': 'OK',
-                'please click select': 'Clique para sel.'
-            },
-            'ru': {
-                'hour': 'Час',
-                'minute': 'Мин',
-                'second': 'Сек',
-                'zone': 'Зона',
-                'cancel': 'Отмена',
-                'ok': 'ОК',
-                'please click select': 'Нажмите выбрать'
-            },
-            'vi': {
-                'hour': 'Giờ',
-                'minute': 'Phút',
-                'second': 'Giây',
-                'zone': 'Múi',
-                'cancel': 'Hủy',
-                'ok': 'OK',
-                'please click select': 'Nhấn chọn'
-            },
-        };
-    }
+    emits = {
+        'changed': null,
+        'yearmonthchanged': null,
+        'update:modelValue': null,
+        'update:tz': null,
+        'update:yearmonth': null,
+        'update:hourminute': null,
+    };
+    props = {
+        'disabled': false,
+        'disabledList': [],
+        'modelValue': undefined,
+        'tz': undefined,
+        'yearmonth': '',
+        'hourminute': '',
+        'start': undefined,
+        'end': undefined,
+        'date': true,
+        'time': true,
+        'zone': false,
+        'close': true
+    };
+    dateObj = new Date();
+    /** --- 时间戳基数（真正的选择的时间戳） --- */
+    timestamp = undefined;
+    dateStr = '';
+    timeStr = '';
+    /** --- 当前时区信息（小时） --- */
+    tzData = 0;
+    vhour = [];
+    hours = [];
+    vminute = [];
+    minutes = [];
+    vseconds = [];
+    seconds = [];
+    vzone = [];
+    zones = [];
+    vzdec = [];
+    zdecs = ['00', '15', '30', '45'];
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'hour': 'Hr',
+            'minute': 'Min',
+            'second': 'Sec',
+            'zone': 'Zone',
+            'cancel': 'Cancel',
+            'ok': 'OK',
+            'please click select': 'Click to select'
+        },
+        'sc': {
+            'hour': '时',
+            'minute': '分',
+            'second': '秒',
+            'zone': '时区',
+            'cancel': '取消',
+            'ok': '确定',
+            'please click select': '请点击选择'
+        },
+        'tc': {
+            'hour': '時',
+            'minute': '分',
+            'second': '秒',
+            'zone': '時區',
+            'cancel': '取消',
+            'ok': '確定',
+            'please click select': '請點擊選擇'
+        },
+        'ja': {
+            'hour': '時',
+            'minute': '分',
+            'second': '秒',
+            'zone': '時區', // --- タイムゾーン ---
+            'cancel': '取消',
+            'ok': '確定',
+            'please click select': '選択して下さい'
+        },
+        'ko': {
+            'hour': '시',
+            'minute': '분',
+            'second': '초',
+            'zone': '時區', // --- 시간대 ---
+            'cancel': '취소',
+            'ok': '확인',
+            'please click select': '선택 클릭'
+        },
+        'th': {
+            'hour': 'ชม.',
+            'minute': 'น.',
+            'second': 'วิ',
+            'zone': 'เขต',
+            'cancel': 'ยกเลิก',
+            'ok': 'ตกลง',
+            'please click select': 'คลิกเลือก'
+        },
+        'es': {
+            'hour': 'Hr',
+            'minute': 'Min',
+            'second': 'Seg',
+            'zone': 'Zona',
+            'cancel': 'Cancelar',
+            'ok': 'OK',
+            'please click select': 'Clic para elegir'
+        },
+        'de': {
+            'hour': 'Std',
+            'minute': 'Min',
+            'second': 'Sek',
+            'zone': 'Zone',
+            'cancel': 'Abbr.',
+            'ok': 'OK',
+            'please click select': 'Klicken Sie wählen'
+        },
+        'fr': {
+            'hour': 'Hr', // 或 'H'
+            'minute': 'Min',
+            'second': 'Sec',
+            'zone': 'Zone',
+            'cancel': 'Annul.',
+            'ok': 'OK',
+            'please click select': 'Cliquer choisir'
+        },
+        'pt': {
+            'hour': 'Hr',
+            'minute': 'Min',
+            'second': 'Seg',
+            'zone': 'Fuso',
+            'cancel': 'Cancelar',
+            'ok': 'OK',
+            'please click select': 'Clique para sel.'
+        },
+        'ru': {
+            'hour': 'Час',
+            'minute': 'Мин',
+            'second': 'Сек',
+            'zone': 'Зона',
+            'cancel': 'Отмена',
+            'ok': 'ОК',
+            'please click select': 'Нажмите выбрать'
+        },
+        'vi': {
+            'hour': 'Giờ',
+            'minute': 'Phút',
+            'second': 'Giây',
+            'zone': 'Múi',
+            'cancel': 'Hủy',
+            'ok': 'OK',
+            'please click select': 'Nhấn chọn'
+        },
+    };
     // --- 单击事件 ---
     click(type) {
         const el = this.refs[type];

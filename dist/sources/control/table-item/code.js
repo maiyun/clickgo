@@ -1,29 +1,26 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'width': 0,
-            'minWidth': 50,
-            'label': 'label',
-            'sort': undefined,
-            'direction': 'h',
-            'gutter': '',
-            'alignH': undefined,
-            'alignV': undefined
-        };
-        /** --- 当前是第几列，从 0 开始 --- */
-        this.index = 0;
-        /** --- 所属的 table 控件 --- */
-        this.table = {
-            'widthMap': {
-                [this.index]: 0
-            },
-            'minWidthMap': {
-                [this.index]: 0
-            }
-        };
-    }
+    props = {
+        'width': 0,
+        'minWidth': 50,
+        'label': 'label',
+        'sort': undefined,
+        'direction': 'h',
+        'gutter': '',
+        'alignH': undefined,
+        'alignV': undefined
+    };
+    /** --- 当前是第几列，从 0 开始 --- */
+    index = 0;
+    /** --- 所属的 table 控件 --- */
+    table = {
+        'widthMap': {
+            [this.index]: 0
+        },
+        'minWidthMap': {
+            [this.index]: 0
+        }
+    };
     /** --- 当前列是否是固定模式，是的话当前列是固定在左侧还是右侧 --- */
     get isFixed() {
         if (this.table.clientWidth < 500) {

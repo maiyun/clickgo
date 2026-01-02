@@ -1,105 +1,98 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'add': null,
-            'added': null,
-            'remove': null,
-            'removed': null,
-            'change': null,
-            'changed': null,
-            'tagclick': null,
-            'itemclicked': null,
-            'remote': null,
-            'load': null,
-            'label': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'editable': false,
-            'multi': false,
-            'plain': false,
-            'virtual': false,
-            'search': false,
-            'remote': false,
-            'remoteDelay': 500,
-            'tree': false,
-            'treeDefault': 0,
-            'async': false,
-            'icon': false,
-            'iconDefault': '',
-            'map': {},
-            'padding': 'm',
-            'leftlabel': true,
-            'minWidth': 0,
-            'modelValue': [],
-            'placeholder': '',
-            'data': [],
-            'disabledList': [],
-            'unavailableList': []
-        };
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'search': 'Search'
-            },
-            'sc': {
-                'search': '搜索'
-            },
-            'tc': {
-                'search': '搜尋'
-            },
-            'ja': {
-                'search': '検索'
-            },
-            'ko': {
-                'search': '검색'
-            },
-            'th': {
-                'search': 'ค้นหา'
-            },
-            'es': {
-                'search': 'buscar'
-            },
-            'de': {
-                'search': 'suchen'
-            },
-            'fr': {
-                'search': 'rechercher'
-            },
-            'pt': {
-                'search': 'pesquisar'
-            },
-            'ru': {
-                'search': 'поиск'
-            },
-            'vi': {
-                'search': 'tìm kiếm'
-            }
-        };
-        this.value = [];
-        this.label = [];
-        /** --- 输入框 --- */
-        this.inputValue = '';
-        /** --- 搜索输入框 --- */
-        this.searchValue = '';
-        /** --- 远程或本地 search 结果的 list --- */
-        this.searchData = [];
-        /** --- list 的选中值 --- */
-        this.listValue = [];
-        /** --- list 的选中的 label --- */
-        this.listLabel = [];
-        /** --- list 的选中的 item 属性包列表 --- */
-        this.listItem = [];
-        /** --- pop 的 loading --- */
-        this.loading = 0;
-        /** --- 当前需要发起请求的次数 --- */
-        this._needSearch = 0;
-        /** --- 当前搜索中的个数（远程） --- */
-        this.searching = 0;
-    }
+    emits = {
+        'add': null,
+        'added': null,
+        'remove': null,
+        'removed': null,
+        'change': null,
+        'changed': null,
+        'tagclick': null,
+        'itemclicked': null,
+        'remote': null,
+        'load': null,
+        'label': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'editable': false,
+        'multi': false,
+        'plain': false,
+        'virtual': false,
+        'search': false,
+        'remote': false,
+        'remoteDelay': 500,
+        'tree': false,
+        'treeDefault': 0,
+        'async': false,
+        'icon': false,
+        'iconDefault': '',
+        'map': {},
+        'padding': 'm',
+        'leftlabel': true,
+        'minWidth': 0,
+        'modelValue': [],
+        'placeholder': '',
+        'data': [],
+        'disabledList': [],
+        'unavailableList': []
+    };
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'search': 'Search'
+        },
+        'sc': {
+            'search': '搜索'
+        },
+        'tc': {
+            'search': '搜尋'
+        },
+        'ja': {
+            'search': '検索'
+        },
+        'ko': {
+            'search': '검색'
+        },
+        'th': {
+            'search': 'ค้นหา'
+        },
+        'es': {
+            'search': 'buscar'
+        },
+        'de': {
+            'search': 'suchen'
+        },
+        'fr': {
+            'search': 'rechercher'
+        },
+        'pt': {
+            'search': 'pesquisar'
+        },
+        'ru': {
+            'search': 'поиск'
+        },
+        'vi': {
+            'search': 'tìm kiếm'
+        }
+    };
+    value = [];
+    label = [];
+    /** --- 输入框 --- */
+    inputValue = '';
+    /** --- 搜索输入框 --- */
+    searchValue = '';
+    /** --- 远程或本地 search 结果的 list --- */
+    searchData = [];
+    /** --- list 的选中值 --- */
+    listValue = [];
+    /** --- list 的选中的 label --- */
+    listLabel = [];
+    /** --- list 的选中的 item 属性包列表 --- */
+    listItem = [];
+    /** --- pop 的 loading --- */
+    loading = 0;
     /** --- list 是否为必须选择的模式 --- */
     get isMust() {
         if (this.propBoolean('editable')) {
@@ -447,6 +440,10 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
     }
+    /** --- 当前需要发起请求的次数 --- */
+    _needSearch = 0;
+    /** --- 当前搜索中的个数（远程） --- */
+    searching = 0;
     /** --- 私有搜索方法 --- */
     async _search(success) {
         /** --- 当前要搜索的值 --- */
@@ -943,9 +940,6 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.tags.scrollLeft += e.deltaY;
     }
     async tagdown(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         e.stopPropagation();
         await clickgo.form.doFocusAndPopEvent(e);
     }

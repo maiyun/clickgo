@@ -1,10 +1,7 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.value = 'radio1';
-        this.disabled = false;
-    }
+    value = 'radio1';
+    disabled = false;
     async onChange(e) {
         if (e.detail.selected !== 'radio2') {
             return;

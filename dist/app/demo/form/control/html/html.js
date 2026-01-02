@@ -1,11 +1,9 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.adaptation = false;
-        this.htmlIndex = 0;
-        this.html = [
-            `<h1>Hello world!</h1>
+    adaptation = false;
+    htmlIndex = 0;
+    html = [
+        `<h1>Hello world!</h1>
 <button>Button</button> <button disabled>Button2</button>
 <h2>H2 title</h2>
 <div>div</div>
@@ -24,11 +22,10 @@ export default class extends clickgo.form.AbstractForm {
 </ol>
 <script>alert('b');</script>
 <style>ul{background:hsl(0,100%,98%)}</style>`,
-            `<h2>123</h2>
+        `<h2>123</h2>
 <button>Test</button>`
-        ];
-        this.css = `div{background:blue;}.test{background:red;}#li{background:yellow;}`;
-        this.lcss = '';
-        this.rcss = '';
-    }
+    ];
+    css = `div{background:blue;}.test{background:red;}#li{background:yellow;}`;
+    lcss = '';
+    rcss = '';
 }

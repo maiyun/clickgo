@@ -88,14 +88,13 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.tabs[0].scrollLeft += e.deltaY;
     }
 
-    public down(e: MouseEvent | TouchEvent, index: number): void {
+    public down(e: PointerEvent, index: number): void {
         const nval = this.tabsComp[index].value;
         if (this.value !== nval) {
             this.value = nval;
             this.emit('update:modelValue', this.value);
         }
-        clickgo.dom.bindDrag(e, {
-            'el': (e.currentTarget as HTMLElement).parentNode as HTMLElement,
+        clickgo.modules.pointer.drag(e, (e.currentTarget as HTMLElement).parentNode as HTMLElement, {
             'data': {
                 'index': index,
                 'tab': this.rand
@@ -158,12 +157,9 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('changed', event2);
     }
 
-    public longDown(e: MouseEvent | TouchEvent, type: 'start' | 'end'): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public longDown(e: PointerEvent, type: 'start' | 'end'): void {
         const num = type === 'start' ? -5 : 5;
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             down: () => {
                 this.timer = clickgo.task.onFrame(this, () => {
                     if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {

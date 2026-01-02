@@ -1,9 +1,6 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.list = [];
-    }
+    list = [];
     onLauncherFolderNameChanged(id, name) {
         const date = new Date();
         this.list.unshift({

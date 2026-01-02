@@ -1,12 +1,12 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
-    <div class="item" v-for="item, index of modelValue" data-cg-drop @drop="drop($event, index)">
+    <div class="item" v-for="item, index of modelValue" data-drop @drop="drop($event, index)">
         <div class="top" v-if="item.title">{{item.title}}</div>
         <cg-img :src="pre + (item.src ?? item)"></cg-img>
         <div class="bottom">
             <div class="bitem" @click="remove(index)">
                 <cg-icon name="trash" size="m"></cg-icon>
             </div>
-            <div class="bitem drag" v-if="propBoolean('drag')" @mousedown="down($event, index)" @touchstart="down($event, index)">
+            <div class="bitem drag" v-if="propBoolean('drag')" @pointerdown="down($event, index)">
                 <cg-icon name="drag" size="m"></cg-icon>
             </div>
         </div>

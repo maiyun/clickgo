@@ -165,26 +165,13 @@ export default class extends clickgo.control.AbstractControl {
         return list;
     }
 
-    public contextmenu(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-    }
-
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(e: PointerEvent): void {
         if (this.refs.content.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.refs.content);
         }
-        if (e instanceof TouchEvent) {
-            // --- 长按触发 contextmenu ---
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.refs.content, this.refs.pop, e);
-            });
-        }
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.refs.content, this.refs.pop, e);
+        });
     }
 
     public changeSort(sort: string): void {
@@ -199,14 +186,10 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 点击选择一个 line ---
     public select(
-        e: MouseEvent | TouchEvent,
         item2: string,
         item3: string,
         desc: string
     ): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         this.selectedTitle = item2;
         this.selectedSub = item3;
         this.title = item3 ?? item2;
@@ -306,7 +289,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 双击 ---
-    public reset(e?: MouseEvent | TouchEvent): void {
+    public reset(e?: PointerEvent): void {
         const handler = (): void => {
             for (const item of this.props.modelValue) {
                 if (item.title !== this.selectedTitle) {
@@ -348,7 +331,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         };
         if (e) {
-            clickgo.dom.bindDblClick(e, handler);
+            clickgo.modules.pointer.dblClick(e, handler);
             return;
         }
         handler();

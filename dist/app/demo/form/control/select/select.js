@@ -1,109 +1,106 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.ntab = '';
-        this.area = 'all';
-        this.slist = [
-            {
-                'type': 0,
-                'name': 'Appraise',
-                'path': 'Bob >> folder >> Appraise',
-                'src': '/package/res/r-1.svg'
-            },
-            {
-                'type': 0,
-                'name': 'Card',
-                'path': 'Bob >> folder >> Card',
-                'src': '/package/res/r-2.svg',
-                'menu': true
-            },
-            {
-                'type': 0,
-                'name': 'Appraise2',
-                'path': 'Bob >> folder >> Appraise2',
-                'src': '/package/res/r-1.svg',
-                'disabled': true
-            },
-            {
-                'control': 'split'
-            },
-            {
-                'type': 1
-            }
-        ];
-        this.select = [];
-        this.slist2 = [
-            'haha1', 'haha2', 'haha3', {
-                'label': 'tip',
-                'color': 'tip'
-            }, 'haha4', {
-                'value': 'hA5',
-                'label': 'The value is hA5'
-            }, {
-                'value': 'ha6',
-                'label': 'Can not be selected',
-                'disabled': true
-            }, {
-                'value': 'title',
-                'children': [
-                    {
-                        'label': 'sub1label'
-                    }, {
-                        'label': 'sub2'
-                    }, {
-                        'label': 'Sub title',
-                        'children': ['1', '2']
-                    }
-                ]
-            }, {
-                'label': 'happy',
-                'children': ['xixi', 'xixida', {
-                        'value': 'gogogo',
-                        'children': ['aaa', 'bbb', 'ccc']
-                    }]
-            }
-        ];
-        /** --- onAdd / onRemove --- */
-        this.addRemoveList = [];
-        this.select2 = ['haha4'];
-        this.aemodel = [];
-        this.label2 = [];
-        this.asyncModel = ['1'];
-        this.asyncData = {};
-        this.select3 = '';
-        this.label3 = '';
-        this.level3 = [];
-        this.s3other = false;
-        this.slist3r = ['a', 'b', 'c', 'haha3'];
-        this.editableDataValue = ['0'];
-        this.editableData = {
-            '0': ['1', '2', '3', { 'label': 'is gDa', 'value': 'gDa' }, '5'],
-            '1': ['6', '7', '8', '9', '10', { 'label': 'But gDa', 'value': 'gDa' }],
-            '2': ['11', '12', '13', '14', 'gDa', { 'label': 'Other', 'value': 'o' }],
-            '3': []
-        };
-        this.noValue = [];
-        this.reward = ['z'];
-        this.disabledList = [];
-        this.unavailableList = [];
-        // --- 操作 ---
-        this.padding = ['m'];
-        this.fontSize = false;
-        this.background = false;
-        this.disabled = false;
-        this.multi = false;
-        this.search = false;
-        this.editable = false;
-        this.tree = false;
-        this.async = false;
-        this.icon = false;
-        this.remote = false;
-        this.remoteDelay = [0];
-        this.plain = false;
-        this.virtual = false;
-        this.leftlabel = true;
-    }
+    ntab = '';
+    area = 'all';
+    slist = [
+        {
+            'type': 0,
+            'name': 'Appraise',
+            'path': 'Bob >> folder >> Appraise',
+            'src': '/package/res/r-1.svg'
+        },
+        {
+            'type': 0,
+            'name': 'Card',
+            'path': 'Bob >> folder >> Card',
+            'src': '/package/res/r-2.svg',
+            'menu': true
+        },
+        {
+            'type': 0,
+            'name': 'Appraise2',
+            'path': 'Bob >> folder >> Appraise2',
+            'src': '/package/res/r-1.svg',
+            'disabled': true
+        },
+        {
+            'control': 'split'
+        },
+        {
+            'type': 1
+        }
+    ];
+    select = [];
+    slist2 = [
+        'haha1', 'haha2', 'haha3', {
+            'label': 'tip',
+            'color': 'tip'
+        }, 'haha4', {
+            'value': 'hA5',
+            'label': 'The value is hA5'
+        }, {
+            'value': 'ha6',
+            'label': 'Can not be selected',
+            'disabled': true
+        }, {
+            'value': 'title',
+            'children': [
+                {
+                    'label': 'sub1label'
+                }, {
+                    'label': 'sub2'
+                }, {
+                    'label': 'Sub title',
+                    'children': ['1', '2']
+                }
+            ]
+        }, {
+            'label': 'happy',
+            'children': ['xixi', 'xixida', {
+                    'value': 'gogogo',
+                    'children': ['aaa', 'bbb', 'ccc']
+                }]
+        }
+    ];
+    /** --- onAdd / onRemove --- */
+    addRemoveList = [];
+    select2 = ['haha4'];
+    aemodel = [];
+    label2 = [];
+    asyncModel = ['1'];
+    asyncData = {};
+    select3 = '';
+    label3 = '';
+    level3 = [];
+    s3other = false;
+    slist3r = ['a', 'b', 'c', 'haha3'];
+    editableDataValue = ['0'];
+    editableData = {
+        '0': ['1', '2', '3', { 'label': 'is gDa', 'value': 'gDa' }, '5'],
+        '1': ['6', '7', '8', '9', '10', { 'label': 'But gDa', 'value': 'gDa' }],
+        '2': ['11', '12', '13', '14', 'gDa', { 'label': 'Other', 'value': 'o' }],
+        '3': []
+    };
+    noValue = [];
+    reward = ['z'];
+    disabledList = [];
+    unavailableList = [];
+    // --- 操作 ---
+    padding = ['m'];
+    fontSize = false;
+    background = false;
+    disabled = false;
+    multi = false;
+    search = false;
+    editable = false;
+    tree = false;
+    async = false;
+    icon = false;
+    remote = false;
+    remoteDelay = [0];
+    plain = false;
+    virtual = false;
+    leftlabel = true;
     // --- size 高度 ---
     get sizes() {
         const rtn = {};

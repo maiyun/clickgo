@@ -1,57 +1,54 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.key = '6901643c38b65f1f9770196343cf72b2';
-        this.factory = ['tianditu'];
-        this.keyReal = '';
-        this.factoryReal = 'google';
-        this.css = '.label{background:rgba(255,255,255,.7);padding:5px;border:solid 1px #000;position:absolute;transform:translateX(-27px) translateY(5px);}';
-        this.ntab = 'marker';
-        // --- 地图相关 ---
-        this.lat = 31.223704;
-        this.lng = 121.366077;
-        this.zoom = 8;
-        this.zoomControl = false;
-        // --- 日志 ---
-        this.logs = [];
-        // --- 点 ---
-        this.markers = [];
-        // --- 折线 ---
-        this.lines = [];
-        this.lineDrag = true;
-        this.lineEdit = true;
-        // --- 区域 ---
-        this.polygons = [{
-                'path': [{
-                        'lat': 31.283912,
-                        'lng': 121.129381
-                    },
-                    {
-                        'lat': 31.083912,
-                        'lng': 121.329381
-                    },
-                    {
-                        'lat': 31.283912,
-                        'lng': 121.629381
-                    },
-                    {
-                        'lat': 31.583912,
-                        'lng': 121.629381
-                    },
-                    {
-                        'lat': 31.583912,
-                        'lng': 121.029381
-                    }],
-                'strokeColor': 'hsl(210, 100%, 50%)',
-                'strokeWeight': 3,
-                'fillColor': 'hsl(210, 100%, 50%)',
-                'drag': this.lineDrag,
-                'edit': this.lineEdit
-            }];
-        // --- html ---
-        this.overlays = [];
-    }
+    key = '6901643c38b65f1f9770196343cf72b2';
+    factory = ['tianditu'];
+    keyReal = '';
+    factoryReal = 'google';
+    css = '.label{background:rgba(255,255,255,.7);padding:5px;border:solid 1px #000;position:absolute;transform:translateX(-27px) translateY(5px);}';
+    ntab = 'marker';
+    // --- 地图相关 ---
+    lat = 31.223704;
+    lng = 121.366077;
+    zoom = 8;
+    zoomControl = false;
+    // --- 日志 ---
+    logs = [];
+    // --- 点 ---
+    markers = [];
+    // --- 折线 ---
+    lines = [];
+    lineDrag = true;
+    lineEdit = true;
+    // --- 区域 ---
+    polygons = [{
+            'path': [{
+                    'lat': 31.283912,
+                    'lng': 121.129381
+                },
+                {
+                    'lat': 31.083912,
+                    'lng': 121.329381
+                },
+                {
+                    'lat': 31.283912,
+                    'lng': 121.629381
+                },
+                {
+                    'lat': 31.583912,
+                    'lng': 121.629381
+                },
+                {
+                    'lat': 31.583912,
+                    'lng': 121.029381
+                }],
+            'strokeColor': 'hsl(210, 100%, 50%)',
+            'strokeWeight': 3,
+            'fillColor': 'hsl(210, 100%, 50%)',
+            'drag': this.lineDrag,
+            'edit': this.lineEdit
+        }];
+    // --- html ---
+    overlays = [];
     get dataInfo() {
         return this[this.ntab + 's'];
     }

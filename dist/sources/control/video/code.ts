@@ -163,46 +163,19 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 进入时保持 controls 常亮 ---
-    public onMouseEnter(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public onDown(e: PointerEvent): void {
         if (!this.propBoolean('controls')) {
             return;
         }
-        this.isShow = true;
-        if (this.hideTimer) {
-            clickgo.task.removeTimer(this, this.hideTimer);
-            this.hideTimer = 0;
-        }
-    }
-
-    public onMouseLeave(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (!this.propBoolean('controls')) {
-            return;
-        }
-        this.hideTimer = clickgo.task.sleep(this, () => {
-            this.isShow = false;
-        }, 800);
-    }
-
-    public onTouch(e: TouchEvent): void {
-        if (!this.propBoolean('controls')) {
-            return;
-        }
-        // --- 防止在手机模式按下状态下 controls 被自动隐藏，PC 下有 enter 所以没事 ---
-        clickgo.dom.bindDown(e, {
-            down: () => {
+        clickgo.modules.pointer.hover(e, {
+            enter: () => {
                 this.isShow = true;
                 if (this.hideTimer) {
                     clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             },
-            up: () => {
+            leave: () => {
                 this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
@@ -218,49 +191,33 @@ export default class extends clickgo.control.AbstractControl {
         return clickgo.tool.formatSecond(this.bcurrent);
     }
 
-    /** --- 鼠标移动事件 --- */
-    public onBMove(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.inBar = true;
-        const bcr = this.refs.top.getBoundingClientRect();
-        const x = e.clientX - bcr.left;
-        this.bcurrent = x / bcr.width * this.duration;
-    }
-
-    public onBLeave(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.inBar = false;
-    }
-
-    public onBClick(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.currentData = this.bcurrent;
-        this.refs.video.currentTime = this.currentData;
-        this.emit('update:current', this.currentData);
-    }
-
-    /** --- 手指移动事件 --- */
-    public onBTouch(e: TouchEvent): void {
-        const bcr = this.refs.top.getBoundingClientRect();
-        clickgo.dom.bindDown(e, {
-            move: (e2) => {
-                this.inBar = true;
-                const x = e2.touches[0].clientX - bcr.left;
-                this.bcurrent = x / bcr.width * this.duration;
-            },
+    public onBDown(oe: PointerEvent): void {
+        clickgo.modules.pointer.down(oe, {
             up: () => {
-                this.inBar = false;
-                // --- 直接响应 ---
                 this.currentData = this.bcurrent;
                 this.refs.video.currentTime = this.currentData;
                 this.emit('update:current', this.currentData);
             }
+        });
+        this.onBEnter(oe);
+    }
+
+    public onBEnter(oe: PointerEvent): void {
+        clickgo.modules.pointer.hover(oe, {
+            enter: e => {
+                this.inBar = true;
+                const bcr = this.refs.top.getBoundingClientRect();
+                const x = e.clientX - bcr.left;
+                this.bcurrent = x / bcr.width * this.duration;
+            },
+            move: e => {
+                const bcr = this.refs.top.getBoundingClientRect();
+                const x = e.clientX - bcr.left;
+                this.bcurrent = x / bcr.width * this.duration;
+            },
+            leave: () => {
+                this.inBar = false;
+            },
         });
     }
 

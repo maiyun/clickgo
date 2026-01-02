@@ -1,16 +1,16 @@
-<svg class="wrap" :class="[isInteract && 'isInteract']" @touchstart="wrapDown" @mousedown="wrapDown" stroke="none">
+<svg class="wrap" :class="[isInteract && 'isInteract']" @pointerdown="wrapDown" stroke="none">
     <template v-for="item of modelValueComp">
         <template v-if="item.type === 'rect'">
-            <rect class="box" :class="[(item.move !== false) && 'move', selectedData.includes(item.id) && 'isSelected']" :style="{'width': item.width + 2 + 'px', 'height': item.height + 2 + 'px'}" :x="item.x - 1" :y="item.y - 1" @touchstart="down($event, item.id)" @mousedown="down($event, item.id)" />
+            <rect class="box" :class="[(item.move !== false) && 'move', selectedData.includes(item.id) && 'isSelected']" :style="{'width': item.width + 2 + 'px', 'height': item.height + 2 + 'px'}" :x="item.x - 1" :y="item.y - 1" @pointerdown="down($event, item.id)" />
             <template v-if="selectedData.includes(item.id) && !item.resize && !isInteract">
-                <rect v-if="!item.resize || item.resize.includes('lt')" @touchstart="resize($event, item.id, 'lt')" @mousedown="resize($event, item.id, 'lt')" class="ctrl lt" :x="item.x - 5" :y="item.y - 5" />
-                <rect v-if="!item.resize || item.resize.includes('t')" @touchstart="resize($event, item.id, 't')" @mousedown="resize($event, item.id, 't')" class="ctrl t" :x="item.x + (item.width / 2) - 4" :y="item.y - 5" />
-                <rect v-if="!item.resize || item.resize.includes('tr')" @touchstart="resize($event, item.id, 'tr')" @mousedown="resize($event, item.id, 'tr')" class="ctrl tr" :x="item.x - 3 + item.width" :y="item.y - 5" />
-                <rect v-if="!item.resize || item.resize.includes('r')" @touchstart="resize($event, item.id, 'r')" @mousedown="resize($event, item.id, 'r')" class="ctrl r" :x="item.x - 3 + item.width" :y="item.y + (item.height / 2) - 4" />
-                <rect v-if="!item.resize || item.resize.includes('rb')" @touchstart="resize($event, item.id, 'rb')" @mousedown="resize($event, item.id, 'rb')" class="ctrl rb" :x="item.x - 3 + item.width" :y="item.y + item.height - 3" />
-                <rect v-if="!item.resize || item.resize.includes('b')" @touchstart="resize($event, item.id, 'b')" @mousedown="resize($event, item.id, 'b')" class="ctrl b" :x="item.x + (item.width / 2) - 4" :y="item.y + item.height - 3" />
-                <rect v-if="!item.resize || item.resize.includes('bl')" @touchstart="resize($event, item.id, 'bl')" @mousedown="resize($event, item.id, 'bl')" class="ctrl bl" :x="item.x - 5" :y="item.y + item.height - 3" />
-                <rect v-if="!item.resize || item.resize.includes('l')" @touchstart="resize($event, item.id, 'l')" @mousedown="resize($event, item.id, 'l')" class="ctrl l" :x="item.x - 5" :y="item.y + (item.height / 2) - 4" />
+                <rect v-if="!item.resize || item.resize.includes('lt')" @pointerdown="resize($event, item.id, 'lt')" class="ctrl lt" :x="item.x - 5" :y="item.y - 5" />
+                <rect v-if="!item.resize || item.resize.includes('t')" @pointerdown="resize($event, item.id, 't')" class="ctrl t" :x="item.x + (item.width / 2) - 4" :y="item.y - 5" />
+                <rect v-if="!item.resize || item.resize.includes('tr')" @pointerdown="resize($event, item.id, 'tr')" class="ctrl tr" :x="item.x - 3 + item.width" :y="item.y - 5" />
+                <rect v-if="!item.resize || item.resize.includes('r')" @pointerdown="resize($event, item.id, 'r')" class="ctrl r" :x="item.x - 3 + item.width" :y="item.y + (item.height / 2) - 4" />
+                <rect v-if="!item.resize || item.resize.includes('rb')" @pointerdown="resize($event, item.id, 'rb')" class="ctrl rb" :x="item.x - 3 + item.width" :y="item.y + item.height - 3" />
+                <rect v-if="!item.resize || item.resize.includes('b')" @pointerdown="resize($event, item.id, 'b')" class="ctrl b" :x="item.x + (item.width / 2) - 4" :y="item.y + item.height - 3" />
+                <rect v-if="!item.resize || item.resize.includes('bl')" @pointerdown="resize($event, item.id, 'bl')" class="ctrl bl" :x="item.x - 5" :y="item.y + item.height - 3" />
+                <rect v-if="!item.resize || item.resize.includes('l')" @pointerdown="resize($event, item.id, 'l')" class="ctrl l" :x="item.x - 5" :y="item.y + (item.height / 2) - 4" />
             </template>
         </template>
     </template>

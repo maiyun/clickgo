@@ -1,38 +1,35 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'show': null,
-            /** --- 用户主动滚动事件 --- */
-            'roll': null,
-            'update:offset': null
-        };
-        this.props = {
-            'disabled': false,
-            'float': false,
-            'direction': 'v',
-            'length': 1000,
-            'client': 100,
-            'offset': 0
-        };
-        /** --- 当前位置（数值） --- */
-        this.offsetData = 0;
-        /** --- 将在多久后隐藏 --- */
-        this.hideTimer = 0;
-        /** --- 是否在以设定数值的形式滚动中的 timer 值（controlDown） --- */
-        this.tran = 0;
-        /** --- 是否在显示 --- */
-        this.isShow = true;
-        /** --- 是否是 enter 状态 --- */
-        this.isEnter = false;
-        /** --- 整体的元素的宽度像素 --- */
-        this.width = 0;
-        /** --- 整体的元素高度像素 --- */
-        this.height = 0;
-        /** --- bar 的 px --- */
-        this.barPx = 0;
-    }
+    emits = {
+        'show': null,
+        /** --- 用户主动滚动事件 --- */
+        'roll': null,
+        'update:offset': null
+    };
+    props = {
+        'disabled': false,
+        'float': false,
+        'direction': 'v',
+        'length': 1000,
+        'client': 100,
+        'offset': 0
+    };
+    /** --- 当前位置（数值） --- */
+    offsetData = 0;
+    /** --- 将在多久后隐藏 --- */
+    hideTimer = 0;
+    /** --- 是否在以设定数值的形式滚动中的 timer 值（controlDown） --- */
+    tran = 0;
+    /** --- 是否在显示 --- */
+    isShow = true;
+    /** --- 是否是 enter 状态 --- */
+    isEnter = false;
+    /** --- 整体的元素的宽度像素 --- */
+    width = 0;
+    /** --- 整体的元素高度像素 --- */
+    height = 0;
+    /** --- bar 的 px --- */
+    barPx = 0;
     /** --- block 的 px --- */
     get blockPx() {
         const px = this.propInt('client') / this.propInt('length') * this.barPx;
@@ -65,38 +62,12 @@ export default class extends clickgo.control.AbstractControl {
     get offsetPx() {
         return this.outBlockPx * this.offsetRatio;
     }
-    /**
-     * ---- wrap 的 touchstart 事件 ---
-     */
-    wrapTouch(e) {
-        // --- 防止在手机模式按下的状态下滚动条被自动隐藏，PC 下有 enter 所以没事 ---
-        clickgo.dom.bindDown(e, {
-            down: () => {
-                this.isEnter = true;
-                if (this.propBoolean('float')) {
-                    this.isShow = true;
-                    if (this.hideTimer) {
-                        clickgo.task.removeTimer(this, this.hideTimer);
-                        this.hideTimer = 0;
-                    }
-                }
-            },
-            up: () => {
-                this.isEnter = false;
-                if (this.propBoolean('float')) {
-                    this.hideTimer = clickgo.task.sleep(this, () => {
-                        this.isShow = false;
-                    }, 800);
-                }
-            }
-        });
-    }
     /** --- 上下控制按钮按下事件 --- */
     controlDown(e, type) {
         if (this.props.client >= this.props.length) {
             return;
         }
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             down: () => {
                 this.tran = clickgo.task.onFrame(this, () => {
                     if (type === 'start') {
@@ -141,10 +112,7 @@ export default class extends clickgo.control.AbstractControl {
      * --- block 的 down 事件 ---
      */
     down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.dom.bindMove(e, {
+        clickgo.modules.pointer.move(e, {
             'areaObject': this.refs.bar,
             'object': this.refs.block,
             'move': (e, o) => {
@@ -169,9 +137,6 @@ export default class extends clickgo.control.AbstractControl {
      * --- bar 的空白区域（非 down 区域）按下事件 ---
      */
     barDown(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (e.currentTarget !== e.target) {
             return;
         }
@@ -180,7 +145,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- bar inner 对应的 left 或 top 位置 --- */
         const barOffsetPx = this.props.direction === 'v' ? barRect.top : barRect.left;
         /** --- 鼠标点击在 bar 中的位置 --- */
-        let eOffsetPx = this.props.direction === 'v' ? (e instanceof MouseEvent ? e.clientY : e.touches[0].clientY) : (e instanceof MouseEvent ? e.clientX : e.touches[0].clientX);
+        let eOffsetPx = this.props.direction === 'v' ? e.clientY : e.clientX;
         eOffsetPx = eOffsetPx - barOffsetPx;
         // --- 计算 offset px 位置 ---
         let offsetPx = eOffsetPx - this.blockPx / 2;
@@ -198,30 +163,27 @@ export default class extends clickgo.control.AbstractControl {
         this.down(e);
     }
     // --- 进入时保持滚动条常亮 ---
-    enter(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.isEnter = true;
-        if (this.propBoolean('float')) {
-            this.isShow = true;
-            if (this.hideTimer) {
-                clickgo.task.removeTimer(this, this.hideTimer);
-                this.hideTimer = 0;
-            }
-        }
-    }
-    // --- 移出后十滚动条隐藏 ---
-    leave(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.isEnter = false;
-        if (this.propBoolean('float')) {
-            this.hideTimer = clickgo.task.sleep(this, () => {
-                this.isShow = false;
-            }, 800);
-        }
+    enter(oe) {
+        clickgo.modules.pointer.hover(oe, {
+            enter: () => {
+                this.isEnter = true;
+                if (this.propBoolean('float')) {
+                    this.isShow = true;
+                    if (this.hideTimer) {
+                        clickgo.task.removeTimer(this, this.hideTimer);
+                        this.hideTimer = 0;
+                    }
+                }
+            },
+            leave: () => {
+                this.isEnter = false;
+                if (this.propBoolean('float')) {
+                    this.hideTimer = clickgo.task.sleep(this, () => {
+                        this.isShow = false;
+                    }, 800);
+                }
+            },
+        });
     }
     onMounted() {
         const checkOffset = () => {

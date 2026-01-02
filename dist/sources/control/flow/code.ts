@@ -95,7 +95,7 @@ export default class extends clickgo.control.AbstractControl {
      * --- 电脑的 wheel 事件，横向滚动不能被屏蔽 ---
      */
     public wheel(e: WheelEvent): void {
-        clickgo.dom.bindGesture(e, (e, dir) => {
+        clickgo.modules.pointer.gesture(e, (e, dir) => {
             switch (dir) {
                 case 'top': {
                     if (this.element.scrollTop > 0) {
@@ -147,15 +147,15 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    public down(e: TouchEvent | MouseEvent): void {
+    public down(e: PointerEvent): void {
         if ((e.target as HTMLElement).dataset.cgFlowDownCancel !== undefined || clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-flow-down-cancel')) {
             return;
         }
         if (this.propBoolean('selection')) {
-            const x: number = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-            const y: number = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+            const x: number = e.clientX;
+            const y: number = e.clientY;
             // --- 鼠标手指只会响应一个，进行建立选区 ---
-            clickgo.dom.bindDown(e, {
+            clickgo.modules.pointer.down(e, {
                 start: (): void => {
                     const rect = this.element.getBoundingClientRect();
                     this.access.selectionOrigin.x = x - rect.left + this.element.scrollLeft;
@@ -285,11 +285,7 @@ export default class extends clickgo.control.AbstractControl {
             });
         }
         else {
-            if (e instanceof MouseEvent) {
-                return;
-            }
-            // --- 仅 touch ---
-            clickgo.dom.bindGesture(e, (ne, dir) => {
+            clickgo.modules.pointer.gesture(e, (ne, dir) => {
                 switch (dir) {
                     case 'top': {
                         if (this.element.scrollTop > 0) {

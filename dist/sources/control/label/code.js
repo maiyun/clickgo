@@ -1,72 +1,69 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'mode': 'default',
-            'content': '',
-            'size': 's',
-            'align': 'left',
-            'nowrap': false,
-            'copy': false,
-            'thru': false,
-            'time': true,
-            'date': true,
-            'zone': false,
-            'tz': undefined
-        };
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'copy': 'Copy',
-                'copied': 'Copied'
-            },
-            'sc': {
-                'copy': '复制',
-                'copied': '已复制'
-            },
-            'tc': {
-                'copy': '複製',
-                'copied': '已複製'
-            },
-            'ja': {
-                'copy': 'コピー',
-                'copied': 'コピーしました'
-            },
-            'ko': {
-                'copy': '복사',
-                'copied': '복사됨'
-            },
-            'th': {
-                'copy': 'คัดลอก',
-                'copied': 'คัดลอกแล้ว'
-            },
-            'es': {
-                'copy': 'Copiar',
-                'copied': 'Copiado'
-            },
-            'de': {
-                'copy': 'Kopieren',
-                'copied': 'Kopiert'
-            },
-            'fr': {
-                'copy': 'Copier',
-                'copied': 'Copié'
-            },
-            'pt': {
-                'copy': 'Copiar',
-                'copied': 'Copiado'
-            },
-            'ru': {
-                'copy': 'Копировать',
-                'copied': 'Скопировано'
-            },
-            'vi': {
-                'copy': 'Sao chép',
-                'copied': 'Đã sao chép'
-            }
-        };
-    }
+    props = {
+        'mode': 'default',
+        'content': '',
+        'size': 's',
+        'align': 'left',
+        'nowrap': false,
+        'copy': false,
+        'thru': false,
+        'time': true,
+        'date': true,
+        'zone': false,
+        'tz': undefined
+    };
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'copy': 'Copy',
+            'copied': 'Copied'
+        },
+        'sc': {
+            'copy': '复制',
+            'copied': '已复制'
+        },
+        'tc': {
+            'copy': '複製',
+            'copied': '已複製'
+        },
+        'ja': {
+            'copy': 'コピー',
+            'copied': 'コピーしました'
+        },
+        'ko': {
+            'copy': '복사',
+            'copied': '복사됨'
+        },
+        'th': {
+            'copy': 'คัดลอก',
+            'copied': 'คัดลอกแล้ว'
+        },
+        'es': {
+            'copy': 'Copiar',
+            'copied': 'Copiado'
+        },
+        'de': {
+            'copy': 'Kopieren',
+            'copied': 'Kopiert'
+        },
+        'fr': {
+            'copy': 'Copier',
+            'copied': 'Copié'
+        },
+        'pt': {
+            'copy': 'Copiar',
+            'copied': 'Copiado'
+        },
+        'ru': {
+            'copy': 'Копировать',
+            'copied': 'Скопировано'
+        },
+        'vi': {
+            'copy': 'Sao chép',
+            'copied': 'Đã sao chép'
+        }
+    };
     /** --- 获取 align 的 css 属性模式 --- */
     get alignComp() {
         switch (this.props.align) {
@@ -114,44 +111,25 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- wrap 的 down --- */
     down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (!this.propBoolean('copy')) {
             return;
         }
         // --- 点击复制 ---
-        clickgo.dom.bindClick(e, async () => {
+        clickgo.modules.pointer.click(e, async () => {
             await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
             clickgo.form.alert(this.l('copied'));
         });
         if (!navigator.clipboard) {
             return;
         }
-        if (e instanceof TouchEvent) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-        }
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
         // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
         }
         clickgo.form.hidePop();
-    }
-    /** --- contextmenu --- */
-    contextmenu(e) {
-        if (!this.propBoolean('copy')) {
-            return;
-        }
-        if (!navigator.clipboard) {
-            e.stopPropagation();
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, e);
     }
     /** --- 执行复制 --- */
     execCmd(ac) {

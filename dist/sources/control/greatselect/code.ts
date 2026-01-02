@@ -102,10 +102,7 @@ export default class extends clickgo.control.AbstractControl {
         this.down(e, 'arrow');
     }
 
-    public down(e: MouseEvent | TouchEvent | KeyboardEvent, area: 'left' | 'arrow'): void {
-        if (!(e instanceof KeyboardEvent) && clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(e: PointerEvent | KeyboardEvent, area: 'left' | 'arrow'): void {
         if (this.element.dataset.cgPopOpen !== undefined) {
             // this.hidePop();
             return;

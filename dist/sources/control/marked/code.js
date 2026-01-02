@@ -1,18 +1,15 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'init': null,
-        };
-        this.props = {
-            'modelValue': '',
-            'css': '',
-        };
-        this.notInit = false;
-        this.isLoading = true;
-        this.html = '';
-    }
+    emits = {
+        'init': null,
+    };
+    props = {
+        'modelValue': '',
+        'css': '',
+    };
+    notInit = false;
+    isLoading = true;
+    html = '';
     async onMounted() {
         const makred = await clickgo.core.getModule('@toast-ui/editor');
         if (!makred) {

@@ -1,41 +1,38 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'gesture': null,
-            'beforeselect': null,
-            'afterselect': null,
-            'select': null,
-            'clientwidth': null,
-            'clientheight': null,
-            'scrollwidth': null,
-            'scrollheight': null,
-            'update:scrollLeft': null,
-            'update:scrollTop': null
-        };
-        this.props = {
-            'direction': 'h',
-            'selection': false,
-            'gesture': [],
-            'gutter': '',
-            'scrollLeft': 0,
-            'scrollTop': 0
-        };
-        this.access = {
-            /** --- 选框开始时的鼠标坐标原点相对于元素本身 --- */
-            'selectionOrigin': { 'x': 0, 'y': 0 },
-            /** --- 当前画选框时的指针坐标相对于屏幕 --- */
-            'selectionCurrent': { 'x': 0, 'y': 0, 'quick': false },
-            /** --- 选框的 timer --- */
-            'selectionTimer': 0
-        };
-        /** --- 当前框选的部分起终下标 --- */
-        this.selectPos = {
-            'start': 0,
-            'end': 0
-        };
-    }
+    emits = {
+        'gesture': null,
+        'beforeselect': null,
+        'afterselect': null,
+        'select': null,
+        'clientwidth': null,
+        'clientheight': null,
+        'scrollwidth': null,
+        'scrollheight': null,
+        'update:scrollLeft': null,
+        'update:scrollTop': null
+    };
+    props = {
+        'direction': 'h',
+        'selection': false,
+        'gesture': [],
+        'gutter': '',
+        'scrollLeft': 0,
+        'scrollTop': 0
+    };
+    access = {
+        /** --- 选框开始时的鼠标坐标原点相对于元素本身 --- */
+        'selectionOrigin': { 'x': 0, 'y': 0 },
+        /** --- 当前画选框时的指针坐标相对于屏幕 --- */
+        'selectionCurrent': { 'x': 0, 'y': 0, 'quick': false },
+        /** --- 选框的 timer --- */
+        'selectionTimer': 0
+    };
+    /** --- 当前框选的部分起终下标 --- */
+    selectPos = {
+        'start': 0,
+        'end': 0
+    };
     /**
      * --- 最大可拖动的 scroll 左侧位置 ---
      */
@@ -79,7 +76,7 @@ export default class extends clickgo.control.AbstractControl {
      * --- 电脑的 wheel 事件，横向滚动不能被屏蔽 ---
      */
     wheel(e) {
-        clickgo.dom.bindGesture(e, (e, dir) => {
+        clickgo.modules.pointer.gesture(e, (e, dir) => {
             switch (dir) {
                 case 'top': {
                     if (this.element.scrollTop > 0) {
@@ -135,10 +132,10 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         if (this.propBoolean('selection')) {
-            const x = (e instanceof MouseEvent) ? e.clientX : e.touches[0].clientX;
-            const y = (e instanceof MouseEvent) ? e.clientY : e.touches[0].clientY;
+            const x = e.clientX;
+            const y = e.clientY;
             // --- 鼠标手指只会响应一个，进行建立选区 ---
-            clickgo.dom.bindDown(e, {
+            clickgo.modules.pointer.down(e, {
                 start: () => {
                     const rect = this.element.getBoundingClientRect();
                     this.access.selectionOrigin.x = x - rect.left + this.element.scrollLeft;
@@ -268,11 +265,7 @@ export default class extends clickgo.control.AbstractControl {
             });
         }
         else {
-            if (e instanceof MouseEvent) {
-                return;
-            }
-            // --- 仅 touch ---
-            clickgo.dom.bindGesture(e, (ne, dir) => {
+            clickgo.modules.pointer.gesture(e, (ne, dir) => {
                 switch (dir) {
                     case 'top': {
                         if (this.element.scrollTop > 0) {

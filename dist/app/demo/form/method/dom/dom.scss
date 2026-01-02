@@ -3,7 +3,7 @@
 
     > block {
         border: solid 1px var(--g-plain-border-color); flex: 1; margin-right: 5px; display: flex; justify-content: center; align-items: center;
-        &[data-cg-hover] {
+        &[data-hover] {
             background-color: var(--g-color); color: var(--face);
         }
     }

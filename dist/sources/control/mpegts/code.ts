@@ -1,3 +1,4 @@
+import * as mpegts from 'mpegts.js';
 import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
@@ -33,8 +34,8 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     public access: {
-        'instance': any;
-        'mpegts': any;
+        'instance'?: mpegts.default.Player;
+        'mpegts'?: typeof mpegts.default;
         'ctx': any;
     } = {
             'instance': undefined,
@@ -58,10 +59,19 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前的声量 --- */
     public volumeData = 0;
 
+    /** --- 自动重置的 timer --- */
+    private _resetTimer = 0;
+
     // --- 播放状态相关事件 ---
 
     /** --- 正式开始播放 --- */
     public toPlay(): void {
+        if (!this.access.mpegts) {
+            return;
+        }
+        if (!(this.refs.video instanceof HTMLVideoElement)) {
+            return;
+        }
         /** --- 要加载的 url --- */
         const url = this.isFull ? (this.props.fsrc || this.props.src) : this.props.src;
         this.access.instance = this.access.mpegts.createPlayer({
@@ -82,17 +92,11 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.access.instance.attachMediaElement(this.refs.video);
         this.access.instance.load();
-        this.access.instance.on(this.access.mpegts.Events.ERROR, (e: any, e2: any, e3: any) => {
-            // --- 会是啥错误呢 ---
-            console.log('[ERROR][CONTROL][MPEGTS]', 'ERROR', e, e2, e3);
-            this.capture();
-            this.access.instance?.destroy();
-            this.toPlay();
-        });
+        this.access.instance.on(this.access.mpegts.Events.ERROR, this.onError);
         this.access.instance.on(this.access.mpegts.Events.STATISTICS_INFO, () => {
             // --- 如果有连接，这里将一直正常 ---
         });
-        this.access.instance.play();
+        this.access.instance.play() as any;
     }
 
     /** --- 播放状态 --- */
@@ -103,7 +107,7 @@ export default class extends clickgo.control.AbstractControl {
             // --- 变暂停 ---
             if (this.access.instance) {
                 this.capture();
-                this.access.instance?.destroy();
+                this.access.instance.destroy();
                 this.access.instance = undefined;
             }
         }
@@ -146,6 +150,7 @@ export default class extends clickgo.control.AbstractControl {
             if (this.props.fsrc) {
                 this.capture();
                 this.access.instance?.destroy();
+                this.access.instance = undefined;
                 this.toPlay();
             }
             return;
@@ -159,6 +164,7 @@ export default class extends clickgo.control.AbstractControl {
         if (this.props.fsrc && (this.props.fsrc !== this.props.src)) {
             this.capture();
             this.access.instance?.destroy();
+            this.access.instance = undefined;
             this.toPlay();
         }
     }
@@ -168,47 +174,19 @@ export default class extends clickgo.control.AbstractControl {
         return clickgo.dom.is.full;
     }
 
-    // --- 进入时保持 controls 常亮 ---
-    public onMouseEnter(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public onDown(e: PointerEvent): void {
         if (!this.propBoolean('controls')) {
             return;
         }
-        this.isShow = true;
-        if (this.hideTimer) {
-            clickgo.task.removeTimer(this, this.hideTimer);
-            this.hideTimer = 0;
-        }
-    }
-
-    public onMouseLeave(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (!this.propBoolean('controls')) {
-            return;
-        }
-        this.hideTimer = clickgo.task.sleep(this, () => {
-            this.isShow = false;
-        }, 800);
-    }
-
-    public onTouch(e: TouchEvent): void {
-        if (!this.propBoolean('controls')) {
-            return;
-        }
-        // --- 防止在手机模式按下状态下 controls 被自动隐藏，PC 下有 enter 所以没事 ---
-        clickgo.dom.bindDown(e, {
-            down: () => {
+        clickgo.modules.pointer.hover(e, {
+            enter: () => {
                 this.isShow = true;
                 if (this.hideTimer) {
                     clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             },
-            up: () => {
+            leave: () => {
                 this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
@@ -220,7 +198,7 @@ export default class extends clickgo.control.AbstractControl {
     public onCanplay(): void {
         this.playData = this.propBoolean('play');
         if (this.playData && this.access.instance) {
-            this.access.instance.play();
+            this.access.instance.play() as any;
         }
         this.emit('canplay');
     }
@@ -248,6 +226,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.capture();
             this.access.instance?.destroy();
+            this.access.instance = undefined;
             this.toPlay();
         }, 5_000, {
             'count': 1,
@@ -264,7 +243,8 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this.capture();
-            this.access.instance?.destroy();
+            this.access.instance.destroy();
+            this.access.instance = undefined;
             this.toPlay();
         }, 5_000, {
             'count': 1,
@@ -284,6 +264,19 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.video.volume = this.volumeSave / 100;
         this.volumeData = this.volumeSave;
         this.emit('update:volume', this.volumeData);
+    }
+
+    /** --- 错误处理 --- */
+    public onError(e: any, e2: any, e3: any): void {
+        if (!this.access.mpegts) {
+            return;
+        }
+        // --- 会是啥错误呢 ---
+        console.log('[ERROR][CONTROL][MPEGTS]', 'ERROR', e, e2, e3);
+        this.capture();
+        this.access.instance?.destroy();
+        this.access.instance = undefined;
+        this.toPlay();
     }
 
     public async onMounted(): Promise<void> {
@@ -356,13 +349,14 @@ export default class extends clickgo.control.AbstractControl {
                 if (!this.access.instance) {
                     return;
                 }
-                this.access.instance?.destroy();
+                this.access.instance.destroy();
                 this.access.instance = undefined;
                 return;
             }
             // --- 本次不为空，看看是不是还有上次的 ---
             if (this.access.instance) {
-                this.access.instance?.destroy();
+                this.access.instance.destroy();
+                this.access.instance = undefined;
             }
             if (this.playData) {
                 this.toPlay();
@@ -371,30 +365,29 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
 
-        /** --- 自动重置的 timer --- */
-        let resetTimer: number = 0;
         this.watch('reset', () => {
             if (!this.propInt('reset')) {
                 // --- 关闭 ---
-                if (!resetTimer) {
+                if (!this._resetTimer) {
                     // --- 本来就关闭 ---
                     return;
                 }
-                clickgo.task.removeTimer(this, resetTimer);
-                resetTimer = 0;
+                clickgo.task.removeTimer(this, this._resetTimer);
+                this._resetTimer = 0;
                 return;
             }
             // --- 打开 ---
-            if (resetTimer) {
-                clickgo.task.removeTimer(this, resetTimer);
+            if (this._resetTimer) {
+                clickgo.task.removeTimer(this, this._resetTimer);
             }
-            resetTimer = clickgo.task.createTimer(this, () => {
+            this._resetTimer = clickgo.task.createTimer(this, () => {
                 if (!this.access.instance) {
                     return;
                 }
                 // --- 存在必然在播放状态 ---
                 this.capture();
-                this.access.instance?.destroy();
+                this.access.instance.destroy();
+                this.access.instance = undefined;
                 this.toPlay();
             }, this.propInt('reset'));
         }, {
@@ -414,10 +407,25 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onUnmounted(): void {
-        if (!this.access.instance) {
+        if (this.hideTimer) {
+            clickgo.task.removeTimer(this, this.hideTimer);
+            this.hideTimer = 0;
+        }
+        if (this._waitingTimer) {
+            clickgo.task.removeTimer(this, this._waitingTimer);
+            this._waitingTimer = 0;
+        }
+        if (this._resetTimer) {
+            clickgo.task.removeTimer(this, this._resetTimer);
+            this._resetTimer = 0;
+        }
+        if (!this.access.instance || !this.access.mpegts) {
             return;
         }
-        this.access.instance?.destroy();
+        this.access.instance.off(this.access.mpegts.Events.ERROR, this.onError);
+        this.access.instance.destroy();
+        this.access.instance = undefined;
+        this.access.mpegts = undefined;
     }
 
 }

@@ -422,10 +422,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- flow 的鼠标或手指 down 事件 ---
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(e: PointerEvent): void {
         // --- 若正在显示菜单则隐藏 ---
         if (this.refs.flow.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
@@ -434,44 +431,39 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.propBoolean('must')) {
             if (((e.target as HTMLElement).dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-item')) {
                 // --- 当前点击的是空白处 ---
-                clickgo.dom.bindClick(e, () => {
+                clickgo.modules.pointer.click(e, () => {
                     this.select(-1, e.shiftKey, e.ctrlKey);
                 });
             }
         }
-        // --- 手指长安触发菜单 ---
-        if (e instanceof TouchEvent) {
-            // --- 长按触发 contextmenu ---
-            clickgo.dom.bindLong(e, () => {
-                if (!this.propBoolean('must')) {
-                    if (((e.target as HTMLElement).dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-item')) {
-                        // --- 当前点击的是空白处 ---
-                        this.select(-1);
-                    }
+        // --- 长按触发 contextmenu ---
+        clickgo.modules.pointer.menu(e, () => {
+            if (!this.propBoolean('must')) {
+                if (((e.target as HTMLElement).dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-item')) {
+                    // --- 当前点击的是空白处 ---
+                    this.select(-1);
                 }
-                if (this.valueData.length > 0) {
-                    clickgo.form.showPop(this.refs.flow.$el, this.refs.itempop, e);
-                }
-                else {
-                    clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
-                }
-            });
-        }
+            }
+            if (this.valueData.length > 0) {
+                clickgo.form.showPop(this.refs.flow.$el, this.refs.itempop, e);
+            }
+            else {
+                clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
+            }
+        });
     }
 
-    // --- （仅手指）长按 item 选中自己，和通用事件 ---
-    public itemDown(e: TouchEvent | MouseEvent, dindex: number, value: number): void {
-        // --- 长按 ---
+    // --- 长按 item 选中自己，和通用事件 ---
+    public itemDown(e: PointerEvent, dindex: number, value: number): void {
+        // --- 弹出菜单事件设定选中 ---
         const v = dindex * this.rowCount + value;
-        if (e instanceof TouchEvent) {
-            clickgo.dom.bindLong(e, () => {
-                if (this.isSelected(v)) {
-                    return;
-                }
-                this.select(value, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
-            });
-        }
-        clickgo.dom.bindClick(e, () => {
+        clickgo.modules.pointer.menu(e, () => {
+            if (this.isSelected(v)) {
+                return;
+            }
+            this.select(v, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
+        });
+        clickgo.modules.pointer.click(e, () => {
             this.select(v, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 上报点击事件 ---
             const event: clickgo.control.IIconviewItemclickedEvent = {
@@ -483,9 +475,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('itemclicked', event);
         });
         // --- 拖拽 ---
-        clickgo.dom.bindDrag(e, {
-            'el': e.currentTarget as HTMLElement,
-
+        clickgo.modules.pointer.drag(e, e.currentTarget as HTMLElement, {
             'start': () => {
                 if (!this.isSelected(v)) {
                     this.select(v);
@@ -498,15 +488,15 @@ export default class extends clickgo.control.AbstractControl {
                         'path': this.props.data[v].path
                     });
                 }
-                clickgo.dom.setDragData({
+                clickgo.modules.pointer.setDragData({
                     'rand': this.rand,
                     'type': 'fs',
-                    'list': list
+                    'list': list,
                 });
             }
         });
         // --- 双击 ---
-        clickgo.dom.bindDblClick(e, () => {
+        clickgo.modules.pointer.dblClick(e, () => {
             const event: clickgo.control.IIconviewOpenEvent = {
                 'detail': {
                     'value': [value]
@@ -514,38 +504,6 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('open', event);
         });
-    }
-
-    // --- （仅鼠标）弹出菜单事件设定选中 ---
-    public itemContext(e: MouseEvent, dindex: number, value: number): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        const v = dindex * this.rowCount + value;
-        if (this.isSelected(v)) {
-            return;
-        }
-        this.select(v, e.shiftKey, e.ctrlKey);
-    }
-
-    // --- （仅鼠标）flow 整体的 contextmenu 事件 ---
-    public context(e: MouseEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        // --- 空白处取消选择 ---
-        if (!this.propBoolean('must')) {
-            if (((e.target as HTMLElement).dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target as HTMLElement, 'cg-item')) {
-                // --- 当前点击的是空白处 ---
-                this.select(-1);
-            }
-        }
-        if (this.valueData.length > 0) {
-            clickgo.form.showPop(this.refs.flow.$el, this.refs.itempop, e);
-        }
-        else {
-            clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
-        }
     }
 
     // --- 整个控件的键盘事件 ---

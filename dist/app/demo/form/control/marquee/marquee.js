@@ -1,11 +1,8 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.lineCount = 2;
-        this.style = false;
-        this.direction = 'top';
-    }
+    lineCount = 2;
+    style = false;
+    direction = 'top';
     changeDirection() {
         switch (this.direction) {
             case 'top': {

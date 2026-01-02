@@ -1,28 +1,25 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'changed': null,
-            'update:modelValue': null,
-        };
-        this.props = {
-            'disabled': false,
-            'mode': 'hsl',
-            'modelValue': '',
-        };
-        /** ---调色板的 changed --- */
-        this.paletteChanged = {
-            'detail': {
-                'value': '',
-                'hsl': undefined,
-                'rgb': undefined
-            }
-        };
-        /** --- 调色板 颜色 --- */
-        this.color = '';
-        this.value = '';
-    }
+    emits = {
+        'changed': null,
+        'update:modelValue': null,
+    };
+    props = {
+        'disabled': false,
+        'mode': 'hsl',
+        'modelValue': '',
+    };
+    /** ---调色板的 changed --- */
+    paletteChanged = {
+        'detail': {
+            'value': '',
+            'hsl': undefined,
+            'rgb': undefined
+        }
+    };
+    /** --- 调色板 颜色 --- */
+    color = '';
+    value = '';
     /** --- 调色板确定 --- */
     ok() {
         if (this.value !== this.color) {
@@ -33,10 +30,7 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.form.hidePop(this.element);
     }
     // --- 单击事件 ---
-    down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    down() {
         if (this.element.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.element);
             return;

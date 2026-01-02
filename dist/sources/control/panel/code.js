@@ -1,28 +1,25 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'go': null,
-            'went': null
-        };
-        this.props = {
-            'modelValue': '',
-            'plain': false,
-            'map': null
-        };
-        /** --- 如果有 map，要看当前真实选中的 key 是谁 --- */
-        this.mapSelected = '';
-        this.loading = false;
-        /** --- 已经加载过的页面列表 --- */
-        this.loaded = {};
-        this.access = {
-            /** --- nav 控件 --- */
-            'nav': null
-        };
-        /** --- 当前 active 的 panel id --- */
-        this.activeId = '';
-    }
+    emits = {
+        'go': null,
+        'went': null
+    };
+    props = {
+        'modelValue': '',
+        'plain': false,
+        'map': null
+    };
+    /** --- 如果有 map，要看当前真实选中的 key 是谁 --- */
+    mapSelected = '';
+    loading = false;
+    /** --- 已经加载过的页面列表 --- */
+    loaded = {};
+    access = {
+        /** --- nav 控件 --- */
+        'nav': null
+    };
+    /** --- 当前 active 的 panel id --- */
+    activeId = '';
     /** --- 隐藏老 panel --- */
     async hideActive() {
         if (!this.activeId) {

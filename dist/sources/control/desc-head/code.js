@@ -1,9 +1,6 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.desc = null;
-    }
+    desc = null;
     get isBorder() {
         return this.desc?.propBoolean?.('border') ? true : false;
     }

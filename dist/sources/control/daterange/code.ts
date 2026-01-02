@@ -182,6 +182,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.dateObj[0].getTime() - this.tzData * 60 * 60_000,
                 this.dateObj[1].getTime() - this.tzData * 60 * 60_000
             ]);
+            this.emit('changed');
         }
         clickgo.form.hidePop();
     }
@@ -195,6 +196,7 @@ export default class extends clickgo.control.AbstractControl {
         this.ts = undefined;
         this.dateStr.length = 0;
         this.emit('update:modelValue', []);
+        this.emit('changed');
     }
 
     public onRange(e: clickgo.control.IDatepanelRangeEvent): void {
@@ -214,6 +216,7 @@ export default class extends clickgo.control.AbstractControl {
         this.dateObj[1].setTime(e.detail.end + this.tzData * 60 * 60_000);
         // --- 提交数据 ---
         this.emit('update:modelValue', value);
+        this.emit('changed');
         clickgo.form.hidePop(this.refs.firstpop);
         // --- 清空选中 ---
         this.refs.firstpanel.clear();
@@ -269,6 +272,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.dateObj[0].getTime() - this.tzData * 60 * 60_000,
                     this.dateObj[1].getTime() - this.tzData * 60 * 60_000
                 ]);
+                this.emit('changed');
             }
         }, {
             'immediate': true

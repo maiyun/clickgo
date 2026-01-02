@@ -1,60 +1,49 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'durationchange': null,
-            'canplay': null,
-            'canplaythrough': null,
-            'emptied': null,
-            'ended': null,
-            'error': null,
-            'loadeddata': null,
-            'loadedmetadata': null,
-            'loadstart': null,
-            'playing': null,
-            'progress': null,
-            'ratechange': null,
-            'readystatechange': null,
-            'seeked': null,
-            'seeking': null,
-            'stalled': null,
-            'suspend': null,
-            'waiting': null,
-            'update:current': null,
-            'update:play': null
-        };
-        this.props = {
-            'src': '',
-            'controls': false,
-            'loop': false,
-            'muted': false,
-            'volume': 50,
-            'play': false,
-            'current': 0
-        };
-        this.srcData = '';
-        /** --- 当前是否加载的 blob 模式文件 --- */
-        this.isBlob = false;
-        /** --- watch: src 变更次数 --- */
-        this.count = 0;
-        /** --- 媒介长度，秒数 --- */
-        this.duration = 0;
-        /** --- 当前鼠标是否在进度条内 --- */
-        this.inBar = false;
-        /** --- 将在多久后隐藏 (controls) --- */
-        this.hideTimer = 0;
-        /** --- 是否在显示 (controls) --- */
-        this.isShow = false;
-        /** --- 当前播放秒数 --- */
-        this.currentData = 0;
-        /** --- 用于 current 更新的 timer --- */
-        this._currentTimer = 0;
-        // --- 播放状态相关事件 ---
-        this.playData = false;
-        // --- 鼠标和 bar 相关 ---
-        this.bcurrent = 0;
-    }
+    emits = {
+        'durationchange': null,
+        'canplay': null,
+        'canplaythrough': null,
+        'emptied': null,
+        'ended': null,
+        'error': null,
+        'loadeddata': null,
+        'loadedmetadata': null,
+        'loadstart': null,
+        'playing': null,
+        'progress': null,
+        'ratechange': null,
+        'readystatechange': null,
+        'seeked': null,
+        'seeking': null,
+        'stalled': null,
+        'suspend': null,
+        'waiting': null,
+        'update:current': null,
+        'update:play': null
+    };
+    props = {
+        'src': '',
+        'controls': false,
+        'loop': false,
+        'muted': false,
+        'volume': 50,
+        'play': false,
+        'current': 0
+    };
+    srcData = '';
+    /** --- 当前是否加载的 blob 模式文件 --- */
+    isBlob = false;
+    /** --- watch: src 变更次数 --- */
+    count = 0;
+    /** --- 媒介长度，秒数 --- */
+    duration = 0;
+    /** --- 当前鼠标是否在进度条内 --- */
+    inBar = false;
+    /** --- 将在多久后隐藏 (controls) --- */
+    hideTimer = 0;
+    /** --- 是否在显示 (controls) --- */
+    isShow = false;
     /** --- 媒介长度改变时 video 会触发 --- */
     onDurationchange() {
         if (!this.refs.video) {
@@ -66,6 +55,10 @@ export default class extends clickgo.control.AbstractControl {
     get durations() {
         return clickgo.tool.formatSecond(this.duration);
     }
+    /** --- 当前播放秒数 --- */
+    currentData = 0;
+    /** --- 用于 current 更新的 timer --- */
+    _currentTimer = 0;
     currentUpdateStart() {
         if (this._currentTimer) {
             return;
@@ -90,6 +83,8 @@ export default class extends clickgo.control.AbstractControl {
     get currents() {
         return clickgo.tool.formatSecond(this.currentData);
     }
+    // --- 播放状态相关事件 ---
+    playData = false;
     onPlay() {
         if (this.playData) {
             return;
@@ -130,93 +125,56 @@ export default class extends clickgo.control.AbstractControl {
         return clickgo.dom.is.full;
     }
     // --- 进入时保持 controls 常亮 ---
-    onMouseEnter(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    onDown(e) {
         if (!this.propBoolean('controls')) {
             return;
         }
-        this.isShow = true;
-        if (this.hideTimer) {
-            clickgo.task.removeTimer(this, this.hideTimer);
-            this.hideTimer = 0;
-        }
-    }
-    onMouseLeave(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (!this.propBoolean('controls')) {
-            return;
-        }
-        this.hideTimer = clickgo.task.sleep(this, () => {
-            this.isShow = false;
-        }, 800);
-    }
-    onTouch(e) {
-        if (!this.propBoolean('controls')) {
-            return;
-        }
-        // --- 防止在手机模式按下状态下 controls 被自动隐藏，PC 下有 enter 所以没事 ---
-        clickgo.dom.bindDown(e, {
-            down: () => {
+        clickgo.modules.pointer.hover(e, {
+            enter: () => {
                 this.isShow = true;
                 if (this.hideTimer) {
                     clickgo.task.removeTimer(this, this.hideTimer);
                     this.hideTimer = 0;
                 }
             },
-            up: () => {
+            leave: () => {
                 this.hideTimer = clickgo.task.sleep(this, () => {
                     this.isShow = false;
                 }, 800);
             }
         });
     }
+    // --- 鼠标和 bar 相关 ---
+    bcurrent = 0;
     get bcurrents() {
         return clickgo.tool.formatSecond(this.bcurrent);
     }
-    /** --- 鼠标移动事件 --- */
-    onBMove(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.inBar = true;
-        const bcr = this.refs.top.getBoundingClientRect();
-        const x = e.clientX - bcr.left;
-        this.bcurrent = x / bcr.width * this.duration;
-    }
-    onBLeave(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.inBar = false;
-    }
-    onBClick(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        this.currentData = this.bcurrent;
-        this.refs.video.currentTime = this.currentData;
-        this.emit('update:current', this.currentData);
-    }
-    /** --- 手指移动事件 --- */
-    onBTouch(e) {
-        const bcr = this.refs.top.getBoundingClientRect();
-        clickgo.dom.bindDown(e, {
-            move: (e2) => {
-                this.inBar = true;
-                const x = e2.touches[0].clientX - bcr.left;
-                this.bcurrent = x / bcr.width * this.duration;
-            },
+    onBDown(oe) {
+        clickgo.modules.pointer.down(oe, {
             up: () => {
-                this.inBar = false;
-                // --- 直接响应 ---
                 this.currentData = this.bcurrent;
                 this.refs.video.currentTime = this.currentData;
                 this.emit('update:current', this.currentData);
             }
+        });
+        this.onBEnter(oe);
+    }
+    onBEnter(oe) {
+        clickgo.modules.pointer.hover(oe, {
+            enter: e => {
+                this.inBar = true;
+                const bcr = this.refs.top.getBoundingClientRect();
+                const x = e.clientX - bcr.left;
+                this.bcurrent = x / bcr.width * this.duration;
+            },
+            move: e => {
+                const bcr = this.refs.top.getBoundingClientRect();
+                const x = e.clientX - bcr.left;
+                this.bcurrent = x / bcr.width * this.duration;
+            },
+            leave: () => {
+                this.inBar = false;
+            },
         });
     }
     // --- 当视频可以播放之时要处理的事件 ---

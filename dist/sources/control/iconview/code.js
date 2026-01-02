@@ -1,62 +1,59 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'beforeselect': null,
-            'select': null,
-            'afterselect': null,
-            'itemclicked': null,
-            'open': null,
-            'drop': null,
-            'client': null,
-            'gesture': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'plain': false,
-            'must': false,
-            'multi': true,
-            'ctrl': true,
-            'selection': true,
-            'gesture': [],
-            'scroll': 'auto',
-            'size': 100,
-            'name': true,
-            'data': [],
-            'modelValue': []
-        };
-        this.rand = '';
-        /** --- 当前控件是否有焦点 --- */
-        this.focus = false;
-        /** --- 可视高度像素 --- */
-        this.client = 0;
-        /** --- 总高度 --- */
-        this.length = 0;
-        /** --- 滚动位置 --- */
-        this.offset = 0;
-        /** --- client 宽度 --- */
-        this.cw = 0;
-        /** --- 选中的数据 --- */
-        this.valueData = [];
-        /** --- shift 多选框原点 index --- */
-        this.shiftStart = 0;
-        /** --- 选中框当前已选中的序列列表 --- */
-        this.selectValues = [];
-        /** --- 选择之前的数据列表 --- */
-        this.beforeSelectValues = [];
-        /** --- 是否正在框选 --- */
-        this.isSelectStart = false;
-        /** --- 右侧的 scroll 是否在显示状态 --- */
-        this.scrollShow = true;
-        /** --- 一行的图标个数 --- */
-        this.rowCount = 1;
-        /** --- 所有图标读取后的结果 --- */
-        this.iconsData = [];
-        /** --- data 变更次数 --- */
-        this.dataCount = 0;
-    }
+    emits = {
+        'beforeselect': null,
+        'select': null,
+        'afterselect': null,
+        'itemclicked': null,
+        'open': null,
+        'drop': null,
+        'client': null,
+        'gesture': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'plain': false,
+        'must': false,
+        'multi': true,
+        'ctrl': true,
+        'selection': true,
+        'gesture': [],
+        'scroll': 'auto',
+        'size': 100,
+        'name': true,
+        'data': [],
+        'modelValue': []
+    };
+    rand = '';
+    /** --- 当前控件是否有焦点 --- */
+    focus = false;
+    /** --- 可视高度像素 --- */
+    client = 0;
+    /** --- 总高度 --- */
+    length = 0;
+    /** --- 滚动位置 --- */
+    offset = 0;
+    /** --- client 宽度 --- */
+    cw = 0;
+    /** --- 选中的数据 --- */
+    valueData = [];
+    /** --- shift 多选框原点 index --- */
+    shiftStart = 0;
+    /** --- 选中框当前已选中的序列列表 --- */
+    selectValues = [];
+    /** --- 选择之前的数据列表 --- */
+    beforeSelectValues = [];
+    /** --- 是否正在框选 --- */
+    isSelectStart = false;
+    /** --- 右侧的 scroll 是否在显示状态 --- */
+    scrollShow = true;
+    /** --- 一行的图标个数 --- */
+    rowCount = 1;
+    /** --- 所有图标读取后的结果 --- */
+    iconsData = [];
+    /** --- data 变更次数 --- */
+    dataCount = 0;
     /** --- 判断值是否处于已经被选中的状态 --- */
     get isSelected() {
         return (value) => {
@@ -357,9 +354,6 @@ export default class extends clickgo.control.AbstractControl {
     }
     // --- flow 的鼠标或手指 down 事件 ---
     down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         // --- 若正在显示菜单则隐藏 ---
         if (this.refs.flow.$el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop();
@@ -368,43 +362,38 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.propBoolean('must')) {
             if ((e.target.dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target, 'cg-item')) {
                 // --- 当前点击的是空白处 ---
-                clickgo.dom.bindClick(e, () => {
+                clickgo.modules.pointer.click(e, () => {
                     this.select(-1, e.shiftKey, e.ctrlKey);
                 });
             }
         }
-        // --- 手指长安触发菜单 ---
-        if (e instanceof TouchEvent) {
-            // --- 长按触发 contextmenu ---
-            clickgo.dom.bindLong(e, () => {
-                if (!this.propBoolean('must')) {
-                    if ((e.target.dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target, 'cg-item')) {
-                        // --- 当前点击的是空白处 ---
-                        this.select(-1);
-                    }
+        // --- 长按触发 contextmenu ---
+        clickgo.modules.pointer.menu(e, () => {
+            if (!this.propBoolean('must')) {
+                if ((e.target.dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target, 'cg-item')) {
+                    // --- 当前点击的是空白处 ---
+                    this.select(-1);
                 }
-                if (this.valueData.length > 0) {
-                    clickgo.form.showPop(this.refs.flow.$el, this.refs.itempop, e);
-                }
-                else {
-                    clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
-                }
-            });
-        }
+            }
+            if (this.valueData.length > 0) {
+                clickgo.form.showPop(this.refs.flow.$el, this.refs.itempop, e);
+            }
+            else {
+                clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
+            }
+        });
     }
-    // --- （仅手指）长按 item 选中自己，和通用事件 ---
+    // --- 长按 item 选中自己，和通用事件 ---
     itemDown(e, dindex, value) {
-        // --- 长按 ---
+        // --- 弹出菜单事件设定选中 ---
         const v = dindex * this.rowCount + value;
-        if (e instanceof TouchEvent) {
-            clickgo.dom.bindLong(e, () => {
-                if (this.isSelected(v)) {
-                    return;
-                }
-                this.select(value, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
-            });
-        }
-        clickgo.dom.bindClick(e, () => {
+        clickgo.modules.pointer.menu(e, () => {
+            if (this.isSelected(v)) {
+                return;
+            }
+            this.select(v, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
+        });
+        clickgo.modules.pointer.click(e, () => {
             this.select(v, e.shiftKey, (!this.propBoolean('ctrl') && this.propBoolean('multi')) ? true : e.ctrlKey);
             // --- 上报点击事件 ---
             const event = {
@@ -416,8 +405,7 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('itemclicked', event);
         });
         // --- 拖拽 ---
-        clickgo.dom.bindDrag(e, {
-            'el': e.currentTarget,
+        clickgo.modules.pointer.drag(e, e.currentTarget, {
             'start': () => {
                 if (!this.isSelected(v)) {
                     this.select(v);
@@ -430,15 +418,15 @@ export default class extends clickgo.control.AbstractControl {
                         'path': this.props.data[v].path
                     });
                 }
-                clickgo.dom.setDragData({
+                clickgo.modules.pointer.setDragData({
                     'rand': this.rand,
                     'type': 'fs',
-                    'list': list
+                    'list': list,
                 });
             }
         });
         // --- 双击 ---
-        clickgo.dom.bindDblClick(e, () => {
+        clickgo.modules.pointer.dblClick(e, () => {
             const event = {
                 'detail': {
                     'value': [value]
@@ -446,36 +434,6 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('open', event);
         });
-    }
-    // --- （仅鼠标）弹出菜单事件设定选中 ---
-    itemContext(e, dindex, value) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        const v = dindex * this.rowCount + value;
-        if (this.isSelected(v)) {
-            return;
-        }
-        this.select(v, e.shiftKey, e.ctrlKey);
-    }
-    // --- （仅鼠标）flow 整体的 contextmenu 事件 ---
-    context(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        // --- 空白处取消选择 ---
-        if (!this.propBoolean('must')) {
-            if ((e.target.dataset.cgItem === undefined) && !clickgo.dom.findParentByData(e.target, 'cg-item')) {
-                // --- 当前点击的是空白处 ---
-                this.select(-1);
-            }
-        }
-        if (this.valueData.length > 0) {
-            clickgo.form.showPop(this.refs.flow.$el, this.refs.itempop, e);
-        }
-        else {
-            clickgo.form.showPop(this.refs.flow.$el, this.refs.pop, e);
-        }
     }
     // --- 整个控件的键盘事件 ---
     keydown(e) {

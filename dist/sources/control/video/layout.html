@@ -1,7 +1,7 @@
-<div class="wrap" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" @touchstart="onTouch">
+<div class="wrap" @pointerdown="onDown" @pointerenter="onDown">
     <video ref="video" :loop="propBoolean('loop')" :muted="propBoolean('muted')" :controls="false" :src="srcData" @canplay="onCanplay" @canplaythrough="emit('canplaythrough')" @durationchange="onDurationchange" @emptied="emit('emptied')" @ended="emit('ended')" @error="emit('error')" @loadeddata="emit('loadeddata')" @loadedmetadata="emit('loadedmetadata')" @loadstart="emit('loadstart')" @pause="onPause" @play="onPlay" @playing="emit('playing')" @progress="emit('progress')" @ratechange="emit('ratechange')" @readystatechange="emit('readystatechange')" @seeked="emit('seeked')" @seeking="emit('seeking')" @stalled="emit('stalled')" @suspend="emit('suspend')" @waiting="emit('waiting')"></video>
     <div class="controls" v-if="propBoolean('controls')" :style="{'opacity': isShow ? '1' : '0'}">
-        <div ref="top" class="top" @mousemove="onBMove" @mouseleave="onBLeave" @click="onBClick" @touchstart="onBTouch">
+        <div ref="top" class="top" @pointerdown="onBDown" @pointerenter="onBEnter">
             <div class="bar" :style="{'width':(inBar?bcurrent:currentData)/duration*100+'%'}"></div>
         </div>
         <div class="bottom">

@@ -1,35 +1,32 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'layer': null,
-            'qs': null,
-            'update:modelValue': null,
-            'update:show': null
-        };
-        this.props = {
-            'modelValue': '',
-            'default': '',
-            'hash': false,
-            'show': undefined,
-            'logo': ''
-        };
-        // --- 菜单是否在显示 ---
-        this.showData = true;
-        /** --- logo 的实际图像 --- */
-        this.logoData = '';
-        /** --- watch: logo 变更次数 --- */
-        this.logoCount = 0;
-        /** --- 当前选中的 name（可能带 qs） --- */
-        this.selected = '';
-        /** --- 当前选中的 name 中解析后的 qs 值 --- */
-        this.qs = {};
-        /** --- 当前是否是层的模式 --- */
-        this.layer = false;
-        /** --- 当前的所有子集列表，['panel', 'order?a=b'] --- */
-        this.childs = [];
-    }
+    emits = {
+        'layer': null,
+        'qs': null,
+        'update:modelValue': null,
+        'update:show': null
+    };
+    props = {
+        'modelValue': '',
+        'default': '',
+        'hash': false,
+        'show': undefined,
+        'logo': ''
+    };
+    // --- 菜单是否在显示 ---
+    showData = true;
+    /** --- logo 的实际图像 --- */
+    logoData = '';
+    /** --- watch: logo 变更次数 --- */
+    logoCount = 0;
+    /** --- 当前选中的 name（可能带 qs） --- */
+    selected = '';
+    /** --- 当前选中的 name 中解析后的 qs 值 --- */
+    qs = {};
+    /** --- 当前是否是层的模式 --- */
+    layer = false;
+    /** --- 当前的所有子集列表，['panel', 'order?a=b'] --- */
+    childs = [];
     /** --- 当前窗体的 form hash --- */
     get formHash() {
         return this.rootForm.formHash;

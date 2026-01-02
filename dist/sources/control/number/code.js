@@ -1,110 +1,104 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'focus': null,
-            'blur': null,
-            'enter': null,
-            'beforechange': null,
-            'minmaxchange': null,
-            'changed': null,
-            'update:modelValue': null,
-        };
-        this.props = {
-            'disabled': false,
-            'readonly': false,
-            'plain': false,
-            'require': false,
-            'modelValue': '',
-            'placeholder': '',
-            'max': undefined,
-            'min': undefined
-        };
-        // --- 其他 ---
-        this.isFocus = false;
-        this.value = '';
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'copy': 'Copy',
-                'cut': 'Cut',
-                'paste': 'Paste'
-            },
-            'sc': {
-                'copy': '复制',
-                'cut': '剪下',
-                'paste': '粘上'
-            },
-            'tc': {
-                'copy': '複製',
-                'cut': '剪貼',
-                'paste': '貼上'
-            },
-            'ja': {
-                'copy': 'コピー',
-                'cut': '切り取り',
-                'paste': '貼り付け'
-            },
-            'ko': {
-                'copy': '복사',
-                'cut': '잘라내기',
-                'paste': '붙여넣기'
-            },
-            'th': {
-                'copy': 'คัดลอก',
-                'cut': 'ตัด',
-                'paste': 'วาง'
-            },
-            'es': {
-                'copy': 'Copiar',
-                'cut': 'Cortar',
-                'paste': 'Pegar'
-            },
-            'de': {
-                'copy': 'Kopieren',
-                'cut': 'Ausschneiden',
-                'paste': 'Einfügen'
-            },
-            'fr': {
-                'copy': 'Copier',
-                'cut': 'Couper',
-                'paste': 'Coller'
-            },
-            'pt': {
-                'copy': 'Copiar',
-                'cut': 'Recortar',
-                'paste': 'Colar'
-            },
-            'ru': {
-                'copy': 'Копировать',
-                'cut': 'Вырезать',
-                'paste': 'Вставить'
-            },
-            'vi': {
-                'copy': 'Sao chép',
-                'cut': 'Cắt',
-                'paste': 'Dán'
-            }
-        };
-        /** --- 为 true 的话会显示红色边框 --- */
-        this.dangerBorder = false;
-    }
+    emits = {
+        'focus': null,
+        'blur': null,
+        'enter': null,
+        'beforechange': null,
+        'minmaxchange': null,
+        'changed': null,
+        'update:modelValue': null,
+    };
+    props = {
+        'disabled': false,
+        'readonly': false,
+        'plain': false,
+        'require': false,
+        'modelValue': '',
+        'placeholder': '',
+        'max': undefined,
+        'min': undefined
+    };
+    // --- 其他 ---
+    isFocus = false;
+    value = '';
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'copy': 'Copy',
+            'cut': 'Cut',
+            'paste': 'Paste'
+        },
+        'sc': {
+            'copy': '复制',
+            'cut': '剪下',
+            'paste': '粘上'
+        },
+        'tc': {
+            'copy': '複製',
+            'cut': '剪貼',
+            'paste': '貼上'
+        },
+        'ja': {
+            'copy': 'コピー',
+            'cut': '切り取り',
+            'paste': '貼り付け'
+        },
+        'ko': {
+            'copy': '복사',
+            'cut': '잘라내기',
+            'paste': '붙여넣기'
+        },
+        'th': {
+            'copy': 'คัดลอก',
+            'cut': 'ตัด',
+            'paste': 'วาง'
+        },
+        'es': {
+            'copy': 'Copiar',
+            'cut': 'Cortar',
+            'paste': 'Pegar'
+        },
+        'de': {
+            'copy': 'Kopieren',
+            'cut': 'Ausschneiden',
+            'paste': 'Einfügen'
+        },
+        'fr': {
+            'copy': 'Copier',
+            'cut': 'Couper',
+            'paste': 'Coller'
+        },
+        'pt': {
+            'copy': 'Copiar',
+            'cut': 'Recortar',
+            'paste': 'Colar'
+        },
+        'ru': {
+            'copy': 'Копировать',
+            'cut': 'Вырезать',
+            'paste': 'Вставить'
+        },
+        'vi': {
+            'copy': 'Sao chép',
+            'cut': 'Cắt',
+            'paste': 'Dán'
+        }
+    };
     /** --- 供外部调用的使框获取焦点的事件 --- */
     focus() {
         this.refs.text.focus();
     }
     /** --- wrap 的 down --- */
-    down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    down() {
         // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
         }
         clickgo.form.hidePop();
     }
+    /** --- 为 true 的话会显示红色边框 --- */
+    dangerBorder = false;
     /** --- 文本框的 focus 事件 --- */
     tfocus() {
         this.isFocus = true;
@@ -212,24 +206,14 @@ export default class extends clickgo.control.AbstractControl {
         }
         return change;
     }
-    inputTouch(e) {
-        // --- 长按触发 contextmenu ---
-        if (navigator.clipboard) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-        }
-    }
-    /** --- input 的 contextmenu --- */
-    contextmenu(e) {
+    inputDown(e) {
+        // --- 触发 contextmenu ---
         if (!navigator.clipboard) {
-            e.stopPropagation();
             return;
         }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, e);
+        clickgo.modules.pointer.menu(e, () => {
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
     }
     select(e) {
         e.stopPropagation();

@@ -1,19 +1,16 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'direction': 'left',
-            'speed': 1
-        };
-        this.padding = '';
-        this.left = 0;
-        this.top = 0;
-        this.client = 0;
-        this.length = 0;
-        this.timer = 0;
-        this.ani = false;
-    }
+    props = {
+        'direction': 'left',
+        'speed': 1
+    };
+    padding = '';
+    left = 0;
+    top = 0;
+    client = 0;
+    length = 0;
+    timer = 0;
+    ani = false;
     get opMargin() {
         return this.padding.replace(/(\w+)/g, '-$1');
     }

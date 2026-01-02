@@ -1,3 +1,3 @@
-<div class="wrap" :style="{'gap': propInt('gutter') + 'px', 'grid-template-columns': 'repeat(' + columns.toString() + ', 1fr)'}">
+<div class="wrap" :class="{'dense': propBoolean('dense')}" :style="{'gap': propInt('gutter') + 'px', 'grid-template-columns': 'repeat(auto-fit, minmax(250px, 1fr))', 'grid-auto-flow': propBoolean('dense') ? 'row dense' : 'row', '--cg-grid-last': last}" >
     <slot></slot>
 </div>

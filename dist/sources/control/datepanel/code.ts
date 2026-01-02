@@ -32,7 +32,7 @@ export default class extends clickgo.control.AbstractControl {
         'yearmonth': string;
         /** --- 时分秒的字符串，跳转也自动选中 --- */
         'hourminute': string;
-        /** --- range 开启模式下，当前鼠标放置的位置年月字符串 --- */
+        /** --- range 开启模式下，当前鼠标放置的位置年月日字符串 --- */
         'cursor': string;
         /** --- 设置 value 时自动跳转到选中的月份，默认开启 --- */
         'jump': boolean | string;
@@ -987,22 +987,23 @@ export default class extends clickgo.control.AbstractControl {
     public rangeDate?: Date = undefined;
 
     /** --- 鼠标移动到 col 上的事件 --- */
-    public colenter(e: MouseEvent | TouchEvent, col: {
+    public colenter(e: PointerEvent, col: {
         'date': number;
         'month': number;
         'year': number;
     }): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (!this.propBoolean('range')) {
             return;
         }
         if (this.rangeDate) {
             return;
         }
-        this.cursorDate = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
-        this.emit('update:cursor', this.cursorDate);
+        clickgo.modules.pointer.hover(e, {
+            'enter': () => {
+                this.cursorDate = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
+                this.emit('update:cursor', this.cursorDate);
+            },
+        });
     }
 
     /** --- 当前日期是否可选 --- */

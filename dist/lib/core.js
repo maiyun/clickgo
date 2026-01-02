@@ -1,18 +1,3 @@
-/**
- * Copyright 2007-2025 MAIYUN.NET
-
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import * as clickgo from '../clickgo';
 import * as lFs from './fs';
 import * as lForm from './form';
@@ -46,12 +31,10 @@ const configOrigin = {
 export let config;
 /** --- App 抽象类 --- */
 export class AbstractApp {
-    constructor() {
-        /** --- 当前 js 文件在包内的完整路径 --- */
-        this.filename = '';
-        /** --- 系统会自动设置本项 --- */
-        this.taskId = '';
-    }
+    /** --- 当前 js 文件在包内的完整路径 --- */
+    filename = '';
+    /** --- 系统会自动设置本项 --- */
+    taskId = '';
     /**
      * --- 以某个窗体进行正式启动这个 app（入口 form），不启动则任务也启动失败 ---
      * @param form 窗体对象
@@ -675,7 +658,7 @@ const modules = {
     },
     'echarts': {
         func: async function () {
-            await lTool.loadScript(`${clickgo.getCdn()}/npm/echarts@5.4.2/dist/echarts.min.js`);
+            await lTool.loadScript(`${clickgo.getCdn()}/npm/echarts@6.0.0/dist/echarts.min.js`);
             if (!window.echarts) {
                 throw Error('Echarts load failed.');
             }

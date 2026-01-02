@@ -468,7 +468,7 @@
             }
         }
         &.checked {
-            z-index: 10; color: var(--cg);
+            z-index: 9; color: var(--cg);
             &::before {
                 border: solid 2px var(--cg);
             }

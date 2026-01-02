@@ -8,10 +8,7 @@ export default class extends clickgo.control.AbstractControl {
             'gutter': '',
         };
 
-    public async down(e: MouseEvent): Promise<void> {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public async down(e: PointerEvent): Promise<void> {
         const el = e.target as HTMLElement;
         if (el.dataset.cgEfno !== undefined) {
             return;
@@ -20,7 +17,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         e.stopPropagation();
-        clickgo.dom.bindMove(e, {
+        clickgo.modules.pointer.move(e, {
             'object': e.currentTarget as HTMLElement,
             move: (e, o): void => {
                 this.refs.left.scrollTop -= o.oy;

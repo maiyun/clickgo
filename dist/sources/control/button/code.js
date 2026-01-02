@@ -1,28 +1,15 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'disabled': false,
-            'plain': false,
-            'checked': false,
-            'type': 'default',
-            'area': 'all',
-            'size': 'm',
-            'sizeh': false,
-            'gutter': 0
-        };
-        /** --- 当前是否有键盘空格正在按下中 --- */
-        this.isSpaceDown = false;
-        /** --- 按钮左侧获得焦点中 --- */
-        this.innerFocus = false;
-        /** --- 按钮右侧获得焦点中 --- */
-        this.arrowFocus = false;
-        /** --- 当前是第几列，从 0 开始 --- */
-        this.index = 0;
-        /** --- 是否在按钮贴贴内部 --- */
-        this.inBgroup = false;
-    }
+    props = {
+        'disabled': false,
+        'plain': false,
+        'checked': false,
+        'type': 'default',
+        'area': 'all',
+        'size': 'm',
+        'sizeh': false,
+        'gutter': 0
+    };
     /** --- 是否禁用状态 --- */
     get isDisabled() {
         if (!this.inBgroup) {
@@ -63,6 +50,12 @@ export default class extends clickgo.control.AbstractControl {
         }
         return this.parent.props.size;
     }
+    /** --- 当前是否有键盘空格正在按下中 --- */
+    isSpaceDown = false;
+    /** --- 按钮左侧获得焦点中 --- */
+    innerFocus = false;
+    /** --- 按钮右侧获得焦点中 --- */
+    arrowFocus = false;
     /** --- 主标签(子标签为左右边栏)是否可获得焦点和操作（all / mark 模式可操作） --- */
     get canDoMain() {
         return (this.props.area === 'all' || this.props.area === 'mark') ? true : false;
@@ -149,13 +142,13 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
     }
-    // --- 鼠标按下事件 ---
+    // --- 按下事件 ---
     down(e) {
         if (this.props.area !== 'mark') {
             return;
         }
         // --- mark 才响应 ---
-        clickgo.dom.bindLong(e, () => {
+        clickgo.modules.pointer.long(e, () => {
             clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h', {
                 'autoScroll': true,
                 'way': 'click'
@@ -208,6 +201,10 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
     }
+    /** --- 当前是第几列，从 0 开始 --- */
+    index = 0;
+    /** --- 是否在按钮贴贴内部 --- */
+    inBgroup = false;
     /** --- 当前按钮在贴贴的位置 --- */
     get bgroupPos() {
         if (!this.inBgroup) {

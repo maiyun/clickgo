@@ -46,10 +46,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 单击事件 ---
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(): void {
         if (this.element.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(this.element);
             return;

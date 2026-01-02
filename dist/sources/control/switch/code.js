@@ -1,20 +1,15 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'change': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'size': 'm',
-            'map': {},
-            'modelValue': false
-        };
-        this.value = false;
-        this.isSpaceDown = false;
-    }
+    emits = {
+        'change': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'size': 'm',
+        'map': {},
+        'modelValue': false
+    };
     /** --- 初始化后的 map 对象 --- */
     get mapComp() {
         return {
@@ -22,6 +17,8 @@ export default class extends clickgo.control.AbstractControl {
             'false': this.props.map.false ?? false
         };
     }
+    value = false;
+    isSpaceDown = false;
     click() {
         const event = {
             'go': true,

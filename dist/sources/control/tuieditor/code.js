@@ -1,88 +1,85 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'imgselect': null,
-            'imgupload': null,
-            'init': null,
-            'html': null,
-            'update:modelValue': null
-        };
-        this.props = {
-            'disabled': false,
-            'modelValue': '',
-            'visual': false,
-            'theme': 'light'
-        };
-        this.notInit = false;
-        this.isLoading = true;
-        this.localeData = {
-            'en': {
-                'copy': 'Copy',
-                'cut': 'Cut',
-                'paste': 'Paste'
-            },
-            'sc': {
-                'copy': '复制',
-                'cut': '剪下',
-                'paste': '粘上'
-            },
-            'tc': {
-                'copy': '複製',
-                'cut': '剪貼',
-                'paste': '貼上'
-            },
-            'ja': {
-                'copy': 'コピー',
-                'cut': '切り取り',
-                'paste': '貼り付け'
-            },
-            'ko': {
-                'copy': '복사',
-                'cut': '잘라내기',
-                'paste': '붙여넣기'
-            },
-            'th': {
-                'copy': 'คัดลอก',
-                'cut': 'ตัด',
-                'paste': 'วาง'
-            },
-            'es': {
-                'copy': 'Copiar',
-                'cut': 'Cortar',
-                'paste': 'Pegar'
-            },
-            'de': {
-                'copy': 'Kopieren',
-                'cut': 'Ausschneiden',
-                'paste': 'Einfügen'
-            },
-            'fr': {
-                'copy': 'Copier',
-                'cut': 'Couper',
-                'paste': 'Coller'
-            },
-            'pt': {
-                'copy': 'Copiar',
-                'cut': 'Recortar',
-                'paste': 'Colar'
-            },
-            'ru': {
-                'copy': 'Копировать',
-                'cut': 'Вырезать',
-                'paste': 'Вставить'
-            },
-            'vi': {
-                'copy': 'Sao chép',
-                'cut': 'Cắt',
-                'paste': 'Dán'
-            }
-        };
-        this.access = {
-            'tuieditor': undefined
-        };
-    }
+    emits = {
+        'imgselect': null,
+        'imgupload': null,
+        'init': null,
+        'html': null,
+        'update:modelValue': null
+    };
+    props = {
+        'disabled': false,
+        'modelValue': '',
+        'visual': false,
+        'theme': 'light'
+    };
+    notInit = false;
+    isLoading = true;
+    localeData = {
+        'en': {
+            'copy': 'Copy',
+            'cut': 'Cut',
+            'paste': 'Paste'
+        },
+        'sc': {
+            'copy': '复制',
+            'cut': '剪下',
+            'paste': '粘上'
+        },
+        'tc': {
+            'copy': '複製',
+            'cut': '剪貼',
+            'paste': '貼上'
+        },
+        'ja': {
+            'copy': 'コピー',
+            'cut': '切り取り',
+            'paste': '貼り付け'
+        },
+        'ko': {
+            'copy': '복사',
+            'cut': '잘라내기',
+            'paste': '붙여넣기'
+        },
+        'th': {
+            'copy': 'คัดลอก',
+            'cut': 'ตัด',
+            'paste': 'วาง'
+        },
+        'es': {
+            'copy': 'Copiar',
+            'cut': 'Cortar',
+            'paste': 'Pegar'
+        },
+        'de': {
+            'copy': 'Kopieren',
+            'cut': 'Ausschneiden',
+            'paste': 'Einfügen'
+        },
+        'fr': {
+            'copy': 'Copier',
+            'cut': 'Couper',
+            'paste': 'Coller'
+        },
+        'pt': {
+            'copy': 'Copiar',
+            'cut': 'Recortar',
+            'paste': 'Colar'
+        },
+        'ru': {
+            'copy': 'Копировать',
+            'cut': 'Вырезать',
+            'paste': 'Вставить'
+        },
+        'vi': {
+            'copy': 'Sao chép',
+            'cut': 'Cắt',
+            'paste': 'Dán'
+        }
+    };
+    access = {
+        'tuieditor': undefined
+    };
     async execCmd(ac) {
         switch (ac) {
             case 'copy': {
@@ -235,21 +232,6 @@ export default class extends clickgo.control.AbstractControl {
             'el': cgimage,
             'tooltip': this.access.tuieditor.i18n.get('Insert image')
         });
-        // --- 绑定 contextmenu ---
-        this.element.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
-            const target = e.target;
-            if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
-                return;
-            }
-            if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
-                return;
-            }
-            clickgo.form.showPop(this.element, this.refs.pop, e);
-        });
         // --- 绑定 paste ---
         this.element.addEventListener('paste', (e) => {
             if (!e.clipboardData) {
@@ -271,9 +253,6 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 绑定 down 事件 ---
         const down = (e) => {
-            if (clickgo.dom.hasTouchButMouse(e)) {
-                return;
-            }
             if (this.element.dataset.cgPopOpen !== undefined) {
                 clickgo.form.hidePop(this.element);
             }
@@ -281,15 +260,15 @@ export default class extends clickgo.control.AbstractControl {
             if (!target.classList.contains('ProseMirror') && !clickgo.dom.findParentByClass(target, 'ProseMirror')) {
                 return;
             }
-            if (e instanceof TouchEvent) {
-                // --- touch 长按弹出 ---
-                clickgo.dom.bindLong(e, () => {
-                    clickgo.form.showPop(this.element, this.refs.pop, e);
-                });
+            if (target.tagName.toLowerCase() === 'table' || clickgo.dom.findParentByTag(target, 'table')) {
+                return;
             }
+            // --- 弹出菜单 ---
+            clickgo.modules.pointer.menu(e, () => {
+                clickgo.form.showPop(this.element, this.refs.pop, e);
+            });
         };
-        this.element.addEventListener('mousedown', down);
-        this.element.addEventListener('touchstart', down, {
+        this.element.addEventListener('pointerdown', down, {
             'passive': true
         });
         // --- 监听语言变动 ---

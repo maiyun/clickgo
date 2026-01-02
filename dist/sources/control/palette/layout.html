@@ -1,11 +1,11 @@
 <div class="wrap">
     <div class="top">
-        <div class="left" ref="left" @mousedown="leftDown" @touchstart="leftDown" :style="{'background': 'hsl(' + hsl.h + ', 100%, 50%)'}">
+        <div class="left" ref="left" @pointerdown="leftDown" :style="{'background': 'hsl(' + hsl.h + ', 100%, 50%)'}">
             <div class="white"></div>
             <div class="black"></div>
             <div class="control" :style="{'top': 'calc(' + leftTop + '% - 2px)', 'left': 'calc(' + leftLeft + '% - 2px)'}"></div>
         </div>
-        <div class="right" ref="right" @mousedown="rightDown" @touchstart="rightDown">
+        <div class="right" ref="right" @pointerdown="rightDown">
             <div class="control" :style="{'top': 'calc(' + rightTop + '% - 2px)'}"></div>
         </div>
     </div>

@@ -1,11 +1,11 @@
 import * as clickgo from '../clickgo';
 import * as lTool from './tool';
 export class Zip {
+    /** --- zip 对象 --- */
+    _zip;
+    /** --- 当前路径，以 / 开头以 / 结尾 --- */
+    _path = '/';
     constructor(zip) {
-        /** --- 当前路径，以 / 开头以 / 结尾 --- */
-        this._path = '/';
-        /** --- 目录列表缓存 --- */
-        this._list = {};
         this._zip = zip;
         this._refreshList();
     }
@@ -247,6 +247,8 @@ export class Zip {
             return list;
         }
     }
+    /** --- 目录列表缓存 --- */
+    _list = {};
     /**
      * --- 重建目录列表缓存 ---
      */

@@ -249,7 +249,7 @@ global {
         &::after {
             background: var(--cg); transition: all .3s var(--g-cubic);
         }
-        &:not(.tab_selected):not([data-cg-hover]):hover {
+        &:not(.tab_selected):not([data-hover]):hover {
             background: transparent; color: var(--cg);
         }
         &.tab_selected {

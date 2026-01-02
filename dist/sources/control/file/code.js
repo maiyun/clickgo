@@ -1,16 +1,13 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'change': null
-        };
-        this.props = {
-            'accept': [],
-            'multi': false,
-            'dir': false
-        };
-    }
+    emits = {
+        'change': null
+    };
+    props = {
+        'accept': [],
+        'multi': false,
+        'dir': false
+    };
     get acceptComp() {
         const accept = [];
         for (const item of this.propArray('accept')) {

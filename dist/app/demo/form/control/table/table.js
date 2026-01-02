@@ -1,40 +1,32 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.loadFirst = false;
-        this.val = [];
-        this.data = [];
-        // --- 操作 ---
-        this.adaptation = false;
-        this.disabled = false;
-        this.must = true;
-        this.multi = false;
-        this.ctrl = true;
-        this.bottom = false;
-        this.top = false;
-        this.selection = false;
-        this.gesture = false;
-        this.selectionArea = {};
-        this.scroll = 'auto';
-        this.sort = undefined;
-        this.index = false;
-        this.split = false;
-        this.virtual = false;
-        this.slot = false;
-        this.fixed = ['undefined'];
-        this.mode = ['default'];
-        /** --- 已选中的个数 --- */
-        this.checkinfo = {
-            'total': 0,
-            'selected': 0
-        };
-        /** --- 当前 sort 情况 --- */
-        this.sortinfo = {
-            'index': -1,
-            'sort': 'desc'
-        };
-    }
+    loadFirst = false;
+    val = [];
+    data = [];
+    // --- 操作 ---
+    adaptation = false;
+    disabled = false;
+    must = true;
+    multi = false;
+    ctrl = true;
+    bottom = false;
+    top = false;
+    selection = false;
+    gesture = false;
+    selectionArea = {};
+    scroll = 'auto';
+    sort = undefined;
+    index = false;
+    split = false;
+    virtual = false;
+    slot = false;
+    fixed = ['undefined'];
+    mode = ['default'];
+    /** --- 已选中的个数 --- */
+    checkinfo = {
+        'total': 0,
+        'selected': 0
+    };
     refreshCheckinfo() {
         this.checkinfo.total = 0;
         this.checkinfo.selected = 0;
@@ -85,6 +77,11 @@ export default class extends clickgo.form.AbstractForm {
     onSelect(area) {
         this.selectionArea = area;
     }
+    /** --- 当前 sort 情况 --- */
+    sortinfo = {
+        'index': -1,
+        'sort': 'desc'
+    };
     onSort(e) {
         this.sortinfo.index = e.detail.index;
         this.sortinfo.sort = e.detail.sort;

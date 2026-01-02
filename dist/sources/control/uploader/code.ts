@@ -46,9 +46,8 @@ export default class extends clickgo.control.AbstractControl {
 
     public rand = '';
 
-    public down(e: MouseEvent | TouchEvent, index: number): void {
-        clickgo.dom.bindDrag(e, {
-            'el': (e.currentTarget as HTMLElement).parentNode?.parentNode as HTMLElement,
+    public down(e: PointerEvent, index: number): void {
+        clickgo.modules.pointer.drag(e, (e.currentTarget as HTMLElement).parentNode?.parentNode as HTMLElement, {
             'data': {
                 'index': index,
                 'tab': this.rand

@@ -31,7 +31,7 @@
             </svg>
         </cg-button>
     </div>
-    <div ref="content" class="content" @mousedown="down" @touchstart="down" @contextmenu="contextmenu">
+    <div ref="content" class="content" @pointerdown="down">
         <cg-flow direction="v">
             <template v-for="item of value">
                 <div v-if="item.title" class="bigTitle">
@@ -39,9 +39,9 @@
                     <div class="title">{{item.title}}</div>
                 </div>
                 <template v-if="!bigClosed.includes(item.title)" v-for="item2, i2 of item.list">
-                    <div class="line" :class="{'selected': !selectedSub && (selectedTitle === item2.title)}" @mousedown="select($event, item2.title, undefined, item2.desc)" @touchstart="select($event, item2.title, undefined, item2.desc)">
+                    <div class="line" :class="{'selected': !selectedSub && (selectedTitle === item2.title)}" @pointerdown="select(item2.title, undefined, item2.desc)">
                         <div class="control" :class="{'arrow': item2.sub, 'open': opened.includes(item2.title)}" @click="toggle(item2.title)"></div>
-                        <div class="title" @touchstart="reset" @mousedown="reset">{{item2.title}}</div>
+                        <div class="title" @pointerdown="reset">{{item2.title}}</div>
                         <div class="value">
                             <template v-if="!selectedSub && (selectedTitle === item2.title)">
                                 <cg-text v-if="item2.control === 'text'" class="tcontrol" :modelValue="item2.value" @update:modelValue="update($event)" :style="{'font-weight': item2.default !== item2.value ? 'bold' : undefined}"></cg-text>
@@ -57,9 +57,9 @@
                             </template>
                         </div>
                     </div>
-                    <div v-if="item2.sub && opened.includes(item2.title)" v-for="item3, i3 of item2.sub" class="line" :class="{'selected': (selectedTitle === item2.title) && (selectedSub === item3.title)}" @mousedown="select($event, item2.title, item3.title, item3.desc)" @touchstart="select($event, item2.title, item3.title, item3.desc)">
+                    <div v-if="item2.sub && opened.includes(item2.title)" v-for="item3, i3 of item2.sub" class="line" :class="{'selected': (selectedTitle === item2.title) && (selectedSub === item3.title)}" @pointerdown="select(item2.title, item3.title, item3.desc)">
                         <div class="control"></div>
-                        <div class="title" @touchstart="reset" @mousedown="reset">
+                        <div class="title" @pointerdown="reset">
                             <div class="sub">{{item3.title}}</div>
                         </div>
                         <div class="value">

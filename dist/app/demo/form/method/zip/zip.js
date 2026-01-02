@@ -1,15 +1,12 @@
 import * as clickgo from 'clickgo';
 import testFrm from '../fs/text';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.ppath = '/';
-        this.list = [];
-        this.val = [];
-        this.access = {
-            'zip': undefined
-        };
-    }
+    ppath = '/';
+    list = [];
+    val = [];
+    access = {
+        'zip': undefined
+    };
     select() {
         this.refs.file.select();
     }
@@ -43,7 +40,7 @@ export default class extends clickgo.form.AbstractForm {
         this.ppath = path;
     }
     dblclick(e) {
-        clickgo.dom.bindDblClick(e, async () => {
+        clickgo.modules.pointer.dblClick(e, async () => {
             if (!this.access.zip) {
                 return;
             }

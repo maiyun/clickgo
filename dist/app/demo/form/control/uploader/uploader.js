@@ -1,21 +1,18 @@
 import * as clickgo from 'clickgo';
 import imgFrm from '../arteditor/img';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.list = [
-            {
-                'title': 'main',
-                'src': 'res/img.jpg'
-            }
-        ];
-        this.disabled = false;
-        this.multi = false;
-        this.drag = false;
-        this.length = ['7'];
-        /** --- 上传进度 --- */
-        this.progress = undefined;
-    }
+    list = [
+        {
+            'title': 'main',
+            'src': 'res/img.jpg'
+        }
+    ];
+    disabled = false;
+    multi = false;
+    drag = false;
+    length = ['7'];
+    /** --- 上传进度 --- */
+    progress = undefined;
     async select() {
         const frm = await clickgo.form.create(this, imgFrm);
         const path = await frm.showDialog();

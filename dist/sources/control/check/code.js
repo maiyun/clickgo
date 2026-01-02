@@ -1,22 +1,19 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.value = false;
-        this.indeterminateData = false;
-        this.isSpaceDown = false;
-        this.emits = {
-            'change': null,
-            'changed': null,
-            'update:modelValue': null,
-            'update:indeterminate': null
-        };
-        this.props = {
-            'disabled': false,
-            'modelValue': false,
-            'indeterminate': false
-        };
-    }
+    value = false;
+    indeterminateData = false;
+    isSpaceDown = false;
+    emits = {
+        'change': null,
+        'changed': null,
+        'update:modelValue': null,
+        'update:indeterminate': null
+    };
+    props = {
+        'disabled': false,
+        'modelValue': false,
+        'indeterminate': false
+    };
     async click() {
         const event = {
             'go': true,

@@ -30,7 +30,7 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    /** --- 供外部调用的，返回 true 代表校验通过 --- */
+    /** --- 供外部调用，返回 true 代表校验通过 --- */
     public check(): boolean {
         let rtn = true;
         for (const item of this.controls) {

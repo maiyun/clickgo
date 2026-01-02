@@ -122,13 +122,17 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public async execCmd(ac: string): Promise<void> {
+        const iframe = this.refs.iframe as unknown as HTMLIFrameElement;
+        if (!iframe.contentDocument) {
+            return;
+        }
         switch (ac) {
             case 'copy': {
-                clickgo.tool.execCommand(ac);
+                iframe.contentDocument.execCommand(ac);
                 break;
             }
             case 'cut': {
-                clickgo.tool.execCommand('copy');
+                iframe.contentDocument.execCommand('copy');
                 const selection = this.access.instance.getSelection();
                 this.access.instance.executeEdits('', [
                     {
@@ -393,29 +397,16 @@ export default class extends clickgo.control.AbstractControl {
                 if (this.props.theme) {
                     this.access.monaco.editor.setTheme(this.props.theme);
                 }
-                // --- 绑定 contextmenu ---
-                if (navigator.clipboard) {
-                    monacoEl.addEventListener('contextmenu', (e: MouseEvent) => {
-                        e.preventDefault();
-                        if (clickgo.dom.hasTouchButMouse(e)) {
-                            return;
-                        }
-                        const rect = this.element.getBoundingClientRect();
-                        clickgo.form.showPop(this.element, this.refs.pop, {
-                            'x': rect.left + e.clientX,
-                            'y': rect.top + e.clientY
-                        });
-                    });
-                }
                 // --- 绑定 down 事件 ---
-                const down = (e: MouseEvent | TouchEvent): void => {
-                    if (clickgo.dom.hasTouchButMouse(e)) {
-                        return;
-                    }
-                    if (e instanceof TouchEvent) {
-                        // --- touch 长按弹出 ---
-                        clickgo.dom.bindLong(e, () => {
-                            clickgo.form.showPop(this.element, this.refs.pop, e);
+                const down = (e: PointerEvent): void => {
+                    if (navigator.clipboard) {
+                        // --- 绑定 contextmenu ---
+                        clickgo.modules.pointer.menu(e, () => {
+                            const rect = this.element.getBoundingClientRect();
+                            clickgo.form.showPop(this.element, this.refs.pop, {
+                                'x': rect.left + e.clientX,
+                                'y': rect.top + e.clientY
+                            });
                         });
                     }
                     // --- 让本窗体获取焦点 ---
@@ -423,10 +414,7 @@ export default class extends clickgo.control.AbstractControl {
                     // --- 无论是否 menu 是否被展开，都要隐藏，因为 iframe 外的 doFocusAndPopEvent 并不会执行 ---
                     clickgo.form.hidePop();
                 };
-                monacoEl.addEventListener('mousedown', down);
-                monacoEl.addEventListener('touchstart', down, {
-                    'passive': true
-                });
+                monacoEl.addEventListener('pointerdown', down);
                 // -- 设置文件列表 ---
                 if (Object.keys(this.props.files).length) {
                     // --- 读取 files 中的文件内容 ---

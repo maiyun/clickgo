@@ -1,36 +1,31 @@
 import * as clickgo from 'clickgo';
 import tThread from './thread';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.tid = '0';
-        this.frameTimer = 0;
-        this.frameCount = 0;
-        this.timer = 0;
-        this.timerCount = 0;
-        this.select = [];
-        this.sleeping = false;
-        this.langSelect = [
-            {
-                'label': 'l:File size',
-            },
-            {
-                'label': 'l:File name',
-            },
-            {
-                'label': 'File size',
-            },
-            {
-                'label': 'l:File size',
-                'value': 'k2',
-            }
-        ];
-        this.threadRunning = false;
-        this.threadList = [];
-    }
+    tid = '0';
+    frameTimer = 0;
+    frameCount = 0;
+    timer = 0;
+    timerCount = 0;
+    select = [];
+    sleeping = false;
     get globalLocale() {
         return clickgo.core.config.locale;
     }
+    langSelect = [
+        {
+            'label': 'l:File size',
+        },
+        {
+            'label': 'l:File name',
+        },
+        {
+            'label': 'File size',
+        },
+        {
+            'label': 'l:File size',
+            'value': 'k2',
+        }
+    ];
     frameStart(v) {
         let opt = {};
         switch (v) {
@@ -152,6 +147,8 @@ export default class extends clickgo.form.AbstractForm {
     systemTaskInfo() {
         clickgo.form.dialog(this, JSON.stringify(clickgo.task.systemTaskInfo)).catch((e) => { throw e; });
     }
+    threadRunning = false;
+    threadList = [];
     pushThreadConsole(name, text) {
         const date = new Date();
         this.threadList.unshift({

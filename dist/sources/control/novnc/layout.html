@@ -1,6 +1,6 @@
 <div class="wrap">
     <div v-if="notInit" class="notInit">Novnc module not found.</div>
-    <div v-else class="content" ref="content" @mousemove="mousemove" @touchmove="mousemove"></div>
+    <div v-else class="content" ref="content" @pointermove="pointermove"></div>
     <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
         <cg-loading></cg-loading>
     </div>

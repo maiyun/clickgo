@@ -1,60 +1,57 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'gesture': null,
-            'beforeselect': null,
-            'afterselect': null,
-            'select': null,
-            'clientwidth': null,
-            'clientheight': null,
-            'scrollwidth': null,
-            'scrollheight': null,
-            'update:scrollLeft': null,
-            'update:scrollTop': null
-        };
-        this.props = {
-            'direction': 'h',
-            'selection': false,
-            'gesture': [],
-            'scrollLeft': 0,
-            'scrollTop': 0,
-            'data': [],
-            'sizes': {}
-        };
-        /** --- 要显示的项目起、终下标 --- */
-        this.showPos = {
-            'start': 0,
-            'end': 9
-        };
-        /** --- 当前框选的部分起终下标 --- */
-        this.selectPos = {
-            'start': 0,
-            'end': 0
-        };
-        /** --- 每项的起终像素 --- */
-        this.pos = [];
-        /** --- 未定义像素的对象的胖度（计算 dom 得出） --- */
-        this.size = 0;
-        /** --- 总胖度 --- */
-        this.length = 0;
-        /** --- flow 的 scroll left --- */
-        this.scrollLeftData = 0;
-        /** --- flow 的 scroll top --- */
-        this.scrollTopData = 0;
-        /** --- flow 的 client width --- */
-        this.clientWidth = 0;
-        /** --- flow 的 client height --- */
-        this.clientHeight = 0;
-        /** --- watch 的最外层的 padding 的四个距离 --- */
-        this.padding = {
-            'top': 0,
-            'right': 0,
-            'bottom': 0,
-            'left': 0
-        };
-    }
+    emits = {
+        'gesture': null,
+        'beforeselect': null,
+        'afterselect': null,
+        'select': null,
+        'clientwidth': null,
+        'clientheight': null,
+        'scrollwidth': null,
+        'scrollheight': null,
+        'update:scrollLeft': null,
+        'update:scrollTop': null
+    };
+    props = {
+        'direction': 'h',
+        'selection': false,
+        'gesture': [],
+        'scrollLeft': 0,
+        'scrollTop': 0,
+        'data': [],
+        'sizes': {}
+    };
+    /** --- 要显示的项目起、终下标 --- */
+    showPos = {
+        'start': 0,
+        'end': 9
+    };
+    /** --- 当前框选的部分起终下标 --- */
+    selectPos = {
+        'start': 0,
+        'end': 0
+    };
+    /** --- 每项的起终像素 --- */
+    pos = [];
+    /** --- 未定义像素的对象的胖度（计算 dom 得出） --- */
+    size = 0;
+    /** --- 总胖度 --- */
+    length = 0;
+    /** --- flow 的 scroll left --- */
+    scrollLeftData = 0;
+    /** --- flow 的 scroll top --- */
+    scrollTopData = 0;
+    /** --- flow 的 client width --- */
+    clientWidth = 0;
+    /** --- flow 的 client height --- */
+    clientHeight = 0;
+    /** --- watch 的最外层的 padding 的四个距离 --- */
+    padding = {
+        'top': 0,
+        'right': 0,
+        'bottom': 0,
+        'left': 0
+    };
     /**
      * --- 格式化后的 data，主要针对 data 传输的是个 number 的情况 ---
      */

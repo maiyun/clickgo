@@ -29,38 +29,35 @@ export default class extends clickgo.control.AbstractControl {
 
     public aniTimer = 0;
 
-    public hoverstart(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (!this.aniTimer) {
-            this.emit('anistart');
-        }
-        // --- 动画中重置动画时间/新设动画 ---
-        if (this.aniTimer) {
-            clearTimeout(this.aniTimer);
-        }
-        this.aniTimer = window.setTimeout(() => {
-            this.aniTimer = 0;
-            this.emit('aniend');
-        }, 350);
-    }
-
-    public hoverend(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        if (!this.aniTimer) {
-            this.emit('anistart');
-        }
-        // --- 动画中重置动画时间/新设动画 ---
-        if (this.aniTimer) {
-            clearTimeout(this.aniTimer);
-        }
-        this.aniTimer = window.setTimeout(() => {
-            this.aniTimer = 0;
-            this.emit('aniend');
-        }, 350);
+    public down(e: PointerEvent): void {
+        clickgo.modules.pointer.hover(e, {
+            enter: () => {
+                if (!this.aniTimer) {
+                    this.emit('anistart');
+                }
+                // --- 动画中重置动画时间/新设动画 ---
+                if (this.aniTimer) {
+                    clearTimeout(this.aniTimer);
+                }
+                this.aniTimer = window.setTimeout(() => {
+                    this.aniTimer = 0;
+                    this.emit('aniend');
+                }, 350);
+            },
+            leave: () => {
+                if (!this.aniTimer) {
+                    this.emit('anistart');
+                }
+                // --- 动画中重置动画时间/新设动画 ---
+                if (this.aniTimer) {
+                    clearTimeout(this.aniTimer);
+                }
+                this.aniTimer = window.setTimeout(() => {
+                    this.aniTimer = 0;
+                    this.emit('aniend');
+                }, 350);
+            },
+        });
     }
 
     public onMounted(): void | Promise<void> {

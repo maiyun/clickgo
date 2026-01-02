@@ -1,129 +1,124 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'focus': null,
-            'blur': null,
-            'enter': null,
-            'gesture': null,
-            'input': null,
-            'clientwidth': null,
-            'clientheight': null,
-            'scrollwidth': null,
-            'scrollheight': null,
-            'beforechange': null,
-            'changed': null,
-            'minmaxchange': null,
-            'update:modelValue': null,
-            'update:scrollLeft': null,
-            'update:scrollTop': null,
-            'update:selectionStart': null,
-            'update:selectionEnd': null,
-        };
-        this.props = {
-            'disabled': false,
-            'readonly': false,
-            'wrap': true,
-            'maxlength': 0,
-            'scroll': true,
-            'gesture': [],
-            'type': 'text',
-            'plain': false,
-            'require': false,
-            'rule': '',
-            'padding': 'm',
-            'keyboard': false,
-            'modelValue': '',
-            'placeholder': '',
-            'selectionStart': 0,
-            'selectionEnd': 0,
-            'scrollLeft': 0,
-            'scrollTop': 0,
-            'max': undefined,
-            'min': undefined
-        };
-        /** --- 当前是否正在显示密码的状态 --- */
-        this.showPassword = false;
-        // --- 其他 ---
-        this.isFocus = false;
-        this.value = '';
-        /** --- size，主要是 scroll 用 --- */
-        this.size = {
-            'sw': 0,
-            'sh': 0,
-            'cw': 0,
-            'ch': 0,
-            'st': 0,
-            'sl': 0
-        };
-        /** --- 语言包 --- */
-        this.localeData = {
-            'en': {
-                'copy': 'Copy',
-                'cut': 'Cut',
-                'paste': 'Paste'
-            },
-            'sc': {
-                'copy': '复制',
-                'cut': '剪下',
-                'paste': '粘上'
-            },
-            'tc': {
-                'copy': '複製',
-                'cut': '剪貼',
-                'paste': '貼上'
-            },
-            'ja': {
-                'copy': 'コピー',
-                'cut': '切り取り',
-                'paste': '貼り付け'
-            },
-            'ko': {
-                'copy': '복사',
-                'cut': '잘라내기',
-                'paste': '붙여넣기'
-            },
-            'th': {
-                'copy': 'คัดลอก',
-                'cut': 'ตัด',
-                'paste': 'วาง'
-            },
-            'es': {
-                'copy': 'Copiar',
-                'cut': 'Cortar',
-                'paste': 'Pegar'
-            },
-            'de': {
-                'copy': 'Kopieren',
-                'cut': 'Ausschneiden',
-                'paste': 'Einfügen'
-            },
-            'fr': {
-                'copy': 'Copier',
-                'cut': 'Couper',
-                'paste': 'Coller'
-            },
-            'pt': {
-                'copy': 'Copiar',
-                'cut': 'Recortar',
-                'paste': 'Colar'
-            },
-            'ru': {
-                'copy': 'Копировать',
-                'cut': 'Вырезать',
-                'paste': 'Вставить'
-            },
-            'vi': {
-                'copy': 'Sao chép',
-                'cut': 'Cắt',
-                'paste': 'Dán'
-            }
-        };
-        /** --- 为 true 的话会显示红色边框 --- */
-        this.dangerBorder = false;
-    }
-    /** --- 供外部调用的使框获取焦点的事件 --- */
+    emits = {
+        'focus': null,
+        'blur': null,
+        'enter': null,
+        'gesture': null,
+        'input': null,
+        'clientwidth': null,
+        'clientheight': null,
+        'scrollwidth': null,
+        'scrollheight': null,
+        'beforechange': null,
+        'changed': null,
+        'minmaxchange': null,
+        'update:modelValue': null,
+        'update:scrollLeft': null,
+        'update:scrollTop': null,
+        'update:selectionStart': null,
+        'update:selectionEnd': null,
+    };
+    props = {
+        'disabled': false,
+        'readonly': false,
+        'wrap': true,
+        'maxlength': 0,
+        'scroll': true,
+        'gesture': [],
+        'type': 'text',
+        'plain': false,
+        'require': false,
+        'rule': '',
+        'padding': 'm',
+        'keyboard': false,
+        'modelValue': '',
+        'placeholder': '',
+        'selectionStart': 0,
+        'selectionEnd': 0,
+        'scrollLeft': 0,
+        'scrollTop': 0,
+        'max': undefined,
+        'min': undefined
+    };
+    /** --- 当前是否正在显示密码的状态 --- */
+    showPassword = false;
+    // --- 其他 ---
+    isFocus = false;
+    value = '';
+    /** --- size，主要是 scroll 用 --- */
+    size = {
+        'sw': 0,
+        'sh': 0,
+        'cw': 0,
+        'ch': 0,
+        'st': 0,
+        'sl': 0
+    };
+    /** --- 语言包 --- */
+    localeData = {
+        'en': {
+            'copy': 'Copy',
+            'cut': 'Cut',
+            'paste': 'Paste'
+        },
+        'sc': {
+            'copy': '复制',
+            'cut': '剪下',
+            'paste': '粘上'
+        },
+        'tc': {
+            'copy': '複製',
+            'cut': '剪貼',
+            'paste': '貼上'
+        },
+        'ja': {
+            'copy': 'コピー',
+            'cut': '切り取り',
+            'paste': '貼り付け'
+        },
+        'ko': {
+            'copy': '복사',
+            'cut': '잘라내기',
+            'paste': '붙여넣기'
+        },
+        'th': {
+            'copy': 'คัดลอก',
+            'cut': 'ตัด',
+            'paste': 'วาง'
+        },
+        'es': {
+            'copy': 'Copiar',
+            'cut': 'Cortar',
+            'paste': 'Pegar'
+        },
+        'de': {
+            'copy': 'Kopieren',
+            'cut': 'Ausschneiden',
+            'paste': 'Einfügen'
+        },
+        'fr': {
+            'copy': 'Copier',
+            'cut': 'Couper',
+            'paste': 'Coller'
+        },
+        'pt': {
+            'copy': 'Copiar',
+            'cut': 'Recortar',
+            'paste': 'Colar'
+        },
+        'ru': {
+            'copy': 'Копировать',
+            'cut': 'Вырезать',
+            'paste': 'Вставить'
+        },
+        'vi': {
+            'copy': 'Sao chép',
+            'cut': 'Cắt',
+            'paste': 'Dán'
+        }
+    };
+    /** --- 可供外部调用，使框获取焦点的事件 --- */
     focus() {
         this.refs.text.focus();
     }
@@ -138,20 +133,19 @@ export default class extends clickgo.control.AbstractControl {
         return this.refs.text.scrollHeight - this.refs.text.clientHeight;
     }
     /** --- wrap 的 down --- */
-    down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    down() {
         // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
         }
         clickgo.form.hidePop();
     }
+    /** --- 为 true 的话会显示红色边框 --- */
+    dangerBorder = false;
     /** --- 文本框的 focus 事件 --- */
-    tfocus() {
+    tfocus(e) {
         this.isFocus = true;
-        this.emit('focus');
+        this.emit('focus', e);
         if (this.dangerBorder) {
             this.dangerBorder = false;
         }
@@ -205,7 +199,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         this.isFocus = false;
-        this.emit('blur');
+        this.emit('blur', e);
         // --- 判断是否显示红色边框 ---
         this.check();
     }
@@ -283,129 +277,74 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('update:scrollTop', st);
         }
     }
+    _gesture(e) {
+        clickgo.modules.pointer.gesture(e, (e, dir) => {
+            switch (dir) {
+                case 'top': {
+                    if (this.refs.text.scrollTop > 0) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('top')) {
+                            return 1;
+                        }
+                    }
+                    break;
+                }
+                case 'bottom': {
+                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('bottom')) {
+                            return 1;
+                        }
+                    }
+                    break;
+                }
+                case 'left': {
+                    if (this.refs.text.scrollLeft > 0) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('left')) {
+                            return 1;
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('right')) {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            return 0;
+        }, (dir) => {
+            this.emit('gesture', dir);
+        });
+    }
     /**
      * --- 电脑的 wheel 事件，横向滚动不能被屏蔽 ---
      */
     wheel(e) {
-        clickgo.dom.bindGesture(e, (e, dir) => {
-            switch (dir) {
-                case 'top': {
-                    if (this.refs.text.scrollTop > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('top')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'bottom': {
-                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('bottom')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'left': {
-                    if (this.refs.text.scrollLeft > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('left')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                default: {
-                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('right')) {
-                            return 1;
-                        }
-                    }
-                }
-            }
-            return 0;
-        }, (dir) => {
-            this.emit('gesture', dir);
-        });
+        this._gesture(e);
     }
-    inputTouch(e) {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
-            switch (dir) {
-                case 'top': {
-                    if (this.refs.text.scrollTop > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('top')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'bottom': {
-                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('bottom')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'left': {
-                    if (this.refs.text.scrollLeft > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('left')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                default: {
-                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('right')) {
-                            return 1;
-                        }
-                    }
-                }
-            }
-            return 0;
-        }, (dir) => {
-            this.emit('gesture', dir);
-        });
+    /** --- input 的 contextmenu 以及 gesture --- */
+    inputDown(e) {
+        this._gesture(e);
         // --- 长按触发 contextmenu ---
-        if (navigator.clipboard) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-        }
-    }
-    /** --- input 的 contextmenu --- */
-    contextmenu(e) {
         if (!navigator.clipboard) {
-            e.stopPropagation();
             return;
         }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, e);
+        clickgo.modules.pointer.menu(e, (e) => {
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
     }
     select(e) {
         e.stopPropagation();

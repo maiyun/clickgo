@@ -1,21 +1,18 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'src': [],
-            'modelValue': 0
-        };
-        this.width = 0;
-        this.height = 0;
-        /** --- 当前显示的图像数据 --- */
-        this.imgData = '';
-        /** --- watch: src 变更次数 --- */
-        this.count = 0;
-        this.scaleS = 1;
-        this.scaleX = 0;
-        this.scaleY = 0;
-    }
+    props = {
+        'src': [],
+        'modelValue': 0
+    };
+    width = 0;
+    height = 0;
+    /** --- 当前显示的图像数据 --- */
+    imgData = '';
+    /** --- watch: src 变更次数 --- */
+    count = 0;
+    scaleS = 1;
+    scaleX = 0;
+    scaleY = 0;
     /** --- 刷新 img data --- */
     async refreshImgData() {
         const count = ++this.count;
@@ -65,7 +62,7 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- 绑定缩放事件 --- */
     scale(oe) {
-        clickgo.dom.bindScale(oe, (e, scale, cpos) => {
+        clickgo.modules.pointer.scale(oe, (e, scale, cpos) => {
             e.preventDefault();
             this.scaleX += cpos.x;
             this.scaleY += cpos.y;

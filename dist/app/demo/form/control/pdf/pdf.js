@@ -1,13 +1,10 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.access = {
-            'pdf': undefined
-        };
-        this.src = '';
-        this.page = '1';
-    }
+    access = {
+        'pdf': undefined
+    };
+    src = '';
+    page = '1';
     onLoaded(pdf) {
         this.access.pdf = pdf;
     }

@@ -41,10 +41,7 @@ export default class extends clickgo.control.AbstractControl {
         this.element.click();
     }
 
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(): void {
         if (this.element.dataset.cgPopOpen !== undefined) {
             return;
         }

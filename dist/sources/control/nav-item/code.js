@@ -1,23 +1,20 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'select': null,
-            'update:show': null
-        };
-        this.props = {
-            'label': '',
-            'name': '',
-            'icon': '',
-            'show': false
-        };
-        this.showData = false;
-        /** --- 是否是嵌套中的 nav-item --- */
-        this.isChild = false;
-        /** --- nav 控件 --- */
-        this.nav = {};
-    }
+    emits = {
+        'select': null,
+        'update:show': null
+    };
+    props = {
+        'label': '',
+        'name': '',
+        'icon': '',
+        'show': false
+    };
+    showData = false;
+    /** --- 是否是嵌套中的 nav-item --- */
+    isChild = false;
+    /** --- nav 控件 --- */
+    nav = {};
     /** --- 是否有子项 --- */
     get hasChild() {
         return this.slotsAll('default').length ? true : false;

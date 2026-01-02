@@ -1,14 +1,11 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.alayout = null;
-        this.props = {
-            'span': 1,
-            'alignH': undefined,
-            'alignV': undefined
-        };
-    }
+    alayout = null;
+    props = {
+        'span': 1,
+        'alignH': undefined,
+        'alignV': undefined
+    };
     get colWidth() {
         const pcw = this.alayout?.colWidth ?? 100;
         let cw = pcw * this.propInt('span');

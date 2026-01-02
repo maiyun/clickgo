@@ -1,20 +1,11 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.fid = '0';
-        this.tid = '0';
-        this.type = ['primary'];
-        this.atype = ['default'];
-        this.progress = ['noraml'];
-        this.dr = '';
-        this.hash = 'hash' + clickgo.tool.rand(0, 100).toString();
-        // --- 测试 data ---
-        this.cdata = {
-            'abc': '123',
-        };
-        this.cdatai = false;
-    }
+    fid = '0';
+    tid = '0';
+    type = ['primary'];
+    atype = ['default'];
+    progress = ['noraml'];
+    dr = '';
     min() {
         clickgo.form.min(this.formId);
     }
@@ -48,6 +39,7 @@ export default class extends clickgo.form.AbstractForm {
     onFormHashChange(taskId, formId, value, data) {
         console.log('onFormHashChange', taskId, formId, value, data);
     }
+    hash = 'hash' + clickgo.tool.rand(0, 100).toString();
     async getActivePanel() {
         await clickgo.form.dialog(this, JSON.stringify(clickgo.form.getActivePanel(this.fid)));
     }
@@ -80,20 +72,6 @@ export default class extends clickgo.form.AbstractForm {
         clickgo.form.showRectangle(e.clientX, e.clientY, 'rb');
         await clickgo.tool.sleep(1000);
         clickgo.form.hideRectangle();
-    }
-    async showDrag() {
-        clickgo.form.showDrag({
-            'element': this.refs.showDrag.$el,
-        });
-        const rect = this.refs.showDrag.$el.getBoundingClientRect();
-        clickgo.form.moveDrag({
-            'left': rect.left,
-            'top': rect.top,
-            'width': rect.width,
-            'height': rect.height
-        });
-        await clickgo.tool.sleep(1000);
-        clickgo.form.hideDrag();
     }
     async notify() {
         let icon = null;
@@ -216,6 +194,11 @@ export default class extends clickgo.form.AbstractForm {
         this.fid = this.formId.toString();
         this.tid = this.taskId.toString();
     }
+    // --- 测试 data ---
+    cdata = {
+        'abc': '123',
+    };
+    cdatai = false;
     get cdatad() {
         return (t) => {
             return this.cdatai ? t : 'none';

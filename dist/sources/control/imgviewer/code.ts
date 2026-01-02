@@ -75,8 +75,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 绑定缩放事件 --- */
-    public scale(oe: MouseEvent | TouchEvent | WheelEvent): void {
-        clickgo.dom.bindScale(oe, (e, scale, cpos) => {
+    public scale(oe: PointerEvent | WheelEvent): void {
+        clickgo.modules.pointer.scale(oe, (e, scale, cpos) => {
             e.preventDefault();
             this.scaleX += cpos.x;
             this.scaleY += cpos.y;

@@ -1,17 +1,14 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.props = {
-            'text': 'https://www.maiyun.net',
-            'options': {}
-        };
-        this.access = {
-            'qrcode': undefined,
-        };
-        this.notInit = false;
-        this.isLoading = true;
-    }
+    props = {
+        'text': 'https://www.maiyun.net',
+        'options': {}
+    };
+    access = {
+        'qrcode': undefined,
+    };
+    notInit = false;
+    isLoading = true;
     async onMounted() {
         const qrcode = await clickgo.core.getModule('qrcode');
         if (!qrcode) {

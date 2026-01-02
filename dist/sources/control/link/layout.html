@@ -2,7 +2,7 @@
     <a v-if="url" :class="[propBoolean('plain')&&'plain',slots['pop']&&'spop',propBoolean('line')&&'line',type]" :href="url" target="_blank" :style="{'justify-content': alignComp}">
         <slot></slot>
     </a>
-    <div v-else :class="[propBoolean('plain')&&'plain',slots['pop']&&'spop',propBoolean('line')&&'line',type]" :tabindex="formFocus ? '0' : undefined" @keydown="keydown" @mousedown="down" @touchstart="down" :style="{'justify-content': alignComp}">
+    <div v-else :class="[propBoolean('plain')&&'plain',slots['pop']&&'spop',propBoolean('line')&&'line',type]" :tabindex="formFocus ? '0' : undefined" @keydown="keydown" @pointerdown="down" :style="{'justify-content': alignComp}">
         <teleport v-if="slots['pop']" to="system">
             <div ref="pop" class="pop">
                 <slot name="pop"></slot>

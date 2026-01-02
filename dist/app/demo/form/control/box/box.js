@@ -1,28 +1,25 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.val1 = {
-            'id1': {
-                'type': 'rect',
-                'width': 150,
-                'height': 120,
-                'x': 40,
-                'y': 20
-            }
-        };
-        this.id = 0;
-        this.selected = [];
-        this.val2 = {
-            'btn': {
-                'type': 'rect',
-                'width': 150,
-                'height': 120,
-                'x': 40,
-                'y': 20
-            }
-        };
-    }
+    val1 = {
+        'id1': {
+            'type': 'rect',
+            'width': 150,
+            'height': 120,
+            'x': 40,
+            'y': 20
+        }
+    };
+    id = 0;
+    selected = [];
+    val2 = {
+        'btn': {
+            'type': 'rect',
+            'width': 150,
+            'height': 120,
+            'x': 40,
+            'y': 20
+        }
+    };
     add() {
         this.val2['tmp' + (++this.id).toString()] = {
             'type': 'rect',

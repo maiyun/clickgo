@@ -1,4 +1,4 @@
-<div class="wrap" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" @touchstart="onTouch">
+<div class="wrap" @pointerdown="onDown" @pointerenter="onDown">
     <div v-if="notInit" class="notInit">Mpegts module not found.</div>
     <video v-else ref="video" class="video" :controls="false" @canplay="onCanplay" @playing="onPlaying" @pause="onPause" @waiting="onWaiting"></video>
     <canvas ref="canvas"></canvas>

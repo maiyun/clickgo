@@ -1,3 +1,9 @@
 .wrap {
     display: grid;
+
+    &.dense {
+        > :last-child {
+            grid-column: span var(--cg-grid-last);
+        }
+    }
 }

@@ -1024,10 +1024,7 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.tags.scrollLeft += e.deltaY;
     }
 
-    public async tagdown(e: MouseEvent | TouchEvent): Promise<void> {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public async tagdown(e: PointerEvent): Promise<void> {
         e.stopPropagation();
         await clickgo.form.doFocusAndPopEvent(e);
     }

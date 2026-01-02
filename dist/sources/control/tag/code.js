@@ -1,25 +1,21 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'close': null,
-            'drop': null,
-        };
-        this.props = {
-            'type': 'default',
-            'plain': false,
-            'size': 's',
-            'rsize': 'l',
-            'close': false,
-            'drag': false,
-            'inline': false,
-        };
-    }
+    emits = {
+        'close': null,
+        'drop': null,
+    };
+    props = {
+        'type': 'default',
+        'plain': false,
+        'size': 's',
+        'rsize': 'l',
+        'close': false,
+        'drag': false,
+        'inline': false,
+    };
     /** --- 拖动提出 --- */
-    down(e) {
-        clickgo.dom.bindDrag(e, {
-            'el': this.element,
+    down(oe) {
+        clickgo.modules.pointer.drag(oe, this.element, {
             'data': {
                 'index': clickgo.dom.index(this.element),
                 'tag': 'cg-tag',

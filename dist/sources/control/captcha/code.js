@@ -1,91 +1,88 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'result': null,
-        };
-        this.props = {
-            'factory': 'tc',
-            'akey': '',
-        };
-        this.access = {
-            'lib': undefined,
-            'instance': undefined,
-        };
-        /** --- 是否没有初始化 --- */
-        this.notInit = false;
-        /** --- 当前是否加载中 --- */
-        this.isLoading = false;
-        /** --- 当前状态 --- */
-        this.state = '';
-        this.localeData = {
-            'en': {
-                'click': 'Click to verify',
-                'failed': 'Failed, retry',
-                'successful': 'Verified'
-            },
-            'sc': {
-                'click': '点击进行验证',
-                'failed': '失败，点击重试',
-                'successful': '验证成功'
-            },
-            'tc': {
-                'click': '點選進行驗證',
-                'failed': '失敗，點選重試',
-                'successful': '驗證成功'
-            },
-            'ja': {
-                'click': '認証する',
-                'failed': '失敗、再試行',
-                'successful': '成功'
-            },
-            'ko': {
-                'click': '인증하기',
-                'failed': '실패, 재시도',
-                'successful': '성공'
-            },
-            'th': {
-                'click': 'ยืนยัน',
-                'failed': 'ล้มเหลว, ลองอีก',
-                'successful': 'สำเร็จ'
-            },
-            'es': {
-                'click': 'Verificar',
-                'failed': 'Error, reintenta',
-                'successful': 'Verificado'
-            },
-            'de': {
-                'click': 'Prüfen',
-                'failed': 'Fehler, retry',
-                'successful': 'Erfolgreich'
-            },
-            'fr': {
-                'click': 'Vérifier',
-                'failed': 'Échec, réessayer',
-                'successful': 'Réussi'
-            },
-            'pt': {
-                'click': 'Verificar',
-                'failed': 'Falha, retry',
-                'successful': 'Sucesso'
-            },
-            'ru': {
-                'click': 'Проверить',
-                'failed': 'Ошибка, повтор',
-                'successful': 'Успешно'
-            },
-            'vi': {
-                'click': 'Xác minh',
-                'failed': 'Thất bại, thử lại',
-                'successful': 'Thành công'
-            }
-        };
-    }
+    emits = {
+        'result': null,
+    };
+    props = {
+        'factory': 'tc',
+        'akey': '',
+    };
     get showMask() {
         // --- 防止拖动导致卡顿 ---
         return this.isLoading ? true : clickgo.dom.is.move;
     }
+    access = {
+        'lib': undefined,
+        'instance': undefined,
+    };
+    /** --- 是否没有初始化 --- */
+    notInit = false;
+    /** --- 当前是否加载中 --- */
+    isLoading = false;
+    /** --- 当前状态 --- */
+    state = '';
+    localeData = {
+        'en': {
+            'click': 'Click to verify',
+            'failed': 'Failed, retry',
+            'successful': 'Verified'
+        },
+        'sc': {
+            'click': '点击进行验证',
+            'failed': '失败，点击重试',
+            'successful': '验证成功'
+        },
+        'tc': {
+            'click': '點選進行驗證',
+            'failed': '失敗，點選重試',
+            'successful': '驗證成功'
+        },
+        'ja': {
+            'click': '認証する',
+            'failed': '失敗、再試行',
+            'successful': '成功'
+        },
+        'ko': {
+            'click': '인증하기',
+            'failed': '실패, 재시도',
+            'successful': '성공'
+        },
+        'th': {
+            'click': 'ยืนยัน',
+            'failed': 'ล้มเหลว, ลองอีก',
+            'successful': 'สำเร็จ'
+        },
+        'es': {
+            'click': 'Verificar',
+            'failed': 'Error, reintenta',
+            'successful': 'Verificado'
+        },
+        'de': {
+            'click': 'Prüfen',
+            'failed': 'Fehler, retry',
+            'successful': 'Erfolgreich'
+        },
+        'fr': {
+            'click': 'Vérifier',
+            'failed': 'Échec, réessayer',
+            'successful': 'Réussi'
+        },
+        'pt': {
+            'click': 'Verificar',
+            'failed': 'Falha, retry',
+            'successful': 'Sucesso'
+        },
+        'ru': {
+            'click': 'Проверить',
+            'failed': 'Ошибка, повтор',
+            'successful': 'Успешно'
+        },
+        'vi': {
+            'click': 'Xác minh',
+            'failed': 'Thất bại, thử lại',
+            'successful': 'Thành công'
+        }
+    };
     /** --- 供外部调用的 --- */
     reset() {
         if (this.props.factory === 'tc') {

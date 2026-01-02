@@ -31,8 +31,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(this, stats ? JSON.stringify(stats) : 'null');
     }
 
-    public dblclick(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindDblClick(e, async () => {
+    public dblclick(e: PointerEvent): void {
+        clickgo.modules.pointer.dblClick(e, async () => {
             const r = await clickgo.fs.isFile(this, this.val[0]);
             if (r) {
                 const extlio: number = this.val[0].lastIndexOf('.');

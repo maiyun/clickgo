@@ -312,7 +312,7 @@ async function addFile(zipo, base = '', path = '') {
                 await addFile(zipo, base + '/' + item, path + (path ? '/' : '') + item);
                 continue;
             }
-            if (item.endsWith('.ts') || item.endsWith('.tsx') || item.endsWith('.scss')) {
+            if (item.endsWith('.ts') || item.endsWith('.tsx') || item.endsWith('.scss') || (item === 'info.md')) {
                 continue;
             }
             const buf = await fs.promises.readFile(base + '/' + item);

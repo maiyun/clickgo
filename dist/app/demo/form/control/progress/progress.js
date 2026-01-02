@@ -1,12 +1,9 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.v = 0;
-        this.v2 = 20;
-        this.v3 = 60;
-        this.v4 = ['default'];
-    }
+    v = 0;
+    v2 = 20;
+    v3 = 60;
+    v4 = ['default'];
     onMounted() {
         clickgo.tool.sleep(500).then(async () => {
             this.v2 = 40;

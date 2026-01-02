@@ -1,68 +1,61 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'max': null,
-            'min': null,
-            'close': null,
-            'update:width': null,
-            'update:height': null,
-            'update:left': null,
-            'update:top': null,
-            'update:stateMin': null,
-            'update:stateMax': null
-        };
-        this.props = {
-            'icon': '',
-            'title': 'title',
-            'min': true,
-            'max': true,
-            'close': true,
-            'resize': true,
-            'move': true,
-            'loading': false,
-            'minWidth': 200,
-            'minHeight': 100,
-            'border': 'normal',
-            'background': '',
-            'padding': '',
-            'direction': 'h',
-            'stateMin': false,
-            'stateMax': false,
-            'width': 300,
-            'height': 200,
-            'left': -1,
-            'top': -1,
-        };
-        /** --- 是否是 native 下无边框的第一个窗体 --- */
-        this.isNativeNoFrameFirst = false;
-        this.stateMinData = false;
-        this.stateMaxData = false;
-        this.widthData = 0;
-        this.heightData = 0;
-        this.leftData = 0;
-        this.topData = 0;
-        this.isShow = false;
-        this.iconDataUrl = '';
-        this.zIndex = 0;
-        /** --- 当前的吸附状态 --- */
-        this.stateAbs = '';
-        /** --- 最大化、吸附前的位置 --- */
-        this.historyLocation = {
-            'width': 0,
-            'height': 0,
-            'left': 0,
-            'top': 0
-        };
-        this.flashTimer = undefined;
-        /** --- 是否是内联窗体 --- */
-        this.isInside = false;
-        // --- step 相关 ---
-        this.stepData = [];
-        this.stepValue = '';
-        this.stepShowData = false;
-    }
+    emits = {
+        'max': null,
+        'min': null,
+        'close': null,
+        'update:width': null,
+        'update:height': null,
+        'update:left': null,
+        'update:top': null,
+        'update:stateMin': null,
+        'update:stateMax': null
+    };
+    props = {
+        'icon': '',
+        'title': 'title',
+        'min': true,
+        'max': true,
+        'close': true,
+        'resize': true,
+        'move': true,
+        'loading': false,
+        'minWidth': 200,
+        'minHeight': 100,
+        'border': 'normal',
+        'background': '',
+        'padding': '',
+        'direction': 'h',
+        'stateMin': false,
+        'stateMax': false,
+        'width': 300,
+        'height': 200,
+        'left': -1,
+        'top': -1,
+    };
+    /** --- 是否是 native 下无边框的第一个窗体 --- */
+    isNativeNoFrameFirst = false;
+    stateMinData = false;
+    stateMaxData = false;
+    widthData = 0;
+    heightData = 0;
+    leftData = 0;
+    topData = 0;
+    isShow = false;
+    iconDataUrl = '';
+    zIndex = 0;
+    /** --- 当前的吸附状态 --- */
+    stateAbs = '';
+    /** --- 最大化、吸附前的位置 --- */
+    historyLocation = {
+        'width': 0,
+        'height': 0,
+        'left': 0,
+        'top': 0
+    };
+    flashTimer = undefined;
+    /** --- 是否是内联窗体 --- */
+    isInside = false;
     get isMin() {
         return clickgo.tool.getBoolean(this.props.min);
     }
@@ -101,9 +94,6 @@ export default class extends clickgo.control.AbstractControl {
     }
     // --- 拖动 ---
     moveMethod(e, custom = false) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         if (!this.isMove && !custom) {
             // --- !this.isMove 代表不能拖动，并且不是用户的指令 custom，那么则禁止拖动 ---
             return;
@@ -112,7 +102,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- 绑定双击事件 ---
-        clickgo.dom.bindDblClick(e, () => {
+        clickgo.modules.pointer.dblClick(e, () => {
             if (this.stateAbs) {
                 this.maxVMethod();
             }
@@ -124,7 +114,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         /** --- 当前所处边框 --- */
         let isBorder = '';
-        clickgo.dom.bindMove(e, {
+        clickgo.modules.pointer.move(e, {
             'start': (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
@@ -612,9 +602,6 @@ export default class extends clickgo.control.AbstractControl {
         if (this.stateMaxData) {
             return;
         }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         /** --- 拖动过程中贴入的边边 --- */
         let isBorder = '';
         const top = this.topData;
@@ -673,7 +660,7 @@ export default class extends clickgo.control.AbstractControl {
                 'top': this.topData
             };
         }
-        clickgo.dom.bindResize(e, {
+        clickgo.modules.pointer.resize(e, {
             'objectLeft': left,
             'objectTop': top,
             'objectWidth': width,
@@ -759,7 +746,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 绑定双击事件 ---
         if (border === 't' || border === 'b') {
-            clickgo.dom.bindDblClick(e, () => {
+            clickgo.modules.pointer.dblClick(e, () => {
                 this.maxVMethod();
             });
         }
@@ -852,6 +839,10 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
     }
+    // --- step 相关 ---
+    stepData = [];
+    stepValue = '';
+    stepShowData = false;
     /** --- 隐藏 step --- */
     stepHide() {
         this.stepShowData = false;
@@ -867,7 +858,7 @@ export default class extends clickgo.control.AbstractControl {
         this.stepShowData = false;
     }
     stepDown(e) {
-        clickgo.dom.bindMove(e, {
+        clickgo.modules.pointer.move(e, {
             'areaObject': this.refs.content,
             'object': this.refs.step,
             move: (e, o) => {

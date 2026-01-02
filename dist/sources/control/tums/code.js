@@ -1,32 +1,29 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'init': null,
-            'playing': null,
-            'disconnected': null,
-        };
-        this.props = {
-            'init': {
-                'type': 'relay',
-                'url': '',
-                'stream': 'video',
-                'volume': 80,
-                'sid': '',
-                'skey': '',
-            },
+    emits = {
+        'init': null,
+        'playing': null,
+        'disconnected': null,
+    };
+    props = {
+        'init': {
+            'type': 'relay',
+            'url': '',
+            'stream': 'video',
             'volume': 80,
-        };
-        this.access = {
-            'tums': undefined,
-            'instance': undefined,
-        };
-        /** --- 是否没有初始化 --- */
-        this.notInit = false;
-        /** --- 当前是否加载中 --- */
-        this.isLoading = false;
-    }
+            'sid': '',
+            'skey': '',
+        },
+        'volume': 80,
+    };
+    access = {
+        'tums': undefined,
+        'instance': undefined,
+    };
+    /** --- 是否没有初始化 --- */
+    notInit = false;
+    /** --- 当前是否加载中 --- */
+    isLoading = false;
     async onMounted() {
         const tums = await clickgo.core.getModule('tums-player');
         if (!tums) {

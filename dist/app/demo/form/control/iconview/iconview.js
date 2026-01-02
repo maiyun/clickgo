@@ -1,74 +1,71 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
-    constructor() {
-        super(...arguments);
-        this.list = [
-            {
-                'id': '1',
-                'type': 0,
-                'name': 'Folder',
-                'time': 1676636097
-            },
-            {
-                'id': '2',
-                'type': 0,
-                'name': 'Folder2',
-                'time': 1676636097
-            },
-            {
-                'id': '3',
-                'type': 1,
-                'name': 'File1',
-                'time': 1676600096
-            },
-            {
-                'id': '4',
-                'type': 1,
-                'name': 'db.sql',
-                'time': 1676600097,
-                'icon': '/package/res/sql.svg'
-            },
-            {
-                'id': '5',
-                'type': 1,
-                'name': 'article.txt',
-                'time': 1676600098,
-                'icon': '/package/res/txt.svg'
-            },
-            {
-                'id': '6',
-                'type': 1,
-                'name': 'pack.zip',
-                'time': 1676600099,
-                'icon': '/package/res/zip.svg'
-            },
-            {
-                'id': '7',
-                'type': 1,
-                'name': 'packlonglonglonglonglonglonglonglonglong.zip',
-                'time': 1676700099,
-                'icon': '/package/res/zip.svg'
-            },
-            {
-                'id': 7,
-                'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/img.jpg'
-            }
-        ];
-        this.select = [];
-        // --- 操作 ---
-        this.custom = false;
-        this.disabled = false;
-        this.must = false;
-        this.multi = true;
-        this.ctrl = true;
-        this.selection = true;
-        this.gesture = false;
-        this.name = true;
-        this.selectionArea = {};
-        this.scroll = 'auto';
-        this.size = [100];
-        this.plain = false;
-    }
+    list = [
+        {
+            'id': '1',
+            'type': 0,
+            'name': 'Folder',
+            'time': 1676636097
+        },
+        {
+            'id': '2',
+            'type': 0,
+            'name': 'Folder2',
+            'time': 1676636097
+        },
+        {
+            'id': '3',
+            'type': 1,
+            'name': 'File1',
+            'time': 1676600096
+        },
+        {
+            'id': '4',
+            'type': 1,
+            'name': 'db.sql',
+            'time': 1676600097,
+            'icon': '/package/res/sql.svg'
+        },
+        {
+            'id': '5',
+            'type': 1,
+            'name': 'article.txt',
+            'time': 1676600098,
+            'icon': '/package/res/txt.svg'
+        },
+        {
+            'id': '6',
+            'type': 1,
+            'name': 'pack.zip',
+            'time': 1676600099,
+            'icon': '/package/res/zip.svg'
+        },
+        {
+            'id': '7',
+            'type': 1,
+            'name': 'packlonglonglonglonglonglonglonglonglong.zip',
+            'time': 1676700099,
+            'icon': '/package/res/zip.svg'
+        },
+        {
+            'id': 7,
+            'icon': 'https://cdn.jsdelivr.net/npm/clickgo@3.7.0/dist/app/demo/res/img.jpg'
+        }
+    ];
+    select = [];
+    // --- 操作 ---
+    custom = false;
+    disabled = false;
+    must = false;
+    multi = true;
+    ctrl = true;
+    selection = true;
+    gesture = false;
+    name = true;
+    selectionArea = {};
+    scroll = 'auto';
+    size = [100];
+    plain = false;
     showIndex() {
         clickgo.form.dialog(this, 'Index is ' + this.select.toString() + '.').catch((e) => { throw e; });
     }

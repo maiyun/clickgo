@@ -1,27 +1,21 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'data': null,
-            'resize': null,
-            'init': null
-        };
-        this.props = {
-            'disabled': false,
-            'theme': 'black'
-        };
-        this.notInit = false;
-        this.isLoading = true;
-        this.access = {
-            'term': undefined,
-        };
-    }
-    // --- 鼠标、手势按下事件 ---
+    emits = {
+        'data': null,
+        'resize': null,
+        'init': null
+    };
+    props = {
+        'disabled': false,
+        'theme': 'black'
+    };
+    notInit = false;
+    isLoading = true;
+    access = {
+        'term': undefined,
+    };
+    // --- 按下事件 ---
     async down(e) {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
         // --- 仅支持鼠标 ---
         if (e.button !== 2) {
             return;
@@ -43,7 +37,7 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
     async onMounted() {
-        const xterm = clickgo.modules.xterm;
+        const xterm = await clickgo.core.getModule('xterm');
         if (!xterm) {
             // --- 没有成功 ---
             this.isLoading = false;

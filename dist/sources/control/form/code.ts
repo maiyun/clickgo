@@ -153,10 +153,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 拖动 ---
-    public moveMethod(e: MouseEvent | TouchEvent, custom: boolean = false): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public moveMethod(e: PointerEvent, custom: boolean = false): void {
         if (!this.isMove && !custom) {
             // --- !this.isMove 代表不能拖动，并且不是用户的指令 custom，那么则禁止拖动 ---
             return;
@@ -165,7 +162,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         // --- 绑定双击事件 ---
-        clickgo.dom.bindDblClick(e, () => {
+        clickgo.modules.pointer.dblClick(e, () => {
             if (this.stateAbs) {
                 this.maxVMethod();
             }
@@ -177,7 +174,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         /** --- 当前所处边框 --- */
         let isBorder: clickgo.dom.TDomBorder = '';
-        clickgo.dom.bindMove(e, {
+        clickgo.modules.pointer.move(e, {
             'start': (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
@@ -666,11 +663,8 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 改变窗体大小 ---
-    public resizeMethod(e: MouseEvent | TouchEvent, border: clickgo.dom.TDomBorder): void {
+    public resizeMethod(e: PointerEvent, border: clickgo.dom.TDomBorder): void {
         if (this.stateMaxData) {
-            return;
-        }
-        if (clickgo.dom.hasTouchButMouse(e)) {
             return;
         }
         /** --- 拖动过程中贴入的边边 --- */
@@ -731,7 +725,7 @@ export default class extends clickgo.control.AbstractControl {
                 'top': this.topData
             };
         }
-        clickgo.dom.bindResize(e, {
+        clickgo.modules.pointer.resize(e, {
             'objectLeft': left,
             'objectTop': top,
             'objectWidth': width,
@@ -819,7 +813,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 绑定双击事件 ---
         if (border === 't' || border === 'b') {
-            clickgo.dom.bindDblClick(e, () => {
+            clickgo.modules.pointer.dblClick(e, () => {
                 this.maxVMethod();
             });
         }
@@ -938,8 +932,8 @@ export default class extends clickgo.control.AbstractControl {
         this.stepShowData = false;
     }
 
-    public stepDown(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindMove(e, {
+    public stepDown(e: PointerEvent): void {
+        clickgo.modules.pointer.move(e, {
             'areaObject': this.refs.content,
             'object': this.refs.step,
             move: (e, o): void => {

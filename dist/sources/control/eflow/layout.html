@@ -1,5 +1,5 @@
 <div class="wrap" :style="{'gap': propNumber('gutter') ? (gutter + 'px') : '0'}" data-cg-scroll>
-    <div ref="left" class="left" @mousedown="down">
+    <div ref="left" class="left" @pointerdown="down">
         <slot></slot>
     </div>
     <cg-scroll :length="length" :client="client" v-model:offset="offset" @roll="roll" :style="{'display': (length > client) ? undefined : 'none'}"></cg-scroll>

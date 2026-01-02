@@ -72,7 +72,7 @@ export default class extends clickgo.control.AbstractControl {
         this.click();
     }
 
-    public onMounted(): void | Promise<void> {
+    public onMounted(): void {
         this.watch('modelValue', () => {
             if (this.props.modelValue !== undefined) {
                 this.value = this.props.modelValue;

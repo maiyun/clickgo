@@ -29,11 +29,8 @@ export default class extends clickgo.control.AbstractControl {
             'term': undefined,
         };
 
-    // --- 鼠标、手势按下事件 ---
-    public async down(e: MouseEvent): Promise<void> {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    // --- 按下事件 ---
+    public async down(e: PointerEvent): Promise<void> {
         // --- 仅支持鼠标 ---
         if (e.button !== 2) {
             return;
@@ -56,7 +53,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public async onMounted(): Promise<void> {
-        const xterm = clickgo.modules.xterm;
+        const xterm = await clickgo.core.getModule('xterm');
         if (!xterm) {
             // --- 没有成功 ---
             this.isLoading = false;

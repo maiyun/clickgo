@@ -50,8 +50,8 @@ export default class extends clickgo.form.AbstractForm {
         this.ppath = path;
     }
 
-    public dblclick(e: MouseEvent | TouchEvent): void {
-        clickgo.dom.bindDblClick(e, async () => {
+    public dblclick(e: PointerEvent): void {
+        clickgo.modules.pointer.dblClick(e, async () => {
             if (!this.access.zip) {
                 return;
             }

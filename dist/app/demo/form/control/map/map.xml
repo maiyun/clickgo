@@ -1,4 +1,4 @@
-<form title="Map" width="500" min-width="380" height="500" min-height="400" padding="10">
+<form title="Map" width="500" min-width="380" height="600" min-height="400" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
         <layout gutter="10" align-v="center">
             <label>lat: </label><text v-model="lat" style="flex: 1;" /><label>, lng: </label><text v-model="lng" style="flex: 1;" />
@@ -24,18 +24,18 @@
         <tab v-model="ntab" :tabs="['marker', 'line', 'polygon', 'overlay', 'log']">
             <flow direction="v" style="line-height: 1.5; flex: 1; height: 100px; padding: 5px;">
                 <template v-if="ntab === 'log'">
-                    <div style="display: flex;border-bottom: solid 1px rgba(0,0,0,.1);">
-                        <div style="width: 100px;">TIME</div>
-                        <div style="width: 100px;">OBJECT</div>
-                        <div style="width: 100px;">EVENT</div>
-                        <div style="flex: 1;">DATA</div>
-                    </div>
-                    <div v-for="item of dataInfo" style="display: flex;border-bottom: solid 1px rgba(0,0,0,.1);">
-                        <div style="width: 100px;">{{item.time}}</div>
-                        <div style="width: 100px;">{{item.object}}</div>
-                        <div style="width: 100px;">{{item.event}}</div>
-                        <div style="flex: 1;">{{item.data}}</div>
-                    </div>
+                    <layout style="border-bottom: solid 1px rgba(0,0,0,.1);">
+                        <block style="width: 100px;">TIME</block>
+                        <block style="width: 100px;">OBJECT</block>
+                        <block style="width: 100px;">EVENT</block>
+                        <block style="flex: 1;">DATA</block>
+                    </layout>
+                    <layout v-for="item of dataInfo" style="border-bottom: solid 1px rgba(0,0,0,.1);">
+                        <block style="width: 100px;">{{item.time}}</block>
+                        <block style="width: 100px;">{{item.object}}</block>
+                        <block style="width: 100px;">{{item.event}}</block>
+                        <block style="flex: 1;">{{item.data}}</block>
+                    </layout>
                 </template>
                 <template v-else>{{dataInfo}}</template>
             </flow>

@@ -128,10 +128,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- sv down --- */
-    public leftDown(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public leftDown(e: PointerEvent): void {
         /** --- right 的 rect 对象 --- */
         const leftRect = this.refs.left.getBoundingClientRect();
         /** --- 最大 top --- */
@@ -139,7 +136,7 @@ export default class extends clickgo.control.AbstractControl {
         const maxLeft = leftRect.width - 4;
 
         this.refreshLeftPosition(e, leftRect, maxTop, maxLeft);
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             'move': (ne) => {
                 this.refreshLeftPosition(ne, leftRect, maxTop, maxLeft);
             }
@@ -165,17 +162,14 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- h down --- */
-    public rightDown(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public rightDown(e: PointerEvent): void {
         /** --- right 的 rect 对象 --- */
         const rightRect = this.refs.right.getBoundingClientRect();
         /** --- 最大 top --- */
         const maxTop = rightRect.height - 4;
 
         this.refreshRightPosition(e, rightRect, maxTop);
-        clickgo.dom.bindDown(e, {
+        clickgo.modules.pointer.down(e, {
             'move': (ne) => {
                 this.refreshRightPosition(ne, rightRect, maxTop);
             }

@@ -1,21 +1,18 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
-    constructor() {
-        super(...arguments);
-        this.emits = {
-            'init': null
-        };
-        this.props = {
-            'disabled': false,
-            'data': {},
-            'theme': 'light',
-        };
-        this.notInit = false;
-        this.isLoading = true;
-        this.access = {
-            'chart': undefined,
-        };
-    }
+    emits = {
+        'init': null
+    };
+    props = {
+        'disabled': false,
+        'data': {},
+        'theme': 'light',
+    };
+    notInit = false;
+    isLoading = true;
+    access = {
+        'chart': undefined,
+    };
     async onMounted() {
         const echarts = await clickgo.core.getModule('echarts');
         if (!echarts) {

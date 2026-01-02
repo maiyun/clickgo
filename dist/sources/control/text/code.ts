@@ -155,7 +155,7 @@ export default class extends clickgo.control.AbstractControl {
         }
     };
 
-    /** --- 供外部调用的使框获取焦点的事件 --- */
+    /** --- 可供外部调用，使框获取焦点的事件 --- */
     public focus(): void {
         this.refs.text.focus();
     }
@@ -173,10 +173,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- wrap 的 down --- */
-    public down(e: MouseEvent | TouchEvent): void {
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
+    public down(): void {
         // --- 若正在显示菜单则隐藏 ---
         if (this.element.dataset.cgPopOpen === undefined) {
             return;
@@ -188,9 +185,9 @@ export default class extends clickgo.control.AbstractControl {
     public dangerBorder = false;
 
     /** --- 文本框的 focus 事件 --- */
-    public tfocus(): void {
+    public tfocus(e: FocusEvent): void {
         this.isFocus = true;
-        this.emit('focus');
+        this.emit('focus', e);
         if (this.dangerBorder) {
             this.dangerBorder = false;
         }
@@ -245,7 +242,7 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
         this.isFocus = false;
-        this.emit('blur');
+        this.emit('blur', e);
         // --- 判断是否显示红色边框 ---
         this.check();
     }
@@ -327,131 +324,76 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
+    private _gesture(e: WheelEvent | PointerEvent): void {
+        clickgo.modules.pointer.gesture(e, (e, dir) => {
+            switch (dir) {
+                case 'top': {
+                    if (this.refs.text.scrollTop > 0) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('top')) {
+                            return 1;
+                        }
+                    }
+                    break;
+                }
+                case 'bottom': {
+                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('bottom')) {
+                            return 1;
+                        }
+                    }
+                    break;
+                }
+                case 'left': {
+                    if (this.refs.text.scrollLeft > 0) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('left')) {
+                            return 1;
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
+                        return -1;
+                    }
+                    else {
+                        if (this.propArray('gesture').includes('right')) {
+                            return 1;
+                        }
+                    }
+                }
+            }
+            return 0;
+        }, (dir) => {
+            this.emit('gesture', dir);
+        });
+    }
+
     /**
      * --- 电脑的 wheel 事件，横向滚动不能被屏蔽 ---
      */
     public wheel(e: WheelEvent): void {
-        clickgo.dom.bindGesture(e, (e, dir) => {
-            switch (dir) {
-                case 'top': {
-                    if (this.refs.text.scrollTop > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('top')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'bottom': {
-                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('bottom')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'left': {
-                    if (this.refs.text.scrollLeft > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('left')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                default: {
-                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('right')) {
-                            return 1;
-                        }
-                    }
-                }
-            }
-            return 0;
-        }, (dir) => {
-            this.emit('gesture', dir);
-        });
+        this._gesture(e);
     }
 
-    public inputTouch(e: TouchEvent): void {
-        clickgo.dom.bindGesture(e, (ne, dir) => {
-            switch (dir) {
-                case 'top': {
-                    if (this.refs.text.scrollTop > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('top')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'bottom': {
-                    if (Math.round(this.refs.text.scrollTop) < this.maxScrollTop()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('bottom')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                case 'left': {
-                    if (this.refs.text.scrollLeft > 0) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('left')) {
-                            return 1;
-                        }
-                    }
-                    break;
-                }
-                default: {
-                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
-                        return -1;
-                    }
-                    else {
-                        if (this.propArray('gesture').includes('right')) {
-                            return 1;
-                        }
-                    }
-                }
-            }
-            return 0;
-        }, (dir) => {
-            this.emit('gesture', dir);
-        });
+    /** --- input 的 contextmenu 以及 gesture --- */
+    public inputDown(e: PointerEvent): void {
+        this._gesture(e);
         // --- 长按触发 contextmenu ---
-        if (navigator.clipboard) {
-            clickgo.dom.bindLong(e, () => {
-                clickgo.form.showPop(this.element, this.refs.pop, e);
-            });
-        }
-    }
-
-    /** --- input 的 contextmenu --- */
-    public contextmenu(e: MouseEvent): void {
         if (!navigator.clipboard) {
-            e.stopPropagation();
             return;
         }
-        if (clickgo.dom.hasTouchButMouse(e)) {
-            return;
-        }
-        clickgo.form.showPop(this.element, this.refs.pop, e);
+        clickgo.modules.pointer.menu(e, (e) => {
+            clickgo.form.showPop(this.element, this.refs.pop, e);
+        });
     }
 
     public select(e: InputEvent): void {
@@ -459,7 +401,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- up/down 按钮点击时，阻止默认事件 --- */
-    public udDown(e: MouseEvent | TouchEvent): void {
+    public udDown(e: PointerEvent): void {
         e.preventDefault();
         if (this.isFocus) {
             return;
@@ -614,7 +556,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- 文本框的键盘图标点下事件 --- */
-    public kbdown(e: MouseEvent | TouchEvent): void {
+    public kbdown(e: PointerEvent): void {
         e.preventDefault();
     }
 
