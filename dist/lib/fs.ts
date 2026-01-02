@@ -347,7 +347,7 @@ export async function putContent(current: lCore.TCurrent, path: string, data: st
  * --- 读取链接的 target ---
  * @param current 当前任务 id
  * @param path 要读取的路径
- * @param options 选项
+ * @param encoding 编码
  */
 export async function readLink(
     current: lCore.TCurrent, path: string, encoding?: BufferEncoding

@@ -85,7 +85,7 @@ const getRetry = {
 };
 /**
  * --- 获取任务简略信息 ---
- * @param tid 任务 id
+ * @param taskId 任务 id
  */
 export function get(taskId) {
     if (typeof taskId !== 'string') {

@@ -480,7 +480,7 @@ export function layoutClassPrepend(layout, preps) {
     return rtn;
 }
 /**
- * --- 对 layout 的 @events 事件进行包裹 ---
+ * --- 对 layout 的 events 事件进行包裹 ---
  * @param layout 要包裹的 layout
  */
 export function eventsAttrWrap(layout) {
@@ -779,7 +779,11 @@ export function hex2rgb(hex) {
 }
 /**
  * --- rgb 字符串转 hsl 数组 ---
- * @param rgb rgb(x, x, x) 或直接 x,x,x
+ * @param r r 值或 rgb(x, x, x) 或直接 x,x,x
+ * @param g g 值
+ * @param b b 值
+ * @param a a 值
+ * @param decimal 是否保留小数
  */
 export function rgb2hsl(r, g, b, a = 1, decimal = false) {
     const hsl = {
@@ -859,7 +863,11 @@ export function rgb2hsl(r, g, b, a = 1, decimal = false) {
 }
 /**
  * --- hsl 字符串转 rgb 数组 ---
- * @param hsl hsl(x, x, x) 或直接 x,x,x
+ * @param h h 值或 hsl(x, x, x) 或直接 x,x,x
+ * @param s s 值
+ * @param l l 值
+ * @param a a 值
+ * @param decimal 是否保留小数
  */
 export function hsl2rgb(h, s, l, a = 1, decimal = false) {
     const rgb = {

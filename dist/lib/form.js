@@ -3629,7 +3629,7 @@ export async function prompt(current, opt) {
 }
 /**
  * --- 让窗体闪烁 ---
- * @param taskId 所属的 taskId
+ * @param current 所属的 taskId
  * @param formId 要闪烁的窗体 id，必填
  */
 export async function flash(current, formId) {

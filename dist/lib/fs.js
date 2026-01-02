@@ -309,7 +309,7 @@ export async function putContent(current, path, data, options = {}) {
  * --- 读取链接的 target ---
  * @param current 当前任务 id
  * @param path 要读取的路径
- * @param options 选项
+ * @param encoding 编码
  */
 export async function readLink(current, path, encoding) {
     if (typeof current !== 'string') {

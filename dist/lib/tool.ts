@@ -80,7 +80,7 @@ export async function compressor<T extends File | Blob>(file: T, options: {
     });
 }
 
-interface IClassPrototype {
+export interface IClassPrototype {
     'method': Record<string, any>;
     'access': Record<string, {
         'get': any;
@@ -518,7 +518,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
 }
 
 /**
- * --- 对 layout 的 @events 事件进行包裹 ---
+ * --- 对 layout 的 events 事件进行包裹 ---
  * @param layout 要包裹的 layout
  */
 export function eventsAttrWrap(layout: string): string {
@@ -845,7 +845,11 @@ export function hex2rgb(hex: string): {
 
 /**
  * --- rgb 字符串转 hsl 数组 ---
- * @param rgb rgb(x, x, x) 或直接 x,x,x
+ * @param r r 值或 rgb(x, x, x) 或直接 x,x,x
+ * @param g g 值
+ * @param b b 值
+ * @param a a 值
+ * @param decimal 是否保留小数
  */
 export function rgb2hsl(
     r: string | number, g?: string | number, b?: string | number, a: string | number = 1, decimal: boolean = false
@@ -944,7 +948,11 @@ export function rgb2hsl(
 
 /**
  * --- hsl 字符串转 rgb 数组 ---
- * @param hsl hsl(x, x, x) 或直接 x,x,x
+ * @param h h 值或 hsl(x, x, x) 或直接 x,x,x
+ * @param s s 值
+ * @param l l 值
+ * @param a a 值
+ * @param decimal 是否保留小数
  */
 export function hsl2rgb(
     h: string | number, s?: string | number, l?: string | number, a: string | number = 1, decimal: boolean = false

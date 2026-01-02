@@ -54,7 +54,6 @@ export class Zip {
     /**
      * --- 获取对象是否存在，存在则返回 stats 对象，否则返回 null ---
      * @param path 对象路径
-     * @param options 选项
      */
     stats(path) {
         path = lTool.urlResolve(this._path, path);

@@ -4005,7 +4005,7 @@ export async function prompt(current: lCore.TCurrent, opt: string | IFormPromptO
 
 /**
  * --- 让窗体闪烁 ---
- * @param taskId 所属的 taskId
+ * @param current 所属的 taskId
  * @param formId 要闪烁的窗体 id，必填
  */
 export async function flash(current: lCore.TCurrent, formId: string): Promise<void> {

@@ -414,9 +414,9 @@ export async function readApp(blob) {
 }
 /**
  * --- 从网址下载应用 ---
- * @param url 对于当前网页的相对、绝对路径，以 .cga 结尾的文件 ---
- * @param opt,notifyId:显示进度条的 notify id,current:设置则以设置的为准，不以 / 结尾，否则以 location 为准 ---
  * @param taskId 所属任务 ID
+ * @param url 对于当前网页的相对、绝对路径，以 .cga 结尾的文件
+ * @param opt 选项
  */
 export async function fetchApp(taskId, url, opt = {}) {
     /** --- notify 配置项 --- */
@@ -537,7 +537,7 @@ export function getAvailArea() {
 }
 /**
  * --- 修改浏览器 hash ---
- * @param taskId 当前任务 id
+ * @param current 当前任务 id
  * @param hash 修改的值，不含 #
  */
 export async function hash(current, hash) {
@@ -875,8 +875,7 @@ const modules = {
  * --- 注册模块 ---
  * @param current 当前任务 id
  * @param name 模块名
- * @param func 执行加载函数
- * @param version 版本号，非 ESM 可留空
+ * @param opt 选项
  */
 export async function regModule(current, name, opt) {
     if (!(await lTask.checkPermission(current, 'root'))[0]) {
