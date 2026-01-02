@@ -34,7 +34,8 @@ find $API_DOC_OUTPUT_DIR -name "*.md" -type f | while read file; do
 done
 
 # --- 定义额外的单文件列表 ---
-extra_files=("doc/README.sc.md")
+# extra_files=("doc/README.sc.md")
+extra_files=("doc/sc/quick-start.md" "doc/sc/global-style.md")
 
 # --- 处理单文件 ---
 for f in "${extra_files[@]}"; do

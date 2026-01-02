@@ -1,60 +1,55 @@
 
-README.sc.md
+quick-start.md
 ---
 
-# ClickGo
+# 快速开始
 
-<p align="center"><img src="../dist/icon.png" width="68" height="68" alt="ClickGo"></p>
-<p align="center">
-    <a href="https://github.com/maiyun/clickgo/blob/master/LICENSE">
-        <img alt="License" src="https://img.shields.io/github/license/maiyun/clickgo?color=blue" />
-    </a>
-    <a href="https://www.npmjs.com/package/clickgo">
-        <img alt="NPM stable version" src="https://img.shields.io/npm/v/clickgo?color=brightgreen&logo=npm" />
-    </a>
-    <a href="https://github.com/maiyun/clickgo/releases">
-        <img alt="GitHub releases" src="https://img.shields.io/github/v/release/maiyun/clickgo?color=brightgreen&logo=github" />
-    </a>
-    <a href="https://github.com/maiyun/clickgo/issues">
-        <img alt="GitHub issues" src="https://img.shields.io/github/issues/maiyun/clickgo?color=blue&logo=github" />
-    </a>
-</p>
+## 安装
 
-使用 HTML + CSS 构建 Web、Native 应用。
-
-应用编译为 cga 单文件，可以在 Web 中运行，也可以借助 [ClickGo Native](https://github.com/maiyun/clickgo-native) 在本地系统运行。可编写图像编辑器、数据库管理工具、文件浏览器等应用软件，也可编写后台管理面板。
-
-<p align="center">
-    <img src="./pic3.jpg" alt="ClickGo">
-    <img src="./pic.jpg" alt="ClickGo">
-    <img src="./pic2.jpg" alt="ClickGo">
-</p>
-
-## 使用
-
-需要借助 [ClickGo Compiler](https://github.com/maiyun/clickgo-compiler) 将 app 文件夹编译为 cga 文件，然后编译入口文件，并在浏览器中引用入口文件。
+首先设置 ClickGo 模块的加载路径，然后使用 script 模块加载。
 
 **index.html**
 
 ```html
-<script type="module" src="index.pack.js"></script>
+<script type="importmap">
+{
+    "imports": {
+        "clickgo": "https://cdn.jsdelivr.net/npm/clickgo@x.x.x/dist/index.js"
+    }
+}
+</script>
+<script type="module" src="index.js"></script>
+```
+
+也可以携带参数和全局变量。
+
+```html
+<script>
+clickgo = {
+    'config': {
+        'cdn': 'https://cdn.jsdelivr.net',
+    },
+    'global': {},
+};
+</script>
 ```
 
 **index.js**
 
-```typescript
+```ts
 import * as clickgo from 'clickgo';
 class Boot extends clickgo.AbstractBoot {
     public async main(): Promise<void> {
+        // --- 运行应用，例如运行一个 cga 文件 ---
         await clickgo.task.run(this._sysId, 'xxx.cga');
     }
 }
 clickgo.launcher(new Boot());
 ```
 
-### NPM
+## 代码提示
 
-TypeScript 环境下，在使用 NPM 安装后，您将得到代码提示。
+安装 ClickGo 模块后，即可获得代码提示。
 
 ```sh
 $ npm i clickgo --save-dev
@@ -64,17 +59,87 @@ $ npm i vue --save-dev
 
 ## 注意
 
-ClickGo 会自动加载 Vue、jszip 库，所以**请勿**引用这些库的 JS 和 CSS 文件。
+ClickGo 会自动加载 Vue、jszip 库，所以**请勿**在 HTML 中手动引用这些库的 JS 和 CSS 文件。
 
-## 示例
+global-style.md
+---
 
-克隆代码并访问 "dist/test/index.html"。
+# 全局样式
 
-[点击这里在线访问](https://maiyun.github.io/clickgo/dist/test/)
+## 变量
 
-## 许可
+ClickGo 使用 CSS 变量来控制全局样式和主题。这些变量通常定义在 `#cg-wrap` 下。
 
-ClickGo 基于 [Apache-2.0](./LICENSE) 协议发布。
+### 基础颜色
+
+- `--cg`: 主题色
+- `--cg-hover`: 主题色悬停状态
+- `--cg-active`: 主题色激活状态
+- `--cg-focus`: 主题色焦点状态
+- `--cg-disabled`: 主题色禁用状态
+- `--cg-bg`: 主题色浅色背景
+
+### 状态颜色
+
+- `--success`: 成功颜色
+- `--info`: 信息颜色
+- `--warning`: 警告颜色
+- `--danger`: 危险颜色
+- 各状态颜色均有对应的 `-hover`、`-active`、`-focus`、`-disabled` 和 `-bg` 变体。
+
+### 控件通用颜色
+
+- `--g-color`: 默认文字颜色
+- `--g-background`: 默认背景颜色
+- `--g-border-color`: 默认边框颜色
+- `--g-plain-color`: 朴素/轻量文字颜色
+- `--g-plain-background`: 朴素/轻量背景颜色
+- `--g-plain-border-color`: 朴素/轻量边框颜色
+
+### 布局与间距
+
+- `--g-padding`: 标准内边距
+- `--g-padding-s`: 小内边距
+- `--g-padding-xs`: 超小内边距
+- `--g-padding-l`: 大内边距
+- `--g-padding-xl`: 超大内边距
+- `--g-margin`: 标准外边距
+
+### 圆角
+
+- `--g-radius`: 标准圆角
+- `--g-radius-l`: 较大圆角
+- `--g-radius-xl`: 超大圆角
+
+### 字号
+
+- `--g-size`: 标准字号
+- `--g-size-xs`: 超小字号
+- `--g-size-m`: 中等字号
+- `--g-size-l`: 较大字号
+- `--g-size-xl`: 大字号
+- `--g-size-xxl`: 超大字号
+
+### 控件尺寸
+
+- `--g-control`: 标准控件尺寸（如 check、radio 的宽度）
+- `--g-control-m`: 中等控件尺寸
+- `--g-control-l`: 较大控件尺寸
+
+### 其他
+
+- `--g-family`: 字体族
+- `--g-line`: 行高
+- `--g-cubic`: 全局贝塞尔缓动函数
+- `--g-transition`: 全局过渡动画
+- `--g-pure`: 纯底色（通常为白色或极浅色）
+- `--face`: 表面颜色
+- `--g-shadow`: 阴影
+
+## 属性选择器
+
+- `[data-cg-disabled]`: 禁用状态，会自动设置 `cursor: not-allowed;`。
+
 
 # 控件
 ---

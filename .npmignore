@@ -15,6 +15,7 @@ eslint.config.cjs
 tsconfig.json
 package-lock.json
 
+/utils/
 /dist/app/demo/
 /dist/app/task/
 /dist/compiler/
