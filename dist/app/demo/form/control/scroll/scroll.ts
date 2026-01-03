@@ -14,8 +14,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public so2 = 0;
 
-    public so3 = 0;
-
     public count = 3;
 
     public float = false;

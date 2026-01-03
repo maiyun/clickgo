@@ -1,4 +1,4 @@
-<form title="Scroll" width="400" min-width="300" height="600" min-height="390">
+<form title="Scroll" width="400" min-width="300" height="400" min-height="390">
     <layout gutter="10" direction="v" style="flex: 1; width: 0; background: var(--g-plain-background); padding: 10px;">
         <layout gutter="10" style="flex: 1; height: 0;">
             <layout gutter="10" direction="v" style="flex: 1;">
@@ -17,17 +17,6 @@
             <scroll :disabled="disabled" style="width: 30px;"></scroll>
         </layout>
         <scroll direction="h" :disabled="disabled" style="height: 30px;"></scroll>
-        <label>Element:</label>
-        <layout style="border: solid 1px var(--g-plain-border-color); flex: 1; height: 0;">
-            <flow ref="flowElement" v-model:scroll-top="so3" direction="v" style="line-height: 1.5; flex: 1;">
-                <block ref="blockElement" style="padding: 10px;">
-                    <block>Length: {{sh2}}, Client: {{c2}}.</block>
-                    <block v-for="line of count">Line {{line}}.</block>
-                </block>
-            </flow>
-            <scroll :length="refs.blockElement" :client="refs.flowElement" v-model:offset="so3" :float="float" :disabled="disabled" style="width: 20px;"></scroll>
-        </layout>
-        <label>Param:</label>
         <layout style="border: solid 1px var(--g-plain-border-color); flex: 1; height: 0;">
             <flow v-model:scroll-top="so2" direction="v" @clientheight="c2 = $event" @scrollheight="sh2 = $event" style="line-height: 1.5; flex: 1;">
                 <block style="padding: 10px;">

@@ -80,8 +80,11 @@ export async function compressor<T extends File | Blob>(file: T, options: {
     });
 }
 
+/** --- 类原型信息 --- */
 export interface IClassPrototype {
+    /** --- 方法列表，key 为方法名，value 为函数体，例如：{'method1': function() { ... }} --- */
     'method': Record<string, any>;
+    /** --- 访问器列表，key 为属性名，value 为包含 get 和 set 的对象，例如：{'prop1': { 'get': function() { ... }, 'set': function(v) { ... } }} --- */
     'access': Record<string, {
         'get': any;
         'set': any;
