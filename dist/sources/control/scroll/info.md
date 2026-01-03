@@ -22,15 +22,15 @@
 
 #### length
 
-`number` | `string`
+`number` | `string` | `HTMLElement` | `AbstractControl`
 
-内容总长度，默认 1000。
+内容总长度，默认 1000。若传入对象，则会自动根据 `direction` 监听其尺寸。
 
 #### client
 
-`number` | `string`
+`number` | `string` | `HTMLElement` | `AbstractControl`
 
-可视区域长度，默认 100。
+可视区域长度，默认 100。若传入对象，则会自动根据 `direction` 监听其尺寸。
 
 #### offset
 

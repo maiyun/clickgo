@@ -6,6 +6,7 @@ export default class extends clickgo.form.AbstractForm {
     sh2 = 0;
     c2 = 0;
     so2 = 0;
+    so3 = 0;
     count = 3;
     float = false;
     disabled = false;

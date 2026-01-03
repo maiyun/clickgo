@@ -16,8 +16,8 @@ export default class extends clickgo.control.AbstractControl {
 
         'direction': 'h' | 'v';
 
-        'length': number | string;
-        'client': number | string;
+        'length': number | string | (HTMLElement & clickgo.control.AbstractControl & Record<string, any>);
+        'client': number | string | (HTMLElement & clickgo.control.AbstractControl & Record<string, any>);
         'offset': number | string;
     } = {
             'disabled': false,
@@ -51,12 +51,24 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 整体的元素高度像素 --- */
     public height = 0;
 
+    /** --- 实际的长度 --- */
+    public lengthData = 0;
+
+    /** --- 实际的客户端长度 --- */
+    public clientData = 0;
+
+    /** --- 正在监听 length 的 element --- */
+    private _lengthEl: HTMLElement | null = null;
+
+    /** --- 正在监听 client 的 element --- */
+    private _clientEl: HTMLElement | null = null;
+
     /** --- bar 的 px --- */
     public barPx = 0;
 
     /** --- block 的 px --- */
     public get blockPx(): number {
-        const px = this.propInt('client') / this.propInt('length') * this.barPx;
+        const px = this.clientData / this.lengthData * this.barPx;
         if (px < 5) {
             return 5;
         }
@@ -67,7 +79,7 @@ export default class extends clickgo.control.AbstractControl {
      * --- 最大可拖动的 offset 位置 ---
      */
     public get maxOffset(): number {
-        return (this.propInt('length') > this.propInt('client')) ? this.propInt('length') - this.propInt('client') : 0;
+        return (this.lengthData > this.clientData) ? this.lengthData - this.clientData : 0;
     }
 
     /**
@@ -91,9 +103,69 @@ export default class extends clickgo.control.AbstractControl {
         return this.outBlockPx * this.offsetRatio;
     }
 
+    /** --- 检查 offset 是否超限 --- */
+    public checkOffset(): void {
+        if (this.offsetData <= this.maxOffset) {
+            return;
+        }
+        this.offsetData = this.maxOffset;
+        this.emit('update:offset', this.offsetData);
+        this.emit('roll');
+    }
+
+    /**
+     * --- 初始化 length 属性的监听或设置 ---
+     */
+    private _initLength(): void {
+        // --- 取消之前的监听 ---
+        if (this._lengthEl) {
+            clickgo.dom.unwatchSize(this._lengthEl);
+            this._lengthEl = null;
+        }
+        if (typeof this.props.length === 'string' || typeof this.props.length === 'number') {
+            // --- 如果是数值或字符串，直接设置 ---
+            this.lengthData = this.propInt('length');
+            this.checkOffset();
+        }
+        else {
+            // --- 如果是对象，则获取 element 并监听尺寸 ---
+            this._lengthEl = this.props.length.element ? this.props.length.element : this.props.length;
+            clickgo.dom.watchSize(this, this._lengthEl, () => {
+                const rect = this._lengthEl!.getBoundingClientRect();
+                this.lengthData = this.props.direction === 'v' ? rect.height : rect.width;
+                this.checkOffset();
+            }, true);
+        }
+    }
+
+    /**
+     * --- 初始化 client 属性的监听或设置 ---
+     */
+    private _initClient(): void {
+        // --- 取消之前的监听 ---
+        if (this._clientEl) {
+            clickgo.dom.unwatchSize(this._clientEl);
+            this._clientEl = null;
+        }
+        if (typeof this.props.client === 'string' || typeof this.props.client === 'number') {
+            // --- 如果是数值或字符串，直接设置 ---
+            this.clientData = this.propInt('client');
+            this.checkOffset();
+        }
+        else {
+            // --- 如果是对象，则获取 element 并监听尺寸 ---
+            this._clientEl = this.props.client.element ? this.props.client.element : this.props.client;
+            clickgo.dom.watchSize(this, this._clientEl, () => {
+                const rect = this._clientEl!.getBoundingClientRect();
+                this.clientData = this.props.direction === 'v' ? rect.height : rect.width;
+                this.checkOffset();
+            }, true);
+        }
+    }
+
     /** --- 上下控制按钮按下事件 --- */
     public controlDown(e: PointerEvent, type: 'start' | 'end'): void {
-        if (this.props.client >= this.props.length) {
+        if (this.clientData >= this.lengthData) {
             return;
         }
         clickgo.modules.pointer.down(e, {
@@ -219,16 +291,20 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onMounted(): void {
-        const checkOffset = (): void => {
-            if (this.offsetData <= this.maxOffset) {
-                return;
-            }
-            this.offsetData = this.maxOffset;
-            this.emit('update:offset', this.offsetData);
-            this.emit('roll');
-        };
-        this.watch('length', checkOffset);
-        this.watch('client', checkOffset);
+        this.watch('length', () => {
+            this._initLength();
+        }, {
+            'immediate': true,
+        });
+        this.watch('client', () => {
+            this._initClient();
+        }, {
+            'immediate': true,
+        });
+        this.watch('direction', () => {
+            this._initLength();
+            this._initClient();
+        });
         // --- 监听 prop 用户的 offset 设定 ---
         this.watch('offset', (): void => {
             if (this.offsetData === this.propInt('offset')) {
@@ -283,7 +359,16 @@ export default class extends clickgo.control.AbstractControl {
 
     public onUnmounted(): void {
         if (this.hideTimer) {
-            clickgo.task.offFrame(this, this.hideTimer);
+            clickgo.task.removeTimer(this, this.hideTimer);
+        }
+        if (this.tran) {
+            clickgo.task.offFrame(this, this.tran);
+        }
+        if (this._lengthEl) {
+            clickgo.dom.unwatchSize(this._lengthEl);
+        }
+        if (this._clientEl) {
+            clickgo.dom.unwatchSize(this._clientEl);
         }
     }
 

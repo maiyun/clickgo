@@ -434,29 +434,11 @@ export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'
  */
 function layoutClassPrependObject(object: string): string {
     object = object.slice(1, -1).trim();
-    /*
-    return '{' + object.replace(/(.+?):(.+?)(,|$)/g, function(t, t1: string, t2: string, t3: string) {
+    return `{${object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, function(t, t1: string, t2: string) {
         // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
         if (t1.startsWith('[')) {
-            t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
-        }
-        else {
-            let sp = '';
-            if (t1.startsWith('\'') || t1.startsWith('"')) {
-                sp = t1[0];
-                t1 = t1.slice(1, -1);
-            }
-            t1 = `[classPrepend(${sp}${t1}${sp})]`;
-        }
-        return t1 + ':' + t2 + t3;
-    }) + '}';
-    //*/
-    return '{' + object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, function(t, t1: string, t2: string) {
-        // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
-        t1 = t1.trim();
-        if (t1.startsWith('[')) {
-            t1 = '[classPrepend(' + t1.slice(1, -1) + ')]';
+            t1 = `[classPrepend(${t1.slice(1, -1)})]`;
         }
         else {
             let sp = '';
@@ -464,10 +446,13 @@ function layoutClassPrependObject(object: string): string {
                 sp = t1[0];
                 t1 = t1.slice(1, -1);
             }
+            else {
+                sp = '\'';
+            }
             t1 = `[classPrepend(${sp}${t1}${sp})]`;
         }
-        return t1 + t2;
-    }) + '}';
+        return `${t1}${t2}`;
+    })}}`;
 }
 
 /**
@@ -476,22 +461,24 @@ function layoutClassPrependObject(object: string): string {
  * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
  */
 export function layoutClassPrepend(layout: string, preps: string[]): string {
-    const rtn = layout.replace(/ class=["'](.+?)["']/gi, function(t, t1: string) {
+    const rtn = layout.replace(/ class=["'](.*?)["']/gi, function(t, t1: string) {
         // --- t1 为 xxx yyy zzz 这样的 ----
         t1 = t1.trim();
-        const classList = t1.split(' ');
+        const classList = t1.split(/\s+/);
         const resultList: string[] = [];
         for (const item of classList) {
+            if (!item) {
+                continue;
+            }
             for (const prep of preps) {
-                resultList.push(prep + item);
+                resultList.push(`${prep}${item}`);
             }
         }
         return ` class="${resultList.join(' ')}"`;
-    //}).replace(/ :class=(["']).+?>/gi, function(t, sp) {
-    }).replace(/ :class=(["']).+?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function(t, sp) {
-        return t.replace(new RegExp(`:class=${sp}([^"]+?)${sp}`, 'gi'), function(t, t1: string) {
+    }).replace(/ :class=(["']).*?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function(t, sp) {
+        return t.replace(new RegExp(`:class=${sp}([^${sp}]+?)${sp}`, 'gi'), function(t, t1: string) {
         // return t.replace(new RegExp(`:class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
-            // --- t1 为 [] 或 {} ---
+            // --- t1 为 [] 或 {} 或 变量 ---
             t1 = t1.trim();
             if (t1.startsWith('[')) {
                 // --- ['xxx', yyy && 'yyy', {'zzz': zzz}] ---
@@ -503,17 +490,20 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
                         t1a[i] = layoutClassPrependObject(t1a[i]);
                     }
                     else {
-                        t1a[i] = 'classPrepend(' + t1a[i] + ')';
+                        t1a[i] = `classPrepend(${t1a[i]})`;
                     }
                 }
-                t1 = '[' + t1a.join(',') + ']';
+                t1 = `[${t1a.join(',')}]`;
+            }
+            else if (t1.startsWith('{')) {
+                t1 = layoutClassPrependObject(t1);
             }
             else {
-                t1 = layoutClassPrependObject(t1);
+                t1 = `classPrepend(${t1})`;
             }
             return `:class="${t1}"`;
         });
-    }).replace(/ id=(["'])/gi, ' id=$1' + preps[0]);
+    }).replace(/ id=(["'])/gi, ` id=$1${preps[0]}`);
     return rtn;
 }
 

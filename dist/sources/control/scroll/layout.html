@@ -1,7 +1,7 @@
-<div class="wrap" :class="[direction, propBoolean('float') && 'float']" :data-cg-disabled="(propBoolean('disabled') || (length <= client)) ? '' : undefined" :style="{'opacity': isShow ? '1' : '0'}" @pointerenter="enter" @pointerdown="enter" data-cg-efno>
+<div class="wrap" :class="[direction, propBoolean('float') && 'float']" :data-cg-disabled="(propBoolean('disabled') || (lengthData <= clientData)) ? '' : undefined" :style="{'opacity': isShow ? '1' : '0'}" @pointerenter="enter" @pointerdown="enter" data-cg-efno>
     <div class="start" :data-cg-disabled="(offsetData === 0) ? '' : undefined" @pointerdown="controlDown($event, 'start')" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}"></div>
     <div ref="bar" class="bar" @pointerdown="barDown">
-        <div ref="block" class="block" :class="{'tran': tran}" @pointerdown="down" :style="{'height': direction === 'v' ? (client >= length ? '100%' : blockPx + 'px') : undefined, 'width': direction === 'h' ? blockPx + 'px' : undefined, 'transform': (direction === 'v' ? 'translate3d(0, ' + offsetPx + 'px, 0)' : 'translate3d(' + offsetPx + 'px, 0, 0)') + ' translateZ(0px)'}"></div>
+        <div ref="block" class="block" :class="{'tran': tran}" @pointerdown="down" :style="{'height': direction === 'v' ? (clientData >= lengthData ? '100%' : blockPx + 'px') : undefined, 'width': direction === 'h' ? blockPx + 'px' : undefined, 'transform': (direction === 'v' ? 'translate3d(0, ' + offsetPx + 'px, 0)' : 'translate3d(' + offsetPx + 'px, 0, 0)') + ' translateZ(0px)'}"></div>
     </div>
     <div class="end" :data-cg-disabled="(offsetData === maxOffset) ? '' : undefined" @pointerdown="controlDown($event, 'end')" :style="{'height': direction === 'v' ? width + 'px' : undefined, 'width': direction === 'h' ? height + 'px' : undefined}"></div>
 </div>
