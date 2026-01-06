@@ -99,8 +99,11 @@
         </layout>
         <!-- Eflow -->
         <layout v-else direction="v" gutter="10" style="flex: 1; min-width: 0; padding: 10px;">
-            <label>Normal:</label>
-            <eflow class="border" style="flex: 1; min-height: 0;">
+            <layout gutter="10" align-h="center">
+                <label style="flex: 1;">Normal:</label>
+                <button @click="refs.eflow.toBottom()">toBottom()</button>
+            </layout>
+            <eflow ref="eflow" class="border" style="flex: 1; min-height: 0;">
                 <template v-for="i of 70">
                     <eflow v-if="i === 30" class="border" direction="v" style="height: 50px;">
                         <label v-for="k of 50">Line {{k}}</label>

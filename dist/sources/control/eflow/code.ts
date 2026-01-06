@@ -8,24 +8,6 @@ export default class extends clickgo.control.AbstractControl {
             'gutter': '',
         };
 
-    public async down(e: PointerEvent): Promise<void> {
-        const el = e.target as HTMLElement;
-        if (el.dataset.cgEfno !== undefined) {
-            return;
-        }
-        if (clickgo.dom.findParentByData(el, 'cg-efno')) {
-            return;
-        }
-        e.stopPropagation();
-        clickgo.modules.pointer.move(e, {
-            move: (e, detail): void => {
-                this.refs.left.scrollTop -= detail.oy;
-                this.refs.left.scrollLeft -= detail.ox;
-            }
-        });
-        await clickgo.form.doFocusAndPopEvent(e);
-    }
-
     /** --- 总长度 --- */
     public length: number = 0;
 
@@ -43,6 +25,32 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 横向滚动偏移量 --- */
     public offseth: number = 0;
+
+    /** --- 供外部调用，滚动到底部 --- */
+    public toBottom(): void {
+        this.refs.left.scrollTo({
+            'top': this.refs.left.scrollHeight,
+            'behavior': 'smooth',
+        });
+    }
+
+    public async down(e: PointerEvent): Promise<void> {
+        const el = e.target as HTMLElement;
+        if (el.dataset.cgEfno !== undefined) {
+            return;
+        }
+        if (clickgo.dom.findParentByData(el, 'cg-efno')) {
+            return;
+        }
+        e.stopPropagation();
+        clickgo.modules.pointer.move(e, {
+            move: (e, detail): void => {
+                this.refs.left.scrollTop -= detail.oy;
+                this.refs.left.scrollLeft -= detail.ox;
+            }
+        });
+        await clickgo.form.doFocusAndPopEvent(e);
+    }
 
     /** --- 纵向滚动条的滚动事件 --- */
     public roll(): void {

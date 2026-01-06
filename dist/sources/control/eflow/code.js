@@ -3,6 +3,25 @@ export default class extends clickgo.control.AbstractControl {
     props = {
         'gutter': '',
     };
+    /** --- 总长度 --- */
+    length = 0;
+    /** --- 可见长度 --- */
+    client = 0;
+    /** --- 滚动偏移量 --- */
+    offset = 0;
+    /** --- 横向总宽度 --- */
+    lengthh = 0;
+    /** --- 横向可见宽度 --- */
+    clienth = 0;
+    /** --- 横向滚动偏移量 --- */
+    offseth = 0;
+    /** --- 供外部调用，滚动到底部 --- */
+    toBottom() {
+        this.refs.left.scrollTo({
+            'top': this.refs.left.scrollHeight,
+            'behavior': 'smooth',
+        });
+    }
     async down(e) {
         const el = e.target;
         if (el.dataset.cgEfno !== undefined) {
@@ -20,18 +39,6 @@ export default class extends clickgo.control.AbstractControl {
         });
         await clickgo.form.doFocusAndPopEvent(e);
     }
-    /** --- 总长度 --- */
-    length = 0;
-    /** --- 可见长度 --- */
-    client = 0;
-    /** --- 滚动偏移量 --- */
-    offset = 0;
-    /** --- 横向总宽度 --- */
-    lengthh = 0;
-    /** --- 横向可见宽度 --- */
-    clienth = 0;
-    /** --- 横向滚动偏移量 --- */
-    offseth = 0;
     /** --- 纵向滚动条的滚动事件 --- */
     roll() {
         this.refs.left.scrollTop = this.offset;
