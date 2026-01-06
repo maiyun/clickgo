@@ -73,6 +73,7 @@ export class AbstractControl {
     }
     /** --- 获取当前的 HTML DOM --- */
     get element() {
+        // --- Vue 内部属性 ---
         return this.$el;
     }
     // --- init 止 ---
@@ -81,6 +82,7 @@ export class AbstractControl {
     /** --- 当前控件所在窗体的窗体对象 --- */
     get rootForm() {
         if (!this._rootForm) {
+            // --- 获取根组件 ---
             this._rootForm = this.parentByName('root');
             if (!this._rootForm) {
                 lForm.notify({

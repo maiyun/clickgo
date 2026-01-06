@@ -145,7 +145,7 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 内部 ---
 
-    public updateScrollLeft(sl: number): any {
+    public updateScrollLeft(sl: number): void {
         this.refs.header.scrollLeft = sl;
         this.scrollLeft = sl;
     }

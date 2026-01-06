@@ -81,7 +81,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 主标签(子标签为左右边栏)是否可获得焦点和操作（all / mark 模式可操作） --- */
     public get canDoMain(): boolean {
-        return (this.props.area === 'all' || this.props.area === 'mark') ? true : false;
+        return (this.props.area === 'all' || this.props.area === 'mark');
     }
 
     /** --- 左侧或者右侧正在有焦点 --- */

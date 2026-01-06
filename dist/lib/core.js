@@ -168,11 +168,13 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
         case 'error': {
+            // --- boot 是抽象类，具体实现的方法是动态的 ---
             boot?.[eventName](taskId, formId, param1, param2);
             for (const tid in taskList) {
                 const t = taskList[tid];
                 const rt = lTask.getRuntime(sysId, tid);
                 if (!taskId || (taskId === tid) || rt?.permissions.includes('root')) {
+                    // --- 动态调用 app 实例的方法 ---
                     t.class?.[eventName](taskId, formId, param1, param2);
                     for (const fid in t.forms) {
                         t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
@@ -183,9 +185,11 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
         }
         case 'screenResize': {
             globalEvents.screenResize();
+            // --- boot 是抽象类，具体实现的方法是动态的 ---
             boot?.[eventName]();
             for (const tid in taskList) {
                 const t = taskList[tid];
+                // --- 动态调用 app 实例的方法 ---
                 t.class?.[eventName]();
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.();
@@ -194,9 +198,11 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
             break;
         }
         case 'configChanged': {
+            // --- boot 是抽象类，具体实现的方法是动态的 ---
             boot?.[eventName]();
             for (const tid in taskList) {
                 const t = taskList[tid];
+                // --- 动态调用 app 实例的方法 ---
                 t.class?.[eventName](taskId, formId);
                 for (const fid in t.forms) {
                     t.forms[fid].vroot[eventName]?.(taskId, formId);

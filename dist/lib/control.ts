@@ -85,6 +85,7 @@ export abstract class AbstractControl {
 
     /** --- 获取当前的 HTML DOM --- */
     public get element(): HTMLElement {
+        // --- Vue 内部属性 ---
         return (this as any).$el;
     }
 
@@ -96,6 +97,7 @@ export abstract class AbstractControl {
     /** --- 当前控件所在窗体的窗体对象 --- */
     public get rootForm(): lForm.AbstractForm & Record<string, any> {
         if (!this._rootForm) {
+            // --- 获取根组件 ---
             this._rootForm = this.parentByName('root') as any;
             if (!this._rootForm) {
                 lForm.notify({

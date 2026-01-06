@@ -189,6 +189,7 @@ export function clone(obj) {
         return newObj;
     }
     // --- 对象 ---
+    /** --- 初始化为空对象，后续动态赋值 --- */
     const newObj = {};
     for (const key in obj) {
         if (obj[key] instanceof Date) {

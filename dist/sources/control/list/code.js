@@ -127,6 +127,10 @@ export default class extends clickgo.control.AbstractControl {
         if (!Array.isArray(value)) {
             value = [value];
         }
+        else {
+            /** --- 复制一份数组，防止修改原数组 --- */
+            value = [...value];
+        }
         for (let i = 0; i < value.length; ++i) {
             if (typeof value[i] === 'string') {
                 continue;
