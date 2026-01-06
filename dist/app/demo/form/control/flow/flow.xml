@@ -98,14 +98,19 @@
             </flow>
         </layout>
         <!-- Eflow -->
-        <layout v-else style="flex: 1; width: 0; padding: 10px;">
-            <eflow class="border" style="flex: 1; width: 0;">
+        <layout v-else direction="v" gutter="10" style="flex: 1; min-width: 0; padding: 10px;">
+            <label>Normal:</label>
+            <eflow class="border" style="flex: 1; min-height: 0;">
                 <template v-for="i of 70">
                     <eflow v-if="i === 30" class="border" direction="v" style="height: 50px;">
                         <label v-for="k of 50">Line {{k}}</label>
                     </eflow>
                     <label v-else>Line {{i}}</label>
                 </template>
+            </eflow>
+            <label>Horizontal:</label>
+            <eflow class="border" style="flex: 1; min-height: 0;">
+                <block style="background: linear-gradient(to right, #ff0000, #ffabab); width: 2000px; color: #FFF; padding: 20px;">So long</block>
             </eflow>
         </layout>
     </tab>

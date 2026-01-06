@@ -1,6 +1,14 @@
 <div class="wrap" :style="{'gap': propNumber('gutter') ? (gutter + 'px') : '0'}" data-cg-scroll>
-    <div ref="left" class="left" @pointerdown="down">
-        <slot></slot>
+    <div class="top">
+        <div ref="left" class="left" @pointerdown="down" @scroll="scrollHandler">
+            <div ref="inner" class="left-inner">
+                <slot></slot>
+            </div>
+        </div>
+        <cg-scroll v-if="length > client" :length="length" :client="client" v-model:offset="offset" @roll="roll"></cg-scroll>
     </div>
-    <cg-scroll :length="length" :client="client" v-model:offset="offset" @roll="roll" :style="{'display': (length > client) ? undefined : 'none'}"></cg-scroll>
+    <div v-if="lengthh > clienth" class="bottom">
+        <cg-scroll direction="h" :length="lengthh" :client="clienth" v-model:offset="offseth" @roll="rollh"></cg-scroll>
+        <div v-if="length > client" class="rb"></div>
+    </div>
 </div>

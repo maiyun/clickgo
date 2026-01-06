@@ -13,9 +13,9 @@ export default class extends clickgo.control.AbstractControl {
         }
         e.stopPropagation();
         clickgo.modules.pointer.move(e, {
-            'object': e.currentTarget,
-            move: (e, o) => {
-                this.refs.left.scrollTop -= o.oy;
+            move: (e, detail) => {
+                this.refs.left.scrollTop -= detail.oy;
+                this.refs.left.scrollLeft -= detail.ox;
             }
         });
         await clickgo.form.doFocusAndPopEvent(e);
@@ -26,21 +26,35 @@ export default class extends clickgo.control.AbstractControl {
     client = 0;
     /** --- 滚动偏移量 --- */
     offset = 0;
+    /** --- 横向总宽度 --- */
+    lengthh = 0;
+    /** --- 横向可见宽度 --- */
+    clienth = 0;
+    /** --- 横向滚动偏移量 --- */
+    offseth = 0;
+    /** --- 纵向滚动条的滚动事件 --- */
     roll() {
         this.refs.left.scrollTop = this.offset;
     }
+    /** --- 横向滚动条的滚动事件 --- */
+    rollh() {
+        this.refs.left.scrollLeft = this.offseth;
+    }
+    /** --- 滚动处理 --- */
+    scrollHandler() {
+        this.offset = this.refs.left.scrollTop;
+        this.offseth = this.refs.left.scrollLeft;
+    }
     onMounted() {
-        // --- 大小改变，会影响 scroll offset、client，也会影响 length ---
+        // --- 容器大小改变 ---
         clickgo.dom.watchSize(this, this.refs.left, () => {
             this.client = this.refs.left.clientHeight;
+            this.clienth = this.refs.left.clientWidth;
         }, true);
-        // --- 内容改变 ---
-        clickgo.dom.watchProperty(this.refs.left, ['scrollHeight', 'scrollTop'], (name, val) => {
-            if (name === 'scrollTop') {
-                this.offset = val;
-                return;
-            }
-            this.length = val;
+        // --- 内容大小改变 ---
+        clickgo.dom.watchSize(this, this.refs.inner, () => {
+            this.length = this.refs.inner.offsetHeight;
+            this.lengthh = this.refs.inner.offsetWidth;
         }, true);
     }
 }

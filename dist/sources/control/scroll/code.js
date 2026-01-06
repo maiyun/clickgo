@@ -32,10 +32,6 @@ export default class extends clickgo.control.AbstractControl {
     lengthData = 0;
     /** --- 实际的客户端长度 --- */
     clientData = 0;
-    /** --- 正在监听 length 的 element --- */
-    _lengthEl = null;
-    /** --- 正在监听 client 的 element --- */
-    _clientEl = null;
     /** --- bar 的 px --- */
     barPx = 0;
     /** --- block 的 px --- */
@@ -83,49 +79,15 @@ export default class extends clickgo.control.AbstractControl {
      * --- 初始化 length 属性的监听或设置 ---
      */
     _initLength() {
-        // --- 取消之前的监听 ---
-        if (this._lengthEl) {
-            clickgo.dom.unwatchSize(this._lengthEl);
-            this._lengthEl = null;
-        }
-        if (typeof this.props.length === 'string' || typeof this.props.length === 'number') {
-            // --- 如果是数值或字符串，直接设置 ---
-            this.lengthData = this.propInt('length');
-            this.checkOffset();
-        }
-        else {
-            // --- 如果是对象，则获取 element 并监听尺寸 ---
-            this._lengthEl = this.props.length.element ? this.props.length.element : this.props.length;
-            clickgo.dom.watchSize(this, this._lengthEl, () => {
-                const rect = this._lengthEl.getBoundingClientRect();
-                this.lengthData = this.props.direction === 'v' ? rect.height : rect.width;
-                this.checkOffset();
-            }, true);
-        }
+        this.lengthData = this.propInt('length');
+        this.checkOffset();
     }
     /**
      * --- 初始化 client 属性的监听或设置 ---
      */
     _initClient() {
-        // --- 取消之前的监听 ---
-        if (this._clientEl) {
-            clickgo.dom.unwatchSize(this._clientEl);
-            this._clientEl = null;
-        }
-        if (typeof this.props.client === 'string' || typeof this.props.client === 'number') {
-            // --- 如果是数值或字符串，直接设置 ---
-            this.clientData = this.propInt('client');
-            this.checkOffset();
-        }
-        else {
-            // --- 如果是对象，则获取 element 并监听尺寸 ---
-            this._clientEl = this.props.client.element ? this.props.client.element : this.props.client;
-            clickgo.dom.watchSize(this, this._clientEl, () => {
-                const rect = this._clientEl.getBoundingClientRect();
-                this.clientData = this.props.direction === 'v' ? rect.height : rect.width;
-                this.checkOffset();
-            }, true);
-        }
+        this.clientData = this.propInt('client');
+        this.checkOffset();
     }
     /** --- 上下控制按钮按下事件 --- */
     controlDown(e, type) {
@@ -322,12 +284,6 @@ export default class extends clickgo.control.AbstractControl {
         }
         if (this.tran) {
             clickgo.task.offFrame(this, this.tran);
-        }
-        if (this._lengthEl) {
-            clickgo.dom.unwatchSize(this._lengthEl);
-        }
-        if (this._clientEl) {
-            clickgo.dom.unwatchSize(this._clientEl);
         }
     }
 }
