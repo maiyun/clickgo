@@ -8,7 +8,7 @@
 
 > **styleUrl2DataUrl**(`path`, `style`, `files`): `Promise`\<`string`\>
 
-Defined in: [dist/lib/tool.ts:320](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L320)
+Defined in: [dist/lib/tool.ts:323](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L323)
 
 将 style 中的 url 转换成 base64 data url
 

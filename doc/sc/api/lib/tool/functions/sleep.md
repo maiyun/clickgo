@@ -8,7 +8,7 @@
 
 > **sleep**(`ms`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/tool.ts:244](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L244)
+Defined in: [dist/lib/tool.ts:247](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L247)
 
 等待毫秒
 

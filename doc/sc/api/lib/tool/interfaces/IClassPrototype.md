@@ -6,7 +6,9 @@
 
 # Interface: IClassPrototype
 
-Defined in: [dist/lib/tool.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L83)
+Defined in: [dist/lib/tool.ts:84](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L84)
+
+类原型信息
 
 ## Properties
 
@@ -14,7 +16,9 @@ Defined in: [dist/lib/tool.ts:83](https://github.com/maiyun/clickgo/blob/master/
 
 > **access**: `Record`\<`string`, \{ `get`: `any`; `set`: `any`; \}\>
 
-Defined in: [dist/lib/tool.ts:85](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L85)
+Defined in: [dist/lib/tool.ts:88](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L88)
+
+访问器列表，key 为属性名，value 为包含 get 和 set 的对象，例如：{'prop1': { 'get': function() { ... }, 'set': function(v) { ... } }}
 
 ***
 
@@ -22,4 +26,6 @@ Defined in: [dist/lib/tool.ts:85](https://github.com/maiyun/clickgo/blob/master/
 
 > **method**: `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/tool.ts:84](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L84)
+Defined in: [dist/lib/tool.ts:86](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L86)
+
+方法列表，key 为方法名，value 为函数体，例如：{'method1': function() { ... }}

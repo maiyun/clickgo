@@ -8,7 +8,7 @@
 
 > `const` **lang**: `object`
 
-Defined in: [dist/lib/tool.ts:2560](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2560)
+Defined in: [dist/lib/tool.ts:2553](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2553)
 
 语言相关
 

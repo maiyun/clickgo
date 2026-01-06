@@ -8,7 +8,7 @@
 
 > **formatTime**(`ts`, `tz?`): `object`
 
-Defined in: [dist/lib/tool.ts:1575](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1575)
+Defined in: [dist/lib/tool.ts:1568](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1568)
 
 将日期对象或毫秒级时间戳转换为字符串
 

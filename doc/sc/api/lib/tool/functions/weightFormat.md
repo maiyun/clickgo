@@ -8,7 +8,7 @@
 
 > **weightFormat**(`weight`, `spliter`): `string`
 
-Defined in: [dist/lib/tool.ts:174](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L174)
+Defined in: [dist/lib/tool.ts:177](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L177)
 
 将毫克重量格式化为带单位的字符串
 

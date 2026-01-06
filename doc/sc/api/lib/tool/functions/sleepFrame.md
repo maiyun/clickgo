@@ -8,7 +8,7 @@
 
 > **sleepFrame**(`count`): `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:271](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L271)
+Defined in: [dist/lib/tool.ts:274](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L274)
 
 等待浏览器帧
 

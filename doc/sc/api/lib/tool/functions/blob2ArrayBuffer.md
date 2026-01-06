@@ -8,7 +8,7 @@
 
 > **blob2ArrayBuffer**(`blob`): `Promise`\<`ArrayBuffer`\>
 
-Defined in: [dist/lib/tool.ts:145](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L145)
+Defined in: [dist/lib/tool.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L148)
 
 将 blob 对象转换为 ArrayBuffer
 

@@ -8,7 +8,7 @@
 
 > **blob2DataUrl**(`blob`): `Promise`\<`string`\>
 
-Defined in: [dist/lib/tool.ts:1491](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1491)
+Defined in: [dist/lib/tool.ts:1484](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1484)
 
 将 blob 对象转换为 base64 url
 

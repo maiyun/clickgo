@@ -8,7 +8,7 @@
 
 > **parseUrl**(`url`): [`IUrl`](../interfaces/IUrl.md)
 
-Defined in: [dist/lib/tool.ts:1313](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1313)
+Defined in: [dist/lib/tool.ts:1306](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1306)
 
 传输 url 并解析为 IUrl 对象
 
