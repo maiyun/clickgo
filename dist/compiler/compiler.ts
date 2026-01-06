@@ -316,7 +316,14 @@ export async function application(path: string, icon?: string, save?: string): P
  * @param path zip 中的路径基，不以 / 结尾
  */
 async function addFile(zipo: zip, base: string = '', path: string = ''): Promise<void> {
+    if (path) {
+        zipo.file(path, null, {
+            'dir': true,
+            'date': new Date(0),
+        });
+    }
     const list = await fs.promises.readdir(base);
+    list.sort();
     for (const item of list) {
         try {
             const stat = await fs.promises.lstat(base + '/' + item);
@@ -330,22 +337,30 @@ async function addFile(zipo: zip, base: string = '', path: string = ''): Promise
             const buf = await fs.promises.readFile(base + '/' + item);
             if (item.endsWith('.html') || item.endsWith('.xml')) {
                 // --- 为了去除 html 中的空白和注释 ---
-                zipo.file(path + (path ? '/' : '') + item, lTool.purify(buf.toString()));
+                zipo.file(path + (path ? '/' : '') + item, lTool.purify(buf.toString()), {
+                    'date': new Date(0),
+                });
             }
             else if (item.endsWith('.js') || item.endsWith('.js.map')) {
                 if (!item.endsWith('.pack.js')) {
                     continue;
                 }
                 let code = buf.toString();
-                zipo.file(path + (path ? '/' : '') + item.slice(0, -7) + 'js', code);
+                zipo.file(path + (path ? '/' : '') + item.slice(0, -7) + 'js', code, {
+                    'date': new Date(0),
+                });
             }
             else if (item.endsWith('.css')) {
                 // --- 压缩 css ---
                 const rtn = cs.minify(buf.toString());
-                zipo.file(path + (path ? '/' : '') + item, rtn.styles ?? '');
+                zipo.file(path + (path ? '/' : '') + item, rtn.styles ?? '', {
+                    'date': new Date(0),
+                });
             }
             else {
-                zipo.file(path + (path ? '/' : '') + item, buf);
+                zipo.file(path + (path ? '/' : '') + item, buf, {
+                    'date': new Date(0),
+                });
             }
         }
         catch {
