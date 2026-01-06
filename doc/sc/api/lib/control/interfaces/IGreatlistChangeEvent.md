@@ -6,7 +6,7 @@
 
 # Interface: IGreatlistChangeEvent
 
-Defined in: [dist/lib/control.ts:1025](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1025)
+Defined in: [dist/lib/control.ts:1028](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1028)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1026](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1026)
+Defined in: [dist/lib/control.ts:1029](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1029)
 
 #### value
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/control.ts:1026](https://github.com/maiyun/clickgo/blob/ma
 
 > **go**: `boolean`
 
-Defined in: [dist/lib/control.ts:872](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L872)
+Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L875)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [dist/lib/control.ts:872](https://github.com/maiyun/clickgo/blob/mas
 
 > **preventDefault**: () => `void`
 
-Defined in: [dist/lib/control.ts:873](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L873)
+Defined in: [dist/lib/control.ts:876](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L876)
 
 #### Returns
 

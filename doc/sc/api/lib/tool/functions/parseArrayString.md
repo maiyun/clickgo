@@ -8,7 +8,7 @@
 
 > **parseArrayString**(`arrayStr`): `string`[]
 
-Defined in: [dist/lib/tool.ts:1674](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1674)
+Defined in: [dist/lib/tool.ts:1675](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1675)
 
 数组字符串解析器
 解析数组字符串为各元素组成的字符串数组

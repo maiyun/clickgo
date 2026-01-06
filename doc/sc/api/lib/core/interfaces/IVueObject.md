@@ -6,7 +6,7 @@
 
 # Interface: IVueObject
 
-Defined in: [dist/lib/core.ts:1315](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1315)
+Defined in: [dist/lib/core.ts:1321](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1321)
 
 ## Methods
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/core.ts:1315](https://github.com/maiyun/clickgo/blob/maste
 
 > **createApp**(`opt`): [`IVApp`](IVApp.md)
 
-Defined in: [dist/lib/core.ts:1316](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1316)
+Defined in: [dist/lib/core.ts:1322](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1322)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/core.ts:1316](https://github.com/maiyun/clickgo/blob/maste
 
 > **h**(`tag`, `props?`, `list?`): `any`
 
-Defined in: [dist/lib/core.ts:1324](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1324)
+Defined in: [dist/lib/core.ts:1330](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1330)
 
 #### Parameters
 
@@ -58,7 +58,7 @@ Defined in: [dist/lib/core.ts:1324](https://github.com/maiyun/clickgo/blob/maste
 
 > **reactive**\<`T`\>(`obj`): `T`
 
-Defined in: [dist/lib/core.ts:1318](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1318)
+Defined in: [dist/lib/core.ts:1324](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1324)
 
 #### Type Parameters
 
@@ -82,7 +82,7 @@ Defined in: [dist/lib/core.ts:1318](https://github.com/maiyun/clickgo/blob/maste
 
 > **ref**\<`T`\>(`obj`): `object`
 
-Defined in: [dist/lib/core.ts:1317](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1317)
+Defined in: [dist/lib/core.ts:1323](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1323)
 
 #### Type Parameters
 
@@ -110,7 +110,7 @@ Defined in: [dist/lib/core.ts:1317](https://github.com/maiyun/clickgo/blob/maste
 
 > **watch**(`v`, `cb`, `opt`): `void`
 
-Defined in: [dist/lib/core.ts:1319](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1319)
+Defined in: [dist/lib/core.ts:1325](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1325)
 
 #### Parameters
 

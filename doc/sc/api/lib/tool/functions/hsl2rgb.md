@@ -8,7 +8,7 @@
 
 > **hsl2rgb**(`h`, `s?`, `l?`, `a?`, `decimal?`): `object`
 
-Defined in: [dist/lib/tool.ts:950](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L950)
+Defined in: [dist/lib/tool.ts:951](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L951)
 
 hsl 字符串转 rgb 数组
 

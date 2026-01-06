@@ -6,7 +6,7 @@
 
 # Interface: INumberMinMaxChangeEvent
 
-Defined in: [dist/lib/control.ts:901](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L901)
+Defined in: [dist/lib/control.ts:904](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L904)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:902](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L902)
+Defined in: [dist/lib/control.ts:905](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L905)
 
 #### before
 
@@ -36,7 +36,7 @@ Defined in: [dist/lib/control.ts:902](https://github.com/maiyun/clickgo/blob/mas
 
 > **go**: `boolean`
 
-Defined in: [dist/lib/control.ts:872](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L872)
+Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L875)
 
 #### Inherited from
 
@@ -48,7 +48,7 @@ Defined in: [dist/lib/control.ts:872](https://github.com/maiyun/clickgo/blob/mas
 
 > **preventDefault**: () => `void`
 
-Defined in: [dist/lib/control.ts:873](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L873)
+Defined in: [dist/lib/control.ts:876](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L876)
 
 #### Returns
 

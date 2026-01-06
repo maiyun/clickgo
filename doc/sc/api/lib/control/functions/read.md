@@ -8,7 +8,7 @@
 
 > **read**(`blob`): `Promise`\<`false` \| [`TControlPackage`](../type-aliases/TControlPackage.md)\>
 
-Defined in: [dist/lib/control.ts:423](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L423)
+Defined in: [dist/lib/control.ts:426](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L426)
 
 将 cgc 文件 blob 转换为 control 对象
 

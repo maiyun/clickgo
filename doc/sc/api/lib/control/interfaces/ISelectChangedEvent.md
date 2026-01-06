@@ -6,7 +6,7 @@
 
 # Interface: ISelectChangedEvent
 
-Defined in: [dist/lib/control.ts:1376](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1376)
+Defined in: [dist/lib/control.ts:1379](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1379)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1376](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1377](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1377)
+Defined in: [dist/lib/control.ts:1380](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1380)
 
 #### before
 

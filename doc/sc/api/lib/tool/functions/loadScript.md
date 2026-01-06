@@ -8,7 +8,7 @@
 
 > **loadScript**(`url`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/tool.ts:2411](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2411)
+Defined in: [dist/lib/tool.ts:2412](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2412)
 
 加载脚本
 

@@ -8,7 +8,7 @@
 
 > **isMs**(`time`): `boolean`
 
-Defined in: [dist/lib/tool.ts:1595](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1595)
+Defined in: [dist/lib/tool.ts:1596](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1596)
 
 是否是毫秒
 

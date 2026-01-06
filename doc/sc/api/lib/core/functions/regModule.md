@@ -8,7 +8,7 @@
 
 > **regModule**(`current`, `name`, `opt`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/core.ts:1009](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1009)
+Defined in: [dist/lib/core.ts:1015](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1015)
 
 注册模块
 

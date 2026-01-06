@@ -8,7 +8,7 @@
 
 > **open**(`url`): `void`
 
-Defined in: [dist/lib/core.ts:729](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L729)
+Defined in: [dist/lib/core.ts:735](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L735)
 
 打开新的标签页
 

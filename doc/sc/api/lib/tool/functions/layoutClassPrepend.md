@@ -8,7 +8,7 @@
 
 > **layoutClassPrepend**(`layout`, `preps`): `string`
 
-Defined in: [dist/lib/tool.ts:466](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L466)
+Defined in: [dist/lib/tool.ts:467](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L467)
 
 给 class 增加 scope 的随机前缀，给 id 新增前缀
 

@@ -8,7 +8,7 @@
 
 > **getMimeByPath**(`path`): `object`
 
-Defined in: [dist/lib/tool.ts:625](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L625)
+Defined in: [dist/lib/tool.ts:626](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L626)
 
 根据后缀、文件名或路径获取 mime 类型（简单版，完整版请使用 @litert/mime.js）
 

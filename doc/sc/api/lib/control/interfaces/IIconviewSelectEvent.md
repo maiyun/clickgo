@@ -6,7 +6,7 @@
 
 # Interface: IIconviewSelectEvent
 
-Defined in: [dist/lib/control.ts:1160](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1160)
+Defined in: [dist/lib/control.ts:1163](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1163)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1160](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1161](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1161)
+Defined in: [dist/lib/control.ts:1164](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1164)
 
 #### area
 
