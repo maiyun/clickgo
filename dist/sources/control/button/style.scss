@@ -443,6 +443,12 @@
 
         // --- 放在后面用来覆盖前面的样式 ---
         &.area-split {
+            .inner {
+                border-radius: var(--g-radius) 0 0 var(--g-radius);
+            }
+            .arrow {
+                border-radius: 0 var(--g-radius) var(--g-radius) 0;
+            }
             .inner, .arrow {
                 &:focus {                       // --- 焦点 ---
                     color: var(--color-focus);
