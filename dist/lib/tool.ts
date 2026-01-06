@@ -516,7 +516,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
  * @param layout 要包裹的 layout
  */
 export function eventsAttrWrap(layout: string): string {
-    const events = ['click', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
+    const events = ['click', 'dblclick', 'pointerdown', 'pointerenter', 'pointerleave', 'pointerup', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
     const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
     return layout.replace(reg, function(t, t1, t2): string {
         if (/^[\w]+$/.test(t2)) {

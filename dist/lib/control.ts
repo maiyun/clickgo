@@ -244,7 +244,8 @@ export abstract class AbstractControl {
      * @param e 鼠标、触摸、键盘事件
      */
     public allowEvent(e: PointerEvent | KeyboardEvent): boolean {
-        return clickgo.modules.pointer.allowEvent(e);
+        const r = clickgo.modules.pointer.allowEvent(e);
+        return r;
     }
 
     /**

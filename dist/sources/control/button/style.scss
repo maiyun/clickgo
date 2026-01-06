@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; outline: none; position: relative; border-radius: var(--g-radius); /* overflow: hidden; 加了这个角标等控件将无法完整显示 */ transition: var(--g-transition); transition-property: color, background-color, box-shadow;
+    display: flex; outline: none; position: relative; border-radius: var(--g-radius); /* overflow: hidden; 加了这个角标等控件将无法完整显示 */ transition: var(--g-transition); transition-property: color, background-color, box-shadow, transform;
     // --- 外边框 ---
     &::before {
         content: ''; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; border-radius: var(--g-radius); transition: var(--g-transition); transition-property: border-color;

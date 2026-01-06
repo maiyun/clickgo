@@ -209,7 +209,8 @@ export class AbstractControl {
      * @param e 鼠标、触摸、键盘事件
      */
     allowEvent(e) {
-        return clickgo.modules.pointer.allowEvent(e);
+        const r = clickgo.modules.pointer.allowEvent(e);
+        return r;
     }
     /**
      * --- 触发系统方法 ---
