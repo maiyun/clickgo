@@ -127,8 +127,6 @@ export function setGlobalTransition(enable: boolean): void {
 // --- 添加 touchstart 事件，优化点击行为 ---
 document.addEventListener('touchstart', function() {
     // --- 空操作，仅为了激活某些浏览器的点击行为 ---
-}, {
-    'passive': true,
 });
 
 /**

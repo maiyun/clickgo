@@ -2823,8 +2823,6 @@ export async function doFocusAndPopEvent(e: PointerEvent): Promise<void> {
 }
 window.addEventListener('pointerdown', (e) => {
     doFocusAndPopEvent(e).catch(() => {});
-}, {
-    'passive': true
 });
 
 /**
