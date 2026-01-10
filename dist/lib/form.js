@@ -2504,8 +2504,6 @@ export async function doFocusAndPopEvent(e) {
 }
 window.addEventListener('pointerdown', (e) => {
     doFocusAndPopEvent(e).catch(() => { });
-}, {
-    'passive': true
 });
 /**
  * --- 移除一个 form（关闭窗口） ---
