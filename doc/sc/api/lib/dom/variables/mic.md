@@ -8,7 +8,7 @@
 
 > `const` **mic**: `object`
 
-Defined in: [dist/lib/dom.ts:1612](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1612)
+Defined in: [dist/lib/dom.ts:1610](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1610)
 
 麦克风通过 WebSocket 对讲
 

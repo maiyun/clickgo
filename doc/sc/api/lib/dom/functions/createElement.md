@@ -8,7 +8,7 @@
 
 > **createElement**\<`T`\>(`tagName`): `HTMLElementTagNameMap`\[`T`\]
 
-Defined in: [dist/lib/dom.ts:1428](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1428)
+Defined in: [dist/lib/dom.ts:1426](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1426)
 
 创建 element
 

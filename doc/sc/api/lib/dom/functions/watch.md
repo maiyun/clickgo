@@ -8,7 +8,7 @@
 
 > **watch**(`current`, `el`, `cb`, `mode`, `immediate`): `boolean`
 
-Defined in: [dist/lib/dom.ts:545](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L545)
+Defined in: [dist/lib/dom.ts:543](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L543)
 
 添加 DOM 内容变化监视
 

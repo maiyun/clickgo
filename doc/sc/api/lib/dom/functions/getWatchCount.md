@@ -8,7 +8,7 @@
 
 > **getWatchCount**(`taskId?`): `number`
 
-Defined in: [dist/lib/dom.ts:521](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L521)
+Defined in: [dist/lib/dom.ts:519](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L519)
 
 获取当前 watch 中的元素总数
 

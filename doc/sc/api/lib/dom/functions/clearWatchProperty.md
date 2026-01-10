@@ -8,7 +8,7 @@
 
 > **clearWatchProperty**(`formId`, `panelId?`): `void`
 
-Defined in: [dist/lib/dom.ts:974](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L974)
+Defined in: [dist/lib/dom.ts:972](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L972)
 
 清除某个窗体的所有 watch property 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余
 

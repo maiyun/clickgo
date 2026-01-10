@@ -8,7 +8,7 @@
 
 > **findParentByData**(`el`, `name`, `value?`): `HTMLElement` \| `null`
 
-Defined in: [dist/lib/dom.ts:1263](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1263)
+Defined in: [dist/lib/dom.ts:1261](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1261)
 
 通过 data 名查找上层所有标签是否存在
 

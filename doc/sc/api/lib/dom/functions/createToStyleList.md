@@ -8,7 +8,7 @@
 
 > **createToStyleList**(`taskId`): `void`
 
-Defined in: [dist/lib/dom.ts:138](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L138)
+Defined in: [dist/lib/dom.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L136)
 
 创建任务时连同一起创建的 style 标签
 

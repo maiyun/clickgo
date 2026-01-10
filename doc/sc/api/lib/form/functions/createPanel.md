@@ -8,7 +8,7 @@
 
 > **createPanel**\<`T`\>(`rootPanel`, `cls`, `opt`): `Promise`\<\{ `id`: `string`; `vapp`: [`IVApp`](../../core/interfaces/IVApp.md); `vroot`: `T`; \}\>
 
-Defined in: [dist/lib/form.ts:2963](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2963)
+Defined in: [dist/lib/form.ts:2961](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2961)
 
 创建 panel 对象，一般情况下无需使用
 

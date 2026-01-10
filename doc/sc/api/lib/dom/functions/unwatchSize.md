@@ -8,7 +8,7 @@
 
 > **unwatchSize**(`el`): `void`
 
-Defined in: [dist/lib/dom.ts:473](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L473)
+Defined in: [dist/lib/dom.ts:471](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L471)
 
 移除监视 Element 对象大小
 

@@ -8,7 +8,7 @@
 
 > **siblings**(`el`): `HTMLElement`[]
 
-Defined in: [dist/lib/dom.ts:1355](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1355)
+Defined in: [dist/lib/dom.ts:1353](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1353)
 
 查找指定 el 的同级所有元素
 
