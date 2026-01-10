@@ -9,8 +9,8 @@ eslint.config.cjs
 .gitignore
 .npmignore
 .DS_Store
-/doc/
-!/doc/clickgo-rag.md
+doc/**
+!doc/clickgo-rag.md
 *.ts
 !*.d.ts
 tsconfig.json
