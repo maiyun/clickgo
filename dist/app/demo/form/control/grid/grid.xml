@@ -1,17 +1,17 @@
 <form width="350" height="500" title="grid" padding="10">
     <layout gutter="10" style="flex: 1;">
-        <grid :gutter="gutter[0]" :item-gutter="igutter[0]" :direction="direction[0]" :dense="dense" style="flex: 1;" align-h="center">
+        <grid :gutter="gutter[0]" :item-gutter="igutter[0]" :direction="direction[0]" style="flex: 1;" align-h="center">
             <grid-cell style="background:hsl(0,0%,90%);">1</grid-cell>
             <grid-cell style="background:hsl(0,0%,85%);">2</grid-cell>
             <grid-cell style="background:hsl(0,20%,85%);">3</grid-cell>
             <grid-cell style="background:hsl(0,40%,85%);">4</grid-cell>
-            <grid-cell style="background:hsl(0,0%,80%);padding:10px;" align-v="center" span="2">
-                <label>span: 2</label>
+            <grid-cell style="background:hsl(0,0%,80%);padding:10px;" align-v="center" span="2" v-slot="d">
+                <label>span: {{d.span}}</label>
                 <text style="width: 50%; flex: 1;" />
             </grid-cell>
             <grid-cell style="background:hsl(0,20%,80%);">6</grid-cell>
             <grid-cell style="background:hsl(0,40%,80%);">7</grid-cell>
-            <grid-cell style="background:hsl(0,60%,80%);" align-h="right" align-v="bottom">
+            <grid-cell style="background:hsl(0,60%,80%);" align-h="right" align-v="bottom" size-l="4" size-m="2">
                 <button>OK</button>
             </grid-cell>
         </grid>
@@ -22,7 +22,6 @@
             <select v-model="igutter" :data="[0, 10, 12, 30, 31, 50]"></select>
             <label>direction:</label>
             <select v-model="direction" :data="['h', 'v']"></select>
-            <check v-model="dense">dense</check>
         </layout>
     </layout>
 </form>

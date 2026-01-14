@@ -5,7 +5,9 @@ export default class extends clickgo.control.AbstractControl {
         'gutter': 0,
         'alignH': undefined,
         'alignV': undefined,
-        'span': undefined,
+        'span': 0,
+        'sizeM': 0,
+        'sizeL': 0,
     };
     grid = null;
     /** --- 方向 --- */
@@ -19,36 +21,26 @@ export default class extends clickgo.control.AbstractControl {
         }
         return this.propNumber('gutter') ? this.propNumber('gutter') : (this.grid?.propNumber('itemGutter') ?? 0);
     }
-    /** --- 横向对齐方式 --- */
     get alignHComp2() {
         return this.alignHComp ?? this.grid?.alignHComp;
     }
-    /** --- 纵向对齐方式 --- */
     get alignVComp2() {
         return this.alignVComp ?? this.grid?.alignVComp;
     }
-    /** --- 横跨几列数字 --- */
+    /** --- 当前单元格横跨的列 --- */
     get spanNum() {
-        if (this.props.span === undefined) {
+        const size = this.grid?.size ?? 's';
+        if (size === 's') {
             return 1;
         }
-        const span = this.propInt('span');
-        if (span === -1) {
-            return -1;
+        if (size === 'm') {
+            return this.propInt('sizeM') === -1 ? 1 : (this.propInt('sizeM') || this.propInt('span') || 1);
         }
-        /** --- grid max span --- */
-        const maxSpan = this.grid?.maxSpan ?? 12;
-        return (span > maxSpan) ? maxSpan : span;
+        return this.propInt('sizeL') === -1 ? 1 : (this.propInt('sizeL') || this.propInt('span') || 1);
     }
-    /** --- 横跨几列 css 模式 --- */
+    /** --- 横跨几行 --- */
     get spanComp() {
-        if (this.props.span === undefined) {
-            return undefined;
-        }
-        if (this.spanNum === -1) {
-            return '1 / -1';
-        }
-        return 'span ' + this.spanNum.toString();
+        return this.spanNum > 1 ? 'span ' + this.spanNum.toString() : undefined;
     }
     onMounted() {
         this.grid = this.parentByName('grid');
