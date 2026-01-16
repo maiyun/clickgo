@@ -17,11 +17,13 @@ export default class extends clickgo.control.AbstractControl {
     };
 
     public props: {
+        'name': string;
         'disabled': boolean | string;
 
         'modelValue': boolean | string;
         'indeterminate': boolean | string;
     } = {
+            'name': '',
             'disabled': false,
 
             'modelValue': false,
@@ -35,6 +37,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
+                'name': this.props.name,
                 'value': this.value,
                 'indeterminate': this.indeterminateData
             }
@@ -54,6 +57,7 @@ export default class extends clickgo.control.AbstractControl {
         await this.nextTick();
         const event2: clickgo.control.ICheckChangedEvent = {
             'detail': {
+                'name': this.props.name,
                 'value': this.value,
                 'indeterminate': this.indeterminateData
             }

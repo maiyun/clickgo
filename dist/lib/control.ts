@@ -880,6 +880,7 @@ export interface ICustomEvent {
 
 export interface ICheckChangeEvent extends ICustomEvent {
     'detail': {
+        'name': string;
         'value': boolean;
         'indeterminate': boolean;
     };
@@ -887,6 +888,7 @@ export interface ICheckChangeEvent extends ICustomEvent {
 
 export interface ICheckChangedEvent {
     'detail': {
+        'name': string;
         'value': boolean;
         'indeterminate': boolean;
     };

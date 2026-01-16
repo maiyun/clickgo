@@ -10,6 +10,7 @@ export default class extends clickgo.control.AbstractControl {
         'update:indeterminate': null
     };
     props = {
+        'name': '',
         'disabled': false,
         'modelValue': false,
         'indeterminate': false
@@ -21,6 +22,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.go = false;
             },
             'detail': {
+                'name': this.props.name,
                 'value': this.value,
                 'indeterminate': this.indeterminateData
             }
@@ -40,6 +42,7 @@ export default class extends clickgo.control.AbstractControl {
         await this.nextTick();
         const event2 = {
             'detail': {
+                'name': this.props.name,
                 'value': this.value,
                 'indeterminate': this.indeterminateData
             }
