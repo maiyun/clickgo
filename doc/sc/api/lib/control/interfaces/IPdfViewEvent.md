@@ -6,7 +6,7 @@
 
 # Interface: IPdfViewEvent
 
-Defined in: [dist/lib/control.ts:1107](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1107)
+Defined in: [dist/lib/control.ts:1109](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1109)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1107](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1108](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1108)
+Defined in: [dist/lib/control.ts:1110](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1110)
 
 #### height
 

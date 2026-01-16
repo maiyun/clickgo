@@ -6,7 +6,7 @@
 
 # Interface: ISelectAddEvent
 
-Defined in: [dist/lib/control.ts:1343](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1343)
+Defined in: [dist/lib/control.ts:1345](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1345)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1344](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1344)
+Defined in: [dist/lib/control.ts:1346](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1346)
 
 #### index
 

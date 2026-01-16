@@ -6,7 +6,7 @@
 
 # Interface: IFormCloseEvent
 
-Defined in: [dist/lib/control.ts:988](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L988)
+Defined in: [dist/lib/control.ts:990](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L990)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:989](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L989)
+Defined in: [dist/lib/control.ts:991](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L991)
 
 #### event
 

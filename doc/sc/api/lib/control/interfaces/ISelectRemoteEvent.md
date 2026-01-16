@@ -6,7 +6,7 @@
 
 # Interface: ISelectRemoteEvent
 
-Defined in: [dist/lib/control.ts:1393](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1393)
+Defined in: [dist/lib/control.ts:1395](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1395)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1393](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1394](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1394)
+Defined in: [dist/lib/control.ts:1396](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1396)
 
 #### callback()
 

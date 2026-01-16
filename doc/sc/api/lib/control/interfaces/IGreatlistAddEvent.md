@@ -6,7 +6,7 @@
 
 # Interface: IGreatlistAddEvent
 
-Defined in: [dist/lib/control.ts:1047](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1047)
+Defined in: [dist/lib/control.ts:1049](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1049)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1048](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1048)
+Defined in: [dist/lib/control.ts:1050](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1050)
 
 #### index
 

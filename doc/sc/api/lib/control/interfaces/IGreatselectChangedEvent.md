@@ -6,7 +6,7 @@
 
 # Interface: IGreatselectChangedEvent
 
-Defined in: [dist/lib/control.ts:1078](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1078)
+Defined in: [dist/lib/control.ts:1080](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1080)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1078](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1079](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1079)
+Defined in: [dist/lib/control.ts:1081](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1081)
 
 #### value
 

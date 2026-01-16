@@ -6,7 +6,7 @@
 
 # Interface: IIconviewOpenEvent
 
-Defined in: [dist/lib/control.ts:1141](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1141)
+Defined in: [dist/lib/control.ts:1143](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1143)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1141](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1142](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1142)
+Defined in: [dist/lib/control.ts:1144](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1144)
 
 #### value
 

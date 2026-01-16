@@ -26,6 +26,10 @@ Defined in: [dist/lib/control.ts:882](https://github.com/maiyun/clickgo/blob/mas
 
 > **indeterminate**: `boolean`
 
+#### name
+
+> **name**: `string`
+
 #### value
 
 > **value**: `boolean`

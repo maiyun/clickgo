@@ -6,7 +6,7 @@
 
 # Interface: IGreatselectChangeEvent
 
-Defined in: [dist/lib/control.ts:1072](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1072)
+Defined in: [dist/lib/control.ts:1074](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1074)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1073](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1073)
+Defined in: [dist/lib/control.ts:1075](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1075)
 
 #### value
 

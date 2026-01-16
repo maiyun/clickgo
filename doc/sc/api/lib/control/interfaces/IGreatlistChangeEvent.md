@@ -6,7 +6,7 @@
 
 # Interface: IGreatlistChangeEvent
 
-Defined in: [dist/lib/control.ts:1028](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1028)
+Defined in: [dist/lib/control.ts:1030](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1030)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1029](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1029)
+Defined in: [dist/lib/control.ts:1031](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1031)
 
 #### value
 

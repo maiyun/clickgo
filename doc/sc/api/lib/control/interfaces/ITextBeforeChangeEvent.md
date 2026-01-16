@@ -6,7 +6,7 @@
 
 # Interface: ITextBeforeChangeEvent
 
-Defined in: [dist/lib/control.ts:913](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L913)
+Defined in: [dist/lib/control.ts:915](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L915)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:914](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L914)
+Defined in: [dist/lib/control.ts:916](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L916)
 
 #### change?
 

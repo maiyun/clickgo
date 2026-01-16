@@ -6,7 +6,7 @@
 
 # Interface: IDateChangedEvent
 
-Defined in: [dist/lib/control.ts:940](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L940)
+Defined in: [dist/lib/control.ts:942](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L942)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:940](https://github.com/maiyun/clickgo/blob/mas
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:941](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L941)
+Defined in: [dist/lib/control.ts:943](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L943)
 
 #### before?
 

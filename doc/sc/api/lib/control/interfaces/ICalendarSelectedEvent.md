@@ -6,7 +6,7 @@
 
 # Interface: ICalendarSelectedEvent
 
-Defined in: [dist/lib/control.ts:949](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L949)
+Defined in: [dist/lib/control.ts:951](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L951)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:949](https://github.com/maiyun/clickgo/blob/mas
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:950](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L950)
+Defined in: [dist/lib/control.ts:952](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L952)
 
 #### date
 

@@ -6,7 +6,7 @@
 
 # Interface: IChecklistRemoveEvent
 
-Defined in: [dist/lib/control.ts:1194](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1194)
+Defined in: [dist/lib/control.ts:1196](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1196)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1195](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1195)
+Defined in: [dist/lib/control.ts:1197](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1197)
 
 #### index
 

@@ -6,7 +6,7 @@
 
 # Interface: ITextMinMaxChangeEvent
 
-Defined in: [dist/lib/control.ts:920](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L920)
+Defined in: [dist/lib/control.ts:922](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L922)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:921](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L921)
+Defined in: [dist/lib/control.ts:923](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L923)
 
 #### before
 

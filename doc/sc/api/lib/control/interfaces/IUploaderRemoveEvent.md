@@ -6,7 +6,7 @@
 
 # Interface: IUploaderRemoveEvent
 
-Defined in: [dist/lib/control.ts:1126](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1126)
+Defined in: [dist/lib/control.ts:1128](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1128)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1127](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1127)
+Defined in: [dist/lib/control.ts:1129](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1129)
 
 #### index
 

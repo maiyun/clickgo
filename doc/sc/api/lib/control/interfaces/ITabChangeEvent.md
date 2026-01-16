@@ -6,7 +6,7 @@
 
 # Interface: ITabChangeEvent
 
-Defined in: [dist/lib/control.ts:1418](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1418)
+Defined in: [dist/lib/control.ts:1420](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1420)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1419](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1419)
+Defined in: [dist/lib/control.ts:1421](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1421)
 
 #### value
 

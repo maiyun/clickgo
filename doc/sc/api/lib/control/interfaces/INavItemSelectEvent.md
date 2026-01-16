@@ -6,7 +6,7 @@
 
 # Interface: INavItemSelectEvent
 
-Defined in: [dist/lib/control.ts:1262](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1262)
+Defined in: [dist/lib/control.ts:1264](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1264)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1263](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1263)
+Defined in: [dist/lib/control.ts:1265](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1265)
 
 #### name
 

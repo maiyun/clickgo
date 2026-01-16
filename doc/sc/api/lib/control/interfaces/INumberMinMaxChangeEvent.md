@@ -6,7 +6,7 @@
 
 # Interface: INumberMinMaxChangeEvent
 
-Defined in: [dist/lib/control.ts:904](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L904)
+Defined in: [dist/lib/control.ts:906](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L906)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:905](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L905)
+Defined in: [dist/lib/control.ts:907](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L907)
 
 #### before
 
