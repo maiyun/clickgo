@@ -113,7 +113,7 @@
         flex: 1; display: flex; flex-direction: column; overflow: hidden;
         // --- 头部 ---
         .header {
-            display: flex; background: var(--g-plain-background);
+            display: flex; background: var(--g-plain-background); align-items: center;
             // --- 图标 ---
             .icon {
                 display: flex; align-items: center; padding-left: 10px;
@@ -144,10 +144,10 @@
                 }
                 .close {
                     &:hover {
-                        background: var(--danger); fill: #FFF; stroke: #FFF;
+                        background: var(--danger); color: #FFF;
                     }
                     &:active {
-                        background: var(--danger-hover); fill: #FFF; stroke: #FFF;
+                        background: var(--danger-hover); color: #FFF;
                     }
                 }
             }

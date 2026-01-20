@@ -8,6 +8,12 @@
 
 是否禁用控件，默认 false。
 
+#### name
+
+`string`
+
+控件名称，会在事件中进行返回，默认空字符串。
+
 #### modelValue
 
 `boolean` | `string`

@@ -1,5 +1,9 @@
 .wrap {
-    display: flex; position: relative;
+    display: flex; position: relative; overflow: hidden;
+    // --- bg 勿删，供 theme 扩展使用 ---
+    .bg {
+        display: none;
+    }
     .menuwrap {
         display: flex; overflow: hidden; z-index: 7; // --- 不设置的话，收起来的瞬间会到底部去，不能设置 2，会被 header 挡住 ---
         .menu {

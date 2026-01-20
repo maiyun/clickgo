@@ -57,11 +57,11 @@ document.getElementsByTagName('body')[0].appendChild(styleList);
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-cursor\'></style>');
 styleList.insertAdjacentHTML('beforeend', '<style id=\'cg-global-transition\'></style>');
 styleList.insertAdjacentHTML('beforeend', `<style id='cg-global'>
-${classUnfold()} {-webkit-user-select: none; user-select: none; cursor: default; box-sizing: border-box;}
+${classUnfold()} {-webkit-user-select: none; user-select: none; cursor: default; box-sizing: border-box; background-clip: padding-box;}
 ${topClass.slice(0, 4).join(', ')} {left: 0; top: 0; width: 0; height: 0; position: absolute;}
 ${classUnfold('img')} {vertical-align: bottom;}
 ${classUnfold('::selection', ['#cg-launcher'])} {background-color: rgba(0, 0, 0, .1);}
-${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
+${classUnfold('*')}, ${classUnfold('*::after')}, ${classUnfold('*::before')} {box-sizing: border-box; background-clip: padding-box; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); flex-shrink: 0;}
 ${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size); line-height: 1; -webkit-font-smoothing: antialiased; text-shadow: 0 0 1px color-mix(in srgb, currentColor 40%, transparent); fill: currentColor; stroke: currentColor;}
 #cg-wrap { ${hueCssVar}}
 </style>`);

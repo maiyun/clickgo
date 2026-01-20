@@ -1,0 +1,414 @@
+global {
+    --g-padding-xs:3px;
+    --g-padding-s:6px;
+    --g-padding:12px;
+    --g-padding-h:6px var(--g-padding);
+    --g-padding-l:18px;
+    --g-padding-l-h:12px var(--g-padding-l);
+    --g-padding-xl:28px;
+    --g-padding-xl-h:14px var(--g-padding-xl);
+    --g-bpadding:25px;
+    --g-margin:7px;
+    --g-radius:10px;
+    --g-radius-l:15px;
+    --g-radius-xl:20px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:20px;
+    --g-size-l:28px;
+    --g-size-xl:38px;
+    --g-control:20px;   // --- 如 check、radio 等的宽度 ---
+    --g-control-m:24px;
+    --g-control-l:28px;
+    --g-transition:all .3s var(--g-cubic);
+    --g-line:1.5;
+    --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
+
+    // --- 基础颜色 ---
+
+    --g-pure:oklch(.995 0.005 243);
+    --face:oklch(.973 0.013 243 / .8);
+    --face-hover:oklch(.943 0.013 243 / .8);
+    --face-selected:oklch(.913 0.013 243 / .8);
+    --g-pop-background:oklch(.973 0.013 243 / .6);
+    --g-pop-backdrop:blur(16px) saturate(1.8);
+    --g-pop-border:solid 6px oklch(.973 0.013 243 / .6);
+    --g-shadow:0 1px 3px oklch(.2 0 0 / .05);
+    --g-shadow-d:0 1px 3px oklch(.2 0 0 / .35);
+    --g-outline-shadow:0 0 0 4px oklch(1 0 0 / .2); 
+
+    // --- 组件默认颜色（如按钮） ---
+
+    --g-background:oklch(1 0 0 / .1);
+    --g-background-hover:oklch(1 0 0 / .4);
+    --g-background-active:oklch(1 0 0 / .6);
+    --g-background-opacity:oklch(1 0 0 / .2);
+    --g-background-focus:oklch(1 0 0 / .4);
+    --g-background-disabled:oklch(1 0 0 / .05);
+
+    --g-border-color:oklch(1 0 0 / .5);
+    --g-border-color-hover:oklch(1 0 0 / 1);
+    --g-border-color-active:oklch(1 0 0 / 1);
+    --g-border-color-focus:oklch(1 0 0 / 1);
+    --g-border-color-disabled:oklch(1 0 0 / .2);
+    
+    // --- 组件轻量颜色（如文本框） ---
+
+    --g-plain-background:oklch(1 0 0 / .1);
+    --g-plain-background-hover:oklch(1 0 0 / .2);
+    --g-plain-background-active:oklch(1 0 0 / .4);
+    --g-plain-background-focus:oklch(1 0 0 / .4);
+    --g-plain-background-disabled:oklch(1 0 0 / .05);
+    --g-plain-background-selected:oklch(1 0 0 / .2);
+
+    --g-plain-border-color:oklch(1 0 0 / .5);
+    --g-plain-border-color-hover:oklch(1 0 0 / .8);
+    --g-plain-border-color-active:oklch(1 0 0 / 1);
+    --g-plain-border-color-focus:oklch(1 0 0 / 1);
+    --g-plain-border-color-disabled:oklch(1 0 0 / .2);
+    --g-plain-border-color-plain:oklch(1 0 0 / .3);
+
+    // --- 特殊组件颜色 ---
+
+    --g-block-background:oklch(.96 0.01 243);
+    --g-block-background-hover:oklch(.94 0.01 243);
+    --g-block-dark-background:oklch(.04 0.01 243);
+    --g-block-dark-background-hover:oklch(.06 0.01 243);
+
+    ::selection {
+        background-color: oklch(0.9 0.05 243 / 0.2);
+    }
+}
+
+// -- CONTROL -- form --
+
+@keyframes form_flash {
+    0%, 50% {
+        box-shadow: 0 3px 24px -2px hsla(0, 0%, 0%, .25),0 12px 64px -10px hsla(217, 85%, 50%, .11),inset 0 0 28px hsla(0, 0%, 100%, .5);
+        color: var(--g-color);
+        border-color: var(--g-border-color);
+    }
+    51%, 100% {
+        box-shadow: 0 3px 12px -2px hsla(0, 0%, 0%, .05),0 12px 48px -10px hsla(217, 85%, 50%, .11),inset 0 0 28px hsla(0, 0%, 100%, .5);
+        color: var(--g-color-disabled);
+        border-color: var(--g-plain-border-color);
+    }
+}
+
+.form_wrap {
+    padding: var(--g-padding-s); backdrop-filter: var(--g-pop-backdrop);
+    &:not(.form_border-none):not([data-cg-max]) {
+        border: none;
+    }
+    &:not(.form_border-none):not([data-cg-max]) {
+        box-shadow: 0 3px 12px -2px hsla(0, 0%, 0%, .05),0 12px 48px -10px hsla(217, 85%, 50%, .11),inset 0 0 28px hsla(0, 0%, 100%, .5);
+    }
+    &.form_focus {
+        color: var(--g-color);
+        &:not(.form_border-none):not([data-cg-max]) {
+            box-shadow: 0 3px 24px -2px hsla(0, 0%, 0%, .25),0 12px 64px -10px hsla(217, 85%, 50%, .11),inset 0 0 28px hsla(0, 0%, 100%, .5);
+        }
+    }
+    &.form_focus {
+        &:not(.form_border-none):not([data-cg-max]) {
+            border: none;
+        }
+    }
+    &.form_flash {
+        animation: form_flash .2s linear infinite;
+    }
+
+    // --- 内部 ---
+    .form_inner {
+        // --- 头部 ---
+        .form_header {
+            background: transparent;
+            .form_title {
+                padding: var(--g-padding); text-shadow: 0 0 3px oklch(1 0 0); font-weight: bold;
+            }
+            .form_controls {
+                padding: var(--g-padding-s); gap: 6px;
+                .form_min, .form_max, .form_close {
+                    box-shadow: var(--g-shadow); border-radius: var(--g-radius);
+                    &:hover {
+                        transform: translateY(-1px); box-shadow: 0 1px 5px oklch(.2 0 0 / .05);
+                    }
+                    &:active {
+                        transform: translateY(0);
+                    }
+                }
+                .form_close {
+                    color: #FFF; background: var(--danger);
+                }
+            }
+        }
+        // --- 主体内容 ---
+        .form_content {
+            .form_loading {
+                background: radial-gradient(circle, oklch(.99 0.01 243 / .9) 10%, oklch(.99 0.01 243 / .4) 80%);
+                &:not(.form_show) {
+                    transform: scale(1.3);
+                }
+            }
+        }
+    }
+    &:not([data-cg-max]) {
+        .form_inner {
+            .form_content {
+                border-radius: var(--g-radius);
+            }
+        }
+    }
+}
+
+// -- CONTROL -- group --
+
+.group_wrap {
+    border-radius: var(--g-radius-xl);
+    &.group_hover:hover, &:not(.group_hover) {
+        box-shadow: 0 12px 16px -4px oklch(.2 0.01 243 / .08), 0 4px 6px -2px oklch(.2 0.01 243 / 0.03);
+    }
+    &.group_plain {
+        &.group_hover:hover, &:not(.group_hover) {
+            box-shadow: 0px 3px 16px 0px oklch(.2 0.01 243 / .06);
+        }
+    }
+}
+
+// --- CONTROL -- levelselect ---
+
+.levelselect_tag-cg-greatselect {
+    .levelselect_op {
+        .levelselect_oploading {
+            background: radial-gradient(circle, oklch(.99 0.01 243 / .9) 10%, oklch(.99 0.01 243 / .4) 80%);
+        }
+    }
+}
+.levelselect_pop {
+    .levelselect_loading {
+        background: radial-gradient(circle, oklch(.99 0.01 243 / .9) 10%, oklch(.99 0.01 243 / .4) 80%);
+    }
+}
+
+// --- CONTROL -- nav ---
+
+@keyframes nav_float {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+        transform: translate(20px, -20px) scale(1.05);
+    }
+}
+
+.nav_wrap {
+    .nav_bg {
+        display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%; filter: blur(80px) contrast(1.1); z-index: 0;
+        .nav_bg-item {
+            position: absolute; border-radius: 50%; animation: nav_float infinite ease-in-out alternate;
+            opacity: 0.8; /* --- 调整透明度以混合颜色 --- */
+            /* --- 色块1：深蓝色 (对应图中下方的深蓝) --- */
+            &.nav_bg-item-1 {
+                width: 60vw; height: 60vw; background: #2196F3; bottom: -10%; left: 2%; animation-duration: 18s; animation-delay: -2s;
+            }
+            /* --- 色块2：粉紫色 (对应图中右下角的粉色) --- */
+            &.nav_bg-item-2 {
+                width: 50vw; height: 50vw; background: #FFC1E3; bottom: -10%; right: -10%; animation-duration: 22s; z-index: 2;
+            }
+            /* --- 色块3：青白色/浅蓝 (对应图中右上和顶部) --- */
+            &.nav_bg-item-3 {
+                width: 70vw; height: 70vw; background: #B3E5FC; top: -20%; right: -20%; animation-duration: 20s; animation-delay: -5s; opacity: 0.6;
+            }
+            /* --- 色块4：白色高光 (对应图中左上角的亮白) --- */
+            &.nav_bg-item-4 {
+                width: 30vw; height: 30vw; background: #ffffff; top: -10%; left: -10%; animation-duration: 25s; opacity: 0.9; z-index: 3;
+            }
+        }
+    }
+    .nav_menuwrap {
+        .nav_menu {
+            background: var(--g-pop-background); backdrop-filter: var(--g-pop-backdrop);
+        }
+    }
+    .nav_content {
+        .nav_header {
+            background: transparent;
+        }
+    }
+}
+
+// -- CONTROL -- nav-item --
+
+.nav-item_wrap {
+    &:not(.nav-item_selected) {
+        > .nav-item_text:hover {
+            color: var(--g-color-hover);
+        }
+    }
+    &.nav-item_selected {
+        > .nav-item_text {
+            color: oklch(.99 0.01 243); background: var(--cg);
+        }
+    }
+}
+
+// -- CONTROL -- property --
+
+.property_wrap {
+    .property_controls {
+        .property_tag-cg-button {
+            margin-right: 5px;
+        }
+        .property_split {
+            margin: 0 5px 0 0;
+        }
+    }
+}
+
+// -- CONTROL -- scroll --
+
+.scroll_wrap {
+    background-color: transparent;
+    .scroll_start, .scroll_end {
+        display: none;
+    }
+    .scroll_bar {
+        .scroll_block {
+            transition-property: background-color;
+        }
+    }
+}
+
+// -- CONTROL -- select --
+
+.select_tag-cg-greatselect {
+    .select_op {
+        .select_tags {
+            .select_tag {
+                .select_label {
+                    padding: 0 10px;
+                }
+                .select_close {
+                    width: 22px; height: 22px;
+                }
+            }
+        }
+    }
+}
+
+// -- CONTROL -- tab --
+
+.tab_wrap {
+    .tab_tab {
+        background: transparent; border: none;
+        &::after {
+            background: var(--cg); transition: all .3s var(--g-cubic);
+        }
+        &:not(.tab_selected):not([data-hover]):hover {
+            background: transparent; color: var(--cg);
+        }
+        &.tab_selected {
+            background: transparent; font-weight: bold; color: var(--cg);
+        }
+    }
+    &.tab_top {
+        .tab_tabs {
+            .tab_tab {
+                padding-bottom: 2px;
+                &.tab_selected {
+                    padding-bottom: 2px;    // --- 用来覆盖控件默认样式的 ---
+                    &::after {
+                        top: initial; bottom: 0; height: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-right: var(--g-padding);
+            }
+        }
+    }
+    &.tab_bottom {
+        .tab_tabs {
+            .tab_tab {
+                padding-top: 2px;
+                &.tab_selected {
+                    padding-top: 2px;   // --- 用来覆盖控件默认样式的 ---
+                    &::after {
+                        top: 0; height: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-right: var(--g-padding);
+            }
+        }
+    }
+    &.tab_left {
+        .tab_tabs {
+            .tab_tab {
+                padding-right: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: initial; right: 0; width: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-bottom: var(--g-padding);
+            }
+        }
+    }
+    &.tab_right {
+        .tab_tabs {
+            .tab_tab {
+                padding-left: 2px;
+                &.tab_selected {
+                    &::after {
+                        left: 0; width: 2px;
+                    }
+                }
+            }
+            > :not(:last-child) {
+                margin-bottom: var(--g-padding);
+            }
+        }
+    }
+
+    .tab_panel {
+        background: transparent; border: none;
+    }
+}
+
+// -- CONTROL -- task --
+
+.task_wrap {
+    background: var(--g-pop-background);
+    .task_date {
+        color: var(--g-color)
+    }
+}
+
+// --- CONTROL -- menulist ---
+
+.menulist_wrap {
+    background: transparent; padding: 4px;
+}
+
+// --- CONTROL -- button ---
+
+.button_wrap {
+    &:not([data-cg-disabled]) {
+        &:hover {
+            transform: translateY(-1px);
+        }
+        &:active {
+            transform: translateY(0);
+        }
+    }
+}
