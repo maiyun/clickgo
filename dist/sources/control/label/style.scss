@@ -42,6 +42,9 @@
     }
 
     // --- size ---
+    &.size-xs {
+        font-size: var(--g-size-xs);
+    }
     &.size-m {
         font-size: var(--g-size-m);
     }
