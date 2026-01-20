@@ -21,6 +21,16 @@
                 <button type="cg" plain>Cg</button>
                 <button type="tool" plain>Tool</button>
             </layout>
+            <label>Pointer:</label>
+            <layout gutter="10" class="buttons">
+                <button pointer>Default</button>
+                <button type="primary" pointer>Primary</button>
+                <button type="info" pointer>Info</button>
+                <button type="warning" pointer>Warning</button>
+                <button type="danger" pointer>Danger</button>
+                <button type="cg" pointer>Cg</button>
+                <button type="tool" pointer>Tool</button>
+            </layout>
             <label>Disabled:</label>
             <layout gutter="10" class="buttons">
                 <button disabled>Default</button>

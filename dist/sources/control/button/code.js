@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
         'plain': false,
         'checked': false,
         'type': 'default',
+        'pointer': false,
         'area': 'all',
         'size': 'm',
         'sizeh': false,
@@ -143,16 +144,47 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
     // --- 按下事件 ---
-    down(e) {
-        if (this.props.area !== 'mark') {
+    down(oe) {
+        if (this.props.area === 'mark') {
+            // --- mark 才响应 ---
+            clickgo.modules.pointer.long(oe, () => {
+                clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h', {
+                    'autoScroll': true,
+                    'way': 'click'
+                });
+            });
+        }
+        if (this.propBoolean('pointer')) {
+            this.doMove(oe);
+        }
+    }
+    // --- 进入事件 ---
+    enter(oe) {
+        if (!this.propBoolean('pointer')) {
             return;
         }
-        // --- mark 才响应 ---
-        clickgo.modules.pointer.long(e, () => {
-            clickgo.form.showPop(this.refs.arrow, this.refs.pop, 'h', {
-                'autoScroll': true,
-                'way': 'click'
-            });
+        this.doMove(oe);
+    }
+    doMove(oe) {
+        clickgo.modules.pointer.hover(oe, {
+            enter: e => {
+                const rect = this.element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                this.element.style.setProperty('--pointer-x', x + 'px');
+                this.element.style.setProperty('--pointer-y', y + 'px');
+                this.refs.pointer.style.opacity = '1';
+            },
+            move: e => {
+                const rect = this.element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                this.element.style.setProperty('--pointer-x', x + 'px');
+                this.element.style.setProperty('--pointer-y', y + 'px');
+            },
+            leave: () => {
+                this.refs.pointer.style.opacity = '0';
+            }
         });
     }
     // --- 左侧点击 ---

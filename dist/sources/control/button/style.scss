@@ -12,6 +12,10 @@
     &:focus::after, .inner:focus::after, .arrow:focus::after {
         display: block;
     }
+    // --- 指针效果 ---
+    .pointer {
+        position: absolute; left: var(--pointer-x); top: var(--pointer-y); width: 100px; height: 100px; border-radius: 50%; background-image: radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0) 70%); opacity: .5; mix-blend-mode: overlay; transform: translate(-50%, -50%); pointer-events: none; opacity: 0; transition: opacity .3s var(--g-cubic); z-index: 1;
+    }
 
     .inner {
         flex: 1; display: flex; align-items: center; justify-content: center; outline: none; position: relative; padding: var(--g-padding); transition: var(--g-transition);
