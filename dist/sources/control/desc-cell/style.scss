@@ -6,17 +6,23 @@
             border-color: var(--g-plain-border-color-plain);
         }
     }
-    &.size-s {
-        padding: var(--g-padding-s);
+
+    &:not(.nopadding) {
+        &.size-s {
+            padding: var(--g-padding-s);
+        }
+        &.size-m {
+            padding: var(--g-padding);
+        }
+        &.size-l {
+            padding: var(--g-padding-l);
+        }
+        &.size-xl {
+            padding: var(--g-padding-xl);
+        }
     }
-    &.size-m {
-        padding: var(--g-padding);
-    }
-    &.size-l {
-        padding: var(--g-padding-l);
-    }
-    &.size-xl {
-        padding: var(--g-padding-xl);
+    &.nopadding {
+        padding: 0;
     }
 
     &.stripe {

@@ -2,6 +2,7 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
     props = {
         'stripe': false,
+        'nopadding': false,
     };
     desc = null;
     descRow = null;

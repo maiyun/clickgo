@@ -15,7 +15,7 @@
             </desc-row>
             <desc-row>
                 <desc-head>HEAD7</desc-head>
-                <desc-cell colspan="3">CELL1</desc-cell>
+                <desc-cell colspan="3" nopadding>NOPADDING</desc-cell>
             </desc-row>
         </desc>
         <layout gutter="10">

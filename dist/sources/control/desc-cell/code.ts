@@ -4,8 +4,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'stripe': boolean | string;
+        'nopadding': boolean | string;
     } = {
             'stripe': false,
+            'nopadding': false,
         };
 
     public desc: any = null;
