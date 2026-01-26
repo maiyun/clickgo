@@ -169,6 +169,12 @@ row 之间的间距，默认 0。
 
 cell 之间的间距，默认 0。
 
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
+
 ### 样式
 
 使用 flex 布局，子元素按指定方向排列。支持自适应和固定宽度的子元素混合使用。
@@ -198,6 +204,12 @@ cell 之间的间距，默认 0。
 `number` | `string`
 
 cell 之间的间距，默认 0。
+
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
 
 ### 事件
 
@@ -1431,6 +1443,12 @@ cell 之间的间距，默认 0。
 
 是否朴素模式，默认 false。
 
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
+
 #### collapse
 
 `boolean` | `string`
@@ -1467,6 +1485,14 @@ cell 之间的间距，默认 0。
 
 描述列表单元格组件，用于显示描述内容。
 
+### 参数
+
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
+
 ### 样式
 
 作为 `desc-row` 的子组件，显示描述内容。使用表格单元格布局。
@@ -1500,6 +1526,14 @@ cell 之间的间距，默认 0。
 ---
 
 描述列表行组件。
+
+### 参数
+
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
 
 ### 样式
 
@@ -1849,6 +1883,12 @@ ECharts 配置选项。
 `number` | `string`
 
 内容间距。
+
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
 
 #### scrollLeft
 
@@ -2654,6 +2694,12 @@ ECharts 配置选项。
 `string` | `undefined`
 
 自定义色相值。
+
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
 
 ### 样式
 
@@ -6791,6 +6837,12 @@ TUMS 监控组件。
 `Record<string, number | undefined>`
 
 尺寸配置。
+
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
 
 ### 事件
 
