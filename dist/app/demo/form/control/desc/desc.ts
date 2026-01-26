@@ -6,6 +6,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public collapse = true;
 
+    public outside = true;
+
     public data: Array<{
         'name': string;
         'child': string[];

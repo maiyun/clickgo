@@ -26,6 +26,12 @@
 
 是否折叠模式，默认 true。
 
+#### outside
+
+`boolean` | `string`
+
+是否显示外边框，默认 true。
+
 #### size
 
 `'s'` | `'m'` | `'l'` | `'xl'`

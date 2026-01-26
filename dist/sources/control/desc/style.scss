@@ -12,6 +12,25 @@
                 border-color: var(--g-plain-border-color-plain);
             }
         }
+        &.no-outside {
+            border: none;
+
+            // --- 上下 ---
+            > :first-child > * {
+                border-top: none;
+            }
+            > :last-child > * {
+                border-bottom: none;
+            }
+
+            // --- 左右 ---
+            > * > :first-child {
+                border-left: none;
+            }
+            > * > :last-child {
+                border-right: none;
+            }
+        }
         &.collapse {
             border-collapse: collapse;
         }

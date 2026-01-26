@@ -2,6 +2,7 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
     border = true;
     collapse = true;
+    outside = true;
     data = [
         {
             'name': 'name1',

@@ -1,5 +1,5 @@
 <div class="wrap" data-cg-scroll>
-    <table :class="[propBoolean('border') && 'border', propBoolean('collapse') && 'collapse', propBoolean('plain') && 'plain']">
+    <table :class="[propBoolean('border') && 'border', !propBoolean('outside') && 'no-outside', propBoolean('collapse') && 'collapse', propBoolean('plain') && 'plain']">
         <slot></slot>
     </table>
 </div>

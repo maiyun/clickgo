@@ -8,12 +8,14 @@ export default class extends clickgo.control.AbstractControl {
         'stripe': boolean | string;
         'collapse': boolean | string;
         'size': 's' | 'm' | 'l' | 'xl';
+        'outside': boolean | string;
     } = {
             'border': true,
             'plain': false,
             'stripe': false,
             'collapse': true,
-            'size': 'm'
+            'size': 'm',
+            'outside': true
         };
 
 }

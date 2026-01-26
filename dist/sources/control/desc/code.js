@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
         'plain': false,
         'stripe': false,
         'collapse': true,
-        'size': 'm'
+        'size': 'm',
+        'outside': true
     };
 }
