@@ -14,6 +14,12 @@
 
 是否朴素模式，默认 false。
 
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
+
 #### collapse
 
 `boolean` | `string`

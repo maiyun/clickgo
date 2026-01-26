@@ -19,7 +19,8 @@ export default class extends clickgo.control.AbstractControl {
         'scrollLeft': 0,
         'scrollTop': 0,
         'data': [],
-        'sizes': {}
+        'sizes': {},
+        'stripe': false,
     };
     /** --- 要显示的项目起、终下标 --- */
     showPos = {

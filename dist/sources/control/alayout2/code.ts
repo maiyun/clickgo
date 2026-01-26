@@ -8,8 +8,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'gutter': number | string;
+        'stripe': boolean | string;
     } = {
             'gutter': 0,
+            'stripe': false,
         };
 
     /** --- 当前的方向 --- */

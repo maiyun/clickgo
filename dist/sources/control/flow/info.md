@@ -26,6 +26,12 @@
 
 内容间距。
 
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
+
 #### scrollLeft
 
 `number` | `string`

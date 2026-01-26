@@ -8,6 +8,12 @@
 
 cell 之间的间距，默认 0。
 
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
+
 ### 事件
 
 #### direction

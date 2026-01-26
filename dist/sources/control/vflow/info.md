@@ -44,6 +44,12 @@
 
 尺寸配置。
 
+#### stripe
+
+`boolean` | `string`
+
+是否显示条纹，默认 `false`。
+
 ### 事件
 
 #### gesture

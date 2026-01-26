@@ -1,6 +1,11 @@
 .wrap {
     display: flex; -webkit-overflow-scrolling: touch; max-width: 100%; max-height: 100%; position: relative;
 
+    &.stripe {
+        background-image: linear-gradient(135deg, var(--g-plain-border-color-plain) 25%, transparent 25%, transparent 50%, var(--g-plain-border-color-plain) 50%, var(--g-plain-border-color-plain) 75%, transparent 75%, transparent);
+        background-size: 8px 8px;
+    }
+
     &::-webkit-scrollbar {
         display: none;
     }

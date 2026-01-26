@@ -24,6 +24,8 @@ export default class extends clickgo.control.AbstractControl {
 
         'scrollLeft': number | string;
         'scrollTop': number | string;
+
+        'stripe': boolean | string;
     } = {
             'direction': 'h',
             'selection': false,
@@ -31,7 +33,9 @@ export default class extends clickgo.control.AbstractControl {
             'gutter': '',
 
             'scrollLeft': 0,
-            'scrollTop': 0
+            'scrollTop': 0,
+
+            'stripe': false,
         };
 
     public access = {

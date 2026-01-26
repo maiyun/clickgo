@@ -18,7 +18,8 @@ export default class extends clickgo.control.AbstractControl {
         'gesture': [],
         'gutter': '',
         'scrollLeft': 0,
-        'scrollTop': 0
+        'scrollTop': 0,
+        'stripe': false,
     };
     access = {
         /** --- 选框开始时的鼠标坐标原点相对于元素本身 --- */

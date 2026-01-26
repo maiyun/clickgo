@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
     };
     props = {
         'gutter': 0,
+        'stripe': false,
     };
     /** --- 当前的方向 --- */
     direction = 'h';

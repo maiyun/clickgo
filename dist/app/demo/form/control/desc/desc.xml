@@ -11,7 +11,7 @@
                 <desc-head>HEAD5</desc-head>
                 <desc-cell>CELL1</desc-cell>
                 <desc-head>HEAD6</desc-head>
-                <desc-cell>CELL2</desc-cell>
+                <desc-cell stripe>CELL2</desc-cell>
             </desc-row>
             <desc-row>
                 <desc-head>HEAD7</desc-head>

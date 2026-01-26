@@ -26,6 +26,8 @@ export default class extends clickgo.control.AbstractControl {
 
         'data': any[] | number;
         'sizes': Record<string, number | undefined>;
+
+        'stripe': boolean | string;
     } = {
             'direction': 'h',
             'selection': false,
@@ -35,7 +37,9 @@ export default class extends clickgo.control.AbstractControl {
             'scrollTop': 0,
 
             'data': [],
-            'sizes': {}
+            'sizes': {},
+
+            'stripe': false,
         };
 
     /** --- 要显示的项目起、终下标 --- */

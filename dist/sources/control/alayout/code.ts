@@ -7,10 +7,12 @@ export default class extends clickgo.control.AbstractControl {
         'direction': 'h' | 'v';
         'gutter': number | string;
         'itemGutter': number | string;
+        'stripe': boolean | string;
     } = {
             'direction': 'h',
             'gutter': 0,
-            'itemGutter': 0
+            'itemGutter': 0,
+            'stripe': false,
         };
 
     /** --- 列宽百分比，如 88 --- */

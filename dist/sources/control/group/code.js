@@ -12,5 +12,6 @@ export default class extends clickgo.control.AbstractControl {
         'position': 'top',
         'type': 'default',
         'hue': undefined,
+        'stripe': false,
     };
 }
