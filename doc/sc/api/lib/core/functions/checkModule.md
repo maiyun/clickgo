@@ -8,7 +8,7 @@
 
 > **checkModule**(`name`): `boolean`
 
-Defined in: [dist/lib/core.ts:1044](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1044)
+Defined in: [dist/lib/core.ts:1058](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1058)
 
 检查特殊模块是否注册
 
