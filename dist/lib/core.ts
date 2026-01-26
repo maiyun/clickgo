@@ -1004,6 +1004,20 @@ const modules: Record<string, {
         'loading': false,
         'resolve': [],
     },
+    // --- pdf-lib ---
+    'pdf-lib': {
+        func: async function() {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js`
+            ]);
+            if (!(window as any).PDFLib) {
+                throw Error('pdf-lib load failed.');
+            }
+            return (window as any).PDFLib;
+        },
+        'loading': false,
+        'resolve': [],
+    },
 };
 
 /**

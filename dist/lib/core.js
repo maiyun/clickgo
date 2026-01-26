@@ -876,6 +876,20 @@ const modules = {
         'loading': false,
         'resolve': [],
     },
+    // --- pdf-lib ---
+    'pdf-lib': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js`
+            ]);
+            if (!window.PDFLib) {
+                throw Error('pdf-lib load failed.');
+            }
+            return window.PDFLib;
+        },
+        'loading': false,
+        'resolve': [],
+    },
 };
 /**
  * --- 注册模块 ---
