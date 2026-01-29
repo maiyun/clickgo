@@ -1,3 +1,3 @@
-<td class="wrap" :class="[isBorder && 'border', 'size-' + size, plain && 'plain', isStripe && 'stripe', propBoolean('nopadding') && 'nopadding']" :colspan="colspan" :rowspan="rowspan">
+<td class="wrap" :class="[isBorder && 'border', 'size-' + size, plain && 'plain', isStripe && 'stripe', propBoolean('nopadding') && 'nopadding']" :colspan="propInt('colspan')" :rowspan="propInt('rowspan')">
     <slot></slot>
 </td>

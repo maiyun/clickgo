@@ -8,6 +8,24 @@
 
 是否显示条纹，默认 `false`。
 
+#### nopadding
+
+`boolean` | `string`
+
+是否移除内边距，默认 `false`。
+
+#### colspan
+
+`number` | `string`
+
+单元格横向合并的列数，默认 `1`。
+
+#### rowspan
+
+`number` | `string`
+
+单元格纵向合并的行数，默认 `1`。
+
 ### 样式
 
 作为 `desc-row` 的子组件，显示描述内容。使用表格单元格布局。

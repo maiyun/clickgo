@@ -5,9 +5,13 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'stripe': boolean | string;
         'nopadding': boolean | string;
+        'colspan': number | string;
+        'rowspan': number | string;
     } = {
             'stripe': false,
             'nopadding': false,
+            'colspan': 1,
+            'rowspan': 1,
         };
 
     public desc: any = null;
