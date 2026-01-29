@@ -3,6 +3,8 @@ export default class extends clickgo.control.AbstractControl {
     props = {
         'stripe': false,
         'nopadding': false,
+        'colspan': 1,
+        'rowspan': 1,
     };
     desc = null;
     descRow = null;

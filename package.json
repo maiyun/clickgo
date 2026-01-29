@@ -1,6 +1,6 @@
 {
   "name": "clickgo",
-  "version": "5.6.0",
+  "version": "5.6.1",
   "description": "Background interface, software interface, mobile phone APP interface operation library.",
   "type": "module",
   "keywords": [
