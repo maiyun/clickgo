@@ -748,7 +748,25 @@ export function getArray(param: string | any[]): any[] {
  * @param html HTML 字符
  */
 export function escapeHTML(html: string): string {
-    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return html.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&#34;')
+        .replace(/'/g, '&#39;');
+}
+
+/**
+ * --- 还原转义后的 HTML ---
+ * @param html 已转义的 HTML 字符
+ */
+export function unescapeHTML(html: string): string {
+    return html.replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&#34;/g, '"')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, '\'')
+        .replace(/&apos;/g, '\'');
 }
 
 /**
