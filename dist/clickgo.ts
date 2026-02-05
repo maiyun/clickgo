@@ -338,9 +338,12 @@ export abstract class AbstractBoot {
  * @param boot 启动类
  */
 export async function launcher(boot: AbstractBoot): Promise<void> {
+    // --- 先加载核心库 ---
     await lTool.loadScripts([
-        // --- 加载 Vue ---
-        `${cdn}/npm/vue@3.5.25/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`,
+        `${cdn}/npm/vue@3.5.26/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`,
+    ]);
+    // --- 再加载三方库，防止 Vue 没加载好，三方库加载会有异常 ---
+    await lTool.loadScripts([
         // --- 加载 jszip ---
         `${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`,
         // --- 加载 pointer ---
