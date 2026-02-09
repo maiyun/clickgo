@@ -137,10 +137,11 @@ export function blob2ArrayBuffer(blob) {
  * @param spliter 分隔符
  */
 export function sizeFormat(size, spliter = ' ') {
-    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let i = 0;
-    for (; i < 6 && size >= 1024.0; ++i) {
+    while (i < units.length - 1 && size >= 1024.0) {
         size /= 1024.0;
+        i++;
     }
     return (Math.round(size * 100) / 100).toString() + spliter + units[i];
 }
@@ -594,14 +595,19 @@ export function getMimeByPath(path) {
 }
 /**
  * --- 生成范围内的随机数 ---
- * @param min 最新范围
- * @param max 最大范围
+ * @param min >= 最小值
+ * @param max <= 最大值
+ * @param prec 保留几位小数
  */
-export function rand(min, max) {
-    if (min > max) {
-        [min, max] = [max, min];
+export function rand(min, max, prec = 0) {
+    if (prec < 0) {
+        prec = 0;
     }
-    return min + Math.round(Math.random() * (max - min));
+    if (prec === 0) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    const p = Math.pow(10, prec);
+    return Math.round((Math.random() * (max - min) + min) * p) / p;
 }
 export const RANDOM_N = '0123456789';
 export const RANDOM_U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -690,7 +696,24 @@ export function getArray(param) {
  * @param html HTML 字符
  */
 export function escapeHTML(html) {
-    return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return html.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&#34;')
+        .replace(/'/g, '&#39;');
+}
+/**
+ * --- 还原转义后的 HTML ---
+ * @param html 已转义的 HTML 字符
+ */
+export function unescapeHTML(html) {
+    return html.replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&#34;/g, '"')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, '\'')
+        .replace(/&apos;/g, '\'');
 }
 /**
  * --- 将 rgb 或 hsl 等颜色转换为数字数组 ---
@@ -2226,29 +2249,10 @@ export async function loadScript(url) {
  * @param opt 选项
  */
 export async function loadScripts(urls, opt = {}) {
-    return new Promise((resolve) => {
-        let count = 0;
-        for (const url of urls) {
-            loadScript(url).then(res => {
-                ++count;
-                if (res) {
-                    opt.loaded?.(url, 1);
-                }
-                else {
-                    opt.loaded?.(url, 0);
-                }
-                if (count === urls.length) {
-                    resolve();
-                }
-            }).catch(() => {
-                ++count;
-                opt.loaded?.(url, -1);
-                if (count === urls.length) {
-                    resolve();
-                }
-            });
-        }
-    });
+    await Promise.all(urls.map(async (url) => {
+        const res = await loadScript(url);
+        opt.loaded?.(url, res ? 1 : 0);
+    }));
 }
 /**
  * --- 加载 css 文件 ---
@@ -2281,29 +2285,10 @@ export async function loadLink(url, pos = 'after') {
  * @param opt 选项
  */
 export async function loadLinks(urls, opt = {}) {
-    return new Promise((resolve) => {
-        let count = 0;
-        for (const url of urls) {
-            loadLink(url).then(res => {
-                ++count;
-                if (res) {
-                    opt.loaded?.(url, 1);
-                }
-                else {
-                    opt.loaded?.(url, 0);
-                }
-                if (count === urls.length) {
-                    resolve();
-                }
-            }).catch(() => {
-                ++count;
-                opt.loaded?.(url, -1);
-                if (count === urls.length) {
-                    resolve();
-                }
-            });
-        }
-    });
+    await Promise.all(urls.map(async (url) => {
+        const res = await loadLink(url);
+        opt.loaded?.(url, res ? 1 : 0);
+    }));
 }
 /**
  * --- 加载 css 字符串 ---

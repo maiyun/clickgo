@@ -85,7 +85,7 @@ export default class extends clickgo.control.AbstractControl {
         'overlays': {}
     };
     /** --- 是否没有初始化 --- */
-    notInit = false;
+    notInit = true;
     /** --- 当前是否加载中 --- */
     isLoading = false;
     /** --- 当前地图的缩放级别 --- */
@@ -175,7 +175,13 @@ export default class extends clickgo.control.AbstractControl {
                 });`;
                 idoc.head.append(scriptEl);
                 this.access.iwindow.initMap = async () => {
+                    if (!this.access.iwindow?.google) {
+                        return;
+                    }
                     await this.access.iwindow.google.maps.importLibrary('maps');
+                    if (!this.access.iwindow?.google) {
+                        return;
+                    }
                     const lib = this.access.iwindow.google.maps;
                     const props = this.props;
                     class Overlay extends lib.OverlayView {
@@ -308,8 +314,11 @@ export default class extends clickgo.control.AbstractControl {
             case 'tianditu': {
                 // ---- 加载天地图 ---
                 const scriptEl = idoc.createElement('script');
-                scriptEl.src = `${clickgo.getCdn()}/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.js`;
+                scriptEl.src = `${clickgo.getCdn()}/npm/maptalks@1.12.0/dist/maptalks.min.js`;
                 scriptEl.addEventListener('load', () => {
+                    if (!this.access.iwindow?.maptalks) {
+                        return;
+                    }
                     this.access.lib = this.access.iwindow.maptalks;
                     const attributions = {
                         'cn': '&copy;<a target="_blank" href="https://www.tianditu.gov.cn">天地图</a> - GS(2023)336号 - 甲测资字1100471',
@@ -497,7 +506,7 @@ export default class extends clickgo.control.AbstractControl {
                 idoc.head.append(scriptEl);
                 const linkEl = idoc.createElement('link');
                 linkEl.rel = 'stylesheet';
-                linkEl.href = `${clickgo.getCdn()}/npm/maptalks@1.0.0-rc.24/dist/maptalks.min.css`;
+                linkEl.href = `${clickgo.getCdn()}/npm/maptalks@1.12.0/dist/maptalks.min.css`;
                 idoc.head.append(linkEl);
                 break;
             }
