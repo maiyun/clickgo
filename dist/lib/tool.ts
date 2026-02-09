@@ -161,10 +161,11 @@ export function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
  * @param spliter 分隔符
  */
 export function sizeFormat(size: number, spliter: string = ' '): string {
-    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let i = 0;
-    for (; i < 6 && size >= 1024.0; ++i) {
+    while (i < units.length - 1 && size >= 1024.0) {
         size /= 1024.0;
+        i++;
     }
     return (Math.round(size * 100) / 100).toString() + spliter + units[i];
 }
@@ -645,14 +646,19 @@ export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } 
 
 /**
  * --- 生成范围内的随机数 ---
- * @param min 最新范围
- * @param max 最大范围
+ * @param min >= 最小值
+ * @param max <= 最大值
+ * @param prec 保留几位小数
  */
-export function rand(min: number, max: number): number {
-    if (min > max) {
-        [min, max] = [max, min];
+export function rand(min: number, max: number, prec: number = 0): number {
+    if (prec < 0) {
+        prec = 0;
     }
-    return min + Math.round(Math.random() * (max - min));
+    if (prec === 0) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    const p = Math.pow(10, prec);
+    return Math.round((Math.random() * (max - min) + min) * p) / p;
 }
 
 export const RANDOM_N = '0123456789';
