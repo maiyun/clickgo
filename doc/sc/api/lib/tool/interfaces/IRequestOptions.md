@@ -6,7 +6,7 @@
 
 # Interface: IRequestOptions
 
-Defined in: [dist/lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2627)
+Defined in: [dist/lib/tool.ts:2613](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2613)
 
 请求选项
 
@@ -16,7 +16,7 @@ Defined in: [dist/lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **body**: `FormData`
 
-Defined in: [dist/lib/tool.ts:2630](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2630)
+Defined in: [dist/lib/tool.ts:2616](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2616)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [dist/lib/tool.ts:2630](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **credentials**: `boolean`
 
-Defined in: [dist/lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2628)
+Defined in: [dist/lib/tool.ts:2614](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2614)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **end**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2639](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2639)
+Defined in: [dist/lib/tool.ts:2625](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2625)
 
 #### Returns
 
@@ -44,7 +44,7 @@ Defined in: [dist/lib/tool.ts:2639](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **error**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2642](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2642)
+Defined in: [dist/lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2628)
 
 #### Returns
 
@@ -56,7 +56,7 @@ Defined in: [dist/lib/tool.ts:2642](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **headers**: `HeadersInit`
 
-Defined in: [dist/lib/tool.ts:2633](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2633)
+Defined in: [dist/lib/tool.ts:2619](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2619)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [dist/lib/tool.ts:2633](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **load**: (`res`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2641](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2641)
+Defined in: [dist/lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2627)
 
 #### Parameters
 
@@ -82,7 +82,7 @@ Defined in: [dist/lib/tool.ts:2641](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **method**: `"GET"` \| `"POST"`
 
-Defined in: [dist/lib/tool.ts:2629](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2629)
+Defined in: [dist/lib/tool.ts:2615](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2615)
 
 ***
 
@@ -90,7 +90,7 @@ Defined in: [dist/lib/tool.ts:2629](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **progress**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2640](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2640)
+Defined in: [dist/lib/tool.ts:2626](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2626)
 
 #### Parameters
 
@@ -112,7 +112,7 @@ Defined in: [dist/lib/tool.ts:2640](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **responseType**: `XMLHttpRequestResponseType`
 
-Defined in: [dist/lib/tool.ts:2632](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2632)
+Defined in: [dist/lib/tool.ts:2618](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2618)
 
 ***
 
@@ -120,7 +120,7 @@ Defined in: [dist/lib/tool.ts:2632](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **start**: (`total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2638](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2638)
+Defined in: [dist/lib/tool.ts:2624](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2624)
 
 #### Parameters
 
@@ -138,7 +138,7 @@ Defined in: [dist/lib/tool.ts:2638](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **timeout**: `number`
 
-Defined in: [dist/lib/tool.ts:2631](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2631)
+Defined in: [dist/lib/tool.ts:2617](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2617)
 
 ***
 
@@ -146,7 +146,7 @@ Defined in: [dist/lib/tool.ts:2631](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **uploadEnd**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2637](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2637)
+Defined in: [dist/lib/tool.ts:2623](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2623)
 
 #### Returns
 
@@ -158,7 +158,7 @@ Defined in: [dist/lib/tool.ts:2637](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **uploadProgress**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2636](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2636)
+Defined in: [dist/lib/tool.ts:2622](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2622)
 
 #### Parameters
 
@@ -180,7 +180,7 @@ Defined in: [dist/lib/tool.ts:2636](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **uploadStart**: (`total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2635](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2635)
+Defined in: [dist/lib/tool.ts:2621](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2621)
 
 #### Parameters
 

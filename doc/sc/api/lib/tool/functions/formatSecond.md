@@ -8,7 +8,7 @@
 
 > **formatSecond**(`second`): `string`
 
-Defined in: [dist/lib/tool.ts:1556](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1556)
+Defined in: [dist/lib/tool.ts:1580](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1580)
 
 将秒数格式化为 0:0:0 的字符串
 

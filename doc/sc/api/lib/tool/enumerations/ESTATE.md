@@ -6,7 +6,7 @@
 
 # Enumeration: ESTATE
 
-Defined in: [dist/lib/tool.ts:1741](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1741)
+Defined in: [dist/lib/tool.ts:1765](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1765)
 
 状态机状态
 
@@ -16,7 +16,7 @@ Defined in: [dist/lib/tool.ts:1741](https://github.com/maiyun/clickgo/blob/maste
 
 > **COMMENT**: `4`
 
-Defined in: [dist/lib/tool.ts:1751](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1751)
+Defined in: [dist/lib/tool.ts:1775](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1775)
 
 注释
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/tool.ts:1751](https://github.com/maiyun/clickgo/blob/maste
 
 > **NORMAL**: `0`
 
-Defined in: [dist/lib/tool.ts:1743](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1743)
+Defined in: [dist/lib/tool.ts:1767](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1767)
 
 普通
 
@@ -36,7 +36,7 @@ Defined in: [dist/lib/tool.ts:1743](https://github.com/maiyun/clickgo/blob/maste
 
 > **REG**: `3`
 
-Defined in: [dist/lib/tool.ts:1749](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1749)
+Defined in: [dist/lib/tool.ts:1773](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1773)
 
 正则
 
@@ -46,7 +46,7 @@ Defined in: [dist/lib/tool.ts:1749](https://github.com/maiyun/clickgo/blob/maste
 
 > **STRING**: `2`
 
-Defined in: [dist/lib/tool.ts:1747](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1747)
+Defined in: [dist/lib/tool.ts:1771](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1771)
 
 字符串
 
@@ -56,6 +56,6 @@ Defined in: [dist/lib/tool.ts:1747](https://github.com/maiyun/clickgo/blob/maste
 
 > **WORD**: `1`
 
-Defined in: [dist/lib/tool.ts:1745](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1745)
+Defined in: [dist/lib/tool.ts:1769](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1769)
 
 单词

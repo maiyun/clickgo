@@ -8,7 +8,7 @@
 
 > **loadScripts**(`urls`, `opt`): `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2431](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2431)
+Defined in: [dist/lib/tool.ts:2455](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2455)
 
 批量加载 js 文件
 

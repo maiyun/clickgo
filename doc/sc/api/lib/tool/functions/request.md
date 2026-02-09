@@ -8,7 +8,7 @@
 
 > **request**(`url`, `opt`): `Promise`\<`any`\>
 
-Defined in: [dist/lib/tool.ts:1016](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1016)
+Defined in: [dist/lib/tool.ts:1040](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1040)
 
 发起一个网络请求，若是返回值是 JSON 则自动解析，否则直接返回字符串
 

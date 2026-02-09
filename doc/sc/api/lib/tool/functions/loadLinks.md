@@ -8,7 +8,7 @@
 
 > **loadLinks**(`urls`, `opt`): `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2490](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2490)
+Defined in: [dist/lib/tool.ts:2495](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2495)
 
 批量加载 css 文件
 

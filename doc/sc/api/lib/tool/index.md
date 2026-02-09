@@ -94,6 +94,7 @@
 - [stylePrepend](functions/stylePrepend.md)
 - [styleUrl2DataUrl](functions/styleUrl2DataUrl.md)
 - [teleportGlue](functions/teleportGlue.md)
+- [unescapeHTML](functions/unescapeHTML.md)
 - [urlAtom](functions/urlAtom.md)
 - [urlResolve](functions/urlResolve.md)
 - [weightFormat](functions/weightFormat.md)
