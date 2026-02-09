@@ -1243,7 +1243,7 @@ export default class extends clickgo.control.AbstractControl {
                                 // --- 节点新增、移除 ---
                                 for (let i = 0; i < paths.length; ++i) {
                                     const old = this.access.polygons[key].path[i];
-                                    if (old.lat === paths[i].lat && old.lng === paths[i].lng) {
+                                    if (old && old.lat === paths[i].lat && old.lng === paths[i].lng) {
                                         continue;
                                     }
                                     // --- 不同的节点，新增的或已被移除 ---
