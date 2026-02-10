@@ -696,7 +696,7 @@ export function buildComponents(taskId, formId, path) {
             }
         };
         components['cg-' + name] = {
-            'template': control.layout.replace(/{{{formId}}}/g, formId.toString()),
+            'template': control.layout.replace(/{{{formId}}}/g, formId.toString()).replaceAll('@click="', '@tap="'),
             'props': control.props,
             'emits': control.emits,
             'data': function () {

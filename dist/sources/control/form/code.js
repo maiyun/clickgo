@@ -115,7 +115,7 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 当前所处边框 --- */
         let isBorder = '';
         clickgo.modules.pointer.move(e, {
-            'start': (x, y) => {
+            start: (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
                     const event = {
@@ -239,7 +239,7 @@ export default class extends clickgo.control.AbstractControl {
                     };
                 }
             },
-            'move': (e, o) => {
+            move: (e, o) => {
                 this.leftData += o.ox;
                 this.emit('update:left', this.leftData);
                 this.topData += o.oy;
@@ -270,7 +270,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                 }
             },
-            'end': () => {
+            end: () => {
                 if (isBorder !== '') {
                     // --- 贴合了边缘，检测贴合了哪里 ---
                     if (isBorder === 't') {
