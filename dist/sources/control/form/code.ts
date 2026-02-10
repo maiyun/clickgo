@@ -174,7 +174,12 @@ export default class extends clickgo.control.AbstractControl {
         });
         /** --- 当前所处边框 --- */
         let isBorder: clickgo.dom.TDomBorder = '';
+        const aa = clickgo.core.getAvailArea();
         clickgo.modules.pointer.move(e, {
+            'left': aa.left,
+            'top': aa.top,
+            'right': aa.left + aa.width,
+            'bottom': aa.top + aa.height,
             start: (x, y) => {
                 if (this.stateMaxData) {
                     // --- 不能用 maxMethod 方法，因为那个获得的形状不能满足拖动还原的形状 ---
