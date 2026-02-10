@@ -6,7 +6,7 @@
 
 # Interface: IMoveDragOptions
 
-Defined in: [dist/lib/form.ts:4148](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4148)
+Defined in: [dist/lib/form.ts:4130](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4130)
 
 移动 drag 到新位置函数的选项
 
@@ -16,7 +16,7 @@ Defined in: [dist/lib/form.ts:4148](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **height**: `number`
 
-Defined in: [dist/lib/form.ts:4152](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4152)
+Defined in: [dist/lib/form.ts:4134](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4134)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [dist/lib/form.ts:4152](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **icon**: `boolean`
 
-Defined in: [dist/lib/form.ts:4153](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4153)
+Defined in: [dist/lib/form.ts:4135](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4135)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/form.ts:4153](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **left**: `number`
 
-Defined in: [dist/lib/form.ts:4150](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4150)
+Defined in: [dist/lib/form.ts:4132](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4132)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [dist/lib/form.ts:4150](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **top**: `number`
 
-Defined in: [dist/lib/form.ts:4149](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4149)
+Defined in: [dist/lib/form.ts:4131](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4131)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [dist/lib/form.ts:4149](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **width**: `number`
 
-Defined in: [dist/lib/form.ts:4151](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4151)
+Defined in: [dist/lib/form.ts:4133](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4133)

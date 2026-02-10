@@ -8,7 +8,7 @@
 
 > **dialog**(`current`, `opt`): `Promise`\<`string`\>
 
-Defined in: [dist/lib/form.ts:3863](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3863)
+Defined in: [dist/lib/form.ts:3845](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3845)
 
 显示一个 dialog
 

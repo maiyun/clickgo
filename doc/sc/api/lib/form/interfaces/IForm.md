@@ -6,7 +6,7 @@
 
 # Interface: IForm
 
-Defined in: [dist/lib/form.ts:4127](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4127)
+Defined in: [dist/lib/form.ts:4109](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4109)
 
 运行时 task 中的 form 对象
 
@@ -16,7 +16,7 @@ Defined in: [dist/lib/form.ts:4127](https://github.com/maiyun/clickgo/blob/maste
 
 > **closed**: `boolean`
 
-Defined in: [dist/lib/form.ts:4132](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4132)
+Defined in: [dist/lib/form.ts:4114](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4114)
 
 是否已经执行过了关闭窗体方法，此处加判断为了防止重复执行 close 导致的 bug
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/form.ts:4132](https://github.com/maiyun/clickgo/blob/maste
 
 > **id**: `string`
 
-Defined in: [dist/lib/form.ts:4128](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4128)
+Defined in: [dist/lib/form.ts:4110](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4110)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [dist/lib/form.ts:4128](https://github.com/maiyun/clickgo/blob/maste
 
 > **vapp**: [`IVApp`](../../core/interfaces/IVApp.md)
 
-Defined in: [dist/lib/form.ts:4129](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4129)
+Defined in: [dist/lib/form.ts:4111](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4111)
 
 ***
 
@@ -42,4 +42,4 @@ Defined in: [dist/lib/form.ts:4129](https://github.com/maiyun/clickgo/blob/maste
 
 > **vroot**: [`IVue`](../../core/interfaces/IVue.md)
 
-Defined in: [dist/lib/form.ts:4130](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4130)
+Defined in: [dist/lib/form.ts:4112](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4112)

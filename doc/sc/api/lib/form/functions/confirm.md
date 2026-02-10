@@ -8,7 +8,7 @@
 
 > **confirm**(`current`, `opt`): `Promise`\<`number` \| `boolean`\>
 
-Defined in: [dist/lib/form.ts:3938](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3938)
+Defined in: [dist/lib/form.ts:3920](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3920)
 
 显示一个 confirm
 
