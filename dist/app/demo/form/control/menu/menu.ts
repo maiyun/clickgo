@@ -22,4 +22,8 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.form.dialog(this, 'When the value is set to "radio2," this option cannot be selected. Now is: ' + n);
     }
 
+    public async dialogClick(): Promise<void> {
+        await clickgo.form.dialog(this, 'Dialog from menu item clicked.');
+    }
+
 }

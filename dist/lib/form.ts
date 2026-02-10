@@ -3777,24 +3777,6 @@ export async function create<T extends AbstractForm>(
             console.error('Runtime Error [form.create.mount]', `Message: ${err.message}\nTask id: ${t.id}\nForm id: ${formId}`, err);
             lCore.trigger('error', t.id, formId, err, err.message).catch(() => {});
         }
-        // --- 创建自定义事件 tap ---
-        el.addEventListener('pointerdown', oe => {
-            clickgo.modules.pointer.click(oe, () => {
-                // --- 创建 tap 的原生自定义事件 ---
-                const tapEvent = new CustomEvent('tap', {
-                    // --- 让事件可以冒泡 ---
-                    'bubbles': true,
-                    // --- 允许阻止默认行为 ---
-                    'cancelable': true,
-                    'detail': {
-                        // --- 把原始点击事件带过去 ---
-                        'originalEvent': oe,
-                    },
-                });
-                // --- Vue 的 @tap 监听器此时会捕捉到这个事件 ---
-                oe.target?.dispatchEvent(tapEvent);
-            });
-        }, true);
     });
     // --- 创建 form 信息对象 ---
     const nform: IForm = {
