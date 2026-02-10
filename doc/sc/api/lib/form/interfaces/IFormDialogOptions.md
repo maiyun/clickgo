@@ -6,7 +6,7 @@
 
 # Interface: IFormDialogOptions
 
-Defined in: [dist/lib/form.ts:4155](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4155)
+Defined in: [dist/lib/form.ts:4181](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4181)
 
 Dialog 选项
 
@@ -16,7 +16,7 @@ Dialog 选项
 
 > `optional` **autoDialogResult**: `boolean`
 
-Defined in: [dist/lib/form.ts:4159](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4159)
+Defined in: [dist/lib/form.ts:4185](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4185)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [dist/lib/form.ts:4159](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **buttons**: `string`[]
 
-Defined in: [dist/lib/form.ts:4158](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4158)
+Defined in: [dist/lib/form.ts:4184](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4184)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/form.ts:4158](https://github.com/maiyun/clickgo/blob/maste
 
 > **content**: `string`
 
-Defined in: [dist/lib/form.ts:4157](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4157)
+Defined in: [dist/lib/form.ts:4183](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4183)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [dist/lib/form.ts:4157](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **data**: `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/form.ts:4165](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4165)
+Defined in: [dist/lib/form.ts:4191](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4191)
 
 传值，需要用 data.x 读取
 
@@ -50,7 +50,7 @@ Defined in: [dist/lib/form.ts:4165](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **direction**: `"v"` \| `"h"`
 
-Defined in: [dist/lib/form.ts:4161](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4161)
+Defined in: [dist/lib/form.ts:4187](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4187)
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [dist/lib/form.ts:4161](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **gutter**: `string` \| `number`
 
-Defined in: [dist/lib/form.ts:4162](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4162)
+Defined in: [dist/lib/form.ts:4188](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4188)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: [dist/lib/form.ts:4162](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **methods**: `Record`\<`string`, (...`param`) => `any`\>
 
-Defined in: [dist/lib/form.ts:4167](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4167)
+Defined in: [dist/lib/form.ts:4193](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4193)
 
 传值，需要用 methods.x 读取
 
@@ -76,7 +76,7 @@ Defined in: [dist/lib/form.ts:4167](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **path**: `string`
 
-Defined in: [dist/lib/form.ts:4171](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4171)
+Defined in: [dist/lib/form.ts:4197](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4197)
 
 路径基，以 / 结束或文件路径则以文件的基路径为准，可留空
 
@@ -86,7 +86,7 @@ Defined in: [dist/lib/form.ts:4171](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **select**: (`this`, `e`, `button`) => `void`
 
-Defined in: [dist/lib/form.ts:4178](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4178)
+Defined in: [dist/lib/form.ts:4204](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4204)
 
 点击按钮触发事件
 
@@ -118,7 +118,7 @@ Defined in: [dist/lib/form.ts:4178](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **style**: `string`
 
-Defined in: [dist/lib/form.ts:4169](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4169)
+Defined in: [dist/lib/form.ts:4195](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4195)
 
 样式表
 
@@ -128,4 +128,4 @@ Defined in: [dist/lib/form.ts:4169](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **title**: `string`
 
-Defined in: [dist/lib/form.ts:4156](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4156)
+Defined in: [dist/lib/form.ts:4182](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4182)
