@@ -225,7 +225,7 @@ export async function launcher(boot) {
         // --- 加载 jszip ---
         `${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`,
         // --- 加载 pointer ---
-        `${cdn}/npm/@litert/pointer@1.7.1/dist/index.umd.min.js`,
+        `${cdn}/npm/@litert/pointer@1.7.2/dist/index.umd.min.js`,
     ]);
     modules.vue = window.Vue;
     modules.jszip = window.JSZip;

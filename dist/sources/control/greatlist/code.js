@@ -571,7 +571,7 @@ export default class extends clickgo.control.AbstractControl {
                                         this.go = false;
                                     },
                                     'detail': {
-                                        'index': rtn.add[name],
+                                        'index': rtn.remove[name],
                                         'value': parseInt(name)
                                     }
                                 };
@@ -782,7 +782,7 @@ export default class extends clickgo.control.AbstractControl {
     onBeforeSelect() {
         this.isSelectStart = true;
         this.selectValues = [];
-        this.beforeSelectValues = typeof this.valueData !== 'number' ? this.valueData : (this.valueData > 0 ? [this.valueData] : []);
+        this.beforeSelectValues = [...this.valueData];
         this.emit('beforeselect');
     }
     onSelect(area) {
@@ -953,7 +953,7 @@ export default class extends clickgo.control.AbstractControl {
             if (offset === this.offset) {
                 return;
             }
-            this.client = offset;
+            this.offset = offset;
         });
         // --- 监听用户设定的值的变更事件 ---
         this.watch('modelValue', () => {

@@ -217,19 +217,19 @@ export default class extends clickgo.control.AbstractControl {
                         }
                         // --- 纵向 ---
                         if (this.access.selectionCurrent.y < rect.top) {
-                            // --- 向左滚动 ---
+                            // --- 向上滚动 ---
                             if (this.element.scrollTop > 0) {
                                 /** --- 差值 --- */
-                                const x = rect.top - this.access.selectionCurrent.y;
+                                const y = rect.top - this.access.selectionCurrent.y;
                                 /** --- 移动的距离 --- */
                                 let dist = 0;
                                 // --- 判断是否是 quick 模式，将加速滚动 ---
                                 if (this.access.selectionCurrent.quick) {
-                                    dist = x / 2;
+                                    dist = y / 2;
                                     this.access.selectionCurrent.quick = false;
                                 }
                                 else {
-                                    dist = x / 5;
+                                    dist = y / 5;
                                 }
                                 if (this.element.scrollTop - dist < 0) {
                                     dist = this.element.scrollTop;
@@ -240,19 +240,19 @@ export default class extends clickgo.control.AbstractControl {
                         }
                         else if (this.access.selectionCurrent.y > rect.bottom) {
                             const maxTop = this.maxScrollTop();
-                            // --- 向右滚动 ---
+                            // --- 向下滚动 ---
                             if (this.element.scrollTop < maxTop) {
                                 /** --- 差值 --- */
-                                const x = this.access.selectionCurrent.y - rect.bottom;
+                                const y = this.access.selectionCurrent.y - rect.bottom;
                                 /** --- 移动的距离 --- */
                                 let dist = 0;
                                 // --- 判断是否是 quick 模式，将加速滚动 ---
                                 if (this.access.selectionCurrent.quick) {
-                                    dist = x / 2;
+                                    dist = y / 2;
                                     this.access.selectionCurrent.quick = false;
                                 }
                                 else {
-                                    dist = x / 5;
+                                    dist = y / 5;
                                 }
                                 if (this.element.scrollTop + dist > maxTop) {
                                     dist = maxTop - this.element.scrollTop;
@@ -487,7 +487,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!start) {
                 // --- 起项不存在 ---
                 if (pos.start === 0 || !this.getPos(0)) {
-                    return { 'start': 0, 'end': 9, 'empty': true };
+                    return { 'start': 0, 'end': 0, 'empty': true };
                 }
                 pos.start = 0;
                 rtn.start = 0;
@@ -506,7 +506,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 if (rtn.start === -1) {
                     // --- 找到最后都没找到，应该是 area 的区域远远大于目前存在的所有项的位置 ---
-                    return { 'start': 0, 'end': 9, 'empty': true };
+                    return { 'start': 0, 'end': 0, 'empty': true };
                 }
             }
             else {
@@ -531,6 +531,10 @@ export default class extends clickgo.control.AbstractControl {
                     }
                 }
             }
+        }
+        // --- 如果没有找到起项，说明当前区域内没有项 ---
+        if (rtn.start === -1) {
+            return { 'start': 0, 'end': 0, 'empty': true };
         }
         if (rtn.end > -1) {
             return rtn;
