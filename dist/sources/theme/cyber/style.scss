@@ -67,7 +67,7 @@ global {
     --face-selected:oklch(.35 .05 280);
     --g-pop-background:oklch(.15 .05 280 / .8);
     --g-pop-backdrop:blur(10px) saturate(2);
-    --g-pop-border:solid 1px var(--g-border-color);
+    --g-pop-border:none;
     --g-shadow:0 0 10px oklch(.7 .15 220 / .2);
     --g-shadow-d:0 0 20px oklch(.7 .15 220 / .4);
     --g-outline-shadow:0 0 0 2px oklch(.7 .15 220); 

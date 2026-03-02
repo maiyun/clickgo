@@ -32,7 +32,7 @@ global {
     --face-selected:oklch(.913 0.013 243 / .8);
     --g-pop-background:oklch(.973 0.013 243 / .6);
     --g-pop-backdrop:blur(16px) saturate(1.8);
-    --g-pop-border:solid 6px oklch(.973 0.013 243 / .6);
+    --g-pop-border:none;
     --g-shadow:0 1px 3px oklch(.2 0 0 / .05);
     --g-shadow-d:0 1px 3px oklch(.2 0 0 / .35);
     --g-outline-shadow:0 0 0 4px oklch(1 0 0 / .2); 
