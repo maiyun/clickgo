@@ -400,7 +400,7 @@ export function layoutInsertAttr(layout, insert, opt = {}) {
  */
 function layoutClassPrependObject(object) {
     object = object.slice(1, -1).trim();
-    return `{${object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, function (t, t1, t2) {
+    return `{${object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, (t, t1, t2) => {
         // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
         t1 = t1.trim();
         if (t1.startsWith('[')) {
@@ -436,7 +436,12 @@ export function layoutClassPrepend(layout, preps) {
                 continue;
             }
             for (const prep of preps) {
-                resultList.push(`${prep}${item}`);
+                if (item.startsWith('fa-')) {
+                    resultList.push(`${item}`);
+                }
+                else {
+                    resultList.push(`${prep}${item}`);
+                }
             }
         }
         return ` class="${resultList.join(' ')}"`;

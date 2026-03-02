@@ -349,6 +349,9 @@ export async function launcher(boot: AbstractBoot): Promise<void> {
         // --- 加载 pointer ---
         `${cdn}/npm/@litert/pointer@1.7.2/dist/index.umd.min.js`,
     ]);
+    await lTool.loadLinks([
+        `${cdn}/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css`,
+    ]);
     modules.vue = (window as any).Vue;
     modules.jszip = (window as any).JSZip;
     modules.pointer = (window as any).pointer;

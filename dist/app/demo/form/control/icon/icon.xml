@@ -1,4 +1,4 @@
-<form width="450" height="500" title="Icon" padding="10">
+<form width="500" height="600" title="Icon" padding="10">
     <layout gutter="20" direction="v" style="flex: 1">
         <label>id</label>
         <layout gutter="20" align-v="center">
@@ -90,5 +90,17 @@
             <icon name="record" size="m"></icon>
             <label>record</label>
         </layout>
+        <layout>Font Awesome icons:</layout>
+        <layout gutter="20" align-v="center">
+            <icon name="fa-solid fa-camera"></icon>
+            <icon name="fa-solid fa-heart"></icon>
+            <icon name="fa-solid fa-star"></icon>
+            <icon name="fa-solid fa-search"></icon>
+            <icon name="fa-solid fa-user"></icon>
+            <icon name="fa-solid fa-bell"></icon>
+            <icon name="fa-solid fa-download"></icon>
+            <icon name="fa-solid fa-share"></icon>
+        </layout>
+        <link url="https://fontawesome.com/search?ic=free-collection">See all icons</link>
     </layout>
 </form>

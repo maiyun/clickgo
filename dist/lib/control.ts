@@ -170,6 +170,9 @@ export abstract class AbstractControl {
                 return cla;
             }
             // --- 控件没有样式表，则除了主题样式外，class 将不进行设置 ---
+            if (cla.startsWith('fa-')) {
+                return `${cla}`;
+            }
             return `cg-theme-task${this.taskId}-${this.controlName}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
         };
     }

@@ -227,6 +227,9 @@ export async function launcher(boot) {
         // --- 加载 pointer ---
         `${cdn}/npm/@litert/pointer@1.7.2/dist/index.umd.min.js`,
     ]);
+    await lTool.loadLinks([
+        `${cdn}/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css`,
+    ]);
     modules.vue = window.Vue;
     modules.jszip = window.JSZip;
     modules.pointer = window.pointer;

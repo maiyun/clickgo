@@ -2,19 +2,19 @@
     display: inline-block; background-size: cover; background-position: center;
     
     &.s {
-        width: var(--g-size); height: var(--g-size);
+        width: var(--g-size); height: var(--g-size); font-size: var(--g-size);
     }
     &.m {
-        width: var(--g-size-m); height: var(--g-size-m);
+        width: var(--g-size-m); height: var(--g-size-m); font-size: var(--g-size-m);
     }
     &.l {
-        width: var(--g-size-l); height: var(--g-size-l);
+        width: var(--g-size-l); height: var(--g-size-l); font-size: var(--g-size-l);
     }
     &.xl {
-        width: var(--g-size-xl); height: var(--g-size-xl);
+        width: var(--g-size-xl); height: var(--g-size-xl); font-size: var(--g-size-xl);
     }
     &.xxl {
-        width: var(--g-size-xxl); height: var(--g-size-xxl);
+        width: var(--g-size-xxl); height: var(--g-size-xxl); font-size: var(--g-size-xxl);
     }
 
     // --- name ---
