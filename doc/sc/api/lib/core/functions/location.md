@@ -8,7 +8,7 @@
 
 > **location**(`current`, `url`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/core.ts:696](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L696)
+Defined in: [lib/core.ts:696](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L696)
 
 对浏览器做跳转操作
 

@@ -6,9 +6,9 @@
 
 # Function: compressor()
 
-> **compressor**\<`T`\>(`file`, `options`): `Promise`\<`false` \| `T`\>
+> **compressor**\<`T`\>(`file`, `options?`): `Promise`\<`false` \| `T`\>
 
-Defined in: [dist/lib/tool.ts:35](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L35)
+Defined in: [lib/tool.ts:35](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L35)
 
 压缩一个图片
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/tool.ts:35](https://github.com/maiyun/clickgo/blob/master/
 
 文件或 blob 类型
 
-### options
+### options?
 
 参数
 

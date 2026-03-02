@@ -6,7 +6,7 @@
 
 # Interface: IRuntime
 
-Defined in: [dist/lib/task.ts:1727](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1727)
+Defined in: [lib/task.ts:1727](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1727)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/task.ts:1727](https://github.com/maiyun/clickgo/blob/maste
 
 > **dialogFormIds**: `string`[]
 
-Defined in: [dist/lib/task.ts:1728](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1728)
+Defined in: [lib/task.ts:1728](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1728)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [dist/lib/task.ts:1728](https://github.com/maiyun/clickgo/blob/maste
 
 > **index**: `number`
 
-Defined in: [dist/lib/task.ts:1730](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1730)
+Defined in: [lib/task.ts:1730](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1730)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [dist/lib/task.ts:1730](https://github.com/maiyun/clickgo/blob/maste
 
 > **permissions**: `string`[]
 
-Defined in: [dist/lib/task.ts:1729](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1729)
+Defined in: [lib/task.ts:1729](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1729)

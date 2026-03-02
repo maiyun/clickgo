@@ -8,7 +8,7 @@
 
 > **runIife**(`code`): `any`
 
-Defined in: [dist/lib/tool.ts:25](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L25)
+Defined in: [lib/tool.ts:25](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L25)
 
 运行 iife 代码
 

@@ -6,9 +6,9 @@
 
 # Function: trigger()
 
-> **trigger**(`name`, `taskId`, `formId`, `param1`, `param2`, `param3`): `Promise`\<`void`\>
+> **trigger**(`name`, `taskId?`, `formId?`, `param1?`, `param2?`, `param3?`): `Promise`\<`void`\>
 
-Defined in: [dist/lib/core.ts:266](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L266)
+Defined in: [lib/core.ts:266](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L266)
 
 主动触发系统级事件，用 this.trigger 替代
 
@@ -18,23 +18,23 @@ Defined in: [dist/lib/core.ts:266](https://github.com/maiyun/clickgo/blob/master
 
 [`TGlobalEvent`](../type-aliases/TGlobalEvent.md)
 
-### taskId
+### taskId?
 
 `string` | `boolean` | `KeyboardEvent`
 
-### formId
+### formId?
 
 `string` | `boolean` | `Record`\<`string`, `any`\> | `null`
 
-### param1
+### param1?
 
 `string` | `boolean` | `Error`
 
-### param2
+### param2?
 
 `string` | `Record`\<`string`, `any`\>
 
-### param3
+### param3?
 
 `boolean` = `true`
 

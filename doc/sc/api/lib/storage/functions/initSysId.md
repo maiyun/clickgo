@@ -8,7 +8,7 @@
 
 > **initSysId**(`id`): `void`
 
-Defined in: [dist/lib/storage.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L28)
+Defined in: [lib/storage.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L28)
 
 初始化系统级 ID，仅能设置一次
 

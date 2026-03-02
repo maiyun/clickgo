@@ -6,9 +6,9 @@
 
 # Function: postResponseEventStream()
 
-> **postResponseEventStream**(`url`, `data`, `opts`): `AbortController`
+> **postResponseEventStream**(`url`, `data`, `opts?`): `AbortController`
 
-Defined in: [dist/lib/tool.ts:1228](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1228)
+Defined in: [lib/tool.ts:1233](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1233)
 
 发起 JSON 请求并获得文本 SSE 响应
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/tool.ts:1228](https://github.com/maiyun/clickgo/blob/maste
 
 数据
 
-### opts
+### opts?
 
 选项
 

@@ -8,7 +8,7 @@
 
 > **eventsAttrWrap**(`layout`): `string`
 
-Defined in: [dist/lib/tool.ts:519](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L519)
+Defined in: [lib/tool.ts:524](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L524)
 
 对 layout 的 events 事件进行包裹
 

@@ -8,7 +8,7 @@
 
 > **fetch**(`url`, `init?`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [dist/lib/tool.ts:1127](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1127)
+Defined in: [lib/tool.ts:1132](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1132)
 
 发起 fetch 请求
 

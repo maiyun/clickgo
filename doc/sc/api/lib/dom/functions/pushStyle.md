@@ -6,9 +6,9 @@
 
 # Function: pushStyle()
 
-> **pushStyle**(`taskId`, `style`, `type`, `formId`, `panelId?`): `void`
+> **pushStyle**(`taskId`, `style`, `type?`, `formId?`, `panelId?`): `void`
 
-Defined in: [dist/lib/dom.ts:156](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L156)
+Defined in: [lib/dom.ts:156](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L156)
 
 将 style 内容写入 dom
 
@@ -26,13 +26,13 @@ Defined in: [dist/lib/dom.ts:156](https://github.com/maiyun/clickgo/blob/master/
 
 样式内容
 
-### type
+### type?
 
 插入的类型
 
 `"form"` | `"global"` | `"theme"` | `"control"`
 
-### formId
+### formId?
 
 `string` = `''`
 

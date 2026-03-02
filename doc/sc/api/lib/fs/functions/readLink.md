@@ -8,7 +8,7 @@
 
 > **readLink**(`current`, `path`, `encoding?`): `Promise`\<`string` \| `null`\>
 
-Defined in: [dist/lib/fs.ts:352](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L352)
+Defined in: [lib/fs.ts:352](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L352)
 
 读取链接的 target
 

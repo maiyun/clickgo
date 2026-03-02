@@ -8,7 +8,7 @@
 
 > **stats**(`current`, `path`): `Promise`\<[`IStats`](../interfaces/IStats.md) \| `null`\>
 
-Defined in: [dist/lib/fs.ts:578](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L578)
+Defined in: [lib/fs.ts:578](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L578)
 
 获取对象是否存在，存在则返回 stats 对象，否则返回 null
 

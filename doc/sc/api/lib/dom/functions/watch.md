@@ -6,9 +6,9 @@
 
 # Function: watch()
 
-> **watch**(`current`, `el`, `cb`, `mode`, `immediate`): `boolean`
+> **watch**(`current`, `el`, `cb`, `mode?`, `immediate?`): `boolean`
 
-Defined in: [dist/lib/dom.ts:543](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L543)
+Defined in: [lib/dom.ts:543](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L543)
 
 添加 DOM 内容变化监视
 
@@ -32,13 +32,13 @@ dom 对象
 
 回调
 
-### mode
+### mode?
 
 监听模式，默认 default
 
 `"default"` | `"style"` | `"text"` | `"child"` | `"childsub"`
 
-### immediate
+### immediate?
 
 `boolean` = `false`
 

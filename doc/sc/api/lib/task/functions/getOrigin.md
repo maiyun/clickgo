@@ -8,7 +8,7 @@
 
 > **getOrigin**(`taskId`): [`ITask`](../interfaces/ITask.md) \| `null`
 
-Defined in: [dist/lib/task.ts:126](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L126)
+Defined in: [lib/task.ts:126](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L126)
 
 获取任务对象
 

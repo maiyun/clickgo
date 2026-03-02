@@ -8,7 +8,7 @@
 
 > **setGlobalCursor**(`type?`): `void`
 
-Defined in: [dist/lib/dom.ts:95](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L95)
+Defined in: [lib/dom.ts:95](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L95)
 
 设置全局鼠标样式
 

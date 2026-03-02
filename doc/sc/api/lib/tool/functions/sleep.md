@@ -6,15 +6,15 @@
 
 # Function: sleep()
 
-> **sleep**(`ms`): `Promise`\<`boolean`\>
+> **sleep**(`ms?`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/tool.ts:249](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L249)
+Defined in: [lib/tool.ts:249](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L249)
 
 等待毫秒
 
 ## Parameters
 
-### ms
+### ms?
 
 `number` = `0`
 

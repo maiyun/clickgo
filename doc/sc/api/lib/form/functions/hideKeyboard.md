@@ -8,7 +8,7 @@
 
 > **hideKeyboard**(): `void`
 
-Defined in: [dist/lib/form.ts:1461](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1461)
+Defined in: [lib/form.ts:1461](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1461)
 
 隐藏系统级虚拟键盘
 

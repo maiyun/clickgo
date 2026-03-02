@@ -8,7 +8,7 @@
 
 > **getOriginList**(`current`): `Promise`\<`Record`\<`string`, [`ITask`](../interfaces/ITask.md)\>\>
 
-Defined in: [dist/lib/task.ts:73](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L73)
+Defined in: [lib/task.ts:73](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L73)
 
 获取原始 list
 

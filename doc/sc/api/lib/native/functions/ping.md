@@ -8,7 +8,7 @@
 
 > **ping**(`val`): `Promise`\<`string`\>
 
-Defined in: [dist/lib/native.ts:377](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L377)
+Defined in: [lib/native.ts:377](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L377)
 
 测试与 native 的连通性
 

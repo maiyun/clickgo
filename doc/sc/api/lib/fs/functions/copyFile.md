@@ -8,7 +8,7 @@
 
 > **copyFile**(`current`, `src`, `dest`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/fs.ts:1351](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1351)
+Defined in: [lib/fs.ts:1351](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1351)
 
 复制文件
 

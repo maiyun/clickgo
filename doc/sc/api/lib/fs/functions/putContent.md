@@ -6,9 +6,9 @@
 
 # Function: putContent()
 
-> **putContent**(`current`, `path`, `data`, `options`): `Promise`\<`boolean`\>
+> **putContent**(`current`, `path`, `data`, `options?`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/fs.ts:298](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L298)
+Defined in: [lib/fs.ts:298](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L298)
 
 写入文件内容
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/fs.ts:298](https://github.com/maiyun/clickgo/blob/master/d
 
 `string` | `Blob`
 
-### options
+### options?
 
 选项
 

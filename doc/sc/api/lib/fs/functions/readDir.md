@@ -8,7 +8,7 @@
 
 > **readDir**(`current`, `path`, `encoding?`): `Promise`\<[`IDirent`](../interfaces/IDirent.md)[]\>
 
-Defined in: [dist/lib/fs.ts:1063](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1063)
+Defined in: [lib/fs.ts:1063](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1063)
 
 获取文件夹下文件列表
 

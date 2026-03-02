@@ -6,7 +6,7 @@
 
 # Interface: IIconviewItemclickedEvent
 
-Defined in: [dist/lib/control.ts:1136](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1136)
+Defined in: [lib/control.ts:1139](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1139)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1136](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1137](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1137)
+Defined in: [lib/control.ts:1140](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1140)
 
 #### event
 

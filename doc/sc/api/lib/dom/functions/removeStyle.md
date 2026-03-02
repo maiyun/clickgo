@@ -6,9 +6,9 @@
 
 # Function: removeStyle()
 
-> **removeStyle**(`taskId`, `type`, `formId`, `panelId?`): `void`
+> **removeStyle**(`taskId`, `type?`, `formId?`, `panelId?`): `void`
 
-Defined in: [dist/lib/dom.ts:180](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L180)
+Defined in: [lib/dom.ts:180](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L180)
 
 移除 style 样式 dom
 
@@ -20,13 +20,13 @@ Defined in: [dist/lib/dom.ts:180](https://github.com/maiyun/clickgo/blob/master/
 
 要移除的任务 ID
 
-### type
+### type?
 
 移除的类型
 
 `"form"` | `"global"` | `"theme"` | `"control"`
 
-### formId
+### formId?
 
 `string` = `''`
 

@@ -6,15 +6,15 @@
 
 # Function: dialog()
 
-> **dialog**(`options`): `Promise`\<`number`\>
+> **dialog**(`options?`): `Promise`\<`number`\>
 
-Defined in: [dist/lib/native.ts:360](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L360)
+Defined in: [lib/native.ts:360](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L360)
 
 弹出消息框
 
 ## Parameters
 
-### options
+### options?
 
 选项
 

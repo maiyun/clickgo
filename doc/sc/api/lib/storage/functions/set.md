@@ -8,7 +8,7 @@
 
 > **set**(`current`, `key`, `val`): `boolean`
 
-Defined in: [dist/lib/storage.ts:111](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L111)
+Defined in: [lib/storage.ts:111](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L111)
 
 存储小型存储数据，单应用最大存储 1M
 

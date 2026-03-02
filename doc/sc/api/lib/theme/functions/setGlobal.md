@@ -6,9 +6,9 @@
 
 # Function: setGlobal()
 
-> **setGlobal**(`theme`, `current`): `Promise`\<`number`\>
+> **setGlobal**(`theme`, `current?`): `Promise`\<`number`\>
 
-Defined in: [dist/lib/theme.ts:194](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L194)
+Defined in: [lib/theme.ts:194](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L194)
 
 将 cgt 主题设置到全局所有任务
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/theme.ts:194](https://github.com/maiyun/clickgo/blob/maste
 
 `string` | [`ITheme`](../interfaces/ITheme.md)
 
-### current
+### current?
 
 如果要读包内对象，则要传当前任务
 

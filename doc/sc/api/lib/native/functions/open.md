@@ -6,15 +6,15 @@
 
 # Function: open()
 
-> **open**(`options`): `Promise`\<`string`[] \| `null`\>
+> **open**(`options?`): `Promise`\<`string`[] \| `null`\>
 
-Defined in: [dist/lib/native.ts:316](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L316)
+Defined in: [lib/native.ts:316](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L316)
 
 弹出文件选择框
 
 ## Parameters
 
-### options
+### options?
 
 选项
 

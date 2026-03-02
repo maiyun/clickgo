@@ -8,7 +8,7 @@
 
 > **loadStyle**(`style`): `void`
 
-Defined in: [dist/lib/tool.ts:2508](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2508)
+Defined in: [lib/tool.ts:2513](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2513)
 
 加载 css 字符串
 

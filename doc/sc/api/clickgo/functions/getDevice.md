@@ -8,7 +8,7 @@
 
 > **getDevice**(): `object`
 
-Defined in: [dist/clickgo.ts:125](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L125)
+Defined in: [clickgo.ts:125](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L125)
 
 获取当前设备信息（支持 native 和 web）
 

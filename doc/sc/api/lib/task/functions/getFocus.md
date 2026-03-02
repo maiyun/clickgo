@@ -8,7 +8,7 @@
 
 > **getFocus**(`current`): `Promise`\<`string` \| `null`\>
 
-Defined in: [dist/lib/task.ts:170](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L170)
+Defined in: [lib/task.ts:170](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L170)
 
 获取当前有焦点的任务 ID
 

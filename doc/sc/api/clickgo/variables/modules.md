@@ -8,7 +8,7 @@
 
 > `const` **modules**: `object`
 
-Defined in: [dist/clickgo.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L43)
+Defined in: [clickgo.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L43)
 
 原生模块
 

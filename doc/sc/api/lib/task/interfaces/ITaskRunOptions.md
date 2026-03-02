@@ -6,7 +6,7 @@
 
 # Interface: ITaskRunOptions
 
-Defined in: [dist/lib/task.ts:1740](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1740)
+Defined in: [lib/task.ts:1740](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1740)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/task.ts:1740](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **after**: `string`
 
-Defined in: [dist/lib/task.ts:1753](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1753)
+Defined in: [lib/task.ts:1753](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1753)
 
 如果是网络加载 cga，则网址后面会附带，如 ?123
 
@@ -24,7 +24,7 @@ Defined in: [dist/lib/task.ts:1753](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **data**: `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/task.ts:1755](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1755)
+Defined in: [lib/task.ts:1755](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1755)
 
 给 task 传值
 
@@ -34,7 +34,7 @@ Defined in: [dist/lib/task.ts:1755](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **icon**: `string`
 
-Defined in: [dist/lib/task.ts:1741](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1741)
+Defined in: [lib/task.ts:1741](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1741)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [dist/lib/task.ts:1741](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **initProgress**: (`loaded`, `total`, `type`, `msg`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/task.ts:1743](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1743)
+Defined in: [lib/task.ts:1743](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1743)
 
 初始化进度回调
 
@@ -74,7 +74,7 @@ Defined in: [dist/lib/task.ts:1743](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **notify**: `boolean`
 
-Defined in: [dist/lib/task.ts:1749](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1749)
+Defined in: [lib/task.ts:1749](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1749)
 
 显示 notify 窗口
 
@@ -84,7 +84,7 @@ Defined in: [dist/lib/task.ts:1749](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **path**: `string`
 
-Defined in: [dist/lib/task.ts:1757](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1757)
+Defined in: [lib/task.ts:1757](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1757)
 
 执行文件的基路径，一般在传入 APP 包时使用，以 .cga 结尾
 
@@ -94,7 +94,7 @@ Defined in: [dist/lib/task.ts:1757](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **permissions**: `string`[]
 
-Defined in: [dist/lib/task.ts:1751](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1751)
+Defined in: [lib/task.ts:1751](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1751)
 
 直接赋予此任务相应权限，有 "root" 权限的应用才能设置
 
@@ -104,7 +104,7 @@ Defined in: [dist/lib/task.ts:1751](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **perProgress**: (`per`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/task.ts:1747](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1747)
+Defined in: [lib/task.ts:1747](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1747)
 
 返回总加载进度百分比（0 - 1）
 
@@ -124,7 +124,7 @@ Defined in: [dist/lib/task.ts:1747](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **progress**: (`loaded`, `total`, `type`, `path`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/task.ts:1745](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1745)
+Defined in: [lib/task.ts:1745](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1745)
 
 加载进度回调（根据 type 分为不同阶段）
 

@@ -6,7 +6,7 @@
 
 # Interface: IPanelWentEvent
 
-Defined in: [dist/lib/control.ts:1280](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1280)
+Defined in: [lib/control.ts:1283](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1283)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1280](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1281](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1281)
+Defined in: [lib/control.ts:1284](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1284)
 
 #### from
 

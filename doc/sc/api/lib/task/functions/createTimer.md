@@ -6,9 +6,9 @@
 
 # Function: createTimer()
 
-> **createTimer**(`current`, `fun`, `delay`, `opt`): `number`
+> **createTimer**(`current`, `fun`, `delay`, `opt?`): `number`
 
-Defined in: [dist/lib/task.ts:1226](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1226)
+Defined in: [lib/task.ts:1226](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1226)
 
 创建 timer
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/task.ts:1226](https://github.com/maiyun/clickgo/blob/maste
 
 延迟/间隔，毫秒
 
-### opt
+### opt?
 
 [`ICreateTimerOptions`](../interfaces/ICreateTimerOptions.md) = `{}`
 

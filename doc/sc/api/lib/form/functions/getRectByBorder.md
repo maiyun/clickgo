@@ -8,7 +8,7 @@
 
 > **getRectByBorder**(`border`): `object`
 
-Defined in: [dist/lib/form.ts:2001](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2001)
+Defined in: [lib/form.ts:2001](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2001)
 
 根据 border 方向 获取理论窗体大小
 

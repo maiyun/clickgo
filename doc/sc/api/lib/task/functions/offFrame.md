@@ -8,7 +8,7 @@
 
 > **offFrame**(`current`, `ft`): `void`
 
-Defined in: [dist/lib/task.ts:317](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L317)
+Defined in: [lib/task.ts:317](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L317)
 
 移除 frame 监听
 

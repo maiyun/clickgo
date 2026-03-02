@@ -6,9 +6,9 @@
 
 # Function: rand()
 
-> **rand**(`min`, `max`, `prec`): `number`
+> **rand**(`min`, `max`, `prec?`): `number`
 
-Defined in: [dist/lib/tool.ts:653](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L653)
+Defined in: [lib/tool.ts:658](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L658)
 
 生成范围内的随机数
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/tool.ts:653](https://github.com/maiyun/clickgo/blob/master
 
 <= 最大值
 
-### prec
+### prec?
 
 `number` = `0`
 

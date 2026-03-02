@@ -8,7 +8,7 @@
 
 > **activate**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/native.ts:281](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L281)
+Defined in: [lib/native.ts:281](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L281)
 
 ## Parameters
 

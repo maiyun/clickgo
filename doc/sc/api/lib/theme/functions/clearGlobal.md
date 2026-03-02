@@ -8,7 +8,7 @@
 
 > **clearGlobal**(): `Promise`\<`void`\>
 
-Defined in: [dist/lib/theme.ts:221](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L221)
+Defined in: [lib/theme.ts:221](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L221)
 
 清除全局主题
 

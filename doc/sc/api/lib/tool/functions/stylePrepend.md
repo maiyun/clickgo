@@ -6,9 +6,9 @@
 
 # Function: stylePrepend()
 
-> **stylePrepend**(`style`, `prep`): `object`
+> **stylePrepend**(`style`, `prep?`): `object`
 
-Defined in: [dist/lib/tool.ts:550](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L550)
+Defined in: [lib/tool.ts:555](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L555)
 
 给 class 前部增加唯一标识符
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/tool.ts:550](https://github.com/maiyun/clickgo/blob/master
 
 样式内容
 
-### prep
+### prep?
 
 `string` = `''`
 

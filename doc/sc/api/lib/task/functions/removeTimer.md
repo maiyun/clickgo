@@ -8,7 +8,7 @@
 
 > **removeTimer**(`current`, `timer`): `void`
 
-Defined in: [dist/lib/task.ts:1293](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1293)
+Defined in: [lib/task.ts:1293](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1293)
 
 移除 timer
 

@@ -6,7 +6,7 @@
 
 # Interface: IDatepanelSelectedEvent
 
-Defined in: [dist/lib/control.ts:977](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L977)
+Defined in: [lib/control.ts:980](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L980)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:977](https://github.com/maiyun/clickgo/blob/mas
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:978](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L978)
+Defined in: [lib/control.ts:981](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L981)
 
 #### date
 

@@ -6,7 +6,7 @@
 
 # Interface: ITheme
 
-Defined in: [dist/lib/theme.ts:259](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L259)
+Defined in: [lib/theme.ts:259](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L259)
 
 主题对象
 
@@ -16,7 +16,7 @@ Defined in: [dist/lib/theme.ts:259](https://github.com/maiyun/clickgo/blob/maste
 
 > **config**: [`IThemeConfig`](IThemeConfig.md)
 
-Defined in: [dist/lib/theme.ts:262](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L262)
+Defined in: [lib/theme.ts:262](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L262)
 
 主题对象配置文件
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/theme.ts:262](https://github.com/maiyun/clickgo/blob/maste
 
 > **files**: `Record`\<`string`, `Blob` \| `string`\>
 
-Defined in: [dist/lib/theme.ts:264](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L264)
+Defined in: [lib/theme.ts:264](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L264)
 
 所有已加载的文件内容
 
@@ -36,4 +36,4 @@ Defined in: [dist/lib/theme.ts:264](https://github.com/maiyun/clickgo/blob/maste
 
 > **type**: `"theme"`
 
-Defined in: [dist/lib/theme.ts:260](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L260)
+Defined in: [lib/theme.ts:260](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L260)

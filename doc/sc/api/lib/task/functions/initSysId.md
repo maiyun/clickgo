@@ -8,7 +8,7 @@
 
 > **initSysId**(`id`): `void`
 
-Defined in: [dist/lib/task.ts:33](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L33)
+Defined in: [lib/task.ts:33](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L33)
 
 初始化系统级 ID，仅能设置一次
 

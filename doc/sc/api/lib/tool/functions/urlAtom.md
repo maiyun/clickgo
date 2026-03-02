@@ -8,7 +8,7 @@
 
 > **urlAtom**(`url`): `string`
 
-Defined in: [dist/lib/tool.ts:1473](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1473)
+Defined in: [lib/tool.ts:1478](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1478)
 
 处理 URL 中的 .. / . 等
 

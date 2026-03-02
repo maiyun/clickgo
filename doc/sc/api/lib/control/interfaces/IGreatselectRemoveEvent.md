@@ -6,7 +6,7 @@
 
 # Interface: IGreatselectRemoveEvent
 
-Defined in: [dist/lib/control.ts:1086](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1086)
+Defined in: [lib/control.ts:1089](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1089)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1087](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1087)
+Defined in: [lib/control.ts:1090](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1090)
 
 #### value
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/control.ts:1087](https://github.com/maiyun/clickgo/blob/ma
 
 > **go**: `boolean`
 
-Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L875)
+Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L878)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/mas
 
 > **preventDefault**: () => `void`
 
-Defined in: [dist/lib/control.ts:876](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L876)
+Defined in: [lib/control.ts:879](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L879)
 
 #### Returns
 

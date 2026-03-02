@@ -6,7 +6,7 @@
 
 # Interface: IUrl
 
-Defined in: [dist/lib/tool.ts:2598](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2598)
+Defined in: [lib/tool.ts:2603](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2603)
 
 网址对象
 
@@ -16,7 +16,7 @@ Defined in: [dist/lib/tool.ts:2598](https://github.com/maiyun/clickgo/blob/maste
 
 > **auth**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2599](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2599)
+Defined in: [lib/tool.ts:2604](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2604)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [dist/lib/tool.ts:2599](https://github.com/maiyun/clickgo/blob/maste
 
 > **hash**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2600](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2600)
+Defined in: [lib/tool.ts:2605](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2605)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/tool.ts:2600](https://github.com/maiyun/clickgo/blob/maste
 
 > **host**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2601](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2601)
+Defined in: [lib/tool.ts:2606](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2606)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [dist/lib/tool.ts:2601](https://github.com/maiyun/clickgo/blob/maste
 
 > **hostname**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2602](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2602)
+Defined in: [lib/tool.ts:2607](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2607)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [dist/lib/tool.ts:2602](https://github.com/maiyun/clickgo/blob/maste
 
 > **pass**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2603](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2603)
+Defined in: [lib/tool.ts:2608](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2608)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [dist/lib/tool.ts:2603](https://github.com/maiyun/clickgo/blob/maste
 
 > **path**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2604](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2604)
+Defined in: [lib/tool.ts:2609](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2609)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [dist/lib/tool.ts:2604](https://github.com/maiyun/clickgo/blob/maste
 
 > **pathname**: `string`
 
-Defined in: [dist/lib/tool.ts:2605](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2605)
+Defined in: [lib/tool.ts:2610](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2610)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [dist/lib/tool.ts:2605](https://github.com/maiyun/clickgo/blob/maste
 
 > **port**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2607](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2607)
+Defined in: [lib/tool.ts:2612](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2612)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [dist/lib/tool.ts:2607](https://github.com/maiyun/clickgo/blob/maste
 
 > **protocol**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2606](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2606)
+Defined in: [lib/tool.ts:2611](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2611)
 
 ***
 
@@ -88,7 +88,7 @@ Defined in: [dist/lib/tool.ts:2606](https://github.com/maiyun/clickgo/blob/maste
 
 > **query**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2608](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2608)
+Defined in: [lib/tool.ts:2613](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2613)
 
 ***
 
@@ -96,4 +96,4 @@ Defined in: [dist/lib/tool.ts:2608](https://github.com/maiyun/clickgo/blob/maste
 
 > **user**: `string` \| `null`
 
-Defined in: [dist/lib/tool.ts:2609](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2609)
+Defined in: [lib/tool.ts:2614](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2614)

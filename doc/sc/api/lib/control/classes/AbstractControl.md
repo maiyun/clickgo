@@ -6,7 +6,7 @@
 
 # Abstract Class: AbstractControl
 
-Defined in: [dist/lib/control.ts:40](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L40)
+Defined in: [lib/control.ts:40](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L40)
 
 窗体的抽象类
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/control.ts:40](https://github.com/maiyun/clickgo/blob/mast
 
 > `readonly` **emits**: `Record`\<`string`, `null` \| (`payload`) => `boolean`\> = `{}`
 
-Defined in: [dist/lib/control.ts:273](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L273)
+Defined in: [lib/control.ts:276](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L276)
 
 组件参数，由用户定义重写
 
@@ -36,7 +36,7 @@ Defined in: [dist/lib/control.ts:273](https://github.com/maiyun/clickgo/blob/mas
 
 > `readonly` **packageFiles**: `Record`\<`string`, `Blob` \| `string`\> = `{}`
 
-Defined in: [dist/lib/control.ts:267](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L267)
+Defined in: [lib/control.ts:270](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L270)
 
 组件内部文件，由系统重写
 
@@ -46,7 +46,7 @@ Defined in: [dist/lib/control.ts:267](https://github.com/maiyun/clickgo/blob/mas
 
 > `readonly` **props**: `object` = `{}`
 
-Defined in: [dist/lib/control.ts:270](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L270)
+Defined in: [lib/control.ts:273](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L273)
 
 组件参数，由用户定义重写
 
@@ -56,7 +56,7 @@ Defined in: [dist/lib/control.ts:270](https://github.com/maiyun/clickgo/blob/mas
 
 > `readonly` **slots**: `Record`\<`string`, () => `any`[]\> = `{}`
 
-Defined in: [dist/lib/control.ts:276](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L276)
+Defined in: [lib/control.ts:279](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L279)
 
 组件的子插槽
 
@@ -68,7 +68,7 @@ Defined in: [dist/lib/control.ts:276](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **alignHComp**(): `string` \| `undefined`
 
-Defined in: [dist/lib/control.ts:178](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L178)
+Defined in: [lib/control.ts:181](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L181)
 
 获取 alignH 的 css 属性模式，请确保 props.alignH 存在
 
@@ -84,7 +84,7 @@ Defined in: [dist/lib/control.ts:178](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **alignVComp**(): `string` \| `undefined`
 
-Defined in: [dist/lib/control.ts:195](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L195)
+Defined in: [lib/control.ts:198](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L198)
 
 获取 alignH 的 css 属性模式，请确保 props.alignH 存在
 
@@ -100,7 +100,7 @@ Defined in: [dist/lib/control.ts:195](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **classPrepend**(): (`cla`) => `string`
 
-Defined in: [dist/lib/control.ts:167](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L167)
+Defined in: [lib/control.ts:167](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L167)
 
 layout 中 :class 的转义
 
@@ -126,7 +126,7 @@ layout 中 :class 的转义
 
 > **get** **controlName**(): `string`
 
-Defined in: [dist/lib/control.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L57)
+Defined in: [lib/control.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L57)
 
 当前的控件名称
 
@@ -142,7 +142,7 @@ Defined in: [dist/lib/control.ts:57](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **element**(): `HTMLElement`
 
-Defined in: [dist/lib/control.ts:87](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L87)
+Defined in: [lib/control.ts:87](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L87)
 
 获取当前的 HTML DOM
 
@@ -158,7 +158,7 @@ Defined in: [dist/lib/control.ts:87](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **filename**(): `string`
 
-Defined in: [dist/lib/control.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L43)
+Defined in: [lib/control.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L43)
 
 当前文件在包内的路径
 
@@ -174,7 +174,7 @@ Defined in: [dist/lib/control.ts:43](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **findex**(): `number`
 
-Defined in: [dist/lib/control.ts:51](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L51)
+Defined in: [lib/control.ts:51](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L51)
 
 当前的窗体创建的位数
 
@@ -190,7 +190,7 @@ Defined in: [dist/lib/control.ts:51](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **fl**(): (`key`, `data?`) => `string`
 
-Defined in: [dist/lib/control.ts:157](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L157)
+Defined in: [lib/control.ts:157](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L157)
 
 获取窗体语言内容
 
@@ -220,7 +220,7 @@ Defined in: [dist/lib/control.ts:157](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **formFocus**(): `boolean`
 
-Defined in: [dist/lib/control.ts:124](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L124)
+Defined in: [lib/control.ts:124](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L124)
 
 当前窗体是否有焦点
 
@@ -236,7 +236,7 @@ Defined in: [dist/lib/control.ts:124](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **formId**(): `string`
 
-Defined in: [dist/lib/control.ts:69](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L69)
+Defined in: [lib/control.ts:69](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L69)
 
 当前组件所在的窗体 ID
 
@@ -252,7 +252,7 @@ Defined in: [dist/lib/control.ts:69](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **l**(): (`key`, `data?`) => `string`
 
-Defined in: [dist/lib/control.ts:137](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L137)
+Defined in: [lib/control.ts:137](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L137)
 
 获取语言内容
 
@@ -282,7 +282,7 @@ Defined in: [dist/lib/control.ts:137](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **locale**(): `string`
 
-Defined in: [dist/lib/control.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L129)
+Defined in: [lib/control.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L129)
 
 获取当前语言名
 
@@ -298,7 +298,7 @@ Defined in: [dist/lib/control.ts:129](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **nextTick**(): () => `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:238](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L238)
+Defined in: [lib/control.ts:241](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L241)
 
 等待渲染
 
@@ -318,7 +318,7 @@ Defined in: [dist/lib/control.ts:238](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **parent**(): `AbstractControl` & [`AbstractForm`](../../form/classes/AbstractForm.md) & `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/control.ts:341](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L341)
+Defined in: [lib/control.ts:344](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L344)
 
 获取上层控件
 
@@ -334,7 +334,7 @@ Defined in: [dist/lib/control.ts:341](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **parentByAccess**(): (`name`, `val`) => `AbstractControl` & `Record`\<`string`, `any`\> \| `null`
 
-Defined in: [dist/lib/control.ts:366](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L366)
+Defined in: [lib/control.ts:369](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L369)
 
 根据 control access 查询上层控件
 
@@ -364,7 +364,7 @@ Defined in: [dist/lib/control.ts:366](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **parentByName**(): (`controlName`) => `AbstractControl` & `Record`\<`string`, `any`\> \| `null`
 
-Defined in: [dist/lib/control.ts:348](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L348)
+Defined in: [lib/control.ts:351](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L351)
 
 根据 control name 查询上层控件
 
@@ -390,7 +390,7 @@ Defined in: [dist/lib/control.ts:348](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **path**(): `string`
 
-Defined in: [dist/lib/control.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L75)
+Defined in: [lib/control.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L75)
 
 当前控件所在运行窗体的包内路径不以 / 结尾
 
@@ -406,7 +406,7 @@ Defined in: [dist/lib/control.ts:75](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **prep**(): `string`
 
-Defined in: [dist/lib/control.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L81)
+Defined in: [lib/control.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L81)
 
 样式独占前缀
 
@@ -422,7 +422,7 @@ Defined in: [dist/lib/control.ts:81](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **propArray**(): (`name`) => `any`[]
 
-Defined in: [dist/lib/control.ts:323](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L323)
+Defined in: [lib/control.ts:326](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L326)
 
 获取 props 中的 array 类型的值
 
@@ -448,7 +448,7 @@ keyof `this`\[`"props"`\]
 
 > **get** **propBoolean**(): (`name`) => `boolean`
 
-Defined in: [dist/lib/control.ts:302](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L302)
+Defined in: [lib/control.ts:305](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L305)
 
 获取 props 中的 boolean 类型的值
 
@@ -474,7 +474,7 @@ keyof `this`\[`"props"`\]
 
 > **get** **propInt**(): (`name`) => `number`
 
-Defined in: [dist/lib/control.ts:316](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L316)
+Defined in: [lib/control.ts:319](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L319)
 
 获取 props 中的 int 类型的值
 
@@ -500,7 +500,7 @@ keyof `this`\[`"props"`\]
 
 > **get** **propNumber**(): (`name`) => `number`
 
-Defined in: [dist/lib/control.ts:309](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L309)
+Defined in: [lib/control.ts:312](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L312)
 
 获取 props 中的 number 类型的值
 
@@ -526,7 +526,7 @@ keyof `this`\[`"props"`\]
 
 > **get** **refs**(): `Record`\<`string`, `HTMLElement` & `AbstractControl` & `Record`\<`string`, `any`\>\>
 
-Defined in: [dist/lib/control.ts:231](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L231)
+Defined in: [lib/control.ts:234](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L234)
 
 获取 refs 情况
 
@@ -542,7 +542,7 @@ Defined in: [dist/lib/control.ts:231](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **rootControl**(): `AbstractControl` & `Record`\<`string`, `any`\> \| `null`
 
-Defined in: [dist/lib/control.ts:117](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L117)
+Defined in: [lib/control.ts:117](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L117)
 
 当前组件如果在开发控件层面被包裹了，则可以获取到包裹他的组件对象
 
@@ -558,7 +558,7 @@ Defined in: [dist/lib/control.ts:117](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **rootForm**(): [`AbstractForm`](../../form/classes/AbstractForm.md) & `Record`\<`string`, `any`\>
 
-Defined in: [dist/lib/control.ts:98](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L98)
+Defined in: [lib/control.ts:98](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L98)
 
 当前控件所在窗体的窗体对象
 
@@ -574,7 +574,7 @@ Defined in: [dist/lib/control.ts:98](https://github.com/maiyun/clickgo/blob/mast
 
 > **get** **slotsAll**(): (`name`) => `any`[]
 
-Defined in: [dist/lib/control.ts:279](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L279)
+Defined in: [lib/control.ts:282](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L282)
 
 获取某插槽所有子类
 
@@ -600,7 +600,7 @@ Defined in: [dist/lib/control.ts:279](https://github.com/maiyun/clickgo/blob/mas
 
 > **get** **taskId**(): `string`
 
-Defined in: [dist/lib/control.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L63)
+Defined in: [lib/control.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L63)
 
 当前组件所在的任务 ID
 
@@ -614,7 +614,7 @@ Defined in: [dist/lib/control.ts:63](https://github.com/maiyun/clickgo/blob/mast
 
 > **allowEvent**(`e`): `boolean`
 
-Defined in: [dist/lib/control.ts:246](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L246)
+Defined in: [lib/control.ts:249](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L249)
 
 判断当前事件可否执行
 
@@ -636,7 +636,7 @@ Defined in: [dist/lib/control.ts:246](https://github.com/maiyun/clickgo/blob/mas
 
 > **emit**(`name`, ...`v`): `void`
 
-Defined in: [dist/lib/control.ts:334](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L334)
+Defined in: [lib/control.ts:337](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L337)
 
 向上反应事件
 
@@ -664,7 +664,7 @@ Defined in: [dist/lib/control.ts:334](https://github.com/maiyun/clickgo/blob/mas
 
 > **onBeforeCreate**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:387](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L387)
+Defined in: [lib/control.ts:390](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L390)
 
 #### Returns
 
@@ -676,7 +676,7 @@ Defined in: [dist/lib/control.ts:387](https://github.com/maiyun/clickgo/blob/mas
 
 > **onBeforeMount**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:395](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L395)
+Defined in: [lib/control.ts:398](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L398)
 
 #### Returns
 
@@ -688,7 +688,7 @@ Defined in: [dist/lib/control.ts:395](https://github.com/maiyun/clickgo/blob/mas
 
 > **onBeforeUnmount**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:412](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L412)
+Defined in: [lib/control.ts:415](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L415)
 
 #### Returns
 
@@ -700,7 +700,7 @@ Defined in: [dist/lib/control.ts:412](https://github.com/maiyun/clickgo/blob/mas
 
 > **onBeforeUpdate**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:404](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L404)
+Defined in: [lib/control.ts:407](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L407)
 
 #### Returns
 
@@ -712,7 +712,7 @@ Defined in: [dist/lib/control.ts:404](https://github.com/maiyun/clickgo/blob/mas
 
 > **onCreated**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:391](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L391)
+Defined in: [lib/control.ts:394](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L394)
 
 #### Returns
 
@@ -724,7 +724,7 @@ Defined in: [dist/lib/control.ts:391](https://github.com/maiyun/clickgo/blob/mas
 
 > **onMounted**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:400](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L400)
+Defined in: [lib/control.ts:403](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L403)
 
 控件挂载好后触发
 
@@ -738,7 +738,7 @@ Defined in: [dist/lib/control.ts:400](https://github.com/maiyun/clickgo/blob/mas
 
 > **onUnmounted**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:416](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L416)
+Defined in: [lib/control.ts:419](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L419)
 
 #### Returns
 
@@ -750,7 +750,7 @@ Defined in: [dist/lib/control.ts:416](https://github.com/maiyun/clickgo/blob/mas
 
 > **onUpdated**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:408](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L408)
+Defined in: [lib/control.ts:411](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L411)
 
 #### Returns
 
@@ -760,9 +760,9 @@ Defined in: [dist/lib/control.ts:408](https://github.com/maiyun/clickgo/blob/mas
 
 ### trigger()
 
-> **trigger**(`name`, `param1`, `param2`): `Promise`\<`void`\>
+> **trigger**(`name`, `param1?`, `param2?`): `Promise`\<`void`\>
 
-Defined in: [dist/lib/control.ts:257](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L257)
+Defined in: [lib/control.ts:260](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L260)
 
 触发系统方法
 
@@ -774,13 +774,13 @@ Defined in: [dist/lib/control.ts:257](https://github.com/maiyun/clickgo/blob/mas
 
 方法名
 
-##### param1
+##### param1?
 
 参数1
 
 `string` | `boolean` | `Error`
 
-##### param2
+##### param2?
 
 `string` = `''`
 
@@ -794,9 +794,9 @@ Defined in: [dist/lib/control.ts:257](https://github.com/maiyun/clickgo/blob/mas
 
 ### watch()
 
-> **watch**\<`T`, `TK`, `TR`\>(`name`, `cb`, `opt`): () => `void`
+> **watch**\<`T`, `TK`, `TR`\>(`name`, `cb`, `opt?`): () => `void`
 
-Defined in: [dist/lib/control.ts:217](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L217)
+Defined in: [lib/control.ts:220](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L220)
 
 监视变动
 
@@ -828,7 +828,7 @@ Defined in: [dist/lib/control.ts:217](https://github.com/maiyun/clickgo/blob/mas
 
 回调
 
-##### opt
+##### opt?
 
 参数
 

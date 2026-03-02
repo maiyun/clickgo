@@ -8,7 +8,7 @@
 
 > **isFile**(`current`, `path`): `Promise`\<`false` \| [`IStats`](../interfaces/IStats.md)\>
 
-Defined in: [dist/lib/fs.ts:813](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L813)
+Defined in: [lib/fs.ts:813](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L813)
 
 判断是否是文件或文件是否存在，是的话返回 stats
 

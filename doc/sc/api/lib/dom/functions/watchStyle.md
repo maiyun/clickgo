@@ -6,9 +6,9 @@
 
 # Function: watchStyle()
 
-> **watchStyle**(`el`, `name`, `cb`, `immediate`): `void`
+> **watchStyle**(`el`, `name`, `cb`, `immediate?`): `void`
 
-Defined in: [dist/lib/dom.ts:753](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L753)
+Defined in: [lib/dom.ts:753](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L753)
 
 监听一个标签的计算后样式的变化
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/dom.ts:753](https://github.com/maiyun/clickgo/blob/master/
 
 变更回调
 
-### immediate
+### immediate?
 
 `boolean` = `false`
 

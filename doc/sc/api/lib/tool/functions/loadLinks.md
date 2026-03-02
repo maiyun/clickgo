@@ -6,9 +6,9 @@
 
 # Function: loadLinks()
 
-> **loadLinks**(`urls`, `opt`): `Promise`\<`void`\>
+> **loadLinks**(`urls`, `opt?`): `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2495](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2495)
+Defined in: [lib/tool.ts:2500](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2500)
 
 批量加载 css 文件
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/tool.ts:2495](https://github.com/maiyun/clickgo/blob/maste
 
 css 文件列表
 
-### opt
+### opt?
 
 选项
 

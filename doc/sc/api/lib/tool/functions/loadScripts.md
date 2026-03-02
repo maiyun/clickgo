@@ -6,9 +6,9 @@
 
 # Function: loadScripts()
 
-> **loadScripts**(`urls`, `opt`): `Promise`\<`void`\>
+> **loadScripts**(`urls`, `opt?`): `Promise`\<`void`\>
 
-Defined in: [dist/lib/tool.ts:2455](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2455)
+Defined in: [lib/tool.ts:2460](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2460)
 
 批量加载 js 文件
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/tool.ts:2455](https://github.com/maiyun/clickgo/blob/maste
 
 js 文件列表
 
-### opt
+### opt?
 
 选项
 

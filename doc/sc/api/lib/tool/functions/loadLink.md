@@ -6,9 +6,9 @@
 
 # Function: loadLink()
 
-> **loadLink**(`url`, `pos`): `Promise`\<`boolean`\>
+> **loadLink**(`url`, `pos?`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/tool.ts:2469](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2469)
+Defined in: [lib/tool.ts:2474](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2474)
 
 加载 css 文件
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/tool.ts:2469](https://github.com/maiyun/clickgo/blob/maste
 
 css 文件网址
 
-### pos
+### pos?
 
 `"before"` | `"after"`
 

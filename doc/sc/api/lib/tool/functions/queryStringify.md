@@ -6,9 +6,9 @@
 
 # Function: queryStringify()
 
-> **queryStringify**(`query`, `encode`): `string`
+> **queryStringify**(`query`, `encode?`): `string`
 
-Defined in: [dist/lib/tool.ts:1629](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1629)
+Defined in: [lib/tool.ts:1634](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1634)
 
 将对象转换为 query string
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/tool.ts:1629](https://github.com/maiyun/clickgo/blob/maste
 
 要转换的对象
 
-### encode
+### encode?
 
 `boolean` = `true`
 

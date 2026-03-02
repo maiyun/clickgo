@@ -6,7 +6,7 @@
 
 # Interface: IDatepanelRangeEvent
 
-Defined in: [dist/lib/control.ts:963](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L963)
+Defined in: [lib/control.ts:966](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L966)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:964](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L964)
+Defined in: [lib/control.ts:967](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L967)
 
 #### end
 
@@ -36,7 +36,7 @@ Defined in: [dist/lib/control.ts:964](https://github.com/maiyun/clickgo/blob/mas
 
 > **go**: `boolean`
 
-Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L875)
+Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L878)
 
 #### Inherited from
 
@@ -48,7 +48,7 @@ Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/mas
 
 > **preventDefault**: () => `void`
 
-Defined in: [dist/lib/control.ts:876](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L876)
+Defined in: [lib/control.ts:879](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L879)
 
 #### Returns
 

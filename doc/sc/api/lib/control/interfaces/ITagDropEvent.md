@@ -6,7 +6,7 @@
 
 # Interface: ITagDropEvent
 
-Defined in: [dist/lib/control.ts:1465](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1465)
+Defined in: [lib/control.ts:1468](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1468)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/control.ts:1465](https://github.com/maiyun/clickgo/blob/ma
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:1466](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1466)
+Defined in: [lib/control.ts:1469](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1469)
 
 #### after
 

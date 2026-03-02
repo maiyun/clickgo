@@ -6,9 +6,9 @@
 
 # Function: weightFormat()
 
-> **weightFormat**(`weight`, `spliter`): `string`
+> **weightFormat**(`weight`, `spliter?`): `string`
 
-Defined in: [dist/lib/tool.ts:178](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L178)
+Defined in: [lib/tool.ts:178](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L178)
 
 将毫克重量格式化为带单位的字符串
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/tool.ts:178](https://github.com/maiyun/clickgo/blob/master
 
 毫克重量
 
-### spliter
+### spliter?
 
 `string` = `' '`
 

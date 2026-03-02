@@ -6,9 +6,9 @@
 
 # Function: sizeFormat()
 
-> **sizeFormat**(`size`, `spliter`): `string`
+> **sizeFormat**(`size`, `spliter?`): `string`
 
-Defined in: [dist/lib/tool.ts:163](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L163)
+Defined in: [lib/tool.ts:163](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L163)
 
 将文件大小格式化为带单位的字符串
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/tool.ts:163](https://github.com/maiyun/clickgo/blob/master
 
 文件大小
 
-### spliter
+### spliter?
 
 `string` = `' '`
 

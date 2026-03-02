@@ -6,7 +6,7 @@
 
 # Interface: IThread
 
-Defined in: [dist/lib/task.ts:1678](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1678)
+Defined in: [lib/task.ts:1678](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1678)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [dist/lib/task.ts:1678](https://github.com/maiyun/clickgo/blob/maste
 
 > **end**: () => `Promise`\<`void`\>
 
-Defined in: [dist/lib/task.ts:1686](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1686)
+Defined in: [lib/task.ts:1686](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1686)
 
 结束线程
 
@@ -28,7 +28,7 @@ Defined in: [dist/lib/task.ts:1686](https://github.com/maiyun/clickgo/blob/maste
 
 > **off**: (`name`, `handler`) => `void`
 
-Defined in: [dist/lib/task.ts:1682](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1682)
+Defined in: [lib/task.ts:1682](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1682)
 
 移除事件
 
@@ -52,7 +52,7 @@ Defined in: [dist/lib/task.ts:1682](https://github.com/maiyun/clickgo/blob/maste
 
 > **on**: (`name`, `handler`) => `void`
 
-Defined in: [dist/lib/task.ts:1680](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1680)
+Defined in: [lib/task.ts:1680](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1680)
 
 绑定事件
 
@@ -76,7 +76,7 @@ Defined in: [dist/lib/task.ts:1680](https://github.com/maiyun/clickgo/blob/maste
 
 > **send**: (`data`) => `void`
 
-Defined in: [dist/lib/task.ts:1684](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1684)
+Defined in: [lib/task.ts:1684](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1684)
 
 发送数据
 

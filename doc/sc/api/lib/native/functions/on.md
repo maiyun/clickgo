@@ -6,9 +6,9 @@
 
 # Function: on()
 
-> **on**(`current`, `name`, `handler`, `once`, `formId?`): `void`
+> **on**(`current`, `name`, `handler`, `once?`, `formId?`): `void`
 
-Defined in: [dist/lib/native.ts:78](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L78)
+Defined in: [lib/native.ts:78](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L78)
 
 监听 native 传输过来的事件
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/native.ts:78](https://github.com/maiyun/clickgo/blob/maste
 
 回调函数
 
-### once
+### once?
 
 `boolean` = `false`
 

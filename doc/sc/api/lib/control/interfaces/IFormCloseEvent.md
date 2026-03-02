@@ -6,7 +6,7 @@
 
 # Interface: IFormCloseEvent
 
-Defined in: [dist/lib/control.ts:990](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L990)
+Defined in: [lib/control.ts:993](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L993)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [dist/lib/control.ts:991](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L991)
+Defined in: [lib/control.ts:994](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L994)
 
 #### event
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/control.ts:991](https://github.com/maiyun/clickgo/blob/mas
 
 > **go**: `boolean`
 
-Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L875)
+Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L878)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [dist/lib/control.ts:875](https://github.com/maiyun/clickgo/blob/mas
 
 > **preventDefault**: () => `void`
 
-Defined in: [dist/lib/control.ts:876](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L876)
+Defined in: [lib/control.ts:879](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L879)
 
 #### Returns
 

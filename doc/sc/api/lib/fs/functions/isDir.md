@@ -8,7 +8,7 @@
 
 > **isDir**(`current`, `path`): `Promise`\<`false` \| [`IStats`](../interfaces/IStats.md)\>
 
-Defined in: [dist/lib/fs.ts:800](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L800)
+Defined in: [lib/fs.ts:800](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L800)
 
 判断是否是目录或目录是否存在，是的话返回 stats
 

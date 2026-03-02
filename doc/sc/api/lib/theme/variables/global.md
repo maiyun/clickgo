@@ -8,6 +8,6 @@
 
 > **global**: [`ITheme`](../interfaces/ITheme.md) \| `null` = `null`
 
-Defined in: [dist/lib/theme.ts:39](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L39)
+Defined in: [lib/theme.ts:39](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L39)
 
 当前全局主题

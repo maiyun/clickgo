@@ -6,7 +6,7 @@
 
 # Interface: IControl
 
-Defined in: [dist/lib/control.ts:858](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L858)
+Defined in: [lib/control.ts:861](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L861)
 
 控件对象
 
@@ -16,7 +16,7 @@ Defined in: [dist/lib/control.ts:858](https://github.com/maiyun/clickgo/blob/mas
 
 > **config**: [`IControlConfig`](IControlConfig.md)
 
-Defined in: [dist/lib/control.ts:861](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L861)
+Defined in: [lib/control.ts:864](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L864)
 
 控件对象配置文件
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/control.ts:861](https://github.com/maiyun/clickgo/blob/mas
 
 > **files**: `Record`\<`string`, `Blob` \| `string`\>
 
-Defined in: [dist/lib/control.ts:863](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L863)
+Defined in: [lib/control.ts:866](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L866)
 
 所有已加载的文件内容
 
@@ -36,4 +36,4 @@ Defined in: [dist/lib/control.ts:863](https://github.com/maiyun/clickgo/blob/mas
 
 > **type**: `"control"`
 
-Defined in: [dist/lib/control.ts:859](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L859)
+Defined in: [lib/control.ts:862](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L862)

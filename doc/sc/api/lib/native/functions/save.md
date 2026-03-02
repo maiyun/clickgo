@@ -6,15 +6,15 @@
 
 # Function: save()
 
-> **save**(`options`): `Promise`\<`string` \| `null`\>
+> **save**(`options?`): `Promise`\<`string` \| `null`\>
 
-Defined in: [dist/lib/native.ts:342](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L342)
+Defined in: [lib/native.ts:342](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L342)
 
 弹出文件保存框
 
 ## Parameters
 
-### options
+### options?
 
 选项
 

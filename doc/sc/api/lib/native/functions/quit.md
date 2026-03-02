@@ -8,7 +8,7 @@
 
 > **quit**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/native.ts:231](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L231)
+Defined in: [lib/native.ts:231](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L231)
 
 直接让整个 native 进程退出
 

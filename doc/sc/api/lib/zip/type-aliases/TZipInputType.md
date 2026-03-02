@@ -8,4 +8,4 @@
 
 > **TZipInputType** = keyof [`IZipInputByType`](../interfaces/IZipInputByType.md)
 
-Defined in: [dist/lib/zip.ts:479](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L479)
+Defined in: [lib/zip.ts:479](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L479)

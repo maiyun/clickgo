@@ -8,7 +8,7 @@
 
 > **once**(`current`, `name`, `handler`, `formId?`): `void`
 
-Defined in: [dist/lib/native.ts:107](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L107)
+Defined in: [lib/native.ts:107](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L107)
 
 监听 native 传输过来的事件（仅一次）
 

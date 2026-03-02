@@ -6,9 +6,9 @@
 
 # Function: layoutInsertAttr()
 
-> **layoutInsertAttr**(`layout`, `insert`, `opt`): `string`
+> **layoutInsertAttr**(`layout`, `insert`, `opt?`): `string`
 
-Defined in: [dist/lib/tool.ts:409](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L409)
+Defined in: [lib/tool.ts:409](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L409)
 
 给标签追加 attr，即使 attr 存在也会追加上一个新的（非真实 DOM 操作，仅仅是对字符串进行处理）
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/tool.ts:409](https://github.com/maiyun/clickgo/blob/master
 
 要追加
 
-### opt
+### opt?
 
 选项, ignore 忽略的标签，include 包含的标签
 

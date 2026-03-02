@@ -6,9 +6,9 @@
 
 # Function: mkdir()
 
-> **mkdir**(`current`, `path`, `mode`): `Promise`\<`boolean`\>
+> **mkdir**(`current`, `path`, `mode?`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/fs.ts:827](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L827)
+Defined in: [lib/fs.ts:827](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L827)
 
 深度创建目录，如果最末目录存在，则自动创建成功
 
@@ -26,7 +26,7 @@ Defined in: [dist/lib/fs.ts:827](https://github.com/maiyun/clickgo/blob/master/d
 
 要创建的路径，如 /a/b/c/
 
-### mode
+### mode?
 
 `number` = `0o755`
 

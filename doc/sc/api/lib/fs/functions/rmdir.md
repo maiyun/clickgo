@@ -8,7 +8,7 @@
 
 > **rmdir**(`current`, `path`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/fs.ts:875](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L875)
+Defined in: [lib/fs.ts:875](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L875)
 
 删除空目录
 

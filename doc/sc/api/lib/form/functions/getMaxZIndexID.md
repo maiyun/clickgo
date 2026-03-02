@@ -6,9 +6,9 @@
 
 # Function: getMaxZIndexID()
 
-> **getMaxZIndexID**(`current`, `out`): `Promise`\<`string` \| `null`\>
+> **getMaxZIndexID**(`current`, `out?`): `Promise`\<`string` \| `null`\>
 
-Defined in: [dist/lib/form.ts:1937](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1937)
+Defined in: [lib/form.ts:1937](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1937)
 
 获取当前 z-index 值最大的 form id（除了 top 模式的窗体和最小化的窗体）
 
@@ -20,7 +20,7 @@ Defined in: [dist/lib/form.ts:1937](https://github.com/maiyun/clickgo/blob/maste
 
 当前任务 id
 
-### out
+### out?
 
 排除选项
 

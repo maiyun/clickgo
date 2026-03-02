@@ -8,7 +8,7 @@
 
 > **mount**(`current`, `name`, `handler`): `boolean`
 
-Defined in: [dist/lib/fs.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L89)
+Defined in: [lib/fs.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L89)
 
 挂载到 mounted 目录下
 

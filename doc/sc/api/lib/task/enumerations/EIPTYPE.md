@@ -6,7 +6,7 @@
 
 # Enumeration: EIPTYPE
 
-Defined in: [dist/lib/task.ts:368](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L368)
+Defined in: [lib/task.ts:368](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L368)
 
 initProgress 的 type
 
@@ -16,7 +16,7 @@ initProgress 的 type
 
 > **APP**: `0`
 
-Defined in: [dist/lib/task.ts:369](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L369)
+Defined in: [lib/task.ts:369](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L369)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [dist/lib/task.ts:369](https://github.com/maiyun/clickgo/blob/master
 
 > **CONTROL**: `2`
 
-Defined in: [dist/lib/task.ts:371](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L371)
+Defined in: [lib/task.ts:371](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L371)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [dist/lib/task.ts:371](https://github.com/maiyun/clickgo/blob/master
 
 > **DONE**: `7`
 
-Defined in: [dist/lib/task.ts:376](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L376)
+Defined in: [lib/task.ts:376](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L376)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [dist/lib/task.ts:376](https://github.com/maiyun/clickgo/blob/master
 
 > **LOCAL**: `1`
 
-Defined in: [dist/lib/task.ts:370](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L370)
+Defined in: [lib/task.ts:370](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L370)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [dist/lib/task.ts:370](https://github.com/maiyun/clickgo/blob/master
 
 > **PERMISSION**: `5`
 
-Defined in: [dist/lib/task.ts:374](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L374)
+Defined in: [lib/task.ts:374](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L374)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [dist/lib/task.ts:374](https://github.com/maiyun/clickgo/blob/master
 
 > **START**: `6`
 
-Defined in: [dist/lib/task.ts:375](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L375)
+Defined in: [lib/task.ts:375](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L375)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [dist/lib/task.ts:375](https://github.com/maiyun/clickgo/blob/master
 
 > **STYLE**: `4`
 
-Defined in: [dist/lib/task.ts:373](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L373)
+Defined in: [lib/task.ts:373](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L373)
 
 ***
 
@@ -72,4 +72,4 @@ Defined in: [dist/lib/task.ts:373](https://github.com/maiyun/clickgo/blob/master
 
 > **THEME**: `3`
 
-Defined in: [dist/lib/task.ts:372](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L372)
+Defined in: [lib/task.ts:372](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L372)

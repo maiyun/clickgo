@@ -8,4 +8,4 @@
 
 > **TZipOutputType** = keyof [`IZipOutputByType`](../interfaces/IZipOutputByType.md)
 
-Defined in: [dist/lib/zip.ts:468](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L468)
+Defined in: [lib/zip.ts:468](https://github.com/maiyun/clickgo/blob/master/dist/lib/zip.ts#L468)

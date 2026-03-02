@@ -8,7 +8,7 @@
 
 > **load**(`taskId`, `theme?`): `Promise`\<`boolean`\>
 
-Defined in: [dist/lib/theme.ts:91](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L91)
+Defined in: [lib/theme.ts:91](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L91)
 
 加载 theme 给任务
 

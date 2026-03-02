@@ -8,7 +8,7 @@
 
 > **get**(`taskId`): [`ITaskInfo`](../interfaces/ITaskInfo.md) \| `null`
 
-Defined in: [dist/lib/task.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L103)
+Defined in: [lib/task.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L103)
 
 获取任务简略信息
 

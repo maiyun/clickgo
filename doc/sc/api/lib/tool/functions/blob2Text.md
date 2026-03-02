@@ -8,7 +8,7 @@
 
 > **blob2Text**(`blob`): `Promise`\<`string`\>
 
-Defined in: [dist/lib/tool.ts:1490](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1490)
+Defined in: [lib/tool.ts:1495](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1495)
 
 将 blob 对象转换为 text
 

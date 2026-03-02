@@ -6,27 +6,27 @@
 
 # Function: random()
 
-> **random**(`length`, `source`, `block`): `string`
+> **random**(`length?`, `source?`, `block?`): `string`
 
-Defined in: [dist/lib/tool.ts:682](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L682)
+Defined in: [lib/tool.ts:687](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L687)
 
 生成随机字符串
 
 ## Parameters
 
-### length
+### length?
 
 `number` = `8`
 
 长度
 
-### source
+### source?
 
 `string` = `RANDOM_LN`
 
 字符源
 
-### block
+### block?
 
 `string` = `''`
 
