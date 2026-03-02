@@ -6,8 +6,14 @@
 .wrap {
     display: flex;
 
-    &.top, &.bottom {
+    &.top {
         flex-direction: column;
+    }
+    &.bottom {
+        flex-direction: column-reverse;
+    }
+    &.right {
+        flex-direction: row-reverse;
     }
 
     > .tabs-wrap {

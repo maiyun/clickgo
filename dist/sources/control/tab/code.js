@@ -17,7 +17,6 @@ export default class extends clickgo.control.AbstractControl {
     arrow = false;
     timer = 0;
     tabsData = [];
-    oldTabs = undefined;
     value = '';
     rand = '';
     get isDrag() {
@@ -57,14 +56,14 @@ export default class extends clickgo.control.AbstractControl {
     }
     wheel(e) {
         if (this.props.tabPosition === 'left' || this.props.tabPosition === 'right') {
-            this.refs.tabs[0].scrollTop += e.deltaY;
+            this.refs.tabs.scrollTop += e.deltaY;
             return;
         }
         if (e.deltaX !== 0) {
-            this.refs.tabs[0].scrollLeft += e.deltaX;
+            this.refs.tabs.scrollLeft += e.deltaX;
             return;
         }
-        this.refs.tabs[0].scrollLeft += e.deltaY;
+        this.refs.tabs.scrollLeft += e.deltaY;
     }
     down(e, index) {
         const nval = this.tabsComp[index].value;
@@ -137,10 +136,10 @@ export default class extends clickgo.control.AbstractControl {
             down: () => {
                 this.timer = clickgo.task.onFrame(this, () => {
                     if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
-                        this.refs.tabs[0].scrollLeft += num;
+                        this.refs.tabs.scrollLeft += num;
                     }
                     else {
-                        this.refs.tabs[0].scrollTop += num;
+                        this.refs.tabs.scrollTop += num;
                     }
                 });
             },
@@ -152,7 +151,7 @@ export default class extends clickgo.control.AbstractControl {
     }
     // --- 检测是否显示箭头 ---
     onResize() {
-        const tab = this.refs.tabs[0];
+        const tab = this.refs.tabs;
         if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
             const width = this.arrow ? tab.clientWidth + 40 : tab.clientWidth;
             if (tab.scrollWidth > width) {
@@ -212,20 +211,9 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'deep': true
         });
-        this.watch('tabPosition', async () => {
-            await this.nextTick();
-            if (this.oldTabs === this.refs.tabs[0]) {
-                return;
-            }
-            this.oldTabs = this.refs.tabs[0];
-            clickgo.dom.watchSize(this, this.refs.tabs[0], () => {
-                this.onResize();
-            });
-        });
         this.rand = clickgo.tool.random(16);
         // --- 检测是否显示箭头 ---
-        this.oldTabs = this.refs.tabs[0];
-        clickgo.dom.watchSize(this, this.refs.tabs[0], () => {
+        clickgo.dom.watchSize(this, this.refs.tabs, () => {
             this.onResize();
         });
         this.refreshValue();
