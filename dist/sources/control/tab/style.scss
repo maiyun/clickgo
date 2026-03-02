@@ -10,16 +10,16 @@
         flex-direction: column;
     }
 
-    .tabs-wrap {
+    > .tabs-wrap {
         display: flex; z-index: 1;
     }
     &.left, &.right {
-        .tabs-wrap {
+        > .tabs-wrap {
             flex-direction: column;
         }
     }
 
-    .arrow {
+    > .tabs-wrap > .arrow {
         display: flex; justify-content: center; align-items: center;
         &::before {
             content: ''; pointer-events: none; border: solid 1px var(--g-color); width: 6px; height: 6px; transform: rotate(45deg);
@@ -36,7 +36,7 @@
         }
     }
     &.top, &.bottom {
-        .arrow {
+        > .tabs-wrap > .arrow {
             width: 20px;
             &.start::before {
                 border-width: 0 0 1px 1px; margin-left: 3px;
@@ -47,7 +47,7 @@
         }
     }
     &.left, &.right {
-        .arrow {
+        > .tabs-wrap > .arrow {
             height: 20px;
             &.start::before {
                 border-width: 1px 0 0 1px; margin-top: 3px;
@@ -58,36 +58,36 @@
         }
     }
 
-    .tabs {
+    > .tabs-wrap > .tabs {
         flex-grow: 1; flex-basis: 0; display: flex; -webkit-overflow-scrolling: touch;
         &::-webkit-scrollbar {
             display: none;
         }
     }
     &.top, &.bottom {
-        .tabs {
+        > .tabs-wrap > .tabs {
             width: 0; overflow-x: auto; overflow-y: hidden;
         }
     }
-    &.top .tabs {
+    &.top > .tabs-wrap > .tabs {
         align-items: flex-end; transform: translateY(1px); padding-bottom: 1px;
     }
-    &.bottom .tabs {
+    &.bottom > .tabs-wrap > .tabs {
         align-items: flex-start; transform: translateY(-1px); padding-top: 1px;
     }
     &.left, &.right {
-        .tabs {
+        > .tabs-wrap > .tabs {
             height: 0; flex-direction: column; overflow-y: auto; overflow-x: hidden;
         }
     }
-    &.left .tabs {
+    &.left > .tabs-wrap > .tabs {
         transform: translateX(1px); padding-right: 1px;
     }
-    &.right .tabs {
+    &.right > .tabs-wrap > .tabs {
         transform: translateX(-1px); padding-left: 1px;
     }
 
-    .tab {
+    > .tabs-wrap > .tabs > .tab {
         background: var(--face); transition: var(--g-transition); display: inline-flex; align-items: center; border: solid .5px var(--g-plain-border-color); position: relative;
         &::after {
             content: ' '; pointer-events: none; position: absolute; background: var(--g-plain-background); transition: var(--g-transition); opacity: 0;
@@ -102,23 +102,23 @@
             background: var(--g-color); color: var(--face);
         }
 
-        .drag {
+        > .drag {
             cursor: move; padding-left: 8px; font-family: 'ifont'; opacity: .5;
         }
         
-        .prepend {
+        > .prepend {
             display: flex; align-items: center; padding-left: var(--g-padding);
         }
 
-        .content {
+        > .content {
             padding: var(--g-padding);
         }
 
-        .append {
+        > .append {
             display: flex; align-items: center; padding-right: var(--g-padding);
         }
 
-        .close {
+        > .close {
             margin-right: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px; transition: var(--g-transition); border: solid .5px transparent;
             &:hover {
                 background: var(--g-background-hover); border: solid .5px var(--g-border-color-hover);
@@ -128,14 +128,14 @@
             }
         }
         &:hover {
-            .close {
+            > .close {
                 opacity: 1;
             }
         }
     }
     &.top, &.bottom {
-        .tabs {
-            .tab {
+        > .tabs-wrap > .tabs {
+            > .tab {
                 &.selected {
                     border-right-width: .5px;
                     + * {
@@ -147,13 +147,13 @@
                 border-right-width: .5px;
             }
         }
-        .panel {
+        > .panel {
             height: 0;
         }
     }
     &.top {
-        .tabs {
-            .tab {
+        > .tabs-wrap > .tabs {
+            > .tab {
                 border-width: .5px 0 0 .5px; border-radius: var(--g-radius) var(--g-radius) 0 0;
                 &.selected {
                     padding-bottom: 3px;
@@ -163,13 +163,13 @@
                 }
             }
         }
-        .panel {
+        > .panel {
             border-radius: 0 0 var(--g-radius) var(--g-radius);
         }
     }
     &.bottom {
-        .tabs {
-            .tab {
+        > .tabs-wrap > .tabs {
+            > .tab {
                 border-width: 0 0 .5px .5px; border-radius: 0 0 var(--g-radius) var(--g-radius);
                 &.selected {
                     padding-top: 3px;
@@ -179,13 +179,13 @@
                 }
             }
         }
-        .panel {
+        > .panel {
             border-radius: var(--g-radius) var(--g-radius) 0 0;
         }
     }
     &.left, &.right {
-        .tabs {
-            .tab {
+        > .tabs-wrap > .tabs {
+            > .tab {
                 &.selected {
                     border-bottom-width: .5px;
                     + * {
@@ -197,13 +197,13 @@
                 border-bottom-width: .5px;
             }
         }
-        .panel {
+        > .panel {
             width: 0;
         }
     }
     &.left {
-        .tabs {
-            .tab {
+        > .tabs-wrap > .tabs {
+            > .tab {
                 border-width: .5px 0 0 .5px; border-radius: var(--g-radius) 0 0 var(--g-radius);
                 &.selected {
                     &::after {
@@ -212,13 +212,13 @@
                 }
             }
         }
-        .panel {
+        > .panel {
             border-radius: 0 var(--g-radius) var(--g-radius) 0;
         }
     }
     &.right {
-        .tabs {
-            .tab {
+        > .tabs-wrap > .tabs {
+            > .tab {
                 border-width: .5px .5px 0 0; border-radius: 0 var(--g-radius) var(--g-radius) 0;
                 &.selected {
                     &::after {
@@ -227,12 +227,12 @@
                 }
             }
         }
-        .panel {
+        > .panel {
             border-radius: var(--g-radius) 0 0 var(--g-radius);
         }
     }
 
-    .panel {
+    > .panel {
         background: var(--g-plain-background); display: flex; flex: 1; border: solid .5px var(--g-plain-border-color);
     }    
 }

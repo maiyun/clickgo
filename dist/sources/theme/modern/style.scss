@@ -305,7 +305,7 @@ global {
 // -- CONTROL -- tab --
 
 .tab_wrap {
-    .tab_tab {
+    > .tab_tabs-wrap > .tab_tabs > .tab_tab {
         background: transparent; border: none;
         &::after {
             background: var(--cg); transition: all .3s var(--g-cubic);
@@ -318,8 +318,8 @@ global {
         }
     }
     &.tab_top {
-        .tab_tabs {
-            .tab_tab {
+        > .tab_tabs-wrap > .tab_tabs {
+            > .tab_tab {
                 padding-bottom: 2px;
                 &.tab_selected {
                     padding-bottom: 2px;    // --- 用来覆盖控件默认样式的 ---
@@ -334,8 +334,8 @@ global {
         }
     }
     &.tab_bottom {
-        .tab_tabs {
-            .tab_tab {
+        > .tab_tabs-wrap > .tab_tabs {
+            > .tab_tab {
                 padding-top: 2px;
                 &.tab_selected {
                     padding-top: 2px;   // --- 用来覆盖控件默认样式的 ---
@@ -350,8 +350,8 @@ global {
         }
     }
     &.tab_left {
-        .tab_tabs {
-            .tab_tab {
+        > .tab_tabs-wrap > .tab_tabs {
+            > .tab_tab {
                 padding-right: 2px;
                 &.tab_selected {
                     &::after {
@@ -365,8 +365,8 @@ global {
         }
     }
     &.tab_right {
-        .tab_tabs {
-            .tab_tab {
+        > .tab_tabs-wrap > .tab_tabs {
+            > .tab_tab {
                 padding-left: 2px;
                 &.tab_selected {
                     &::after {
@@ -380,7 +380,7 @@ global {
         }
     }
 
-    .tab_panel {
+    > .tab_panel {
         background: transparent; border: none;
     }
 }
