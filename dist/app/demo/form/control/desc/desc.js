@@ -3,6 +3,10 @@ export default class extends clickgo.form.AbstractForm {
     border = true;
     collapse = true;
     outside = true;
+    plain = false;
+    rowlr = true;
+    hover = false;
+    size = ['m'];
     data = [
         {
             'name': 'name1',
@@ -17,8 +21,6 @@ export default class extends clickgo.form.AbstractForm {
             'child': ['val1', 'val2', 'val3', 'val4']
         }
     ];
-    plain = false;
-    size = ['m'];
     /** --- 最大行数 --- */
     get maxLine() {
         let len = 0;

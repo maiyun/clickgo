@@ -1,0 +1,9 @@
+{
+    "name": "desc-header",
+    "ver": 1,
+    "version": "0.1",
+    "author": "clickgo",
+
+    "style": "/style",
+    "layout": "/layout"
+}

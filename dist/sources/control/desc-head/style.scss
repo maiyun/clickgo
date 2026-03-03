@@ -1,11 +1,23 @@
 .wrap {
-    background: var(--face); border-radius: var(--g-radius);
+    background-color: var(--face); border-radius: var(--g-radius); transition: background-color .3s var(--g-cubic);
     &.border {
-        border: solid .5px var(--g-plain-border-color);
-        &.plain{
+        border: solid .5px var(--g-plain-border-color); border-left: none; border-right: none;
+        &.plain {
             border-color: var(--g-plain-border-color-plain);
         }
     }
+    &.rowlr {
+        border-left: solid .5px var(--g-plain-border-color);
+        border-right: solid .5px var(--g-plain-border-color);
+        &.plain {
+            border-left-color: var(--g-plain-border-color-plain);
+            border-right-color: var(--g-plain-border-color-plain);
+        }
+    }
+    &.hover {
+        background-color: var(--face-hover);
+    }
+
     &.size-s {
         padding: var(--g-padding-s);
     }

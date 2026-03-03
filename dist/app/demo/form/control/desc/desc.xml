@@ -1,19 +1,19 @@
 <form title="Desc" width="500" height="500" padding="10">
     <layout gutter="10" direction="v" style="flex: 1; width: 0;">
-        <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" :outside="outside">
-            <desc-row>
+        <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" :outside="outside" :rowlr="rowlr">
+            <desc-row :hover="hover">
                 <desc-head>HEAD1</desc-head>
                 <desc-head>HEAD2</desc-head>
                 <desc-head>HEAD3</desc-head>
                 <desc-head>HEAD4</desc-head>
             </desc-row>
-            <desc-row>
+            <desc-row :hover="hover">
                 <desc-head>HEAD5</desc-head>
                 <desc-cell>CELL1</desc-cell>
                 <desc-head>HEAD6</desc-head>
                 <desc-cell stripe>CELL2</desc-cell>
             </desc-row>
-            <desc-row>
+            <desc-row :hover="hover">
                 <desc-head>HEAD7</desc-head>
                 <desc-cell colspan="3" nopadding>NOPADDING</desc-cell>
             </desc-row>
@@ -25,21 +25,37 @@
         </layout>
         <layout gutter="10">
             <button @click="plain = !plain" style="flex: 1;">plain: {{plain ? 'true' : 'false'}}</button>
+            <button @click="rowlr = !rowlr" style="flex: 1;">rowlr: {{rowlr ? 'true' : 'false'}}</button>
+            <button @click="hover = !hover" style="flex: 1;">hover: {{hover ? 'true' : 'false'}}</button>
+        </layout>
+        <layout gutter="10">
             <select v-model="size" style="flex: 1;" :data="['s', 'm', 'l', 'xl']" />
         </layout>
         <label>Test: {{cols}}</label>
-        <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" :outside="outside" style="flex: 1;">
-            <desc-row v-for="line of maxLine">
-                <!-- 行 1 - max -->
-                <template v-for="col of data.length">
-                    <!-- 列 1 - max -->
-                    <desc-cell v-if="col===data.length">{{data[col-1].child[(line-1)%cols[col-2]]}}</desc-cell>
-                    <desc-cell v-else-if="line%cols[col-1]===1" :rowspan="cols[col-1]">{{data[col-1].child[Math.floor((line-1)/cols[col-1])%data[col-1].child.length]}}</desc-cell>
-                </template>
-                <desc-cell>LINE-{{line}}</desc-cell>
-                <desc-cell>DATA1</desc-cell>
-                <desc-cell>DATA2</desc-cell>
-            </desc-row>
+        <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" :outside="outside" :rowlr="rowlr" style="flex: 1;">
+            <desc-header>
+                <desc-row>
+                    <desc-head>HEAD1</desc-head>
+                    <desc-head>HEAD2</desc-head>
+                    <desc-head>HEAD3</desc-head>
+                    <desc-head>HEAD4</desc-head>
+                    <desc-head>HEAD5</desc-head>
+                    <desc-head>HEAD6</desc-head>
+                </desc-row>
+            </desc-header>
+            <desc-body>
+                <desc-row v-for="line of maxLine" :hover="hover">
+                    <!-- 行 1 - max -->
+                    <template v-for="col of data.length">
+                        <!-- 列 1 - max -->
+                        <desc-cell v-if="col===data.length">{{data[col-1].child[(line-1)%cols[col-2]]}}</desc-cell>
+                        <desc-cell v-else-if="line%cols[col-1]===1" :rowspan="cols[col-1]">{{data[col-1].child[Math.floor((line-1)/cols[col-1])%data[col-1].child.length]}}</desc-cell>
+                    </template>
+                    <desc-cell>LINE-{{line}}</desc-cell>
+                    <desc-cell>DATA1</desc-cell>
+                    <desc-cell>DATA2</desc-cell>
+                </desc-row>
+            </desc-body>
         </desc>
     </layout>
 </form>

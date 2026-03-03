@@ -8,6 +8,14 @@ export default class extends clickgo.form.AbstractForm {
 
     public outside = true;
 
+    public plain: boolean = false;
+
+    public rowlr: boolean = true;
+
+    public hover: boolean = false;
+
+    public size: string[] = ['m'];
+
     public data: Array<{
         'name': string;
         'child': string[];
@@ -25,10 +33,6 @@ export default class extends clickgo.form.AbstractForm {
                 'child': ['val1', 'val2', 'val3', 'val4']
             }
         ];
-
-    public plain: boolean = false;
-
-    public size: string[] = ['m'];
 
     /** --- 最大行数 --- */
     public get maxLine(): number {

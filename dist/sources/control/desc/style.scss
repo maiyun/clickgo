@@ -3,36 +3,48 @@
     &::-webkit-scrollbar {
         display: none;
     }
-    table {
-        border-radius: var(--g-radius);
 
-        &.border {
-            border: solid .5px var(--g-plain-border-color);
-            &.plain{
-                border-color: var(--g-plain-border-color-plain);
-            }
+    &.outside {
+        border: solid .5px var(--g-plain-border-color);
+        &.plain {
+            border-color: var(--g-plain-border-color-plain);
         }
-        &.no-outside {
-            border: none;
 
-            // --- 上下 ---
-            > :first-child > * {
+        > table {
+            // --- 首行去掉上边框 ---
+            > [data-tr]:first-child > [data-th],
+            > [data-tr]:first-child > [data-td],
+            > :first-child > [data-tr]:first-child > [data-th],
+            > :first-child > [data-tr]:first-child > [data-td] {
                 border-top: none;
             }
-            > :last-child > * {
+            // --- 末行去掉下边框 ---
+            > [data-tr]:last-child > [data-th],
+            > [data-tr]:last-child > [data-td],
+            > :last-child > [data-tr]:last-child > [data-th],
+            > :last-child > [data-tr]:last-child > [data-td] {
                 border-bottom: none;
             }
-
-            // --- 左右 ---
-            > * > :first-child {
+            // --- 首列去掉左边框 ---
+            [data-tr] > [data-th]:first-child,
+            [data-tr] > [data-td]:first-child {
                 border-left: none;
             }
-            > * > :last-child {
+            // --- 末列去掉右边框 ---
+            [data-tr] > [data-th]:last-child,
+            [data-tr] > [data-td]:last-child {
                 border-right: none;
             }
         }
-        &.collapse {
+    }
+
+    &.collapse {
+        table {
             border-collapse: collapse;
         }
+    }
+
+    table {
+        border-radius: var(--g-radius);
     }
 }
