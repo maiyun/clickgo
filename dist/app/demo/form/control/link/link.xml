@@ -11,7 +11,7 @@
             <link type="danger">Danger</link>
         </layout>
         <link @click="alert" disabled>Disabled</link>
-        <link style="text-align: center;">Center</link>
+        <link align="center">Center</link>
         <link style="color: red;">Color</link>
         <link style="background: rgba(0, 0, 0, .1);">Background</link>
         <link style="background: rgba(0, 0, 0, .1); padding: 10px;">Padding</link>

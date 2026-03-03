@@ -24,7 +24,7 @@ export default class extends clickgo.control.AbstractControl {
             'collapse': true,
             'size': 'm',
             'outside': true,
-            'rowlr': false,
+            'rowlr': true,
         };
 
     /** --- 总长度 --- */
