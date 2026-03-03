@@ -347,7 +347,7 @@ export async function launcher(boot: AbstractBoot): Promise<void> {
         // --- 加载 jszip ---
         `${cdn}/npm/jszip@3.10.1/dist/jszip.min.js`,
         // --- 加载 pointer ---
-        `${cdn}/npm/@litert/pointer@1.7.2/dist/index.umd.min.js`,
+        `${cdn}/npm/@litert/pointer@1.7.3/dist/index.umd.min.js`,
     ]);
     await lTool.loadLinks([
         `${cdn}/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css`,
