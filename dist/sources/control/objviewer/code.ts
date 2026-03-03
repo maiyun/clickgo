@@ -37,7 +37,13 @@ export default class extends clickgo.control.AbstractControl {
             line.end.obj = line.end.obj.element;
         }
         clickgo.dom.watchSize(this, line.start.obj, () => {
-
+            if (this.refreshLineTimer) {
+                return;
+            }
+            this.refreshLineTimer = window.setTimeout(() => {
+                this.refreshLines();
+                this.refreshLineTimer = 0;
+            }, 100);
         });
         clickgo.dom.watchSize(this, line.end.obj, () => {
             if (this.refreshLineTimer) {
@@ -71,8 +77,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 刷新连线 --- */
     public refreshLines(): void {
-        const scaleExec = /scale\(([\d.]+)\)/.exec(this.refs.content.style.transform);
-        const scale = scaleExec ? parseFloat(scaleExec[1]) : 1;
+        const scale = this.scaleS;
         for (const line of this.lines) {
             const startPos = clickgo.dom.getRectPoint(line.start.obj as HTMLElement, this.refs.content, line.start.pos);
             const endPos = clickgo.dom.getRectPoint(line.end.obj as HTMLElement, this.refs.content, line.end.pos);
@@ -197,8 +202,15 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 重置缩放/定位 --- */
     public refresh(): void {
         this.scaleS = 1;
-        this.scaleX = (this.element.offsetWidth - this.refs.content.offsetWidth) / 2;
-        this.scaleY = (this.element.offsetHeight - this.refs.content.offsetHeight) / 2;
+        const elWidth = this.element.offsetWidth;
+        const elHeight = this.element.offsetHeight;
+        const contentWidth = this.refs.content.offsetWidth;
+        const contentHeight = this.refs.content.offsetHeight;
+        if (!elWidth || !elHeight) {
+            return;
+        }
+        this.scaleX = (elWidth - contentWidth) / 2;
+        this.scaleY = (elHeight - contentHeight) / 2;
     }
 
     // --- 供用户调用结束 ---
@@ -227,8 +239,15 @@ export default class extends clickgo.control.AbstractControl {
         // --- 初次刷新 ---
         this.refresh();
         await clickgo.tool.sleep(300);
-        // --- 有可能相应较慢，补刷新一次 ---
+        // --- 有可能响应较慢，补刷新一次 ---
         this.refresh();
+    }
+
+    public onUnmounted(): void {
+        if (this.refreshLineTimer) {
+            clearTimeout(this.refreshLineTimer);
+            this.refreshLineTimer = 0;
+        }
     }
 
 }
