@@ -1,7 +1,7 @@
-<div class="wrap" :style="{'gap': propNumber('gutter') ? (gutter + 'px') : '0'}" data-cg-scroll>
+<div class="wrap" data-cg-scroll>
     <div class="top">
         <div ref="left" class="left" @pointerdown="down" @scroll="scrollHandler">
-            <div ref="inner" class="left-inner">
+            <div ref="inner" class="left-inner" :style="{'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
                 <slot></slot>
             </div>
         </div>
