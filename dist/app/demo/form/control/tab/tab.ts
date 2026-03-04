@@ -6,7 +6,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public tabs: any[] = ['tab1', {
         'label': 'haha',
-        'value': 'ok'
+        'value': 'ok',
+        'append': true,
     }];
 
     public tindex = 1;

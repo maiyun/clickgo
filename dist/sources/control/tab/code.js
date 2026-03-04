@@ -11,6 +11,10 @@ export default class extends clickgo.control.AbstractControl {
         'tabPosition': 'top',
         'drag': false,
         'close': false,
+        'before': true,
+        'prepend': true,
+        'append': true,
+        'after': true,
         'tabs': [],
         'modelValue': ''
     };
@@ -25,6 +29,18 @@ export default class extends clickgo.control.AbstractControl {
     get isClose() {
         return clickgo.tool.getBoolean(this.props.close);
     }
+    get isBefore() {
+        return clickgo.tool.getBoolean(this.props.before);
+    }
+    get isPrepend() {
+        return clickgo.tool.getBoolean(this.props.prepend);
+    }
+    get isAppend() {
+        return clickgo.tool.getBoolean(this.props.append);
+    }
+    get isAfter() {
+        return clickgo.tool.getBoolean(this.props.after);
+    }
     get tabsComp() {
         const tabs = [];
         for (const item of this.tabsData) {
@@ -33,7 +49,11 @@ export default class extends clickgo.control.AbstractControl {
                     'label': item,
                     'value': item,
                     'drag': this.isDrag,
-                    'close': this.isClose
+                    'close': this.isClose,
+                    'before': this.isBefore,
+                    'prepend': this.isPrepend,
+                    'append': this.isAppend,
+                    'after': this.isAfter
                 });
             }
             else {
@@ -41,7 +61,11 @@ export default class extends clickgo.control.AbstractControl {
                     'label': item.label ?? item.value ?? 'error',
                     'value': item.value ?? item.label ?? 'error',
                     'drag': item.drag ?? this.isDrag,
-                    'close': item.close ?? this.isClose
+                    'close': item.close ?? this.isClose,
+                    'before': item.before ?? this.isBefore,
+                    'prepend': item.prepend ?? this.isPrepend,
+                    'append': item.append ?? this.isAppend,
+                    'after': item.after ?? this.isAfter,
                 });
             }
         }

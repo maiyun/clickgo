@@ -15,6 +15,10 @@ export default class extends clickgo.control.AbstractControl {
         'tabPosition': 'top',
         'drag': false,
         'close': false,
+        'before': true,
+        'prepend': true,
+        'append': true,
+        'after': true,
 
         'tabs': [],
         'modelValue': ''
@@ -29,6 +33,14 @@ export default class extends clickgo.control.AbstractControl {
         'value'?: string;
         'drag'?: boolean;
         'close'?: boolean;
+        /** --- 默认以 props 为准 --- */
+        'before'?: boolean;
+        /** --- 默认以 props 为准 --- */
+        'prepend'?: boolean;
+        /** --- 默认以 props 为准 --- */
+        'append'?: boolean;
+        /** --- 默认以 props 为准 --- */
+        'after'?: boolean;
     } | string> = [];
 
     public value = '';
@@ -43,6 +55,22 @@ export default class extends clickgo.control.AbstractControl {
         return clickgo.tool.getBoolean(this.props.close);
     }
 
+    public get isBefore(): boolean {
+        return clickgo.tool.getBoolean(this.props.before);
+    }
+
+    public get isPrepend(): boolean {
+        return clickgo.tool.getBoolean(this.props.prepend);
+    }
+
+    public get isAppend(): boolean {
+        return clickgo.tool.getBoolean(this.props.append);
+    }
+
+    public get isAfter(): boolean {
+        return clickgo.tool.getBoolean(this.props.after);
+    }
+
     public get tabsComp(): any[] {
         const tabs = [];
         for (const item of this.tabsData) {
@@ -51,7 +79,11 @@ export default class extends clickgo.control.AbstractControl {
                     'label': item,
                     'value': item,
                     'drag': this.isDrag,
-                    'close': this.isClose
+                    'close': this.isClose,
+                    'before': this.isBefore,
+                    'prepend': this.isPrepend,
+                    'append': this.isAppend,
+                    'after': this.isAfter
                 });
             }
             else {
@@ -59,7 +91,11 @@ export default class extends clickgo.control.AbstractControl {
                     'label': item.label ?? item.value ?? 'error',
                     'value': item.value ?? item.label ?? 'error',
                     'drag': item.drag ?? this.isDrag,
-                    'close': item.close ?? this.isClose
+                    'close': item.close ?? this.isClose,
+                    'before': item.before ?? this.isBefore,
+                    'prepend': item.prepend ?? this.isPrepend,
+                    'append': item.append ?? this.isAppend,
+                    'after': item.after ?? this.isAfter,
                 });
             }
         }

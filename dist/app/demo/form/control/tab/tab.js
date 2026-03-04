@@ -3,7 +3,8 @@ export default class extends clickgo.form.AbstractForm {
     ntab = 'ok';
     tabs = ['tab1', {
             'label': 'haha',
-            'value': 'ok'
+            'value': 'ok',
+            'append': true,
         }];
     tindex = 1;
     tabPosition = 'top';

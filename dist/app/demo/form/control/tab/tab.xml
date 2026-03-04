@@ -1,6 +1,6 @@
 <form title="Tab" width="400" height="450" min-width="300" min-height="400" padding="10" direction="v">
     <label>Now tab: {{ntab}}.</label>
-    <tab v-model="ntab" v-model:tabs="tabs" :tabPosition="tabPosition" :drag="drag" :close="cclose" @close="onClose" style="margin-top: 10px; flex: 1; height: 0;" :style="{'font-size': size, 'color': color}">
+    <tab v-model="ntab" append="false" v-model:tabs="tabs" :tabPosition="tabPosition" :drag="drag" :close="cclose" @close="onClose" style="margin-top: 10px; flex: 1; height: 0;" :style="{'font-size': size, 'color': color}">
         <!-- 默认 -->
         <layout direction="v" style="padding: 10px;">
             <button v-if="ntab === 'tab2'">Test button</button>
