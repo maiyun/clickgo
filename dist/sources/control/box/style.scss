@@ -9,13 +9,13 @@
     }
     &:not(.isInteract) {
         .box.isSelected {
-            stroke-dasharray: 2; stroke-width: .5;
+            stroke-width: 1;
         }
     }
     .box {
         fill: transparent;
         &.isSelected {
-            stroke: var(--g-border-color);
+            stroke: var(--cg);
         }
         // --- 可拖动 ---
         &.move {
@@ -24,7 +24,7 @@
     }
 
     .ctrl {
-        fill: var(--g-plain-background); stroke: var(--g-border-color); stroke-width: .5; width: 8px; height: 8px; 
+        fill: var(--g-plain-background); stroke: var(--cg); stroke-width: 2; width: 8px; height: 8px; 
         &.lt {
             cursor: nw-resize;
         }
@@ -38,16 +38,16 @@
             cursor: e-resize;
         }
         &.rb {
-            cursor: se-resize
+            cursor: se-resize;
         }
         &.b {
-            cursor: s-resize
+            cursor: s-resize;
         }
         &.bl {
-            cursor: sw-resize
+            cursor: sw-resize;
         }
         &.l {
-            cursor: w-resize
+            cursor: w-resize;
         }
     }
 
