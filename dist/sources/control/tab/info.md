@@ -20,9 +20,33 @@
 
 是否显示关闭按钮，默认 false。
 
+#### before
+
+`boolean` | `string`
+
+是否在选项卡内显示 before 插槽，默认 true。
+
+#### prepend
+
+`boolean` | `string`
+
+是否在选项卡内显示 prepend 插槽，默认 true。
+
+#### append
+
+`boolean` | `string`
+
+是否在选项卡内显示 append 插槽，默认 true。
+
+#### after
+
+`boolean` | `string`
+
+是否在选项卡内显示 after 插槽，默认 true。
+
 #### tabs
 
-`Array<string | { label?: string; value?: string; drag?: boolean; close?: boolean; }>`
+`Array<string | { label?: string; value?: string; drag?: boolean; close?: boolean; before?: boolean; prepend?: boolean; append?: boolean; after?: boolean; }>`
 
 双向绑定，选项卡列表。
 
