@@ -1,0 +1,7 @@
+<div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <div v-if="notInit" class="notInit">Fabric module not found.</div>
+    <canvas class="content" ref="content"></canvas>
+    <div v-if="isLoading" class="mask" :class="[isLoading && 'loading']">
+        <cg-loading></cg-loading>
+    </div>
+</div>

@@ -844,6 +844,19 @@ const modules: Record<string, {
         'loading': false,
         'resolve': [],
     },
+    'fabric': {
+        func: async function() {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/fabric@7.2.0/dist/index.min.js`
+            ]);
+            if (!(window as any).fabric) {
+                throw Error('fabric load failed.');
+            }
+            return (window as any).fabric;
+        },
+        'loading': false,
+        'resolve': [],
+    },
     'pdfjs': {
         func: async function() {
             try {

@@ -33,7 +33,8 @@
         "/clickgo/control/novnc",
         "/clickgo/control/objviewer",
         "/clickgo/control/cube",
-        "/clickgo/control/marked"
+        "/clickgo/control/marked",
+        "/clickgo/control/fabric"
     ],
     "style": "/package/global"
 }

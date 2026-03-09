@@ -716,6 +716,19 @@ const modules = {
         'loading': false,
         'resolve': [],
     },
+    'fabric': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/fabric@7.2.0/dist/index.min.js`
+            ]);
+            if (!window.fabric) {
+                throw Error('fabric load failed.');
+            }
+            return window.fabric;
+        },
+        'loading': false,
+        'resolve': [],
+    },
     'pdfjs': {
         func: async function () {
             try {

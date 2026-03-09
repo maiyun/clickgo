@@ -55,6 +55,7 @@ import cimgviewerFrm from './control/imgviewer/imgviewer';
 import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
 import cechartsFrm from './control/echarts/echarts';
+import cfabricFrm from './control/fabric/fabric';
 import cemptyFrm from './control/empty/empty';
 import cjoditFrm from './control/jodit/jodit';
 import ctuieditorFrm from './control/tuieditor/tuieditor';
@@ -157,6 +158,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cecharts': {
                 frm = await clickgo.form.create(this, cechartsFrm);
+                break;
+            }
+            case 'cfabric': {
+                frm = await clickgo.form.create(this, cfabricFrm);
                 break;
             }
             case 'cempty': {

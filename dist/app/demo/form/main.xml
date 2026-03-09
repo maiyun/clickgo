@@ -37,6 +37,7 @@
                 <layout gutter="10">
                     <button @click="openForm('cecharts')">Echarts</button>
                     <button @click="openForm('cempty')">Empty</button>
+                    <button @click="openForm('cfabric')">Fabric</button>
                     <button @click="openForm('cfile')">File</button>
                     <button @click="openForm('cflow')">Flow + Eflow</button>
                 </layout>
