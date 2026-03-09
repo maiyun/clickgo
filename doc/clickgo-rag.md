@@ -1492,6 +1492,28 @@ cell 之间的间距，默认 0。
 </desc>
 ```
 
+## desc-body
+---
+
+描述列表主体渲染组件。
+
+### 样式
+
+使用 `tbody` 标签进行渲染，主要用于描述列表的数据行包装。
+
+### 示例
+
+```xml
+<desc>
+    <desc-body>
+        <desc-row>
+            <desc-cell>Data 1</desc-cell>
+            <desc-cell>Data 2</desc-cell>
+        </desc-row>
+    </desc-body>
+</desc>
+```
+
 ## desc-cell
 ---
 
@@ -1550,6 +1572,28 @@ cell 之间的间距，默认 0。
 
 ```xml
 <desc-head>Title</desc-head>
+```
+
+## desc-header
+---
+
+描述列表头部渲染组件。
+
+### 样式
+
+使用 `thead` 标签进行渲染，主要用于描述列表的标题行包装。
+
+### 示例
+
+```xml
+<desc>
+    <desc-header>
+        <desc-row>
+            <desc-head>Column 1</desc-head>
+            <desc-head>Column 2</desc-head>
+        </desc-row>
+    </desc-header>
+</desc>
 ```
 
 ## desc-row
@@ -5694,9 +5738,33 @@ SVG 内容或 URL 地址。
 
 是否显示关闭按钮，默认 false。
 
+#### before
+
+`boolean` | `string`
+
+是否在选项卡内显示 before 插槽，默认 true。
+
+#### prepend
+
+`boolean` | `string`
+
+是否在选项卡内显示 prepend 插槽，默认 true。
+
+#### append
+
+`boolean` | `string`
+
+是否在选项卡内显示 append 插槽，默认 true。
+
+#### after
+
+`boolean` | `string`
+
+是否在选项卡内显示 after 插槽，默认 true。
+
 #### tabs
 
-`Array<string | { label?: string; value?: string; drag?: boolean; close?: boolean; }>`
+`Array<string | { label?: string; value?: string; drag?: boolean; close?: boolean; before?: boolean; prepend?: boolean; append?: boolean; after?: boolean; }>`
 
 双向绑定，选项卡列表。
 
