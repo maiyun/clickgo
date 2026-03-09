@@ -1,5 +1,36 @@
 .wrap {
-    display: flex;
+    display: flex; color: var(--default);
+
+    &.primary {
+        --default:var(--success);
+        --hover:var(--success-hover);
+        --active:var(--success-active);
+        --focus:var(--success-focus);
+    }
+    &.info {
+        --default:var(--info);
+        --hover:var(--info-hover);
+        --active:var(--info-active);
+        --focus:var(--info-focus);
+    }
+    &.warning {
+        --default:var(--warning);
+        --hover:var(--warning-hover);
+        --active:var(--warning-active);
+        --focus:var(--warning-focus);
+    }
+    &.danger {
+        --default:var(--danger);
+        --hover:var(--danger-hover);
+        --active:var(--danger-active);
+        --focus:var(--danger-focus);
+    }
+    &.plain {
+        --default:var(--g-color-disabled);
+        --hover:var(--g-color);
+        --active:var(--g-color);
+        --focus:var(--g-color);
+    }
 
     &[data-cg-disabled] {
         filter: grayscale(1);
@@ -9,38 +40,7 @@
     }
 
     > * {
-        flex: 1; display: flex; align-items: center; position: relative; outline: none; transition: var(--g-transition); cursor: pointer; color: var(--default);
-
-        &.primary {
-            --default:var(--success);
-            --hover:var(--success-hover);
-            --active:var(--success-active);
-            --focus:var(--success-focus);
-        }
-        &.info {
-            --default:var(--info);
-            --hover:var(--info-hover);
-            --active:var(--info-active);
-            --focus:var(--info-focus);
-        }
-        &.warning {
-            --default:var(--warning);
-            --hover:var(--warning-hover);
-            --active:var(--warning-active);
-            --focus:var(--warning-focus);
-        }
-        &.danger {
-            --default:var(--danger);
-            --hover:var(--danger-hover);
-            --active:var(--danger-active);
-            --focus:var(--danger-focus);
-        }
-        &.plain {
-            --default:var(--g-color-disabled);
-            --hover:var(--g-color);
-            --active:var(--g-color);
-            --focus:var(--g-color);
-        }
+        flex: 1; display: flex; align-items: center; position: relative; outline: none; transition: var(--g-transition); cursor: pointer; color: inherit;
 
         // --- 加下划线 ---
         &.line {
