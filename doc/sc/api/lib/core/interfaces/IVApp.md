@@ -6,7 +6,7 @@
 
 # Interface: IVApp
 
-Defined in: [lib/core.ts:1361](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1361)
+Defined in: [lib/core.ts:1374](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1374)
 
 Vue 应用
 
@@ -16,7 +16,7 @@ Vue 应用
 
 > **\_container**: `HTMLElement`
 
-Defined in: [lib/core.ts:1373](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1373)
+Defined in: [lib/core.ts:1386](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1386)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/core.ts:1373](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **config**: [`IVueConfig`](IVueConfig.md)
 
-Defined in: [lib/core.ts:1364](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1364)
+Defined in: [lib/core.ts:1377](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1377)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1364](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **version**: `string`
 
-Defined in: [lib/core.ts:1371](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1371)
+Defined in: [lib/core.ts:1384](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1384)
 
 ## Methods
 
@@ -42,7 +42,7 @@ Defined in: [lib/core.ts:1371](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **component**(`name`): `any`
 
-Defined in: [lib/core.ts:1362](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1362)
+Defined in: [lib/core.ts:1375](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1375)
 
 ##### Parameters
 
@@ -58,7 +58,7 @@ Defined in: [lib/core.ts:1362](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **component**(`name`, `config`): `this`
 
-Defined in: [lib/core.ts:1363](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1363)
+Defined in: [lib/core.ts:1376](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1376)
 
 ##### Parameters
 
@@ -82,7 +82,7 @@ Defined in: [lib/core.ts:1363](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **directive**(`name`): `any`
 
-Defined in: [lib/core.ts:1365](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1365)
+Defined in: [lib/core.ts:1378](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1378)
 
 ##### Parameters
 
@@ -98,7 +98,7 @@ Defined in: [lib/core.ts:1365](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **directive**(`name`, `config`): `this`
 
-Defined in: [lib/core.ts:1366](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1366)
+Defined in: [lib/core.ts:1379](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1379)
 
 ##### Parameters
 
@@ -120,7 +120,7 @@ Defined in: [lib/core.ts:1366](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **mixin**(`mixin`): `this`
 
-Defined in: [lib/core.ts:1367](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1367)
+Defined in: [lib/core.ts:1380](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1380)
 
 #### Parameters
 
@@ -138,7 +138,7 @@ Defined in: [lib/core.ts:1367](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **mount**(`rootContainer`): [`IVue`](IVue.md)
 
-Defined in: [lib/core.ts:1368](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1368)
+Defined in: [lib/core.ts:1381](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1381)
 
 #### Parameters
 
@@ -156,7 +156,7 @@ Defined in: [lib/core.ts:1368](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **provide**\<`T`\>(`key`, `value`): `this`
 
-Defined in: [lib/core.ts:1369](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1369)
+Defined in: [lib/core.ts:1382](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1382)
 
 #### Type Parameters
 
@@ -184,7 +184,7 @@ Defined in: [lib/core.ts:1369](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **unmount**(): `void`
 
-Defined in: [lib/core.ts:1370](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1370)
+Defined in: [lib/core.ts:1383](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1383)
 
 #### Returns
 

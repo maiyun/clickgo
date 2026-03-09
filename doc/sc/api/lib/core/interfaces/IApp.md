@@ -6,7 +6,7 @@
 
 # Interface: IApp
 
-Defined in: [lib/core.ts:1258](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1258)
+Defined in: [lib/core.ts:1271](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1271)
 
 应用包解包后对象
 
@@ -16,7 +16,7 @@ Defined in: [lib/core.ts:1258](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **config**: [`IAppConfig`](IAppConfig.md)
 
-Defined in: [lib/core.ts:1261](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1261)
+Defined in: [lib/core.ts:1274](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1274)
 
 控件对象配置文件
 
@@ -26,7 +26,7 @@ Defined in: [lib/core.ts:1261](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **files**: `Record`\<`string`, `Blob` \| `string`\>
 
-Defined in: [lib/core.ts:1263](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1263)
+Defined in: [lib/core.ts:1276](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1276)
 
 所有已加载的文件内容
 
@@ -36,7 +36,7 @@ Defined in: [lib/core.ts:1263](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **icon**: `string`
 
-Defined in: [lib/core.ts:1265](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1265)
+Defined in: [lib/core.ts:1278](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1278)
 
 应用图标
 
@@ -46,4 +46,4 @@ Defined in: [lib/core.ts:1265](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **type**: `"app"`
 
-Defined in: [lib/core.ts:1259](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1259)
+Defined in: [lib/core.ts:1272](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1272)
