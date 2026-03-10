@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import fabric from 'fabric';
 import * as mpegts from 'mpegts.js';
 import * as clickgo from '../clickgo';
 import * as lFs from './fs';
@@ -1074,6 +1075,7 @@ export function checkModule(name: string): boolean {
 
 export async function getModule(name: 'tums-player'): Promise<ITumsPlayer | null>;
 export async function getModule(name: 'mpegts'): Promise<typeof mpegts.default | null>;
+export async function getModule(name: 'fabric'): Promise<typeof fabric | null>;
 export async function getModule(name: string): Promise<any | null>;
 /**
  * --- 获取模块内容，通常用于异步加载模块时使用 ---

@@ -51,6 +51,10 @@ export const modules: {
     'pointer': typeof import('@litert/pointer');
     /** --- 原生 tums-player 对象（在 default 里） --- */
     'tums-player': lCore.ITumsPlayer;
+    /** --- 原生 mpegts 对象 --- */
+    'mpegts': typeof import('mpegts.js');
+    /** --- 原生 fabric --- */
+    'fabric': typeof import('fabric');
 
     /* eslint-enable */
 
