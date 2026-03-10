@@ -24,11 +24,23 @@ Defined in: [clickgo.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/c
 
 > **clickgo**: *typeof* [`clickgo`](../index.md)
 
+### fabric
+
+> **fabric**: `__module`
+
+原生 fabric
+
 ### jszip
 
 > **jszip**: `__module`
 
 原生 jszip
+
+### mpegts
+
+> **mpegts**: `__module`
+
+原生 mpegts 对象
 
 ### pointer
 

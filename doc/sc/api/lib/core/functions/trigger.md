@@ -8,7 +8,7 @@
 
 > **trigger**(`name`, `taskId?`, `formId?`, `param1?`, `param2?`, `param3?`): `Promise`\<`void`\>
 
-Defined in: [lib/core.ts:266](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L266)
+Defined in: [lib/core.ts:267](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L267)
 
 主动触发系统级事件，用 this.trigger 替代
 

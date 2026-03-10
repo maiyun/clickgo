@@ -8,7 +8,7 @@
 
 > **getHash**(): `string`
 
-Defined in: [lib/core.ts:676](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L676)
+Defined in: [lib/core.ts:677](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L677)
 
 获取当前浏览器的 hash
 

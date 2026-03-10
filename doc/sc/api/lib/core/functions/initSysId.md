@@ -8,7 +8,7 @@
 
 > **initSysId**(`id`): `void`
 
-Defined in: [lib/core.ts:33](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L33)
+Defined in: [lib/core.ts:34](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L34)
 
 初始化系统级 ID，仅能设置一次
 

@@ -8,7 +8,7 @@
 
 > **readApp**(`blob`): `Promise`\<`false` \| [`IApp`](../interfaces/IApp.md)\>
 
-Defined in: [lib/core.ts:467](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L467)
+Defined in: [lib/core.ts:468](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L468)
 
 cga blob 文件解包
 

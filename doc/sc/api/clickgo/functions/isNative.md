@@ -8,7 +8,7 @@
 
 > **isNative**(): `boolean`
 
-Defined in: [clickgo.ts:71](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L71)
+Defined in: [clickgo.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L75)
 
 是否是 native 环境
 

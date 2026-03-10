@@ -8,7 +8,7 @@
 
 > **fetchApp**(`taskId`, `url`, `opt?`): `Promise`\<[`IApp`](../interfaces/IApp.md) \| `null`\>
 
-Defined in: [lib/core.ts:529](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L529)
+Defined in: [lib/core.ts:530](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L530)
 
 从网址下载应用
 
