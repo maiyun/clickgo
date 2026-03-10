@@ -7,6 +7,7 @@ export default class extends clickgo.form.AbstractForm {
             'label': 'step1'
         },
         {
+            'label': 'step2 so long so long',
             'value': 'step2'
         },
         {

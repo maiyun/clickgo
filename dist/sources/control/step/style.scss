@@ -23,10 +23,10 @@
             }
         }
         .label {
-            padding: var(--g-padding); display: flex; justify-content: center; font-weight: bold;
+            padding: var(--g-padding); display: flex; justify-content: center; font-weight: bold; text-align: center; word-break: break-all; flex: 1;
         }
         .desc {
-            display: flex; justify-content: center;
+            display: flex; justify-content: center; text-align: center; word-break: break-all;
         }
 
         &.end {
