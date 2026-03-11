@@ -19,6 +19,23 @@
         <tip label="link tip">
             <link>456</link>
         </tip>
+        <tip label="Immediate tip" immediate>
+            <button>immediate</button>
+        </tip>
+        <layout gutter="5">
+            <tip label="Top tip" direction="top" immediate>
+                <button style="flex: 1">top</button>
+            </tip>
+            <tip label="Right tip" direction="right" immediate>
+                <button style="flex: 1">right</button>
+            </tip>
+            <tip label="Bottom tip" direction="bottom" immediate>
+                <button style="flex: 1">bottom</button>
+            </tip>
+            <tip label="Left tip" direction="left" immediate>
+                <button style="flex: 1">left</button>
+            </tip>
+        </layout>
         <layout gutter="5" align-v="center">
             <label>svg</label>
             <tip label="This is svg" type="info">
