@@ -6,6 +6,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public cfResult: string = 'waiting...';
 
+    public methodResult: string = 'waiting...';
+
     public tcKey = '';
 
     public cfKey = '';
@@ -26,6 +28,34 @@ export default class extends clickgo.form.AbstractForm {
     public cfOnReset(): void {
         this.cfResult = 'waiting...';
         this.refs.cf.reset();
+    }
+
+    public async tcOnShowByMethod(): Promise<void> {
+        this.loading = true;
+        const res = await clickgo.form.captcha(this, {
+            'factory': 'tc',
+            'akey': this.tcKey,
+        });
+        this.loading = false;
+        if (!res) {
+            this.methodResult = 'tc: false';
+            return;
+        }
+        this.methodResult = 'tc: ' + res.detail.token;
+    }
+
+    public async cfOnShowByMethod(): Promise<void> {
+        this.loading = true;
+        const res = await clickgo.form.captcha(this, {
+            'factory': 'cf',
+            'akey': this.cfKey,
+        });
+        this.loading = false;
+        if (!res) {
+            this.methodResult = 'cf: false';
+            return;
+        }
+        this.methodResult = 'cf: ' + res.detail.token;
     }
 
 }

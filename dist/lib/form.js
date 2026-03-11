@@ -3470,7 +3470,7 @@ export async function create(current, cls, data, opt = {}) {
 }
 /**
  * --- 显示一个 dialog ---
- * @param current 当前窗体 id
+ * @param current 当前任务
  * @param opt 选项或者一段文字
  */
 export function dialog(current, opt) {
@@ -3519,6 +3519,9 @@ export function dialog(current, opt) {
                     close(this.formId);
                 }
             }
+            async onMounted() {
+                await nopt.onMounted?.call(this);
+            }
         };
         create(current, cls, undefined, {
             'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
@@ -3537,6 +3540,75 @@ export function dialog(current, opt) {
             resolve('');
         });
     });
+}
+/**
+ * --- 显示一个验证码窗口 ---
+ * @param current 当前任务
+ * @param opt 选项
+ * @returns 验证是否通过
+ */
+export async function captcha(current, opt) {
+    if (opt.factory === 'tc') {
+        // --- TC ---
+        const tcc = await clickgo.core.getModule('tjcaptcha');
+        if (!tcc) {
+            // --- 加载失败 ---
+            return false;
+        }
+        return new Promise(resolve => {
+            const instance = new tcc(opt.akey, (res) => {
+                const event = {
+                    'detail': {
+                        'result': (res.ret === 0 && !res.errorCode) ? 1 : 0,
+                        'token': res.ticket + '|' + res.randstr,
+                    },
+                };
+                resolve(event.detail.result === 1 ? event : false);
+            }, {
+                'needFeedBack': false,
+            });
+            instance.show();
+        });
+    }
+    const cft = await clickgo.core.getModule('turnstile');
+    if (!cft) {
+        // --- 没有成功 ---
+        return false;
+    }
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const t = lTask.getOrigin(current);
+    if (!t) {
+        return false;
+    }
+    const locale = t.locale.lang || lCore.config.locale;
+    const buttons = [info.locale[locale]?.cancel ?? info.locale['en'].cancel];
+    const event = {
+        'detail': {
+            'result': 1,
+            'token': '',
+        },
+    };
+    const res = await dialog(current, {
+        'content': '<block ref="content"></block>',
+        'buttons': buttons,
+        onMounted: function () {
+            const instance = cft.render(this.refs.content, {
+                'sitekey': opt.akey,
+                'size': 'flexible',
+                callback: (token) => {
+                    event.detail.token = token;
+                    cft.remove(instance);
+                    this.close();
+                },
+            });
+        },
+    });
+    if (res === (info.locale[locale]?.cancel ?? info.locale['en'].cancel)) {
+        return false;
+    }
+    return event;
 }
 /**
  * --- 显示一个 confirm ---
