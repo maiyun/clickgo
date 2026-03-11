@@ -34,7 +34,8 @@
         "/clickgo/control/objviewer",
         "/clickgo/control/cube",
         "/clickgo/control/marked",
-        "/clickgo/control/fabric"
+        "/clickgo/control/fabric",
+        "/clickgo/control/waterfall"
     ],
     "style": "/package/global"
 }

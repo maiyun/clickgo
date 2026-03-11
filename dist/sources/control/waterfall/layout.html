@@ -1,0 +1,7 @@
+<div class="wrap" data-cg-scroll @scroll="onScroll">
+    <div class="inner" :style="{ 'height': totalHeight + 'px' }">
+        <div v-for="index in renderList" :key="index" class="item" :style="{ 'transform': `translate(${itemPositions[index].left}px, ${itemPositions[index].top}px)`, 'width': itemPositions[index].width + 'px', 'height': itemPositions[index].height + 'px' }">
+            <slot :row="props.data[index]" :index="index"></slot>
+        </div>
+    </div>
+</div>

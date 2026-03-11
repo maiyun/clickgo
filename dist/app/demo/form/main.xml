@@ -125,6 +125,9 @@
                     <button @click="openForm('cjodit')">Jodit</button>
                     <button @click="openForm('cmarked')">Marked</button>
                 </layout>
+                <layout gutter="10">
+                    <button @click="openForm('cwaterfall')">Waterfall</button>
+                </layout>
             </layout>
         </flow>
         <flow v-else-if="ntab === 'method'" class="inner" direction="v">

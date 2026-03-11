@@ -1,0 +1,17 @@
+<form class="demo-form" title="Waterfall" width="650" height="550">
+    <layout direction="v" style="flex: 1; padding: 10px;">
+        <waterfall :data="data" :columns="columns" gap="10" :sizes="sizes" style="flex: 1;">
+            <template v-slot="scope">
+                <layout class="waterfall-item" direction="v" gutter="10">
+                    <label>ID: {{ scope.row.id }}</label>
+                    <text>Height: {{ sizes[scope.row.id] }}px</text>
+                </layout>
+            </template>
+        </waterfall>
+        <layout direction="h" style="height: 50px; align-items: center; padding: 10px;">
+            <label>Columns:</label>
+            <text v-model="columns" type="number" style="width: 100px; margin-left: 10px;"></text>
+            <button @click="addData" style="margin-left: 10px;">Add Data</button>
+        </layout>
+    </layout>
+</form>

@@ -1,0 +1,14 @@
+.wrap {
+    overflow-y: auto; overflow-x: hidden;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .inner {
+        position: relative;
+    }
+
+    .item {
+        position: absolute; left: 0; top: 0; display: flex; flex-direction: column;
+    }
+}
