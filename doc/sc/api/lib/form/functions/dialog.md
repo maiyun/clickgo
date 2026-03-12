@@ -18,7 +18,7 @@ Defined in: [lib/form.ts:3845](https://github.com/maiyun/clickgo/blob/master/dis
 
 [`TCurrent`](../../core/type-aliases/TCurrent.md)
 
-当前窗体 id
+当前任务
 
 ### opt
 
