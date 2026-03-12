@@ -36,10 +36,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public async down(e: PointerEvent): Promise<void> {
         const el = e.target as HTMLElement;
-        if (el.dataset.cgEfno !== undefined) {
+        if (el.dataset.cgEfno !== undefined || el.dataset.cgScroll !== undefined) {
             return;
         }
-        if (clickgo.dom.findParentByData(el, 'cg-efno')) {
+        if (clickgo.dom.findParentByData(el, 'cg-efno') || clickgo.dom.findParentByData(el, 'cg-scroll')) {
             return;
         }
         e.stopPropagation();

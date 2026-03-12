@@ -24,10 +24,10 @@ export default class extends clickgo.control.AbstractControl {
     }
     async down(e) {
         const el = e.target;
-        if (el.dataset.cgEfno !== undefined) {
+        if (el.dataset.cgEfno !== undefined || el.dataset.cgScroll !== undefined) {
             return;
         }
-        if (clickgo.dom.findParentByData(el, 'cg-efno')) {
+        if (clickgo.dom.findParentByData(el, 'cg-efno') || clickgo.dom.findParentByData(el, 'cg-scroll')) {
             return;
         }
         e.stopPropagation();
