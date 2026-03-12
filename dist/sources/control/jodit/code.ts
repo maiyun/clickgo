@@ -143,7 +143,8 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 创建编辑器 --- */
         this.access.editor = jodit.make(this.refs.editor, {
             'height': '100%',
-            'removeButtons': ['ai-assistant', 'about', 'speechRecognize', 'ai-commands'],
+            // --- 去除一些不需要的按钮，包括最大化/全屏
+            'removeButtons': ['ai-assistant', 'about', 'speechRecognize', 'ai-commands', 'fullsize'],
             'extraButtons': [{
                 'image': 'bold',
                 'icon': 'upload',
