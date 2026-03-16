@@ -108,8 +108,9 @@ export default class extends clickgo.control.AbstractControl {
             return '';
         }
         const rtn: string[] = [];
-        const content = this.props.content.toString().length >= 13 ? this.propNumber('content') : this.propNumber('content') * 1_000;
-        const res = clickgo.tool.formatTime(content, this.props.tz === undefined ? undefined : this.propNumber('tz'));
+        const contentNum = this.propNumber('content');
+        const content = (contentNum > 9999999999 || contentNum < -9999999999) ? contentNum : contentNum * 1_000;
+        const res = clickgo.tool.formatTime(content, (this.props.tz === undefined || this.props.tz === '') ? undefined : this.propNumber('tz'));
         if (this.propBoolean('date')) {
             rtn.push(res.date);
         }
@@ -127,6 +128,9 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.propBoolean('copy')) {
             return;
         }
+        if (!navigator.clipboard) {
+            return;
+        }
         await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
         clickgo.form.alert(this.l('copied'));
     }
@@ -138,6 +142,9 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 点击复制 ---
         clickgo.modules.pointer.click(e, async (): Promise<void> => {
+            if (!navigator.clipboard) {
+                return;
+            }
             await navigator.clipboard.writeText(this.props.content ? this.contentComp : this.element.innerText);
             clickgo.form.alert(this.l('copied'));
         });

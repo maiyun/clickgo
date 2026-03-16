@@ -2,6 +2,8 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.form.AbstractForm {
 
+    public dates: string = '1759276800';
+
     public daten: number = 1672599845;
 
     public date: boolean = true;
