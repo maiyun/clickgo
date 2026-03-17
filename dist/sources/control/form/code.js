@@ -665,6 +665,23 @@ export default class extends clickgo.control.AbstractControl {
                 'top': this.topData
             };
         }
+        // --- 根据可用区域限制最大缩放尺寸，防止拖动超出 avail area ---
+        // --- +1 是为了补偿 pointer.js clampToBorder 内部的 max-1 边界判断，确保能精确到 maxWidth/maxHeight ---
+        const area = clickgo.core.getAvailArea();
+        let maxWidth;
+        let maxHeight;
+        if (border === 'tr' || border === 'r' || border === 'rb') {
+            maxWidth = area.left + area.width - left + 1;
+        }
+        else if (border === 'bl' || border === 'l' || border === 'lt') {
+            maxWidth = left + width - area.left + 1;
+        }
+        if (border === 'rb' || border === 'b' || border === 'bl') {
+            maxHeight = area.top + area.height - top + 1;
+        }
+        else if (border === 'lt' || border === 't' || border === 'tr') {
+            maxHeight = top + height - area.top + 1;
+        }
         clickgo.modules.pointer.resize(e, {
             'objectLeft': left,
             'objectTop': top,
@@ -672,8 +689,10 @@ export default class extends clickgo.control.AbstractControl {
             'objectHeight': height,
             'minWidth': this.propInt('minWidth'),
             'minHeight': this.propInt('minHeight'),
+            'maxWidth': maxWidth,
+            'maxHeight': maxHeight,
             'border': border,
-            'start': () => {
+            start: () => {
                 /*
                 if (this.stateAbs && changeStateAbs) {
                     // --- 吸附拖动还原 ---
@@ -681,7 +700,7 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 */
             },
-            'move': (left, top, width, height, x, y, nborder) => {
+            move: (left, top, width, height, x, y, nborder) => {
                 // --- 内联窗体不会执行这个 ---
                 this.leftData = left;
                 this.emit('update:left', left);
@@ -728,7 +747,7 @@ export default class extends clickgo.control.AbstractControl {
                     }
                 }
             },
-            'end': () => {
+            end: () => {
                 if (!isBorder) {
                     return;
                 }
@@ -747,7 +766,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.topData = area.top;
                 this.emit('update:top', this.topData);
                 clickgo.form.hideRectangle();
-            }
+            },
         });
         // --- 绑定双击事件 ---
         if (border === 't' || border === 'b') {
