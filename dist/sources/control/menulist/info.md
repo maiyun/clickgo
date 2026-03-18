@@ -12,8 +12,17 @@
 
 ```xml
 <menulist>
-    <menulist-item label="Item 1"></menulist-item>
-    <menulist-split></menulist-split>
-    <menulist-item label="Item 2"></menulist-item>
+    <menulist-item>
+        <template v-slot>File</template>
+        <template v-slot:pop>
+            <menulist>
+                <menulist-item label="New"></menulist-item>
+                <menulist-item label="Open"></menulist-item>
+                <menulist-split></menulist-split>
+                <menulist-item label="Exit"></menulist-item>
+            </menulist>
+        </template>
+    </menulist-item>
+    <menulist-item label="Edit"></menulist-item>
 </menulist>
 ```
