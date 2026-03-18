@@ -12,7 +12,7 @@
 
 #### init
 
-`(canvas: any) => void`
+`(canvas: fabric.Canvas) => void`
 
 加载成功并初始化 fabric js 的 canvas 对象后触发，利用此抛出对象可执行原生的所有绘图和操作方法。
 
