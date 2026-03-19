@@ -90,9 +90,12 @@
                     <button @click="openForm('csgroup')">Sgroup</button>
                 </layout>
                 <layout gutter="10">
+                    <button @click="openForm('cstab')">Stab</button>
                     <button @click="openForm('cstep')">Step</button>
                     <button @click="openForm('csvg')">Svg</button>
                     <button @click="openForm('cswitch')">Switch</button>
+                </layout>
+                <layout gutter="10">
                     <button @click="openForm('ctab')">Tab</button>
                 </layout>
                 <layout gutter="10">

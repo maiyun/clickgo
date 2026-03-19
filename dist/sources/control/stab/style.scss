@@ -1,0 +1,21 @@
+.wrap {
+    display: flex; justify-content: center; border-bottom: solid .5px var(--g-plain-border-color);
+
+    // --- 朴素模式，无底边框 ---
+    &.plain {
+        border-bottom: none;
+    }
+
+    // --- 胶囊模式 ---
+    &.light {
+        border-bottom: none; gap: var(--g-padding);
+    }
+
+    // --- 矩形滑块模式 ---
+    &.rect {
+        border-bottom: none; padding: var(--g-padding-xs); background: var(--g-block-background); border-radius: var(--g-radius); position: relative;
+        &::before {
+            content: ''; border-radius: var(--g-radius); background: var(--g-plain-background); position: absolute; left: var(--g-padding-xs); top: var(--g-padding-xs); height: calc(100% - var(--g-padding-xs) * 2); width: var(--stab-item-width, 0px); transition: var(--g-transition); transform: translateX(calc(var(--stab-item-left, var(--g-padding-xs)) - var(--g-padding-xs))); box-shadow: var(--g-shadow);
+        }
+    }
+}

@@ -52,6 +52,7 @@ import cvflowFrm from './control/vflow/vflow';
 import cvideoFrm from './control/video/video';
 import cmpegtsFrm from './control/mpegts/mpegts';
 import cimgviewerFrm from './control/imgviewer/imgviewer';
+import cstabFrm from './control/stab/stab';
 import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
 import cechartsFrm from './control/echarts/echarts';
@@ -207,6 +208,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cmpegts': {
                 frm = await clickgo.form.create(this, cmpegtsFrm);
+                break;
+            }
+            case 'cstab': {
+                frm = await clickgo.form.create(this, cstabFrm);
                 break;
             }
             case 'cstep': {

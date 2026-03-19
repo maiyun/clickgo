@@ -1,0 +1,30 @@
+.wrap {
+    padding: var(--g-padding); transition: var(--g-transition); border-bottom: solid 2px transparent; transform: translateY(1px);
+
+    &.selected {
+        color: var(--cg); font-weight: bold; border-bottom-color: var(--cg);
+    }
+
+    &:not(.selected):hover {
+        color: var(--g-color-hover);
+    }
+
+    // --- 胶囊模式 ---
+    &.light {
+        border-radius: var(--g-radius-xl); border: none; transform: none;
+        &.selected {
+            background: color-mix(in srgb, var(--cg) 12%, transparent);
+        }
+        &:not(.selected):hover {
+            background: var(--face-hover);
+        }
+    }
+
+    // --- 矩形滑块模式 ---
+    &.rect {
+        border: none; z-index: 1; border-radius: var(--g-radius); transform: none;
+        &.selected {
+            font-weight: normal; color: var(--g-color);
+        }
+    }
+}

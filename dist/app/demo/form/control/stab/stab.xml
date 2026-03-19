@@ -1,0 +1,31 @@
+<form title="Stab" width="360" height="400" padding="10" direction="v">
+    <label>Value: {{value}}</label>
+    <layout direction="v" gutter="20" style="margin-top: 10px; flex: 1;">
+        <!-- default 底线型 -->
+        <stab v-model="value" type="default">
+            <stab-item>Tab 1</stab-item>
+            <stab-item>Tab 2</stab-item>
+            <stab-item>Tab 3</stab-item>
+        </stab>
+        <!-- plain 无底边框底线型 -->
+        <stab v-model="value" type="plain">
+            <stab-item>Tab 1</stab-item>
+            <stab-item>Tab 2</stab-item>
+            <stab-item>Tab 3</stab-item>
+        </stab>
+        <!-- light 胶囊型 -->
+        <stab v-model="value" type="light">
+            <stab-item>Tab 1</stab-item>
+            <stab-item>Tab 2</stab-item>
+            <stab-item>Tab 3</stab-item>
+        </stab>
+        <!-- rect 矩形滑块型 -->
+        <layout align-h="center">
+            <stab v-model="value" type="rect">
+                <stab-item>Tab 1</stab-item>
+                <stab-item>Tab 2</stab-item>
+                <stab-item>Tab 3</stab-item>
+            </stab>
+        </layout>
+    </layout>
+</form>
