@@ -1472,6 +1472,16 @@ export interface ITagDropEvent {
     };
 }
 
+// --- Step Control ---
+
+export interface IStepClickedEvent {
+    'detail': {
+        'index': number;
+        'value': string;
+        'label': string;
+    };
+}
+
 // --- Objviewer Control ---
 
 export interface IObjviewerLine {

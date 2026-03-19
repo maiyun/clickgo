@@ -25,4 +25,12 @@ export default class extends clickgo.form.AbstractForm {
 
     public step1 = '';
 
+    /**
+     * --- 步骤节点点击事件处理 ---
+     * @param e click 事件
+     */
+    public onStepClicked(e: clickgo.control.IStepClickedEvent): void {
+        this.step1 = e.detail.value;
+    }
+
 }

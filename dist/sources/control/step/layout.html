@@ -1,10 +1,14 @@
 <div class="wrap" :class="[propBoolean('plain') && 'plain']">
-    <div v-for="item, index of dataComp" class="item" :class="[(nowIndex > index) && 'end', (index === nowIndex) && 'now']">
+    <div v-for="item, index of dataComp" class="item" :class="[(nowIndex > index) && 'end', (index === nowIndex) && 'now']" @click="clickItem(item, index)">
         <div class="icon">
             <template v-if="item.icon">
                 <cg-svg v-if="item.icon.endsWith('svg')" :src="item.icon" class="img" />
                 <cg-img v-else :src="item.icon" class="img" />
             </template>
+            <!-- 已完成步骤显示对勾图标 -->
+            <div v-else-if="nowIndex > index" class="num">
+                <svg viewBox="0 0 24 24" stroke="none"><path d="m19.7732 6.25699c.3024.34265.3024.8982 0 1.24086l-8.1328 9.21715c-1.5117 1.7133-3.96265 1.7133-5.47436.0001l-1.93928-2.1979c-.30235-.3427-.30235-.8982 0-1.2409.30234-.3426.79253-.3426 1.09487 0l1.93928 2.1979c.90703 1.028 2.3776 1.028 3.28459 0l8.1329-9.21721c.3023-.34265.7925-.34265 1.0948 0z" /></svg>
+            </div>
             <div v-else class="num">{{index + 1}}</div>
             <template v-if="!propBoolean('plain')">
                 <div v-if="index > 0" class="line left"></div>

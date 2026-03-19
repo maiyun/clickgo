@@ -3,7 +3,8 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
-        'update:modelValue': null
+        'update:modelValue': null,
+        'clicked': null
     };
 
     public props: {
@@ -39,20 +40,50 @@ export default class extends clickgo.control.AbstractControl {
         return data;
     }
 
-    /** --- 当前位置 --- */
+    /** --- 当前步骤索引 --- */
     public get nowIndex(): number {
         if (this.props.modelValue === '#') {
             return this.dataComp.length;
         }
         for (let i = 0; i < this.dataComp.length; ++i) {
-            const item = this.dataComp[i];
-            if (item.value !== this.props.modelValue) {
-                continue;
+            if (this.dataComp[i].value === this.props.modelValue) {
+                return i;
             }
-            return i;
         }
-        this.emit('update:modelValue', this.dataComp[0]?.value ?? '');
         return 0;
+    }
+
+    /**
+     * --- 点击步骤节点 ---
+     * @param item 当前步骤数据
+     * @param index 当前步骤索引
+     */
+    public clickItem(item: { 'icon': string; 'label': string; 'value': string; 'desc': string; }, index: number): void {
+        const event: clickgo.control.IStepClickedEvent = {
+            'detail': {
+                'index': index,
+                'value': item.value,
+                'label': item.label
+            }
+        };
+        this.emit('clicked', event);
+    }
+
+    public onMounted(): void {
+        /** --- 校验 modelValue 是否合法，不合法则自动纠正为第一项 --- */
+        this.watch('modelValue', () => {
+            if (this.props.modelValue === '#') {
+                return;
+            }
+            for (const item of this.dataComp) {
+                if (item.value === this.props.modelValue) {
+                    return;
+                }
+            }
+            this.emit('update:modelValue', this.dataComp[0]?.value ?? '');
+        }, {
+            'immediate': true
+        });
     }
 
 }

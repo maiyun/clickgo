@@ -2,12 +2,15 @@
     display: flex;
 
     .item {
-        display: flex; flex-direction: column; flex: 1;
+        display: flex; flex-direction: column; flex: 1; cursor: pointer;
 
         .icon {
             display: flex; justify-content: center; position: relative;
             .num {
                 border: solid .5px var(--g-plain-border-color); border-radius: 100%; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+                svg {
+                    width: 14px; height: 14px;
+                }
             }
             .img {
                 width: 24px; height: 24px;
