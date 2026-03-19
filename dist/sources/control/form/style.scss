@@ -161,7 +161,7 @@
 
             /* --- Step 部分 --- */
             .step {
-                position: absolute; z-index: 8; cursor: move; padding: var(--g-padding-l-h); background: var(--g-pop-background); box-shadow: 0px 15px 30px rgba(0, 0, 0, .07); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); pointer-events: none; transition: all .3s var(--g-cubic); transition-property: transform, opacity; transform: translateX(0px) translateY(10px) translateZ(0); opacity: 0; border-radius: var(--g-radius);
+                position: absolute; z-index: 8; cursor: move; padding: var(--g-padding-l); background: var(--g-pop-background); box-shadow: 0px 15px 30px rgba(0, 0, 0, .07); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); pointer-events: none; transition: all .3s var(--g-cubic); transition-property: transform, opacity; transform: translateX(0px) translateY(10px) translateZ(0); opacity: 0; border-radius: var(--g-radius-l);
                 &.show {
                     transform: translateY(0px); opacity: 1; pointer-events: initial;
                 }
