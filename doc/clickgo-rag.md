@@ -5569,6 +5569,174 @@ QR 码组件，用于生成二维码。
 </setting-item>
 ```
 
+## sform
+---
+
+侧栏面板容器控件，类似 Adobe Photoshop 右侧面板区域。支持展开和收起两种模式，与 `sform-group` 和 `sform-item` 搭配使用。展开模式下显示分组面板，收起模式下显示图标栏并支持浮动面板弹出。
+
+### 参数
+
+#### expanded
+
+`boolean` | `string`
+
+双向绑定，是否展开，默认 `true`。
+
+#### width
+
+`number` | `string`
+
+展开模式下的面板宽度，默认 `280`。
+
+### 事件
+
+无。
+
+### 方法
+
+#### toggle
+
+`() => void`
+
+切换展开/收起状态。
+
+#### toggleFloat
+
+`(groupIndex: number, itemIndex: number) => void`
+
+收起模式下打开或关闭指定分组的浮动面板。
+
+#### closeFloat
+
+`() => void`
+
+关闭当前浮动面板。
+
+### 样式
+
+**布局结构**：垂直 flex 容器，顶部为展开/收起切换按钮，下方为内容区域。展开时显示完整面板宽度，收起时压缩为 40px 图标栏。
+
+**视觉特征**：左侧带边框分隔，背景使用 `--g-plain-background`。切换按钮悬停时显示背景色变化。
+
+**交互响应**：点击顶部按钮切换展开/收起状态；收起模式下点击分组图标弹出浮动面板。
+
+### 示例
+
+```xml
+<sform :expanded="expanded" @update:expanded="expanded = $event">
+    <sform-group>
+        <sform-item label="Colors" icon="/package/res/color.svg">
+            <label>Color settings</label>
+        </sform-item>
+        <sform-item label="Layers" icon="/package/res/layer.svg">
+            <label>Layer list</label>
+        </sform-item>
+    </sform-group>
+</sform>
+```
+
+
+## sform-group
+---
+
+侧栏面板分组控件，与 `sform` 和 `sform-item` 搭配使用。在展开模式下作为选项卡面板显示，在收起模式下作为图标按钮列显示。
+
+### 参数
+
+#### modelValue
+
+`number`
+
+双向绑定，当前选中的子项索引，从 0 开始，默认 `0`。
+
+### 事件
+
+无。
+
+### 方法
+
+#### select
+
+`(index: number) => void`
+
+选中指定索引的子项。
+
+#### iconClick
+
+`(index: number) => void`
+
+收起模式下触发，通知父级 `sform` 打开浮动面板。
+
+### 样式
+
+**布局结构**：垂直 flex 容器。展开模式下上方为选项卡栏、下方为内容区域；收起模式下为垂直排列的图标按钮。
+
+**视觉特征**：展开模式选项卡选中态显示主题色文字与底部指示线；收起模式图标按钮激活态显示主题色淡背景。
+
+**交互响应**：展开模式下点击 tab 切换内容；收起模式下点击图标按钮弹出浮动面板。
+
+### 示例
+
+```xml
+<sform>
+    <sform-group>
+        <sform-item label="Colors" icon="/package/res/color.svg">
+            <label>Color content</label>
+        </sform-item>
+    </sform-group>
+</sform>
+```
+
+
+## sform-item
+---
+
+侧栏面板子项控件，与 `sform-group` 搭配使用。每个子项在展开模式下作为选项卡页面显示内容，在收起模式下显示为图标按钮。
+
+### 参数
+
+#### label
+
+`string`
+
+选项卡显示文本。
+
+#### icon
+
+`string`
+
+收起模式下显示的图标路径，支持 svg、图片或 Data URL。
+
+### 事件
+
+无。
+
+### 方法
+
+无。
+
+### 样式
+
+**布局结构**：flex 容器，默认隐藏，选中时显示，内容占满可用空间。
+
+**视觉特征**：选中态通过 `display: flex` 切换显示，支持内容溢出滚动。
+
+**交互响应**：由父级 `sform-group` 控制选中状态切换，无自身交互。
+
+### 示例
+
+```xml
+<sform-group>
+    <sform-item label="Colors" icon="/package/res/color.svg">
+        <label>Color settings</label>
+    </sform-item>
+    <sform-item label="Layers" icon="/package/res/layer.svg">
+        <label>Layer list</label>
+    </sform-item>
+</sform-group>
+```
+
+
 ## sgroup
 ---
 
@@ -5726,20 +5894,28 @@ QR 码组件，用于生成二维码。
 
 `string`
 
-双向绑定，当前步骤值。
+双向绑定，当前步骤值。传入 `#` 时表示全部完成状态。
+
+### 事件
+
+#### clicked
+
+点击步骤节点时触发。
+
+参数：`detail.index` `number`，被点击节点的索引；`detail.value` `string`，被点击节点的值；`detail.label` `string`，被点击节点的标签文字。
 
 ### 样式
 
-使用 flex 布局，步骤项水平排列。每个步骤显示序号/图标、标题和可选的描述文字。
+使用 flex 布局，步骤项水平排列。每个步骤显示序号/图标、标题和可选的描述文字。已完成步骤显示对勾图标（自定义图标步骤除外）。
 
-当前步骤和已完成步骤显示主题色，未完成步骤显示灰色。步骤之间用连接线连接。
+当前步骤和已完成步骤显示对应主题色，未开始步骤显示默认颜色。非朴素模式下步骤之间以连接线相连，连接线颜色随完成进度变化。
 
-朴素模式下无背景色和边框。步骤项支持自定义图标。
+朴素模式下以箭头替代连接线，步骤横向平铺排列，不显示描述文字。
 
 ### 示例
 
 ```xml
-<step :data="steps" v-model="currentStep"></step>
+<step :data="steps" v-model="currentStep" @click="onStepClick"></step>
 ```
 
 ## svg
@@ -9619,6 +9795,7 @@ lib/control/index.md
 - [ISelectRemovedEvent](interfaces/ISelectRemovedEvent.md)
 - [ISelectRemoveEvent](interfaces/ISelectRemoveEvent.md)
 - [ISelectTagclickEvent](interfaces/ISelectTagclickEvent.md)
+- [IStepClickedEvent](interfaces/IStepClickedEvent.md)
 - [ISwitchChangeEvent](interfaces/ISwitchChangeEvent.md)
 - [ITabChangedEvent](interfaces/ITabChangedEvent.md)
 - [ITabChangeEvent](interfaces/ITabChangeEvent.md)
@@ -11760,7 +11937,7 @@ lib/control/interfaces/IObjviewerLine.md
 
 # Interface: IObjviewerLine
 
-Defined in: [lib/control.ts:1477](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1477)
+Defined in: [lib/control.ts:1487](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1487)
 
 ## Properties
 
@@ -11768,7 +11945,7 @@ Defined in: [lib/control.ts:1477](https://github.com/maiyun/clickgo/blob/master/
 
 > **end**: [`IObjviewerLineObj`](IObjviewerLineObj.md)
 
-Defined in: [lib/control.ts:1481](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1481)
+Defined in: [lib/control.ts:1491](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1491)
 
 ***
 
@@ -11776,7 +11953,7 @@ Defined in: [lib/control.ts:1481](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **hue**: `string`
 
-Defined in: [lib/control.ts:1483](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1483)
+Defined in: [lib/control.ts:1493](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1493)
 
 默认 255
 
@@ -11786,7 +11963,7 @@ Defined in: [lib/control.ts:1483](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **name**: `string`
 
-Defined in: [lib/control.ts:1479](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1479)
+Defined in: [lib/control.ts:1489](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1489)
 
 -- 可自定义线段的名称
 
@@ -11796,7 +11973,7 @@ Defined in: [lib/control.ts:1479](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **path**: `string`
 
-Defined in: [lib/control.ts:1484](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1484)
+Defined in: [lib/control.ts:1494](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1494)
 
 ***
 
@@ -11804,7 +11981,7 @@ Defined in: [lib/control.ts:1484](https://github.com/maiyun/clickgo/blob/master/
 
 > **start**: [`IObjviewerLineObj`](IObjviewerLineObj.md)
 
-Defined in: [lib/control.ts:1480](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1480)
+Defined in: [lib/control.ts:1490](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1490)
 
 ***
 
@@ -11812,7 +11989,7 @@ Defined in: [lib/control.ts:1480](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **stroke**: `"down"` \| `"solid"` \| `"dashed"` \| `"up"`
 
-Defined in: [lib/control.ts:1486](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1486)
+Defined in: [lib/control.ts:1496](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1496)
 
 默认 solid
 
@@ -11827,7 +12004,7 @@ lib/control/interfaces/IObjviewerLineObj.md
 
 # Interface: IObjviewerLineObj
 
-Defined in: [lib/control.ts:1489](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1489)
+Defined in: [lib/control.ts:1499](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1499)
 
 ## Properties
 
@@ -11835,7 +12012,7 @@ Defined in: [lib/control.ts:1489](https://github.com/maiyun/clickgo/blob/master/
 
 > **obj**: `HTMLElement` \| [`AbstractControl`](../classes/AbstractControl.md)
 
-Defined in: [lib/control.ts:1490](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1490)
+Defined in: [lib/control.ts:1500](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1500)
 
 ***
 
@@ -11843,7 +12020,7 @@ Defined in: [lib/control.ts:1490](https://github.com/maiyun/clickgo/blob/master/
 
 > **pos**: `"b"` \| `"tr"` \| `"lt"` \| `"t"` \| `"r"` \| `"rb"` \| `"bl"` \| `"l"`
 
-Defined in: [lib/control.ts:1491](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1491)
+Defined in: [lib/control.ts:1501](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1501)
 
 lib/control/interfaces/IPaletteChangedEvent.md
 ---
@@ -12510,6 +12687,39 @@ Defined in: [lib/control.ts:1392](https://github.com/maiyun/clickgo/blob/master/
 #### index
 
 > **index**: `number`
+
+#### value
+
+> **value**: `string`
+
+lib/control/interfaces/IStepClickedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IStepClickedEvent
+
+# Interface: IStepClickedEvent
+
+Defined in: [lib/control.ts:1477](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1477)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:1478](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1478)
+
+#### index
+
+> **index**: `number`
+
+#### label
+
+> **label**: `string`
 
 #### value
 

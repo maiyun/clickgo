@@ -71,6 +71,7 @@
 - [ISelectRemovedEvent](interfaces/ISelectRemovedEvent.md)
 - [ISelectRemoveEvent](interfaces/ISelectRemoveEvent.md)
 - [ISelectTagclickEvent](interfaces/ISelectTagclickEvent.md)
+- [IStepClickedEvent](interfaces/IStepClickedEvent.md)
 - [ISwitchChangeEvent](interfaces/ISwitchChangeEvent.md)
 - [ITabChangedEvent](interfaces/ITabChangedEvent.md)
 - [ITabChangeEvent](interfaces/ITabChangeEvent.md)
