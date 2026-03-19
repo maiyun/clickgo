@@ -504,6 +504,7 @@ export async function run(
     }
     runtime[taskId] = clickgo.modules.vue.reactive({
         'dialogFormIds': [],
+        'dialogCreating': 0,
         'permissions': permissions,
         'index': ++index,
     });
@@ -1726,6 +1727,8 @@ export interface ITask {
 
 export interface IRuntime {
     'dialogFormIds': string[];
+    /** --- 正在异步创建 dialog 的数量，用于防止快速重复调用产生多个 dialog --- */
+    'dialogCreating': number;
     'permissions': string[];
     'index': number;
 }

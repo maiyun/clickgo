@@ -469,6 +469,7 @@ export async function run(current, url, opt = {}) {
     }
     runtime[taskId] = clickgo.modules.vue.reactive({
         'dialogFormIds': [],
+        'dialogCreating': 0,
         'permissions': permissions,
         'index': ++index,
     });

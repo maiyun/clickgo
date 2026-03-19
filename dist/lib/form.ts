@@ -539,6 +539,10 @@ export abstract class AbstractForm extends AbstractCommon {
         if (!runtime) {
             return false;
         }
+        // --- 正在异步创建 dialog 时，屏蔽所有窗体 ---
+        if (runtime.dialogCreating) {
+            return true;
+        }
         return !runtime.dialogFormIds.length ||
         runtime.dialogFormIds[runtime.dialogFormIds.length - 1]
             === this.formId ? false : true;
@@ -734,7 +738,7 @@ export abstract class AbstractForm extends AbstractCommon {
         runtime.dialogFormIds.push(this.formId);
         await this.show();
         this.topMost = true;
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             (this as any).cgDialogCallback = () => {
                 resolve(this.dialogResult);
             };
@@ -3859,6 +3863,13 @@ export function dialog(current: lCore.TCurrent, opt: string | IFormDialogOptions
             resolve('');
             return;
         }
+        // --- 防止快速重复调用时同时创建多个 dialog ---
+        const runtime = lTask.getRuntime(sysId, current);
+        if (!runtime || runtime.dialogCreating > 0) {
+            resolve('');
+            return;
+        }
+        runtime.dialogCreating++;
         const locale = t.locale.lang || lCore.config.locale;
         nopt.buttons ??= [info.locale[locale]?.ok ?? info.locale['en'].ok];
         const cls = class extends AbstractForm {
@@ -3902,15 +3913,18 @@ export function dialog(current: lCore.TCurrent, opt: string | IFormDialogOptions
             'style': nopt.style
         }).then((frm) => {
             if (typeof frm === 'number') {
+                runtime.dialogCreating--;
                 resolve('');
                 return;
             }
+            runtime.dialogCreating--;
             frm.showDialog().then((v) => {
                 resolve(v);
             }).catch(() => {
                 resolve('');
             });
         }).catch(() => {
+            runtime.dialogCreating--;
             resolve('');
         });
     });
