@@ -8,7 +8,7 @@
 
 > **checkPermission**(`taskId`, `vals`, `apply?`, `applyHandler?`): `Promise`\<`boolean`[]\>
 
-Defined in: [lib/task.ts:912](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L912)
+Defined in: [lib/task.ts:913](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L913)
 
 检测应用是否有相应的权限（如果 taskId 是 sysId 则直接成功）
 

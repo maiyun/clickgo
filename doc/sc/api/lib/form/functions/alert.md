@@ -8,7 +8,7 @@
 
 > **alert**(`content`, `type?`): `number`
 
-Defined in: [lib/form.ts:2178](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2178)
+Defined in: [lib/form.ts:2182](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2182)
 
 从下方弹出 alert
 

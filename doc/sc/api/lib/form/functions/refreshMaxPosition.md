@@ -8,7 +8,7 @@
 
 > **refreshMaxPosition**(): `void`
 
-Defined in: [lib/form.ts:1567](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1567)
+Defined in: [lib/form.ts:1571](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1571)
 
 重置所有已经最大化的窗体大小和位置
 

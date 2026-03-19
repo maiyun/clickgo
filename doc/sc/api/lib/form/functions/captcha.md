@@ -8,7 +8,7 @@
 
 > **captcha**(`current`, `opt`): `Promise`\<`false` \| [`ICaptchaResultEvent`](../../control/interfaces/ICaptchaResultEvent.md)\>
 
-Defined in: [lib/form.ts:3925](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3925)
+Defined in: [lib/form.ts:3939](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3939)
 
 显示一个验证码窗口
 

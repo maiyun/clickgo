@@ -8,7 +8,7 @@
 
 > **setActivePanel**(`current`, `formId`, `panelId`): `boolean`
 
-Defined in: [lib/form.ts:1747](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1747)
+Defined in: [lib/form.ts:1751](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1751)
 
 将 form 中某个 panel 设置为活动的
 

@@ -6,7 +6,7 @@
 
 # Interface: INotifyOptions
 
-Defined in: [lib/form.ts:4215](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4215)
+Defined in: [lib/form.ts:4229](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4229)
 
 弹出 notify 信息框的选项
 
@@ -16,7 +16,7 @@ Defined in: [lib/form.ts:4215](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **content**: `string`
 
-Defined in: [lib/form.ts:4218](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4218)
+Defined in: [lib/form.ts:4232](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4232)
 
 正文
 
@@ -26,7 +26,7 @@ Defined in: [lib/form.ts:4218](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **icon**: `string` \| `null`
 
-Defined in: [lib/form.ts:4221](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4221)
+Defined in: [lib/form.ts:4235](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4235)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [lib/form.ts:4221](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **note**: `string`
 
-Defined in: [lib/form.ts:4220](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4220)
+Defined in: [lib/form.ts:4234](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4234)
 
 浅色描述
 
@@ -44,7 +44,7 @@ Defined in: [lib/form.ts:4220](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **progress**: `boolean`
 
-Defined in: [lib/form.ts:4224](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4224)
+Defined in: [lib/form.ts:4238](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4238)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [lib/form.ts:4224](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **timeout**: `number`
 
-Defined in: [lib/form.ts:4222](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4222)
+Defined in: [lib/form.ts:4236](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4236)
 
 ***
 
@@ -60,7 +60,7 @@ Defined in: [lib/form.ts:4222](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **title**: `string`
 
-Defined in: [lib/form.ts:4216](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4216)
+Defined in: [lib/form.ts:4230](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4230)
 
 ***
 
@@ -68,4 +68,4 @@ Defined in: [lib/form.ts:4216](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **type**: `"progress"` \| `"info"` \| `"warning"` \| `"danger"` \| `"primary"`
 
-Defined in: [lib/form.ts:4223](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4223)
+Defined in: [lib/form.ts:4237](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4237)

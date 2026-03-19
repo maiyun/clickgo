@@ -8,7 +8,7 @@
 
 > **getActivePanel**(`formId`): `string`[]
 
-Defined in: [lib/form.ts:1706](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1706)
+Defined in: [lib/form.ts:1710](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1710)
 
 获取窗体当前活跃中的 panelId 列表
 

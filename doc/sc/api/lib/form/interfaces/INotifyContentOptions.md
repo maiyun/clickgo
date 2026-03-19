@@ -6,7 +6,7 @@
 
 # Interface: INotifyContentOptions
 
-Defined in: [lib/form.ts:4228](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4228)
+Defined in: [lib/form.ts:4242](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4242)
 
 notify 信息框的修改选项
 
@@ -16,7 +16,7 @@ notify 信息框的修改选项
 
 > `optional` **content**: `string`
 
-Defined in: [lib/form.ts:4230](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4230)
+Defined in: [lib/form.ts:4244](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4244)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/form.ts:4230](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **note**: `string`
 
-Defined in: [lib/form.ts:4231](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4231)
+Defined in: [lib/form.ts:4245](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4245)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/form.ts:4231](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **progress**: `number`
 
-Defined in: [lib/form.ts:4233](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4233)
+Defined in: [lib/form.ts:4247](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4247)
 
 可顺便修改进度
 
@@ -42,7 +42,7 @@ Defined in: [lib/form.ts:4233](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **timeout**: `number`
 
-Defined in: [lib/form.ts:4235](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4235)
+Defined in: [lib/form.ts:4249](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4249)
 
 设置后将在 x 毫秒后隐藏，这不会大于创建时的设置的总时长
 
@@ -52,4 +52,4 @@ Defined in: [lib/form.ts:4235](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **title**: `string`
 
-Defined in: [lib/form.ts:4229](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4229)
+Defined in: [lib/form.ts:4243](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4243)
