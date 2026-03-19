@@ -1,4 +1,4 @@
-<div class="wrap" :class="[direction, propBoolean('stripe')&&'stripe']" @scroll="onScroll" @wheel="wheel" @pointerdown="down" :style="{'gap': propNumber('gutter') ? (gutter + 'px') : '0'}" data-cg-scroll>
+<div class="wrap" :class="[direction, propBoolean('stripe')&&'stripe']" @scroll="onScroll" @wheel="wheel" @pointerdown="down" :style="{'gap': gutter !== undefined ? (propNumber('gutter') ? (gutter + 'px') : '0') : undefined}" data-cg-scroll>
     <slot></slot>
     <div class="selection" ref="selection"></div>
 </div>

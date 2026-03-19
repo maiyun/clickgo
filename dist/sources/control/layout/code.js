@@ -2,7 +2,7 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
     props = {
         'direction': 'h',
-        'gutter': '',
+        'gutter': undefined,
         'alignH': undefined,
         'alignV': undefined,
         'wrap': false

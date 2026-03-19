@@ -16,7 +16,7 @@ export default class extends clickgo.control.AbstractControl {
         'direction': 'h',
         'selection': false,
         'gesture': [],
-        'gutter': '',
+        'gutter': undefined,
         'scrollLeft': 0,
         'scrollTop': 0,
         'stripe': false,
