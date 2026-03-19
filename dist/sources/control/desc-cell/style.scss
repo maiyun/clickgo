@@ -1,5 +1,5 @@
 .wrap {
-    background-color: var(--g-plain-background); border-radius: var(--g-radius); transition: background-color .3s var(--g-cubic);
+    border-radius: var(--g-radius); transition: background-color .3s var(--g-cubic);
     &.border {
         border: solid .5px var(--g-plain-border-color); border-left: none; border-right: none;
         &.plain {
