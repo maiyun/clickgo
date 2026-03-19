@@ -1,0 +1,29 @@
+.wrap {
+    display: flex; flex-direction: column; border-left: solid .5px var(--g-border-color); background: var(--g-plain-background);
+
+    > .toggle-btn {
+        display: flex; align-items: center; justify-content: center; height: 28px; transition: var(--g-transition); border-bottom: solid .5px var(--g-plain-border-color);
+
+        svg {
+            width: 14px; height: 14px;
+        }
+
+        &:hover {
+            background: var(--face-hover);
+        }
+    }
+
+    &.expanded {
+        > .body {
+            flex: 1; display: flex; flex-direction: column; overflow: hidden;
+        }
+    }
+
+    &.collapsed {
+        width: 40px;
+
+        > .body {
+            flex: 1; display: flex; flex-direction: column; overflow: visible; position: relative;
+        }
+    }
+}

@@ -1,0 +1,70 @@
+<form title="Sform" width="700" height="500">
+    <layout style="flex: 1;">
+        <!-- 主内容区域 -->
+        <flow style="flex: 1; padding: 10px;" direction="v" gutter="10">
+            <label size="l">Sform Demo</label>
+            <label>Expanded: {{expanded}}</label>
+            <layout gutter="10" style="margin-top: 10px;">
+                <button @click="expanded = !expanded">Toggle</button>
+            </layout>
+        </flow>
+        <!-- 侧栏面板列 1 -->
+        <sform v-model:expanded="expanded" :width="260">
+            <sform-group>
+                <sform-item label="Color" icon="/package/form/control/sform/res/palette.svg">
+                    <flow direction="v" style="padding: 10px;">
+                        <label>Swatches</label>
+                        <layout gutter="5" style="margin-top: 5px; flex-wrap: wrap;">
+                            <div style="width: 20px; height: 20px; background: oklch(.6 .25 30); border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 20px; background: oklch(.6 .25 150); border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 20px; background: oklch(.6 .25 240); border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 20px; background: oklch(.6 .25 330); border-radius: 3px;"></div>
+                        </layout>
+                    </flow>
+                </sform-item>
+                <sform-item label="Gradient" icon="/package/form/control/sform/res/edit.svg">
+                    <flow direction="v" style="padding: 10px;">
+                        <label>Gradient Editor</label>
+                        <div style="height: 30px; margin-top: 5px; background: linear-gradient(to right, oklch(.3 0 0), oklch(.9 0 0)); border-radius: 3px;"></div>
+                    </flow>
+                </sform-item>
+            </sform-group>
+            <sform-group>
+                <sform-item label="Layers" icon="/package/form/control/sform/res/layers.svg">
+                    <flow direction="v" style="padding: 10px;">
+                        <label>Layer 1 - Background</label>
+                        <label>Layer 2 - Shape</label>
+                        <label>Layer 3 - Text</label>
+                    </flow>
+                </sform-item>
+                <sform-item label="Channels" icon="/package/form/control/sform/res/chart.svg">
+                    <flow direction="v" style="padding: 10px;">
+                        <label>RGB</label>
+                        <label>Red</label>
+                        <label>Green</label>
+                        <label>Blue</label>
+                    </flow>
+                </sform-item>
+            </sform-group>
+        </sform>
+        <!-- 侧栏面板列 2 -->
+        <sform v-model:expanded="expanded2" :width="220">
+            <sform-group>
+                <sform-item label="Properties" icon="/package/form/control/sform/res/property.svg">
+                    <flow direction="v" style="padding: 10px;">
+                        <label>Width: 1920</label>
+                        <label>Height: 1080</label>
+                        <label>Resolution: 72 ppi</label>
+                    </flow>
+                </sform-item>
+                <sform-item label="Info" icon="/package/form/control/sform/res/info.svg">
+                    <flow direction="v" style="padding: 10px;">
+                        <label>X: 0</label>
+                        <label>Y: 0</label>
+                        <label>Color: #000000</label>
+                    </flow>
+                </sform-item>
+            </sform-group>
+        </sform>
+    </layout>
+</form>

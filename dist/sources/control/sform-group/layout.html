@@ -1,0 +1,24 @@
+<div class="wrap" :class="[isExpanded ? 'expanded' : 'collapsed', isFloating && 'floating']">
+    <!-- 展开模式 tab 栏 -->
+    <div v-if="isExpanded" class="tabs">
+        <div v-for="(item, i) of items" class="tab" :class="[selected === i && 'selected']" @click="select(i)">{{item.label}}</div>
+    </div>
+    <!-- 收起模式 icon 按钮 -->
+    <template v-if="!isExpanded">
+        <div v-for="(item, i) of items" class="icon-btn" :class="[isFloating && selected === i && 'active']" @click="iconClick(i)">
+            <cg-svg v-if="item.icon && item.icon.endsWith('svg')" :src="item.icon" />
+            <cg-img v-else-if="item.icon" :src="item.icon" />
+            <div v-else class="icon-text">{{item.label.slice(0, 1)}}</div>
+        </div>
+    </template>
+    <!-- 内容面板始终渲染 -->
+    <div class="content">
+        <!-- 浮动模式 tab 栏 -->
+        <div v-if="!isExpanded && isFloating" class="float-tabs">
+            <div v-for="(item, i) of items" class="float-tab" :class="[selected === i && 'selected']" @click="floatTabClick(i)">{{item.label}}</div>
+        </div>
+        <div class="panel">
+            <slot></slot>
+        </div>
+    </div>
+</div>
