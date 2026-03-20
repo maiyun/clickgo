@@ -11,6 +11,8 @@ export default class extends clickgo.control.AbstractControl {
         'update:layer': null,
         /** --- 激活图层变更时触发（仅 autoLayer=true 时），参数为 { prev: 变更前图层 name, next: 变更后图层 name } --- */
         'layerchange': null,
+        /** --- 选区变更时触发（创建、移动、组合、清除） --- */
+        'marqueechange': null,
     };
 
     public props: {
@@ -31,12 +33,14 @@ export default class extends clickgo.control.AbstractControl {
         'artboardBg': string;
         /** --- 画板内填充色，支持任意 CSS 颜色字符串，空字符串表示透明（透过画板看到外部背景色） --- */
         'artboardFill': string;
-        /** --- 画布交互模式，'' 为正常模式，'pan' 为平移模式（类似 PS 空格键），'zoom' 为拖拽缩放模式（类似 PS Z 键） --- */
-        'mode': '' | 'pan' | 'zoom';
+        /** --- 画布交互模式，'' 为正常模式，'pan' 为平移模式，'zoom' 为拖拽缩放模式，'marquee' 为选区模式 --- */
+        'mode': '' | 'pan' | 'zoom' | 'marquee';
         /** --- 画布最小缩放倍数，默认为 0.01 --- */
         'zoomMin': number | string;
         /** --- 画布最大缩放倍数，默认为 100 --- */
         'zoomMax': number | string;
+        /** --- 选区组合模式：replace 替换、add 合并、subtract 减去、intersect 交集 --- */
+        'marqueeCompose': 'replace' | 'add' | 'subtract' | 'intersect';
     } = {
             'disabled': false,
             'autoLayer': true,
@@ -50,20 +54,30 @@ export default class extends clickgo.control.AbstractControl {
             'mode': '',
             'zoomMin': 0.01,
             'zoomMax': 100,
+            'marqueeCompose': 'replace',
         };
 
     public notInit = false;
 
     public isLoading = true;
 
+    /** --- 内部闭包暴露的选区清除函数引用 --- */
+    private _clearMarquee: (() => void) | null = null;
+
+    /** --- 内部闭包暴露的选区设置函数引用 --- */
+    private _setMarqueeRect: ((x: number, y: number, w: number, h: number) => void) | null = null;
+
     public access: {
         /** --- fabric Canvas 对象 --- */
         'canvas': fabric.Canvas | undefined;
         /** --- 当前画板在 canvas 中的位置与尺寸，未启用画板时为 null --- */
         'artboard': { 'left': number; 'top': number; 'width': number; 'height': number; } | null;
+        /** --- 当前选区矩形列表（canvas 内部坐标），无选区时为空数组 --- */
+        'marquee': Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }>;
     } = {
             'canvas': undefined,
             'artboard': null,
+            'marquee': [],
         };
 
     public async onMounted(): Promise<void> {
@@ -174,8 +188,8 @@ export default class extends clickgo.control.AbstractControl {
                 if (getObjName(obj) === ARTBOARD_NAME) {
                     return;
                 }
-                // --- pan 模式或 zoom 模式下所有对象均不可交互 ---
-                if (this.props.mode === 'pan' || this.props.mode === 'zoom') {
+                // --- pan / zoom / marquee 模式下所有对象均不可交互 ---
+                if (this.props.mode === 'pan' || this.props.mode === 'zoom' || this.props.mode === 'marquee') {
                     obj.set({ 'evented': false, 'selectable': false });
                     return;
                 }
@@ -211,7 +225,8 @@ export default class extends clickgo.control.AbstractControl {
             }
 
             // --- 同步框选矩形开关 ---
-            this.access.canvas.selection = this.propBoolean('selector');
+            // --- marquee 模式强制禁用 fabric 框选，防止上层 canvas 产生残留虚线框 ---
+            this.access.canvas.selection = (this.props.mode !== 'marquee') && this.propBoolean('selector');
 
             updateSelectionStyle(false);
         };
@@ -400,6 +415,314 @@ export default class extends clickgo.control.AbstractControl {
             applyMode();
         });
 
+        // --- 选区矩形列表（canvas 内部坐标），用于 marquee 功能 ---
+        /** --- 选区矩形列表，每项为 canvas 坐标系中的矩形 --- */
+        let marqueeRects: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }> = [];
+        /** --- 是否正在拖拽创建新选区 --- */
+        let isMarqueeDrawing = false;
+        /** --- 选区绘制起始点（canvas 坐标） --- */
+        let marqueeStartX = 0;
+        let marqueeStartY = 0;
+        /** --- 是否正在拖拽移动已有选区 --- */
+        let isMarqueeMoving = false;
+        /** --- 选区移动上一帧鼠标位置（屏幕坐标） --- */
+        let marqueeMoveLastX = 0;
+        let marqueeMoveLastY = 0;
+
+        /**
+         * --- 将选区矩形限制在画板范围内，画板未启用时不裁剪 ---
+         * @param rect 待裁剪矩形
+         * @returns 裁剪后矩形，若完全超出画板则返回 null
+         */
+        const clipRectToArtboard = (rect: { 'x': number; 'y': number; 'width': number; 'height': number; }): { 'x': number; 'y': number; 'width': number; 'height': number; } | null => {
+            if (!this.access.artboard) {
+                return rect;
+            }
+            const ab = this.access.artboard;
+            const x1 = Math.max(rect.x, ab.left);
+            const y1 = Math.max(rect.y, ab.top);
+            const x2 = Math.min(rect.x + rect.width, ab.left + ab.width);
+            const y2 = Math.min(rect.y + rect.height, ab.top + ab.height);
+            if (x2 <= x1 || y2 <= y1) {
+                return null;
+            }
+            return { 'x': x1, 'y': y1, 'width': x2 - x1, 'height': y2 - y1 };
+        };
+
+        /**
+         * --- 判断屏幕坐标点是否在已有选区内（任一矩形） ---
+         * @param screenX 鼠标在 canvas 元素内的屏幕 x
+         * @param screenY 鼠标在 canvas 元素内的屏幕 y
+         */
+        const isPointInMarquee = (screenX: number, screenY: number): boolean => {
+            if (marqueeRects.length === 0 || !this.access.canvas) {
+                return false;
+            }
+            const zoom = this.access.canvas.getZoom();
+            const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+            // --- 屏幕坐标转 canvas 坐标 ---
+            const cx = (screenX - vpt[4]) / zoom;
+            const cy = (screenY - vpt[5]) / zoom;
+            for (const r of marqueeRects) {
+                if (cx >= r.x && cx <= r.x + r.width && cy >= r.y && cy <= r.y + r.height) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        /**
+         * --- 同步 access.marquee 并触发 marqueechange 事件 ---
+         */
+        const syncMarquee = (): void => {
+            this.access.marquee = marqueeRects.map(r => ({ ...r }));
+            this.emit('marqueechange');
+        };
+
+        /**
+         * --- 合并两组矩形（add 模式）：将所有矩形拼合为一个列表 ---
+         */
+        const mergeRects = (existing: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }>, newRect: { 'x': number; 'y': number; 'width': number; 'height': number; }): Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }> => {
+            return [...existing, newRect];
+        };
+
+        /**
+         * --- subtract 模式：从已有矩形列表中减去新矩形重叠区域 ---
+         */
+        const subtractRect = (existing: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }>, cut: { 'x': number; 'y': number; 'width': number; 'height': number; }): Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }> => {
+            const result: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }> = [];
+            for (const r of existing) {
+                // --- 计算交集 ---
+                const ix1 = Math.max(r.x, cut.x);
+                const iy1 = Math.max(r.y, cut.y);
+                const ix2 = Math.min(r.x + r.width, cut.x + cut.width);
+                const iy2 = Math.min(r.y + r.height, cut.y + cut.height);
+                if (ix1 >= ix2 || iy1 >= iy2) {
+                    // --- 无交集，保留原矩形 ---
+                    result.push(r);
+                    continue;
+                }
+                // --- 有交集，将 r 分割为最多 4 条带状矩形（上/下/左/右）---
+                // --- 上部 ---
+                if (r.y < iy1) {
+                    result.push({ 'x': r.x, 'y': r.y, 'width': r.width, 'height': iy1 - r.y });
+                }
+                // --- 下部 ---
+                if (iy2 < r.y + r.height) {
+                    result.push({ 'x': r.x, 'y': iy2, 'width': r.width, 'height': r.y + r.height - iy2 });
+                }
+                // --- 左部（仅交集高度范围内）---
+                if (r.x < ix1) {
+                    result.push({ 'x': r.x, 'y': iy1, 'width': ix1 - r.x, 'height': iy2 - iy1 });
+                }
+                // --- 右部（仅交集高度范围内）---
+                if (ix2 < r.x + r.width) {
+                    result.push({ 'x': ix2, 'y': iy1, 'width': r.x + r.width - ix2, 'height': iy2 - iy1 });
+                }
+            }
+            return result;
+        };
+
+        /**
+         * --- intersect 模式：保留已有矩形与新矩形的交集部分 ---
+         */
+        const intersectRect = (existing: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }>, clip: { 'x': number; 'y': number; 'width': number; 'height': number; }): Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }> => {
+            const result: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }> = [];
+            for (const r of existing) {
+                const ix1 = Math.max(r.x, clip.x);
+                const iy1 = Math.max(r.y, clip.y);
+                const ix2 = Math.min(r.x + r.width, clip.x + clip.width);
+                const iy2 = Math.min(r.y + r.height, clip.y + clip.height);
+                if (ix2 > ix1 && iy2 > iy1) {
+                    result.push({ 'x': ix1, 'y': iy1, 'width': ix2 - ix1, 'height': iy2 - iy1 });
+                }
+            }
+            return result;
+        };
+
+        /**
+         * --- 将新绘制的选区按当前组合模式应用到 marqueeRects ---
+         * @param newRect 新绘制的矩形（已裁剪到画板范围）
+         */
+        const applyMarqueeCompose = (newRect: { 'x': number; 'y': number; 'width': number; 'height': number; }): void => {
+            // --- PS 规则：当前无选区时，任何模式均退化为 replace，直接创建初始选区 ---
+            if (marqueeRects.length === 0) {
+                marqueeRects = [newRect];
+                return;
+            }
+            switch (this.props.marqueeCompose) {
+                case 'add': {
+                    marqueeRects = mergeRects(marqueeRects, newRect);
+                    break;
+                }
+                case 'subtract': {
+                    marqueeRects = subtractRect(marqueeRects, newRect);
+                    break;
+                }
+                case 'intersect': {
+                    marqueeRects = intersectRect(marqueeRects, newRect);
+                    break;
+                }
+                default: {
+                    // --- replace 模式：直接替换 ---
+                    marqueeRects = [newRect];
+                    break;
+                }
+            }
+        };
+
+        /** --- after:render 监听器引用，用于在画布内容上层绘制选区虚线 --- */
+        let afterRenderHandler: ((e: any) => void) | null = null;
+
+        /**
+         * --- 从矩形列表中提取合并后的外轮廓边缘线段 ---
+         * @param rects 矩形列表（画布坐标系）
+         * @param zoom 缩放倍数
+         * @param vpt 视口变换矩阵
+         * @returns 边缘线段数组，每条线段为 { x1, y1, x2, y2 }（屏幕坐标系）
+         */
+        const extractOutlineEdges = (
+            rects: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }>,
+            zoom: number,
+            vpt: number[]
+        ): Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }> => {
+            if (rects.length === 0) {
+                return [];
+            }
+            // --- 将矩形坐标转换为屏幕坐标并取整，防止浮点精度问题 ---
+            const screenRects = rects.map((r) => {
+                const sx = Math.round(r.x * zoom + vpt[4]);
+                const sy = Math.round(r.y * zoom + vpt[5]);
+                const sw = Math.round(r.width * zoom);
+                const sh = Math.round(r.height * zoom);
+                return { 'x': sx, 'y': sy, 'w': sw, 'h': sh };
+            });
+            // --- 收集所有唯一的 x 坐标和 y 坐标 ---
+            const xCoords = new Set<number>();
+            const yCoords = new Set<number>();
+            for (const sr of screenRects) {
+                xCoords.add(sr.x);
+                xCoords.add(sr.x + sr.w);
+                yCoords.add(sr.y);
+                yCoords.add(sr.y + sr.h);
+            }
+            const sortedX = [...xCoords].sort((a, b) => a - b);
+            const sortedY = [...yCoords].sort((a, b) => a - b);
+            // --- 构建网格：每个格子标记是否被至少一个矩形覆盖 ---
+            const cols = sortedX.length - 1;
+            const rows = sortedY.length - 1;
+            if (cols <= 0 || rows <= 0) {
+                return [];
+            }
+            const grid: boolean[][] = [];
+            for (let r = 0; r < rows; r++) {
+                grid.push(new Array(cols).fill(false));
+            }
+            for (const sr of screenRects) {
+                const left = sortedX.indexOf(sr.x);
+                const right = sortedX.indexOf(sr.x + sr.w);
+                const top = sortedY.indexOf(sr.y);
+                const bottom = sortedY.indexOf(sr.y + sr.h);
+                for (let r = top; r < bottom; r++) {
+                    for (let c = left; c < right; c++) {
+                        grid[r][c] = true;
+                    }
+                }
+            }
+            // --- 扫描网格边缘：只保留一侧被覆盖、另一侧未被覆盖的边 ---
+            const edges: Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }> = [];
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (!grid[r][c]) {
+                        continue;
+                    }
+                    const x1 = sortedX[c];
+                    const x2 = sortedX[c + 1];
+                    const y1 = sortedY[r];
+                    const y2 = sortedY[r + 1];
+                    // --- 上边：如果上方格子不在区域内，此边为外轮廓 ---
+                    if (r === 0 || !grid[r - 1][c]) {
+                        edges.push({ 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y1 });
+                    }
+                    // --- 下边 ---
+                    if (r === rows - 1 || !grid[r + 1][c]) {
+                        edges.push({ 'x1': x1, 'y1': y2, 'x2': x2, 'y2': y2 });
+                    }
+                    // --- 左边 ---
+                    if (c === 0 || !grid[r][c - 1]) {
+                        edges.push({ 'x1': x1, 'y1': y1, 'x2': x1, 'y2': y2 });
+                    }
+                    // --- 右边 ---
+                    if (c === cols - 1 || !grid[r][c + 1]) {
+                        edges.push({ 'x1': x2, 'y1': y1, 'x2': x2, 'y2': y2 });
+                    }
+                }
+            }
+            return edges;
+        };
+
+        /** --- 创建并注册 after:render 监听器 --- */
+        const setupAfterRender = (): void => {
+            if (afterRenderHandler || !this.access.canvas) {
+                return;
+            }
+            afterRenderHandler = (e: any): void => {
+                if (marqueeRects.length === 0 && !isMarqueeDrawing) {
+                    return;
+                }
+                const ctx: CanvasRenderingContext2D = e.ctx;
+                const zoom = this.access.canvas!.getZoom();
+                const vpt = this.access.canvas!.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+                ctx.save();
+                ctx.setLineDash([4, 4]);
+                ctx.lineWidth = 1;
+                // --- 区分稳定选区（已确认）和临时矩形（正在拖拽预览中）---
+                const stableRects = marqueeRects.filter(r => !(r as any)._temp);
+                const tempRect = marqueeRects.find(r => (r as any)._temp);
+                // --- 双色虚线绘制函数 ---
+                const drawEdges = (edges: Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }>): void => {
+                    for (const pass of [{ 'color': '#ffffff', 'offset': 0 }, { 'color': '#000000', 'offset': 4 }]) {
+                        ctx.strokeStyle = pass.color;
+                        ctx.lineDashOffset = pass.offset;
+                        ctx.beginPath();
+                        for (const edge of edges) {
+                            ctx.moveTo(edge.x1 + 0.5, edge.y1 + 0.5);
+                            ctx.lineTo(edge.x2 + 0.5, edge.y2 + 0.5);
+                        }
+                        ctx.stroke();
+                    }
+                };
+                // --- 先绘制稳定选区的合并外轮廓 ---
+                if (stableRects.length > 0) {
+                    drawEdges(extractOutlineEdges(stableRects, zoom, vpt));
+                }
+                // --- 再绘制临时矩形（独立显示在最顶层，不与稳定选区合并）---
+                if (tempRect) {
+                    const sx = tempRect.x * zoom + vpt[4];
+                    const sy = tempRect.y * zoom + vpt[5];
+                    const sw = tempRect.width * zoom;
+                    const sh = tempRect.height * zoom;
+                    drawEdges([{
+                        'x1': Math.round(sx), 'y1': Math.round(sy),
+                        'x2': Math.round(sx + sw), 'y2': Math.round(sy),
+                    }, {
+                        'x1': Math.round(sx + sw), 'y1': Math.round(sy),
+                        'x2': Math.round(sx + sw), 'y2': Math.round(sy + sh),
+                    }, {
+                        'x1': Math.round(sx + sw), 'y1': Math.round(sy + sh),
+                        'x2': Math.round(sx), 'y2': Math.round(sy + sh),
+                    }, {
+                        'x1': Math.round(sx), 'y1': Math.round(sy + sh),
+                        'x2': Math.round(sx), 'y2': Math.round(sy),
+                    }]);
+                }
+                ctx.restore();
+            };
+            this.access.canvas.on('after:render', afterRenderHandler);
+        };
+        // --- 初始注册 ---
+        setupAfterRender();
+
         // --- PS 模式拖拽：transform=false 时从画布任意区域拖动激活图层 ---
         let isPsDragging = false;
         let psDragHasMoved = false;
@@ -434,6 +757,30 @@ export default class extends clickgo.control.AbstractControl {
             transformKeepObj = null;
             isPanDragging = false;
             isZoomDragging = false;
+            isMarqueeDrawing = false;
+            isMarqueeMoving = false;
+            // --- marquee 模式：判断是移动已有选区还是创建新选区 ---
+            if (this.props.mode === 'marquee') {
+                const canvasEl = this.access.canvas!.getElement();
+                const rect = canvasEl.getBoundingClientRect();
+                const sx = e.e.clientX - rect.left;
+                const sy = e.e.clientY - rect.top;
+                if (marqueeRects.length > 0 && this.props.marqueeCompose === 'replace' && isPointInMarquee(sx, sy)) {
+                    // --- 点击在已有选区内且 replace 模式 → 移动选区 ---
+                    isMarqueeMoving = true;
+                    marqueeMoveLastX = e.e.clientX;
+                    marqueeMoveLastY = e.e.clientY;
+                }
+                else {
+                    // --- 其他情况 → 创建新选区 ---
+                    isMarqueeDrawing = true;
+                    const zoom = this.access.canvas!.getZoom();
+                    const vpt = this.access.canvas!.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+                    marqueeStartX = (sx - vpt[4]) / zoom;
+                    marqueeStartY = (sy - vpt[5]) / zoom;
+                }
+                return;
+            }
             // --- zoom 模式优先与 pan 互斥：任意位置按下记录锁定点 ---
             if (this.props.mode === 'zoom') {
                 isZoomDragging = true;
@@ -565,8 +912,55 @@ export default class extends clickgo.control.AbstractControl {
             updateSelectionStyle(false);
         });
 
-        // --- PS 拖拽移动：平移激活图层；画布平移：移动 viewport；缩放模式：以锁定点缩放 ---
+        // --- PS 拖拽移动：平移激活图层；画布平移：移动 viewport；缩放模式：以锁定点缩放；选区模式：绘制/移动 ---
         this.access.canvas.on('mouse:move', (e: any) => {
+            // --- 选区模式：绘制新选区 ---
+            if (isMarqueeDrawing && this.access.canvas) {
+                const canvasEl = this.access.canvas.getElement();
+                const rect = canvasEl.getBoundingClientRect();
+                const sx = e.e.clientX - rect.left;
+                const sy = e.e.clientY - rect.top;
+                const zoom = this.access.canvas.getZoom();
+                const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+                const cx = (sx - vpt[4]) / zoom;
+                const cy = (sy - vpt[5]) / zoom;
+                // --- 实时更新临时选区矩形用于绘制预览 ---
+                const tempRect: { 'x': number; 'y': number; 'width': number; 'height': number; } = {
+                    'x': Math.min(marqueeStartX, cx),
+                    'y': Math.min(marqueeStartY, cy),
+                    'width': Math.abs(cx - marqueeStartX),
+                    'height': Math.abs(cy - marqueeStartY),
+                };
+                const clipped = clipRectToArtboard(tempRect);
+                // --- 绘制期间临时显示当前绘制的矩形 ---
+                if (clipped) {
+                    // --- 保持已有选区不变，仅追加临时绘制矩形用于预览 ---
+                    // --- 使用原始 marqueeRects + 临时矩形，释放时再应用组合 ---
+                    marqueeRects = [...marqueeRects.filter(r => !(r as any)._temp), Object.assign(clipped, { '_temp': true })];
+                }
+                this.access.canvas.requestRenderAll();
+                return;
+            }
+            // --- 选区模式：移动已有选区 ---
+            if (isMarqueeMoving && this.access.canvas) {
+                const dx = e.e.clientX - marqueeMoveLastX;
+                const dy = e.e.clientY - marqueeMoveLastY;
+                marqueeMoveLastX = e.e.clientX;
+                marqueeMoveLastY = e.e.clientY;
+                if (dx !== 0 || dy !== 0) {
+                    const zoom = this.access.canvas.getZoom();
+                    const cdx = dx / zoom;
+                    const cdy = dy / zoom;
+                    marqueeRects = marqueeRects.map(r => ({
+                        'x': r.x + cdx,
+                        'y': r.y + cdy,
+                        'width': r.width,
+                        'height': r.height,
+                    }));
+                    this.access.canvas.requestRenderAll();
+                }
+                return;
+            }
             // --- 缩放模式：左移缩小、右移放大，以按下位置为锁定点 ---
             if (isZoomDragging && this.access.canvas) {
                 const dx = e.e.clientX - zoomDragStartX;
@@ -613,6 +1007,33 @@ export default class extends clickgo.control.AbstractControl {
         this.access.canvas.on('mouse:up', () => {
             // --- 兜底恢复控制点样式 ---
             updateSelectionStyle(false);
+            // --- 选区绘制结束：将临时矩形应用组合模式 ---
+            if (isMarqueeDrawing && this.access.canvas) {
+                isMarqueeDrawing = false;
+                // --- 找到临时矩形 ---
+                const tempIdx = marqueeRects.findIndex(r => (r as any)._temp);
+                if (tempIdx >= 0) {
+                    const tempRect = { ...marqueeRects[tempIdx] };
+                    delete (tempRect as any)._temp;
+                    // --- 移除临时矩形，恢复原始列表 ---
+                    const origRects = marqueeRects.filter(r => !(r as any)._temp);
+                    marqueeRects = origRects;
+                    // --- 应用组合模式 ---
+                    if (tempRect.width > 0 && tempRect.height > 0) {
+                        applyMarqueeCompose(tempRect);
+                    }
+                }
+                syncMarquee();
+                this.access.canvas.requestRenderAll();
+                return;
+            }
+            // --- 选区移动结束 ---
+            if (isMarqueeMoving && this.access.canvas) {
+                isMarqueeMoving = false;
+                syncMarquee();
+                this.access.canvas.requestRenderAll();
+                return;
+            }
             // --- 缩放模式结束 ---
             if (isZoomDragging) {
                 isZoomDragging = false;
@@ -671,6 +1092,35 @@ export default class extends clickgo.control.AbstractControl {
         // --- 初始化完成，应用初始模式与画板 ---
         applyMode();
         applyArtboard();
+
+        // --- 将闭包内的选区操作函数暴露给实例方法 ---
+        this._clearMarquee = (): void => {
+            isMarqueeDrawing = false;
+            marqueeRects = [];
+            syncMarquee();
+            if (this.access.canvas) {
+                // --- 选区虚线绘制于上层 canvas（contextTop），renderAll 仅清除下层，需显式清除上层 ---
+                const ctxTop = (this.access.canvas as any).contextTop as CanvasRenderingContext2D | undefined;
+                if (ctxTop) {
+                    ctxTop.clearRect(0, 0, ctxTop.canvas.width, ctxTop.canvas.height);
+                }
+                this.access.canvas.renderAll();
+            }
+        };
+        this._setMarqueeRect = (x: number, y: number, w: number, h: number): void => {
+            isMarqueeDrawing = false;
+            marqueeRects = [{ 'x': x, 'y': y, 'width': w, 'height': h }];
+            syncMarquee();
+            if (this.access.canvas) {
+                // --- 清除上层 canvas 旧选区，新选区将在下次 renderAll 的 after:render 中重绘 ---
+                const ctxTop = (this.access.canvas as any).contextTop as CanvasRenderingContext2D | undefined;
+                if (ctxTop) {
+                    ctxTop.clearRect(0, 0, ctxTop.canvas.width, ctxTop.canvas.height);
+                }
+                this.access.canvas.renderAll();
+            }
+        };
+
         this.isLoading = false;
         this.emit('init', this.access.canvas);
     }
@@ -771,6 +1221,80 @@ export default class extends clickgo.control.AbstractControl {
         const cw = this.access.canvas.getWidth();
         const ch = this.access.canvas.getHeight();
         this.zoomTo(this.access.canvas.getZoom() / 1.25, cw / 2, ch / 2);
+    }
+
+    /**
+     * --- 供用户调用，清除所有选区 ---
+     */
+    public clearMarquee(): void {
+        this._clearMarquee?.();
+    }
+
+    /**
+     * --- 供用户调用，获取选区的外接矩形（canvas 内部坐标），无选区时返回 null ---
+     * @returns 外接矩形或 null
+     */
+    public getMarqueeRect(): { 'x': number; 'y': number; 'width': number; 'height': number; } | null {
+        if (this.access.marquee.length === 0) {
+            return null;
+        }
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        for (const r of this.access.marquee) {
+            if (r.x < minX) {
+                minX = r.x;
+            }
+            if (r.y < minY) {
+                minY = r.y;
+            }
+            if (r.x + r.width > maxX) {
+                maxX = r.x + r.width;
+            }
+            if (r.y + r.height > maxY) {
+                maxY = r.y + r.height;
+            }
+        }
+        return { 'x': minX, 'y': minY, 'width': maxX - minX, 'height': maxY - minY };
+    }
+
+    /**
+     * --- 供用户调用，获取与选区有交集的 fabric 对象列表 ---
+     * @returns fabric 对象数组
+     */
+    public getMarqueeObjects(): fabric.FabricObject[] {
+        if (!this.access.canvas || this.access.marquee.length === 0) {
+            return [];
+        }
+        const result: fabric.FabricObject[] = [];
+        this.access.canvas.forEachObject(obj => {
+            const name = ((obj as unknown as { 'name'?: string; }).name) ?? '';
+            if (name === '__cg_artboard__') {
+                return;
+            }
+            const bound = obj.getBoundingRect();
+            // --- 检查对象包围盒是否与任一选区矩形有交集 ---
+            for (const r of this.access.marquee) {
+                if (bound.left < r.x + r.width && bound.left + bound.width > r.x &&
+                    bound.top < r.y + r.height && bound.top + bound.height > r.y) {
+                    result.push(obj);
+                    return;
+                }
+            }
+        });
+        return result;
+    }
+
+    /**
+     * --- 供用户调用，以编程方式设置选区矩形（canvas 内部坐标） ---
+     * @param x 矩形左上角 x
+     * @param y 矩形左上角 y
+     * @param width 矩形宽度
+     * @param height 矩形高度
+     */
+    public setMarqueeRect(x: number, y: number, width: number, height: number): void {
+        this._setMarqueeRect?.(x, y, width, height);
     }
 
     public async onUnmounted(): Promise<void> {

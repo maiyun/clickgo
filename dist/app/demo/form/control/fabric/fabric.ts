@@ -26,6 +26,12 @@ export default class extends clickgo.form.AbstractForm {
 
     public mode: string[] = [''];
 
+    /** --- 选区组合模式 --- */
+    public marqueeCompose: string[] = ['replace'];
+
+    /** --- 选区信息文本 --- */
+    public marqueeInfo: string = '(none)';
+
     /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
     public layer: string = '';
 
@@ -82,6 +88,21 @@ export default class extends clickgo.form.AbstractForm {
 
     public onZoomOut(): void {
         (this.refs['fabric'] as any).zoomOut();
+    }
+
+    public onClearMarquee(): void {
+        (this.refs['fabric'] as any).clearMarquee();
+    }
+
+    public onMarqueeChange(): void {
+        const rect = (this.refs['fabric'] as any).getMarqueeRect();
+        if (rect) {
+            const objs = (this.refs['fabric'] as any).getMarqueeObjects();
+            this.marqueeInfo = `(${Math.round(rect.x)}, ${Math.round(rect.y)}) ${Math.round(rect.width)}×${Math.round(rect.height)}, ${objs.length} objs`;
+        }
+        else {
+            this.marqueeInfo = '(none)';
+        }
     }
 
 }

@@ -1,6 +1,6 @@
-<form title="fabric" width="600" height="630">
+<form title="fabric" width="600" height="730">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
-        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" ref="fabric"></fabric>
+        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" @marqueechange="onMarqueeChange" ref="fabric"></fabric>
         <!-- 当前激活图层显示 -->
         <layout gutter="10" align-v="center">
             <label>Active layer:</label>
@@ -25,11 +25,11 @@
             <switch v-model="disabled"></switch>
             <label style="flex: 1;">disabled</label>
         </layout>
-        <!-- 画板 / 平移 / 缩放模式开关 -->
+        <!-- 画板 / 模式选择 -->
         <layout gutter="10" align-v="center">
             <switch v-model="artboard"></switch>
             <label style="flex: 1;">artboard mode (400 × 300)</label>
-            <select v-model="mode" :data="[{'label': 'normal', 'value': ''}, {'label': 'pan', 'value': 'pan'}, {'label': 'zoom', 'value': 'zoom'}]" style="flex: 1;"></select>
+            <select v-model="mode" :data="[{'label': 'normal', 'value': ''}, {'label': 'pan', 'value': 'pan'}, {'label': 'zoom', 'value': 'zoom'}, {'label': 'marquee', 'value': 'marquee'}]" style="flex: 1;"></select>
         </layout>
         <!-- 画板外背景色（仅画板模式下有效） -->
         <layout gutter="10" align-v="center">
@@ -44,6 +44,17 @@
             <button @click="onZoomFit()" style="flex: 1;">fit screen</button>
             <button @click="onZoomIn()" style="flex: 1;">zoom in</button>
             <button @click="onZoomOut()" style="flex: 1;">zoom out</button>
+        </layout>
+        <!-- 选区操作 -->
+        <layout gutter="10" align-v="center">
+            <label>compose:</label>
+            <select v-model="marqueeCompose" :data="[{'label': 'replace', 'value': 'replace'}, {'label': 'add', 'value': 'add'}, {'label': 'subtract', 'value': 'subtract'}, {'label': 'intersect', 'value': 'intersect'}]" style="flex: 1;"></select>
+            <button @click="onClearMarquee()" style="flex: 1;">clear marquee</button>
+        </layout>
+        <!-- 选区信息 -->
+        <layout gutter="10" align-v="center">
+            <label>Marquee:</label>
+            <label style="flex: 1;">{{marqueeInfo}}</label>
         </layout>
     </layout>
 </form>

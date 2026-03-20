@@ -13,6 +13,10 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 画板内填充色，空字符串为透明 --- */
     artboardFill = '#ffffff';
     mode = [''];
+    /** --- 选区组合模式 --- */
+    marqueeCompose = ['replace'];
+    /** --- 选区信息文本 --- */
+    marqueeInfo = '(none)';
     /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
     layer = '';
     onInit(canvas) {
@@ -60,5 +64,18 @@ export default class extends clickgo.form.AbstractForm {
     }
     onZoomOut() {
         this.refs['fabric'].zoomOut();
+    }
+    onClearMarquee() {
+        this.refs['fabric'].clearMarquee();
+    }
+    onMarqueeChange() {
+        const rect = this.refs['fabric'].getMarqueeRect();
+        if (rect) {
+            const objs = this.refs['fabric'].getMarqueeObjects();
+            this.marqueeInfo = `(${Math.round(rect.x)}, ${Math.round(rect.y)}) ${Math.round(rect.width)}×${Math.round(rect.height)}, ${objs.length} objs`;
+        }
+        else {
+            this.marqueeInfo = '(none)';
+        }
     }
 }
