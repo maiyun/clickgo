@@ -415,15 +415,15 @@ export default class extends clickgo.control.AbstractControl {
         let isPanDragging = false;
         let panLastX = 0;
         let panLastY = 0;
-        /** --- 缩放模式（zoom=true）拖拽状态 --- */
+        /** --- 缩放模式（zoom）拖拽状态 --- */
         let isZoomDragging = false;
         /** --- zoom 拖拽起始 X，用于计算拖拽距离 --- */
         let zoomDragStartX = 0;
         /** --- zoom 拖拽起始时画布的当前缩放倍数 --- */
         let zoomDragStartZoom = 1;
-        /** --- zoom 拖拽起始点在 canvas 中的坐标（用于锁定点缩放） --- */
-        let zoomDragOriginX = 0;
-        let zoomDragOriginY = 0;
+        /** --- zoom 拖拽起始点的屏幕坐标（相对于 canvas 元素），用于传入 fabric 原生 zoomToPoint --- */
+        let zoomDragScreenX = 0;
+        let zoomDragScreenY = 0;
 
         // --- 捕获空白区域按下：selector=true 时不接管（交由 fabric 框选）；selector=false 时才处理保持或 PS 拖拽 ---
         this.access.canvas.on('mouse:down:before', (e: any) => {
@@ -439,14 +439,11 @@ export default class extends clickgo.control.AbstractControl {
                 isZoomDragging = true;
                 zoomDragStartX = e.e.clientX;
                 zoomDragStartZoom = this.access.canvas!.getZoom();
-                // --- 将点击点转换为 canvas 内部坐标（不受当前 viewport 影响） ---
+                // --- 记录屏幕坐标（相对于 canvas 元素），传入 fabric 原生 zoomToPoint ---
                 const canvasEl = this.access.canvas!.getElement();
                 const rect = canvasEl.getBoundingClientRect();
-                const clientX = e.e.clientX - rect.left;
-                const clientY = e.e.clientY - rect.top;
-                const vpt = this.access.canvas!.viewportTransform ?? [1, 0, 0, 1, 0, 0];
-                zoomDragOriginX = (clientX - vpt[4]) / zoomDragStartZoom;
-                zoomDragOriginY = (clientY - vpt[5]) / zoomDragStartZoom;
+                zoomDragScreenX = e.e.clientX - rect.left;
+                zoomDragScreenY = e.e.clientY - rect.top;
                 return;
             }
             // --- pan 模式：任意位置按下都进入画布平移 ---
@@ -575,7 +572,7 @@ export default class extends clickgo.control.AbstractControl {
                 const dx = e.e.clientX - zoomDragStartX;
                 // --- 每 100px 对应 1 倍变化，采用指数曲线保证缩放手感平滑 ---
                 const newZoom = zoomDragStartZoom * Math.pow(2, dx / 100);
-                this.zoomTo(newZoom, zoomDragOriginX, zoomDragOriginY);
+                this.zoomTo(newZoom, zoomDragScreenX, zoomDragScreenY);
                 return;
             }
             // --- 画布平移模式 ---
@@ -679,28 +676,20 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /**
-     * --- 供用户调用，将画布缩放到指定倍数，以指定点为锁定点（面对 canvas 的内部坐标） ---
+     * --- 供用户调用，将画布缩放到指定倍数，以指定屏幕坐标点为锁定点（fabric 原生 zoomToPoint） ---
      * @param zoom 目标缩放倍数
-     * @param originX 锁定点在 canvas 内部坐标系的 x，默认 0
-     * @param originY 锁定点在 canvas 内部坐标系的 y，默认 0
+     * @param screenX 锁定点在 canvas 元素内的屏幕 x 坐标，默认 0
+     * @param screenY 锁定点在 canvas 元素内的屏幕 y 坐标，默认 0
      */
-    public zoomTo(zoom: number, originX: number = 0, originY: number = 0): void {
+    public zoomTo(zoom: number, screenX: number = 0, screenY: number = 0): void {
         if (!this.access.canvas) {
             return;
         }
         const zoomMin = parseFloat(String(this.props.zoomMin)) || 0.01;
         const zoomMax = parseFloat(String(this.props.zoomMax)) || 100;
         const newZoom = Math.min(zoomMax, Math.max(zoomMin, zoom));
-        const oldZoom = this.access.canvas.getZoom();
-        // --- 必须复制 viewportTransform，直接修改引用会与 fabric 内部 setZoom 冲突 ---
-        const vpt = [...this.access.canvas.viewportTransform] as fabric.TMat2D;
-        vpt[0] = newZoom;
-        vpt[3] = newZoom;
-        // --- 保持 originX/originY 在屏幕上不动，根据缩放差值修正平移量 ---
-        vpt[4] = originX * (oldZoom - newZoom) + vpt[4];
-        vpt[5] = originY * (oldZoom - newZoom) + vpt[5];
-        this.access.canvas.setViewportTransform(vpt);
-        this.access.canvas.requestRenderAll();
+        const fabric = clickgo.modules.fabric;
+        this.access.canvas.zoomToPoint(new fabric.Point(screenX, screenY), newZoom);
     }
 
     /**
@@ -769,11 +758,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         const cw = this.access.canvas.getWidth();
         const ch = this.access.canvas.getHeight();
-        const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
-        // --- 以画布中心为锁定点 ---
-        const originX = (cw / 2 - vpt[4]) / this.access.canvas.getZoom();
-        const originY = (ch / 2 - vpt[5]) / this.access.canvas.getZoom();
-        this.zoomTo(this.access.canvas.getZoom() * 1.25, originX, originY);
+        this.zoomTo(this.access.canvas.getZoom() * 1.25, cw / 2, ch / 2);
     }
 
     /**
@@ -785,11 +770,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         const cw = this.access.canvas.getWidth();
         const ch = this.access.canvas.getHeight();
-        const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
-        // --- 以画布中心为锁定点 ---
-        const originX = (cw / 2 - vpt[4]) / this.access.canvas.getZoom();
-        const originY = (ch / 2 - vpt[5]) / this.access.canvas.getZoom();
-        this.zoomTo(this.access.canvas.getZoom() / 1.25, originX, originY);
+        this.zoomTo(this.access.canvas.getZoom() / 1.25, cw / 2, ch / 2);
     }
 
     public async onUnmounted(): Promise<void> {
