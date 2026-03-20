@@ -23,12 +23,27 @@ export default class extends clickgo.control.AbstractControl {
         'layer': string;
         /** --- 是否显示框选矩形 --- */
         'selector': boolean | string;
+        /** --- 画板宽度（像素），0 = 不启用画板，canvas 本身即全部展示区域 --- */
+        'artboardWidth': number | string;
+        /** --- 画板高度（像素），0 = 不启用画板 --- */
+        'artboardHeight': number | string;
+        /** --- 画板外背景色，支持任意 CSS 颜色字符串，空字符串表示透明 --- */
+        'artboardBg': string;
+        /** --- 画板内填充色，支持任意 CSS 颜色字符串，空字符串表示透明（透过画板看到外部背景色） --- */
+        'artboardFill': string;
+        /** --- 是否开启画布平移模式（类似 PS 空格键），开启时所有对象不响应事件，仅可拖动整个画布 --- */
+        'pan': boolean | string;
     } = {
             'disabled': false,
             'autoLayer': true,
             'transform': true,
             'layer': '',
             'selector': true,
+            'artboardWidth': 0,
+            'artboardHeight': 0,
+            'artboardBg': '#7a7a7a',
+            'artboardFill': '#ffffff',
+            'pan': false,
         };
 
     public notInit = false;
@@ -38,8 +53,11 @@ export default class extends clickgo.control.AbstractControl {
     public access: {
         /** --- fabric Canvas 对象 --- */
         'canvas': fabric.Canvas | undefined;
+        /** --- 当前画板在 canvas 中的位置与尺寸，未启用画板时为 null --- */
+        'artboard': { 'left': number; 'top': number; 'width': number; 'height': number; } | null;
     } = {
             'canvas': undefined,
+            'artboard': null,
         };
 
     public async onMounted(): Promise<void> {
@@ -61,6 +79,15 @@ export default class extends clickgo.control.AbstractControl {
             'height': ch,
         });
 
+        // --- fabric 会在 canvas 外层包裹一个 div(.canvas-container) 并设置 position:relative 内联样式 ---
+        // --- 该 div 若留在 flex 流中，其固定宽度会阻止父容器收缩；改为 absolute 脱离 flex 流 ---
+        const canvasContainer = (this.refs.content as HTMLElement).parentElement;
+        if (canvasContainer) {
+            canvasContainer.style.position = 'absolute';
+            canvasContainer.style.top = '0';
+            canvasContainer.style.left = '0';
+        }
+
         const borderColor = getComputedStyle(this.element).getPropertyValue('--cg').trim();
         const cornerColor = getComputedStyle(this.element).getPropertyValue('--g-plain-background').trim();
 
@@ -71,6 +98,9 @@ export default class extends clickgo.control.AbstractControl {
 
         /** --- 因为 fabric.js v7 类型定义中 FabricObject 实例的 name 字段不在直接类型上，需转换访问 --- */
         const getObjName = (obj: fabric.FabricObject): string => ((obj as unknown as { 'name'?: string; }).name) ?? '';
+
+        /** --- 内部画板矩形的保留 name，过滤所有对外逻辑 --- */
+        const ARTBOARD_NAME = '__cg_artboard__';
 
         /**
          * --- 构建控制点和边框样式属性，用于统一应用到 fabric 对象 ---
@@ -109,6 +139,10 @@ export default class extends clickgo.control.AbstractControl {
             const activeObject = this.access.canvas.getActiveObject();
             const styleProps = buildStyleProps(isDragging, showControls);
             this.access.canvas.forEachObject(obj => {
+                // --- 跳过内部画板矩形 ---
+                if (getObjName(obj) === ARTBOARD_NAME) {
+                    return;
+                }
                 obj.set(styleProps);
             });
             // --- ActiveSelection 为虚拟对象不计入 forEachObject，需单独应用样式 ---
@@ -130,6 +164,15 @@ export default class extends clickgo.control.AbstractControl {
 
             // --- 按 autoLayer 更新所有对象的可交互状态 ---
             this.access.canvas.forEachObject(obj => {
+                // --- 跳过内部画板矩形，始终保持不可选中/不响应事件 ---
+                if (getObjName(obj) === ARTBOARD_NAME) {
+                    return;
+                }
+                // --- pan 模式下所有对象均不可交互 ---
+                if (this.propBoolean('pan')) {
+                    obj.set({ 'evented': false, 'selectable': false });
+                    return;
+                }
                 if (isAutoLayer) {
                     // --- 自动切换图层：所有对象均可被点选 ---
                     obj.set({
@@ -190,6 +233,167 @@ export default class extends clickgo.control.AbstractControl {
             this.access.canvas.selection = this.propBoolean('selector');
         });
 
+        /**
+         * --- 为指定用户对象设置画板裁剪，对象内容被裁剪到画板范围内，控制点不受影响 ---
+         * @param obj 要设置裁剪的对象
+         * @param ab 当前画板信息
+         */
+        const applyObjClip = (obj: fabric.FabricObject, ab: { 'left': number; 'top': number; 'width': number; 'height': number; }): void => {
+            obj.clipPath = new fabric.Rect({
+                'left': ab.left,
+                'top': ab.top,
+                'width': ab.width,
+                'height': ab.height,
+                /** --- originX/originY 须显式设为 left/top，fabric v7 默认为 center --- */
+                'originX': 'left',
+                'originY': 'top',
+                /** --- absolutePositioned=true 表示 clipPath 使用画布绝对坐标，不受对象自身变换影响 --- */
+                'absolutePositioned': true,
+            });
+        };
+
+        /**
+         * --- 同步画板矩形：居中显示画板区域，外部背景；为所有用户对象设置 clipPath 裁剪至画板内 ---
+         */
+        /** --- before:render 监听器引用，用于在画板外部绘制背景色（在对象和控制点之前绘制，不覆盖任何内容） --- */
+        let beforeRenderHandler: ((e: any) => void) | null = null;
+        const applyArtboard = (): void => {
+            if (!this.access.canvas) {
+                return;
+            }
+            // --- 移除旧的 before:render 监听器 ---
+            if (beforeRenderHandler) {
+                this.access.canvas.off('before:render', beforeRenderHandler);
+                beforeRenderHandler = null;
+            }
+            const aw = parseFloat(String(this.props.artboardWidth)) || 0;
+            const ah = parseFloat(String(this.props.artboardHeight)) || 0;
+            // --- 移除旧画板矩形（若存在）---
+            const oldArtboard = this.access.canvas.getObjects().find(o => getObjName(o) === ARTBOARD_NAME);
+            if (oldArtboard) {
+                this.access.canvas.remove(oldArtboard);
+            }
+            if (!aw || !ah) {
+                // --- 关闭画板：清除所有用户对象的 clipPath ---
+                this.access.canvas.forEachObject(obj => {
+                    if (getObjName(obj) === ARTBOARD_NAME) {
+                        return;
+                    }
+                    /** --- fabric v7 类型中 clipPath 不含 undefined，用 unknown 中转 --- */
+                    (obj as unknown as { 'clipPath': undefined; }).clipPath = undefined;
+                });
+                this.access.canvas.backgroundColor = '';
+                this.access.artboard = null;
+                this.access.canvas.requestRenderAll();
+                return;
+            }
+            const cw = this.access.canvas.getWidth();
+            const ch = this.access.canvas.getHeight();
+            const left = Math.round((cw - aw) / 2);
+            const top = Math.round((ch - ah) / 2);
+            this.access.artboard = {
+                'left': left,
+                'top': top,
+                'width': aw,
+                'height': ah,
+            };
+            // --- 为所有现有用户对象应用画板 clipPath ---
+            this.access.canvas.forEachObject(obj => {
+                if (getObjName(obj) === ARTBOARD_NAME) {
+                    return;
+                }
+                applyObjClip(obj, this.access.artboard!);
+            });
+            // --- 创建画板矩形底层背景 ---
+            const artboardRect = new fabric.Rect({
+                'left': left,
+                'top': top,
+                'width': aw,
+                'height': ah,
+                /** --- originX/originY 须显式设为 left/top，fabric v7 默认为 center --- */
+                'originX': 'left',
+                'originY': 'top',
+                /** --- 无描边，避免 strokeWidth 影响边界计算 --- */
+                'strokeWidth': 0,
+                /** --- artboardFill 为空字符串时使用 null 表示完全透明 --- */
+                'fill': (this.props.artboardFill || null) as any,
+                'selectable': false,
+                'evented': false,
+                'hasControls': false,
+                'hasBorders': false,
+                'lockMovementX': true,
+                'lockMovementY': true,
+            });
+            (artboardRect as unknown as { 'name': string; }).name = ARTBOARD_NAME;
+            this.access.canvas.add(artboardRect);
+            /** --- fabric.js v7 Canvas.sendObjectToBack 方法将画板压到最底层 --- */
+            (this.access.canvas as any).sendObjectToBack(artboardRect);
+            // --- 画板外背景色通过 before:render 绘制，不影响对象和控制点的渲染 ---
+            // --- before:render 在 clearContext 之后、renderObjects 之前触发，绝不覆盖 controls ---
+            beforeRenderHandler = (e: any): void => {
+                const bg = this.props.artboardBg;
+                if (!this.access.artboard || !bg) {
+                    return;
+                }
+                const ab = this.access.artboard;
+                const zoom = this.access.canvas!.getZoom();
+                const vpt = this.access.canvas!.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+                const canvasWidth = this.access.canvas!.getWidth();
+                const canvasHeight = this.access.canvas!.getHeight();
+                // --- 画板在当前 viewport 下的屏幕坐标 ---
+                const sx = ab.left * zoom + vpt[4];
+                const sy = ab.top * zoom + vpt[5];
+                const sw = ab.width * zoom;
+                const sh = ab.height * zoom;
+                const ctx: CanvasRenderingContext2D = e.ctx;
+                ctx.save();
+                ctx.fillStyle = bg;
+                // --- evenodd 裁剪区域：外矩形减去画板区域，只绘制 4 个外周区域 ---
+                ctx.beginPath();
+                ctx.rect(0, 0, canvasWidth, canvasHeight);
+                ctx.rect(sx, sy, sw, sh);
+                ctx.clip('evenodd');
+                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                ctx.restore();
+            };
+            this.access.canvas.on('before:render', beforeRenderHandler);
+            // --- canvas 自身背景设为透明，让画板内部区域可透过至 HTML 层 ---
+            this.access.canvas.backgroundColor = '';
+            this.access.canvas.requestRenderAll();
+        };
+
+        // --- 监听画板尺寸变更 ---
+        this.watch('artboardWidth', () => {
+            applyArtboard();
+        });
+        this.watch('artboardHeight', () => {
+            applyArtboard();
+        });
+        this.watch('artboardBg', () => {
+            if (!this.access.canvas || !this.access.artboard) {
+                return;
+            }
+            // --- before:render 处理程序动态读取 artboardBg，此处只需触发重绘 ---
+            this.access.canvas.requestRenderAll();
+        });
+        this.watch('artboardFill', () => {
+            if (!this.access.canvas || !this.access.artboard) {
+                return;
+            }
+            const artboardRect = this.access.canvas.getObjects().find(o => getObjName(o) === ARTBOARD_NAME);
+            if (artboardRect) {
+                artboardRect.set('fill', (this.props.artboardFill || null) as any);
+                /** --- fabric v7 必须手动标记 dirty 才能触发重绘 --- */
+                artboardRect.dirty = true;
+                this.access.canvas.requestRenderAll();
+            }
+        });
+
+        // --- 监听 pan prop 变更 ---
+        this.watch('pan', () => {
+            applyMode();
+        });
+
         // --- PS 模式拖拽：transform=false 时从画布任意区域拖动激活图层 ---
         let isPsDragging = false;
         let psDragHasMoved = false;
@@ -201,6 +405,10 @@ export default class extends clickgo.control.AbstractControl {
         let isTransformKeep = false;
         /** --- transform=true 时暂存的激活对象 --- */
         let transformKeepObj: fabric.FabricObject | null = null;
+        /** --- 画布平移模式（pan=true）是否正在拖拽 --- */
+        let isPanDragging = false;
+        let panLastX = 0;
+        let panLastY = 0;
 
         // --- 捕获空白区域按下：selector=true 时不接管（交由 fabric 框选）；selector=false 时才处理保持或 PS 拖拽 ---
         this.access.canvas.on('mouse:down:before', (e: any) => {
@@ -209,6 +417,14 @@ export default class extends clickgo.control.AbstractControl {
             psDragObj = null;
             isTransformKeep = false;
             transformKeepObj = null;
+            isPanDragging = false;
+            // --- pan 模式：任意位置按下都进入画布平移 ---
+            if (this.propBoolean('pan')) {
+                isPanDragging = true;
+                panLastX = e.e.clientX;
+                panLastY = e.e.clientY;
+                return;
+            }
             // --- 点击了对象或 selector=true 时交由 fabric 自然处理（保留框选能力）---
             if (e.target || this.propBoolean('selector')) {
                 return;
@@ -232,8 +448,15 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
 
-        // --- 新对象加入时同步当前模式状态 ---
-        this.access.canvas.on('object:added', () => {
+        // --- 新对象加入时同步当前模式状态（跳过内部画板矩形，避免干扰）---
+        this.access.canvas.on('object:added', (e: any) => {
+            if (getObjName(e.target) === ARTBOARD_NAME) {
+                return;
+            }
+            // --- 若画板已激活则为新对象自动应用裁剪 ---
+            if (this.access.artboard) {
+                applyObjClip(e.target, this.access.artboard);
+            }
             applyMode();
         });
 
@@ -330,8 +553,23 @@ export default class extends clickgo.control.AbstractControl {
             updateSelectionStyle(false);
         });
 
-        // --- PS 拖拽移动：在画布上跟踪鼠标位移并平移激活图层 ---
+        // --- PS 拖拽移动：平移激活图层；画布平移：移动 viewport ---
         this.access.canvas.on('mouse:move', (e: any) => {
+            // --- 画布平移模式 ---
+            if (isPanDragging && this.access.canvas) {
+                const dx = e.e.clientX - panLastX;
+                const dy = e.e.clientY - panLastY;
+                panLastX = e.e.clientX;
+                panLastY = e.e.clientY;
+                if (dx !== 0 || dy !== 0) {
+                    const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+                    vpt[4] += dx;
+                    vpt[5] += dy;
+                    this.access.canvas.setViewportTransform(vpt);
+                    this.access.canvas.requestRenderAll();
+                }
+                return;
+            }
             if (!isPsDragging || !psDragObj || !this.access.canvas) {
                 return;
             }
@@ -355,6 +593,11 @@ export default class extends clickgo.control.AbstractControl {
         this.access.canvas.on('mouse:up', () => {
             // --- 兜底恢复控制点样式 ---
             updateSelectionStyle(false);
+            // --- 画布平移结束 ---
+            if (isPanDragging) {
+                isPanDragging = false;
+                return;
+            }
             // --- transform 保持模式：恢复框选开关，清除暂存 ---
             if (isTransformKeep) {
                 isTransformKeep = false;
@@ -396,10 +639,13 @@ export default class extends clickgo.control.AbstractControl {
                 'width': this.element.clientWidth,
                 'height': this.element.clientHeight,
             });
+            // --- 画布尺寸变化时不重新居中画板，避免已有对象出现视觉偏移 ---
+            // --- 画板居中仅在 artboardWidth/artboardHeight prop 变更时触发 ---
         }, true);
 
-        // --- 初始化完成，应用初始模式 ---
+        // --- 初始化完成，应用初始模式与画板 ---
         applyMode();
+        applyArtboard();
         this.isLoading = false;
         this.emit('init', this.access.canvas);
     }

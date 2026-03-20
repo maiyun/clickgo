@@ -32,6 +32,36 @@
 
 是否显示框选矩形（拖拽空白区域来多选对象的虚线选框），默认为 `true`。
 
+#### pan
+
+`boolean` | `string`
+
+是否开启画布平移模式（类似 PS 按住空格键），默认为 `false`。开启后所有对象不响应事件，拖拽任意位置将平移整个画布 viewport，与画板居中/对象操作模式不冲突，可随时切换回来。
+
+#### artboardWidth
+
+`number` | `string`
+
+画板宽度（像素），默认为 `0`（不启用画板）。与 `artboardHeight` 同时设置时生效：画布扩展为铺满整个控件，中间显示指定尺寸的白色画板，四周为灰色背景。此模式下控制点与拖拽响应在整个控件范围内有效，对象移到画板外时控制点依然可见。
+
+#### artboardHeight
+
+`number` | `string`
+
+画板高度（像素），默认为 `0`（不启用画板）。
+
+#### artboardBg
+
+`string`
+
+画板外背景色，支持任意 CSS 颜色字符串，默认为 `#7a7a7a`。空字符串表示透明，可以透过到 HTML 背景层。仅在启用画板模式（`artboardWidth` 和 `artboardHeight` 同时非 0）时有效。
+
+#### artboardFill
+
+`string`
+
+画板内填充色，支持任意 CSS 颜色字符串，默认为 `#ffffff`（白色）。空字符串表示画板内容透明，可以透过到 HTML 背景层。仅在启用画板模式时有效。
+
 ### 事件
 
 #### init
@@ -45,6 +75,26 @@
 `(event: { detail: { prev: string; next: string } }) => void`
 
 激活图层变更时触发（仅 `autoLayer` 为 `true` 时）。`event.detail.prev` 为变更前的图层 name，`event.detail.next` 为变更后的图层 name，取消选中时为空字符串。多选状态下 `event.detail.next` 同样为空字符串。
+
+### 属性
+
+#### access.canvas
+
+`fabric.Canvas | undefined`
+
+fabric.js Canvas 对象，在 `init` 事件触发后可用。可通过此对象调用所有 fabric.js 原生 API，如添加/移除对象、获取图层列表、设置视图变换等。
+
+#### access.artboard
+
+`{ left: number; top: number; width: number; height: number; } | null`
+
+当前画板在 canvas 中的位置与尺寸。启用画板模式时（`artboardWidth` 和 `artboardHeight` 同时非 0）此值为对象，包含：
+- `left` — 画板左上角在 canvas 中的 x 坐标
+- `top` — 画板左上角在 canvas 中的 y 坐标
+- `width` — 画板宽度
+- `height` — 画板高度
+
+未启用画板模式时为 `null`。用户可据此计算对象相对于画板的坐标（如 `objLeft - access.artboard.left`）。
 
 ### 方法
 
@@ -72,4 +122,40 @@
 
 <!-- 关闭框选矩形 -->
 <fabric :selector="false" @init="init"></fabric>
+
+<!-- 启用画板模式：控件铺满容器，中间显示 800×600 的白色画板，四周灰色 -->
+<fabric :artboard-width="800" :artboard-height="600" @init="init"></fabric>
+
+<!-- 自定义画板模式颜色 -->
+<fabric :artboard-width="800" :artboard-height="600" :artboard-bg="'#cccccc'" :artboard-fill="'#eeeeee'" @init="init"></fabric>
+
+<!-- 透明画板：透过到背景 -->
+<fabric :artboard-width="800" :artboard-height="600" :artboard-bg="''" :artboard-fill="''" @init="init"></fabric>
 ```
+
+**在 TypeScript 中使用画板和 canvas API**：
+```typescript
+public init(canvas: fabric.Canvas): void {
+    // canvas 为 fabric.Canvas 对象
+    // 可调用任何 fabric.js 原生 API
+    canvas.add(new fabric.Circle({
+        left: 100,
+        top: 100,
+        radius: 50,
+        fill: '#ff0000'
+    }));
+    
+    // 访问画板位置信息
+    if (this.access.artboard) {
+        console.log(`画板位置: (${this.access.artboard.left}, ${this.access.artboard.top})`);
+        console.log(`画板尺寸: ${this.access.artboard.width} × ${this.access.artboard.height}`);
+        
+        // 计算对象相对于画板的坐标
+        const allObjs = canvas.getObjects();
+        allObjs.forEach(obj => {
+            const relX = obj.left - this.access.artboard.left;
+            const relY = obj.top - this.access.artboard.top;
+            console.log(`对象在画板中的相对位置: (${relX}, ${relY})`);
+        });
+    }
+}

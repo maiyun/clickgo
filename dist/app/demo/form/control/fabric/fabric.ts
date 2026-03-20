@@ -16,6 +16,16 @@ export default class extends clickgo.form.AbstractForm {
 
     public selector: boolean = true;
 
+    public artboard: boolean = false;
+
+    /** --- 画板外背景色，空字符串为透明 --- */
+    public artboardBg: string = '#7a7a7a';
+
+    /** --- 画板内填充色，空字符串为透明 --- */
+    public artboardFill: string = '#ffffff';
+
+    public pan: boolean = false;
+
     /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
     public layer: string = '';
 
@@ -29,8 +39,8 @@ export default class extends clickgo.form.AbstractForm {
         // --- 红色矩形图层 ---
         const rect = new fabric.Rect({
             'name': 'rect',
-            'left': 40,
-            'top': 60,
+            'left': 110,
+            'top': 55,
             'fill': '#e74c3c',
             'width': 150,
             'height': 110,
@@ -39,20 +49,20 @@ export default class extends clickgo.form.AbstractForm {
         // --- 绿色圆形图层 ---
         const circle = new fabric.Circle({
             'name': 'circle',
-            'radius': 65,
+            'radius': 60,
             'fill': '#2ecc71',
-            'left': 160,
+            'left': 200,
             'top': 110,
         });
 
         // --- 蓝色三角形图层 ---
         const triangle = new fabric.Triangle({
             'name': 'triangle',
-            'width': 150,
-            'height': 120,
+            'width': 140,
+            'height': 115,
             'fill': '#3498db',
-            'left': 290,
-            'top': 70,
+            'left': 255,
+            'top': 60,
         });
 
         this.access.canvas.add(rect, circle, triangle);
