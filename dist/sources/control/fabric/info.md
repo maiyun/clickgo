@@ -32,17 +32,11 @@
 
 是否显示框选矩形（拖拽空白区域来多选对象的虚线选框），默认为 `true`。
 
-#### pan
+#### mode
 
-`boolean` | `string`
+`''` | `'pan'` | `'zoom'`
 
-是否开启画布平移模式（类似 PS 按住空格键），默认为 `false`。开启后所有对象不响应事件，拖拽任意位置将平移整个画布 viewport，与画板居中/对象操作模式不冲突，可随时切换回来。
-
-#### zoom
-
-`boolean` | `string`
-
-是否开启缩放拖拽模式（类似 PS Z 键），默认为 `false`。开启后所有对象不响应事件，在画布任意位置按住鼠标并左右拖动即可缩放：向右拖动放大，向左拖动缩小，鼠标按下的点在缩放过程中保持位置不动（锁定点缩放）。`zoom` 与 `pan` 互斥，同时只能开启一个。
+画布交互模式，默认为 `''`（正常模式）。`'pan'` 为平移模式（类似 PS 按住空格键），开启后所有对象不响应事件，拖拽任意位置将平移整个画布 viewport。`'zoom'` 为拖拽缩放模式（类似 PS Z 键），开启后所有对象不响应事件，在画布任意位置按住鼠标并左右拖动即可缩放：向右拖动放大，向左拖动缩小，鼠标按下的点在缩放过程中保持位置不动（锁定点缩放）。
 
 #### zoomMin
 
@@ -177,8 +171,11 @@ zoomTo(zoom: number, originX?: number, originY?: number): void
 <!-- 透明画板：透过到背景 -->
 <fabric :artboard-width="800" :artboard-height="600" :artboard-bg="''" :artboard-fill="''" @init="init"></fabric>
 
-<!-- 开启缩放拖拽模式（类似 PS Z 键） -->
-<fabric :zoom="zoom" :pan="pan" @init="init"></fabric>
+<!-- 开启平移模式（类似 PS 空格键） -->
+<fabric mode="pan" @init="init"></fabric>
+
+<!-- 开启拖拽缩放模式（类似 PS Z 键） -->
+<fabric mode="zoom" @init="init"></fabric>
 ```
 
 **使用缩放功能**：

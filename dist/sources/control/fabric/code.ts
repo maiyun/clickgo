@@ -31,10 +31,8 @@ export default class extends clickgo.control.AbstractControl {
         'artboardBg': string;
         /** --- 画板内填充色，支持任意 CSS 颜色字符串，空字符串表示透明（透过画板看到外部背景色） --- */
         'artboardFill': string;
-        /** --- 是否开启画布平移模式（类似 PS 空格键），开启时所有对象不响应事件，仅可拖动整个画布 --- */
-        'pan': boolean | string;
-        /** --- 是否开启缩放模式（类似 PS Z 键），开启后点击任意位置并左右拖动可与该点为锁定点缩放画布 --- */
-        'zoom': boolean | string;
+        /** --- 画布交互模式，'' 为正常模式，'pan' 为平移模式（类似 PS 空格键），'zoom' 为拖拽缩放模式（类似 PS Z 键） --- */
+        'mode': '' | 'pan' | 'zoom';
         /** --- 画布最小缩放倍数，默认为 0.01 --- */
         'zoomMin': number | string;
         /** --- 画布最大缩放倍数，默认为 100 --- */
@@ -49,8 +47,7 @@ export default class extends clickgo.control.AbstractControl {
             'artboardHeight': 0,
             'artboardBg': '#7a7a7a',
             'artboardFill': '#ffffff',
-            'pan': false,
-            'zoom': false,
+            'mode': '',
             'zoomMin': 0.01,
             'zoomMax': 100,
         };
@@ -178,7 +175,7 @@ export default class extends clickgo.control.AbstractControl {
                     return;
                 }
                 // --- pan 模式或 zoom 模式下所有对象均不可交互 ---
-                if (this.propBoolean('pan') || this.propBoolean('zoom')) {
+                if (this.props.mode === 'pan' || this.props.mode === 'zoom') {
                     obj.set({ 'evented': false, 'selectable': false });
                     return;
                 }
@@ -398,8 +395,8 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
 
-        // --- 监听 pan prop 变更 ---
-        this.watch('pan', () => {
+        // --- 监听 mode prop 变更 ---
+        this.watch('mode', () => {
             applyMode();
         });
 
@@ -438,7 +435,7 @@ export default class extends clickgo.control.AbstractControl {
             isPanDragging = false;
             isZoomDragging = false;
             // --- zoom 模式优先与 pan 互斥：任意位置按下记录锁定点 ---
-            if (this.propBoolean('zoom')) {
+            if (this.props.mode === 'zoom') {
                 isZoomDragging = true;
                 zoomDragStartX = e.e.clientX;
                 zoomDragStartZoom = this.access.canvas!.getZoom();
@@ -453,7 +450,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             // --- pan 模式：任意位置按下都进入画布平移 ---
-            if (this.propBoolean('pan')) {
+            if (this.props.mode === 'pan') {
                 isPanDragging = true;
                 panLastX = e.e.clientX;
                 panLastY = e.e.clientY;
@@ -571,18 +568,13 @@ export default class extends clickgo.control.AbstractControl {
             updateSelectionStyle(false);
         });
 
-        // --- 监听 zoom prop 变更 ---
-        this.watch('zoom', () => {
-            applyMode();
-        });
-
         // --- PS 拖拽移动：平移激活图层；画布平移：移动 viewport；缩放模式：以锁定点缩放 ---
         this.access.canvas.on('mouse:move', (e: any) => {
             // --- 缩放模式：左移缩小、右移放大，以按下位置为锁定点 ---
             if (isZoomDragging && this.access.canvas) {
                 const dx = e.e.clientX - zoomDragStartX;
-                // --- 每 200px 对应 1 倍变化，采用指数曲线保证缩放手感平滑 ---
-                const newZoom = zoomDragStartZoom * Math.pow(2, dx / 200);
+                // --- 每 100px 对应 1 倍变化，采用指数曲线保证缩放手感平滑 ---
+                const newZoom = zoomDragStartZoom * Math.pow(2, dx / 100);
                 this.zoomTo(newZoom, zoomDragOriginX, zoomDragOriginY);
                 return;
             }

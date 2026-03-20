@@ -24,9 +24,7 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 画板内填充色，空字符串为透明 --- */
     public artboardFill: string = '#ffffff';
 
-    public pan: boolean = false;
-
-    public zoom: boolean = false;
+    public mode: string[] = [''];
 
     /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
     public layer: string = '';
