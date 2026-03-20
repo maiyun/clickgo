@@ -1068,12 +1068,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.access.canvas.fire('object:modified', { 'target': obj });
                 return;
             }
-            // --- 未移动：点击了空白区域，autoLayer=true 时取消图层选中 ---
-            // --- 图层变更事件由随后触发的 selection:cleared 统一处理，此处不重复 emit ---
-            if (this.propBoolean('autoLayer')) {
-                this.access.canvas.discardActiveObject();
-                this.access.canvas.requestRenderAll();
-            }
+            // --- 未移动：点击空白区域，不改变图层选中状态 ---
         });
 
         // --- 自适应大小 ---
