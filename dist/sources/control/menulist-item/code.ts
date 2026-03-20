@@ -77,12 +77,31 @@ export default class extends clickgo.control.AbstractControl {
         });
     }
 
-    /** --- 显示右侧的快捷键 --- */
+    /** --- 显示右侧的快捷键，解析 alt prop 中以 + 分隔的组合键 --- */
     public get skeys(): string[] {
         if (!this.props.alt) {
             return [];
         }
-        return [this.device.os === 'macos' ? '⌘' : 'Ctrl', this.props.alt];
+        const isMac = this.device.os === 'macos';
+        const parts = this.props.alt.split('+');
+        const modifierSet = new Set(['ctrl', 'alt', 'shift', 'meta']);
+        const hasModifier = parts.some(p => modifierSet.has(p.toLowerCase()));
+        if (!hasModifier) {
+            // --- 向后兼容：无修饰键时自动前置 Ctrl/⌘ ---
+            return [isMac ? '⌘' : 'Ctrl', ...parts];
+        }
+        return parts.map(part => {
+            if (!isMac) {
+                return part;
+            }
+            switch (part.toLowerCase()) {
+                case 'ctrl': return '⌘';
+                case 'alt': return '⌥';
+                case 'shift': return '⇧';
+                case 'meta': return '⌘';
+                default: return part;
+            }
+        });
     }
 
     public onBeforeUnmount(): void | Promise<void> {
