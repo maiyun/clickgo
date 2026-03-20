@@ -1,6 +1,6 @@
-<form title="fabric" width="600" height="590">
+<form title="fabric" width="600" height="630">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
-        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :pan="pan" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit"></fabric>
+        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :pan="pan" :zoom="zoom" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" ref="fabric"></fabric>
         <!-- 当前激活图层显示 -->
         <layout gutter="10" align-v="center">
             <label>Active layer:</label>
@@ -25,12 +25,14 @@
             <switch v-model="disabled"></switch>
             <label style="flex: 1;">disabled</label>
         </layout>
-        <!-- 画板 / 平移模式开关 -->
+        <!-- 画板 / 平移 / 缩放模式开关 -->
         <layout gutter="10" align-v="center">
             <switch v-model="artboard"></switch>
             <label style="flex: 1;">artboard mode (400 × 300)</label>
             <switch v-model="pan"></switch>
             <label style="flex: 1;">pan mode</label>
+            <switch v-model="zoom"></switch>
+            <label style="flex: 1;">zoom mode</label>
         </layout>
         <!-- 画板外背景色（仅画板模式下有效） -->
         <layout gutter="10" align-v="center">
@@ -38,6 +40,13 @@
             <text v-model="artboardBg" style="flex: 1;"></text>
             <label>artboard fill:</label>
             <text v-model="artboardFill" style="flex: 1;"></text>
+        </layout>
+        <!-- 缩放操作 -->
+        <layout gutter="10" align-v="center">
+            <button @click="onZoomActual()" style="flex: 1;">actual (1:1)</button>
+            <button @click="onZoomFit()" style="flex: 1;">fit screen</button>
+            <button @click="onZoomIn()" style="flex: 1;">zoom in</button>
+            <button @click="onZoomOut()" style="flex: 1;">zoom out</button>
         </layout>
     </layout>
 </form>

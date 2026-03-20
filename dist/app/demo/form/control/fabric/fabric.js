@@ -13,6 +13,7 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 画板内填充色，空字符串为透明 --- */
     artboardFill = '#ffffff';
     pan = false;
+    zoom = false;
     /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
     layer = '';
     onInit(canvas) {
@@ -48,5 +49,17 @@ export default class extends clickgo.form.AbstractForm {
             'top': 60,
         });
         this.access.canvas.add(rect, circle, triangle);
+    }
+    onZoomActual() {
+        this.refs['fabric'].zoomActual();
+    }
+    onZoomFit() {
+        this.refs['fabric'].zoomFit();
+    }
+    onZoomIn() {
+        this.refs['fabric'].zoomIn();
+    }
+    onZoomOut() {
+        this.refs['fabric'].zoomOut();
     }
 }

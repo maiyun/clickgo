@@ -53,7 +53,6 @@ for (const item of checkList) {
     // --- 解析 code.ts ---
     let propsMatch = /public\s+props:\s*\{([\s\S]+?)\}\s*=/.exec(code);
     propsMatch ??= /public\s+props\s*=\s*\{([\s\S]+?)\}/.exec(code);
-    const emitsMatch = /public\s+emits\s*=\s*\{([\s\S]+?)\}/.exec(code);
     const codeProps = [];
     if (propsMatch) {
         let propStr = propsMatch[1];
@@ -68,14 +67,18 @@ for (const item of checkList) {
             codeProps.push(match[1]);
         }
     }
+    // --- 解析 emits，直接在原始 code 中查找所有 'key': 模式，无需完整匹配整个对象 ---
     const codeEmits = [];
-    if (emitsMatch) {
-        const matches = emitsMatch[1].matchAll(/'(.+?)'\s*\??:/g);
-        for (const match of matches) {
-            if (match[1].startsWith('update:')) {
-                continue;
+    const emitsRegex = /public\s+emits\s*=\s*\{[\s\S]*?\};/;
+    const emitsFullMatch = emitsRegex.exec(code);
+    if (emitsFullMatch) {
+        // --- 从 emits 对象中提取所有的键 ---
+        const emitsContent = emitsFullMatch[0];
+        const emitsKeys = emitsContent.matchAll(/'([^']+)'\s*:/g);
+        for (const match of emitsKeys) {
+            if (!match[1].startsWith('update:')) {
+                codeEmits.push(match[1]);
             }
-            codeEmits.push(match[1]);
         }
     }
     // --- 解析 info.md ---

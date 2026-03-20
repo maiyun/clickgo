@@ -19,6 +19,9 @@ export default class extends clickgo.control.AbstractControl {
         'artboardBg': '#7a7a7a',
         'artboardFill': '#ffffff',
         'pan': false,
+        'zoom': false,
+        'zoomMin': 0.01,
+        'zoomMax': 100,
     };
     notInit = false;
     isLoading = true;
@@ -123,8 +126,8 @@ export default class extends clickgo.control.AbstractControl {
                 if (getObjName(obj) === ARTBOARD_NAME) {
                     return;
                 }
-                // --- pan 模式下所有对象均不可交互 ---
-                if (this.propBoolean('pan')) {
+                // --- pan 模式或 zoom 模式下所有对象均不可交互 ---
+                if (this.propBoolean('pan') || this.propBoolean('zoom')) {
                     obj.set({ 'evented': false, 'selectable': false });
                     return;
                 }
@@ -198,11 +201,11 @@ export default class extends clickgo.control.AbstractControl {
                 'absolutePositioned': true,
             });
         };
+        /** --- before:render 监听器引用，用于在画板外部绘制背景色（在对象和控制点之前绘制，不覆盖任何内容） --- */
+        let beforeRenderHandler = null;
         /**
          * --- 同步画板矩形：居中显示画板区域，外部背景；为所有用户对象设置 clipPath 裁剪至画板内 ---
          */
-        /** --- before:render 监听器引用，用于在画板外部绘制背景色（在对象和控制点之前绘制，不覆盖任何内容） --- */
-        let beforeRenderHandler = null;
         const applyArtboard = () => {
             if (!this.access.canvas) {
                 return;
@@ -352,6 +355,15 @@ export default class extends clickgo.control.AbstractControl {
         let isPanDragging = false;
         let panLastX = 0;
         let panLastY = 0;
+        /** --- 缩放模式（zoom=true）拖拽状态 --- */
+        let isZoomDragging = false;
+        /** --- zoom 拖拽起始 X，用于计算拖拽距离 --- */
+        let zoomDragStartX = 0;
+        /** --- zoom 拖拽起始时画布的当前缩放倍数 --- */
+        let zoomDragStartZoom = 1;
+        /** --- zoom 拖拽起始点在 canvas 中的坐标（用于锁定点缩放） --- */
+        let zoomDragOriginX = 0;
+        let zoomDragOriginY = 0;
         // --- 捕获空白区域按下：selector=true 时不接管（交由 fabric 框选）；selector=false 时才处理保持或 PS 拖拽 ---
         this.access.canvas.on('mouse:down:before', (e) => {
             // --- 重置可能残留的上一次状态 ---
@@ -360,6 +372,22 @@ export default class extends clickgo.control.AbstractControl {
             isTransformKeep = false;
             transformKeepObj = null;
             isPanDragging = false;
+            isZoomDragging = false;
+            // --- zoom 模式优先与 pan 互斥：任意位置按下记录锁定点 ---
+            if (this.propBoolean('zoom')) {
+                isZoomDragging = true;
+                zoomDragStartX = e.e.clientX;
+                zoomDragStartZoom = this.access.canvas.getZoom();
+                // --- 将点击点转换为 canvas 内部坐标（不受当前 viewport 影响） ---
+                const canvasEl = this.access.canvas.getElement();
+                const rect = canvasEl.getBoundingClientRect();
+                const clientX = e.e.clientX - rect.left;
+                const clientY = e.e.clientY - rect.top;
+                const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+                zoomDragOriginX = (clientX - vpt[4]) / zoomDragStartZoom;
+                zoomDragOriginY = (clientY - vpt[5]) / zoomDragStartZoom;
+                return;
+            }
             // --- pan 模式：任意位置按下都进入画布平移 ---
             if (this.propBoolean('pan')) {
                 isPanDragging = true;
@@ -403,7 +431,10 @@ export default class extends clickgo.control.AbstractControl {
         this.access.canvas.on('before:selection:cleared', () => {
             updateSelectionStyle(false);
         });
-        this.access.canvas.on('selection:created', () => {
+        /**
+         * --- 选区创建/更新时：刷新控制点样式并触发图层变更事件 ---
+         */
+        const onSelectionChange = () => {
             updateSelectionStyle(false);
             if (!this.propBoolean('autoLayer')) {
                 return;
@@ -423,28 +454,9 @@ export default class extends clickgo.control.AbstractControl {
                 }
             };
             this.emit('layerchange', event);
-        });
-        this.access.canvas.on('selection:updated', () => {
-            updateSelectionStyle(false);
-            if (!this.propBoolean('autoLayer')) {
-                return;
-            }
-            const activeObject = this.access.canvas?.getActiveObject();
-            /** --- 多选（ActiveSelection）时无单一激活图层，以空字符串表示 --- */
-            const name = (activeObject instanceof fabric.ActiveSelection) ? '' : (activeObject ? getObjName(activeObject) : '');
-            const prevName = this.props.layer || '';
-            if (name === prevName) {
-                return;
-            }
-            this.emit('update:layer', name);
-            const event = {
-                'detail': {
-                    'prev': prevName,
-                    'next': name,
-                }
-            };
-            this.emit('layerchange', event);
-        });
+        };
+        this.access.canvas.on('selection:created', onSelectionChange);
+        this.access.canvas.on('selection:updated', onSelectionChange);
         this.access.canvas.on('selection:cleared', () => {
             updateSelectionStyle(false);
             if (isTransformKeep && transformKeepObj && this.access.canvas) {
@@ -485,8 +497,20 @@ export default class extends clickgo.control.AbstractControl {
         this.access.canvas.on('object:modified', () => {
             updateSelectionStyle(false);
         });
-        // --- PS 拖拽移动：平移激活图层；画布平移：移动 viewport ---
+        // --- 监听 zoom prop 变更 ---
+        this.watch('zoom', () => {
+            applyMode();
+        });
+        // --- PS 拖拽移动：平移激活图层；画布平移：移动 viewport；缩放模式：以锁定点缩放 ---
         this.access.canvas.on('mouse:move', (e) => {
+            // --- 缩放模式：左移缩小、右移放大，以按下位置为锁定点 ---
+            if (isZoomDragging && this.access.canvas) {
+                const dx = e.e.clientX - zoomDragStartX;
+                // --- 每 200px 对应 1 倍变化，采用指数曲线保证缩放手感平滑 ---
+                const newZoom = zoomDragStartZoom * Math.pow(2, dx / 200);
+                this.zoomTo(newZoom, zoomDragOriginX, zoomDragOriginY);
+                return;
+            }
             // --- 画布平移模式 ---
             if (isPanDragging && this.access.canvas) {
                 const dx = e.e.clientX - panLastX;
@@ -524,6 +548,11 @@ export default class extends clickgo.control.AbstractControl {
         this.access.canvas.on('mouse:up', () => {
             // --- 兜底恢复控制点样式 ---
             updateSelectionStyle(false);
+            // --- 缩放模式结束 ---
+            if (isZoomDragging) {
+                isZoomDragging = false;
+                return;
+            }
             // --- 画布平移结束 ---
             if (isPanDragging) {
                 isPanDragging = false;
@@ -577,6 +606,115 @@ export default class extends clickgo.control.AbstractControl {
         applyArtboard();
         this.isLoading = false;
         this.emit('init', this.access.canvas);
+    }
+    /**
+     * --- 供用户调用，将画布缩放到指定倍数，以指定点为锁定点（面对 canvas 的内部坐标） ---
+     * @param zoom 目标缩放倍数
+     * @param originX 锁定点在 canvas 内部坐标系的 x，默认 0
+     * @param originY 锁定点在 canvas 内部坐标系的 y，默认 0
+     */
+    zoomTo(zoom, originX = 0, originY = 0) {
+        if (!this.access.canvas) {
+            return;
+        }
+        const zoomMin = parseFloat(String(this.props.zoomMin)) || 0.01;
+        const zoomMax = parseFloat(String(this.props.zoomMax)) || 100;
+        const newZoom = Math.min(zoomMax, Math.max(zoomMin, zoom));
+        const oldZoom = this.access.canvas.getZoom();
+        // --- 必须复制 viewportTransform，直接修改引用会与 fabric 内部 setZoom 冲突 ---
+        const vpt = [...this.access.canvas.viewportTransform];
+        vpt[0] = newZoom;
+        vpt[3] = newZoom;
+        // --- 保持 originX/originY 在屏幕上不动，根据缩放差值修正平移量 ---
+        vpt[4] = originX * (oldZoom - newZoom) + vpt[4];
+        vpt[5] = originY * (oldZoom - newZoom) + vpt[5];
+        this.access.canvas.setViewportTransform(vpt);
+        this.access.canvas.requestRenderAll();
+    }
+    /**
+     * --- 供用户调用，将画布恢复到实际像素（1:1）并居中画板 ---
+     */
+    zoomActual() {
+        if (!this.access.canvas) {
+            return;
+        }
+        const cw = this.access.canvas.getWidth();
+        const ch = this.access.canvas.getHeight();
+        if (this.access.artboard) {
+            // --- 画板居中：zoom=1，画板左上角对齐 canvas 中心 ---
+            // --- screen = canvas * zoom + vpt，居中需减去画板在 canvas 中的初始偏移 ---
+            const vpt = [
+                1, 0, 0, 1,
+                Math.round((cw - this.access.artboard.width) / 2 - this.access.artboard.left),
+                Math.round((ch - this.access.artboard.height) / 2 - this.access.artboard.top)
+            ];
+            this.access.canvas.setViewportTransform(vpt);
+        }
+        else {
+            // --- 无画板：zoom=1，viewport 重置 ---
+            this.access.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+        }
+        this.access.canvas.requestRenderAll();
+    }
+    /**
+     * --- 供用户调用，将画布适应屏幕并居中画板 ---
+     */
+    zoomFit() {
+        if (!this.access.canvas) {
+            return;
+        }
+        const cw = this.access.canvas.getWidth();
+        const ch = this.access.canvas.getHeight();
+        if (this.access.artboard) {
+            // --- 按画板尺寸适应屏, 保留 10px 内边距 ---
+            const scaleX = (cw - 20) / this.access.artboard.width;
+            const scaleY = (ch - 20) / this.access.artboard.height;
+            const newZoom = Math.min(scaleX, scaleY);
+            const scaledW = this.access.artboard.width * newZoom;
+            const scaledH = this.access.artboard.height * newZoom;
+            // --- screen = canvas * newZoom + vpt，居中需减去画板初始偏移乘以缩放倍数 ---
+            const vpt = [
+                newZoom, 0, 0, newZoom,
+                Math.round((cw - scaledW) / 2 - this.access.artboard.left * newZoom),
+                Math.round((ch - scaledH) / 2 - this.access.artboard.top * newZoom)
+            ];
+            this.access.canvas.setViewportTransform(vpt);
+        }
+        else {
+            // --- 无画板：viewport 重置 ---
+            this.access.canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+        }
+        this.access.canvas.requestRenderAll();
+    }
+    /**
+     * --- 供用户调用，放大画布，以中心点为锁定点，每次按 1.25 倍放大 ---
+     */
+    zoomIn() {
+        if (!this.access.canvas) {
+            return;
+        }
+        const cw = this.access.canvas.getWidth();
+        const ch = this.access.canvas.getHeight();
+        const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+        // --- 以画布中心为锁定点 ---
+        const originX = (cw / 2 - vpt[4]) / this.access.canvas.getZoom();
+        const originY = (ch / 2 - vpt[5]) / this.access.canvas.getZoom();
+        this.zoomTo(this.access.canvas.getZoom() * 1.25, originX, originY);
+    }
+    /**
+     * --- 供用户调用，缩小画布，以中心点为锁定点，每次按 1.25 倍缩小 ---
+     */
+    zoomOut() {
+        if (!this.access.canvas) {
+            return;
+        }
+        const cw = this.access.canvas.getWidth();
+        const ch = this.access.canvas.getHeight();
+        const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+        // --- 以画布中心为锁定点 ---
+        const originX = (cw / 2 - vpt[4]) / this.access.canvas.getZoom();
+        const originY = (ch / 2 - vpt[5]) / this.access.canvas.getZoom();
+        this.zoomTo(this.access.canvas.getZoom() / 1.25, originX, originY);
     }
     async onUnmounted() {
         if (!this.access.canvas) {

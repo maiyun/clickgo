@@ -26,6 +26,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public pan: boolean = false;
 
+    public zoom: boolean = false;
+
     /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
     public layer: string = '';
 
@@ -66,6 +68,22 @@ export default class extends clickgo.form.AbstractForm {
         });
 
         this.access.canvas.add(rect, circle, triangle);
+    }
+
+    public onZoomActual(): void {
+        (this.refs['fabric'] as any).zoomActual();
+    }
+
+    public onZoomFit(): void {
+        (this.refs['fabric'] as any).zoomFit();
+    }
+
+    public onZoomIn(): void {
+        (this.refs['fabric'] as any).zoomIn();
+    }
+
+    public onZoomOut(): void {
+        (this.refs['fabric'] as any).zoomOut();
     }
 
 }
