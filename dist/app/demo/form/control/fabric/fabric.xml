@@ -1,9 +1,29 @@
-<form title="fabric" width="600" height="500">
+<form title="fabric" width="600" height="540">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
-        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" @init="onInit"></fabric>
+        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" v-model:layer="layer" @init="onInit"></fabric>
+        <!-- 当前激活图层显示 -->
         <layout gutter="10" align-v="center">
-            <button @click="disabled = !disabled">{{disabled ? '' : '!'}}disabled</button>
-            <label>You can drag or resize the shapes.</label>
+            <label>Active layer:</label>
+            <label style="flex: 1;">{{layer || '(none)'}}</label>
+        </layout>
+        <!-- 手动指定图层（演示外部控制） -->
+        <layout gutter="10" align-v="center">
+            <label>Set layer:</label>
+            <button @click="layer = 'rect'" style="flex: 1;">rect</button>
+            <button @click="layer = 'circle'" style="flex: 1;">circle</button>
+            <button @click="layer = 'triangle'" style="flex: 1;">triangle</button>
+            <button @click="layer = ''" style="flex: 1;">none</button>
+        </layout>
+        <!-- 开关选项 -->
+        <layout gutter="10" align-v="center">
+            <switch v-model="autoLayer"></switch>
+            <label style="flex: 1;">autoLayer</label>
+            <switch v-model="transform"></switch>
+            <label style="flex: 1;">transform</label>
+            <switch v-model="selector"></switch>
+            <label style="flex: 1;">selector</label>
+            <switch v-model="disabled"></switch>
+            <label style="flex: 1;">disabled</label>
         </layout>
     </layout>
 </form>
