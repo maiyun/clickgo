@@ -190,6 +190,16 @@ getMarqueeObjects(): fabric.FabricObject[]
 
 获取与选区有交集的 fabric 对象列表（排除内部画板矩形）。通过对象的包围盒与选区矩形进行交集判断。
 
+#### getMarqueePolygon
+
+```typescript
+getMarqueePolygon(): Array<Array<{ x: number; y: number; }>>
+```
+
+获取选区外轮廓的多边形顶点数组（canvas 内部坐标）。对于 `add`/`subtract`/`intersect` 模式产生的不规则选区，会将所有矩形合并后提取外轮廓，并以顶点序列的形式返回。当选区存在多个不相交的独立区域时，返回多个多边形。无选区时返回空数组。
+
+每个多边形为一组有序顶点，按顺序连接即可还原封闭轮廓（末尾顶点与起始顶点隐式闭合）。
+
 #### setMarqueeRect
 
 ```typescript

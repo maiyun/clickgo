@@ -3,6 +3,152 @@ import * as clickgo from 'clickgo';
 
 // --- 当前 fabric 库版本为 7.2.0，文档：https://fabricjs.com/docs/ ---
 
+/**
+ * --- 从矩形列表中提取合并后的外轮廓边缘线段 ---
+ * @param rects 矩形列表（画布坐标系）
+ * @param zoom 缩放倍数
+ * @param vpt 视口变换矩阵
+ * @returns 边缘线段数组，每条线段为 { x1, y1, x2, y2 }（屏幕坐标系）
+ */
+const extractOutlineEdges = (
+    rects: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }>,
+    zoom: number,
+    vpt: number[]
+): Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }> => {
+    if (rects.length === 0) {
+        return [];
+    }
+    // --- 将矩形坐标转换为屏幕坐标并取整，防止浮点精度问题 ---
+    const screenRects = rects.map((r) => {
+        const sx = Math.round(r.x * zoom + vpt[4]);
+        const sy = Math.round(r.y * zoom + vpt[5]);
+        const sw = Math.round(r.width * zoom);
+        const sh = Math.round(r.height * zoom);
+        return { 'x': sx, 'y': sy, 'w': sw, 'h': sh };
+    });
+    // --- 收集所有唯一的 x 坐标和 y 坐标 ---
+    const xCoords = new Set<number>();
+    const yCoords = new Set<number>();
+    for (const sr of screenRects) {
+        xCoords.add(sr.x);
+        xCoords.add(sr.x + sr.w);
+        yCoords.add(sr.y);
+        yCoords.add(sr.y + sr.h);
+    }
+    const sortedX = [...xCoords].sort((a, b) => a - b);
+    const sortedY = [...yCoords].sort((a, b) => a - b);
+    // --- 构建网格：每个格子标记是否被至少一个矩形覆盖 ---
+    const cols = sortedX.length - 1;
+    const rows = sortedY.length - 1;
+    if (cols <= 0 || rows <= 0) {
+        return [];
+    }
+    const grid: boolean[][] = [];
+    for (let r = 0; r < rows; r++) {
+        grid.push(new Array(cols).fill(false));
+    }
+    for (const sr of screenRects) {
+        const left = sortedX.indexOf(sr.x);
+        const right = sortedX.indexOf(sr.x + sr.w);
+        const top = sortedY.indexOf(sr.y);
+        const bottom = sortedY.indexOf(sr.y + sr.h);
+        for (let r = top; r < bottom; r++) {
+            for (let c = left; c < right; c++) {
+                grid[r][c] = true;
+            }
+        }
+    }
+    // --- 扫描网格边缘：只保留一侧被覆盖、另一侧未被覆盖的边 ---
+    const edges: Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }> = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (!grid[r][c]) {
+                continue;
+            }
+            const x1 = sortedX[c];
+            const x2 = sortedX[c + 1];
+            const y1 = sortedY[r];
+            const y2 = sortedY[r + 1];
+            // --- 上边：如果上方格子不在区域内，此边为外轮廓 ---
+            if (r === 0 || !grid[r - 1][c]) {
+                edges.push({ 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y1 });
+            }
+            // --- 下边 ---
+            if (r === rows - 1 || !grid[r + 1][c]) {
+                edges.push({ 'x1': x1, 'y1': y2, 'x2': x2, 'y2': y2 });
+            }
+            // --- 左边 ---
+            if (c === 0 || !grid[r][c - 1]) {
+                edges.push({ 'x1': x1, 'y1': y1, 'x2': x1, 'y2': y2 });
+            }
+            // --- 右边 ---
+            if (c === cols - 1 || !grid[r][c + 1]) {
+                edges.push({ 'x1': x2, 'y1': y1, 'x2': x2, 'y2': y2 });
+            }
+        }
+    }
+    return edges;
+};
+
+/**
+ * --- 将外轮廓边缘线段链式连接为多边形顶点数组 ---
+ * @param edges 边缘线段数组
+ * @returns 多边形顶点数组的数组（不规则选区可能包含多个独立闭合多边形）
+ */
+const buildOutlinePolygons = (
+    edges: Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }>
+): Array<Array<{ 'x': number; 'y': number; }>> => {
+    if (edges.length === 0) {
+        return [];
+    }
+    // --- 构建端点邻接表：每个端点记录与之相连的边索引和对端坐标 ---
+    const ptKey = (x: number, y: number): string => `${x},${y}`;
+    const adjacency = new Map<string, Array<{ 'idx': number; 'to': { 'x': number; 'y': number; }; }>>();
+    for (let i = 0; i < edges.length; i++) {
+        const e = edges[i];
+        const k1 = ptKey(e.x1, e.y1);
+        const k2 = ptKey(e.x2, e.y2);
+        if (!adjacency.has(k1)) {
+            adjacency.set(k1, []);
+        }
+        if (!adjacency.has(k2)) {
+            adjacency.set(k2, []);
+        }
+        adjacency.get(k1)!.push({ 'idx': i, 'to': { 'x': e.x2, 'y': e.y2 } });
+        adjacency.get(k2)!.push({ 'idx': i, 'to': { 'x': e.x1, 'y': e.y1 } });
+    }
+    // --- 链式游走：从每条未访问边出发，依次连接成多边形 ---
+    const visited = new Set<number>();
+    const polygons: Array<Array<{ 'x': number; 'y': number; }>> = [];
+    for (let i = 0; i < edges.length; i++) {
+        if (visited.has(i)) {
+            continue;
+        }
+        const polygon: Array<{ 'x': number; 'y': number; }> = [];
+        let current = { 'x': edges[i].x1, 'y': edges[i].y1 };
+        let edgeIdx = i;
+        while (!visited.has(edgeIdx)) {
+            visited.add(edgeIdx);
+            polygon.push({ 'x': current.x, 'y': current.y });
+            const edge = edges[edgeIdx];
+            const next = (edge.x1 === current.x && edge.y1 === current.y)
+                ? { 'x': edge.x2, 'y': edge.y2 }
+                : { 'x': edge.x1, 'y': edge.y1 };
+            const neighbors = adjacency.get(ptKey(next.x, next.y)) ?? [];
+            const nextEdge = neighbors.find(n => !visited.has(n.idx));
+            if (!nextEdge) {
+                break;
+            }
+            current = next;
+            edgeIdx = nextEdge.idx;
+        }
+        if (polygon.length >= 3) {
+            polygons.push(polygon);
+        }
+    }
+    return polygons;
+};
+
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
@@ -574,122 +720,38 @@ export default class extends clickgo.control.AbstractControl {
         /** --- after:render 监听器引用，用于在画布内容上层绘制选区虚线 --- */
         let afterRenderHandler: ((e: any) => void) | null = null;
 
-        /**
-         * --- 从矩形列表中提取合并后的外轮廓边缘线段 ---
-         * @param rects 矩形列表（画布坐标系）
-         * @param zoom 缩放倍数
-         * @param vpt 视口变换矩阵
-         * @returns 边缘线段数组，每条线段为 { x1, y1, x2, y2 }（屏幕坐标系）
-         */
-        const extractOutlineEdges = (
-            rects: Array<{ 'x': number; 'y': number; 'width': number; 'height': number; }>,
-            zoom: number,
-            vpt: number[]
-        ): Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }> => {
-            if (rects.length === 0) {
-                return [];
-            }
-            // --- 将矩形坐标转换为屏幕坐标并取整，防止浮点精度问题 ---
-            const screenRects = rects.map((r) => {
-                const sx = Math.round(r.x * zoom + vpt[4]);
-                const sy = Math.round(r.y * zoom + vpt[5]);
-                const sw = Math.round(r.width * zoom);
-                const sh = Math.round(r.height * zoom);
-                return { 'x': sx, 'y': sy, 'w': sw, 'h': sh };
-            });
-            // --- 收集所有唯一的 x 坐标和 y 坐标 ---
-            const xCoords = new Set<number>();
-            const yCoords = new Set<number>();
-            for (const sr of screenRects) {
-                xCoords.add(sr.x);
-                xCoords.add(sr.x + sr.w);
-                yCoords.add(sr.y);
-                yCoords.add(sr.y + sr.h);
-            }
-            const sortedX = [...xCoords].sort((a, b) => a - b);
-            const sortedY = [...yCoords].sort((a, b) => a - b);
-            // --- 构建网格：每个格子标记是否被至少一个矩形覆盖 ---
-            const cols = sortedX.length - 1;
-            const rows = sortedY.length - 1;
-            if (cols <= 0 || rows <= 0) {
-                return [];
-            }
-            const grid: boolean[][] = [];
-            for (let r = 0; r < rows; r++) {
-                grid.push(new Array(cols).fill(false));
-            }
-            for (const sr of screenRects) {
-                const left = sortedX.indexOf(sr.x);
-                const right = sortedX.indexOf(sr.x + sr.w);
-                const top = sortedY.indexOf(sr.y);
-                const bottom = sortedY.indexOf(sr.y + sr.h);
-                for (let r = top; r < bottom; r++) {
-                    for (let c = left; c < right; c++) {
-                        grid[r][c] = true;
-                    }
-                }
-            }
-            // --- 扫描网格边缘：只保留一侧被覆盖、另一侧未被覆盖的边 ---
-            const edges: Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }> = [];
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    if (!grid[r][c]) {
-                        continue;
-                    }
-                    const x1 = sortedX[c];
-                    const x2 = sortedX[c + 1];
-                    const y1 = sortedY[r];
-                    const y2 = sortedY[r + 1];
-                    // --- 上边：如果上方格子不在区域内，此边为外轮廓 ---
-                    if (r === 0 || !grid[r - 1][c]) {
-                        edges.push({ 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y1 });
-                    }
-                    // --- 下边 ---
-                    if (r === rows - 1 || !grid[r + 1][c]) {
-                        edges.push({ 'x1': x1, 'y1': y2, 'x2': x2, 'y2': y2 });
-                    }
-                    // --- 左边 ---
-                    if (c === 0 || !grid[r][c - 1]) {
-                        edges.push({ 'x1': x1, 'y1': y1, 'x2': x1, 'y2': y2 });
-                    }
-                    // --- 右边 ---
-                    if (c === cols - 1 || !grid[r][c + 1]) {
-                        edges.push({ 'x1': x2, 'y1': y1, 'x2': x2, 'y2': y2 });
-                    }
-                }
-            }
-            return edges;
-        };
-
         /** --- 创建并注册 after:render 监听器 --- */
         const setupAfterRender = (): void => {
             if (afterRenderHandler || !this.access.canvas) {
                 return;
             }
-            afterRenderHandler = (e: any): void => {
+            afterRenderHandler = (): void => {
+                const canvas = this.access.canvas!;
+                // --- 始终操作 contextTop（上层画布），并在绘制前清除，防止缩放/平移时旧轮廓残留 ---
+                const contextTop = (canvas as any).contextTop as CanvasRenderingContext2D;
+                contextTop.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 if (marqueeRects.length === 0 && !isMarqueeDrawing) {
                     return;
                 }
-                const ctx: CanvasRenderingContext2D = e.ctx;
-                const zoom = this.access.canvas!.getZoom();
-                const vpt = this.access.canvas!.viewportTransform ?? [1, 0, 0, 1, 0, 0];
-                ctx.save();
-                ctx.setLineDash([4, 4]);
-                ctx.lineWidth = 1;
+                const zoom = canvas.getZoom();
+                const vpt = canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
+                contextTop.save();
+                contextTop.setLineDash([4, 4]);
+                contextTop.lineWidth = 1;
                 // --- 区分稳定选区（已确认）和临时矩形（正在拖拽预览中）---
                 const stableRects = marqueeRects.filter(r => !(r as any)._temp);
                 const tempRect = marqueeRects.find(r => (r as any)._temp);
                 // --- 双色虚线绘制函数 ---
                 const drawEdges = (edges: Array<{ 'x1': number; 'y1': number; 'x2': number; 'y2': number; }>): void => {
                     for (const pass of [{ 'color': '#ffffff', 'offset': 0 }, { 'color': '#000000', 'offset': 4 }]) {
-                        ctx.strokeStyle = pass.color;
-                        ctx.lineDashOffset = pass.offset;
-                        ctx.beginPath();
+                        contextTop.strokeStyle = pass.color;
+                        contextTop.lineDashOffset = pass.offset;
+                        contextTop.beginPath();
                         for (const edge of edges) {
-                            ctx.moveTo(edge.x1 + 0.5, edge.y1 + 0.5);
-                            ctx.lineTo(edge.x2 + 0.5, edge.y2 + 0.5);
+                            contextTop.moveTo(edge.x1 + 0.5, edge.y1 + 0.5);
+                            contextTop.lineTo(edge.x2 + 0.5, edge.y2 + 0.5);
                         }
-                        ctx.stroke();
+                        contextTop.stroke();
                     }
                 };
                 // --- 先绘制稳定选区的合并外轮廓 ---
@@ -716,7 +778,7 @@ export default class extends clickgo.control.AbstractControl {
                         'x2': Math.round(sx), 'y2': Math.round(sy),
                     }]);
                 }
-                ctx.restore();
+                contextTop.restore();
             };
             this.access.canvas.on('after:render', afterRenderHandler);
         };
@@ -1279,6 +1341,19 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
         return result;
+    }
+
+    /**
+     * --- 供用户调用，获取选区外轮廓的多边形顶点数组（canvas 内部坐标），无选区时返回空数组 ---
+     * @returns 多边形顶点数组的数组（不规则选区可能包含多个独立闭合多边形）
+     */
+    public getMarqueePolygon(): Array<Array<{ 'x': number; 'y': number; }>> {
+        if (this.access.marquee.length === 0) {
+            return [];
+        }
+        // --- 使用 zoom=1、单位矩阵变换，直接在 canvas 坐标系中提取边缘并转换为多边形 ---
+        const edges = extractOutlineEdges(this.access.marquee, 1, [1, 0, 0, 1, 0, 0]);
+        return buildOutlinePolygons(edges);
     }
 
     /**
