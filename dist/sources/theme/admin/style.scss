@@ -131,6 +131,15 @@ global {
                 }
             }
         }
+        // --- 主体内容 ---
+        .form_content {
+            .form_loading {
+                background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
+                &:not(.form_show) {
+                    transform: scale(1.3);
+                }
+            }
+        }
     }
 }
 
@@ -165,82 +174,65 @@ global {
 // -- CONTROL -- tab --
 
 .tab_wrap {
-    .tab_tab {
-        background: transparent; border: none;
-        &::after {
-            background: var(--cg); transition: all .3s var(--g-cubic);
-        }
+    // --- 通用 tab 标签样式，去掉边框 ---
+    > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+        border: none;
         &:not(.tab_selected):not([data-hover]):hover {
-            background: transparent; color: var(--cg);
+            background: var(--face-hover); color: var(--g-color);
         }
         &.tab_selected {
-            background: transparent; font-weight: bold; color: var(--cg);
+            background: var(--g-background); font-weight: 600; color: var(--cg);
+            box-shadow: var(--g-shadow-m);
+        }
+    }
+    // --- 消除所有方向选中 tab 的下划线指示器 ---
+    &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab.tab_selected::after { content: none; }
+    }
+    // --- top/bottom 水平布局 ---
+    &.tab_top, &.tab_bottom {
+        > .tab_tabs-wrap > .tab_tabs {
+            background: var(--face); border-radius: var(--g-radius-l);
+            padding: 3px; gap: 2px; align-items: center;
+            > :not(:last-child) { margin-right: 0; }
         }
     }
     &.tab_top {
-        .tab_tabs {
-            .tab_tab {
-                padding-bottom: 2px;
-                &.tab_selected {
-                    padding-bottom: 2px;    // --- 用来覆盖控件默认样式的 ---
-                    &::after {
-                        top: initial; bottom: 0; height: 2px;
-                    }
-                }
-            }
-            > :not(:last-child) {
-                margin-right: var(--g-padding);
-            }
+        > .tab_tabs-wrap { padding-bottom: var(--g-padding-s); }
+        > .tab_tabs-wrap > .tab_tabs { transform: none; }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            border-radius: var(--g-radius);
+            &.tab_selected { padding-bottom: 0; }    // --- 用来覆盖控件默认样式的 ---
         }
     }
     &.tab_bottom {
-        .tab_tabs {
-            .tab_tab {
-                padding-top: 2px;
-                &.tab_selected {
-                    padding-top: 2px;   // --- 用来覆盖控件默认样式的 ---
-                    &::after {
-                        top: 0; height: 2px;
-                    }
-                }
-            }
-            > :not(:last-child) {
-                margin-right: var(--g-padding);
-            }
+        > .tab_tabs-wrap { padding-top: var(--g-padding-s); }
+        > .tab_tabs-wrap > .tab_tabs { transform: none; }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            border-radius: var(--g-radius);
+            &.tab_selected { padding-top: 0; }     // --- 用来覆盖控件默认样式的 ---
+        }
+    }
+    // --- left/right 垂直布局 ---
+    &.tab_left, &.tab_right {
+        > .tab_tabs-wrap > .tab_tabs {
+            background: var(--face); border-radius: var(--g-radius-l);
+            padding: 3px; gap: 2px;
+            > :not(:last-child) { margin-bottom: 0; }
         }
     }
     &.tab_left {
-        .tab_tabs {
-            .tab_tab {
-                padding-right: 2px;
-                &.tab_selected {
-                    &::after {
-                        left: initial; right: 0; width: 2px;
-                    }
-                }
-            }
-            > :not(:last-child) {
-                margin-bottom: var(--g-padding);
-            }
-        }
+        > .tab_tabs-wrap { padding-right: var(--g-padding-s); }
+        > .tab_tabs-wrap > .tab_tabs { transform: none; }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab { border-radius: var(--g-radius); }
     }
     &.tab_right {
-        .tab_tabs {
-            .tab_tab {
-                padding-left: 2px;
-                &.tab_selected {
-                    &::after {
-                        left: 0; width: 2px;
-                    }
-                }
-            }
-            > :not(:last-child) {
-                margin-bottom: var(--g-padding);
-            }
-        }
+        > .tab_tabs-wrap { padding-left: var(--g-padding-s); }
+        > .tab_tabs-wrap > .tab_tabs { transform: none; }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab { border-radius: var(--g-radius); }
     }
-
-    .tab_panel {
+    // --- 面板 ---
+    > .tab_panel {
         background: transparent; border: none;
     }
 }
@@ -334,7 +326,7 @@ global {
     background: var(--g-pop-background);
     padding: 6px;
     box-shadow: var(--g-shadow-d);
-    border: solid 1px oklch(.9 0 0);
+    border: solid 1px var(--g-border-color);
 }
 
 // -- CONTROL -- select / greatselect --
