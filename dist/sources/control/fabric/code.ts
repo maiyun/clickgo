@@ -866,6 +866,8 @@ export default class extends clickgo.control.AbstractControl {
         let isTransformKeep = false;
         /** --- transform=true 时暂存的激活对象 --- */
         let transformKeepObj: fabric.FabricObject | null = null;
+        /** --- transform=true 时多选的子对象引用，用于 selection:cleared 后重建 ActiveSelection（discardActiveObject 会使原对象失效）--- */
+        let transformKeepChildren: fabric.FabricObject[] = [];
         /** --- 画布平移模式（pan=true）是否正在拖拽 --- */
         let isPanDragging = false;
         let panLastX = 0;
@@ -892,6 +894,7 @@ export default class extends clickgo.control.AbstractControl {
             psDragChildren = [];
             isTransformKeep = false;
             transformKeepObj = null;
+            transformKeepChildren = [];
             isPanDragging = false;
             isZoomDragging = false;
             isMarqueeDrawing = false;
@@ -950,6 +953,9 @@ export default class extends clickgo.control.AbstractControl {
                 // --- transform=true + selector=false + 空白区域 → 保持激活对象不清除 ---
                 isTransformKeep = true;
                 transformKeepObj = activeObj;
+                // --- 多选时须在 discardActiveObject 清空子对象前保存引用，以便 selection:cleared 后重建 ---
+                transformKeepChildren = (activeObj instanceof fabric.ActiveSelection)
+                    ? [...activeObj.getObjects()] : [];
             }
             else {
                 // --- transform=false + selector=false + 空白区域 → PS 拖拽 ---
@@ -1018,9 +1024,16 @@ export default class extends clickgo.control.AbstractControl {
 
         this.access.canvas.on('selection:cleared', () => {
             updateSelectionStyle(false);
-            if (isTransformKeep && transformKeepObj && this.access.canvas) {
+            if (isTransformKeep && this.access.canvas) {
                 // --- transform 保持模式：恢复激活对象，不触发图层变更事件 ---
-                this.access.canvas.setActiveObject(transformKeepObj);
+                // --- 多选时需重建 ActiveSelection（discardActiveObject 已释放子对象坐标，原对象已失效）---
+                if (transformKeepChildren.length > 0) {
+                    const newSel = new fabric.ActiveSelection(transformKeepChildren, { 'canvas': this.access.canvas });
+                    this.access.canvas.setActiveObject(newSel);
+                }
+                else if (transformKeepObj) {
+                    this.access.canvas.setActiveObject(transformKeepObj);
+                }
                 return;
             }
             if (isPsDragging && this.access.canvas) {
@@ -1036,6 +1049,10 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             if (!this.propBoolean('autoLayer')) {
+                // --- 手动图层模式：点击空白不应丢失激活状态，重建 ActiveSelection 与 layer prop 保持一致 ---
+                if (this.props.layer.length > 0 && this.access.canvas) {
+                    applyMode();
+                }
                 return;
             }
             const prevNames = this.props.layer;
@@ -1200,6 +1217,7 @@ export default class extends clickgo.control.AbstractControl {
             if (isTransformKeep) {
                 isTransformKeep = false;
                 transformKeepObj = null;
+                transformKeepChildren = [];
                 if (this.access.canvas) {
                     this.access.canvas.selection = this.propBoolean('selector');
                 }
