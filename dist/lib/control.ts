@@ -1486,10 +1486,10 @@ export interface IStepClickedEvent {
 
 export interface IFabricLayerchangeEvent {
     'detail': {
-        /** --- 图层变更前的 name 属性值 --- */
-        'prev': string;
-        /** --- 图层变更后的 name 属性值 --- */
-        'next': string;
+        /** --- 图层变更前的 name 属性值数组 --- */
+        'prev': string[];
+        /** --- 图层变更后的 name 属性值数组 --- */
+        'next': string[];
     };
 }
 

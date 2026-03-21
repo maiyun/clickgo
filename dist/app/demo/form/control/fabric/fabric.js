@@ -17,8 +17,8 @@ export default class extends clickgo.form.AbstractForm {
     marqueeCompose = ['replace'];
     /** --- 选区信息文本 --- */
     marqueeInfo = '(none)';
-    /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
-    layer = '';
+    /** --- 当前激活图层名称列表，由 v-model:layer 双向绑定 --- */
+    layer = [];
     onInit(canvas) {
         this.access.canvas = canvas;
         const fabric = clickgo.modules.fabric;

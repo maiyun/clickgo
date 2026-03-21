@@ -4,15 +4,16 @@
         <!-- 当前激活图层显示 -->
         <layout gutter="10" align-v="center">
             <label>Active layer:</label>
-            <label style="flex: 1;">{{layer || '(none)'}}</label>
+            <label style="flex: 1;">{{layer.join(', ') || '(none)'}}</label>
         </layout>
         <!-- 手动指定图层（演示外部控制） -->
         <layout gutter="10" align-v="center">
             <label>Set layer:</label>
-            <button @click="layer = 'rect'" style="flex: 1;">rect</button>
-            <button @click="layer = 'circle'" style="flex: 1;">circle</button>
-            <button @click="layer = 'triangle'" style="flex: 1;">triangle</button>
-            <button @click="layer = ''" style="flex: 1;">none</button>
+            <button @click="layer = ['rect']" style="flex: 1;">rect</button>
+            <button @click="layer = ['circle']" style="flex: 1;">circle</button>
+            <button @click="layer = ['triangle']" style="flex: 1;">triangle</button>
+            <button @click="layer = ['rect', 'circle']" style="flex: 1;">rect+circle</button>
+            <button @click="layer = []" style="flex: 1;">none</button>
         </layout>
         <!-- 开关选项 -->
         <layout gutter="10" align-v="center">

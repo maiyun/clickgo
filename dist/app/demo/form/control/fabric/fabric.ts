@@ -32,8 +32,8 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 选区信息文本 --- */
     public marqueeInfo: string = '(none)';
 
-    /** --- 当前激活图层名称，由 v-model:layer 双向绑定 --- */
-    public layer: string = '';
+    /** --- 当前激活图层名称列表，由 v-model:layer 双向绑定 --- */
+    public layer: string[] = [];
 
     public onInit(canvas: any): void {
         this.access.canvas = canvas;
