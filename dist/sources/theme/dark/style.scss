@@ -86,27 +86,27 @@ global {
     --g-background-focus:oklch(.2 0 0);
     --g-background-disabled:oklch(.2 0 0);
 
-    --g-border-color:oklch(.35 0 0);
-    --g-border-color-hover:oklch(.35 0 0);
-    --g-border-color-active:oklch(.35 0 0);
-    --g-border-color-focus:oklch(.35 0 0);
-    --g-border-color-disabled:oklch(.35 0 0);
+    --g-border-color:oklch(.28 0 0);
+    --g-border-color-hover:oklch(.28 0 0);
+    --g-border-color-active:oklch(.28 0 0);
+    --g-border-color-focus:oklch(.28 0 0);
+    --g-border-color-disabled:oklch(.28 0 0);
     
     // --- 组件轻量颜色（如文本框） ---
 
-    --g-plain-background:oklch(.18 0 0);
-    --g-plain-background-hover:oklch(.22 0 0);
-    --g-plain-background-active:oklch(.18 0 0);
-    --g-plain-background-focus:oklch(.18 0 0);
-    --g-plain-background-disabled:oklch(.18 0 0);
+    --g-plain-background:oklch(.22 0 0);
+    --g-plain-background-hover:oklch(.26 0 0);
+    --g-plain-background-active:oklch(.22 0 0);
+    --g-plain-background-focus:oklch(.22 0 0);
+    --g-plain-background-disabled:oklch(.22 0 0);
     --g-plain-background-selected:oklch(.25 0 0);
 
-    --g-plain-border-color:oklch(.3 0 0);
-    --g-plain-border-color-hover:oklch(.35 0 0);
-    --g-plain-border-color-active:oklch(.35 0 0);
-    --g-plain-border-color-focus:oklch(.35 0 0);
-    --g-plain-border-color-disabled:oklch(.35 0 0);
-    --g-plain-border-color-plain:oklch(.32 0 0);
+    --g-plain-border-color:transparent;
+    --g-plain-border-color-hover:oklch(.3 0 0);
+    --g-plain-border-color-active:oklch(.3 0 0);
+    --g-plain-border-color-focus:oklch(.3 0 0);
+    --g-plain-border-color-disabled:oklch(.3 0 0);
+    --g-plain-border-color-plain:oklch(.26 0 0);
 
     // --- 特殊组件颜色 ---
 
