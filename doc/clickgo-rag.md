@@ -1915,9 +1915,9 @@ ECharts 配置选项。
 
 #### layer
 
-`string`
+`string[]`
 
-双向绑定当前激活图层的标识，值为 fabric 对象的 `name` 属性值，无选中时为空字符串。`autoLayer` 为 `false` 时可通过此属性从外部手动切换激活图层。
+双向绑定当前激活图层列表，值为 fabric 对象 `name` 属性值的数组。`autoLayer` 为 `true` 时由控件根据用户交互自动更新；`autoLayer` 为 `false` 时可通过此属性从外部手动指定激活图层，支持同时传入多个 `name` 以实现多图层联动操作（拖动、自由变换等会同时影响所有指定图层）。无选中时为空数组 `[]`。
 
 #### selector
 
@@ -1990,9 +1990,9 @@ ECharts 配置选项。
 
 #### layerchange
 
-`(event: { detail: { prev: string; next: string } }) => void`
+`(event: { detail: { prev: string[]; next: string[] } }) => void`
 
-激活图层变更时触发（仅 `autoLayer` 为 `true` 时）。`event.detail.prev` 为变更前的图层 name，`event.detail.next` 为变更后的图层 name，取消选中时为空字符串。多选状态下 `event.detail.next` 同样为空字符串。
+激活图层变更时触发（仅 `autoLayer` 为 `true` 时）。`event.detail.prev` 为变更前的图层 name 数组，`event.detail.next` 为变更后的图层 name 数组，取消选中时为空数组。同时选中多个对象时，`event.detail.next` 包含所有选中对象的 name。
 
 #### marqueechange
 
@@ -10898,15 +10898,15 @@ Defined in: [lib/control.ts:1488](https://github.com/maiyun/clickgo/blob/master/
 
 #### next
 
-> **next**: `string`
+> **next**: `string`[]
 
-图层变更后的 name 属性值
+图层变更后的 name 属性值数组
 
 #### prev
 
-> **prev**: `string`
+> **prev**: `string`[]
 
-图层变更前的 name 属性值
+图层变更前的 name 属性值数组
 
 lib/control/interfaces/IFormCloseEvent.md
 ---

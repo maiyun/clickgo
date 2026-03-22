@@ -18,12 +18,12 @@ Defined in: [lib/control.ts:1488](https://github.com/maiyun/clickgo/blob/master/
 
 #### next
 
-> **next**: `string`
+> **next**: `string`[]
 
-图层变更后的 name 属性值
+图层变更后的 name 属性值数组
 
 #### prev
 
-> **prev**: `string`
+> **prev**: `string`[]
 
-图层变更前的 name 属性值
+图层变更前的 name 属性值数组
