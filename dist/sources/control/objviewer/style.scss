@@ -10,13 +10,13 @@
 }
 
 .wrap {
-    position: relative; overflow: hidden;
+    position: relative; overflow: hidden; background: var(--g-pure);
 
     &.bg-dot {
-        background-image: radial-gradient(var(--g-plain-border-color) 1px, transparent 1px); background-size: 20px 20px;
+        background-image: radial-gradient(var(--g-border-color) 1px, transparent 1px); background-size: 20px 20px;
     }
     &.bg-grid {
-        background-image: repeating-linear-gradient(0deg, var(--g-plain-border-color), var(--g-plain-border-color) 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, var(--g-plain-border-color), var(--g-plain-border-color) 1px, transparent 1px, transparent 20px);
+        background-image: repeating-linear-gradient(0deg, var(--g-border-color), var(--g-border-color) 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, var(--g-border-color), var(--g-border-color) 1px, transparent 1px, transparent 20px);
     }
 
     .content {
