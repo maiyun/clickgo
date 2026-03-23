@@ -32,6 +32,12 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 选区信息文本 --- */
     public marqueeInfo: string = '(none)';
 
+    /** --- 图层列表显示文本 --- */
+    public layerListInfo: string = '(none)';
+
+    /** --- 图层管理输入框内容 --- */
+    public newLayerName: string = '';
+
     /** --- 当前激活图层名称列表，由 v-model:layer 双向绑定 --- */
     public layer: string[] = [];
 
@@ -103,6 +109,27 @@ export default class extends clickgo.form.AbstractForm {
         else {
             this.marqueeInfo = '(none)';
         }
+    }
+
+    public onLayerListChange(): void {
+        const ls = (this.refs['fabric'] as any).layers as string[];
+        this.layerListInfo = (ls.length > 0) ? ls.join(', ') : '(none)';
+    }
+
+    public onAddLayer(): void {
+        if (!this.newLayerName) {
+            return;
+        }
+        (this.refs['fabric'] as any).addLayer(this.newLayerName);
+        this.newLayerName = '';
+    }
+
+    public onRemoveLayer(): void {
+        if (!this.newLayerName) {
+            return;
+        }
+        (this.refs['fabric'] as any).removeLayer(this.newLayerName);
+        this.newLayerName = '';
     }
 
 }

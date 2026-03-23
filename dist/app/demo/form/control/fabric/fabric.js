@@ -17,6 +17,10 @@ export default class extends clickgo.form.AbstractForm {
     marqueeCompose = ['replace'];
     /** --- 选区信息文本 --- */
     marqueeInfo = '(none)';
+    /** --- 图层列表显示文本 --- */
+    layerListInfo = '(none)';
+    /** --- 图层管理输入框内容 --- */
+    newLayerName = '';
     /** --- 当前激活图层名称列表，由 v-model:layer 双向绑定 --- */
     layer = [];
     onInit(canvas) {
@@ -77,5 +81,23 @@ export default class extends clickgo.form.AbstractForm {
         else {
             this.marqueeInfo = '(none)';
         }
+    }
+    onLayerListChange() {
+        const ls = this.refs['fabric'].layers;
+        this.layerListInfo = (ls.length > 0) ? ls.join(', ') : '(none)';
+    }
+    onAddLayer() {
+        if (!this.newLayerName) {
+            return;
+        }
+        this.refs['fabric'].addLayer(this.newLayerName);
+        this.newLayerName = '';
+    }
+    onRemoveLayer() {
+        if (!this.newLayerName) {
+            return;
+        }
+        this.refs['fabric'].removeLayer(this.newLayerName);
+        this.newLayerName = '';
     }
 }

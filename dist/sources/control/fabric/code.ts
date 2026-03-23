@@ -235,6 +235,8 @@ export default class extends clickgo.control.AbstractControl {
         'layerchange': null,
         /** --- 选区变更时触发（创建、移动、组合、清除） --- */
         'marqueechange': null,
+        /** --- 图层列表变更时触发（新建空图层、移除图层或通过 canvas.add 首次使用某 name 时自动注册） --- */
+        'layerlistchange': null,
     };
 
     public props: {
@@ -301,6 +303,9 @@ export default class extends clickgo.control.AbstractControl {
             'artboard': null,
             'marquee': [],
         };
+
+    /** --- 所有图层名称列表，包含空图层，具有响应式 --- */
+    public layers: string[] = [];
 
     public async onMounted(): Promise<void> {
         // ==============================
@@ -978,6 +983,12 @@ export default class extends clickgo.control.AbstractControl {
             if (this.access.artboard) {
                 applyObjClip(e.target, this.access.artboard);
             }
+            // --- 若对象有 name 且尚未注册到图层列表，自动注册（与 addLayer 创建的空图层共存）---
+            const objName = getObjName(e.target);
+            if (objName && !this.layers.includes(objName)) {
+                this.layers.push(objName);
+                this.emit('layerlistchange');
+            }
             applyMode();
         });
 
@@ -1469,6 +1480,44 @@ export default class extends clickgo.control.AbstractControl {
      */
     public setMarqueeRect(x: number, y: number, width: number, height: number): void {
         this._setMarqueeRect?.(x, y, width, height);
+    }
+
+    /**
+     * --- 供用户调用，新建一个空图层 ---
+     * @param name 图层名称，不能与已有图层重复
+     * @returns 是否成功（name 重复时返回 false）
+     */
+    public addLayer(name: string): boolean {
+        if (this.layers.includes(name)) {
+            return false;
+        }
+        this.layers.push(name);
+        this.emit('layerlistchange');
+        return true;
+    }
+
+    /**
+     * --- 供用户调用，移除图层及其所有 fabric 对象 ---
+     * @param name 图层名称
+     */
+    public removeLayer(name: string): void {
+        const idx = this.layers.indexOf(name);
+        if (idx === -1) {
+            return;
+        }
+        this.layers.splice(idx, 1);
+        // --- 删除该图层下的所有 fabric 对象 ---
+        if (this.access.canvas) {
+            const toRemove = this.access.canvas.getObjects().filter(obj => getObjName(obj) === name);
+            for (const obj of toRemove) {
+                this.access.canvas.remove(obj);
+            }
+        }
+        // --- 若当前激活图层包含此 name，从 layer prop 中移除（watcher 会自动调用 applyMode）---
+        if (this.props.layer.includes(name)) {
+            this.emit('update:layer', this.props.layer.filter(n => n !== name));
+        }
+        this.emit('layerlistchange');
     }
 
     public async onUnmounted(): Promise<void> {

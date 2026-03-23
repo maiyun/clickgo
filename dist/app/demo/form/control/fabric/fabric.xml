@@ -1,6 +1,6 @@
-<form title="fabric" width="600" height="730">
+<form title="fabric" width="600" height="820">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
-        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" @marqueechange="onMarqueeChange" ref="fabric"></fabric>
+        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" @marqueechange="onMarqueeChange" @layerlistchange="onLayerListChange" ref="fabric"></fabric>
         <!-- 当前激活图层显示 -->
         <layout gutter="10" align-v="center">
             <label>Active layer:</label>
@@ -56,6 +56,17 @@
         <layout gutter="10" align-v="center">
             <label>Marquee:</label>
             <label style="flex: 1;">{{marqueeInfo}}</label>
+        </layout>
+        <!-- 图层列表 -->
+        <layout gutter="10" align-v="center">
+            <label>Layers:</label>
+            <label style="flex: 1;">{{layerListInfo}}</label>
+        </layout>
+        <!-- 图层管理 -->
+        <layout gutter="10" align-v="center">
+            <text v-model="newLayerName" style="flex: 1;"></text>
+            <button @click="onAddLayer()" style="flex: 1;">add layer</button>
+            <button @click="onRemoveLayer()" style="flex: 1;">remove layer</button>
         </layout>
     </layout>
 </form>
