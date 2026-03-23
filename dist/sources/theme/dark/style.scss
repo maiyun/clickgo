@@ -9,9 +9,9 @@ global {
     --g-padding-xl-h:14px var(--g-padding-xl);
     --g-bpadding:25px;
     --g-margin:7px;
-    --g-radius:5px;
-    --g-radius-l:8px;
-    --g-radius-xl:12px;
+    --g-radius:12px;
+    --g-radius-l:18px;
+    --g-radius-xl:24px;
     --g-size-xs:11px;
     --g-size:13px;
     --g-size-m:20px;
@@ -81,7 +81,7 @@ global {
 
     --g-background:oklch(.2 0 0);
     --g-background-hover:oklch(.25 0 0);
-    --g-background-active:oklch(.2 0 0);
+    --g-background-active:oklch(.29 0 0);
     --g-background-opacity:oklch(.25 0 0 / .2);
     --g-background-focus:oklch(.2 0 0);
     --g-background-disabled:oklch(.2 0 0);
@@ -91,6 +91,8 @@ global {
     --g-border-color-active:oklch(.28 0 0);
     --g-border-color-focus:oklch(.28 0 0);
     --g-border-color-disabled:oklch(.28 0 0);
+    
+    --g-focusbox-border-width:0;
     
     // --- 组件轻量颜色（如文本框） ---
 
@@ -102,11 +104,11 @@ global {
     --g-plain-background-selected:oklch(.25 0 0);
 
     --g-plain-border-color:transparent;
-    --g-plain-border-color-hover:oklch(.3 0 0);
-    --g-plain-border-color-active:oklch(.3 0 0);
-    --g-plain-border-color-focus:oklch(.3 0 0);
-    --g-plain-border-color-disabled:oklch(.3 0 0);
-    --g-plain-border-color-plain:oklch(.26 0 0);
+    --g-plain-border-color-hover:oklch(.22 0 0);
+    --g-plain-border-color-active:oklch(.28 0 0);
+    --g-plain-border-color-focus:oklch(.28 0 0);
+    --g-plain-border-color-disabled:oklch(.28 0 0);
+    --g-plain-border-color-plain:oklch(.24 0 0);
 
     // --- 特殊组件颜色 ---
 

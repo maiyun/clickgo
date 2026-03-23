@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; min-height: 0; background-color: var(--g-plain-background); 
+    display: flex; min-height: 0; background-color: var(--g-plain-background); border-radius: var(--g-radius);
 
     .inner {
         overflow: auto; display: flex; flex-direction: column; flex: 1; border-radius: var(--g-radius);

@@ -1,7 +1,7 @@
 .wrap {
     outline: none; padding: var(--g-padding); position: relative;
     &::after {
-        content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; border: dotted .5px hsl(0, 0%, 100%)
+        content: ''; pointer-events: none; position: absolute; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); display: none; border: dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
     }
     // --- 获取焦点时自动显示焦点框 ---
     &:focus::after {

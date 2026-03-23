@@ -53,7 +53,7 @@
         // --- 焦点虚线 ---
         &:focus {
             &::before {
-                content: ''; position: absolute; width: 100%; height: 100%; border: dotted .5px var(--g-plain-border-color); left: 0; top: 0;
+                content: ''; position: absolute; width: 100%; height: 100%; border: dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color); left: 0; top: 0;
             }
         }
 

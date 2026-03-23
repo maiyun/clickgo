@@ -95,7 +95,7 @@
             --border-focus:solid .5px var(--g-border-color-focus);
             --border-disabled:solid .5px var(--g-border-color-disabled);
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -116,7 +116,7 @@
             --border-focus:solid .5px var(--g-plain-border-color-focus);
             --border-disabled:solid .5px var(--g-plain-border-color-disabled);
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:var(--g-shadow);
         }
     }
@@ -138,7 +138,7 @@
             --border-focus:solid .5px var(--g-border-color-focus);
             --border-disabled:solid .5px transparent;
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:none;
         }
         &.plain {
@@ -158,7 +158,7 @@
             --border-focus:solid .5px var(--g-plain-border-color-focus);
             --border-disabled:solid .5px transparent;
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:none;
         }
     }
@@ -176,7 +176,7 @@
             --background-focus:var(--success-focus);
             --background-disabled:var(--success-disabled);
 
-            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -198,7 +198,7 @@
             --border-focus:solid .5px var(--success-focus);
             --border-disabled:solid .5px var(--success-disabled);
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:var(--g-shadow);
         }
     }
@@ -216,7 +216,7 @@
             --background-focus:var(--info-focus);
             --background-disabled:var(--info-disabled);
 
-            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -238,7 +238,7 @@
             --border-focus:solid .5px var(--info-focus);
             --border-disabled:solid .5px var(--info-disabled);
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:var(--g-shadow);
         }
     }
@@ -256,7 +256,7 @@
             --background-focus:var(--warning-focus);
             --background-disabled:var(--warning-disabled);
 
-            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -278,7 +278,7 @@
             --border-focus:solid .5px var(--warning-focus);
             --border-disabled:solid .5px var(--warning-disabled);
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:var(--g-shadow);
         }
     }
@@ -296,7 +296,7 @@
             --background-focus:var(--danger-focus);
             --background-disabled:var(--danger-disabled);
 
-            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -318,7 +318,7 @@
             --border-focus:solid .5px var(--danger-focus);
             --border-disabled:solid .5px var(--danger-disabled);
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:var(--g-shadow);
         }
     }
@@ -336,7 +336,7 @@
             --background-focus:var(--cg-focus);
             --background-disabled:var(--cg-disabled);
 
-            --focusbox-border:dotted .5px hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -358,7 +358,7 @@
             --border-focus:solid .5px var(--cg-focus);
             --border-disabled:solid .5px var(--cg-disabled);
 
-            --focusbox-border:dotted .5px var(--g-focusbox-border-color);
+            --focusbox-border:dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             --shadow:var(--g-shadow);
         }
     }

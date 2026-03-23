@@ -38,7 +38,7 @@
 
         .label {
             &::before {
-                border: dotted .5px var(--g-focusbox-border-color);
+                border: dotted var(--g-focusbox-border-width) var(--g-focusbox-border-color);
             }
         }
 
