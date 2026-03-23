@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; justify-content: center; border-bottom: solid .5px var(--g-plain-border-color);
+    display: flex; justify-content: center; border-bottom: solid .5px var(--g-border-color);
 
     // --- 朴素模式，无底边框 ---
     &.plain {
