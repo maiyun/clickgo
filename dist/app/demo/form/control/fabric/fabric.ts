@@ -5,7 +5,7 @@ export default class extends clickgo.form.AbstractForm {
     public access: {
         'canvas': any;
     } = {
-            'canvas': undefined
+            'canvas': undefined,
         };
 
     public disabled: boolean = false;
@@ -32,14 +32,51 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 选区信息文本 --- */
     public marqueeInfo: string = '(none)';
 
-    /** --- 图层列表显示文本 --- */
-    public layerListInfo: string = '(none)';
-
-    /** --- 图层管理输入框内容 --- */
-    public newLayerName: string = '';
+    /** --- 图层树 HTML 展示内容（[F]=文件夹 [L]=图层 [H]=隐藏 [K]=锁定） --- */
+    public layerListHtml: string = '(none)';
 
     /** --- 当前激活图层名称列表，由 v-model:layer 双向绑定 --- */
     public layer: string[] = [];
+
+    /** --- 图层操作的 name 输入内容（供 add / remove / rename / visible / locked 复用） --- */
+    public layerOpName: string = '';
+
+    /** --- 图层操作的 title 输入内容（add 时为初始标题，rename 时为新标题） --- */
+    public layerOpTitle: string = '';
+
+    /** --- setLayerVisible 目标可见状态 --- */
+    public stateVisible: boolean = true;
+
+    /** --- setLayerLocked 目标锁定状态 --- */
+    public stateLocked: boolean = false;
+
+    /** --- moveLayer 源图层，逗号分隔多个 name --- */
+    public moveSrc: string = '';
+
+    /** --- moveLayer 参考目标 name，空字符串表示移到根末尾 --- */
+    public moveRef: string = '';
+
+    /** --- moveLayer 插入位置 --- */
+    public movePos: string[] = ['before'];
+
+    /** --- 递归构建图层树 HTML 字符串 --- */
+    private _buildLayerHtml(list: any[], indent: number = 0): string {
+        const parts: string[] = [];
+        for (const item of list) {
+            const pad = '&nbsp;&nbsp;'.repeat(indent);
+            const state = `${item.hidden ? ' [H]' : ''}${item.locked ? ' [K]' : ''}`;
+            if (item.type === 'folder') {
+                parts.push(`${pad}<b>[F]</b> <b>${item.name}</b> (${item.title})${state}`);
+                if (item.children?.length) {
+                    parts.push(this._buildLayerHtml(item.children, indent + 1));
+                }
+            }
+            else {
+                parts.push(`${pad}[L] ${item.name} (${item.title})${state}`);
+            }
+        }
+        return parts.join('<br>');
+    }
 
     public onInit(canvas: any): void {
         this.access.canvas = canvas;
@@ -78,6 +115,10 @@ export default class extends clickgo.form.AbstractForm {
         });
 
         this.access.canvas.add(rect, circle, triangle);
+        // --- 创建 shapes 文件夹，将 rect、circle 移入其中演示文件夹结构 ---
+        const fb = this.refs['fabric'] as any;
+        fb.addFolder('shapes', 'Shapes');
+        fb.moveLayer(['rect', 'circle'], 'shapes', 'inside');
     }
 
     public onZoomActual(): void {
@@ -112,24 +153,64 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onLayerListChange(): void {
-        const ls = this.refs.fabric.layerList;
-        this.layerListInfo = ls.length ? JSON.stringify(ls) : '(none)';
+        const ls = (this.refs['fabric'] as any).layerList;
+        this.layerListHtml = ls.length ? this._buildLayerHtml(ls) : '(none)';
     }
 
     public onAddLayer(): void {
-        if (!this.newLayerName) {
+        if (!this.layerOpName) {
             return;
         }
-        this.refs.fabric.addLayer(this.newLayerName);
-        this.newLayerName = '';
+        (this.refs['fabric'] as any).addLayer(this.layerOpName, this.layerOpTitle || this.layerOpName);
+        this.layerOpName = '';
+        this.layerOpTitle = '';
+    }
+
+    public onAddFolder(): void {
+        if (!this.layerOpName) {
+            return;
+        }
+        this.refs.fabric.addFolder(this.layerOpName, this.layerOpTitle || this.layerOpName);
+        this.layerOpName = '';
+        this.layerOpTitle = '';
     }
 
     public onRemoveLayer(): void {
-        if (!this.newLayerName) {
+        if (!this.layerOpName) {
             return;
         }
-        this.refs.fabric.removeLayer(this.newLayerName);
-        this.newLayerName = '';
+        this.refs.fabric.removeLayer(this.layerOpName);
+    }
+
+    public onRenameLayer(): void {
+        if (!this.layerOpName || !this.layerOpTitle) {
+            return;
+        }
+        this.refs.fabric.renameLayer(this.layerOpName, this.layerOpTitle);
+    }
+
+    public onSetVisible(): void {
+        if (!this.layerOpName) {
+            return;
+        }
+        this.refs.fabric.setLayerVisible(this.layerOpName, this.stateVisible);
+    }
+
+    public onSetLocked(): void {
+        if (!this.layerOpName) {
+            return;
+        }
+        this.refs.fabric.setLayerLocked(this.layerOpName, this.stateLocked);
+    }
+
+    public onMoveLayer(): void {
+        const names = this.moveSrc.split(',').map(n => n.trim()).filter(n => n);
+        if (names.length === 0) {
+            return;
+        }
+        const ref = this.moveRef.trim() || null;
+        const pos = this.movePos[0] as 'before' | 'after' | 'inside';
+        this.refs.fabric.moveLayer(names, ref, pos);
     }
 
 }

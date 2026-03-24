@@ -1,17 +1,19 @@
-<form title="fabric" width="600" height="820">
+<form title="fabric" width="720" height="800">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <!-- Canvas 区域 -->
         <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" @marqueechange="onMarqueeChange" @layerlistchange="onLayerListChange" ref="fabric"></fabric>
-        <!-- 当前激活图层显示 -->
+        <!-- 当前激活图层 -->
         <layout gutter="10" align-v="center">
             <label>Active layer:</label>
             <label style="flex: 1;">{{layer.join(', ') || '(none)'}}</label>
         </layout>
-        <!-- 手动指定图层（演示外部控制） -->
+        <!-- 手动指定图层（shapes 为文件夹，选中后自动展开激活内部所有图层） -->
         <layout gutter="10" align-v="center">
             <label>Set layer:</label>
             <button @click="layer = ['rect']" style="flex: 1;">rect</button>
             <button @click="layer = ['circle']" style="flex: 1;">circle</button>
             <button @click="layer = ['triangle']" style="flex: 1;">triangle</button>
+            <button @click="layer = ['shapes']" style="flex: 1;">shapes (folder)</button>
             <button @click="layer = ['rect', 'circle']" style="flex: 1;">rect+circle</button>
             <button @click="layer = []" style="flex: 1;">none</button>
         </layout>
@@ -32,7 +34,7 @@
             <label style="flex: 1;">artboard mode (400 × 300)</label>
             <select v-model="mode" :data="[{'label': 'normal', 'value': ''}, {'label': 'pan', 'value': 'pan'}, {'label': 'zoom', 'value': 'zoom'}, {'label': 'marquee', 'value': 'marquee'}]" style="flex: 1;"></select>
         </layout>
-        <!-- 画板外背景色（仅画板模式下有效） -->
+        <!-- 画板背景色（仅画板模式下有效） -->
         <layout gutter="10" align-v="center">
             <label>artboard bg:</label>
             <text v-model="artboardBg" style="flex: 1;"></text>
@@ -46,27 +48,46 @@
             <button @click="onZoomIn()" style="flex: 1;">zoom in</button>
             <button @click="onZoomOut()" style="flex: 1;">zoom out</button>
         </layout>
-        <!-- 选区操作 -->
+        <!-- 选区操作与信息 -->
         <layout gutter="10" align-v="center">
             <label>compose:</label>
             <select v-model="marqueeCompose" :data="[{'label': 'replace', 'value': 'replace'}, {'label': 'add', 'value': 'add'}, {'label': 'subtract', 'value': 'subtract'}, {'label': 'intersect', 'value': 'intersect'}]" style="flex: 1;"></select>
             <button @click="onClearMarquee()" style="flex: 1;">clear marquee</button>
+            <label style="flex: 2;">{{marqueeInfo}}</label>
         </layout>
-        <!-- 选区信息 -->
+        <!-- 图层树（[F]=文件夹 [L]=图层 [H]=隐藏 [K]=锁定） -->
+        <html :html="layerListHtml" style="border: solid 1px var(--g-border-color);"></html>
+        <!-- 图层名称与标题输入（供下方各操作复用） -->
         <layout gutter="10" align-v="center">
-            <label>Marquee:</label>
-            <label style="flex: 1;">{{marqueeInfo}}</label>
-        </layout>
-        <!-- 图层列表 -->
-        <layout gutter="10" align-v="center">
-            <label>Layers:</label>
-            <label style="flex: 1;">{{layerListInfo}}</label>
-        </layout>
-        <!-- 图层管理 -->
-        <layout gutter="10" align-v="center">
-            <text v-model="newLayerName" style="flex: 1;"></text>
+            <label>name:</label>
+            <text v-model="layerOpName" style="flex: 1;"></text>
+            <label>title:</label>
+            <text v-model="layerOpTitle" style="flex: 1;"></text>
             <button @click="onAddLayer()" style="flex: 1;">add layer</button>
-            <button @click="onRemoveLayer()" style="flex: 1;">remove layer</button>
+            <button @click="onAddFolder()" style="flex: 1;">add folder</button>
+        </layout>
+        <!-- 删除 / 重命名（使用上方 name / title 输入框） -->
+        <layout gutter="10" align-v="center">
+            <button @click="onRemoveLayer()" style="flex: 1;">remove (name)</button>
+            <button @click="onRenameLayer()" style="flex: 1;">rename (name → title)</button>
+        </layout>
+        <!-- 可见性 / 锁定（使用上方 name 输入框） -->
+        <layout gutter="10" align-v="center">
+            <switch v-model="stateVisible"></switch>
+            <label style="flex: 1;">visible</label>
+            <button @click="onSetVisible()" style="flex: 1;">set visible (name)</button>
+            <switch v-model="stateLocked"></switch>
+            <label style="flex: 1;">locked</label>
+            <button @click="onSetLocked()" style="flex: 1;">set locked (name)</button>
+        </layout>
+        <!-- 跨级移动（src 逗号分隔多个名称；ref 为空则移到根末尾；inside 要求 ref 为文件夹） -->
+        <layout gutter="10" align-v="center">
+            <label>src:</label>
+            <text v-model="moveSrc" style="flex: 2;"></text>
+            <label>ref:</label>
+            <text v-model="moveRef" style="flex: 1;"></text>
+            <select v-model="movePos" :data="[{'label': 'before', 'value': 'before'}, {'label': 'after', 'value': 'after'}, {'label': 'inside', 'value': 'inside'}]" style="flex: 1;"></select>
+            <button @click="onMoveLayer()">move</button>
         </layout>
     </layout>
 </form>

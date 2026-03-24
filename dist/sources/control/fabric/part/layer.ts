@@ -89,6 +89,9 @@ export function layerMixin<
 
         public layerList: ILayerMixin['layerList'] = [];
 
+        /** --- layerApplyMode 正在以编程方式修改 canvas 选区，此期间压制 onSelectionChange 的反向 emit --- */
+        private _layerApplying: boolean = false;
+
         public layerUpdateStyle(isDragging: boolean): void {
             if (!this.access.fabric || !this.access.canvas) {
                 return;
@@ -130,6 +133,22 @@ export function layerMixin<
                 return;
             }
             const stateMap = buildStateMap(this.layerList);
+            // --- 将 layer prop 中的文件夹 name 展开为其内部所有叶子图层 name 的集合 ---
+            const effectiveSelected = new Set<string>();
+            const collectSelected = (list: ILayerMixin['layerList'], parentSelected: boolean): void => {
+                for (const item of list) {
+                    const selected = parentSelected || this.props.layer.includes(item.name);
+                    if (item.type === 'folder') {
+                        if (item.children) {
+                            collectSelected(item.children, selected);
+                        }
+                    }
+                    else if (selected) {
+                        effectiveSelected.add(item.name);
+                    }
+                }
+            };
+            collectSelected(this.layerList, false);
             this.access.canvas.forEachObject(obj => {
                 if (isArtboard(obj)) {
                     return;
@@ -152,18 +171,28 @@ export function layerMixin<
                     obj.set({ 'evented': false, 'selectable': false });
                     return;
                 }
-                // --- autoLayer: 所有对象可交互；否则仅 layer 数组中的对象响应 ---
-                const isActive = this.propBoolean('autoLayer') || this.props.layer.includes(objName);
+                // --- autoLayer: 所有对象可交互；否则仅 layer 中指定（含文件夹展开）的对象响应 ---
+                const isActive = this.propBoolean('autoLayer') || effectiveSelected.has(objName);
                 obj.set({ 'evented': isActive, 'selectable': isActive });
             });
-            // --- 将 layer prop 对应的对象同步为 canvas 激活对象 ---
+            // --- 将 layer prop 对应的对象同步为 canvas 激活对象（含文件夹展开后的子图层）---
+            // --- 此期间设置标志，防止 selection:created/updated 反向覆写 layer prop ---
+            this._layerApplying = true;
             if (this.props.layer.length > 0) {
                 const allObjs = this.access.canvas.getObjects();
-                const targetObjs = this.props.layer
-                    .map(n => allObjs.find(o => getName(o) === n))
-                    .filter((o): o is fabric.FabricObject => !!o);
+                // --- 排除锁定/隐藏对象：它们不应被包入 ActiveSelection，否则可随组拖动 ---
+                const targetObjs = allObjs.filter(o => {
+                    if (isArtboard(o)) {
+                        return false;
+                    }
+                    const name = getName(o);
+                    if (!effectiveSelected.has(name)) {
+                        return false;
+                    }
+                    const state = stateMap.get(name);
+                    return !state?.hidden && !state?.locked;
+                });
                 if (targetObjs.length === 1) {
-                    // --- 仅当当前激活对象不同时才切换，避免触发多余的 selection 事件 ---
                     if (this.access.canvas.getActiveObject() !== targetObjs[0]) {
                         this.access.canvas.setActiveObject(targetObjs[0]);
                     }
@@ -171,7 +200,6 @@ export function layerMixin<
                 else if (targetObjs.length > 1) {
                     const cur = this.access.canvas.getActiveObject();
                     const curObjs = (cur instanceof this.access.fabric.ActiveSelection) ? cur.getObjects() : [];
-                    // --- 仅当当前不是同等内容的 ActiveSelection 时才重建，避免触发多余的 selection 事件 ---
                     if (curObjs.length !== targetObjs.length || !targetObjs.every(o => curObjs.includes(o))) {
                         const sel = new this.access.fabric.ActiveSelection(targetObjs, { 'canvas': this.access.canvas });
                         this.access.canvas.setActiveObject(sel);
@@ -184,6 +212,7 @@ export function layerMixin<
             else if (!this.propBoolean('autoLayer')) {
                 this.access.canvas.discardActiveObject();
             }
+            this._layerApplying = false;
             // --- marquee 模式强制禁用 fabric 框选，防止上层 canvas 产生残留虚线框 ---
             this.access.canvas.selection = (this.props.mode !== 'marquee') && this.propBoolean('selector');
             this.layerUpdateStyle(false);
@@ -221,7 +250,8 @@ export function layerMixin<
              */
             const onSelectionChange = (): void => {
                 this.layerUpdateStyle(false);
-                if (!this.propBoolean('autoLayer')) {
+                // --- autoLayer 关闭，或正处于 layerApplyMode 编程选区阶段，均不反向更新 layer prop ---
+                if (!this.propBoolean('autoLayer') || this._layerApplying) {
                     return;
                 }
                 const activeObject = this.access.canvas?.getActiveObject();
@@ -237,6 +267,26 @@ export function layerMixin<
                     names = [];
                 }
                 const prevNames = this.props.layer;
+                // --- 若新选中的对象均在当前 layer 作用域内（含文件夹展开），保持 layer 不变 ---
+                // --- 例如 layer=['shapes'] 时点击其内部的 rect，不应把 layer 覆写为 ['rect'] ---
+                const scope = new Set<string>();
+                const collectScope = (list: ILayerMixin['layerList'], parentSelected: boolean): void => {
+                    for (const item of list) {
+                        const selected = parentSelected || prevNames.includes(item.name);
+                        if (item.type === 'folder') {
+                            if (item.children) {
+                                collectScope(item.children, selected);
+                            }
+                        }
+                        else if (selected) {
+                            scope.add(item.name);
+                        }
+                    }
+                };
+                collectScope(this.layerList, false);
+                if (scope.size > 0 && names.length > 0 && names.every(n => scope.has(n))) {
+                    return;
+                }
                 if (names.length === prevNames.length && names.every(n => prevNames.includes(n))) {
                     return;
                 }
