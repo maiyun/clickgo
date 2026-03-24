@@ -83,21 +83,21 @@ export default class extends clickgo.form.AbstractForm {
         }
     }
     onLayerListChange() {
-        const ls = this.refs['fabric'].layers;
-        this.layerListInfo = (ls.length > 0) ? ls.join(', ') : '(none)';
+        const ls = this.refs.fabric.layerList;
+        this.layerListInfo = ls.length ? JSON.stringify(ls) : '(none)';
     }
     onAddLayer() {
         if (!this.newLayerName) {
             return;
         }
-        this.refs['fabric'].addLayer(this.newLayerName);
+        this.refs.fabric.addLayer(this.newLayerName);
         this.newLayerName = '';
     }
     onRemoveLayer() {
         if (!this.newLayerName) {
             return;
         }
-        this.refs['fabric'].removeLayer(this.newLayerName);
+        this.refs.fabric.removeLayer(this.newLayerName);
         this.newLayerName = '';
     }
 }

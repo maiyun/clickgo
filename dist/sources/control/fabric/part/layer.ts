@@ -22,6 +22,59 @@ export function isArtboard(obj: fabric.FabricObject): boolean {
     return getName(obj) === ARTBOARD_NAME;
 }
 
+/**
+ * --- 在图层列表（含子文件夹）中查找指定 name 的项及其所在父列表 ---
+ * @param list 图层列表
+ * @param name 图层 name
+ */
+export function findItem(
+    list: ILayerMixin['layerList'],
+    name: string
+): { 'item': ILayerMixin['layerList'][0]; 'parent': ILayerMixin['layerList']; } | null {
+    for (const item of list) {
+        if (item.name === name) {
+            return { 'item': item, 'parent': list };
+        }
+        if (item.type === 'folder' && item.children) {
+            const found = findItem(item.children, name);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * --- 递归构建图层有效状态映射，子项继承父文件夹的 hidden/locked 状态 ---
+ * @param list 图层列表
+ * @param parentHidden 父文件夹是否隐藏
+ * @param parentLocked 父文件夹是否锁定
+ */
+export function buildStateMap(
+    list: ILayerMixin['layerList'],
+    parentHidden: boolean = false,
+    parentLocked: boolean = false
+): Map<string, { 'hidden': boolean; 'locked': boolean; }> {
+    const map = new Map<string, { 'hidden': boolean; 'locked': boolean; }>();
+    for (const item of list) {
+        const hidden = parentHidden || item.hidden;
+        const locked = parentLocked || item.locked;
+        if (item.type === 'folder') {
+            if (item.children) {
+                const childMap = buildStateMap(item.children, hidden, locked);
+                for (const [k, v] of childMap) {
+                    map.set(k, v);
+                }
+            }
+        }
+        else {
+            map.set(item.name, { 'hidden': hidden, 'locked': locked });
+        }
+    }
+    return map;
+}
+
 // --- 控件类 ---
 
 type TConstructor<T = clickgo.control.AbstractControl &
@@ -76,17 +129,31 @@ export function layerMixin<
             if (!this.access.fabric || !this.access.canvas) {
                 return;
             }
+            const stateMap = buildStateMap(this.layerList);
             this.access.canvas.forEachObject(obj => {
                 if (isArtboard(obj)) {
                     return;
                 }
+                const objName = getName(obj);
+                const state = stateMap.get(objName);
+                // --- 隐藏图层：不可见且不可交互 ---
+                if (state?.hidden) {
+                    obj.set({ 'visible': false, 'evented': false, 'selectable': false });
+                    return;
+                }
+                obj.set({ 'visible': true });
                 // --- pan / zoom / marquee 模式下所有对象均不可交互 ---
                 if (this.props.mode === 'pan' || this.props.mode === 'zoom' || this.props.mode === 'marquee') {
                     obj.set({ 'evented': false, 'selectable': false });
                     return;
                 }
+                // --- 锁定图层：可见但不可交互 ---
+                if (state?.locked) {
+                    obj.set({ 'evented': false, 'selectable': false });
+                    return;
+                }
                 // --- autoLayer: 所有对象可交互；否则仅 layer 数组中的对象响应 ---
-                const isActive = this.propBoolean('autoLayer') || this.props.layer.includes(getName(obj));
+                const isActive = this.propBoolean('autoLayer') || this.props.layer.includes(objName);
                 obj.set({ 'evented': isActive, 'selectable': isActive });
             });
             // --- 将 layer prop 对应的对象同步为 canvas 激活对象 ---
@@ -122,6 +189,300 @@ export function layerMixin<
             this.layerUpdateStyle(false);
         }
 
+        public layerSetup(): void {
+            if (!this.access.canvas) {
+                return;
+            }
+            // --- 监听 prop 变更 ---
+            this.watch('autoLayer', () => {
+                this.layerApplyMode();
+            });
+            this.watch('transform', () => {
+                this.layerUpdateStyle(false);
+            });
+            this.watch('layer', () => {
+                this.layerApplyMode();
+            });
+            this.watch('selector', () => {
+                if (!this.access.canvas) {
+                    return;
+                }
+                this.access.canvas.selection = this.propBoolean('selector');
+            });
+            this.watch('mode', () => {
+                this.layerApplyMode();
+            });
+            // --- canvas 事件绑定 ---
+            this.access.canvas.on('before:selection:cleared', () => {
+                this.layerUpdateStyle(false);
+            });
+            /**
+             * --- 选区创建/更新时：刷新控制点样式并触发图层变更事件 ---
+             */
+            const onSelectionChange = (): void => {
+                this.layerUpdateStyle(false);
+                if (!this.propBoolean('autoLayer')) {
+                    return;
+                }
+                const activeObject = this.access.canvas?.getActiveObject();
+                /** --- 获取当前激活图层的名称列表 --- */
+                let names: string[];
+                if (this.access.fabric && activeObject instanceof this.access.fabric.ActiveSelection) {
+                    names = activeObject.getObjects().map(o => getName(o));
+                }
+                else if (activeObject) {
+                    names = [getName(activeObject)];
+                }
+                else {
+                    names = [];
+                }
+                const prevNames = this.props.layer;
+                if (names.length === prevNames.length && names.every(n => prevNames.includes(n))) {
+                    return;
+                }
+                this.emit('update:layer', names);
+                const event: clickgo.control.IFabricLayerchangeEvent = {
+                    'detail': {
+                        'prev': [...prevNames],
+                        'next': names,
+                    }
+                };
+                this.emit('layerchange', event);
+            };
+            this.access.canvas.on('selection:created', onSelectionChange);
+            this.access.canvas.on('selection:updated', onSelectionChange);
+            this.access.canvas.on('object:moving', () => {
+                this.layerUpdateStyle(true);
+            });
+            this.access.canvas.on('object:scaling', () => {
+                this.layerUpdateStyle(true);
+            });
+            this.access.canvas.on('object:rotating', () => {
+                this.layerUpdateStyle(true);
+            });
+            this.access.canvas.on('object:modified', () => {
+                this.layerUpdateStyle(false);
+            });
+        }
+
+        public layerOnObjectAdded(obj: fabric.FabricObject): void {
+            const objName = getName(obj);
+            if (!objName) {
+                return;
+            }
+            // --- 若已在 layerList 中则不重复注册 ---
+            if (findItem(this.layerList, objName)) {
+                return;
+            }
+            this.layerList.push({
+                'type': 'layer',
+                'name': objName,
+                'title': objName,
+                'locked': false,
+                'hidden': false,
+            });
+            this.emit('layerlistchange');
+        }
+
+        public layerOnSelectionCleared(): void {
+            if (!this.propBoolean('autoLayer')) {
+                // --- 手动图层模式：点击空白不应丢失激活状态，重建与 layer prop 一致 ---
+                if (this.props.layer.length > 0 && this.access.canvas) {
+                    this.layerApplyMode();
+                }
+                return;
+            }
+            const prevNames = this.props.layer;
+            if (prevNames.length === 0) {
+                return;
+            }
+            this.emit('update:layer', []);
+            const event: clickgo.control.IFabricLayerchangeEvent = {
+                'detail': {
+                    'prev': [...prevNames],
+                    'next': [],
+                }
+            };
+            this.emit('layerchange', event);
+        }
+
+        public layerGetNames(): string[] {
+            const result: string[] = [];
+            const collect = (list: ILayerMixin['layerList']): void => {
+                for (const item of list) {
+                    if (item.type === 'folder') {
+                        if (item.children) {
+                            collect(item.children);
+                        }
+                    }
+                    else {
+                        result.push(item.name);
+                    }
+                }
+            };
+            collect(this.layerList);
+            return result;
+        }
+
+        public addLayer(name: string, title: string = name): boolean {
+            if (findItem(this.layerList, name)) {
+                return false;
+            }
+            this.layerList.push({
+                'type': 'layer',
+                'name': name,
+                'title': title,
+                'locked': false,
+                'hidden': false,
+            });
+            this.emit('layerlistchange');
+            return true;
+        }
+
+        public removeLayer(name: string): void {
+            const found = findItem(this.layerList, name);
+            if (!found) {
+                return;
+            }
+            const idx = found.parent.indexOf(found.item);
+            found.parent.splice(idx, 1);
+            // --- 删除该图层下的所有 fabric 对象 ---
+            if (this.access.canvas) {
+                const toRemove = this.access.canvas.getObjects().filter(obj => getName(obj) === name);
+                for (const obj of toRemove) {
+                    this.access.canvas.remove(obj);
+                }
+            }
+            // --- 若当前激活图层包含此 name，从 layer prop 中移除（watcher 会自动调用 applyMode）---
+            if (this.props.layer.includes(name)) {
+                this.emit('update:layer', this.props.layer.filter(n => n !== name));
+            }
+            this.emit('layerlistchange');
+        }
+
+        public renameLayer(name: string, title: string): boolean {
+            const found = findItem(this.layerList, name);
+            if (!found) {
+                return false;
+            }
+            found.item.title = title;
+            this.emit('layerlistchange');
+            return true;
+        }
+
+        public setLayerVisible(name: string, visible: boolean): boolean {
+            const found = findItem(this.layerList, name);
+            if (!found) {
+                return false;
+            }
+            found.item.hidden = !visible;
+            this.layerApplyMode();
+            this.emit('layerlistchange');
+            return true;
+        }
+
+        public setLayerLocked(name: string, locked: boolean): boolean {
+            const found = findItem(this.layerList, name);
+            if (!found) {
+                return false;
+            }
+            found.item.locked = locked;
+            this.layerApplyMode();
+            this.emit('layerlistchange');
+            return true;
+        }
+
+        public addFolder(name: string, title: string = name): boolean {
+            if (findItem(this.layerList, name)) {
+                return false;
+            }
+            this.layerList.push({
+                'type': 'folder',
+                'name': name,
+                'title': title,
+                'locked': false,
+                'hidden': false,
+                'children': [],
+            });
+            this.emit('layerlistchange');
+            return true;
+        }
+
+        public moveLayer(names: string | string[], refName: string | null, position: 'before' | 'after' | 'inside'): boolean {
+            const nameList = Array.isArray(names) ? names : [names];
+            if (nameList.length === 0) {
+                return false;
+            }
+            // --- refName 不能是被移动项之一 ---
+            if (refName !== null && nameList.includes(refName)) {
+                return false;
+            }
+            // --- 收集所有要移动的项 ---
+            const founds: Array<{ 'item': ILayerMixin['layerList'][0]; 'parent': ILayerMixin['layerList']; }> = [];
+            for (const name of nameList) {
+                const found = findItem(this.layerList, name);
+                if (!found) {
+                    return false;
+                }
+                founds.push(found);
+            }
+            // --- 移入文件夹时：目标文件夹不能是被移动项的子孙 ---
+            if (refName !== null && position === 'inside') {
+                for (const { item } of founds) {
+                    if (item.type === 'folder' && item.children && findItem(item.children, refName)) {
+                        return false;
+                    }
+                }
+            }
+            // --- 按父列表分组，组内按索引降序删除，避免删除时索引偏移 ---
+            const parentGroups = new Map<ILayerMixin['layerList'], Array<{ 'item': ILayerMixin['layerList'][0]; 'idx': number; }>>();
+            for (const { item, parent } of founds) {
+                let group = parentGroups.get(parent);
+                if (!group) {
+                    group = [];
+                    parentGroups.set(parent, group);
+                }
+                group.push({ item, 'idx': parent.indexOf(item) });
+            }
+            for (const [parent, group] of parentGroups) {
+                group.sort((a, b) => b.idx - a.idx);
+                for (const { idx } of group) {
+                    parent.splice(idx, 1);
+                }
+            }
+            const movedItems = founds.map(f => f.item);
+            if (refName === null) {
+                // --- 移动到根列表末尾 ---
+                this.layerList.push(...movedItems);
+            }
+            else {
+                const ref = findItem(this.layerList, refName);
+                if (!ref) {
+                    // --- 目标不存在（理论上不应发生），回退到根列表末尾 ---
+                    this.layerList.push(...movedItems);
+                    this.emit('layerlistchange');
+                    return false;
+                }
+                if (position === 'inside') {
+                    if (ref.item.type !== 'folder') {
+                        this.layerList.push(...movedItems);
+                        this.emit('layerlistchange');
+                        return false;
+                    }
+                    ref.item.children ??= [];
+                    ref.item.children.push(...movedItems);
+                }
+                else {
+                    const dstList = ref.parent;
+                    const refIdx = dstList.indexOf(ref.item);
+                    const insertIdx = (position === 'before') ? refIdx : refIdx + 1;
+                    dstList.splice(insertIdx, 0, ...movedItems);
+                }
+            }
+            this.emit('layerlistchange');
+            return true;
+        }
+
     }
 
     return Mixed as unknown as TBase & TConstructor<ILayerMixin>;
@@ -131,7 +492,7 @@ export interface ILayerMixin {
 
     'layerList': Array<{
         'type': 'layer' | 'folder';
-        /** --- 图层 name 属性值 --- */
+        /** --- 图层唯一标识，对应 fabric 对象的 name 属性 --- */
         'name': string;
         /** --- 图层显示名称 --- */
         'title': string;
@@ -150,8 +511,78 @@ export interface ILayerMixin {
     layerUpdateStyle(isDragging: boolean): void;
 
     /**
-     * --- 根据 mode / layer / selector prop 同步画布内所有对象的交互状态 ---
+     * --- 根据 mode / layer / selector prop 及 layerList 的 locked/hidden 同步画布内所有对象的交互状态 ---
      */
     layerApplyMode(): void;
+
+    /**
+     * --- 初始化图层相关的 prop 监听和 canvas 事件绑定，在 onMounted 中画布初始化完成后调用 ---
+     */
+    layerSetup(): void;
+
+    /**
+     * --- 当 fabric 对象加入画布时调用，自动将有 name 的对象注册到 layerList ---
+     * @param obj 新加入的 fabric 对象
+     */
+    layerOnObjectAdded(obj: fabric.FabricObject): void;
+
+    /**
+     * --- 当画布 selection:cleared 时调用，处理图层变更事件（不含交互恢复逻辑） ---
+     */
+    layerOnSelectionCleared(): void;
+
+    /**
+     * --- 获取 layerList 中所有图层（非文件夹）的 name 扁平列表 ---
+     */
+    layerGetNames(): string[];
+
+    /**
+     * --- 供用户调用，新建一个空图层 ---
+     * @param name 图层 name，不能与已有图层/文件夹重复
+     * @param title 图层显示名称，默认与 name 相同
+     */
+    addLayer(name: string, title?: string): boolean;
+
+    /**
+     * --- 供用户调用，移除图层及其所有 fabric 对象 ---
+     * @param name 图层 name
+     */
+    removeLayer(name: string): void;
+
+    /**
+     * --- 供用户调用，重命名图层或文件夹的显示名称 ---
+     * @param name 图层 name
+     * @param title 新显示名称
+     */
+    renameLayer(name: string, title: string): boolean;
+
+    /**
+     * --- 供用户调用，设置图层/文件夹的可见性 ---
+     * @param name 图层 name
+     * @param visible 是否可见
+     */
+    setLayerVisible(name: string, visible: boolean): boolean;
+
+    /**
+     * --- 供用户调用，设置图层/文件夹的锁定状态 ---
+     * @param name 图层 name
+     * @param locked 是否锁定
+     */
+    setLayerLocked(name: string, locked: boolean): boolean;
+
+    /**
+     * --- 供用户调用，新建一个文件夹图层 ---
+     * @param name 文件夹 name，不能与已有图层/文件夹重复
+     * @param title 文件夹显示名称，默认与 name 相同
+     */
+    addFolder(name: string, title?: string): boolean;
+
+    /**
+     * --- 供用户调用，跨级移动图层/文件夹到指定位置（支持批量） ---
+     * @param names 要移动的图层/文件夹 name，单个字符串或数组，多选时保持传入顺序
+     * @param refName 参考目标的 name；null 表示移动到根列表末尾
+     * @param position before 插入 refName 之前，after 插入 refName 之后，inside 插入到 refName 文件夹内末尾
+     */
+    moveLayer(names: string | string[], refName: string | null, position: 'before' | 'after' | 'inside'): boolean;
 
 }

@@ -112,15 +112,15 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onLayerListChange(): void {
-        const ls = (this.refs['fabric'] as any).layers as string[];
-        this.layerListInfo = (ls.length > 0) ? ls.join(', ') : '(none)';
+        const ls = this.refs.fabric.layerList;
+        this.layerListInfo = ls.length ? JSON.stringify(ls) : '(none)';
     }
 
     public onAddLayer(): void {
         if (!this.newLayerName) {
             return;
         }
-        (this.refs['fabric'] as any).addLayer(this.newLayerName);
+        this.refs.fabric.addLayer(this.newLayerName);
         this.newLayerName = '';
     }
 
@@ -128,7 +128,7 @@ export default class extends clickgo.form.AbstractForm {
         if (!this.newLayerName) {
             return;
         }
-        (this.refs['fabric'] as any).removeLayer(this.newLayerName);
+        this.refs.fabric.removeLayer(this.newLayerName);
         this.newLayerName = '';
     }
 

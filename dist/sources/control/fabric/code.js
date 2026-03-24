@@ -39,8 +39,6 @@ export default class extends base2 {
         'canvas': null,
         'marquee': [],
     };
-    /** --- 所有图层名称列表，包含空图层，具有响应式 --- */
-    layers = [];
     async onMounted() {
         // --- 加载 fabric 模块 ---
         const fabric = await clickgo.core.getModule('fabric');
@@ -73,30 +71,8 @@ export default class extends base2 {
         this.access.canvas.selectionColor = getComputedStyle(this.element).getPropertyValue('--g-background-opacity').trim();
         this.access.canvas.selectionBorderColor = getComputedStyle(this.element).getPropertyValue('--g-border-color').trim();
         this.access.canvas.selectionLineWidth = 1;
-        // --- 交互模式与图层管理 ---
-        // --- 监听 autoLayer prop 变更 ---
-        this.watch('autoLayer', () => {
-            this.layerApplyMode();
-        });
-        // --- 监听 transform prop 变更 ---
-        this.watch('transform', () => {
-            this.layerUpdateStyle(false);
-        });
-        // --- 监听 layer prop 变更（外部手动指定图层或 v-model 更新）---
-        this.watch('layer', () => {
-            this.layerApplyMode();
-        });
-        // --- 监听 selector prop 变更 ---
-        this.watch('selector', () => {
-            if (!this.access.canvas) {
-                return;
-            }
-            this.access.canvas.selection = this.propBoolean('selector');
-        });
-        // --- 监听 mode prop 变更 ---
-        this.watch('mode', () => {
-            this.layerApplyMode();
-        });
+        // --- 图层管理初始化 ---
+        this.layerSetup();
         // --- 画板管理 ---
         // --- 监听画板尺寸变更 ---
         this.watch('artboardWidth', () => {
@@ -419,52 +395,10 @@ export default class extends base2 {
             if (this.artboard) {
                 this.artboardApplyObjClip(e.target);
             }
-            // --- 若对象有 name 且尚未注册到图层列表，自动注册（与 addLayer 创建的空图层共存）---
-            const objName = pLayer.getName(e.target);
-            if (objName && !this.layers.includes(objName)) {
-                this.layers.push(objName);
-                this.emit('layerlistchange');
-            }
+            // --- 注册图层并同步交互状态 ---
+            this.layerOnObjectAdded(e.target);
             this.layerApplyMode();
         });
-        this.access.canvas.on('before:selection:cleared', () => {
-            this.layerUpdateStyle(false);
-        });
-        /**
-         * --- 选区创建/更新时：刷新控制点样式并触发图层变更事件 ---
-         */
-        const onSelectionChange = () => {
-            this.layerUpdateStyle(false);
-            if (!this.propBoolean('autoLayer')) {
-                return;
-            }
-            const activeObject = this.access.canvas?.getActiveObject();
-            let names;
-            if (activeObject instanceof fabric.ActiveSelection) {
-                // --- 多选时返回所有选中对象的名称数组 ---
-                names = activeObject.getObjects().map(o => pLayer.getName(o));
-            }
-            else if (activeObject) {
-                names = [pLayer.getName(activeObject)];
-            }
-            else {
-                names = [];
-            }
-            const prevNames = this.props.layer;
-            if (names.length === prevNames.length && names.every(n => prevNames.includes(n))) {
-                return;
-            }
-            this.emit('update:layer', names);
-            const event = {
-                'detail': {
-                    'prev': [...prevNames],
-                    'next': names,
-                }
-            };
-            this.emit('layerchange', event);
-        };
-        this.access.canvas.on('selection:created', onSelectionChange);
-        this.access.canvas.on('selection:updated', onSelectionChange);
         this.access.canvas.on('selection:cleared', () => {
             this.layerUpdateStyle(false);
             if (isTransformKeep && this.access.canvas) {
@@ -491,25 +425,7 @@ export default class extends base2 {
                 }
                 return;
             }
-            if (!this.propBoolean('autoLayer')) {
-                // --- 手动图层模式：点击空白不应丢失激活状态，重建 ActiveSelection 与 layer prop 保持一致 ---
-                if (this.props.layer.length > 0 && this.access.canvas) {
-                    this.layerApplyMode();
-                }
-                return;
-            }
-            const prevNames = this.props.layer;
-            if (prevNames.length === 0) {
-                return;
-            }
-            this.emit('update:layer', []);
-            const event = {
-                'detail': {
-                    'prev': [...prevNames],
-                    'next': [],
-                }
-            };
-            this.emit('layerchange', event);
+            this.layerOnSelectionCleared();
         });
         this.access.canvas.on('object:moving', () => {
             this.layerUpdateStyle(true);
@@ -890,42 +806,6 @@ export default class extends base2 {
      */
     setMarqueeRect(x, y, width, height) {
         this._setMarqueeRect?.(x, y, width, height);
-    }
-    /**
-     * --- 供用户调用，新建一个空图层 ---
-     * @param name 图层名称，不能与已有图层重复
-     * @returns 是否成功（name 重复时返回 false）
-     */
-    addLayer(name) {
-        if (this.layers.includes(name)) {
-            return false;
-        }
-        this.layers.push(name);
-        this.emit('layerlistchange');
-        return true;
-    }
-    /**
-     * --- 供用户调用，移除图层及其所有 fabric 对象 ---
-     * @param name 图层名称
-     */
-    removeLayer(name) {
-        const idx = this.layers.indexOf(name);
-        if (idx === -1) {
-            return;
-        }
-        this.layers.splice(idx, 1);
-        // --- 删除该图层下的所有 fabric 对象 ---
-        if (this.access.canvas) {
-            const toRemove = this.access.canvas.getObjects().filter(obj => pLayer.getName(obj) === name);
-            for (const obj of toRemove) {
-                this.access.canvas.remove(obj);
-            }
-        }
-        // --- 若当前激活图层包含此 name，从 layer prop 中移除（watcher 会自动调用 applyMode）---
-        if (this.props.layer.includes(name)) {
-            this.emit('update:layer', this.props.layer.filter(n => n !== name));
-        }
-        this.emit('layerlistchange');
     }
     async onUnmounted() {
         if (!this.access.canvas) {
