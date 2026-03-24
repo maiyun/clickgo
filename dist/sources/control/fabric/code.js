@@ -1,217 +1,16 @@
 import * as clickgo from 'clickgo';
+import * as lMarquee from './lib/marquee';
+import * as pLayer from './part/layer';
+import * as pArtboard from './part/artboard';
 // --- 当前 fabric 库版本为 7.2.0，文档：https://fabricjs.com/docs/ ---
-// ==============================
-// --- 模块级常量与工具函数 ---
-// ==============================
-/** --- 内部画板矩形的保留 name --- */
-const ARTBOARD_NAME = '__cg_artboard__';
-/** --- 获取 fabric 对象 name 属性（fabric v7 类型定义中 name 不在直接类型上，需转换访问）--- */
-const getObjName = (obj) => {
-    return (obj.name) ?? '';
-};
-/**
- * --- 从矩形列表中提取合并后的外轮廓边缘线段 ---
- * @param rects 矩形列表（画布坐标系）
- * @param zoom 缩放倍数
- * @param vpt 视口变换矩阵
- * @returns 边缘线段数组，每条线段为 { x1, y1, x2, y2 }（屏幕坐标系）
- */
-const extractOutlineEdges = (rects, zoom, vpt) => {
-    if (rects.length === 0) {
-        return [];
-    }
-    // --- 将矩形坐标转换为屏幕坐标并取整，防止浮点精度问题 ---
-    const screenRects = rects.map((r) => {
-        const sx = Math.round(r.x * zoom + vpt[4]);
-        const sy = Math.round(r.y * zoom + vpt[5]);
-        const sw = Math.round(r.width * zoom);
-        const sh = Math.round(r.height * zoom);
-        return { 'x': sx, 'y': sy, 'w': sw, 'h': sh };
-    });
-    // --- 收集所有唯一的 x 坐标和 y 坐标 ---
-    const xCoords = new Set();
-    const yCoords = new Set();
-    for (const sr of screenRects) {
-        xCoords.add(sr.x);
-        xCoords.add(sr.x + sr.w);
-        yCoords.add(sr.y);
-        yCoords.add(sr.y + sr.h);
-    }
-    const sortedX = [...xCoords].sort((a, b) => a - b);
-    const sortedY = [...yCoords].sort((a, b) => a - b);
-    // --- 构建网格：每个格子标记是否被至少一个矩形覆盖 ---
-    const cols = sortedX.length - 1;
-    const rows = sortedY.length - 1;
-    if (cols <= 0 || rows <= 0) {
-        return [];
-    }
-    const grid = [];
-    for (let r = 0; r < rows; r++) {
-        grid.push(new Array(cols).fill(false));
-    }
-    for (const sr of screenRects) {
-        const left = sortedX.indexOf(sr.x);
-        const right = sortedX.indexOf(sr.x + sr.w);
-        const top = sortedY.indexOf(sr.y);
-        const bottom = sortedY.indexOf(sr.y + sr.h);
-        for (let r = top; r < bottom; r++) {
-            for (let c = left; c < right; c++) {
-                grid[r][c] = true;
-            }
-        }
-    }
-    // --- 扫描网格边缘：只保留一侧被覆盖、另一侧未被覆盖的边 ---
-    const edges = [];
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            if (!grid[r][c]) {
-                continue;
-            }
-            const x1 = sortedX[c];
-            const x2 = sortedX[c + 1];
-            const y1 = sortedY[r];
-            const y2 = sortedY[r + 1];
-            // --- 上边：如果上方格子不在区域内，此边为外轮廓 ---
-            if (r === 0 || !grid[r - 1][c]) {
-                edges.push({ 'x1': x1, 'y1': y1, 'x2': x2, 'y2': y1 });
-            }
-            // --- 下边 ---
-            if (r === rows - 1 || !grid[r + 1][c]) {
-                edges.push({ 'x1': x1, 'y1': y2, 'x2': x2, 'y2': y2 });
-            }
-            // --- 左边 ---
-            if (c === 0 || !grid[r][c - 1]) {
-                edges.push({ 'x1': x1, 'y1': y1, 'x2': x1, 'y2': y2 });
-            }
-            // --- 右边 ---
-            if (c === cols - 1 || !grid[r][c + 1]) {
-                edges.push({ 'x1': x2, 'y1': y1, 'x2': x2, 'y2': y2 });
-            }
-        }
-    }
-    return edges;
-};
-/**
- * --- 将外轮廓边缘线段链式连接为多边形顶点数组 ---
- * @param edges 边缘线段数组
- * @returns 多边形顶点数组的数组（不规则选区可能包含多个独立闭合多边形）
- */
-const buildOutlinePolygons = (edges) => {
-    if (edges.length === 0) {
-        return [];
-    }
-    // --- 构建端点邻接表：每个端点记录与之相连的边索引和对端坐标 ---
-    const ptKey = (x, y) => `${x},${y}`;
-    const adjacency = new Map();
-    for (let i = 0; i < edges.length; i++) {
-        const e = edges[i];
-        const k1 = ptKey(e.x1, e.y1);
-        const k2 = ptKey(e.x2, e.y2);
-        if (!adjacency.has(k1)) {
-            adjacency.set(k1, []);
-        }
-        if (!adjacency.has(k2)) {
-            adjacency.set(k2, []);
-        }
-        adjacency.get(k1).push({ 'idx': i, 'to': { 'x': e.x2, 'y': e.y2 } });
-        adjacency.get(k2).push({ 'idx': i, 'to': { 'x': e.x1, 'y': e.y1 } });
-    }
-    // --- 链式游走：从每条未访问边出发，依次连接成多边形 ---
-    const visited = new Set();
-    const polygons = [];
-    for (let i = 0; i < edges.length; i++) {
-        if (visited.has(i)) {
-            continue;
-        }
-        const polygon = [];
-        let current = { 'x': edges[i].x1, 'y': edges[i].y1 };
-        let edgeIdx = i;
-        while (!visited.has(edgeIdx)) {
-            visited.add(edgeIdx);
-            polygon.push({ 'x': current.x, 'y': current.y });
-            const edge = edges[edgeIdx];
-            const next = (edge.x1 === current.x && edge.y1 === current.y)
-                ? { 'x': edge.x2, 'y': edge.y2 }
-                : { 'x': edge.x1, 'y': edge.y1 };
-            const neighbors = adjacency.get(ptKey(next.x, next.y)) ?? [];
-            const nextEdge = neighbors.find(n => !visited.has(n.idx));
-            if (!nextEdge) {
-                break;
-            }
-            current = next;
-            edgeIdx = nextEdge.idx;
-        }
-        if (polygon.length >= 3) {
-            polygons.push(polygon);
-        }
-    }
-    return polygons;
-};
-/**
- * --- 从已有矩形列表中减去新矩形重叠区域（subtract 模式）---
- * @param existing 已有矩形列表
- * @param cut 要减去的矩形
- * @returns 减去后的矩形列表
- */
-const subtractRect = (existing, cut) => {
-    const result = [];
-    for (const r of existing) {
-        const ix1 = Math.max(r.x, cut.x);
-        const iy1 = Math.max(r.y, cut.y);
-        const ix2 = Math.min(r.x + r.width, cut.x + cut.width);
-        const iy2 = Math.min(r.y + r.height, cut.y + cut.height);
-        if (ix1 >= ix2 || iy1 >= iy2) {
-            result.push(r);
-            continue;
-        }
-        // --- 有交集，将 r 分割为最多 4 条带状矩形（上/下/左/右）---
-        if (r.y < iy1) {
-            result.push({ 'x': r.x, 'y': r.y, 'width': r.width, 'height': iy1 - r.y });
-        }
-        if (iy2 < r.y + r.height) {
-            result.push({ 'x': r.x, 'y': iy2, 'width': r.width, 'height': r.y + r.height - iy2 });
-        }
-        if (r.x < ix1) {
-            result.push({ 'x': r.x, 'y': iy1, 'width': ix1 - r.x, 'height': iy2 - iy1 });
-        }
-        if (ix2 < r.x + r.width) {
-            result.push({ 'x': ix2, 'y': iy1, 'width': r.x + r.width - ix2, 'height': iy2 - iy1 });
-        }
-    }
-    return result;
-};
-/**
- * --- 保留已有矩形与新矩形的交集部分（intersect 模式）---
- * @param existing 已有矩形列表
- * @param clip 交集矩形
- * @returns 交集后的矩形列表
- */
-const intersectRect = (existing, clip) => {
-    const result = [];
-    for (const r of existing) {
-        const ix1 = Math.max(r.x, clip.x);
-        const iy1 = Math.max(r.y, clip.y);
-        const ix2 = Math.min(r.x + r.width, clip.x + clip.width);
-        const iy2 = Math.min(r.y + r.height, clip.y + clip.height);
-        if (ix2 > ix1 && iy2 > iy1) {
-            result.push({ 'x': ix1, 'y': iy1, 'width': ix2 - ix1, 'height': iy2 - iy1 });
-        }
-    }
-    return result;
-};
-// ==============================
-// --- 控件类 ---
-// ==============================
-export default class extends clickgo.control.AbstractControl {
+const base1 = pLayer.layerMixin(clickgo.control.AbstractControl);
+const base2 = pArtboard.artboardMixin(base1);
+export default class extends base2 {
     emits = {
         'init': null,
-        /** --- v-model:layer 双向绑定，值为激活图层对象的 name 属性数组，无选中时为空数组 --- */
         'update:layer': null,
-        /** --- 激活图层变更时触发（仅 autoLayer=true 时），参数为 { prev: 变更前图层 name, next: 变更后图层 name } --- */
         'layerchange': null,
-        /** --- 选区变更时触发（创建、移动、组合、清除） --- */
         'marqueechange': null,
-        /** --- 图层列表变更时触发（新建空图层、移除图层或通过 canvas.add 首次使用某 name 时自动注册） --- */
         'layerlistchange': null,
     };
     props = {
@@ -236,16 +35,14 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 内部闭包暴露的选区设置函数引用 --- */
     _setMarqueeRect = null;
     access = {
-        'canvas': undefined,
-        'artboard': null,
+        'fabric': null,
+        'canvas': null,
         'marquee': [],
     };
     /** --- 所有图层名称列表，包含空图层，具有响应式 --- */
     layers = [];
     async onMounted() {
-        // ==============================
         // --- 加载 fabric 模块 ---
-        // ==============================
         const fabric = await clickgo.core.getModule('fabric');
         if (!fabric) {
             // --- 没有成功 ---
@@ -253,9 +50,8 @@ export default class extends clickgo.control.AbstractControl {
             this.notInit = true;
             return;
         }
-        // ==============================
+        this.access.fabric = fabric;
         // --- 初始化画布 ---
-        // ==============================
         // --- 获取元素实际宽高 ---
         const cw = this.refs.content.clientWidth;
         const ch = this.refs.content.clientHeight;
@@ -272,149 +68,23 @@ export default class extends clickgo.control.AbstractControl {
             canvasContainer.style.top = '0';
             canvasContainer.style.left = '0';
         }
-        // ==============================
         // --- 主题色与画布样式 ---
-        // ==============================
-        const borderColor = getComputedStyle(this.element).getPropertyValue('--cg').trim();
-        const cornerColor = getComputedStyle(this.element).getPropertyValue('--g-plain-background').trim();
         // --- 设置画布默认选框样式 ---
         this.access.canvas.selectionColor = getComputedStyle(this.element).getPropertyValue('--g-background-opacity').trim();
         this.access.canvas.selectionBorderColor = getComputedStyle(this.element).getPropertyValue('--g-border-color').trim();
         this.access.canvas.selectionLineWidth = 1;
-        // ==============================
-        // --- 控制点与边框样式管理 ---
-        // ==============================
-        /**
-         * --- 构建控制点和边框样式属性，用于统一应用到 fabric 对象 ---
-         * @param isDragging 是否处于拖动/变换操作中
-         * @param showControls 是否显示控制点
-         */
-        const buildStyleProps = (isDragging, showControls) => ({
-            'cornerColor': cornerColor,
-            'cornerStrokeColor': borderColor,
-            'cornerSize': 8,
-            'cornerStyle': 'rect',
-            'transparentCorners': false,
-            'borderColor': borderColor,
-            /** --- 拖动时线条变粗（2px），常态为 1px --- */
-            'borderScaleFactor': isDragging ? 2 : 1,
-            /** --- 确保拖动时不透明度不降低 --- */
-            'borderOpacityWhenMoving': 1,
-            /** --- transform=false 时同时隐藏边框和控制点 --- */
-            'hasBorders': showControls,
-            'hasControls': showControls,
-            /** --- transform=false 时任何位置都能拖动，鼠标悬停在元素上时不显示移动指针 --- */
-            'hoverCursor': showControls ? 'move' : 'default',
-            'moveCursor': showControls ? 'move' : 'default',
-        });
-        /**
-         * --- 更新选中对象的控制点和边框样式 ---
-         * @param isDragging 是否处于拖动/变换操作中
-         */
-        const updateSelectionStyle = (isDragging) => {
-            if (!this.access.canvas) {
-                return;
-            }
-            /** --- 是否开启自由变换（控制点），拖动中临时隐藏 --- */
-            const showControls = this.propBoolean('transform') && !isDragging;
-            const activeObject = this.access.canvas.getActiveObject();
-            const styleProps = buildStyleProps(isDragging, showControls);
-            this.access.canvas.forEachObject(obj => {
-                // --- 跳过内部画板矩形 ---
-                if (getObjName(obj) === ARTBOARD_NAME) {
-                    return;
-                }
-                obj.set(styleProps);
-            });
-            // --- ActiveSelection 为虚拟对象不计入 forEachObject，需单独应用样式 ---
-            if (activeObject instanceof fabric.ActiveSelection) {
-                activeObject.set(styleProps);
-            }
-            this.access.canvas.requestRenderAll();
-        };
-        // ==============================
         // --- 交互模式与图层管理 ---
-        // ==============================
-        /**
-         * --- 根据 mode / layer / selector prop 同步画布内所有对象的交互状态 ---
-         */
-        const applyMode = () => {
-            if (!this.access.canvas) {
-                return;
-            }
-            const isAutoLayer = this.propBoolean('autoLayer');
-            const layerNames = this.props.layer;
-            // --- 按 autoLayer 更新所有对象的可交互状态 ---
-            this.access.canvas.forEachObject(obj => {
-                // --- 跳过内部画板矩形，始终保持不可选中/不响应事件 ---
-                if (getObjName(obj) === ARTBOARD_NAME) {
-                    return;
-                }
-                // --- pan / zoom / marquee 模式下所有对象均不可交互 ---
-                if (this.props.mode === 'pan' || this.props.mode === 'zoom' || this.props.mode === 'marquee') {
-                    obj.set({ 'evented': false, 'selectable': false });
-                    return;
-                }
-                if (isAutoLayer) {
-                    // --- 自动切换图层：所有对象均可被点选 ---
-                    obj.set({
-                        'evented': true,
-                        'selectable': true,
-                    });
-                }
-                else {
-                    // --- 手动指定图层：仅 layer 数组中包含的对象响应鼠标事件，其他穿透 ---
-                    const isActive = layerNames.includes(getObjName(obj));
-                    obj.set({
-                        'evented': isActive,
-                        'selectable': isActive,
-                    });
-                }
-            });
-            // --- 将 layer prop 对应的对象同步为 canvas 激活对象 ---
-            if (layerNames.length > 0) {
-                const allObjs = this.access.canvas.getObjects();
-                const targetObjs = layerNames
-                    .map(n => allObjs.find(o => getObjName(o) === n))
-                    .filter((o) => !!o);
-                if (targetObjs.length === 1) {
-                    // --- 仅当当前激活对象不同时才切换，避免触发多余的 selection 事件 ---
-                    if (this.access.canvas.getActiveObject() !== targetObjs[0]) {
-                        this.access.canvas.setActiveObject(targetObjs[0]);
-                    }
-                }
-                else if (targetObjs.length > 1) {
-                    const cur = this.access.canvas.getActiveObject();
-                    const curObjs = (cur instanceof fabric.ActiveSelection) ? cur.getObjects() : [];
-                    // --- 仅当当前不是同等内容的 ActiveSelection 时才重建，避免触发多余的 selection 事件 ---
-                    if (curObjs.length !== targetObjs.length || !targetObjs.every(o => curObjs.includes(o))) {
-                        const sel = new fabric.ActiveSelection(targetObjs, { 'canvas': this.access.canvas });
-                        this.access.canvas.setActiveObject(sel);
-                    }
-                }
-                else {
-                    this.access.canvas.discardActiveObject();
-                }
-            }
-            else if (!isAutoLayer) {
-                this.access.canvas.discardActiveObject();
-            }
-            // --- 同步框选矩形开关 ---
-            // --- marquee 模式强制禁用 fabric 框选，防止上层 canvas 产生残留虚线框 ---
-            this.access.canvas.selection = (this.props.mode !== 'marquee') && this.propBoolean('selector');
-            updateSelectionStyle(false);
-        };
         // --- 监听 autoLayer prop 变更 ---
         this.watch('autoLayer', () => {
-            applyMode();
+            this.layerApplyMode();
         });
         // --- 监听 transform prop 变更 ---
         this.watch('transform', () => {
-            updateSelectionStyle(false);
+            this.layerUpdateStyle(false);
         });
         // --- 监听 layer prop 变更（外部手动指定图层或 v-model 更新）---
         this.watch('layer', () => {
-            applyMode();
+            this.layerApplyMode();
         });
         // --- 监听 selector prop 变更 ---
         this.watch('selector', () => {
@@ -425,157 +95,28 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 监听 mode prop 变更 ---
         this.watch('mode', () => {
-            applyMode();
+            this.layerApplyMode();
         });
-        // ==============================
         // --- 画板管理 ---
-        // ==============================
-        /**
-         * --- 为指定用户对象设置画板裁剪，对象内容被裁剪到画板范围内，控制点不受影响 ---
-         * @param obj 要设置裁剪的对象
-         * @param ab 当前画板信息
-         */
-        const applyObjClip = (obj, ab) => {
-            obj.clipPath = new fabric.Rect({
-                'left': ab.left,
-                'top': ab.top,
-                'width': ab.width,
-                'height': ab.height,
-                /** --- originX/originY 须显式设为 left/top，fabric v7 默认为 center --- */
-                'originX': 'left',
-                'originY': 'top',
-                /** --- absolutePositioned=true 表示 clipPath 使用画布绝对坐标，不受对象自身变换影响 --- */
-                'absolutePositioned': true,
-            });
-        };
-        /** --- before:render 监听器引用，用于在画板外部绘制背景色（在对象和控制点之前绘制，不覆盖任何内容） --- */
-        let beforeRenderHandler = null;
-        /**
-         * --- 同步画板矩形：居中显示画板区域，外部背景；为所有用户对象设置 clipPath 裁剪至画板内 ---
-         */
-        const applyArtboard = () => {
-            if (!this.access.canvas) {
-                return;
-            }
-            // --- 移除旧的 before:render 监听器 ---
-            if (beforeRenderHandler) {
-                this.access.canvas.off('before:render', beforeRenderHandler);
-                beforeRenderHandler = null;
-            }
-            const aw = parseFloat(String(this.props.artboardWidth)) || 0;
-            const ah = parseFloat(String(this.props.artboardHeight)) || 0;
-            // --- 移除旧画板矩形（若存在）---
-            const oldArtboard = this.access.canvas.getObjects().find(o => getObjName(o) === ARTBOARD_NAME);
-            if (oldArtboard) {
-                this.access.canvas.remove(oldArtboard);
-            }
-            if (!aw || !ah) {
-                // --- 关闭画板：清除所有用户对象的 clipPath ---
-                this.access.canvas.forEachObject(obj => {
-                    if (getObjName(obj) === ARTBOARD_NAME) {
-                        return;
-                    }
-                    /** --- fabric v7 类型中 clipPath 不含 undefined，用 unknown 中转 --- */
-                    obj.clipPath = undefined;
-                });
-                this.access.canvas.backgroundColor = '';
-                this.access.artboard = null;
-                this.access.canvas.requestRenderAll();
-                return;
-            }
-            const cw = this.access.canvas.getWidth();
-            const ch = this.access.canvas.getHeight();
-            const left = Math.round((cw - aw) / 2);
-            const top = Math.round((ch - ah) / 2);
-            this.access.artboard = {
-                'left': left,
-                'top': top,
-                'width': aw,
-                'height': ah,
-            };
-            // --- 为所有现有用户对象应用画板 clipPath ---
-            this.access.canvas.forEachObject(obj => {
-                if (getObjName(obj) === ARTBOARD_NAME) {
-                    return;
-                }
-                applyObjClip(obj, this.access.artboard);
-            });
-            // --- 创建画板矩形底层背景 ---
-            const artboardRect = new fabric.Rect({
-                'left': left,
-                'top': top,
-                'width': aw,
-                'height': ah,
-                /** --- originX/originY 须显式设为 left/top，fabric v7 默认为 center --- */
-                'originX': 'left',
-                'originY': 'top',
-                /** --- 无描边，避免 strokeWidth 影响边界计算 --- */
-                'strokeWidth': 0,
-                /** --- artboardFill 为空字符串时使用 null 表示完全透明 --- */
-                'fill': (this.props.artboardFill || null),
-                'selectable': false,
-                'evented': false,
-                'hasControls': false,
-                'hasBorders': false,
-                'lockMovementX': true,
-                'lockMovementY': true,
-            });
-            artboardRect.name = ARTBOARD_NAME;
-            this.access.canvas.add(artboardRect);
-            /** --- fabric.js v7 Canvas.sendObjectToBack 方法将画板压到最底层 --- */
-            this.access.canvas.sendObjectToBack(artboardRect);
-            // --- 画板外背景色通过 before:render 绘制，不影响对象和控制点的渲染 ---
-            // --- before:render 在 clearContext 之后、renderObjects 之前触发，绝不覆盖 controls ---
-            beforeRenderHandler = (e) => {
-                const bg = this.props.artboardBg;
-                if (!this.access.artboard || !bg) {
-                    return;
-                }
-                const ab = this.access.artboard;
-                const zoom = this.access.canvas.getZoom();
-                const vpt = this.access.canvas.viewportTransform ?? [1, 0, 0, 1, 0, 0];
-                const canvasWidth = this.access.canvas.getWidth();
-                const canvasHeight = this.access.canvas.getHeight();
-                // --- 画板在当前 viewport 下的屏幕坐标 ---
-                const sx = ab.left * zoom + vpt[4];
-                const sy = ab.top * zoom + vpt[5];
-                const sw = ab.width * zoom;
-                const sh = ab.height * zoom;
-                const ctx = e.ctx;
-                ctx.save();
-                ctx.fillStyle = bg;
-                // --- evenodd 裁剪区域：外矩形减去画板区域，只绘制 4 个外周区域 ---
-                ctx.beginPath();
-                ctx.rect(0, 0, canvasWidth, canvasHeight);
-                ctx.rect(sx, sy, sw, sh);
-                ctx.clip('evenodd');
-                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-                ctx.restore();
-            };
-            this.access.canvas.on('before:render', beforeRenderHandler);
-            // --- canvas 自身背景设为透明，让画板内部区域可透过至 HTML 层 ---
-            this.access.canvas.backgroundColor = '';
-            this.access.canvas.requestRenderAll();
-        };
         // --- 监听画板尺寸变更 ---
         this.watch('artboardWidth', () => {
-            applyArtboard();
+            this.artboardApply();
         });
         this.watch('artboardHeight', () => {
-            applyArtboard();
+            this.artboardApply();
         });
         this.watch('artboardBg', () => {
-            if (!this.access.canvas || !this.access.artboard) {
+            if (!this.access.canvas || !this.artboard) {
                 return;
             }
             // --- before:render 处理程序动态读取 artboardBg，此处只需触发重绘 ---
             this.access.canvas.requestRenderAll();
         });
         this.watch('artboardFill', () => {
-            if (!this.access.canvas || !this.access.artboard) {
+            if (!this.access.canvas || !this.artboard) {
                 return;
             }
-            const artboardRect = this.access.canvas.getObjects().find(o => getObjName(o) === ARTBOARD_NAME);
+            const artboardRect = this.access.canvas.getObjects().find(o => pLayer.isArtboard(o));
             if (artboardRect) {
                 artboardRect.set('fill', (this.props.artboardFill || null));
                 /** --- fabric v7 必须手动标记 dirty 才能触发重绘 --- */
@@ -607,10 +148,10 @@ export default class extends clickgo.control.AbstractControl {
          * @returns 裁剪后矩形，若完全超出画板则返回 null
          */
         const clipRectToArtboard = (rect) => {
-            if (!this.access.artboard) {
+            if (!this.artboard) {
                 return rect;
             }
-            const ab = this.access.artboard;
+            const ab = this.artboard;
             const x1 = Math.max(rect.x, ab.left);
             const y1 = Math.max(rect.y, ab.top);
             const x2 = Math.min(rect.x + rect.width, ab.left + ab.width);
@@ -664,11 +205,11 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'subtract': {
-                    marqueeRects = subtractRect(marqueeRects, newRect);
+                    marqueeRects = lMarquee.subtractRect(marqueeRects, newRect);
                     break;
                 }
                 case 'intersect': {
-                    marqueeRects = intersectRect(marqueeRects, newRect);
+                    marqueeRects = lMarquee.intersectRect(marqueeRects, newRect);
                     break;
                 }
                 default: {
@@ -725,7 +266,7 @@ export default class extends clickgo.control.AbstractControl {
                 };
                 // --- 绘制稳定选区的合并外轮廓 ---
                 if (marqueeRects.length > 0) {
-                    drawEdges(extractOutlineEdges(marqueeRects, zoom, vpt));
+                    drawEdges(lMarquee.extractOutlineEdges(marqueeRects, zoom, vpt));
                 }
                 // --- 绘制正在拖拽中的临时矩形（独立显示，不与稳定选区合并）---
                 if (drawingRect) {
@@ -871,29 +412,29 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 新对象加入时同步当前模式状态（跳过内部画板矩形，避免干扰）---
         this.access.canvas.on('object:added', (e) => {
-            if (getObjName(e.target) === ARTBOARD_NAME) {
+            if (pLayer.isArtboard(e.target)) {
                 return;
             }
             // --- 若画板已激活则为新对象自动应用裁剪 ---
-            if (this.access.artboard) {
-                applyObjClip(e.target, this.access.artboard);
+            if (this.artboard) {
+                this.artboardApplyObjClip(e.target);
             }
             // --- 若对象有 name 且尚未注册到图层列表，自动注册（与 addLayer 创建的空图层共存）---
-            const objName = getObjName(e.target);
+            const objName = pLayer.getName(e.target);
             if (objName && !this.layers.includes(objName)) {
                 this.layers.push(objName);
                 this.emit('layerlistchange');
             }
-            applyMode();
+            this.layerApplyMode();
         });
         this.access.canvas.on('before:selection:cleared', () => {
-            updateSelectionStyle(false);
+            this.layerUpdateStyle(false);
         });
         /**
          * --- 选区创建/更新时：刷新控制点样式并触发图层变更事件 ---
          */
         const onSelectionChange = () => {
-            updateSelectionStyle(false);
+            this.layerUpdateStyle(false);
             if (!this.propBoolean('autoLayer')) {
                 return;
             }
@@ -901,10 +442,10 @@ export default class extends clickgo.control.AbstractControl {
             let names;
             if (activeObject instanceof fabric.ActiveSelection) {
                 // --- 多选时返回所有选中对象的名称数组 ---
-                names = activeObject.getObjects().map(o => getObjName(o));
+                names = activeObject.getObjects().map(o => pLayer.getName(o));
             }
             else if (activeObject) {
-                names = [getObjName(activeObject)];
+                names = [pLayer.getName(activeObject)];
             }
             else {
                 names = [];
@@ -925,7 +466,7 @@ export default class extends clickgo.control.AbstractControl {
         this.access.canvas.on('selection:created', onSelectionChange);
         this.access.canvas.on('selection:updated', onSelectionChange);
         this.access.canvas.on('selection:cleared', () => {
-            updateSelectionStyle(false);
+            this.layerUpdateStyle(false);
             if (isTransformKeep && this.access.canvas) {
                 // --- transform 保持模式：恢复激活对象，不触发图层变更事件 ---
                 // --- 多选时需重建 ActiveSelection（discardActiveObject 已释放子对象坐标，原对象已失效）---
@@ -953,7 +494,7 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.propBoolean('autoLayer')) {
                 // --- 手动图层模式：点击空白不应丢失激活状态，重建 ActiveSelection 与 layer prop 保持一致 ---
                 if (this.props.layer.length > 0 && this.access.canvas) {
-                    applyMode();
+                    this.layerApplyMode();
                 }
                 return;
             }
@@ -971,16 +512,16 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('layerchange', event);
         });
         this.access.canvas.on('object:moving', () => {
-            updateSelectionStyle(true);
+            this.layerUpdateStyle(true);
         });
         this.access.canvas.on('object:scaling', () => {
-            updateSelectionStyle(true);
+            this.layerUpdateStyle(true);
         });
         this.access.canvas.on('object:rotating', () => {
-            updateSelectionStyle(true);
+            this.layerUpdateStyle(true);
         });
         this.access.canvas.on('object:modified', () => {
-            updateSelectionStyle(false);
+            this.layerUpdateStyle(false);
         });
         // --- mouse:move ---
         this.access.canvas.on('mouse:move', (e) => {
@@ -1080,7 +621,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- mouse:up ---
         this.access.canvas.on('mouse:up', () => {
-            updateSelectionStyle(false);
+            this.layerUpdateStyle(false);
             // --- 选区绘制结束 ---
             if (isMarqueeDrawing && this.access.canvas) {
                 isMarqueeDrawing = false;
@@ -1154,8 +695,8 @@ export default class extends clickgo.control.AbstractControl {
         // ==============================
         // --- 初始化完成 ---
         // ==============================
-        applyMode();
-        applyArtboard();
+        this.layerApplyMode();
+        this.artboardApply();
         // --- 将闭包内的选区操作函数暴露给实例方法 ---
         this._clearMarquee = () => {
             isMarqueeDrawing = false;
@@ -1201,13 +742,13 @@ export default class extends clickgo.control.AbstractControl {
         }
         const cw = this.access.canvas.getWidth();
         const ch = this.access.canvas.getHeight();
-        if (this.access.artboard) {
+        if (this.artboard) {
             // --- 画板居中：zoom=1，画板左上角对齐 canvas 中心 ---
             // --- screen = canvas * zoom + vpt，居中需减去画板在 canvas 中的初始偏移 ---
             const vpt = [
                 1, 0, 0, 1,
-                Math.round((cw - this.access.artboard.width) / 2 - this.access.artboard.left),
-                Math.round((ch - this.access.artboard.height) / 2 - this.access.artboard.top)
+                Math.round((cw - this.artboard.width) / 2 - this.artboard.left),
+                Math.round((ch - this.artboard.height) / 2 - this.artboard.top)
             ];
             this.access.canvas.setViewportTransform(vpt);
         }
@@ -1226,18 +767,18 @@ export default class extends clickgo.control.AbstractControl {
         }
         const cw = this.access.canvas.getWidth();
         const ch = this.access.canvas.getHeight();
-        if (this.access.artboard) {
+        if (this.artboard) {
             // --- 按画板尺寸适应屏, 保留 10px 内边距 ---
-            const scaleX = (cw - 20) / this.access.artboard.width;
-            const scaleY = (ch - 20) / this.access.artboard.height;
+            const scaleX = (cw - 20) / this.artboard.width;
+            const scaleY = (ch - 20) / this.artboard.height;
             const newZoom = Math.min(scaleX, scaleY);
-            const scaledW = this.access.artboard.width * newZoom;
-            const scaledH = this.access.artboard.height * newZoom;
+            const scaledW = this.artboard.width * newZoom;
+            const scaledH = this.artboard.height * newZoom;
             // --- screen = canvas * newZoom + vpt，居中需减去画板初始偏移乘以缩放倍数 ---
             const vpt = [
                 newZoom, 0, 0, newZoom,
-                Math.round((cw - scaledW) / 2 - this.access.artboard.left * newZoom),
-                Math.round((ch - scaledH) / 2 - this.access.artboard.top * newZoom)
+                Math.round((cw - scaledW) / 2 - this.artboard.left * newZoom),
+                Math.round((ch - scaledH) / 2 - this.artboard.top * newZoom)
             ];
             this.access.canvas.setViewportTransform(vpt);
         }
@@ -1313,7 +854,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         const result = [];
         this.access.canvas.forEachObject(obj => {
-            if (getObjName(obj) === ARTBOARD_NAME) {
+            if (pLayer.isArtboard(obj)) {
                 return;
             }
             const bound = obj.getBoundingRect();
@@ -1337,8 +878,8 @@ export default class extends clickgo.control.AbstractControl {
             return [];
         }
         // --- 使用 zoom=1、单位矩阵变换，直接在 canvas 坐标系中提取边缘并转换为多边形 ---
-        const edges = extractOutlineEdges(this.access.marquee, 1, [1, 0, 0, 1, 0, 0]);
-        return buildOutlinePolygons(edges);
+        const edges = lMarquee.extractOutlineEdges(this.access.marquee, 1, [1, 0, 0, 1, 0, 0]);
+        return lMarquee.buildOutlinePolygons(edges);
     }
     /**
      * --- 供用户调用，以编程方式设置选区矩形（canvas 内部坐标） ---
@@ -1375,7 +916,7 @@ export default class extends clickgo.control.AbstractControl {
         this.layers.splice(idx, 1);
         // --- 删除该图层下的所有 fabric 对象 ---
         if (this.access.canvas) {
-            const toRemove = this.access.canvas.getObjects().filter(obj => getObjName(obj) === name);
+            const toRemove = this.access.canvas.getObjects().filter(obj => pLayer.getName(obj) === name);
             for (const obj of toRemove) {
                 this.access.canvas.remove(obj);
             }
@@ -1391,6 +932,6 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         await this.access.canvas.dispose();
-        this.access.canvas = undefined;
+        this.access.canvas = null;
     }
 }

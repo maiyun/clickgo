@@ -1,0 +1,25 @@
+<form width="360" height="390" title="Form split demo" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1;">
+        <group label="User (from _user.ts)">
+            <layout direction="v" padding="10" gutter="6">
+                <label>userName: {{ userName }}</label>
+                <label>userList: {{ userList.join(', ') }}</label>
+                <!-- 演示：welcomeMsg 由 _user.ts 反向读取了主 form 的属性和方法后合成 -->
+                <label>welcomeMsg: {{ welcomeMsg || '(loading...)' }}</label>
+                <button @click="loadUser()">Reload user</button>
+            </layout>
+        </group>
+        <group label="Order (from _order.ts)">
+            <layout direction="v" padding="10" gutter="6">
+                <label>orderId: {{ orderId || '(none)' }}</label>
+                <button @click="submitOrder()">Submit order</button>
+            </layout>
+        </group>
+        <group label="Product (from _product.ts)">
+            <layout direction="v" padding="10" gutter="6">
+                <label>productName: {{ productName || '(none)' }}</label>
+                <button @click="addProduct()">Add product</button>
+            </layout>
+        </group>
+    </layout>
+</form>

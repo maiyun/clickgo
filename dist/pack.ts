@@ -61,6 +61,7 @@ for (const item of checkList) {
     // --- 解析 code.ts ---
     let propsMatch = /public\s+props:\s*\{([\s\S]+?)\}\s*=/.exec(code);
     propsMatch ??= /public\s+props\s*=\s*\{([\s\S]+?)\}/.exec(code);
+    propsMatch ??= /public\s+props\s*:[^={]+\s*=\s*\{([\s\S]+?)\}/.exec(code);
 
     const codeProps: string[] = [];
     if (propsMatch) {
@@ -80,7 +81,7 @@ for (const item of checkList) {
 
     // --- 解析 emits，直接在原始 code 中查找所有 'key': 模式，无需完整匹配整个对象 ---
     const codeEmits: string[] = [];
-    const emitsRegex = /public\s+emits\s*=\s*\{[\s\S]*?\};/;
+    const emitsRegex = /public\s+emits(?:\s*:[^=]+)?\s*=\s*\{[\s\S]*?\};/;
     const emitsFullMatch = emitsRegex.exec(code);
     if (emitsFullMatch) {
         // --- 从 emits 对象中提取所有的键 ---

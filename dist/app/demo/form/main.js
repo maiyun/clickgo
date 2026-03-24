@@ -90,6 +90,7 @@ import mthemeFrm from './method/theme/theme';
 import mtoolFrm from './method/tool/tool';
 import mzipFrm from './method/zip/zip';
 import sbackpanelFrm from './solution/backpanel/backpanel';
+import ssplitFrm from './solution/split/split';
 export default class extends clickgo.form.AbstractForm {
     ntab = '';
     adata = {};
@@ -497,6 +498,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'sbackpanel': {
                 frm = await clickgo.form.create(this, sbackpanelFrm, data);
+                break;
+            }
+            case 'ssplit': {
+                frm = await clickgo.form.create(this, ssplitFrm);
                 break;
             }
             default: {

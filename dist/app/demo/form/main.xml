@@ -164,6 +164,7 @@
                 <button @click="openForm('sbackpanel')">Backend panel</button>
                 <button @click="openForm('sbackpanel', {'hash': 'test1?a=1&b=2'})">Backend panel with hash</button>
                 <button @click="openForm('shue')">Hue</button>
+                <button @click="openForm('ssplit')">Form split</button>
             </layout>
         </flow>
     </tab>
