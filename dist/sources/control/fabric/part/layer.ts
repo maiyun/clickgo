@@ -6,6 +6,21 @@ import * as pCore from './core';
 /** --- 内部画板矩形的保留 name --- */
 export const ARTBOARD_NAME = '__cg_artboard__';
 
+/** --- 图层项类型定义 --- */
+export interface ILayerItem {
+    'type': 'layer' | 'folder';
+    /** --- 图层唯一标识，对应 fabric 对象的 name 属性 --- */
+    'name': string;
+    /** --- 图层显示名称 --- */
+    'title': string;
+    /** --- 图层是否锁定，锁定后不可编辑 --- */
+    'locked': boolean;
+    /** --- 图层是否隐藏，隐藏后不可见且不可编辑 --- */
+    'hidden': boolean;
+    /** --- 子图层列表，仅在 type 为 folder 时存在 --- */
+    'children'?: ILayerItem[];
+}
+
 /**
  * --- 获取 fabric 对象 name 属性（fabric v7 类型定义中 name 不在直接类型上，需转换访问）---
  * @param obj fabric 对象
@@ -27,10 +42,10 @@ export function isArtboard(obj: fabric.FabricObject): boolean {
  * @param list 图层列表
  * @param name 图层 name
  */
-export function findItem(
-    list: ILayerMixin['layerList'],
+function findItem(
+    list: ILayerItem[],
     name: string
-): { 'item': ILayerMixin['layerList'][0]; 'parent': ILayerMixin['layerList']; } | null {
+): { 'item': ILayerItem; 'parent': ILayerItem[]; } | null {
     for (const item of list) {
         if (item.name === name) {
             return { 'item': item, 'parent': list };
@@ -50,29 +65,50 @@ export function findItem(
  * @param list 图层列表
  * @param parentHidden 父文件夹是否隐藏
  * @param parentLocked 父文件夹是否锁定
+ * @param map 累加结果（递归传入）
  */
-export function buildStateMap(
-    list: ILayerMixin['layerList'],
+function buildStateMap(
+    list: ILayerItem[],
     parentHidden: boolean = false,
-    parentLocked: boolean = false
+    parentLocked: boolean = false,
+    map: Map<string, { 'hidden': boolean; 'locked': boolean; }> = new Map()
 ): Map<string, { 'hidden': boolean; 'locked': boolean; }> {
-    const map = new Map<string, { 'hidden': boolean; 'locked': boolean; }>();
     for (const item of list) {
         const hidden = parentHidden || item.hidden;
         const locked = parentLocked || item.locked;
-        if (item.type === 'folder') {
-            if (item.children) {
-                const childMap = buildStateMap(item.children, hidden, locked);
-                for (const [k, v] of childMap) {
-                    map.set(k, v);
-                }
-            }
+        if (item.type === 'folder' && item.children) {
+            buildStateMap(item.children, hidden, locked, map);
         }
         else {
             map.set(item.name, { 'hidden': hidden, 'locked': locked });
         }
     }
     return map;
+}
+
+/**
+ * --- 将 selectedNames 中包含的文件夹 name 展开为其内部所有叶子图层 name 的集合 ---
+ * @param list 图层列表
+ * @param selectedNames 被选中的图层/文件夹 name 列表
+ * @param parentSelected 父文件夹是否已被选中（递归传入）
+ * @param result 累加结果（递归传入）
+ */
+function expandSelection(
+    list: ILayerItem[],
+    selectedNames: string[],
+    parentSelected: boolean = false,
+    result: Set<string> = new Set()
+): Set<string> {
+    for (const item of list) {
+        const selected = parentSelected || selectedNames.includes(item.name);
+        if (item.type === 'folder' && item.children) {
+            expandSelection(item.children, selectedNames, selected, result);
+        }
+        else if (selected) {
+            result.add(item.name);
+        }
+    }
+    return result;
 }
 
 // --- 控件类 ---
@@ -87,7 +123,7 @@ export function layerMixin<
 
     abstract class Mixed extends (base as unknown as TConstructor) implements ILayerMixin {
 
-        public layerList: ILayerMixin['layerList'] = [];
+        public layerList: ILayerItem[] = [];
 
         /** --- layerApplyMode 正在以编程方式修改 canvas 选区，此期间压制 onSelectionChange 的反向 emit --- */
         private _layerApplying: boolean = false;
@@ -133,22 +169,7 @@ export function layerMixin<
                 return;
             }
             const stateMap = buildStateMap(this.layerList);
-            // --- 将 layer prop 中的文件夹 name 展开为其内部所有叶子图层 name 的集合 ---
-            const effectiveSelected = new Set<string>();
-            const collectSelected = (list: ILayerMixin['layerList'], parentSelected: boolean): void => {
-                for (const item of list) {
-                    const selected = parentSelected || this.props.layer.includes(item.name);
-                    if (item.type === 'folder') {
-                        if (item.children) {
-                            collectSelected(item.children, selected);
-                        }
-                    }
-                    else if (selected) {
-                        effectiveSelected.add(item.name);
-                    }
-                }
-            };
-            collectSelected(this.layerList, false);
+            const effectiveSelected = expandSelection(this.layerList, this.props.layer);
             this.access.canvas.forEachObject(obj => {
                 if (isArtboard(obj)) {
                     return;
@@ -258,7 +279,7 @@ export function layerMixin<
                 /** --- 获取当前激活图层的名称列表 --- */
                 let names: string[];
                 if (this.access.fabric && activeObject instanceof this.access.fabric.ActiveSelection) {
-                    names = activeObject.getObjects().map(o => getName(o));
+                    names = activeObject.getObjects().map(getName);
                 }
                 else if (activeObject) {
                     names = [getName(activeObject)];
@@ -269,21 +290,7 @@ export function layerMixin<
                 const prevNames = this.props.layer;
                 // --- 若新选中的对象均在当前 layer 作用域内（含文件夹展开），保持 layer 不变 ---
                 // --- 例如 layer=['shapes'] 时点击其内部的 rect，不应把 layer 覆写为 ['rect'] ---
-                const scope = new Set<string>();
-                const collectScope = (list: ILayerMixin['layerList'], parentSelected: boolean): void => {
-                    for (const item of list) {
-                        const selected = parentSelected || prevNames.includes(item.name);
-                        if (item.type === 'folder') {
-                            if (item.children) {
-                                collectScope(item.children, selected);
-                            }
-                        }
-                        else if (selected) {
-                            scope.add(item.name);
-                        }
-                    }
-                };
-                collectScope(this.layerList, false);
+                const scope = expandSelection(this.layerList, prevNames);
                 if (scope.size > 0 && names.length > 0 && names.every(n => scope.has(n))) {
                     return;
                 }
@@ -358,12 +365,10 @@ export function layerMixin<
 
         public layerGetNames(): string[] {
             const result: string[] = [];
-            const collect = (list: ILayerMixin['layerList']): void => {
+            const collect = (list: ILayerItem[]): void => {
                 for (const item of list) {
-                    if (item.type === 'folder') {
-                        if (item.children) {
-                            collect(item.children);
-                        }
+                    if (item.type === 'folder' && item.children) {
+                        collect(item.children);
                     }
                     else {
                         result.push(item.name);
@@ -468,7 +473,7 @@ export function layerMixin<
                 return false;
             }
             // --- 收集所有要移动的项 ---
-            const founds: Array<{ 'item': ILayerMixin['layerList'][0]; 'parent': ILayerMixin['layerList']; }> = [];
+            const founds: Array<{ 'item': ILayerItem; 'parent': ILayerItem[]; }> = [];
             for (const name of nameList) {
                 const found = findItem(this.layerList, name);
                 if (!found) {
@@ -485,7 +490,7 @@ export function layerMixin<
                 }
             }
             // --- 按父列表分组，组内按索引降序删除，避免删除时索引偏移 ---
-            const parentGroups = new Map<ILayerMixin['layerList'], Array<{ 'item': ILayerMixin['layerList'][0]; 'idx': number; }>>();
+            const parentGroups = new Map<ILayerItem[], Array<{ 'item': ILayerItem; 'idx': number; }>>();
             for (const { item, parent } of founds) {
                 let group = parentGroups.get(parent);
                 if (!group) {
@@ -540,19 +545,7 @@ export function layerMixin<
 
 export interface ILayerMixin {
 
-    'layerList': Array<{
-        'type': 'layer' | 'folder';
-        /** --- 图层唯一标识，对应 fabric 对象的 name 属性 --- */
-        'name': string;
-        /** --- 图层显示名称 --- */
-        'title': string;
-        /** --- 图层是否锁定，锁定后不可编辑 --- */
-        'locked': boolean;
-        /** --- 图层是否隐藏，隐藏后不可见且不可编辑 --- */
-        'hidden': boolean;
-        /** --- 子图层列表，仅在 type 为 folder 时存在 --- */
-        'children'?: ILayerMixin['layerList'];
-    }>;
+    'layerList': ILayerItem[];
 
     /**
      * --- 更新所有对象的控制点和边框样式 ---

@@ -19,7 +19,7 @@ export function isArtboard(obj) {
  * @param list 图层列表
  * @param name 图层 name
  */
-export function findItem(list, name) {
+function findItem(list, name) {
     for (const item of list) {
         if (item.name === name) {
             return { 'item': item, 'parent': list };
@@ -38,25 +38,39 @@ export function findItem(list, name) {
  * @param list 图层列表
  * @param parentHidden 父文件夹是否隐藏
  * @param parentLocked 父文件夹是否锁定
+ * @param map 累加结果（递归传入）
  */
-export function buildStateMap(list, parentHidden = false, parentLocked = false) {
-    const map = new Map();
+function buildStateMap(list, parentHidden = false, parentLocked = false, map = new Map()) {
     for (const item of list) {
         const hidden = parentHidden || item.hidden;
         const locked = parentLocked || item.locked;
-        if (item.type === 'folder') {
-            if (item.children) {
-                const childMap = buildStateMap(item.children, hidden, locked);
-                for (const [k, v] of childMap) {
-                    map.set(k, v);
-                }
-            }
+        if (item.type === 'folder' && item.children) {
+            buildStateMap(item.children, hidden, locked, map);
         }
         else {
             map.set(item.name, { 'hidden': hidden, 'locked': locked });
         }
     }
     return map;
+}
+/**
+ * --- 将 selectedNames 中包含的文件夹 name 展开为其内部所有叶子图层 name 的集合 ---
+ * @param list 图层列表
+ * @param selectedNames 被选中的图层/文件夹 name 列表
+ * @param parentSelected 父文件夹是否已被选中（递归传入）
+ * @param result 累加结果（递归传入）
+ */
+function expandSelection(list, selectedNames, parentSelected = false, result = new Set()) {
+    for (const item of list) {
+        const selected = parentSelected || selectedNames.includes(item.name);
+        if (item.type === 'folder' && item.children) {
+            expandSelection(item.children, selectedNames, selected, result);
+        }
+        else if (selected) {
+            result.add(item.name);
+        }
+    }
+    return result;
 }
 export function layerMixin(base) {
     class Mixed extends base {
@@ -103,22 +117,7 @@ export function layerMixin(base) {
                 return;
             }
             const stateMap = buildStateMap(this.layerList);
-            // --- 将 layer prop 中的文件夹 name 展开为其内部所有叶子图层 name 的集合 ---
-            const effectiveSelected = new Set();
-            const collectSelected = (list, parentSelected) => {
-                for (const item of list) {
-                    const selected = parentSelected || this.props.layer.includes(item.name);
-                    if (item.type === 'folder') {
-                        if (item.children) {
-                            collectSelected(item.children, selected);
-                        }
-                    }
-                    else if (selected) {
-                        effectiveSelected.add(item.name);
-                    }
-                }
-            };
-            collectSelected(this.layerList, false);
+            const effectiveSelected = expandSelection(this.layerList, this.props.layer);
             this.access.canvas.forEachObject(obj => {
                 if (isArtboard(obj)) {
                     return;
@@ -227,7 +226,7 @@ export function layerMixin(base) {
                 /** --- 获取当前激活图层的名称列表 --- */
                 let names;
                 if (this.access.fabric && activeObject instanceof this.access.fabric.ActiveSelection) {
-                    names = activeObject.getObjects().map(o => getName(o));
+                    names = activeObject.getObjects().map(getName);
                 }
                 else if (activeObject) {
                     names = [getName(activeObject)];
@@ -238,21 +237,7 @@ export function layerMixin(base) {
                 const prevNames = this.props.layer;
                 // --- 若新选中的对象均在当前 layer 作用域内（含文件夹展开），保持 layer 不变 ---
                 // --- 例如 layer=['shapes'] 时点击其内部的 rect，不应把 layer 覆写为 ['rect'] ---
-                const scope = new Set();
-                const collectScope = (list, parentSelected) => {
-                    for (const item of list) {
-                        const selected = parentSelected || prevNames.includes(item.name);
-                        if (item.type === 'folder') {
-                            if (item.children) {
-                                collectScope(item.children, selected);
-                            }
-                        }
-                        else if (selected) {
-                            scope.add(item.name);
-                        }
-                    }
-                };
-                collectScope(this.layerList, false);
+                const scope = expandSelection(this.layerList, prevNames);
                 if (scope.size > 0 && names.length > 0 && names.every(n => scope.has(n))) {
                     return;
                 }
@@ -326,10 +311,8 @@ export function layerMixin(base) {
             const result = [];
             const collect = (list) => {
                 for (const item of list) {
-                    if (item.type === 'folder') {
-                        if (item.children) {
-                            collect(item.children);
-                        }
+                    if (item.type === 'folder' && item.children) {
+                        collect(item.children);
                     }
                     else {
                         result.push(item.name);
