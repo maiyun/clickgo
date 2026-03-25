@@ -13,22 +13,28 @@ const runPath = process.cwd().replace(/\\/g, '/') + '/';
 // --- 插件 ---
 // -----------
 
-/** --- 匹配 extends 后面的类名，为其增加新的方法；分包模式下支持在 class 行加块注释标记，如 class extends base /✱AbstractForm✱/ { --- */
-// eslint-disable-next-line max-len
-const reg = /(?:extends.+?(?:AbstractForm|AbstractPanel|AbstractControl|AbstractThread)|\/\*\s*(?:AbstractForm|AbstractPanel|AbstractControl|AbstractThread)\s*\*\/)\s*{/g;
+/** --- 匹配直接 extends AbstractForm/AbstractPanel/AbstractControl/AbstractThread 的类声明开头花括号 --- */
+const regExtends = /(?:extends.+?(?:AbstractForm|AbstractPanel|AbstractControl|AbstractThread))\s*{/g;
+
+/** --- 分包模式下通过 cgType 字段标记基类类型，供注入 get filename() 使用 --- */
+const regStatic = /cgType\s*=\s*['"](?:AbstractForm|AbstractPanel|AbstractControl|AbstractThread)['"]\s*;/g;
+
 /** --- 增加些必备数据，如 filename --- */
 function preTransformPlugin(base: string): rollup.InputPluginOption {
     return {
         'name': 'pre-transform',
         transform: function(code, id) {
             id = id.replace(/\\/g, '/');
-            if (!reg.test(code)) {
+            if (!regExtends.test(code) && !regStatic.test(code)) {
                 return null;
             }
+            const filename = id.slice(base.length);
+            const newCode = code
+                .replace(regExtends, m => `${m}get filename(){return '${filename}';}`)
+                .replace(regStatic, m => `${m}get filename(){return '${filename}';}`)
+            ;
             return {
-                'code': code.replace(reg, m => {
-                    return `${m}get filename(){return '${id.slice(base.length)}';}`;
-                }),
+                'code': newCode,
                 'map': null,
             };
         }

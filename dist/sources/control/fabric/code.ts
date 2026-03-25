@@ -13,7 +13,10 @@ const base2 = pArtboard.artboardMixin(base1);
 const base3 = pZoom.zoomMixin(base2);
 const base4 = pMarquee.marqueeMixin(base3);
 
-export default class extends base4 /* AbstractControl */ implements pCore.ICore {
+export default class extends base4 implements pCore.ICore {
+
+    /** --- 编译器通过此字段识别基类类型，自动注入 get filename() --- */
+    public cgType = 'AbstractControl';
 
     public emits: pCore.ICore['emits'] = {
         'init': null,
