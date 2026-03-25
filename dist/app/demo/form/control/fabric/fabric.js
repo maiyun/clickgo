@@ -35,6 +35,25 @@ export default class extends clickgo.form.AbstractForm {
     moveRef = '';
     /** --- moveLayer 插入位置 --- */
     movePos = ['before'];
+    /** --- 事件触发日志列表 --- */
+    eventLog = [];
+    /**
+     * --- 向事件日志列表头部插入一条记录 ---
+     * @param name 事件名称
+     * @param content 事件内容摘要
+     */
+    _logEvent(name, content) {
+        const d = new Date();
+        const pad = (n) => n.toString().padStart(2, '0');
+        this.eventLog.unshift({
+            'time': `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`,
+            'name': name,
+            'content': content,
+        });
+        if (this.eventLog.length > 50) {
+            this.eventLog.pop();
+        }
+    }
     /** --- 递归构建图层树 HTML 字符串 --- */
     _buildLayerHtml(list, indent = 0) {
         const parts = [];
@@ -54,6 +73,7 @@ export default class extends clickgo.form.AbstractForm {
         return parts.join('<br>');
     }
     onInit(canvas) {
+        this._logEvent('init', 'canvas ready');
         this.access.canvas = canvas;
         const fabric = clickgo.modules.fabric;
         if (!fabric) {
@@ -106,19 +126,31 @@ export default class extends clickgo.form.AbstractForm {
     onClearMarquee() {
         this.refs['fabric'].clearMarquee();
     }
+    onLayerChange(e) {
+        const prev = e.detail.prev.join(', ') || '(none)';
+        const next = e.detail.next.join(', ') || '(none)';
+        this._logEvent('layerchange', `${prev} → ${next}`);
+    }
     onMarqueeChange() {
         const rect = this.refs['fabric'].getMarqueeRect();
         if (rect) {
             const objs = this.refs['fabric'].getMarqueeObjects();
             this.marqueeInfo = `(${Math.round(rect.x)}, ${Math.round(rect.y)}) ${Math.round(rect.width)}×${Math.round(rect.height)}, ${objs.length} objs`;
+            this._logEvent('marqueechange', this.marqueeInfo);
         }
         else {
             this.marqueeInfo = '(none)';
+            this._logEvent('marqueechange', '(none)');
         }
     }
-    onLayerListChange() {
+    onLayerListChange(e) {
         const ls = this.refs['fabric'].layerList;
         this.layerListHtml = ls.length ? this._buildLayerHtml(ls) : '(none)';
+        this._logEvent('layerlistchange', `type=${e.detail.type}, names=[${e.detail.names.join(', ')}]`);
+    }
+    onObjectChanged(e) {
+        const d = e.detail;
+        this._logEvent('objectchanged', `${d.name}: left=${Math.round(d.left)}, top=${Math.round(d.top)}, w=${Math.round(d.width * d.scaleX)}, h=${Math.round(d.height * d.scaleY)}, angle=${Math.round(d.angle)}°`);
     }
     onAddLayer() {
         if (!this.layerOpName) {

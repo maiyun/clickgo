@@ -1,7 +1,7 @@
-<form title="fabric" width="720" height="800">
+<form title="fabric" width="720" height="950">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
         <!-- Canvas 区域 -->
-        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" @marqueechange="onMarqueeChange" @layerlistchange="onLayerListChange" ref="fabric"></fabric>
+        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" @layerchange="onLayerChange" @marqueechange="onMarqueeChange" @layerlistchange="onLayerListChange" @objectchanged="onObjectChanged" ref="fabric"></fabric>
         <!-- 当前激活图层 -->
         <layout gutter="10" align-v="center">
             <label>Active layer:</label>
@@ -89,5 +89,13 @@
             <select v-model="movePos" :data="[{'label': 'before', 'value': 'before'}, {'label': 'after', 'value': 'after'}, {'label': 'inside', 'value': 'inside'}]" style="flex: 1;"></select>
             <button @click="onMoveLayer()">move</button>
         </layout>
+        <!-- 事件日志（显示所有 emit 触发记录） -->
+        <layout align-v="center" gutter="10">
+            <label style="flex: 1;">Event log:</label>
+            <button @click="eventLog = []">clear</button>
+        </layout>
+        <vflow v-slot="data" :data="eventLog" direction="v" style="height: 100px; border: solid 1px var(--g-border-color); padding: 5px; overflow-y: auto;">
+            <label>[{{data.row.time}}] <b>{{data.row.name}}</b>: {{data.row.content}}</label>
+        </vflow>
     </layout>
 </form>

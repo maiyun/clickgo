@@ -59,6 +59,27 @@ export default class extends clickgo.form.AbstractForm {
     /** --- moveLayer 插入位置 --- */
     public movePos: string[] = ['before'];
 
+    /** --- 事件触发日志列表 --- */
+    public eventLog: Array<{ 'time': string; 'name': string; 'content': string; }> = [];
+
+    /**
+     * --- 向事件日志列表头部插入一条记录 ---
+     * @param name 事件名称
+     * @param content 事件内容摘要
+     */
+    private _logEvent(name: string, content: string): void {
+        const d = new Date();
+        const pad = (n: number): string => n.toString().padStart(2, '0');
+        this.eventLog.unshift({
+            'time': `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`,
+            'name': name,
+            'content': content,
+        });
+        if (this.eventLog.length > 50) {
+            this.eventLog.pop();
+        }
+    }
+
     /** --- 递归构建图层树 HTML 字符串 --- */
     private _buildLayerHtml(list: any[], indent: number = 0): string {
         const parts: string[] = [];
@@ -79,6 +100,7 @@ export default class extends clickgo.form.AbstractForm {
     }
 
     public onInit(canvas: any): void {
+        this._logEvent('init', 'canvas ready');
         this.access.canvas = canvas;
         const fabric = clickgo.modules.fabric;
         if (!fabric) {
@@ -141,20 +163,34 @@ export default class extends clickgo.form.AbstractForm {
         (this.refs['fabric'] as any).clearMarquee();
     }
 
+    public onLayerChange(e: CustomEvent): void {
+        const prev = (e.detail.prev as string[]).join(', ') || '(none)';
+        const next = (e.detail.next as string[]).join(', ') || '(none)';
+        this._logEvent('layerchange', `${prev} → ${next}`);
+    }
+
     public onMarqueeChange(): void {
         const rect = (this.refs['fabric'] as any).getMarqueeRect();
         if (rect) {
             const objs = (this.refs['fabric'] as any).getMarqueeObjects();
             this.marqueeInfo = `(${Math.round(rect.x)}, ${Math.round(rect.y)}) ${Math.round(rect.width)}×${Math.round(rect.height)}, ${objs.length} objs`;
+            this._logEvent('marqueechange', this.marqueeInfo);
         }
         else {
             this.marqueeInfo = '(none)';
+            this._logEvent('marqueechange', '(none)');
         }
     }
 
-    public onLayerListChange(): void {
+    public onLayerListChange(e: CustomEvent): void {
         const ls = (this.refs['fabric'] as any).layerList;
         this.layerListHtml = ls.length ? this._buildLayerHtml(ls) : '(none)';
+        this._logEvent('layerlistchange', `type=${e.detail.type}, names=[${(e.detail.names as string[]).join(', ')}]`);
+    }
+
+    public onObjectChanged(e: CustomEvent): void {
+        const d = e.detail;
+        this._logEvent('objectchanged', `${d.name}: left=${Math.round(d.left)}, top=${Math.round(d.top)}, w=${Math.round(d.width * d.scaleX)}, h=${Math.round(d.height * d.scaleY)}, angle=${Math.round(d.angle)}°`);
     }
 
     public onAddLayer(): void {
