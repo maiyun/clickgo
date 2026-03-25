@@ -28,6 +28,8 @@
 - [IDatepanelRangeEvent](interfaces/IDatepanelRangeEvent.md)
 - [IDatepanelSelectedEvent](interfaces/IDatepanelSelectedEvent.md)
 - [IFabricLayerchangeEvent](interfaces/IFabricLayerchangeEvent.md)
+- [IFabricLayerlistchangeEvent](interfaces/IFabricLayerlistchangeEvent.md)
+- [IFabricObjectchangeEvent](interfaces/IFabricObjectchangeEvent.md)
 - [IFormCloseEvent](interfaces/IFormCloseEvent.md)
 - [IFormMaxEvent](interfaces/IFormMaxEvent.md)
 - [IFormMinEvent](interfaces/IFormMinEvent.md)
