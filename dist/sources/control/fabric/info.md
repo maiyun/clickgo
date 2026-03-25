@@ -12,7 +12,11 @@
 
 `boolean` | `string`
 
-是否允许点击画布对象自动切换激活图层，默认为 `true`。关闭后只有通过 `layer` 属性手动指定的对象才能响应鼠标事件，其他对象完全穿透。
+自动图层选择模式，默认为 `true`。
+
+- `true` 或 `'layer'`：点击画布对象时自动切换到该对象所在的叶子图层。
+- `'group'`：点击画布对象时自动切换到该对象所属的最顶层文件夹（若对象不在任何文件夹中则退回到叶子图层本身）。功能类似 PS 中"自动选择"的"组"模式。
+- `false`：关闭自动切换，只有通过 `layer` 属性手动指定的对象才能响应鼠标事件，其他对象完全穿透。
 
 #### transform
 
@@ -24,7 +28,7 @@
 
 `string[]`
 
-双向绑定当前激活图层列表，值为图层或文件夹的 `name` 数组。`autoLayer` 为 `true` 时由控件根据用户交互自动更新（仅含叶子图层 `name`，不含文件夹名）；`autoLayer` 为 `false` 时可通过此属性从外部手动指定激活图层，支持同时传入多个 `name` 以实现多图层联动操作（拖动、自由变换等会同时影响所有指定图层）。传入文件夹 `name` 时，控件会自动展开该文件夹内的所有子图层并将它们全部激活，适用于层面板中直接选中文件夹的场景。无选中时为空数组 `[]`。
+双向绑定当前激活图层列表，值为图层或文件夹的 `name` 数组。`autoLayer` 为 `true` 时由控件根据用户交互自动更新（仅含叶子图层 `name`，不含文件夹名）；`autoLayer` 为 `'group'` 时自动更新为最顶层文件夹的 `name`；`autoLayer` 为 `false` 时可通过此属性从外部手动指定激活图层，支持同时传入多个 `name` 以实现多图层联动操作（拖动、自由变换等会同时影响所有指定图层）。传入文件夹 `name` 时，控件会自动展开该文件夹内的所有子图层并将它们全部激活，适用于层面板中直接选中文件夹的场景。无选中时为空数组 `[]`。
 
 #### selector
 
@@ -99,7 +103,7 @@
 
 `(event: { detail: { prev: string[]; next: string[] } }) => void`
 
-激活图层变更时触发（仅 `autoLayer` 为 `true` 时）。`event.detail.prev` 为变更前的图层 name 数组，`event.detail.next` 为变更后的图层 name 数组，取消选中时为空数组。同时选中多个对象时，`event.detail.next` 包含所有选中对象的 name。
+激活图层变更时触发（仅 `autoLayer` 非 `false` 时）。`event.detail.prev` 为变更前的图层 name 数组，`event.detail.next` 为变更后的图层 name 数组，取消选中时为空数组。同时选中多个对象时，`event.detail.next` 包含所有选中对象的 name。`autoLayer` 为 `'group'` 时，`next` 中的 name 为最顶层文件夹的 name。
 
 #### marqueechange
 
@@ -109,9 +113,34 @@
 
 #### layerlistchange
 
-`() => void`
+`(event: { detail: { type: 'add' | 'remove' | 'rename' | 'visible' | 'locked' | 'move'; names: string[]; value?: string | boolean; } }) => void`
 
-图层列表发生变化时触发。以下三种情况均会触发：调用 `addLayer` 或 `addFolder` 新建图层/文件夹、调用 `removeLayer`、`renameLayer`、`setLayerVisible`、`setLayerLocked`、`moveLayer` 等修改图层列表、通过 `canvas.add(obj)` 首次将某个新 `name` 对应的对象加入画布时自动注册到 `layerList`。可在此事件中读取 `layerList` 获取最新的图层树。
+图层列表发生变化时触发，`event.detail` 精确描述本次变更的内容：
+
+- `type` — 变更类型：
+  - `'add'` — 新建图层或文件夹（调用 `addLayer`、`addFolder` 或首次 `canvas.add` 自动注册）
+  - `'remove'` — 移除图层（调用 `removeLayer`）
+  - `'rename'` — 重命名（调用 `renameLayer`），`value` 为新显示名称
+  - `'visible'` — 可见性变更（调用 `setLayerVisible`），`value` 为新可见状态（`true` 表示可见）
+  - `'locked'` — 锁定状态变更（调用 `setLayerLocked`），`value` 为新锁定状态
+  - `'move'` — 图层移动（调用 `moveLayer`）
+- `names` — 本次变更所涉及的图层/文件夹 name 列表
+- `value` — 仅 `rename`、`visible`、`locked` 类型时携带，含义见上
+
+可在此事件中读取 `layerList` 获取最新的完整图层树。
+
+#### objectchanged
+
+`(event: { detail: { name: string; left: number; top: number; scaleX: number; scaleY: number; angle: number; width: number; height: number; } }) => void`
+
+对象完成变换（移动、缩放或旋转）后触发，即鼠标释放且 fabric 内部发出 `object:modified` 时。多选操作时，会为每个被修改的对象分别发射一次此事件。内部画板矩形不会触发此事件。
+
+`event.detail` 包含：
+- `name` — 被修改对象的 name
+- `left`、`top` — 对象左上角在 canvas 内部坐标系中的位置
+- `scaleX`、`scaleY` — 水平/垂直缩放比例
+- `angle` — 旋转角度（单位：度）
+- `width`、`height` — 对象自身尺寸（不含缩放）
 
 ### 属性
 

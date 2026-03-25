@@ -11,17 +11,19 @@ export interface ICore {
         /** --- v-model:layer 双向绑定，值为激活图层对象的 name 属性数组，无选中时为空数组 --- */
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'update:layer': null;
-        /** --- 激活图层变更时触发（仅 autoLayer=true 时），参数为 { prev: 变更前图层 name, next: 变更后图层 name } --- */
+        /** --- 激活图层变更时触发（autoLayer 非 false 时），参数为 { prev: 变更前图层 name, next: 变更后图层 name } --- */
         'layerchange': null;
         /** --- 选区变更时触发（创建、移动、组合、清除） --- */
         'marqueechange': null;
         /** --- 图层列表变更时触发（新建空图层、移除图层或通过 canvas.add 首次使用某 name 时自动注册） --- */
         'layerlistchange': null;
+        /** --- 对象变换（移动/缩放/旋转）完成后触发，含最终位置与尺寸 --- */
+        'objectchanged': null;
     };
 
     'props': {
         'disabled': boolean | string;
-        /** --- 是否允许点击对象自动切换激活图层，关闭时只有 layer 属性指定的对象可被操作 --- */
+        /** --- 自动图层选择模式：true/'layer' 点击对象切换到叶子图层，'group' 点击对象切换到其所属的最顶层文件夹，false 关闭自动切换 --- */
         'autoLayer': boolean | string;
         /** --- 是否显示控制点（自由变换句柄），关闭后只能拖动，不能缩放/旋转 --- */
         'transform': boolean | string;

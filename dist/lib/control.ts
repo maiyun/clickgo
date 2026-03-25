@@ -1493,6 +1493,31 @@ export interface IFabricLayerchangeEvent {
     };
 }
 
+export interface IFabricLayerlistchangeEvent {
+    'detail': {
+        /** --- 变更类型：add 新增、remove 移除、rename 重命名、visible 可见性、locked 锁定状态、move 移动位置 --- */
+        'type': 'add' | 'remove' | 'rename' | 'visible' | 'locked' | 'move';
+        /** --- 涉及的图层/文件夹 name 列表 --- */
+        'names': string[];
+        /** --- rename 时为新显示名称；visible 时为新可见状态（true 表示可见）；locked 时为新锁定状态 --- */
+        'value'?: string | boolean;
+    };
+}
+
+export interface IFabricObjectchangeEvent {
+    'detail': {
+        /** --- 发生变换的对象 name --- */
+        'name': string;
+        'left': number;
+        'top': number;
+        'scaleX': number;
+        'scaleY': number;
+        'angle': number;
+        'width': number;
+        'height': number;
+    };
+}
+
 // --- Objviewer Control ---
 
 export interface IObjviewerLine {

@@ -87,6 +87,35 @@ function buildStateMap(
 }
 
 /**
+ * --- 给定叶子图层 name，在图层列表中查找其所属的最顶层文件夹 name ---
+ * @param list 图层列表
+ * @param name 叶子图层 name
+ * @param topFolder 当前递归路径上最顶层的文件夹 name（递归传入）
+ */
+function findTopFolder(
+    list: ILayerItem[],
+    name: string,
+    topFolder: string | null = null
+): string | null {
+    for (const item of list) {
+        if (item.type === 'folder' && item.children) {
+            const folder = topFolder ?? item.name;
+            if (item.name === name) {
+                return folder;
+            }
+            const found = findTopFolder(item.children, name, folder);
+            if (found) {
+                return found;
+            }
+        }
+        else if (item.name === name) {
+            return topFolder;
+        }
+    }
+    return null;
+}
+
+/**
  * --- 将 selectedNames 中包含的文件夹 name 展开为其内部所有叶子图层 name 的集合 ---
  * @param list 图层列表
  * @param selectedNames 被选中的图层/文件夹 name 列表
@@ -287,6 +316,15 @@ export function layerMixin<
                 else {
                     names = [];
                 }
+                // --- autoLayer='group' 时将叶子 name 映射为最顶层文件夹 name ---
+                if (this.props.autoLayer === 'group') {
+                    const folderSet = new Set<string>();
+                    for (const n of names) {
+                        const top = findTopFolder(this.layerList, n);
+                        folderSet.add(top ?? n);
+                    }
+                    names = [...folderSet];
+                }
                 const prevNames = this.props.layer;
                 // --- 若新选中的对象均在当前 layer 作用域内（含文件夹展开），保持 layer 不变 ---
                 // --- 例如 layer=['shapes'] 时点击其内部的 rect，不应把 layer 覆写为 ['rect'] ---
@@ -317,8 +355,40 @@ export function layerMixin<
             this.access.canvas.on('object:rotating', () => {
                 this.layerUpdateStyle(true);
             });
-            this.access.canvas.on('object:modified', () => {
+            this.access.canvas.on('object:modified', (e) => {
                 this.layerUpdateStyle(false);
+                // --- 抛出 objectchanged 事件，告知用户对象变换已完成 ---
+                const changed = (e as unknown as { 'target'?: fabric.FabricObject; }).target;
+                if (!changed) {
+                    return;
+                }
+                const emitChanged = (obj: fabric.FabricObject): void => {
+                    const objName = getName(obj);
+                    if (!objName || isArtboard(obj)) {
+                        return;
+                    }
+                    const objEvent: clickgo.control.IFabricObjectchangeEvent = {
+                        'detail': {
+                            'name': objName,
+                            'left': obj.left,
+                            'top': obj.top,
+                            'scaleX': obj.scaleX,
+                            'scaleY': obj.scaleY,
+                            'angle': obj.angle,
+                            'width': obj.width,
+                            'height': obj.height,
+                        }
+                    };
+                    this.emit('objectchanged', objEvent);
+                };
+                if (this.access.fabric && changed instanceof this.access.fabric.ActiveSelection) {
+                    for (const obj of changed.getObjects()) {
+                        emitChanged(obj);
+                    }
+                }
+                else {
+                    emitChanged(changed);
+                }
             });
         }
 
@@ -338,7 +408,10 @@ export function layerMixin<
                 'locked': false,
                 'hidden': false,
             });
-            this.emit('layerlistchange');
+            const addEvent: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'add', 'names': [objName] }
+            };
+            this.emit('layerlistchange', addEvent);
         }
 
         public layerOnSelectionCleared(): void {
@@ -390,7 +463,10 @@ export function layerMixin<
                 'locked': false,
                 'hidden': false,
             });
-            this.emit('layerlistchange');
+            const event: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'add', 'names': [name] }
+            };
+            this.emit('layerlistchange', event);
             return true;
         }
 
@@ -412,7 +488,10 @@ export function layerMixin<
             if (this.props.layer.includes(name)) {
                 this.emit('update:layer', this.props.layer.filter(n => n !== name));
             }
-            this.emit('layerlistchange');
+            const event: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'remove', 'names': [name] }
+            };
+            this.emit('layerlistchange', event);
         }
 
         public renameLayer(name: string, title: string): boolean {
@@ -421,7 +500,10 @@ export function layerMixin<
                 return false;
             }
             found.item.title = title;
-            this.emit('layerlistchange');
+            const event: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'rename', 'names': [name], 'value': title }
+            };
+            this.emit('layerlistchange', event);
             return true;
         }
 
@@ -432,7 +514,10 @@ export function layerMixin<
             }
             found.item.hidden = !visible;
             this.layerApplyMode();
-            this.emit('layerlistchange');
+            const event: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'visible', 'names': [name], 'value': visible }
+            };
+            this.emit('layerlistchange', event);
             return true;
         }
 
@@ -443,7 +528,10 @@ export function layerMixin<
             }
             found.item.locked = locked;
             this.layerApplyMode();
-            this.emit('layerlistchange');
+            const event: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'locked', 'names': [name], 'value': locked }
+            };
+            this.emit('layerlistchange', event);
             return true;
         }
 
@@ -459,7 +547,10 @@ export function layerMixin<
                 'hidden': false,
                 'children': [],
             });
-            this.emit('layerlistchange');
+            const event: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'add', 'names': [name] }
+            };
+            this.emit('layerlistchange', event);
             return true;
         }
 
@@ -506,6 +597,9 @@ export function layerMixin<
                 }
             }
             const movedItems = founds.map(f => f.item);
+            const moveEvent: clickgo.control.IFabricLayerlistchangeEvent = {
+                'detail': { 'type': 'move', 'names': nameList }
+            };
             if (refName === null) {
                 // --- 移动到根列表末尾 ---
                 this.layerList.push(...movedItems);
@@ -515,13 +609,13 @@ export function layerMixin<
                 if (!ref) {
                     // --- 目标不存在（理论上不应发生），回退到根列表末尾 ---
                     this.layerList.push(...movedItems);
-                    this.emit('layerlistchange');
+                    this.emit('layerlistchange', moveEvent);
                     return false;
                 }
                 if (position === 'inside') {
                     if (ref.item.type !== 'folder') {
                         this.layerList.push(...movedItems);
-                        this.emit('layerlistchange');
+                        this.emit('layerlistchange', moveEvent);
                         return false;
                     }
                     ref.item.children ??= [];
@@ -534,7 +628,7 @@ export function layerMixin<
                     dstList.splice(insertIdx, 0, ...movedItems);
                 }
             }
-            this.emit('layerlistchange');
+            this.emit('layerlistchange', moveEvent);
             return true;
         }
 
@@ -560,6 +654,10 @@ export interface ILayerMixin {
 
     /**
      * --- 初始化图层相关的 prop 监听和 canvas 事件绑定，在 onMounted 中画布初始化完成后调用 ---
+     * --- 绑定后控件会抛出以下事件供外部监听： ---
+     * --- layerchange(IFabricLayerchangeEvent)：选中图层变化 ---
+     * --- layerlistchange(IFabricLayerlistchangeEvent)：图层列表结构/状态变化，detail.type 指明变更类型 ---
+     * --- objectchanged(IFabricObjectchangeEvent)：对象变换（移动/缩放/旋转）完成后触发，含最终位置与尺寸 ---
      */
     layerSetup(): void;
 
