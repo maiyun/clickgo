@@ -14,6 +14,7 @@ const runPath = process.cwd().replace(/\\/g, '/') + '/';
 // -----------
 
 /** --- 匹配 extends 后面的类名，为其增加新的方法；分包模式下支持在 class 行加块注释标记，如 class extends base /✱AbstractForm✱/ { --- */
+// eslint-disable-next-line max-len
 const reg = /(?:extends.+?(?:AbstractForm|AbstractPanel|AbstractControl|AbstractThread)|\/\*\s*(?:AbstractForm|AbstractPanel|AbstractControl|AbstractThread)\s*\*\/)\s*{/g;
 /** --- 增加些必备数据，如 filename --- */
 function preTransformPlugin(base: string): rollup.InputPluginOption {

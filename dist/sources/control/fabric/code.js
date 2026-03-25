@@ -8,7 +8,7 @@ const base1 = pLayer.layerMixin(clickgo.control.AbstractControl);
 const base2 = pArtboard.artboardMixin(base1);
 const base3 = pZoom.zoomMixin(base2);
 const base4 = pMarquee.marqueeMixin(base3);
-export default class extends base4 {
+export default class extends base4 /* AbstractControl */ {
     emits = {
         'init': null,
         'update:layer': null,

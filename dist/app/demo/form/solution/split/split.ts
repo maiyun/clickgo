@@ -28,8 +28,8 @@ const base2 = pOrder.orderMixin(base1);
 const base3 = pProduct.productMixin(base2);
 
 // --- implements ISplitForm 保证主 form 实现了对分包承诺的接口契约 ---
-// --- /* AbstractForm */ 注释让编译器识别类型，自动注入 get filename() ---
-export default class extends base3 implements pCore.ISplitForm /* AbstractForm */ {
+// --- /* AbstractForm */ 注释需在 implements 之前，否则 tsc 删除 implements 子句时会连带删掉注释 ---
+export default class extends base3 /* AbstractForm */ implements pCore.ISplitForm {
 
     /** --- 分包可通过 ISplitForm.greeting 读取本属性 --- */
     public greeting = 'Hello from split.ts';

@@ -13,7 +13,7 @@ const base2 = pArtboard.artboardMixin(base1);
 const base3 = pZoom.zoomMixin(base2);
 const base4 = pMarquee.marqueeMixin(base3);
 
-export default class extends base4 implements pCore.ICore /* AbstractControl */ {
+export default class extends base4 /* AbstractControl */ implements pCore.ICore {
 
     public emits: pCore.ICore['emits'] = {
         'init': null,
