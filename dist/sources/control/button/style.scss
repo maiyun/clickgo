@@ -75,6 +75,18 @@
             border-radius: 0 var(--g-radius) var(--g-radius) 0;
         }
     }
+    &.circle {
+        border-radius: 50%; aspect-ratio: 1;
+        &::before, &::after {
+            border-radius: 50%;
+        }
+        .inner {
+            border-radius: 50%;
+            &::after {
+                border-radius: 50%;
+            }
+        }
+    }
 
     &.default {
         &:not(.plain) {

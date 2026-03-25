@@ -123,6 +123,20 @@
                     </template>
                 </button>
             </layout>
+            <label>Circle:</label>
+            <layout gutter="10" align-v="center">
+                <button circle><img src="../../../res/icon.svg" /></button>
+                <button circle type="primary"><img src="../../../res/icon.svg" /></button>
+                <button circle type="info"><img src="../../../res/icon.svg" /></button>
+                <button circle type="warning"><img src="../../../res/icon.svg" /></button>
+                <button circle type="danger"><img src="../../../res/icon.svg" /></button>
+                <button circle type="tool"><img src="../../../res/icon.svg" /></button>
+                <button circle plain><img src="../../../res/icon.svg" /></button>
+                <button circle type="primary" plain><img src="../../../res/icon.svg" /></button>
+                <button circle size="l"><img src="../../../res/icon.svg" /></button>
+                <button circle size="xl"><img src="../../../res/icon.svg" /></button>
+                <button circle disabled><img src="../../../res/icon.svg" /></button>
+            </layout>
             <label>Other:</label>
             <layout gutter="10" align-v="center">
                 <button size="xl" :sizeh="sizeh">Size xl</button>

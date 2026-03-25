@@ -9,6 +9,7 @@ export default class extends clickgo.control.AbstractControl {
         'area': 'all',
         'size': 'm',
         'sizeh': false,
+        'circle': false,
         'gutter': undefined,
     };
     /** --- 是否禁用状态 --- */

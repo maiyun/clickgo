@@ -50,6 +50,12 @@
 
 是否使用水平尺寸模式，默认 false。
 
+#### circle
+
+`boolean` | `string`
+
+是否为圆形模式，默认 false。开启后按钮呈现 1:1 的正圆形，适合仅包含图标的场景。
+
 #### gutter
 
 `number` | `string`
@@ -66,7 +72,7 @@
 
 按钮采用 flex 布局，内容水平居中对齐。支持多种类型（default/tool/primary/info/warning/danger），每种类型有对应的颜色主题，包括背景色、边框色和文字色。
 
-支持朴素模式（plain），此时按钮无背景色，仅显示边框和文字。选中状态（checked）会改变按钮的外观以表示激活。
+支持朴素模式（plain），此时按钮无背景色，仅显示边框和文字。选中状态（checked）会改变按钮的外观以表示激活。circle 模式下按钮呈现强制 1:1 比例的正圆形（border-radius: 50%），适合仅内含图标的场景。
 
 按钮有三种尺寸（m/l/xl），以及水平尺寸模式（sizeh）。area 属性控制点击区域，支持 all（全区域）、mark（标记）和 split（分割）模式。gutter 属性设置内部元素间距。
 
