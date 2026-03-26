@@ -384,6 +384,7 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:modelValue', this.value);
         // --- changed ---
         this.emit('changed');
+        this.emit('input');
     }
     /** --- 执行复制粘贴剪切等操作 --- */
     async execCmd(ac) {
@@ -411,12 +412,11 @@ export default class extends clickgo.control.AbstractControl {
             if (!event.go) {
                 return;
             }
-            this.value = event.detail.change ?? this.value.slice(0, this.refs.text.selectionStart)
-                + str
-                + this.value.slice(this.refs.text.selectionEnd);
+            this.value = event.detail.change ?? value;
             this.emit('update:modelValue', this.value);
             // --- changed ---
             this.emit('changed');
+            this.emit('input');
             this.refs.text.selectionStart = this.refs.text.selectionStart + str.length;
             this.refs.text.selectionEnd = this.refs.text.selectionStart;
         }
