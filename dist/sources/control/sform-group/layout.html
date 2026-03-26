@@ -12,7 +12,7 @@
         </div>
     </template>
     <!-- 内容面板始终渲染 -->
-    <div class="content">
+    <div class="content" :style="isFloating ? {'width': floatWidth} : undefined">
         <!-- 浮动模式 tab 栏 -->
         <div v-if="!isExpanded && isFloating" class="float-tabs">
             <div v-for="(item, i) of items" class="float-tab" :class="[selected === i && 'selected']" @click="floatTabClick(i)">{{item.label}}</div>

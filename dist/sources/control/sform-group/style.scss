@@ -69,7 +69,7 @@
         // --- 浮动面板 ---
         &.floating {
             > .content {
-                display: flex; flex-direction: column; position: absolute; right: 100%; top: 0; width: 280px; max-height: 400px; background: var(--g-plain-background); border: solid .5px var(--g-border-color); box-shadow: 0px 8px 24px rgba(0, 0, 0, .12); z-index: 10; border-radius: var(--g-radius);
+                display: flex; flex-direction: column; position: absolute; right: 100%; top: 0; max-height: 400px; background: var(--g-plain-background); border: solid .5px var(--g-border-color); box-shadow: 0px 8px 24px rgba(0, 0, 0, .12); z-index: 10; border-radius: var(--g-radius);
 
                 > .float-tabs {
                     display: flex; border-bottom: solid .5px var(--g-plain-border-color); background: var(--face); border-radius: var(--g-radius) var(--g-radius) 0 0;

@@ -31,6 +31,11 @@ export default class extends clickgo.control.AbstractControl {
         return this.sform?.floatGroup === this.index;
     }
 
+    /** --- 浮动面板宽度，来自父级 sform 的 width prop --- */
+    public get floatWidth(): string {
+        return this.sform?.widthComp ?? '280px';
+    }
+
     /** --- 获取子项信息列表 --- */
     public get items(): Array<{ 'label': string; 'icon': string; }> {
         const list: Array<{ 'label': string; 'icon': string; }> = [];
