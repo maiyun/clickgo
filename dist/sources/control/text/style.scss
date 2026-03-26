@@ -43,6 +43,9 @@
 
     .prepend {
         display: flex; align-items: center; padding-left: var(--padding);
+        &.drag {
+            cursor: ew-resize; touch-action: none;
+        }
     }
 
     .text {

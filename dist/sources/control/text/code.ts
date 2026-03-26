@@ -439,6 +439,70 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('input');
     }
 
+    /**
+     * --- prepend 区域在 number 模式下左右拖拽改变数值，类似 PS 的数值拖拽效果 ---
+     * @param e 指针事件
+     */
+    public prependDrag(e: PointerEvent): void {
+        if (this.props.type !== 'number') {
+            return;
+        }
+        e.preventDefault();
+        const el = e.currentTarget as HTMLElement;
+        el.setPointerCapture(e.pointerId);
+        let lastX = e.clientX;
+        /** --- 累计未达到阈值的像素偏移量 --- */
+        let accumulate = 0;
+
+        const onMove = (me: PointerEvent): void => {
+            accumulate += me.clientX - lastX;
+            lastX = me.clientX;
+            // --- 每 5px 变化 1 个单位 ---
+            const step = Math.trunc(accumulate / 5);
+            if (step === 0) {
+                return;
+            }
+            accumulate -= step * 5;
+            const current = parseFloat(this.value) || 0;
+            let newVal = current + step;
+            if (this.props.max !== undefined && this.props.max !== 'undefined') {
+                newVal = Math.min(newVal, this.propNumber('max'));
+            }
+            if (this.props.min !== undefined && this.props.min !== 'undefined') {
+                newVal = Math.max(newVal, this.propNumber('min'));
+            }
+            const n = newVal.toString();
+            const event: clickgo.control.ITextBeforeChangeEvent = {
+                'go': true,
+                preventDefault: function() {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': n,
+                    'change': undefined
+                }
+            };
+            this.emit('beforechange', event);
+            if (!event.go) {
+                return;
+            }
+            this.value = event.detail.change ?? n;
+            this.emit('update:modelValue', this.value);
+            this.emit('changed');
+            this.emit('input');
+        };
+
+        const onEnd = (): void => {
+            el.removeEventListener('pointermove', onMove);
+            el.removeEventListener('pointerup', onEnd);
+            el.removeEventListener('pointercancel', onEnd);
+        };
+
+        el.addEventListener('pointermove', onMove);
+        el.addEventListener('pointerup', onEnd);
+        el.addEventListener('pointercancel', onEnd);
+    }
+
     /** --- 执行复制粘贴剪切等操作 --- */
     public async execCmd(ac: string): Promise<void> {
         this.refs.text.focus();
