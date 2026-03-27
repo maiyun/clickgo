@@ -831,6 +831,19 @@ const modules: Record<string, {
         'loading': false,
         'resolve': []
     },
+    'konva': {
+        func: async function() {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/konva@10.2.3/konva.min.js`,
+            ]);
+            if (!(window as any).Konva) {
+                throw Error('Konva load failed.');
+            }
+            return (window as any).Konva;
+        },
+        'loading': false,
+        'resolve': []
+    },
     'jodit': {
         func: async function() {
             await lTool.loadScripts([

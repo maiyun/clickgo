@@ -61,6 +61,7 @@ import cemptyFrm from './control/empty/empty';
 import cjoditFrm from './control/jodit/jodit';
 import ctuieditorFrm from './control/tuieditor/tuieditor';
 import ctuiviewerFrm from './control/tuiviewer/tuiviewer';
+import ckonvaFrm from './control/konva/konva';
 import carteditorFrm from './control/arteditor/arteditor';
 import ccontentFrm from './control/content/content';
 import cdeleteFrm from './control/delete/delete';
@@ -382,6 +383,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'ctuiviewer': {
                 frm = await clickgo.form.create(this, ctuiviewerFrm);
+                break;
+            }
+            case 'ckonva': {
+                frm = await clickgo.form.create(this, ckonvaFrm);
                 break;
             }
             case 'carteditor': {

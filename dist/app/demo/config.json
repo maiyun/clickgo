@@ -24,6 +24,7 @@
         "/clickgo/control/map",
         "/clickgo/control/tuieditor",
         "/clickgo/control/tuiviewer",
+        "/clickgo/control/konva",
         "/clickgo/control/arteditor",
         "/clickgo/control/jodit",
         "/clickgo/control/qrcode",

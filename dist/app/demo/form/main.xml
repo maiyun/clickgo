@@ -109,6 +109,7 @@
                     <button @click="openForm('ctip')">Tip</button>
                     <button @click="openForm('ctplink')">Tplink</button>
                     <button @click="openForm('ctuieditor')">Tuieditor</button>
+                    <button @click="openForm('ckonva')">Konva</button>
                     <button @click="openForm('ctuiviewer')">Tuiviewer</button>
                 </layout>
                 <layout gutter="10">

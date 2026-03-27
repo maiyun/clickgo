@@ -1,0 +1,6 @@
+<form title="Konva" width="900" height="680">
+    <!-- 加载失败提示 -->
+    <label v-if="failed" style="flex: 1;">Load failed.</label>
+    <!-- 模块加载控件 -->
+    <konva ref="konva" @init="onInit" @failed="onFailed" style="flex: 1;"></konva>
+</form>

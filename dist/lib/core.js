@@ -702,6 +702,19 @@ const modules = {
         'loading': false,
         'resolve': []
     },
+    'konva': {
+        func: async function () {
+            await lTool.loadScripts([
+                `${clickgo.getCdn()}/npm/konva@10.2.3/konva.min.js`,
+            ]);
+            if (!window.Konva) {
+                throw Error('Konva load failed.');
+            }
+            return window.Konva;
+        },
+        'loading': false,
+        'resolve': []
+    },
     'jodit': {
         func: async function () {
             await lTool.loadScripts([
