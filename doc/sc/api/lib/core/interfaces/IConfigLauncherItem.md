@@ -6,7 +6,7 @@
 
 # Interface: IConfigLauncherItem
 
-Defined in: [lib/core.ts:1230](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1230)
+Defined in: [lib/core.ts:1243](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1243)
 
 Launcher 的 item 对象
 
@@ -16,7 +16,7 @@ Launcher 的 item 对象
 
 > `optional` **icon**: `string`
 
-Defined in: [lib/core.ts:1234](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1234)
+Defined in: [lib/core.ts:1247](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1247)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/core.ts:1234](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **id**: `string`
 
-Defined in: [lib/core.ts:1231](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1231)
+Defined in: [lib/core.ts:1244](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1244)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1231](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **list**: `object`[]
 
-Defined in: [lib/core.ts:1235](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1235)
+Defined in: [lib/core.ts:1248](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1248)
 
 #### icon
 
@@ -56,7 +56,7 @@ Defined in: [lib/core.ts:1235](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **name**: `string`
 
-Defined in: [lib/core.ts:1232](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1232)
+Defined in: [lib/core.ts:1245](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1245)
 
 ***
 
@@ -64,4 +64,4 @@ Defined in: [lib/core.ts:1232](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **path**: `string`
 
-Defined in: [lib/core.ts:1233](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1233)
+Defined in: [lib/core.ts:1246](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1246)

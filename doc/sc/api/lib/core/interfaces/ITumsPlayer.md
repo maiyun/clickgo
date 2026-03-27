@@ -6,7 +6,7 @@
 
 # Interface: ITumsPlayer
 
-Defined in: [lib/core.ts:1396](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1396)
+Defined in: [lib/core.ts:1409](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1409)
 
 tums-player 模块对象
 
@@ -16,7 +16,7 @@ tums-player 模块对象
 
 > **default**: `any`
 
-Defined in: [lib/core.ts:1397](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1397)
+Defined in: [lib/core.ts:1410](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1410)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/core.ts:1397](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **startTalk**: (`opt`) => `Promise`\<`void`\>
 
-Defined in: [lib/core.ts:1399](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1399)
+Defined in: [lib/core.ts:1412](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1412)
 
 开始对讲
 
@@ -60,7 +60,7 @@ half_duplex-半双工模式,vad-VAD 人声检测模式,aec-AEC 全双工模式�
 
 > **stopTalk**: () => `void`
 
-Defined in: [lib/core.ts:1407](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1407)
+Defined in: [lib/core.ts:1420](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1420)
 
 停止对讲
 
