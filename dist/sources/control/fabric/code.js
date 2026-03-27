@@ -3,12 +3,14 @@ import * as pLayer from './part/layer';
 import * as pArtboard from './part/artboard';
 import * as pZoom from './part/zoom';
 import * as pMarquee from './part/marquee';
+import * as pSnap from './part/snap';
 // --- 当前 fabric 库版本为 7.2.0，文档：https://fabricjs.com/docs/ ---
 const base1 = pLayer.layerMixin(clickgo.control.AbstractControl);
 const base2 = pArtboard.artboardMixin(base1);
 const base3 = pZoom.zoomMixin(base2);
 const base4 = pMarquee.marqueeMixin(base3);
-export default class extends base4 {
+const base5 = pSnap.snapMixin(base4);
+export default class extends base5 {
     /** --- 编译器通过此字段识别基类类型，自动注入 get filename() --- */
     cgType = 'AbstractControl';
     emits = {
@@ -33,6 +35,9 @@ export default class extends base4 {
         'zoomMin': 0.01,
         'zoomMax': 100,
         'marqueeCompose': 'replace',
+        'cursor': 'default',
+        'snap': false,
+        'snapThreshold': 5,
     };
     notInit = false;
     isLoading = true;
@@ -50,6 +55,9 @@ export default class extends base4 {
     _psDragHasMoved = false;
     _psDragLastX = 0;
     _psDragLastY = 0;
+    /** --- PS 拖拽期间的原始累计坐标（像素模式下用于保留亚像素值） --- */
+    _psDragRawLeft = 0;
+    _psDragRawTop = 0;
     /** --- transform=true 时点击空白区域是否保持激活对象 --- */
     _isTransformKeep = false;
     /** --- 恢复 discardActiveObject 原始方法的回调 --- */
@@ -133,6 +141,9 @@ export default class extends base4 {
                 this.access.canvas.requestRenderAll();
             }
         });
+        this.watch('cursor', () => {
+            this.layerUpdateStyle(false);
+        });
         // ==============================
         // --- 事件绑定 ---
         // ==============================
@@ -167,6 +178,9 @@ export default class extends base4 {
                 this._psDragHasMoved = false;
                 this._psDragLastX = e.e.clientX;
                 this._psDragLastY = e.e.clientY;
+                // --- 记录拖拽起始的原始坐标 ---
+                this._psDragRawLeft = activeObj.left ?? 0;
+                this._psDragRawTop = activeObj.top ?? 0;
                 this._blockDiscard();
             }
         });
@@ -213,8 +227,9 @@ export default class extends base4 {
                 return;
             }
             // --- 移动整个激活对象（ActiveSelection 整体移动，单对象直接移动）---
-            dragObj.set({ 'left': (dragObj.left ?? 0) + dx, 'top': (dragObj.top ?? 0) + dy });
-            dragObj.setCoords();
+            this._psDragRawLeft += dx;
+            this._psDragRawTop += dy;
+            this.snapApply(dragObj, this._psDragRawLeft, this._psDragRawTop);
             this._psDragHasMoved = true;
             this.access.canvas.requestRenderAll();
         });
@@ -257,6 +272,8 @@ export default class extends base4 {
                 'height': this.element.clientHeight,
             });
         }, true);
+        // --- 像素和吸附功能初始化 ---
+        this.snapSetup();
         // --- 初始化完成 ---
         this.layerApplyMode();
         this.artboardApply();

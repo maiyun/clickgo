@@ -47,6 +47,12 @@ export interface ICore {
         'zoomMax': number | string;
         /** --- 选区组合模式：replace 替换、add 合并、subtract 减去、intersect 交集 --- */
         'marqueeCompose': 'replace' | 'add' | 'subtract' | 'intersect';
+        /** --- 悬停/拖动时的鼠标指针样式，默认为 'default'，支持任意 CSS cursor 值 --- */
+        'cursor': string;
+        /** --- 吸附模式：开启后移动对象时自动吸附到其他对象和画板的边缘/中心，并显示辅助线 --- */
+        'snap': boolean | string;
+        /** --- 吸附阈值（屏幕像素），默认 5，距离吸附线小于此值时触发吸附 --- */
+        'snapThreshold': number | string;
     };
 
     'access': {

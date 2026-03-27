@@ -108,6 +108,7 @@ export function layerMixin(base) {
             const showControls = this.propBoolean('transform') && !isDragging;
             const style = getComputedStyle(this.element);
             const borderColor = style.getPropertyValue('--cg').trim();
+            const cursor = this.props.cursor || 'default';
             const props = {
                 'cornerColor': style.getPropertyValue('--g-plain-background').trim(),
                 'cornerStrokeColor': borderColor,
@@ -120,8 +121,8 @@ export function layerMixin(base) {
                 'borderOpacityWhenMoving': 1,
                 'hasBorders': showControls,
                 'hasControls': showControls,
-                'hoverCursor': showControls ? 'move' : 'default',
-                'moveCursor': showControls ? 'move' : 'default',
+                'hoverCursor': showControls ? 'move' : cursor,
+                'moveCursor': showControls ? 'move' : cursor,
             };
             this.access.canvas.forEachObject(obj => {
                 if (isArtboard(obj)) {

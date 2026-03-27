@@ -91,6 +91,32 @@
 
 画板内填充色，支持任意 CSS 颜色字符串，默认为 `#ffffff`（白色）。空字符串表示画板内容透明，可以透过到 HTML 背景层。仅在启用画板模式时有效。
 
+#### cursor
+
+`string`
+
+悬停和拖动对象时的鼠标指针样式，默认为 `'default'`。支持任意 CSS cursor 值，如 `'move'`、`'pointer'`、`'crosshair'` 等。当 `transform` 开启时，控制点区域会始终显示 `move`，该参数控制的是非控制点区域的指针样式。
+
+#### snap
+
+`boolean` | `string`
+
+吸附模式，默认为 `false`。开启后移动对象时自动检测与其他对象和画板的对齐关系，在接近时吸附到对齐位置，并显示青色辅助线（类似 Photoshop 智能参考线）。
+
+吸附参考点包括：
+- 其他可见对象的左边缘、右边缘、水平中心
+- 其他可见对象的上边缘、下边缘、垂直中心
+- 画板的左边缘、右边缘、水平中心（有画板时）
+- 画板的上边缘、下边缘、垂直中心（有画板时）
+
+移动对象自身的左、右、中心和上、下、中心都会参与吸附判定。拖拽结束后辅助线自动消失。
+
+#### snapThreshold
+
+`number` | `string`
+
+吸附阈值，默认为 `5`（屏幕像素）。移动对象的参考点距离吸附线小于此值时触发吸附。该值为屏幕像素，会自动根据当前缩放倍数换算为 canvas 坐标。
+
 ### 事件
 
 #### init
@@ -398,6 +424,23 @@ layerGetNames(): string[]
 const names = this.refs.fabric.layerGetNames();
 ```
 
+#### snapApply
+
+```typescript
+snapApply(target: fabric.FabricObject, rawLeft?: number, rawTop?: number): void
+```
+
+对目标对象应用像素取整（`pixel` 开启时）和吸附调整（`snap` 开启时）。通常由控件内部在 `object:moving` 事件中自动调用，外部一般无需直接使用。但如果通过编程方式移动对象后希望应用吸附效果，可以手动调用此方法。
+
+**参数**：
+- `target` — 要调整的 fabric 对象或 ActiveSelection
+- `rawLeft` — 原始 left 坐标（可选，用于保留亚像素累计值）
+- `rawTop` — 原始 top 坐标（可选）
+
+#### snapClearGuides
+
+清除当前显示的所有吸附辅助线。通常在拖拽结束时由控件自动调用。
+
 ### 插槽
 
 无
@@ -429,6 +472,18 @@ const names = this.refs.fabric.layerGetNames();
 
 <!-- 透明画板：透过到背景 -->
 <fabric :artboard-width="800" :artboard-height="600" :artboard-bg="''" :artboard-fill="''" @init="init"></fabric>
+
+<!-- 开启像素模式：逐像素移动，放大后显示像素网格 -->
+<fabric :pixel="true" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
+
+<!-- 开启像素渲染：放大后图像以像素块显示 -->
+<fabric :pixel-render="true" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
+
+<!-- 开启吸附模式：移动时显示对齐辅助线 -->
+<fabric :snap="true" @init="init"></fabric>
+
+<!-- 同时开启像素和吸附：先吸附再取整 -->
+<fabric :pixel="true" :snap="true" :snap-threshold="8" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
 
 <!-- 开启平移模式（类似 PS 空格键） -->
 <fabric mode="pan" @init="init"></fabric>

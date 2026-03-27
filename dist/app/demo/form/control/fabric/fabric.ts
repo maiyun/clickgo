@@ -18,6 +18,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public artboard: boolean = false;
 
+    /** --- 吸附模式 --- */
+    public snap: boolean = false;
+
     /** --- 画板外背景色，空字符串为透明 --- */
     public artboardBg: string = '#7a7a7a';
 
@@ -99,7 +102,7 @@ export default class extends clickgo.form.AbstractForm {
         return parts.join('<br>');
     }
 
-    public onInit(canvas: any): void {
+    public async onInit(canvas: any): Promise<void> {
         this._logEvent('init', 'canvas ready');
         this.access.canvas = canvas;
         const fabric = clickgo.modules.fabric;
@@ -137,6 +140,17 @@ export default class extends clickgo.form.AbstractForm {
         });
 
         this.access.canvas.add(rect, circle, triangle);
+
+        // --- 位图图层 ---
+        const blob = await clickgo.fs.getContent(this, '/package/res/img.jpg');
+        if (blob instanceof Blob) {
+            const url = URL.createObjectURL(blob);
+            const img = await fabric.FabricImage.fromURL(url);
+            img.set({ 'name': 'img', 'left': 50, 'top': 200 });
+            img.scaleToWidth(120);
+            this.access.canvas.add(img);
+        }
+
         // --- 创建 shapes 文件夹，将 rect、circle 移入其中演示文件夹结构 ---
         const fb = this.refs['fabric'] as any;
         fb.addFolder('shapes', 'Shapes');

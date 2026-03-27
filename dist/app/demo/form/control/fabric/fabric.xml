@@ -1,7 +1,7 @@
 <form title="fabric" width="720" height="950">
     <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
         <!-- Canvas 区域 -->
-        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" v-model:layer="layer" @init="onInit" @layerchange="onLayerChange" @marqueechange="onMarqueeChange" @layerlistchange="onLayerListChange" @objectchanged="onObjectChanged" ref="fabric"></fabric>
+        <fabric style="flex: 1; border: solid 1px var(--g-border-color);" :disabled="disabled" :auto-layer="autoLayer" :transform="transform" :selector="selector" :mode="mode[0]" :marquee-compose="marqueeCompose[0]" :artboard-width="artboard ? 400 : 0" :artboard-height="artboard ? 300 : 0" :artboard-bg="artboardBg" :artboard-fill="artboardFill" :snap="snap" v-model:layer="layer" @init="onInit" @layerchange="onLayerChange" @marqueechange="onMarqueeChange" @layerlistchange="onLayerListChange" @objectchanged="onObjectChanged" ref="fabric"></fabric>
         <!-- 当前激活图层 -->
         <layout gutter="10" align-v="center">
             <label>Active layer:</label>
@@ -32,6 +32,8 @@
         <layout gutter="10" align-v="center">
             <switch v-model="artboard"></switch>
             <label style="flex: 1;">artboard mode (400 × 300)</label>
+            <switch v-model="snap"></switch>
+            <label style="flex: 1;">snap</label>
             <select v-model="mode" :data="[{'label': 'normal', 'value': ''}, {'label': 'pan', 'value': 'pan'}, {'label': 'zoom', 'value': 'zoom'}, {'label': 'marquee', 'value': 'marquee'}]" style="flex: 1;"></select>
         </layout>
         <!-- 画板背景色（仅画板模式下有效） -->
@@ -95,7 +97,7 @@
             <button @click="eventLog = []">clear</button>
         </layout>
         <vflow v-slot="data" :data="eventLog" direction="v" style="height: 100px; border: solid 1px var(--g-border-color); padding: 5px; overflow-y: auto;">
-            <label>[{{data.row.time}}] <b>{{data.row.name}}</b>: {{data.row.content}}</label>
+            <label>[{{data.row.time}}] <label style="font-weight: bold;">{{data.row.name}}</label>: {{data.row.content}}</label>
         </vflow>
     </layout>
 </form>
