@@ -130,8 +130,6 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 --menulist.hasTypeItemsCount;
             }
-        }, {
-            'immediate': true
         });
         this.watch('modelValue', (): void => {
             if (this.value === this.props.modelValue) {
