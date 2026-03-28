@@ -27,7 +27,11 @@ export default class extends clickgo.control.AbstractControl {
         if (el.dataset.cgEfno !== undefined || el.dataset.cgScroll !== undefined) {
             return;
         }
-        if (clickgo.dom.findParentByData(el, 'cg-efno') || clickgo.dom.findParentByData(el, 'cg-scroll')) {
+        if (clickgo.dom.findParentByData(el, 'cg-efno')) {
+            return;
+        }
+        const scroll = clickgo.dom.findParentByData(el, 'cg-scroll');
+        if (scroll && (scroll.dataset.cgControl !== this.controlName)) {
             return;
         }
         e.stopPropagation();
