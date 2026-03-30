@@ -49,6 +49,16 @@
             }
         }
     }
+    &.size-s {
+        .inner {
+            padding: var(--g-padding-s);
+        }
+        &.sizeh {
+            .inner {
+                padding-left: calc(var(--g-padding-s) * 2); padding-right: calc(var(--g-padding-s) * 2);
+            }
+        }
+    }
     .arrow {
         display: flex; align-items: center; justify-content: center; width: 16px; outline: none; position: relative;
         &::before {

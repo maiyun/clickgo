@@ -11,7 +11,7 @@ export default class extends clickgo.control.AbstractControl {
         'pointer': boolean | string;
 
         'area': 'all' | 'mark' | 'split';
-        'size': 'm' | 'l' | 'xl';
+        'size': 's' | 'm' | 'l' | 'xl';
         'sizeh': boolean | string;
         'circle': boolean | string;
         'gutter'?: number | string;
@@ -64,7 +64,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- size --- */
-    public get sizeComp(): 'm' | 'l' | 'xl' {
+    public get sizeComp(): 's' | 'm' | 'l' | 'xl' {
         if (!this.inBgroup) {
             return this.props.size;
         }
