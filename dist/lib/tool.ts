@@ -353,7 +353,7 @@ export async function styleUrl2DataUrl(
 export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string {
     // --- "" '' 引号中的内容先替换为 placeholder 排除掉干扰 ---
     const list: string[] = [];
-    layout = layout.replace(/(\S+)=(".+?"|'.+?')/g, function(t, t1): string {
+    layout = layout.replace(/([^\s<>]+)=(".+?"|'.+?')/g, function(t, t1): string {
         // --- t1 不是标签名，而是 attr 名，例如 class="xxx"、style="xxx" ---
         if (t1 === 'class') {
             return t;

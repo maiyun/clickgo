@@ -99,21 +99,25 @@
         </layout>
         <!-- Eflow -->
         <layout v-else direction="v" gutter="10" style="flex: 1; min-width: 0; padding: 10px;">
+            <!-- 默认（双向滚动） -->
             <layout gutter="10" align-v="center">
-                <label style="flex: 1;">Normal:</label>
+                <label style="flex: 1;">Default (both axes):</label>
                 <button @click="refs.eflow.toBottom()">toBottom()</button>
             </layout>
             <eflow ref="eflow" class="border" style="flex: 1; min-height: 0;">
-                <template v-for="i of 70">
-                    <eflow v-if="i === 30" class="border" direction="v" style="height: 50px;">
-                        <label v-for="k of 50">Line {{k}}</label>
-                    </eflow>
-                    <label v-else>Line {{i}}</label>
-                </template>
+                <label v-for="i of 20">Line {{i}} - this is a very long long long long long content line.</label>
             </eflow>
-            <label>Horizontal:</label>
-            <eflow class="border" style="flex: 1; min-height: 0;">
-                <block style="background: linear-gradient(to right, #ff0000, #ffabab); width: 2000px; color: #FFF; padding: 20px;">So long</block>
+            <!-- direction="v"（仅垂直，宽度约束） -->
+            <label>direction="v" (vertical only, width constrained):</label>
+            <eflow direction="v" class="border" style="flex: 1; min-height: 0;">
+                <label v-for="i of 20">Line {{i}} - this is a very long long long long long content line.</label>
+            </eflow>
+            <!-- direction="h"（仅水平，子元素行方向排列） -->
+            <label>direction="h" (horizontal only, items in a row):</label>
+            <eflow direction="h" class="border" style="flex: 1; min-height: 0;">
+                <layout v-for="i of 30" direction="v" align-v="center" align-h="center" class="rightborder" style="width: 80px; min-height: 60px;">
+                    <label>Col {{i}}</label>
+                </layout>
             </eflow>
         </layout>
     </tab>

@@ -4,8 +4,10 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'gutter': number | string;
+        'direction': string;
     } = {
             'gutter': '',
+            'direction': '',
         };
 
     /** --- 总长度 --- */
@@ -49,8 +51,12 @@ export default class extends clickgo.control.AbstractControl {
         e.stopPropagation();
         clickgo.modules.pointer.move(e, {
             move: (e, detail): void => {
-                this.refs.left.scrollTop -= detail.oy;
-                this.refs.left.scrollLeft -= detail.ox;
+                if (this.props.direction !== 'h') {
+                    this.refs.left.scrollTop -= detail.oy;
+                }
+                if (this.props.direction !== 'v') {
+                    this.refs.left.scrollLeft -= detail.ox;
+                }
             }
         });
         await clickgo.form.doFocusAndPopEvent(e);
