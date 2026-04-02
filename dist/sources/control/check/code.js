@@ -72,8 +72,15 @@ export default class extends clickgo.control.AbstractControl {
                 this.value = this.propBoolean('modelValue');
             }
             if (this.indeterminateData && !this.value) {
-                this.indeterminateData = false;
-                this.emit('update:indeterminate', this.indeterminateData);
+                if (this.propBoolean('indeterminate')) {
+                    // --- indeterminate prop 仍为 true，需恢复 value 以维持半选状态 ---
+                    this.value = true;
+                    this.emit('update:modelValue', this.value);
+                }
+                else {
+                    this.indeterminateData = false;
+                    this.emit('update:indeterminate', this.indeterminateData);
+                }
             }
         }, {
             'immediate': true
