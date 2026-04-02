@@ -1,5 +1,5 @@
 <form title="Flow" width="450" height="450" min-width="300" min-height="400" padding="10">
-    <tab v-model="ntab" :tabs="['normal', 'adaptation', 'beyond', 'nest', 'eflow']" style="flex: 1; width: 0;">
+    <tab v-model="ntab" :tabs="['normal', 'adaptation', 'beyond', 'nest', 'eflow', 'e-nest']" style="flex: 1; width: 0;">
         <!-- 默认 -->
         <layout v-if="ntab === 'normal'" gutter="10" direction="v" style="flex: 1; width: 0; padding: 10px;">
             <!-- v -->
@@ -98,7 +98,7 @@
             </flow>
         </layout>
         <!-- Eflow -->
-        <layout v-else direction="v" gutter="10" style="flex: 1; min-width: 0; padding: 10px;">
+        <layout v-else-if="ntab === 'eflow'" direction="v" gutter="10" style="flex: 1; min-width: 0; padding: 10px;">
             <!-- 默认（双向滚动） -->
             <layout gutter="10" align-v="center">
                 <label style="flex: 1;">Default (both axes):</label>
@@ -115,9 +115,27 @@
             <!-- direction="h"（仅水平，子元素行方向排列） -->
             <label>direction="h" (horizontal only, items in a row):</label>
             <eflow direction="h" class="border" style="flex: 1; min-height: 0;">
-                <layout v-for="i of 30" direction="v" align-v="center" align-h="center" class="rightborder" style="width: 80px; min-height: 60px;">
+                <layout v-for="i of 30" direction="v" align-v="center" align-h="center" class="rightborder" style="width: 80px;">
                     <label>Col {{i}}</label>
                 </layout>
+            </eflow>
+        </layout>
+        <!-- Eflow 嵌套 -->
+        <layout v-else style="flex: 1; width: 0; padding: 10px;">
+            <eflow direction="v" class="border" style="flex: 1;">
+                <template v-for="i of 100">
+                    <!-- 嵌套纵向 eflow -->
+                    <eflow v-if="i === 30" direction="v" class="border" style="height: 100px;">
+                        <label v-for="k of 50">Nested-V Line {{k}}</label>
+                    </eflow>
+                    <!-- 嵌套横向 eflow -->
+                    <eflow v-else-if="i === 60" direction="h" class="border">
+                        <layout v-for="k of 50" direction="v" align-v="center" align-h="center" class="rightborder" style="width: 80px; min-height: 60px;">
+                            <label>Col {{k}}</label>
+                        </layout>
+                    </eflow>
+                    <label v-else>Line {{i}}</label>
+                </template>
             </eflow>
         </layout>
     </tab>

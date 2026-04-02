@@ -13,5 +13,6 @@
         <button @click="indeterminate1=true;indeterminate2=true;indeterminate3=true;indeterminate4=true">Set indeterminate</button>
         <button @click="disabled = !disabled">{{disabled ? 'Remove' : 'Set'}} disabled</button>
         <button @click="checked2 = true">Set checked2 = true</button>
+        <button @click="checked2 = false; indeterminate2 = true;">Set c2 = false; i2 = true;</button>
     </layout>
 </form>

@@ -1,41 +1,43 @@
 .wrap {
     display: flex; flex-direction: column;
 
-    .top {
+    > .top {
         display: flex; flex: 1; min-height: 0;
 
-        .left {
+        > .left {
             -webkit-overflow-scrolling: touch; position: relative; overflow: scroll; flex: 1; min-height: 0;
             &::-webkit-scrollbar {
                 display: none;
             }
 
-            .left-inner {
+            > .left-inner {
                 display: flex; flex-direction: column; min-width: 100%; width: max-content;
             }
         }
-        cg-scroll {
+        > cg-scroll {
             width: 16px;
         }
     }
 
-    .bottom {
+    > .bottom {
         display: flex;
 
-        cg-scroll {
+        > cg-scroll {
             height: 16px; flex: 1;
         }
-        .rb {
+        > .rb {
             width: 16px; background: var(--face);
         }
     }
 
     // --- 仅垂直方向 ---
     &.dir-v {
-        .top .left {
+        min-width: 0;
+
+        > .top > .left {
             overflow-x: hidden;
 
-            .left-inner {
+            > .left-inner {
                 width: 100%; min-width: 100%;
             }
         }
@@ -43,10 +45,10 @@
 
     // --- 仅水平方向 ---
     &.dir-h {
-        .top .left {
+        > .top > .left {
             overflow-y: hidden;
 
-            .left-inner {
+            > .left-inner {
                 flex-direction: row; min-height: 100%;
             }
         }
