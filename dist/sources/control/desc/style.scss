@@ -1,8 +1,27 @@
 .wrap {
-    display: flex; min-height: 0; background-color: var(--g-pure); border-radius: var(--g-radius);
+    display: flex; flex-direction: column; min-height: 0; background-color: var(--g-pure); border-radius: var(--g-radius);
+
+    .top {
+        display: flex; flex: 1; min-height: 0;
+
+        cg-scroll {
+            width: 16px;
+        }
+    }
+
+    .bottom {
+        display: flex;
+
+        cg-scroll {
+            height: 16px; flex: 1;
+        }
+        .rb {
+            width: 16px; background: var(--face);
+        }
+    }
 
     .inner {
-        overflow: auto; display: flex; flex-direction: column; flex: 1; border-radius: var(--g-radius);
+        overflow: scroll; display: flex; flex-direction: column; flex: 1; min-height: 0; border-radius: var(--g-radius);
         &::-webkit-scrollbar {
             display: none;
         }
@@ -54,8 +73,5 @@
         }
     }
 
-    cg-scroll {
-        width: 16px;
-    }
-
 }
+

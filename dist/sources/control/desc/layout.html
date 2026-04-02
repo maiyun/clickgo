@@ -1,8 +1,14 @@
 <div class="wrap" data-cg-scroll>
+    <div class="top">
         <div ref="inner" class="inner" :class="[propBoolean('outside') && 'outside', propBoolean('collapse') && 'collapse', propBoolean('plain') && 'plain', propBoolean('stripe') && 'stripe', propBoolean('rowlr') && 'rowlr', 'size-' + props.size, (length < client) && 'last-border']" @scroll="scrollHandler">
-        <table ref="table" data-table>
-            <slot></slot>
-        </table>
+            <table ref="table" data-table>
+                <slot></slot>
+            </table>
+        </div>
+        <cg-scroll v-if="length > client" :length="length" :client="client" v-model:offset="offset" @roll="roll"></cg-scroll>
     </div>
-    <cg-scroll v-if="length > client" :length="length" :client="client" v-model:offset="offset" @roll="roll"></cg-scroll>
+    <div v-if="lengthh > clienth" class="bottom">
+        <cg-scroll direction="h" :length="lengthh" :client="clienth" v-model:offset="offseth" @roll="rollh"></cg-scroll>
+        <div v-if="length > client" class="rb"></div>
+    </div>
 </div>

@@ -31,6 +31,16 @@
         <layout gutter="10">
             <select v-model="size" style="flex: 1;" :data="['s', 'm', 'l', 'xl']" />
         </layout>
+        <!-- 横向滚动示例 -->
+        <label>Horizontal scroll:</label>
+        <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" :outside="outside" :rowlr="rowlr">
+            <desc-row>
+                <desc-head v-for="i of 12" style="min-width: 100px;">COL {{i}}</desc-head>
+            </desc-row>
+            <desc-row v-for="r of 3">
+                <desc-cell v-for="i of 12">DATA {{r}}-{{i}}</desc-cell>
+            </desc-row>
+        </desc>
         <label>Test: {{cols}}</label>
         <desc :border="border" :collapse="collapse" :size="size[0]" :plain="plain" :outside="outside" :rowlr="rowlr" style="flex: 1;">
             <desc-header>

@@ -36,25 +36,42 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 滚动偏移量 --- */
     public offset: number = 0;
 
+    /** --- 横向总宽度 --- */
+    public lengthh: number = 0;
+
+    /** --- 横向可见宽度 --- */
+    public clienth: number = 0;
+
+    /** --- 横向滚动偏移量 --- */
+    public offseth: number = 0;
+
     /** --- 纵向滚动条的滚动事件 --- */
     public roll(): void {
         this.refs.inner.scrollTop = this.offset;
     }
 
+    /** --- 横向滚动条的滚动事件 --- */
+    public rollh(): void {
+        this.refs.inner.scrollLeft = this.offseth;
+    }
+
     /** --- 滚动处理 --- */
     public scrollHandler(): void {
         this.offset = this.refs.inner.scrollTop;
+        this.offseth = this.refs.inner.scrollLeft;
     }
 
     public onMounted(): void {
         // --- 容器大小改变 ---
         clickgo.dom.watchSize(this, this.refs.inner, () => {
             this.client = this.refs.inner.clientHeight;
+            this.clienth = this.refs.inner.clientWidth;
         }, true);
 
         // --- 内容大小改变 ---
         clickgo.dom.watchSize(this, this.refs.table, () => {
             this.length = this.refs.table.offsetHeight;
+            this.lengthh = this.refs.table.offsetWidth;
         }, true);
     }
 
