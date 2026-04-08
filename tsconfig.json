@@ -13,8 +13,7 @@
         "paths": {
             "~/*": ["./*"]
         },
-        "moduleResolution": "node",
-        "ignoreDeprecations": "6.0",
+        "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "skipLibCheck": true
