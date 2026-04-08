@@ -27,7 +27,6 @@
         <layout align-h="center" align-v="center" style="flex: 1;">
             <form title="Title" :min="false" :max="false" :resize="false" :width="fwidth ? 400 : 'auto'" :height="fwidth ? 400 : 'auto'" direction="v">
                 <dialog @select="btn = $event" :buttons="buttons" :direction="message === 'lines' || message === 'many' ? 'v' : 'h'" :width="fill ? undefined : (width ? 300 : undefined)" :height="fill ? 'fill' : (width ? 300 : undefined)" :padding="padding">
-
                     <template v-if="message === 'message'">Message</template>
                     <template v-else-if="message === 'buttons'"><button style="flex: 1;">Button1</button><button style="margin-left: 10px; flex: 1;">Button2</button></template>
                     <template v-else-if="message === 'lines'"><block v-for="i of 5">Line {{i}}.</block></template>

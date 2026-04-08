@@ -1,3 +1,4 @@
+/// <reference types="google.maps" />
 import * as clickgo from 'clickgo';
 /** --- 天地图底图与 OSM 底图切换范围，并不代表任何区域/国境线 --- */
 // eslint-disable-next-line @stylistic/key-spacing, @stylistic/comma-spacing, @stylistic/object-curly-spacing

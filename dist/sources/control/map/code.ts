@@ -1,3 +1,5 @@
+/// <reference types="google.maps" />
+
 import * as clickgo from 'clickgo';
 
 /** --- 标记点 --- */
