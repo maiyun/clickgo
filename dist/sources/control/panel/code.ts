@@ -46,6 +46,10 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         clickgo.form.removeActivePanel(this, this.activeId, this.formId);
+        // --- 防止 onBeforeUnmount 在 await 挂起期间清空 loaded ---
+        if (!this.loaded[this.activeId]) {
+            return;
+        }
         await this.loaded[this.activeId].vroot.onHide();
         const old: HTMLElement = this.element.querySelector('[data-panel-id="' + this.activeId.toString() + '"]')!;
         old.style.display = 'none';
@@ -229,6 +233,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.mapSelected = name;
         // --- 真正跳转成功，执行 panel 的 onShowed ---
+        // --- 防止 onBeforeUnmount 在 await 挂起期间清空 loaded ---
+        if (!this.loaded[this.activeId]) {
+            return;
+        }
         await this.loaded[this.activeId].vroot.onShowed();
     }
 
