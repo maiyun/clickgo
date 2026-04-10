@@ -42,7 +42,7 @@ Defined in: [lib/core.ts:1372](https://github.com/maiyun/clickgo/blob/master/dis
 
 ##### props?
 
-`any`[] | `Record`\<`string`, `any`\>
+`any`[] \| `Record`\<`string`, `any`\>
 
 ##### list?
 

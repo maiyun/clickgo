@@ -12,7 +12,7 @@ Defined in: [lib/task.ts:1743](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### after?
 
-> `optional` **after**: `string`
+> `optional` **after?**: `string`
 
 Defined in: [lib/task.ts:1756](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1756)
 
@@ -22,7 +22,7 @@ Defined in: [lib/task.ts:1756](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### data?
 
-> `optional` **data**: `Record`\<`string`, `any`\>
+> `optional` **data?**: `Record`\<`string`, `any`\>
 
 Defined in: [lib/task.ts:1758](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1758)
 
@@ -32,15 +32,15 @@ Defined in: [lib/task.ts:1758](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### icon?
 
-> `optional` **icon**: `string`
+> `optional` **icon?**: `string`
 
 Defined in: [lib/task.ts:1744](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1744)
 
 ***
 
-### initProgress()?
+### initProgress?
 
-> `optional` **initProgress**: (`loaded`, `total`, `type`, `msg`) => `void` \| `Promise`\<`void`\>
+> `optional` **initProgress?**: (`loaded`, `total`, `type`, `msg`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/task.ts:1746](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1746)
 
@@ -72,7 +72,7 @@ Defined in: [lib/task.ts:1746](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### notify?
 
-> `optional` **notify**: `boolean`
+> `optional` **notify?**: `boolean`
 
 Defined in: [lib/task.ts:1752](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1752)
 
@@ -82,7 +82,7 @@ Defined in: [lib/task.ts:1752](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### path?
 
-> `optional` **path**: `string`
+> `optional` **path?**: `string`
 
 Defined in: [lib/task.ts:1760](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1760)
 
@@ -92,7 +92,7 @@ Defined in: [lib/task.ts:1760](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### permissions?
 
-> `optional` **permissions**: `string`[]
+> `optional` **permissions?**: `string`[]
 
 Defined in: [lib/task.ts:1754](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1754)
 
@@ -100,9 +100,9 @@ Defined in: [lib/task.ts:1754](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### perProgress()?
+### perProgress?
 
-> `optional` **perProgress**: (`per`) => `void` \| `Promise`\<`void`\>
+> `optional` **perProgress?**: (`per`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/task.ts:1750](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1750)
 
@@ -120,9 +120,9 @@ Defined in: [lib/task.ts:1750](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### progress()?
+### progress?
 
-> `optional` **progress**: (`loaded`, `total`, `type`, `path`) => `void` \| `Promise`\<`void`\>
+> `optional` **progress?**: (`loaded`, `total`, `type`, `path`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/task.ts:1748](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1748)
 
@@ -140,7 +140,7 @@ Defined in: [lib/task.ts:1748](https://github.com/maiyun/clickgo/blob/master/dis
 
 ##### type
 
-`"control"` | `"app"`
+`"control"` \| `"app"`
 
 ##### path
 

@@ -30,7 +30,7 @@ Defined in: [lib/fs.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 #### current
 
-[`TCurrent`](../../core/type-aliases/TCurrent.md) | `null`
+[`TCurrent`](../../core/type-aliases/TCurrent.md) \| `null`
 
 #### path
 
@@ -70,7 +70,7 @@ Defined in: [lib/fs.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 #### current
 
-[`TCurrent`](../../core/type-aliases/TCurrent.md) | `null`
+[`TCurrent`](../../core/type-aliases/TCurrent.md) \| `null`
 
 #### path
 
@@ -78,7 +78,7 @@ Defined in: [lib/fs.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 #### options
 
-`BufferEncoding` | \{ `encoding`: `BufferEncoding`; `end?`: `number`; `progress?`: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>; `start?`: `number`; \}
+`BufferEncoding` \| \{ `encoding`: `BufferEncoding`; `end?`: `number`; `progress?`: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>; `start?`: `number`; \}
 
 ### Returns
 

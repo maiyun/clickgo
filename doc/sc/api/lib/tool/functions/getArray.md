@@ -16,9 +16,9 @@ Defined in: [lib/tool.ts:736](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### param
 
-参数
+`string` \| `any`[]
 
-`string` | `any`[]
+参数
 
 ## Returns
 

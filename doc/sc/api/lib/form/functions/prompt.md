@@ -22,9 +22,9 @@ Defined in: [lib/form.ts:4047](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### opt
 
-选项或者提示文字
+`string` \| [`IFormPromptOptions`](../interfaces/IFormPromptOptions.md)
 
-`string` | [`IFormPromptOptions`](../interfaces/IFormPromptOptions.md)
+选项或者提示文字
 
 ## Returns
 

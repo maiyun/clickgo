@@ -46,7 +46,7 @@ Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/d
 
 ***
 
-### preventDefault()
+### preventDefault
 
 > **preventDefault**: () => `void`
 

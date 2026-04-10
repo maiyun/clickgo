@@ -14,7 +14,7 @@ Confirm 选项
 
 ### cancel?
 
-> `optional` **cancel**: `boolean`
+> `optional` **cancel?**: `boolean`
 
 Defined in: [lib/form.ts:4298](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4298)
 
@@ -30,6 +30,6 @@ Defined in: [lib/form.ts:4297](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 Defined in: [lib/form.ts:4296](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4296)

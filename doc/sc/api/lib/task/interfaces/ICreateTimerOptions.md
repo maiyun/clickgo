@@ -12,7 +12,7 @@ Defined in: [lib/task.ts:1763](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### count?
 
-> `optional` **count**: `number`
+> `optional` **count?**: `number`
 
 Defined in: [lib/task.ts:1767](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1767)
 
@@ -20,7 +20,7 @@ Defined in: [lib/task.ts:1767](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### formId?
 
-> `optional` **formId**: `string`
+> `optional` **formId?**: `string`
 
 Defined in: [lib/task.ts:1764](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1764)
 
@@ -28,6 +28,6 @@ Defined in: [lib/task.ts:1764](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### immediate?
 
-> `optional` **immediate**: `boolean`
+> `optional` **immediate?**: `boolean`
 
 Defined in: [lib/task.ts:1766](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1766)

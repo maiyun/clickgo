@@ -22,7 +22,7 @@ css 文件网址
 
 ### pos?
 
-`"before"` | `"after"`
+`"before"` \| `"after"`
 
 ## Returns
 

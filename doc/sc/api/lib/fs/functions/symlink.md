@@ -34,9 +34,9 @@ Defined in: [lib/fs.ts:401](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 ### type?
 
-选项
+`"dir"` \| `"file"` \| `"junction"`
 
-`"dir"` | `"file"` | `"junction"`
+选项
 
 ## Returns
 

@@ -42,7 +42,7 @@ Defined in: [lib/control.ts:852](https://github.com/maiyun/clickgo/blob/master/d
 
 ### modules?
 
-> `optional` **modules**: `string`[]
+> `optional` **modules?**: `string`[]
 
 Defined in: [lib/control.ts:857](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L857)
 

@@ -50,7 +50,7 @@ Defined in: [lib/core.ts:1380](https://github.com/maiyun/clickgo/blob/master/dis
 
 ##### instance
 
-[`IVue`](IVue.md) | `null`
+[`IVue`](IVue.md) \| `null`
 
 ##### info
 
@@ -94,7 +94,7 @@ Defined in: [lib/core.ts:1385](https://github.com/maiyun/clickgo/blob/master/dis
 
 ##### instance
 
-[`IVue`](IVue.md) | `null`
+[`IVue`](IVue.md) \| `null`
 
 ##### trace
 

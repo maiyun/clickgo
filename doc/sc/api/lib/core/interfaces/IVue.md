@@ -12,7 +12,7 @@ Vue 实例
 
 ## Indexable
 
-\[`key`: `string`\]: `any`
+> \[`key`: `string`\]: `any`
 
 ## Properties
 
@@ -88,15 +88,15 @@ Defined in: [lib/core.ts:1339](https://github.com/maiyun/clickgo/blob/master/dis
 
 #### Index Signature
 
-\[`key`: `string`\]: (`o?`) => [`IVNode`](IVNode.md)[] \| `undefined`
+\[`key`: `string`\]: ((`o?`) => [`IVNode`](IVNode.md)[]) \| `undefined`
 
 #### default
 
-> **default**: (`o?`) => [`IVNode`](IVNode.md)[] \| `undefined`
+> **default**: ((`o?`) => [`IVNode`](IVNode.md)[]) \| `undefined`
 
 ***
 
-### $watch()
+### $watch
 
 > **$watch**: (`o`, `cb`, `opt?`) => `void`
 

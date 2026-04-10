@@ -28,9 +28,9 @@ Defined in: [lib/form.ts:2965](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### cls
 
-路径字符串或 AbstractPanel 类
+`string` \| (() => `T`)
 
-`string` | () => `T`
+路径字符串或 AbstractPanel 类
 
 ### opt?
 

@@ -14,7 +14,7 @@ Defined in: [lib/dom.ts:1610](https://github.com/maiyun/clickgo/blob/master/dist
 
 ## Type Declaration
 
-### start()
+### start
 
 > **start**: (`ws`, `opts`) => `Promise`\<`boolean`\>
 
@@ -72,7 +72,7 @@ rms 音量回调
 
 `Promise`\<`boolean`\>
 
-### stop()
+### stop
 
 > **stop**: () => `void`
 

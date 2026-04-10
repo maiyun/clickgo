@@ -28,9 +28,9 @@ Defined in: [lib/fs.ts:298](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 ### data
 
-要写入的内容
+`string` \| `Blob`
 
-`string` | `Blob`
+要写入的内容
 
 ### options?
 

@@ -34,9 +34,9 @@ dom 对象
 
 ### mode?
 
-监听模式，默认 default
+`"default"` \| `"style"` \| `"text"` \| `"child"` \| `"childsub"`
 
-`"default"` | `"style"` | `"text"` | `"child"` | `"childsub"`
+监听模式，默认 default
 
 ### immediate?
 

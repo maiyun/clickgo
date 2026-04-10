@@ -28,9 +28,9 @@ Defined in: [lib/dom.ts:156](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### type?
 
-插入的类型
+`"form"` \| `"global"` \| `"theme"` \| `"control"`
 
-`"form"` | `"global"` | `"theme"` | `"control"`
+插入的类型
 
 ### formId?
 

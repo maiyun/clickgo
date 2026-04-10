@@ -20,19 +20,19 @@ Defined in: [lib/core.ts:267](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### taskId?
 
-`string` | `boolean` | `KeyboardEvent`
+`string` \| `boolean` \| `KeyboardEvent`
 
 ### formId?
 
-`string` | `boolean` | `Record`\<`string`, `any`\> | `null`
+`string` \| `boolean` \| `Record`\<`string`, `any`\> \| `null`
 
 ### param1?
 
-`string` | `boolean` | `Error`
+`string` \| `boolean` \| `Error`
 
 ### param2?
 
-`string` | `Record`\<`string`, `any`\>
+`string` \| `Record`\<`string`, `any`\>
 
 ### param3?
 

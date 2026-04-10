@@ -144,7 +144,7 @@ Defined in: [lib/core.ts:1396](https://github.com/maiyun/clickgo/blob/master/dis
 
 ##### rootContainer
 
-`string` | `HTMLElement`
+`string` \| `HTMLElement`
 
 #### Returns
 

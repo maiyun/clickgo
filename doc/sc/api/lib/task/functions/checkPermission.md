@@ -22,9 +22,9 @@ Defined in: [lib/task.ts:913](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### vals
 
-要检测的权限
+`string` \| `string`[]
 
-`string` | `string`[]
+要检测的权限
 
 ### apply?
 

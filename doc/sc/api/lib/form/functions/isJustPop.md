@@ -16,7 +16,7 @@ Defined in: [lib/form.ts:2748](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### el
 
-`number` | `HTMLElement`
+`number` \| `HTMLElement`
 
 ## Returns
 

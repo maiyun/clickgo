@@ -18,7 +18,7 @@ Defined in: [lib/control.ts:1305](https://github.com/maiyun/clickgo/blob/master/
 
 #### hsl?
 
-> `optional` **hsl**: `object`
+> `optional` **hsl?**: `object`
 
 对象
 
@@ -40,7 +40,7 @@ Defined in: [lib/control.ts:1305](https://github.com/maiyun/clickgo/blob/master/
 
 #### rgb?
 
-> `optional` **rgb**: `object`
+> `optional` **rgb?**: `object`
 
 ##### rgb.a
 

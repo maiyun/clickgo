@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:1454](https://github.com/maiyun/clickgo/blob/master/
 
 Defined in: [lib/control.ts:1455](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1455)
 
-#### callback()
+#### callback
 
 > **callback**: (`url`, `opt?`) => `void` \| `Promise`\<`void`\>
 

@@ -16,25 +16,25 @@ Defined in: [lib/tool.ts:804](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### r
 
-r 或 rgb 用 , 分隔的字符串
+`string` \| `number`
 
-`string` | `number`
+r 或 rgb 用 , 分隔的字符串
 
 ### g?
 
-可留空，g
+`string` \| `number`
 
-`string` | `number`
+可留空，g
 
 ### b?
 
-可留空，b
+`string` \| `number`
 
-`string` | `number`
+可留空，b
 
 ### a?
 
-`string` | `number`
+`string` \| `number`
 
 ## Returns
 

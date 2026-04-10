@@ -14,7 +14,7 @@ Launcher 的 item 对象
 
 ### icon?
 
-> `optional` **icon**: `string`
+> `optional` **icon?**: `string`
 
 Defined in: [lib/core.ts:1247](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1247)
 
@@ -22,7 +22,7 @@ Defined in: [lib/core.ts:1247](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### id?
 
-> `optional` **id**: `string`
+> `optional` **id?**: `string`
 
 Defined in: [lib/core.ts:1244](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1244)
 
@@ -30,7 +30,7 @@ Defined in: [lib/core.ts:1244](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### list?
 
-> `optional` **list**: `object`[]
+> `optional` **list?**: `object`[]
 
 Defined in: [lib/core.ts:1248](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1248)
 
@@ -40,7 +40,7 @@ Defined in: [lib/core.ts:1248](https://github.com/maiyun/clickgo/blob/master/dis
 
 #### id?
 
-> `optional` **id**: `string`
+> `optional` **id?**: `string`
 
 #### name
 
@@ -62,6 +62,6 @@ Defined in: [lib/core.ts:1245](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### path?
 
-> `optional` **path**: `string`
+> `optional` **path?**: `string`
 
 Defined in: [lib/core.ts:1246](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1246)

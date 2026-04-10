@@ -22,9 +22,9 @@ Defined in: [lib/tool.ts:1314](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### data
 
-数据
+`Record`\<`string`, `any`\> \| `FormData`
 
-`Record`\<`string`, `any`\> | `FormData`
+数据
 
 ### init?
 

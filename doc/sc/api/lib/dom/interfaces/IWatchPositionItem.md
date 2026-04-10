@@ -20,7 +20,7 @@ Defined in: [lib/dom.ts:1863](https://github.com/maiyun/clickgo/blob/master/dist
 
 ***
 
-### handler()
+### handler
 
 > **handler**: (`state`) => `void` \| `Promise`\<`void`\>
 

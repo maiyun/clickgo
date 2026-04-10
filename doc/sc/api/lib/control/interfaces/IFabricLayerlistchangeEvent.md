@@ -30,6 +30,6 @@ Defined in: [lib/control.ts:1497](https://github.com/maiyun/clickgo/blob/master/
 
 #### value?
 
-> `optional` **value**: `string` \| `boolean`
+> `optional` **value?**: `string` \| `boolean`
 
 rename 时为新显示名称；visible 时为新可见状态（true 表示可见）；locked 时为新锁定状态

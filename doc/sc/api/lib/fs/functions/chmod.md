@@ -28,9 +28,9 @@ Defined in: [lib/fs.ts:958](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 ### mod
 
-权限
+`string` \| `number`
 
-`string` | `number`
+权限
 
 ## Returns
 

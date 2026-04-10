@@ -14,7 +14,7 @@ Dialog 选项
 
 ### autoDialogResult?
 
-> `optional` **autoDialogResult**: `boolean`
+> `optional` **autoDialogResult?**: `boolean`
 
 Defined in: [lib/form.ts:4257](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4257)
 
@@ -22,7 +22,7 @@ Defined in: [lib/form.ts:4257](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### buttons?
 
-> `optional` **buttons**: `string`[]
+> `optional` **buttons?**: `string`[]
 
 Defined in: [lib/form.ts:4256](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4256)
 
@@ -38,7 +38,7 @@ Defined in: [lib/form.ts:4255](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### data?
 
-> `optional` **data**: `Record`\<`string`, `any`\>
+> `optional` **data?**: `Record`\<`string`, `any`\>
 
 Defined in: [lib/form.ts:4263](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4263)
 
@@ -48,7 +48,7 @@ Defined in: [lib/form.ts:4263](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### direction?
 
-> `optional` **direction**: `"v"` \| `"h"`
+> `optional` **direction?**: `"v"` \| `"h"`
 
 Defined in: [lib/form.ts:4259](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4259)
 
@@ -56,7 +56,7 @@ Defined in: [lib/form.ts:4259](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### gutter?
 
-> `optional` **gutter**: `string` \| `number`
+> `optional` **gutter?**: `string` \| `number`
 
 Defined in: [lib/form.ts:4260](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4260)
 
@@ -64,7 +64,7 @@ Defined in: [lib/form.ts:4260](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### methods?
 
-> `optional` **methods**: `Record`\<`string`, (...`param`) => `any`\>
+> `optional` **methods?**: `Record`\<`string`, (...`param`) => `any`\>
 
 Defined in: [lib/form.ts:4265](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4265)
 
@@ -72,9 +72,9 @@ Defined in: [lib/form.ts:4265](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### onMounted()?
+### onMounted?
 
-> `optional` **onMounted**: () => `void` \| `Promise`\<`void`\>
+> `optional` **onMounted?**: () => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/form.ts:4285](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4285)
 
@@ -88,7 +88,7 @@ Defined in: [lib/form.ts:4285](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### path?
 
-> `optional` **path**: `string`
+> `optional` **path?**: `string`
 
 Defined in: [lib/form.ts:4269](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4269)
 
@@ -96,9 +96,9 @@ Defined in: [lib/form.ts:4269](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### select()?
+### select?
 
-> `optional` **select**: (`this`, `e`, `button`) => `void`
+> `optional` **select?**: (`this`, `e`, `button`) => `void`
 
 Defined in: [lib/form.ts:4276](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4276)
 
@@ -130,7 +130,7 @@ Defined in: [lib/form.ts:4276](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### style?
 
-> `optional` **style**: `string`
+> `optional` **style?**: `string`
 
 Defined in: [lib/form.ts:4267](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4267)
 
@@ -140,6 +140,6 @@ Defined in: [lib/form.ts:4267](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 Defined in: [lib/form.ts:4254](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4254)

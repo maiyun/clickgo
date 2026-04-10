@@ -16,9 +16,9 @@ Defined in: [lib/tool.ts:710](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### param
 
-参数
+`string` \| `number` \| `boolean` \| `undefined`
 
-`string` | `number` | `boolean` | `undefined`
+参数
 
 ## Returns
 

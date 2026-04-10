@@ -14,7 +14,7 @@ notify 信息框的修改选项
 
 ### content?
 
-> `optional` **content**: `string`
+> `optional` **content?**: `string`
 
 Defined in: [lib/form.ts:4244](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4244)
 
@@ -22,7 +22,7 @@ Defined in: [lib/form.ts:4244](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### note?
 
-> `optional` **note**: `string`
+> `optional` **note?**: `string`
 
 Defined in: [lib/form.ts:4245](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4245)
 
@@ -30,7 +30,7 @@ Defined in: [lib/form.ts:4245](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### progress?
 
-> `optional` **progress**: `number`
+> `optional` **progress?**: `number`
 
 Defined in: [lib/form.ts:4247](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4247)
 
@@ -40,7 +40,7 @@ Defined in: [lib/form.ts:4247](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### timeout?
 
-> `optional` **timeout**: `number`
+> `optional` **timeout?**: `number`
 
 Defined in: [lib/form.ts:4249](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4249)
 
@@ -50,6 +50,6 @@ Defined in: [lib/form.ts:4249](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 Defined in: [lib/form.ts:4243](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4243)

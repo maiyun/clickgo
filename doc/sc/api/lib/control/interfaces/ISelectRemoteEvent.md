@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:1398](https://github.com/maiyun/clickgo/blob/master/
 
 Defined in: [lib/control.ts:1399](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1399)
 
-#### callback()
+#### callback
 
 > **callback**: (`data?`) => `Promise`\<`void`\>
 
@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:1399](https://github.com/maiyun/clickgo/blob/master/
 
 ###### data?
 
-`any`[] | `Record`\<`string`, `string`\>
+`any`[] \| `Record`\<`string`, `string`\>
 
 ##### Returns
 

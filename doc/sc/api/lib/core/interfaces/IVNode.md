@@ -12,7 +12,7 @@ Vue 节点
 
 ## Indexable
 
-\[`key`: `string`\]: `any`
+> \[`key`: `string`\]: `any`
 
 ## Properties
 
@@ -26,7 +26,7 @@ Defined in: [lib/core.ts:1353](https://github.com/maiyun/clickgo/blob/master/dis
 
 ##### default
 
-> **default**: () => `IVNode`[] \| `undefined`
+> **default**: (() => `IVNode`[]) \| `undefined`
 
 ***
 

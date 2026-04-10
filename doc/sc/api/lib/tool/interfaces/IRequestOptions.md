@@ -14,7 +14,7 @@ Defined in: [lib/tool.ts:2618](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### body?
 
-> `optional` **body**: `FormData`
+> `optional` **body?**: `FormData`
 
 Defined in: [lib/tool.ts:2621](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2621)
 
@@ -22,15 +22,15 @@ Defined in: [lib/tool.ts:2621](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### credentials?
 
-> `optional` **credentials**: `boolean`
+> `optional` **credentials?**: `boolean`
 
 Defined in: [lib/tool.ts:2619](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2619)
 
 ***
 
-### end()?
+### end?
 
-> `optional` **end**: () => `void` \| `Promise`\<`void`\>
+> `optional` **end?**: () => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2630](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2630)
 
@@ -40,9 +40,9 @@ Defined in: [lib/tool.ts:2630](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### error()?
+### error?
 
-> `optional` **error**: () => `void` \| `Promise`\<`void`\>
+> `optional` **error?**: () => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2633](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2633)
 
@@ -54,15 +54,15 @@ Defined in: [lib/tool.ts:2633](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### headers?
 
-> `optional` **headers**: `HeadersInit`
+> `optional` **headers?**: `HeadersInit`
 
 Defined in: [lib/tool.ts:2624](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2624)
 
 ***
 
-### load()?
+### load?
 
-> `optional` **load**: (`res`) => `void` \| `Promise`\<`void`\>
+> `optional` **load?**: (`res`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2632](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2632)
 
@@ -80,15 +80,15 @@ Defined in: [lib/tool.ts:2632](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### method?
 
-> `optional` **method**: `"GET"` \| `"POST"`
+> `optional` **method?**: `"GET"` \| `"POST"`
 
 Defined in: [lib/tool.ts:2620](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2620)
 
 ***
 
-### progress()?
+### progress?
 
-> `optional` **progress**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
+> `optional` **progress?**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2631](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2631)
 
@@ -110,15 +110,15 @@ Defined in: [lib/tool.ts:2631](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### responseType?
 
-> `optional` **responseType**: `XMLHttpRequestResponseType`
+> `optional` **responseType?**: `XMLHttpRequestResponseType`
 
 Defined in: [lib/tool.ts:2623](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2623)
 
 ***
 
-### start()?
+### start?
 
-> `optional` **start**: (`total`) => `void` \| `Promise`\<`void`\>
+> `optional` **start?**: (`total`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2629](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2629)
 
@@ -136,15 +136,15 @@ Defined in: [lib/tool.ts:2629](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### timeout?
 
-> `optional` **timeout**: `number`
+> `optional` **timeout?**: `number`
 
 Defined in: [lib/tool.ts:2622](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2622)
 
 ***
 
-### uploadEnd()?
+### uploadEnd?
 
-> `optional` **uploadEnd**: () => `void` \| `Promise`\<`void`\>
+> `optional` **uploadEnd?**: () => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2628)
 
@@ -154,9 +154,9 @@ Defined in: [lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### uploadProgress()?
+### uploadProgress?
 
-> `optional` **uploadProgress**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
+> `optional` **uploadProgress?**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2627)
 
@@ -176,9 +176,9 @@ Defined in: [lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### uploadStart()?
+### uploadStart?
 
-> `optional` **uploadStart**: (`total`) => `void` \| `Promise`\<`void`\>
+> `optional` **uploadStart?**: (`total`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/tool.ts:2626](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2626)
 

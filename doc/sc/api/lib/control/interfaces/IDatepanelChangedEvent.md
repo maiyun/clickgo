@@ -18,8 +18,8 @@ Defined in: [lib/control.ts:974](https://github.com/maiyun/clickgo/blob/master/d
 
 #### before?
 
-> `optional` **before**: `number`
+> `optional` **before?**: `number`
 
 #### value?
 
-> `optional` **value**: `number`
+> `optional` **value?**: `number`

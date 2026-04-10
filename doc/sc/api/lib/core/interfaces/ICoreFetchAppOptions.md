@@ -14,7 +14,7 @@ Defined in: [lib/core.ts:1265](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### after?
 
-> `optional` **after**: `string`
+> `optional` **after?**: `string`
 
 Defined in: [lib/core.ts:1275](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1275)
 
@@ -24,39 +24,43 @@ Defined in: [lib/core.ts:1275](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### notify?
 
-> `optional` **notify**: `number` \| \{ `id?`: `number`; `loaded?`: `number`; `total?`: `number`; \}
+> `optional` **notify?**: `number` \| \{ `id?`: `number`; `loaded?`: `number`; `total?`: `number`; \}
 
 Defined in: [lib/core.ts:1266](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1266)
 
-#### Type Declaration
+#### Union Members
 
 `number`
 
+***
+
+##### Type Literal
+
 \{ `id?`: `number`; `loaded?`: `number`; `total?`: `number`; \}
 
-#### id?
+##### id?
 
-> `optional` **id**: `number`
+> `optional` **id?**: `number`
 
 notify id
 
-#### loaded?
+##### loaded?
 
-> `optional` **loaded**: `number`
+> `optional` **loaded?**: `number`
 
 偏移基准
 
-#### total?
+##### total?
 
-> `optional` **total**: `number`
+> `optional` **total?**: `number`
 
 偏移总量
 
 ***
 
-### progress()?
+### progress?
 
-> `optional` **progress**: (`loaded`, `total`, `per`) => `void` \| `Promise`\<`void`\>
+> `optional` **progress?**: (`loaded`, `total`, `per`) => `void` \| `Promise`\<`void`\>
 
 Defined in: [lib/core.ts:1282](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1282)
 

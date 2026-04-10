@@ -34,7 +34,7 @@ Defined in: [lib/core.ts:1308](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### files?
 
-> `optional` **files**: `string`[]
+> `optional` **files?**: `string`[]
 
 Defined in: [lib/core.ts:1321](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1321)
 
@@ -44,7 +44,7 @@ Defined in: [lib/core.ts:1321](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### icon?
 
-> `optional` **icon**: `string`
+> `optional` **icon?**: `string`
 
 Defined in: [lib/core.ts:1318](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1318)
 
@@ -54,7 +54,7 @@ Defined in: [lib/core.ts:1318](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### locales?
 
-> `optional` **locales**: `Record`\<`string`, `string`\>
+> `optional` **locales?**: `Record`\<`string`, `string`\>
 
 Defined in: [lib/core.ts:1314](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1314)
 
@@ -64,7 +64,7 @@ Defined in: [lib/core.ts:1314](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### modules?
 
-> `optional` **modules**: `string`[]
+> `optional` **modules?**: `string`[]
 
 Defined in: [lib/core.ts:1323](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1323)
 
@@ -84,7 +84,7 @@ Defined in: [lib/core.ts:1299](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### permissions?
 
-> `optional` **permissions**: `string`[]
+> `optional` **permissions?**: `string`[]
 
 Defined in: [lib/core.ts:1312](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1312)
 
@@ -94,7 +94,7 @@ Defined in: [lib/core.ts:1312](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### style?
 
-> `optional` **style**: `string`
+> `optional` **style?**: `string`
 
 Defined in: [lib/core.ts:1316](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1316)
 
@@ -104,7 +104,7 @@ Defined in: [lib/core.ts:1316](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### themes?
 
-> `optional` **themes**: `string`[]
+> `optional` **themes?**: `string`[]
 
 Defined in: [lib/core.ts:1310](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1310)
 

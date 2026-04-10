@@ -22,9 +22,9 @@ Defined in: [lib/form.ts:2182](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### type?
 
-样式，可留空
+`"default"` \| `"info"` \| `"warning"` \| `"danger"` \| `"primary"` \| `"cg"`
 
-`"default"` | `"info"` | `"warning"` | `"danger"` | `"primary"` | `"cg"`
+样式，可留空
 
 ## Returns
 

@@ -10,7 +10,7 @@ Defined in: [lib/task.ts:1679](https://github.com/maiyun/clickgo/blob/master/dis
 
 ## Properties
 
-### end()
+### end
 
 > **end**: () => `Promise`\<`void`\>
 
@@ -24,7 +24,7 @@ Defined in: [lib/task.ts:1687](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### off()
+### off
 
 > **off**: (`name`, `handler`) => `void`
 
@@ -48,7 +48,7 @@ Defined in: [lib/task.ts:1683](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### on()
+### on
 
 > **on**: (`name`, `handler`) => `void`
 
@@ -72,7 +72,7 @@ Defined in: [lib/task.ts:1681](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### send()
+### send
 
 > **send**: (`data`) => `void`
 

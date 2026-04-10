@@ -30,6 +30,6 @@ Defined in: [lib/dom.ts:1881](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### taskId?
 
-> `optional` **taskId**: `string`
+> `optional` **taskId?**: `string`
 
 Defined in: [lib/dom.ts:1882](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1882)

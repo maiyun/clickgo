@@ -10,9 +10,9 @@ Defined in: [lib/fs.ts:1406](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ## Properties
 
-### chmod()?
+### chmod?
 
-> `optional` **chmod**: (`path`, `mod`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **chmod?**: (`path`, `mod`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1426](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1426)
 
@@ -24,7 +24,7 @@ Defined in: [lib/fs.ts:1426](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ##### mod
 
-`string` | `number`
+`string` \| `number`
 
 #### Returns
 
@@ -32,9 +32,9 @@ Defined in: [lib/fs.ts:1426](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### copyFile()?
+### copyFile?
 
-> `optional` **copyFile**: (`src`, `dest`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **copyFile?**: (`src`, `dest`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1429](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1429)
 
@@ -56,7 +56,7 @@ Defined in: [lib/fs.ts:1429](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### date?
 
-> `optional` **date**: `Date`
+> `optional` **date?**: `Date`
 
 Defined in: [lib/fs.ts:1408](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1408)
 
@@ -64,9 +64,9 @@ Defined in: [lib/fs.ts:1408](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### getContent()?
+### getContent?
 
-> `optional` **getContent**: (`path`, `options?`) => `string` \| `Blob` \| `Promise`\<`string` \| `Blob` \| `null`\> \| `null`
+> `optional` **getContent?**: (`path`, `options?`) => `string` \| `Blob` \| `Promise`\<`string` \| `Blob` \| `null`\> \| `null`
 
 Defined in: [lib/fs.ts:1409](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1409)
 
@@ -78,7 +78,7 @@ Defined in: [lib/fs.ts:1409](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ##### options?
 
-`BufferEncoding` | \{ `encoding?`: BufferEncoding \| undefined; `end?`: `number`; `progress?`: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>; `start?`: `number`; \}
+`BufferEncoding` \| \{ `encoding?`: BufferEncoding \| undefined; `end?`: `number`; `progress?`: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>; `start?`: `number`; \}
 
 #### Returns
 
@@ -86,9 +86,9 @@ Defined in: [lib/fs.ts:1409](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### mkdir()?
+### mkdir?
 
-> `optional` **mkdir**: (`path`, `mode?`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **mkdir?**: (`path`, `mode?`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1424](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1424)
 
@@ -108,9 +108,9 @@ Defined in: [lib/fs.ts:1424](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### putContent()?
+### putContent?
 
-> `optional` **putContent**: (`path`, `data`, `options?`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **putContent?**: (`path`, `data`, `options?`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1415](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1415)
 
@@ -122,7 +122,7 @@ Defined in: [lib/fs.ts:1415](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ##### data
 
-`string` | `Blob`
+`string` \| `Blob`
 
 ##### options?
 
@@ -144,9 +144,9 @@ Defined in: [lib/fs.ts:1415](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### readDir()?
+### readDir?
 
-> `optional` **readDir**: (`path`, `encoding?`) => [`IDirent`](IDirent.md)[] \| `Promise`\<[`IDirent`](IDirent.md)[]\>
+> `optional` **readDir?**: (`path`, `encoding?`) => [`IDirent`](IDirent.md)[] \| `Promise`\<[`IDirent`](IDirent.md)[]\>
 
 Defined in: [lib/fs.ts:1428](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1428)
 
@@ -166,9 +166,9 @@ Defined in: [lib/fs.ts:1428](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### readLink()?
+### readLink?
 
-> `optional` **readLink**: (`path`, `encoding?`) => `string` \| `Promise`\<`string` \| `null`\> \| `null`
+> `optional` **readLink?**: (`path`, `encoding?`) => `string` \| `Promise`\<`string` \| `null`\> \| `null`
 
 Defined in: [lib/fs.ts:1420](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1420)
 
@@ -188,9 +188,9 @@ Defined in: [lib/fs.ts:1420](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### rename()?
+### rename?
 
-> `optional` **rename**: (`oldPath`, `newPath`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **rename?**: (`oldPath`, `newPath`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1427](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1427)
 
@@ -210,9 +210,9 @@ Defined in: [lib/fs.ts:1427](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### rmdir()?
+### rmdir?
 
-> `optional` **rmdir**: (`path`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **rmdir?**: (`path`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1425](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1425)
 
@@ -228,9 +228,9 @@ Defined in: [lib/fs.ts:1425](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### stats()?
+### stats?
 
-> `optional` **stats**: (`path`) => [`IStats`](IStats.md) \| `Promise`\<[`IStats`](IStats.md) \| `null`\> \| `null`
+> `optional` **stats?**: (`path`) => [`IStats`](IStats.md) \| `Promise`\<[`IStats`](IStats.md) \| `null`\> \| `null`
 
 Defined in: [lib/fs.ts:1423](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1423)
 
@@ -246,9 +246,9 @@ Defined in: [lib/fs.ts:1423](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### symlink()?
+### symlink?
 
-> `optional` **symlink**: (`filePath`, `linkPath`, `type?`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **symlink?**: (`filePath`, `linkPath`, `type?`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1421](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1421)
 
@@ -264,7 +264,7 @@ Defined in: [lib/fs.ts:1421](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ##### type?
 
-`"dir"` | `"file"` | `"junction"`
+`"dir"` \| `"file"` \| `"junction"`
 
 #### Returns
 
@@ -272,9 +272,9 @@ Defined in: [lib/fs.ts:1421](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ***
 
-### unlink()?
+### unlink?
 
-> `optional` **unlink**: (`path`) => `boolean` \| `Promise`\<`boolean`\>
+> `optional` **unlink?**: (`path`) => `boolean` \| `Promise`\<`boolean`\>
 
 Defined in: [lib/fs.ts:1422](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1422)
 

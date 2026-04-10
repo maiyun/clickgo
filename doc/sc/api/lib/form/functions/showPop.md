@@ -16,21 +16,21 @@ Defined in: [lib/form.ts:2552](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### el
 
-响应的元素
+`HTMLElement` \| [`IVue`](../../core/interfaces/IVue.md)
 
-`HTMLElement` | [`IVue`](../../core/interfaces/IVue.md)
+响应的元素
 
 ### pop
 
-要显示 pop 元素
+`HTMLElement` \| [`IVue`](../../core/interfaces/IVue.md) \| `undefined`
 
-`HTMLElement` | [`IVue`](../../core/interfaces/IVue.md) | `undefined`
+要显示 pop 元素
 
 ### direction
 
-要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
+`"v"` \| `PointerEvent` \| `"t"` \| `"h"` \| \{ `x`: `number`; `y`: `number`; \}
 
-`"v"` | `PointerEvent` | `"t"` | `"h"` | \{ `x`: `number`; `y`: `number`; \}
+要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
 
 ### opt?
 

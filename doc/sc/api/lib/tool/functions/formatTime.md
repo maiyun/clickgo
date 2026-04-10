@@ -16,9 +16,9 @@ Defined in: [lib/tool.ts:1598](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### ts
 
-时间戳或日期对象
+`number` \| `Date`
 
-`number` | `Date`
+时间戳或日期对象
 
 ### tz?
 

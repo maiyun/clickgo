@@ -4,7 +4,7 @@
 
 [Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IVueOptionMergeFunction
 
-# Type Alias: IVueOptionMergeFunction()
+# Type Alias: IVueOptionMergeFunction
 
 > **IVueOptionMergeFunction** = (`to`, `from`, `instance`) => `any`
 

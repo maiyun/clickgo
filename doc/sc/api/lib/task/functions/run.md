@@ -22,9 +22,9 @@ Defined in: [lib/task.ts:386](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### url
 
-app 路径（以 .cga 结尾的文件），或 APP 包对象
+`string` \| [`IApp`](../../core/interfaces/IApp.md)
 
-`string` | [`IApp`](../../core/interfaces/IApp.md)
+app 路径（以 .cga 结尾的文件），或 APP 包对象
 
 ### opt?
 

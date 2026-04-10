@@ -16,27 +16,27 @@ hsl 字符串转 rgb 数组
 
 ### h
 
-h 值或 hsl(x, x, x) 或直接 x,x,x
+`string` \| `number`
 
-`string` | `number`
+h 值或 hsl(x, x, x) 或直接 x,x,x
 
 ### s?
 
-s 值
+`string` \| `number`
 
-`string` | `number`
+s 值
 
 ### l?
 
-l 值
+`string` \| `number`
 
-`string` | `number`
+l 值
 
 ### a?
 
-a 值
+`string` \| `number`
 
-`string` | `number`
+a 值
 
 ### decimal?
 

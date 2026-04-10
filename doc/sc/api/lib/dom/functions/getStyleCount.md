@@ -22,9 +22,9 @@ Defined in: [lib/dom.ts:221](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### type
 
-类型
+`"form"` \| `"theme"` \| `"control"`
 
-`"form"` | `"theme"` | `"control"`
+类型
 
 ## Returns
 

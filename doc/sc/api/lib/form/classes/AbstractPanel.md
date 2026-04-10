@@ -52,17 +52,7 @@ layout 中 :class 的转义
 
 ##### Returns
 
-> (`cla`): `string`
-
-###### Parameters
-
-###### cla
-
-`any`
-
-###### Returns
-
-`string`
+(`cla`) => `string`
 
 #### Inherited from
 
@@ -264,25 +254,7 @@ Defined in: [lib/form.ts:230](https://github.com/maiyun/clickgo/blob/master/dist
 
 ##### Returns
 
-> (`key`, `data?`, `origin?`): `string`
-
-###### Parameters
-
-###### key
-
-`string`
-
-###### data?
-
-`string`[]
-
-###### origin?
-
-`boolean`
-
-###### Returns
-
-`string`
+(`key`, `data?`, `origin?`) => `string`
 
 #### Inherited from
 
@@ -322,11 +294,7 @@ Defined in: [lib/form.ts:291](https://github.com/maiyun/clickgo/blob/master/dist
 
 ##### Returns
 
-> (): `Promise`\<`void`\>
-
-###### Returns
-
-`Promise`\<`void`\>
+() => `Promise`\<`void`\>
 
 #### Inherited from
 
@@ -474,9 +442,9 @@ Defined in: [lib/form.ts:299](https://github.com/maiyun/clickgo/blob/master/dist
 
 ##### e
 
-鼠标、触摸、键盘事件
+`PointerEvent` \| `KeyboardEvent`
 
-`PointerEvent` | `KeyboardEvent`
+鼠标、触摸、键盘事件
 
 #### Returns
 
@@ -842,9 +810,9 @@ Defined in: [lib/form.ts:309](https://github.com/maiyun/clickgo/blob/master/dist
 
 ##### param1?
 
-参数1
+`string` \| `boolean` \| `Error`
 
-`string` | `boolean` | `Error`
+参数1
 
 ##### param2?
 
@@ -888,9 +856,9 @@ Defined in: [lib/form.ts:265](https://github.com/maiyun/clickgo/blob/master/dist
 
 ##### name
 
-监视的属性
+`TK` \| (() => `TR`)
 
-`TK` | () => `TR`
+监视的属性
 
 ##### cb
 
@@ -912,11 +880,7 @@ Defined in: [lib/form.ts:265](https://github.com/maiyun/clickgo/blob/master/dist
 
 #### Returns
 
-> (): `void`
-
-##### Returns
-
-`void`
+() => `void`
 
 #### Inherited from
 

@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:935](https://github.com/maiyun/clickgo/blob/master/d
 
 #### label?
 
-> `optional` **label**: `string`
+> `optional` **label?**: `string`
 
 radio 模式下，当前项的 label 内容
 
@@ -48,7 +48,7 @@ Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/d
 
 ***
 
-### preventDefault()
+### preventDefault
 
 > **preventDefault**: () => `void`
 

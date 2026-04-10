@@ -20,7 +20,7 @@ Defined in: [lib/control.ts:1527](https://github.com/maiyun/clickgo/blob/master/
 
 ### hue?
 
-> `optional` **hue**: `string`
+> `optional` **hue?**: `string`
 
 Defined in: [lib/control.ts:1529](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1529)
 
@@ -30,7 +30,7 @@ Defined in: [lib/control.ts:1529](https://github.com/maiyun/clickgo/blob/master/
 
 ### name?
 
-> `optional` **name**: `string`
+> `optional` **name?**: `string`
 
 Defined in: [lib/control.ts:1525](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1525)
 
@@ -40,7 +40,7 @@ Defined in: [lib/control.ts:1525](https://github.com/maiyun/clickgo/blob/master/
 
 ### path?
 
-> `optional` **path**: `string`
+> `optional` **path?**: `string`
 
 Defined in: [lib/control.ts:1530](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1530)
 
@@ -56,7 +56,7 @@ Defined in: [lib/control.ts:1526](https://github.com/maiyun/clickgo/blob/master/
 
 ### stroke?
 
-> `optional` **stroke**: `"down"` \| `"solid"` \| `"dashed"` \| `"up"`
+> `optional` **stroke?**: `"down"` \| `"solid"` \| `"dashed"` \| `"up"`
 
 Defined in: [lib/control.ts:1532](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1532)
 

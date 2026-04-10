@@ -16,7 +16,7 @@ Defined in: [lib/form.ts:2666](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### pop?
 
-`HTMLElement` | [`IVue`](../../core/interfaces/IVue.md)
+`HTMLElement` \| [`IVue`](../../core/interfaces/IVue.md)
 
 ## Returns
 

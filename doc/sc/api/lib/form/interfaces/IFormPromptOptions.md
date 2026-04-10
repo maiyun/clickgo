@@ -14,7 +14,7 @@ Prompt 选项
 
 ### cancel?
 
-> `optional` **cancel**: `boolean`
+> `optional` **cancel?**: `boolean`
 
 Defined in: [lib/form.ts:4318](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4318)
 
@@ -32,9 +32,9 @@ Defined in: [lib/form.ts:4314](https://github.com/maiyun/clickgo/blob/master/dis
 
 ***
 
-### select()?
+### select?
 
-> `optional` **select**: (`this`, `e`, `button`) => `void`
+> `optional` **select?**: (`this`, `e`, `button`) => `void`
 
 Defined in: [lib/form.ts:4325](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4325)
 
@@ -66,7 +66,7 @@ true 代表确定，false 代表取消
 
 ### text?
 
-> `optional` **text**: `string`
+> `optional` **text?**: `string`
 
 Defined in: [lib/form.ts:4316](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4316)
 
@@ -76,7 +76,7 @@ Defined in: [lib/form.ts:4316](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### title?
 
-> `optional` **title**: `string`
+> `optional` **title?**: `string`
 
 Defined in: [lib/form.ts:4312](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4312)
 

@@ -22,9 +22,9 @@ Defined in: [lib/dom.ts:180](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### type?
 
-移除的类型
+`"form"` \| `"global"` \| `"theme"` \| `"control"`
 
-`"form"` | `"global"` | `"theme"` | `"control"`
+移除的类型
 
 ### formId?
 

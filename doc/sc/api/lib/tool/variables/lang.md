@@ -20,7 +20,7 @@ Defined in: [lib/tool.ts:2545](https://github.com/maiyun/clickgo/blob/master/dis
 
 语言代号
 
-### getCodeByAccept()
+### getCodeByAccept
 
 > **getCodeByAccept**: (`accept?`) => `string`
 

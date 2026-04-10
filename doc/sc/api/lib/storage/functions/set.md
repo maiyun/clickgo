@@ -28,9 +28,9 @@ Defined in: [lib/storage.ts:111](https://github.com/maiyun/clickgo/blob/master/d
 
 ### val
 
-存储值
+`string` \| `number` \| `any`[] \| `Record`\<`string`, `any`\>
 
-`string` | `number` | `any`[] | `Record`\<`string`, `any`\>
+存储值
 
 ## Returns
 

@@ -22,9 +22,9 @@ Defined in: [lib/dom.ts:753](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### name
 
-样式名
+`string` \| `string`[]
 
-`string` | `string`[]
+样式名
 
 ### cb
 

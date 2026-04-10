@@ -24,7 +24,7 @@ Defined in: [lib/form.ts:933](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **confirm**: `HTMLDivElement`
 
-### init()
+### init
 
 > **init**: () => `void`
 

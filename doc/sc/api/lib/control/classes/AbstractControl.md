@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:40](https://github.com/maiyun/clickgo/blob/master/di
 
 ### emits
 
-> `readonly` **emits**: `Record`\<`string`, `null` \| (`payload`) => `boolean`\> = `{}`
+> `readonly` **emits**: `Record`\<`string`, `null` \| ((`payload`) => `boolean`)\> = `{}`
 
 Defined in: [lib/control.ts:276](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L276)
 
@@ -106,17 +106,7 @@ layout 中 :class 的转义
 
 ##### Returns
 
-> (`cla`): `string`
-
-###### Parameters
-
-###### cla
-
-`any`
-
-###### Returns
-
-`string`
+(`cla`) => `string`
 
 ***
 
@@ -196,21 +186,7 @@ Defined in: [lib/control.ts:157](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`key`, `data?`): `string`
-
-###### Parameters
-
-###### key
-
-`string`
-
-###### data?
-
-`string`[]
-
-###### Returns
-
-`string`
+(`key`, `data?`) => `string`
 
 ***
 
@@ -258,21 +234,7 @@ Defined in: [lib/control.ts:137](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`key`, `data?`): `string`
-
-###### Parameters
-
-###### key
-
-`string`
-
-###### data?
-
-`string`[]
-
-###### Returns
-
-`string`
+(`key`, `data?`) => `string`
 
 ***
 
@@ -304,11 +266,7 @@ Defined in: [lib/control.ts:241](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (): `Promise`\<`void`\>
-
-###### Returns
-
-`Promise`\<`void`\>
+() => `Promise`\<`void`\>
 
 ***
 
@@ -340,21 +298,7 @@ Defined in: [lib/control.ts:369](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`name`, `val`): `AbstractControl` & `Record`\<`string`, `any`\> \| `null`
-
-###### Parameters
-
-###### name
-
-`string`
-
-###### val
-
-`string`
-
-###### Returns
-
-`AbstractControl` & `Record`\<`string`, `any`\> \| `null`
+(`name`, `val`) => `AbstractControl` & `Record`\<`string`, `any`\> \| `null`
 
 ***
 
@@ -370,17 +314,7 @@ Defined in: [lib/control.ts:351](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`controlName`): `AbstractControl` & `Record`\<`string`, `any`\> \| `null`
-
-###### Parameters
-
-###### controlName
-
-`string`
-
-###### Returns
-
-`AbstractControl` & `Record`\<`string`, `any`\> \| `null`
+(`controlName`) => `AbstractControl` & `Record`\<`string`, `any`\> \| `null`
 
 ***
 
@@ -428,17 +362,7 @@ Defined in: [lib/control.ts:326](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`name`): `any`[]
-
-###### Parameters
-
-###### name
-
-keyof `this`\[`"props"`\]
-
-###### Returns
-
-`any`[]
+(`name`) => `any`[]
 
 ***
 
@@ -454,17 +378,7 @@ Defined in: [lib/control.ts:305](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`name`): `boolean`
-
-###### Parameters
-
-###### name
-
-keyof `this`\[`"props"`\]
-
-###### Returns
-
-`boolean`
+(`name`) => `boolean`
 
 ***
 
@@ -480,17 +394,7 @@ Defined in: [lib/control.ts:319](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`name`): `number`
-
-###### Parameters
-
-###### name
-
-keyof `this`\[`"props"`\]
-
-###### Returns
-
-`number`
+(`name`) => `number`
 
 ***
 
@@ -506,17 +410,7 @@ Defined in: [lib/control.ts:312](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`name`): `number`
-
-###### Parameters
-
-###### name
-
-keyof `this`\[`"props"`\]
-
-###### Returns
-
-`number`
+(`name`) => `number`
 
 ***
 
@@ -580,17 +474,7 @@ Defined in: [lib/control.ts:282](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### Returns
 
-> (`name`): `any`[]
-
-###### Parameters
-
-###### name
-
-`string`
-
-###### Returns
-
-`any`[]
+(`name`) => `any`[]
 
 ***
 
@@ -622,9 +506,9 @@ Defined in: [lib/control.ts:249](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### e
 
-鼠标、触摸、键盘事件
+`PointerEvent` \| `KeyboardEvent`
 
-`PointerEvent` | `KeyboardEvent`
+鼠标、触摸、键盘事件
 
 #### Returns
 
@@ -776,9 +660,9 @@ Defined in: [lib/control.ts:260](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### param1?
 
-参数1
+`string` \| `boolean` \| `Error`
 
-`string` | `boolean` | `Error`
+参数1
 
 ##### param2?
 
@@ -818,9 +702,9 @@ Defined in: [lib/control.ts:220](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### name
 
-监视的属性或 prop 值
+`TK` \| (() => `TR`)
 
-`TK` | () => `TR`
+监视的属性或 prop 值
 
 ##### cb
 
@@ -842,8 +726,4 @@ Defined in: [lib/control.ts:220](https://github.com/maiyun/clickgo/blob/master/d
 
 #### Returns
 
-> (): `void`
-
-##### Returns
-
-`void`
+() => `void`

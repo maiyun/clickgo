@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:919](https://github.com/maiyun/clickgo/blob/master/d
 
 #### change?
 
-> `optional` **change**: `string`
+> `optional` **change?**: `string`
 
 #### value
 
@@ -44,7 +44,7 @@ Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/d
 
 ***
 
-### preventDefault()
+### preventDefault
 
 > **preventDefault**: () => `void`
 
