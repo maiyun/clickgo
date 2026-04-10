@@ -28484,7 +28484,7 @@ lib/tool/enumerations/ESTATE.md
 
 # Enumeration: ESTATE
 
-Defined in: [lib/tool.ts:1770](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1770)
+Defined in: [lib/tool.ts:1771](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1771)
 
 状态机状态
 
@@ -28494,7 +28494,7 @@ Defined in: [lib/tool.ts:1770](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **COMMENT**: `4`
 
-Defined in: [lib/tool.ts:1780](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1780)
+Defined in: [lib/tool.ts:1781](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1781)
 
 注释
 
@@ -28504,7 +28504,7 @@ Defined in: [lib/tool.ts:1780](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **NORMAL**: `0`
 
-Defined in: [lib/tool.ts:1772](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1772)
+Defined in: [lib/tool.ts:1773](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1773)
 
 普通
 
@@ -28514,7 +28514,7 @@ Defined in: [lib/tool.ts:1772](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **REG**: `3`
 
-Defined in: [lib/tool.ts:1778](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1778)
+Defined in: [lib/tool.ts:1779](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1779)
 
 正则
 
@@ -28524,7 +28524,7 @@ Defined in: [lib/tool.ts:1778](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **STRING**: `2`
 
-Defined in: [lib/tool.ts:1776](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1776)
+Defined in: [lib/tool.ts:1777](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1777)
 
 字符串
 
@@ -28534,7 +28534,7 @@ Defined in: [lib/tool.ts:1776](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **WORD**: `1`
 
-Defined in: [lib/tool.ts:1774](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1774)
+Defined in: [lib/tool.ts:1775](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1775)
 
 单词
 
@@ -28580,7 +28580,7 @@ lib/tool/functions/blob2DataUrl.md
 
 > **blob2DataUrl**(`blob`): `Promise`\<`string`\>
 
-Defined in: [lib/tool.ts:1514](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1514)
+Defined in: [lib/tool.ts:1515](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1515)
 
 将 blob 对象转换为 base64 url
 
@@ -28609,7 +28609,7 @@ lib/tool/functions/blob2Text.md
 
 > **blob2Text**(`blob`): `Promise`\<`string`\>
 
-Defined in: [lib/tool.ts:1495](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1495)
+Defined in: [lib/tool.ts:1496](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1496)
 
 将 blob 对象转换为 text
 
@@ -28673,7 +28673,7 @@ lib/tool/functions/compar.md
 
 > **compar**(`before`, `after`): `object`
 
-Defined in: [lib/tool.ts:1542](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1542)
+Defined in: [lib/tool.ts:1543](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1543)
 
 - 对比老值和新值，看看新值中哪些移除了，哪些新增了
 
@@ -28785,7 +28785,7 @@ lib/tool/functions/escapeHTML.md
 
 > **escapeHTML**(`html`): `string`
 
-Defined in: [lib/tool.ts:761](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L761)
+Defined in: [lib/tool.ts:762](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L762)
 
 转义 HTML
 
@@ -28814,7 +28814,7 @@ lib/tool/functions/eventsAttrWrap.md
 
 > **eventsAttrWrap**(`layout`): `string`
 
-Defined in: [lib/tool.ts:524](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L524)
+Defined in: [lib/tool.ts:525](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L525)
 
 对 layout 的 events 事件进行包裹
 
@@ -28843,7 +28843,7 @@ lib/tool/functions/execCommand.md
 
 > **execCommand**(`ac`): `void`
 
-Defined in: [lib/tool.ts:1529](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1529)
+Defined in: [lib/tool.ts:1530](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1530)
 
 ## Parameters
 
@@ -28868,7 +28868,7 @@ lib/tool/functions/fetch.md
 
 > **fetch**(`url`, `init?`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [lib/tool.ts:1132](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1132)
+Defined in: [lib/tool.ts:1133](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1133)
 
 发起 fetch 请求
 
@@ -28905,7 +28905,7 @@ lib/tool/functions/formatColor.md
 
 > **formatColor**(`color`): `number`[]
 
-Defined in: [lib/tool.ts:787](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L787)
+Defined in: [lib/tool.ts:788](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L788)
 
 将 rgb 或 hsl 等颜色转换为数字数组
 
@@ -28934,7 +28934,7 @@ lib/tool/functions/formatSecond.md
 
 > **formatSecond**(`second`): `string`
 
-Defined in: [lib/tool.ts:1585](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1585)
+Defined in: [lib/tool.ts:1586](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1586)
 
 将秒数格式化为 0:0:0 的字符串
 
@@ -28961,7 +28961,7 @@ lib/tool/functions/formatTime.md
 
 > **formatTime**(`ts`, `tz?`): `object`
 
-Defined in: [lib/tool.ts:1598](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1598)
+Defined in: [lib/tool.ts:1599](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1599)
 
 将日期对象或毫秒级时间戳转换为字符串
 
@@ -29008,7 +29008,7 @@ lib/tool/functions/getArray.md
 
 > **getArray**(`param`): `any`[]
 
-Defined in: [lib/tool.ts:736](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L736)
+Defined in: [lib/tool.ts:737](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L737)
 
 根据参数获取最终的数组型，可传入类似 [1,2,3] 或 1,2,3
 
@@ -29037,7 +29037,7 @@ lib/tool/functions/getBoolean.md
 
 > **getBoolean**(`param`): `boolean`
 
-Defined in: [lib/tool.ts:710](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L710)
+Defined in: [lib/tool.ts:711](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L711)
 
 根据参数获取最终的布尔值
 
@@ -29107,7 +29107,7 @@ lib/tool/functions/get.md
 
 > **get**(`url`, `init?`, `opt?`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [lib/tool.ts:1158](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1158)
+Defined in: [lib/tool.ts:1159](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1159)
 
 发起 GET 请求
 
@@ -29154,7 +29154,7 @@ lib/tool/functions/getMimeByPath.md
 
 > **getMimeByPath**(`path`): `object`
 
-Defined in: [lib/tool.ts:632](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L632)
+Defined in: [lib/tool.ts:633](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L633)
 
 根据后缀、文件名或路径获取 mime 类型（简单版，完整版请使用 @litert/mime.js）
 
@@ -29191,7 +29191,7 @@ lib/tool/functions/getNumber.md
 
 > **getNumber**(`param`): `number`
 
-Defined in: [lib/tool.ts:725](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L725)
+Defined in: [lib/tool.ts:726](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L726)
 
 根据参数获取最终的数字型
 
@@ -29220,7 +29220,7 @@ lib/tool/functions/getResponseJson.md
 
 > **getResponseJson**(`url`, `init?`): `Promise`\<`any`\>
 
-Defined in: [lib/tool.ts:1210](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1210)
+Defined in: [lib/tool.ts:1211](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1211)
 
 发起 GET 请求并解析 JSON 响应
 
@@ -29257,7 +29257,7 @@ lib/tool/functions/hex2rgb.md
 
 > **hex2rgb**(`hex`): `object`
 
-Defined in: [lib/tool.ts:836](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L836)
+Defined in: [lib/tool.ts:837](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L837)
 
 hex 转换为 rgba，#27ae60ff, 27ae60 #fff
 
@@ -29306,7 +29306,7 @@ lib/tool/functions/hsl2rgb.md
 
 > **hsl2rgb**(`h`, `s?`, `l?`, `a?`, `decimal?`): `object`
 
-Defined in: [lib/tool.ts:980](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L980)
+Defined in: [lib/tool.ts:981](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L981)
 
 hsl 字符串转 rgb 数组
 
@@ -29379,7 +29379,7 @@ lib/tool/functions/isEscapeChar.md
 
 > **isEscapeChar**(`code`, `index`): `boolean`
 
-Defined in: [lib/tool.ts:1760](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1760)
+Defined in: [lib/tool.ts:1761](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1761)
 
 判断字符是否是转义字符
 
@@ -29416,7 +29416,7 @@ lib/tool/functions/isEscaped.md
 
 > **isEscaped**(`str`, `pos`): `boolean`
 
-Defined in: [lib/tool.ts:1689](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1689)
+Defined in: [lib/tool.ts:1690](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1690)
 
 转义字符检查
 检查指定位置的字符是否被转义
@@ -29454,7 +29454,7 @@ lib/tool/functions/isFalsy.md
 
 > **isFalsy**(`val`): `val is TFalsy`
 
-Defined in: [lib/tool.ts:2523](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2523)
+Defined in: [lib/tool.ts:2524](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2524)
 
 判断一个值是否是虚假的（为 null/undefined/空字符串/false/0）
 
@@ -29483,7 +29483,7 @@ lib/tool/functions/isMs.md
 
 > **isMs**(`time`): `boolean`
 
-Defined in: [lib/tool.ts:1625](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1625)
+Defined in: [lib/tool.ts:1626](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1626)
 
 是否是毫秒
 
@@ -29512,7 +29512,7 @@ lib/tool/functions/isTruthy.md
 
 > **isTruthy**(`val`): `val is any`
 
-Defined in: [lib/tool.ts:2531](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2531)
+Defined in: [lib/tool.ts:2532](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2532)
 
 判断一个值是否是真实的（不为 null/undefined/空字符串/false/0）
 
@@ -29576,7 +29576,7 @@ lib/tool/functions/layoutClassPrepend.md
 
 > **layoutClassPrepend**(`layout`, `preps`): `string`
 
-Defined in: [lib/tool.ts:468](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L468)
+Defined in: [lib/tool.ts:469](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L469)
 
 给 class 增加 scope 的随机前缀，给 id 新增前缀
 
@@ -29611,7 +29611,7 @@ lib/tool/functions/layoutInsertAttr.md
 
 > **layoutInsertAttr**(`layout`, `insert`, `opt?`): `string`
 
-Defined in: [lib/tool.ts:409](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L409)
+Defined in: [lib/tool.ts:410](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L410)
 
 给标签追加 attr，即使 attr 存在也会追加上一个新的（非真实 DOM 操作，仅仅是对字符串进行处理）
 
@@ -29658,7 +29658,7 @@ lib/tool/functions/loadLink.md
 
 > **loadLink**(`url`, `pos?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/tool.ts:2474](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2474)
+Defined in: [lib/tool.ts:2475](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2475)
 
 加载 css 文件
 
@@ -29693,7 +29693,7 @@ lib/tool/functions/loadLinks.md
 
 > **loadLinks**(`urls`, `opt?`): `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2500](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2500)
+Defined in: [lib/tool.ts:2501](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2501)
 
 批量加载 css 文件
 
@@ -29730,7 +29730,7 @@ lib/tool/functions/loadScript.md
 
 > **loadScript**(`url`): `Promise`\<`boolean`\>
 
-Defined in: [lib/tool.ts:2441](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2441)
+Defined in: [lib/tool.ts:2442](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2442)
 
 加载脚本
 
@@ -29759,7 +29759,7 @@ lib/tool/functions/loadScripts.md
 
 > **loadScripts**(`urls`, `opt?`): `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2460](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2460)
+Defined in: [lib/tool.ts:2461](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2461)
 
 批量加载 js 文件
 
@@ -29796,7 +29796,7 @@ lib/tool/functions/loadStyle.md
 
 > **loadStyle**(`style`): `void`
 
-Defined in: [lib/tool.ts:2513](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2513)
+Defined in: [lib/tool.ts:2514](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2514)
 
 加载 css 字符串
 
@@ -29825,7 +29825,7 @@ lib/tool/functions/logicalOr.md
 
 > **logicalOr**\<`T`, `T2`\>(`v1`, `v2`): \[`T`\] *extends* \[[`TFalsy`](../type-aliases/TFalsy.md)\] ? `T2` : `T`
 
-Defined in: [lib/tool.ts:2540](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2540)
+Defined in: [lib/tool.ts:2541](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2541)
 
 类似 || 运算符的效果
 
@@ -29926,7 +29926,7 @@ lib/tool/functions/parseArrayString.md
 
 > **parseArrayString**(`arrayStr`): `string`[]
 
-Defined in: [lib/tool.ts:1704](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1704)
+Defined in: [lib/tool.ts:1705](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1705)
 
 数组字符串解析器
 解析数组字符串为各元素组成的字符串数组
@@ -29958,7 +29958,7 @@ lib/tool/functions/parseUrl.md
 
 > **parseUrl**(`url`): [`IUrl`](../interfaces/IUrl.md)
 
-Defined in: [lib/tool.ts:1336](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1336)
+Defined in: [lib/tool.ts:1337](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1337)
 
 传输 url 并解析为 IUrl 对象
 
@@ -29987,7 +29987,7 @@ lib/tool/functions/post.md
 
 > **post**(`url`, `data`, `init?`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [lib/tool.ts:1185](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1185)
+Defined in: [lib/tool.ts:1186](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1186)
 
 发起 POST 请求（除 FormData 外都会转换为 JSON 提交）
 
@@ -30030,7 +30030,7 @@ lib/tool/functions/postResponseEventStream.md
 
 > **postResponseEventStream**(`url`, `data`, `opts?`): `AbortController`
 
-Defined in: [lib/tool.ts:1233](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1233)
+Defined in: [lib/tool.ts:1234](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1234)
 
 发起 JSON 请求并获得文本 SSE 响应
 
@@ -30105,7 +30105,7 @@ lib/tool/functions/postResponseJson.md
 
 > **postResponseJson**(`url`, `data`, `init?`): `Promise`\<`any`\>
 
-Defined in: [lib/tool.ts:1314](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1314)
+Defined in: [lib/tool.ts:1315](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1315)
 
 发起 POST 请求并解析 JSON 响应
 
@@ -30177,7 +30177,7 @@ lib/tool/functions/queryParse.md
 
 > **queryParse**(`query`): `Record`\<`string`, `string` \| `string`[]\>
 
-Defined in: [lib/tool.ts:1655](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1655)
+Defined in: [lib/tool.ts:1656](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1656)
 
 将 query string 转换为对象
 
@@ -30206,7 +30206,7 @@ lib/tool/functions/queryStringify.md
 
 > **queryStringify**(`query`, `encode?`): `string`
 
-Defined in: [lib/tool.ts:1634](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1634)
+Defined in: [lib/tool.ts:1635](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1635)
 
 将对象转换为 query string
 
@@ -30241,7 +30241,7 @@ lib/tool/functions/rand.md
 
 > **rand**(`min`, `max`, `prec?`): `number`
 
-Defined in: [lib/tool.ts:658](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L658)
+Defined in: [lib/tool.ts:659](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L659)
 
 生成范围内的随机数
 
@@ -30282,7 +30282,7 @@ lib/tool/functions/random.md
 
 > **random**(`length?`, `source?`, `block?`): `string`
 
-Defined in: [lib/tool.ts:687](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L687)
+Defined in: [lib/tool.ts:688](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L688)
 
 生成随机字符串
 
@@ -30325,7 +30325,7 @@ lib/tool/functions/request.md
 
 > **request**(`url`, `opt`): `Promise`\<`any`\>
 
-Defined in: [lib/tool.ts:1045](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1045)
+Defined in: [lib/tool.ts:1046](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1046)
 
 发起一个网络请求，若是返回值是 JSON 则自动解析，否则直接返回字符串
 
@@ -30360,7 +30360,7 @@ lib/tool/functions/rgb2hex.md
 
 > **rgb2hex**(`r`, `g?`, `b?`, `a?`): `string`
 
-Defined in: [lib/tool.ts:804](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L804)
+Defined in: [lib/tool.ts:805](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L805)
 
 将 r, g, b 转换为 hex 字符串，不含 #
 
@@ -30405,7 +30405,7 @@ lib/tool/functions/rgb2hsl.md
 
 > **rgb2hsl**(`r`, `g?`, `b?`, `a?`, `decimal?`): `object`
 
-Defined in: [lib/tool.ts:877](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L877)
+Defined in: [lib/tool.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L878)
 
 rgb 字符串转 hsl 数组
 
@@ -30602,7 +30602,7 @@ lib/tool/functions/stateMachine.md
 
 > **stateMachine**(`code`, `start`, `process`): `void`
 
-Defined in: [lib/tool.ts:1790](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1790)
+Defined in: [lib/tool.ts:1791](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1791)
 
 状态机
 
@@ -30645,7 +30645,7 @@ lib/tool/functions/stylePrepend.md
 
 > **stylePrepend**(`style`, `prep?`): `object`
 
-Defined in: [lib/tool.ts:555](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L555)
+Defined in: [lib/tool.ts:556](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L556)
 
 给 class 前部增加唯一标识符
 
@@ -30729,7 +30729,7 @@ lib/tool/functions/teleportGlue.md
 
 > **teleportGlue**(`layout`, `formId`): `string`
 
-Defined in: [lib/tool.ts:540](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L540)
+Defined in: [lib/tool.ts:541](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L541)
 
 对 layout 的 teleport 做转义处理为 vue 识别的内容
 
@@ -30764,7 +30764,7 @@ lib/tool/functions/unescapeHTML.md
 
 > **unescapeHTML**(`html`): `string`
 
-Defined in: [lib/tool.ts:773](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L773)
+Defined in: [lib/tool.ts:774](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L774)
 
 还原转义后的 HTML
 
@@ -30793,7 +30793,7 @@ lib/tool/functions/urlAtom.md
 
 > **urlAtom**(`url`): `string`
 
-Defined in: [lib/tool.ts:1478](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1478)
+Defined in: [lib/tool.ts:1479](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1479)
 
 处理 URL 中的 .. / . 等
 
@@ -30820,7 +30820,7 @@ lib/tool/functions/urlResolve.md
 
 > **urlResolve**(`from`, `to`): `string`
 
-Defined in: [lib/tool.ts:1419](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1419)
+Defined in: [lib/tool.ts:1420](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1420)
 
 将相对路径根据基准路径进行转换
 
@@ -31027,7 +31027,7 @@ lib/tool/interfaces/IRequestOptions.md
 
 # Interface: IRequestOptions
 
-Defined in: [lib/tool.ts:2618](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2618)
+Defined in: [lib/tool.ts:2619](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2619)
 
 请求选项
 
@@ -31037,7 +31037,7 @@ Defined in: [lib/tool.ts:2618](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **body?**: `FormData`
 
-Defined in: [lib/tool.ts:2621](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2621)
+Defined in: [lib/tool.ts:2622](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2622)
 
 ***
 
@@ -31045,7 +31045,7 @@ Defined in: [lib/tool.ts:2621](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **credentials?**: `boolean`
 
-Defined in: [lib/tool.ts:2619](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2619)
+Defined in: [lib/tool.ts:2620](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2620)
 
 ***
 
@@ -31053,7 +31053,7 @@ Defined in: [lib/tool.ts:2619](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **end?**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2630](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2630)
+Defined in: [lib/tool.ts:2631](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2631)
 
 #### Returns
 
@@ -31065,7 +31065,7 @@ Defined in: [lib/tool.ts:2630](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **error?**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2633](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2633)
+Defined in: [lib/tool.ts:2634](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2634)
 
 #### Returns
 
@@ -31077,7 +31077,7 @@ Defined in: [lib/tool.ts:2633](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **headers?**: `HeadersInit`
 
-Defined in: [lib/tool.ts:2624](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2624)
+Defined in: [lib/tool.ts:2625](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2625)
 
 ***
 
@@ -31085,7 +31085,7 @@ Defined in: [lib/tool.ts:2624](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **load?**: (`res`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2632](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2632)
+Defined in: [lib/tool.ts:2633](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2633)
 
 #### Parameters
 
@@ -31103,7 +31103,7 @@ Defined in: [lib/tool.ts:2632](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **method?**: `"GET"` \| `"POST"`
 
-Defined in: [lib/tool.ts:2620](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2620)
+Defined in: [lib/tool.ts:2621](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2621)
 
 ***
 
@@ -31111,7 +31111,7 @@ Defined in: [lib/tool.ts:2620](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **progress?**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2631](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2631)
+Defined in: [lib/tool.ts:2632](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2632)
 
 #### Parameters
 
@@ -31133,7 +31133,7 @@ Defined in: [lib/tool.ts:2631](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **responseType?**: `XMLHttpRequestResponseType`
 
-Defined in: [lib/tool.ts:2623](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2623)
+Defined in: [lib/tool.ts:2624](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2624)
 
 ***
 
@@ -31141,7 +31141,7 @@ Defined in: [lib/tool.ts:2623](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **start?**: (`total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2629](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2629)
+Defined in: [lib/tool.ts:2630](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2630)
 
 #### Parameters
 
@@ -31159,7 +31159,7 @@ Defined in: [lib/tool.ts:2629](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **timeout?**: `number`
 
-Defined in: [lib/tool.ts:2622](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2622)
+Defined in: [lib/tool.ts:2623](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2623)
 
 ***
 
@@ -31167,7 +31167,7 @@ Defined in: [lib/tool.ts:2622](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **uploadEnd?**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2628)
+Defined in: [lib/tool.ts:2629](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2629)
 
 #### Returns
 
@@ -31179,7 +31179,7 @@ Defined in: [lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **uploadProgress?**: (`loaded`, `total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2627)
+Defined in: [lib/tool.ts:2628](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2628)
 
 #### Parameters
 
@@ -31201,7 +31201,7 @@ Defined in: [lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **uploadStart?**: (`total`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2626](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2626)
+Defined in: [lib/tool.ts:2627](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2627)
 
 #### Parameters
 
@@ -31224,7 +31224,7 @@ lib/tool/interfaces/IUrl.md
 
 # Interface: IUrl
 
-Defined in: [lib/tool.ts:2603](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2603)
+Defined in: [lib/tool.ts:2604](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2604)
 
 网址对象
 
@@ -31234,7 +31234,7 @@ Defined in: [lib/tool.ts:2603](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **auth**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2604](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2604)
+Defined in: [lib/tool.ts:2605](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2605)
 
 ***
 
@@ -31242,7 +31242,7 @@ Defined in: [lib/tool.ts:2604](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **hash**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2605](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2605)
+Defined in: [lib/tool.ts:2606](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2606)
 
 ***
 
@@ -31250,7 +31250,7 @@ Defined in: [lib/tool.ts:2605](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **host**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2606](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2606)
+Defined in: [lib/tool.ts:2607](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2607)
 
 ***
 
@@ -31258,7 +31258,7 @@ Defined in: [lib/tool.ts:2606](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **hostname**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2607](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2607)
+Defined in: [lib/tool.ts:2608](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2608)
 
 ***
 
@@ -31266,7 +31266,7 @@ Defined in: [lib/tool.ts:2607](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **pass**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2608](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2608)
+Defined in: [lib/tool.ts:2609](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2609)
 
 ***
 
@@ -31274,7 +31274,7 @@ Defined in: [lib/tool.ts:2608](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **path**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2609](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2609)
+Defined in: [lib/tool.ts:2610](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2610)
 
 ***
 
@@ -31282,7 +31282,7 @@ Defined in: [lib/tool.ts:2609](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **pathname**: `string`
 
-Defined in: [lib/tool.ts:2610](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2610)
+Defined in: [lib/tool.ts:2611](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2611)
 
 ***
 
@@ -31290,7 +31290,7 @@ Defined in: [lib/tool.ts:2610](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **port**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2612](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2612)
+Defined in: [lib/tool.ts:2613](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2613)
 
 ***
 
@@ -31298,7 +31298,7 @@ Defined in: [lib/tool.ts:2612](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **protocol**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2611](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2611)
+Defined in: [lib/tool.ts:2612](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2612)
 
 ***
 
@@ -31306,7 +31306,7 @@ Defined in: [lib/tool.ts:2611](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **query**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2613](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2613)
+Defined in: [lib/tool.ts:2614](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2614)
 
 ***
 
@@ -31314,7 +31314,7 @@ Defined in: [lib/tool.ts:2613](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **user**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2614](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2614)
+Defined in: [lib/tool.ts:2615](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2615)
 
 lib/tool/type-aliases/TFalsy.md
 ---
@@ -31329,7 +31329,7 @@ lib/tool/type-aliases/TFalsy.md
 
 > **TFalsy** = `false` \| `""` \| `0` \| `null` \| `undefined` \| *typeof* `NaN`
 
-Defined in: [lib/tool.ts:2637](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2637)
+Defined in: [lib/tool.ts:2638](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2638)
 
 虚假值类型
 
@@ -31346,7 +31346,7 @@ lib/tool/variables/lang.md
 
 > `const` **lang**: `object`
 
-Defined in: [lib/tool.ts:2545](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2545)
+Defined in: [lib/tool.ts:2546](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2546)
 
 语言相关
 
@@ -31401,7 +31401,7 @@ lib/tool/variables/RANDOM_L.md
 
 > `const` **RANDOM\_L**: `"abcdefghijklmnopqrstuvwxyz"` = `'abcdefghijklmnopqrstuvwxyz'`
 
-Defined in: [lib/tool.ts:671](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L671)
+Defined in: [lib/tool.ts:672](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L672)
 
 lib/tool/variables/RANDOM_LN.md
 ---
@@ -31416,7 +31416,7 @@ lib/tool/variables/RANDOM_LN.md
 
 > `const` **RANDOM\_LN**: `string`
 
-Defined in: [lib/tool.ts:674](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L674)
+Defined in: [lib/tool.ts:675](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L675)
 
 lib/tool/variables/RANDOM_LU.md
 ---
@@ -31431,7 +31431,7 @@ lib/tool/variables/RANDOM_LU.md
 
 > `const` **RANDOM\_LU**: `string`
 
-Defined in: [lib/tool.ts:675](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L675)
+Defined in: [lib/tool.ts:676](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L676)
 
 lib/tool/variables/RANDOM_LUN.md
 ---
@@ -31446,7 +31446,7 @@ lib/tool/variables/RANDOM_LUN.md
 
 > `const` **RANDOM\_LUN**: `string`
 
-Defined in: [lib/tool.ts:676](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L676)
+Defined in: [lib/tool.ts:677](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L677)
 
 lib/tool/variables/RANDOM_LUNS.md
 ---
@@ -31461,7 +31461,7 @@ lib/tool/variables/RANDOM_LUNS.md
 
 > `const` **RANDOM\_LUNS**: `string`
 
-Defined in: [lib/tool.ts:678](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L678)
+Defined in: [lib/tool.ts:679](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L679)
 
 lib/tool/variables/RANDOM_N.md
 ---
@@ -31476,7 +31476,7 @@ lib/tool/variables/RANDOM_N.md
 
 > `const` **RANDOM\_N**: `"0123456789"` = `'0123456789'`
 
-Defined in: [lib/tool.ts:669](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L669)
+Defined in: [lib/tool.ts:670](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L670)
 
 lib/tool/variables/RANDOM_U.md
 ---
@@ -31491,7 +31491,7 @@ lib/tool/variables/RANDOM_U.md
 
 > `const` **RANDOM\_U**: `"ABCDEFGHIJKLMNOPQRSTUVWXYZ"` = `'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
 
-Defined in: [lib/tool.ts:670](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L670)
+Defined in: [lib/tool.ts:671](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L671)
 
 lib/tool/variables/RANDOM_UN.md
 ---
@@ -31506,7 +31506,7 @@ lib/tool/variables/RANDOM_UN.md
 
 > `const` **RANDOM\_UN**: `string`
 
-Defined in: [lib/tool.ts:673](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L673)
+Defined in: [lib/tool.ts:674](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L674)
 
 lib/tool/variables/RANDOM_V.md
 ---
@@ -31521,7 +31521,7 @@ lib/tool/variables/RANDOM_V.md
 
 > `const` **RANDOM\_V**: `"ACEFGHJKLMNPRSTWXY34567"` = `'ACEFGHJKLMNPRSTWXY34567'`
 
-Defined in: [lib/tool.ts:677](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L677)
+Defined in: [lib/tool.ts:678](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L678)
 
 lib/zip/classes/Zip.md
 ---

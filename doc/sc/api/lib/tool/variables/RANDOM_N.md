@@ -8,4 +8,4 @@
 
 > `const` **RANDOM\_N**: `"0123456789"` = `'0123456789'`
 
-Defined in: [lib/tool.ts:669](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L669)
+Defined in: [lib/tool.ts:670](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L670)

@@ -8,7 +8,7 @@
 
 > **stylePrepend**(`style`, `prep?`): `object`
 
-Defined in: [lib/tool.ts:555](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L555)
+Defined in: [lib/tool.ts:556](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L556)
 
 给 class 前部增加唯一标识符
 

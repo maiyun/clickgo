@@ -8,7 +8,7 @@
 
 > **isEscapeChar**(`code`, `index`): `boolean`
 
-Defined in: [lib/tool.ts:1760](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1760)
+Defined in: [lib/tool.ts:1761](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1761)
 
 判断字符是否是转义字符
 

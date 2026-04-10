@@ -8,7 +8,7 @@
 
 > **getBoolean**(`param`): `boolean`
 
-Defined in: [lib/tool.ts:710](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L710)
+Defined in: [lib/tool.ts:711](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L711)
 
 根据参数获取最终的布尔值
 

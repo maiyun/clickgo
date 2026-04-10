@@ -8,7 +8,7 @@
 
 > **layoutInsertAttr**(`layout`, `insert`, `opt?`): `string`
 
-Defined in: [lib/tool.ts:409](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L409)
+Defined in: [lib/tool.ts:410](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L410)
 
 给标签追加 attr，即使 attr 存在也会追加上一个新的（非真实 DOM 操作，仅仅是对字符串进行处理）
 

@@ -8,7 +8,7 @@
 
 > **hex2rgb**(`hex`): `object`
 
-Defined in: [lib/tool.ts:836](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L836)
+Defined in: [lib/tool.ts:837](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L837)
 
 hex 转换为 rgba，#27ae60ff, 27ae60 #fff
 

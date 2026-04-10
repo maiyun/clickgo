@@ -8,7 +8,7 @@
 
 > **postResponseEventStream**(`url`, `data`, `opts?`): `AbortController`
 
-Defined in: [lib/tool.ts:1233](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1233)
+Defined in: [lib/tool.ts:1234](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1234)
 
 发起 JSON 请求并获得文本 SSE 响应
 
