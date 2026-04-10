@@ -39,6 +39,7 @@ import cpropertyFrm from './control/property/property';
 import cqrcodeFrm from './control/qrcode/qrcode';
 import cradioFrm from './control/radio/radio';
 import cswitchFrm from './control/switch/switch';
+import cswiperFrm from './control/swiper/swiper';
 import cscrollFrm from './control/scroll/scroll';
 import cselectFrm from './control/select/select';
 import cuploaderFrm from './control/uploader/uploader';
@@ -335,6 +336,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cradio': {
                 frm = await clickgo.form.create(this, cradioFrm);
+                break;
+            }
+            case 'cswiper': {
+                frm = await clickgo.form.create(this, cswiperFrm);
                 break;
             }
             case 'cswitch': {

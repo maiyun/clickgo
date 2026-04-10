@@ -36,7 +36,8 @@
         "/clickgo/control/cube",
         "/clickgo/control/marked",
         "/clickgo/control/fabric",
-        "/clickgo/control/waterfall"
+        "/clickgo/control/waterfall",
+        "/clickgo/control/swiper"
     ],
     "style": "/package/global"
 }

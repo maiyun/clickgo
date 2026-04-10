@@ -1,0 +1,28 @@
+.wrap {
+    width: 100%; height: 100%; overflow: hidden; position: relative; display: flex; flex-direction: column; user-select: none;
+
+    .track {
+        display: flex; flex: 1 0 0; min-height: 0; will-change: transform; touch-action: none;
+
+        .slide {
+            flex-shrink: 0; position: relative; align-self: stretch; overflow: hidden;
+
+            img {
+                position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none;
+            }
+        }
+    }
+
+    .dots {
+        position: absolute; bottom: 10px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 6px; pointer-events: none;
+
+        .dot {
+            width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .6); cursor: pointer; pointer-events: all; transition: var(--g-transition); flex-shrink: 0;
+
+            // --- 激活状态：拉宽并变为纯白 ---
+            &.active {
+                width: 20px; border-radius: 4px; background: oklch(1 0 0);
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+<form width="600" height="480" title="Swiper" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; width: 0;">
+        <swiper :items="items" v-model="current" :autoplay="isAutoplay" :interval="interval" :loop="isLoop" :fit="fit" style="height: 280px; border-radius: 8px; overflow: hidden;" />
+        <layout gutter="10" align-v="center">
+            <label style="flex: 1; min-width: 0;">Current: {{current + 1}} / {{items.length}}</label>
+            <button @click="current = (current - 1 + items.length) % items.length">Prev</button>
+            <button @click="current = (current + 1) % items.length">Next</button>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <check v-model="isAutoplay">Autoplay</check>
+            <check v-model="isLoop">Loop</check>
+            <label align-v="center" style="flex: 1; text-align: right;">Interval:</label>
+            <button :type="interval === 1000 ? 'cg' : undefined" @click="interval = 1000">1s</button>
+            <button :type="interval === 3000 ? 'cg' : undefined" @click="interval = 3000">3s</button>
+            <button :type="interval === 5000 ? 'cg' : undefined" @click="interval = 5000">5s</button>
+        </layout>
+        <layout gutter="10" align-v="center">
+            <label>fit:</label>
+            <button :type="fit === 'cover' ? 'cg' : undefined" @click="fit = 'cover'" style="flex: 1">cover</button>
+            <button :type="fit === 'contain' ? 'cg' : undefined" @click="fit = 'contain'" style="flex: 1">contain</button>
+            <button :type="fit === 'fill' ? 'cg' : undefined" @click="fit = 'fill'" style="flex: 1">fill</button>
+            <button :type="fit === 'scale-down' ? 'cg' : undefined" @click="fit = 'scale-down'" style="flex: 1">scale-down</button>
+        </layout>
+        <layout gutter="10">
+            <button v-for="(item, index) in items" :type="current === index ? 'cg' : undefined" @click="current = index" style="flex: 1">Slide {{index + 1}}</button>
+        </layout>
+    </layout>
+</form>

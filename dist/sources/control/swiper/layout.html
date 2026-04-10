@@ -1,0 +1,10 @@
+<div class="wrap">
+    <div class="track" :style="{ width: `${resolvedItems.length * 100}%`, transform: `translateX(${trackX}%)`, transition: isAni ? 'transform 0.35s ease-in-out' : 'none' }" @pointerdown.prevent="dragStart">
+        <div v-for="(item, index) in resolvedItems" :key="index" class="slide" :style="{ width: `${100 / resolvedItems.length}%` }">
+            <img :src="item.src" :alt="item.alt" :style="{ 'objectFit': fit }" draggable="false" />
+        </div>
+    </div>
+    <div v-if="resolvedItems.length > 1" class="dots">
+        <div v-for="(item, index) in resolvedItems" :key="index" class="dot" :class="[currentIndex === index && 'active']" @click="go(index)"></div>
+    </div>
+</div>
