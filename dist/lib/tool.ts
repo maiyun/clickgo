@@ -364,7 +364,7 @@ export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean
     // --- 开始添加 class tag ---
     layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2: string, t3: string): string {
         // --- t1 是 /，t2 是 tagname，t3 是标签其他内容 ---
-        if (['template', 'slot', 'teleport', 'div', 'canvas'].includes(t2)) {
+        if (['template', 'slot', 'teleport', 'canvas'].includes(t2)) {
             // --- 部分标签不加 ---
             return t;
         }
