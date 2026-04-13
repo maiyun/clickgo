@@ -1,3 +1,7 @@
+@keyframes eflow-spin {
+    to { transform: rotate(360deg); }
+}
+
 .wrap {
     display: flex; flex-direction: column;
 
@@ -12,6 +16,23 @@
 
             > .left-inner {
                 display: flex; flex-direction: column; min-width: 100%; width: max-content;
+
+                > .load-footer {
+                    display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 0; flex-shrink: 0; width: 100%;
+
+                    > .load-spinner {
+                        width: 16px; height: 16px; border: 2px solid var(--g-border-color); border-top-color: var(--g-color); border-radius: 50%; animation: eflow-spin 0.8s linear infinite; flex-shrink: 0; opacity: 0.8;
+                    }
+                    > .load-complete {
+                        display: flex; align-items: center; justify-content: center; gap: 10px; width: 40px; opacity: 0.15;
+                        > .line {
+                            flex: 1; height: 1px; background: var(--g-color); border-radius: 1px;
+                        }
+                        > .dot {
+                            width: 3px; height: 3px; background: var(--g-color); border-radius: 50%; flex-shrink: 0;
+                        }
+                    }
+                }
             }
         }
         > cg-scroll {

@@ -41,12 +41,33 @@ export default class extends clickgo.form.AbstractForm {
     cWidth5 = 0;
     cHeight5 = 0;
     line5 = 10;
+    // --- 6 Eflow state demo ---
+    efState = 'idle';
+    efList = Array.from({ 'length': 15 }, (_, i) => i + 1);
     // --- 操作 ---
     gesture = false;
     style = false;
     selection = false;
     sub = false;
     area = {};
+    async onEfLoad() {
+        this.efState = 'loading';
+        // --- 模拟异步加载 ---
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        // --- 加载更多数据 ---
+        const newItems = Array.from({ 'length': 10 }, (_, i) => this.efList[this.efList.length - 1] + i + 1);
+        this.efList.push(...newItems);
+        // --- 演示目的：加载 2 次后标记为完毕 ---
+        if (this.efList.length >= 35) {
+            this.efState = 'complete';
+        }
+        else {
+            this.efState = 'idle';
+        }
+    }
+    changeEfState(newState) {
+        this.efState = newState;
+    }
     async onGesture(dir) {
         await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }

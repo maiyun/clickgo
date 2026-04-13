@@ -3,6 +3,14 @@
         <div ref="left" class="left" @pointerdown="down" @scroll="scrollHandler">
             <div ref="inner" class="left-inner" :style="{'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
                 <slot></slot>
+                <div v-if="direction !== 'h' && (state === 'loading' || state === 'complete')" class="load-footer">
+                    <div v-if="state === 'loading'" class="load-spinner"></div>
+                    <div v-else class="load-complete">
+                        <div class="line"></div>
+                        <div class="dot"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <cg-scroll v-if="direction !== 'h' && length > client" :length="length" :client="client" v-model:offset="offset" @roll="roll"></cg-scroll>

@@ -2,12 +2,19 @@ import * as clickgo from 'clickgo';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = {
+        'load': null
+    };
+
     public props: {
         'gutter': number | string;
         'direction': string;
+        /** --- 加载状态：idle 空闲可加载、loading 加载中、complete 已加载完毕 --- */
+        'state': 'idle' | 'loading' | 'complete';
     } = {
             'gutter': '',
             'direction': '',
+            'state': 'idle',
         };
 
     /** --- 总长度 --- */
@@ -34,6 +41,20 @@ export default class extends clickgo.control.AbstractControl {
             'top': this.refs.left.scrollHeight,
             'behavior': 'smooth',
         });
+    }
+
+    /** --- 检查是否触底，若满足条件则触发 load 事件 --- */
+    public checkLoad(): void {
+        if (this.props.direction === 'h') {
+            return;
+        }
+        if (this.props.state !== 'idle') {
+            return;
+        }
+        const el = this.refs.left;
+        if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
+            this.emit('load');
+        }
     }
 
     public async down(e: PointerEvent): Promise<void> {
@@ -76,6 +97,8 @@ export default class extends clickgo.control.AbstractControl {
     public scrollHandler(): void {
         this.offset = this.refs.left.scrollTop;
         this.offseth = this.refs.left.scrollLeft;
+        // --- 触底时触发加载事件 ---
+        this.checkLoad();
     }
 
     public onMounted(): void {
@@ -89,6 +112,8 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.watchSize(this, this.refs.inner, () => {
             this.length = this.refs.inner.offsetHeight;
             this.lengthh = this.refs.inner.offsetWidth;
+            // --- 内容未填满容器时自动触发加载 ---
+            this.checkLoad();
         }, true);
     }
 
