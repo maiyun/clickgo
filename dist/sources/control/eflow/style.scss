@@ -9,7 +9,7 @@
         display: flex; flex: 1; min-height: 0;
 
         > .left {
-            -webkit-overflow-scrolling: touch; position: relative; overflow: scroll; flex: 1; min-height: 0;
+            -webkit-overflow-scrolling: touch; position: relative; overflow: scroll; flex: 1; min-height: 0; min-width: 0;
             &::-webkit-scrollbar {
                 display: none;
             }
