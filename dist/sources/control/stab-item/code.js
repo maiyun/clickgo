@@ -10,13 +10,13 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- 父级 stab 的显示类型 --- */
     get type() {
-        return (this.stab?.props).type ?? 'default';
+        return this.stab?.props?.type ?? 'default';
     }
     /**
      * --- 更新 rect 模式下的滑块位置到父级 stab ---
      */
     resize() {
-        if ((this.stab?.props).type !== 'rect') {
+        if (this.stab?.props?.type !== 'rect') {
             return;
         }
         this.stab?.select(this.index, this.element.offsetWidth, this.element.offsetLeft);

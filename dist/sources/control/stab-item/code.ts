@@ -15,14 +15,14 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 父级 stab 的显示类型 --- */
     public get type(): string {
-        return (this.stab?.props as any).type ?? 'default';
+        return (this.stab?.props as any)?.type ?? 'default';
     }
 
     /**
      * --- 更新 rect 模式下的滑块位置到父级 stab ---
      */
     public resize(): void {
-        if ((this.stab?.props as any).type !== 'rect') {
+        if ((this.stab?.props as any)?.type !== 'rect') {
             return;
         }
         this.stab?.select(this.index, this.element.offsetWidth, this.element.offsetLeft);
