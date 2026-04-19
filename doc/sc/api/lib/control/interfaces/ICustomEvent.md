@@ -38,6 +38,7 @@ Custom Event
 - [`ISelectAddEvent`](ISelectAddEvent.md)
 - [`ISelectRemoveEvent`](ISelectRemoveEvent.md)
 - [`ISelectChangeEvent`](ISelectChangeEvent.md)
+- [`IStabChangeEvent`](IStabChangeEvent.md)
 - [`ISwitchChangeEvent`](ISwitchChangeEvent.md)
 - [`ITabChangeEvent`](ITabChangeEvent.md)
 - [`ITabCloseEvent`](ITabCloseEvent.md)

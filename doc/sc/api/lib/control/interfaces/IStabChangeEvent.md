@@ -2,11 +2,11 @@
 
 ***
 
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ITabCloseEvent
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IStabChangeEvent
 
-# Interface: ITabCloseEvent
+# Interface: IStabChangeEvent
 
-Defined in: [lib/control.ts:1443](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1443)
+Defined in: [lib/control.ts:1415](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1415)
 
 Custom Event
 
@@ -20,15 +20,11 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1444](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1444)
-
-#### index
-
-> **index**: `number`
+Defined in: [lib/control.ts:1416](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1416)
 
 #### value
 
-> **value**: `string`
+> **value**: `number`
 
 ***
 

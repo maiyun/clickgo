@@ -6,7 +6,7 @@
 
 # Interface: ITabChangedEvent
 
-Defined in: [lib/control.ts:1429](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1429)
+Defined in: [lib/control.ts:1437](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1437)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1429](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1430](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1430)
+Defined in: [lib/control.ts:1438](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1438)
 
 #### value
 
