@@ -2,6 +2,9 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
     /** --- 当前 item 在父容器中的索引 --- */
     index = 0;
+    props = {
+        'disabled': false
+    };
     /** --- 父级 stab 控件实例 --- */
     stab = null;
     /** --- 是否处于选中状态 --- */
@@ -25,7 +28,7 @@ export default class extends clickgo.control.AbstractControl {
      * --- 点击 item 选中 ---
      */
     click() {
-        if (!this.stab) {
+        if (this.propBoolean('disabled') || !this.stab) {
             return;
         }
         this.stab.select(this.index);

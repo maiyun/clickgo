@@ -2,7 +2,11 @@
 
 ## 参数
 
-无。
+### disabled
+
+`boolean` | `string`
+
+是否禁用此项，禁用后不可点击选中，默认 false。
 
 ## 事件
 

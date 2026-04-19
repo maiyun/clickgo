@@ -24,7 +24,8 @@
             <stab v-model="value" type="rect">
                 <stab-item>Tab 1</stab-item>
                 <stab-item>Tab 2</stab-item>
-                <stab-item>Tab 3</stab-item>
+                <stab-item disabled>Tab 3</stab-item>
+                <stab-item>Tab 4</stab-item>
             </stab>
         </layout>
     </layout>

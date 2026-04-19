@@ -5,26 +5,40 @@
         color: var(--cg); font-weight: bold; border-bottom-color: var(--cg);
     }
 
-    &:not(.selected):hover {
-        color: var(--g-color-hover);
-    }
-
-    // --- 胶囊模式 ---
-    &.light {
-        border-radius: var(--g-radius-xl); border: none; transform: none;
-        &.selected {
-            background: color-mix(in srgb, var(--cg) 12%, transparent);
-        }
+    &:not([data-cg-disabled]) {
         &:not(.selected):hover {
-            background: var(--face-hover);
+            color: var(--g-color-hover);
+        }
+
+        // --- 胶囊模式 ---
+        &.light {
+            border-radius: var(--g-radius-xl); border: none; transform: none;
+            &.selected {
+                background: color-mix(in srgb, var(--cg) 12%, transparent);
+            }
+            &:not(.selected):hover {
+                background: var(--face-hover);
+            }
+        }
+
+        // --- 矩形滑块模式 ---
+        &.rect {
+            border: none; z-index: 1; border-radius: var(--g-radius); transform: none;
+            &.selected {
+                font-weight: normal; color: var(--g-color);
+            }
         }
     }
 
-    // --- 矩形滑块模式 ---
-    &.rect {
-        border: none; z-index: 1; border-radius: var(--g-radius); transform: none;
+    &[data-cg-disabled] {
+        color: var(--cg-disabled);
         &.selected {
-            font-weight: normal; color: var(--g-color);
+            border-bottom-color: var(--cg-disabled);
+        }
+        &.light {
+            &.selected {
+                background: color-mix(in srgb, var(--cg-disabled) 12%, transparent);
+            }
         }
     }
 }

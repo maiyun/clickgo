@@ -5,6 +5,12 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前 item 在父容器中的索引 --- */
     public index: number = 0;
 
+    public props: {
+        'disabled': boolean | string;
+    } = {
+            'disabled': false
+        };
+
     /** --- 父级 stab 控件实例 --- */
     public stab: (clickgo.control.AbstractControl & Record<string, any>) | null = null;
 
@@ -32,7 +38,7 @@ export default class extends clickgo.control.AbstractControl {
      * --- 点击 item 选中 ---
      */
     public click(): void {
-        if (!this.stab) {
+        if (this.propBoolean('disabled') || !this.stab) {
             return;
         }
         this.stab.select(this.index);
