@@ -6,7 +6,7 @@ export default class extends clickgo.control.AbstractControl {
     public index: number = 0;
 
     /** --- 父级 stab 控件实例 --- */
-    public stab: any = null;
+    public stab: (clickgo.control.AbstractControl & Record<string, any>) | null = null;
 
     /** --- 是否处于选中状态 --- */
     public get isSelected(): boolean {
@@ -15,17 +15,17 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 父级 stab 的显示类型 --- */
     public get type(): string {
-        return this.stab?.props.type ?? 'default';
+        return (this.stab?.props as any).type ?? 'default';
     }
 
     /**
      * --- 更新 rect 模式下的滑块位置到父级 stab ---
      */
     public resize(): void {
-        if (!this.stab || this.stab.props.type !== 'rect') {
+        if ((this.stab?.props as any).type !== 'rect') {
             return;
         }
-        this.stab.select(this.index, this.element.offsetWidth, this.element.offsetLeft);
+        this.stab?.select(this.index, this.element.offsetWidth, this.element.offsetLeft);
     }
 
     /**

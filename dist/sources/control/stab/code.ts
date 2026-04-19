@@ -3,7 +3,8 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
-        'update:modelValue': null
+        'update:modelValue': null,
+        'change': null
     };
 
     public props: {
@@ -31,6 +32,19 @@ export default class extends clickgo.control.AbstractControl {
      */
     public select(index: number, width?: number, left?: number): void {
         if (this.selected !== index) {
+            const event: clickgo.control.IStabChangeEvent = {
+                'go': true,
+                preventDefault: function() {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': index
+                },
+            };
+            this.emit('change', event);
+            if (!event.go) {
+                return;
+            }
             this.selected = index;
             this.emit('update:modelValue', this.selected);
         }

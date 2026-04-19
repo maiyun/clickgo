@@ -1410,6 +1410,14 @@ export interface ISelectItemclickedEvent {
     };
 }
 
+// --- Stab Control ---
+
+export interface IStabChangeEvent extends ICustomEvent {
+    'detail': {
+        'value': number;
+    };
+}
+
 // --- Switch Control ---
 
 export interface ISwitchChangeEvent extends ICustomEvent {
