@@ -16,7 +16,15 @@
 
 ### 事件
 
-无。
+#### change
+
+切换选项卡时触发。
+
+参数：
+
+`event: { go: boolean, preventDefault: Function, detail: { value: number } }`
+
+其中 `detail.value` 为即将切换到的索引，`preventDefault()` 可阻止切换。
 
 ### 样式
 

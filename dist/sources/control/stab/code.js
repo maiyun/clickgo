@@ -1,7 +1,8 @@
 import * as clickgo from 'clickgo';
 export default class extends clickgo.control.AbstractControl {
     emits = {
-        'update:modelValue': null
+        'update:modelValue': null,
+        'change': null
     };
     props = {
         'modelValue': 0,
@@ -21,6 +22,19 @@ export default class extends clickgo.control.AbstractControl {
      */
     select(index, width, left) {
         if (this.selected !== index) {
+            const event = {
+                'go': true,
+                preventDefault: function () {
+                    this.go = false;
+                },
+                'detail': {
+                    'value': index
+                },
+            };
+            this.emit('change', event);
+            if (!event.go) {
+                return;
+            }
             this.selected = index;
             this.emit('update:modelValue', this.selected);
         }
