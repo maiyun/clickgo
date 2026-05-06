@@ -102,7 +102,7 @@ Defined in: [lib/form.ts:4269](https://github.com/maiyun/clickgo/blob/master/dis
 
 Defined in: [lib/form.ts:4276](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4276)
 
-点击按钮触发事件
+点击按钮触发事件，不能用 Promise
 
 #### Parameters
 
