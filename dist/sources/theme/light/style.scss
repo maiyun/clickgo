@@ -113,6 +113,17 @@ global {
     }
 }
 
+// --- CONTROL -- tag ---
+
+.tag_wrap {
+    &:not(.tag_plain) {
+        background: var(--g-border-color);
+        &.tag_default {
+            color: inherit;
+        }
+    }
+}
+
 // --- CONTROL -- levelselect ---
 
 .levelselect_tag-cg-greatselect {

@@ -8,7 +8,7 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'disabled': boolean | string;
     } = {
-            'disabled': false
+            'disabled': false,
         };
 
     /** --- 父级 stab 控件实例 --- */

@@ -3,7 +3,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前 item 在父容器中的索引 --- */
     index = 0;
     props = {
-        'disabled': false
+        'disabled': false,
     };
     /** --- 父级 stab 控件实例 --- */
     stab = null;

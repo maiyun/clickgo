@@ -4269,11 +4269,11 @@ export interface IFormDialogOptions {
     'path'?: string;
 
     /**
-     * --- 点击按钮触发事件 ---
+     * --- 点击按钮触发事件，不能用 Promise ---
      * @param e 数据事件
      * @param button 按钮的文本
      */
-    'select'?: (
+    select?: (
         this: AbstractForm & { 'data': Record<string, any>; 'methods': Record<string, (...param: any) => any>; },
         e: IFormDialogSelectEvent,
         button: string
@@ -4282,7 +4282,7 @@ export interface IFormDialogOptions {
     /**
      * --- 窗体挂载完成事件 ---
      */
-    'onMounted'?: () => void | Promise<void>;
+    onMounted?: () => void | Promise<void>;
 }
 
 export interface IFormDialogSelectEvent extends lControl.ICustomEvent {
