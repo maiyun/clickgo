@@ -6461,9 +6461,9 @@ QR 码组件，用于生成二维码。
 
 #### modelValue
 
-`number`
+`number | string`
 
-双向绑定，当前选中的索引，从 0 开始，默认 `0`。
+双向绑定，当前选中的标识。为数字时等同于索引（向后兼容），为字符串时对应 `stab-item` 的 `value` 属性，默认 `0`。
 
 #### type
 
@@ -6479,9 +6479,9 @@ QR 码组件，用于生成二维码。
 
 参数：
 
-`event: { go: boolean, preventDefault: Function, detail: { value: number } }`
+`event: { go: boolean, preventDefault: Function, detail: { value: number | string } }`
 
-其中 `detail.value` 为即将切换到的索引，`preventDefault()` 可阻止切换。
+其中 `detail.value` 为即将切换到的标识，`preventDefault()` 可阻止切换。
 
 ### 样式
 
@@ -6494,10 +6494,19 @@ QR 码组件，用于生成二维码。
 ### 示例
 
 ```html
-<stab v-model="tab" type="default">
+<!-- 数字索引（向后兼容） -->
+<stab v-model="tabIndex" type="default">
     <stab-item>Tab 1</stab-item>
     <stab-item>Tab 2</stab-item>
     <stab-item>Tab 3</stab-item>
+</stab>
+
+<!-- 字符串 key -->
+<stab v-model="activeTab" type="default">
+    <stab-item value="deploy">部署</stab-item>
+    <stab-item value="hosts">Hosts 设置</stab-item>
+    <stab-item value="project">子项目配置</stab-item>
+    <stab-item value="package">Package 更新</stab-item>
 </stab>
 ```
 
@@ -6514,6 +6523,12 @@ QR 码组件，用于生成二维码。
 `boolean` | `string`
 
 是否禁用此项，禁用后不可点击选中，默认 false。
+
+#### value
+
+`number` | `string`
+
+选项标识，支持字符串 key（如 `'deploy'`、`'hosts'` 等）。未设置时自动回退到 DOM 位置索引。
 
 ### 事件
 
@@ -6538,10 +6553,16 @@ QR 码组件，用于生成二维码。
 ### 示例
 
 ```html
-<stab v-model="tab">
+<stab v-model="tabIndex">
     <stab-item>Tab 1</stab-item>
     <stab-item>Tab 2</stab-item>
     <stab-item>Tab 3</stab-item>
+</stab>
+
+<stab v-model="activeTab">
+    <stab-item value="deploy">部署</stab-item>
+    <stab-item value="hosts">Hosts 设置</stab-item>
+    <stab-item value="package">Package 更新</stab-item>
 </stab>
 ```
 
@@ -13488,7 +13509,7 @@ Defined in: [lib/control.ts:1416](https://github.com/maiyun/clickgo/blob/master/
 
 #### value
 
-> **value**: `number`
+> **value**: `string` \| `number`
 
 ***
 

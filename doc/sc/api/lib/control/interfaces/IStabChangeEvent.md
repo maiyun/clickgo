@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:1416](https://github.com/maiyun/clickgo/blob/master/
 
 #### value
 
-> **value**: `number`
+> **value**: `string` \| `number`
 
 ***
 
