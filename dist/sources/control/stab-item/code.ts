@@ -16,6 +16,7 @@ export default class extends clickgo.control.AbstractControl {
         'value'?: number | string;
     } = {
             'disabled': false,
+            'value': undefined,
         };
 
     /** --- 父级 stab 控件实例 --- */

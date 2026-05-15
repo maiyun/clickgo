@@ -8,6 +8,7 @@ export default class extends clickgo.control.AbstractControl {
     }
     props = {
         'disabled': false,
+        'value': undefined,
     };
     /** --- 父级 stab 控件实例 --- */
     stab = null;

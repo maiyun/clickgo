@@ -28,5 +28,12 @@
                 <stab-item>Tab 4</stab-item>
             </stab>
         </layout>
+        <!-- 字符串 value -->
+        <label>String value: {{stringValue}}</label>
+        <stab v-model="stringValue" type="default">
+            <stab-item value="deploy">Deploy</stab-item>
+            <stab-item value="hosts">Hosts</stab-item>
+            <stab-item value="package">Package</stab-item>
+        </stab>
     </layout>
 </form>
