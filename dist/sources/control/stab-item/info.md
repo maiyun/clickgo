@@ -8,6 +8,12 @@
 
 是否禁用此项，禁用后不可点击选中，默认 false。
 
+#### value
+
+`number` | `string`
+
+选项标识，支持字符串 key（如 `'deploy'`、`'hosts'` 等）。未设置时自动回退到 DOM 位置索引。
+
 ### 事件
 
 无。
@@ -31,9 +37,15 @@
 ### 示例
 
 ```html
-<stab v-model="tab">
+<stab v-model="tabIndex">
     <stab-item>Tab 1</stab-item>
     <stab-item>Tab 2</stab-item>
     <stab-item>Tab 3</stab-item>
+</stab>
+
+<stab v-model="activeTab">
+    <stab-item value="deploy">部署</stab-item>
+    <stab-item value="hosts">Hosts 设置</stab-item>
+    <stab-item value="package">Package 更新</stab-item>
 </stab>
 ```

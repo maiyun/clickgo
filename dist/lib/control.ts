@@ -1414,7 +1414,7 @@ export interface ISelectItemclickedEvent {
 
 export interface IStabChangeEvent extends ICustomEvent {
     'detail': {
-        'value': number;
+        'value': number | string;
     };
 }
 

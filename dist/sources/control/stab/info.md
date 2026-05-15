@@ -4,9 +4,9 @@
 
 #### modelValue
 
-`number`
+`number | string`
 
-双向绑定，当前选中的索引，从 0 开始，默认 `0`。
+双向绑定，当前选中的标识。为数字时等同于索引（向后兼容），为字符串时对应 `stab-item` 的 `value` 属性，默认 `0`。
 
 #### type
 
@@ -22,9 +22,9 @@
 
 参数：
 
-`event: { go: boolean, preventDefault: Function, detail: { value: number } }`
+`event: { go: boolean, preventDefault: Function, detail: { value: number | string } }`
 
-其中 `detail.value` 为即将切换到的索引，`preventDefault()` 可阻止切换。
+其中 `detail.value` 为即将切换到的标识，`preventDefault()` 可阻止切换。
 
 ### 样式
 
@@ -37,9 +37,18 @@
 ### 示例
 
 ```html
-<stab v-model="tab" type="default">
+<!-- 数字索引（向后兼容） -->
+<stab v-model="tabIndex" type="default">
     <stab-item>Tab 1</stab-item>
     <stab-item>Tab 2</stab-item>
     <stab-item>Tab 3</stab-item>
+</stab>
+
+<!-- 字符串 key -->
+<stab v-model="activeTab" type="default">
+    <stab-item value="deploy">部署</stab-item>
+    <stab-item value="hosts">Hosts 设置</stab-item>
+    <stab-item value="project">子项目配置</stab-item>
+    <stab-item value="package">Package 更新</stab-item>
 </stab>
 ```
