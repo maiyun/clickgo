@@ -3535,7 +3535,7 @@ export function dialog(current, opt) {
             }
         };
         create(current, cls, undefined, {
-            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
+            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}${nopt.width !== undefined ? ` :width="data.width"` : ''}${nopt.height !== undefined ? ` :height="data.height"` : ''}${nopt.padding !== undefined ? ` :padding="data.padding"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
         }).then((frm) => {
             if (typeof frm === 'number') {

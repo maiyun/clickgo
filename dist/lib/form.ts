@@ -3909,7 +3909,7 @@ export function dialog(current: lCore.TCurrent, opt: string | IFormDialogOptions
             }
         };
         create(current, cls, undefined, {
-            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}>${nopt.content}</dialog></form>`,
+            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}${nopt.width !== undefined ? ` :width="data.width"` : ''}${nopt.height !== undefined ? ` :height="data.height"` : ''}${nopt.padding !== undefined ? ` :padding="data.padding"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
         }).then((frm) => {
             if (typeof frm === 'number') {
@@ -4251,13 +4251,25 @@ export interface INotifyContentOptions {
 
 /** --- Dialog 选项 --- */
 export interface IFormDialogOptions {
+    /** --- dialog 窗体标题，不传则使用默认标题 dialog --- */
     'title'?: string;
+    /** --- dialog 内容，支持直接传布局字符串 --- */
     'content': string;
+    /** --- 底部按钮文本列表，默认使用当前语言的确定按钮文本 --- */
     'buttons'?: string[];
+    /** --- 点击按钮后是否自动将按钮文本写入 dialogResult，默认 true --- */
     'autoDialogResult'?: boolean;
 
+    /** --- dialog 控件内容布局方向，h 为横向，v 为纵向 --- */
     'direction'?: 'h' | 'v';
+    /** --- dialog 控件内容区项目间距，会透传给 dialog 控件 --- */
     'gutter'?: number | string;
+    /** --- dialog 控件宽度，传数字时为像素值，传 fill 时代表填充可用宽度 --- */
+    'width'?: number | string;
+    /** --- dialog 控件高度，传数字时为像素值，传 fill 时代表填充可用高度 --- */
+    'height'?: number | string;
+    /** --- dialog 控件内容区是否显示内边距，默认表现与控件自身一致 --- */
+    'padding'?: boolean | string;
 
     /** --- 传值，需要用 data.x 读取 --- */
     'data'?: Record<string, any>;
