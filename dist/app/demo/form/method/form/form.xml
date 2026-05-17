@@ -64,6 +64,7 @@
             <button @click="dialogButtons">dialog({'content':'Hello world!','buttons':['A','B','C']})</button>
             <button @click="dialogCannot">Dialog can not be close</button>
             <button @click="dialogData">Dialog data</button>
+            <button @click="dialogWidth">Dialog more width</button>
             <button @click="confirm(false)">confirm('confirm')</button>
             <button @click="confirm(true)">confirm({'content':'confirm','cancel':true})</button>
             <button @click="prompt">prompt('test')</button>

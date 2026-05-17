@@ -3505,6 +3505,9 @@ export function dialog(current, opt) {
         nopt.buttons ??= [info.locale[locale]?.ok ?? info.locale['en'].ok];
         const cls = class extends AbstractForm {
             buttons = nopt.buttons;
+            dialogWidth = nopt.width;
+            dialogHeight = nopt.height;
+            dialogPadding = nopt.padding;
             data = nopt.data ?? {};
             methods = nopt.methods ?? {};
             get filename() {
@@ -3535,7 +3538,7 @@ export function dialog(current, opt) {
             }
         };
         create(current, cls, undefined, {
-            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}${nopt.width !== undefined ? ` :width="data.width"` : ''}${nopt.height !== undefined ? ` :height="data.height"` : ''}${nopt.padding !== undefined ? ` :padding="data.padding"` : ''}>${nopt.content}</dialog></form>`,
+            'layout': `<form title="${nopt.title ?? 'dialog'}" min="false" max="false" resize="false" height="0" width="0" border="${nopt.title ? 'normal' : 'plain'}" direction="v"><dialog :buttons="buttons" @select="select"${nopt.direction ? ` direction="${nopt.direction}"` : ''}${nopt.gutter ? ` gutter="${nopt.gutter}"` : ''}${nopt.width !== undefined ? ` :width="dialogWidth"` : ''}${nopt.height !== undefined ? ` :height="dialogHeight"` : ''}${nopt.padding !== undefined ? ` :padding="dialogPadding"` : ''}>${nopt.content}</dialog></form>`,
             'style': nopt.style
         }).then((frm) => {
             if (typeof frm === 'number') {

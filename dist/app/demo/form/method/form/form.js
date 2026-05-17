@@ -166,6 +166,12 @@ export default class extends clickgo.form.AbstractForm {
             }
         });
     }
+    async dialogWidth() {
+        this.dr = await clickgo.form.dialog(this, {
+            'content': '<block style="height: 600px; background: red; flex: 1"></block>',
+            'width': 800
+        });
+    }
     async confirm(cancel) {
         this.dr = await clickgo.form.confirm(this, {
             'content': 'Hello world?',
