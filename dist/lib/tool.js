@@ -341,9 +341,11 @@ export function layoutAddTagClassAndReTagName(layout, retagname) {
                     return retagname ? ('</cg-' + t2 + t3) : t;
                 }
             }
-            if (t3.toLowerCase().includes(' class')) {
+            if (/\sclass\s*=/.test(t3.toLowerCase())) {
                 // --- 有 class，前置增加 ---
-                t3 = t3.replace(/ class=(["']{0,1})/i, ' class=$1tag-' + t2 + ' ');
+                t3 = t3.replace(/\sclass\s*=(["']{0,1})/i, function (t, t1) {
+                    return `${t.slice(0, t.indexOf('class'))}class=${t1}tag-${t2} `;
+                });
             }
             else {
                 // --- 无 class 的 attr，增加 attr ---
@@ -427,7 +429,7 @@ function layoutClassPrependObject(object) {
  * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
  */
 export function layoutClassPrepend(layout, preps) {
-    const rtn = layout.replace(/ class=["'](.*?)["']/gi, function (t, t1) {
+    const rtn = layout.replace(/(\s)class=["'](.*?)["']/gi, function (t, t0, t1) {
         // --- t1 为 xxx yyy zzz 这样的 ----
         t1 = t1.trim();
         const classList = t1.split(/\s+/);
@@ -445,8 +447,8 @@ export function layoutClassPrepend(layout, preps) {
                 }
             }
         }
-        return ` class="${resultList.join(' ')}"`;
-    }).replace(/ :class=(["']).*?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function (t, sp) {
+        return `${t0}class="${resultList.join(' ')}"`;
+    }).replace(/\s:class=(["']).*?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function (t, sp) {
         return t.replace(new RegExp(`:class=${sp}([^${sp}]+?)${sp}`, 'gi'), function (t, t1) {
             // return t.replace(new RegExp(`:class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
             // --- t1 为 [] 或 {} 或 变量 ---
@@ -474,7 +476,7 @@ export function layoutClassPrepend(layout, preps) {
             }
             return `:class="${t1}"`;
         });
-    }).replace(/ id=(["'])/gi, ` id=$1${preps[0]}`);
+    }).replace(/(\s)id=(["'])/gi, `$1id=$2${preps[0]}`);
     return rtn;
 }
 /**
