@@ -55,7 +55,6 @@ export const modules: {
     'mpegts': typeof import('mpegts.js');
     /** --- 原生 fabric --- */
     'fabric': typeof import('fabric');
-
     /* eslint-enable */
 
     /** --- 其他任何模块 --- */
