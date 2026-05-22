@@ -8,7 +8,7 @@
 
 > **formatColor**(`color`): `number`[]
 
-Defined in: [lib/tool.ts:788](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L788)
+Defined in: [lib/tool.ts:790](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L790)
 
 将 rgb 或 hsl 等颜色转换为数字数组
 
