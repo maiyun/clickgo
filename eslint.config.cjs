@@ -19,6 +19,7 @@ module.exports = [
             '@typescript-eslint/no-empty-function': 'off',
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/unbound-method': 'off',
+            '@typescript-eslint/explicit-function-return-type': 'off',
             'max-lines': ['warn', 5000],
         }
     }
