@@ -21,8 +21,8 @@ export default class extends clickgo.control.AbstractControl {
     public html = '';
 
     public async onMounted(): Promise<void> {
-        const makred = await clickgo.core.getModule('@toast-ui/editor');
-        if (!makred) {
+        const marked = await clickgo.core.getModule('marked');
+        if (!marked) {
             // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
@@ -30,7 +30,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 监听上面的值的变动 ---
         this.watch('modelValue', (v: string) => {
-            if (!makred) {
+            if (!marked) {
                 return;
             }
             this.html = clickgo.modules.marked.parse(v, {
