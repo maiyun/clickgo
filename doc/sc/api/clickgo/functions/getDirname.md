@@ -8,7 +8,7 @@
 
 > **getDirname**(): `string`
 
-Defined in: [clickgo.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L81)
+Defined in: [clickgo.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L80)
 
 获取当前 ClickGo 所在的目录，不以 / 结尾
 

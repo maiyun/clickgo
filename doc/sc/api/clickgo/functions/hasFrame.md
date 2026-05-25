@@ -8,7 +8,7 @@
 
 > **hasFrame**(): `boolean`
 
-Defined in: [clickgo.ts:160](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L160)
+Defined in: [clickgo.ts:159](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L159)
 
 是否含有窗体外边框
 

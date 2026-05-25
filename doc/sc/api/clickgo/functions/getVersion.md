@@ -8,7 +8,7 @@
 
 > **getVersion**(): `string`
 
-Defined in: [clickgo.ts:69](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L69)
+Defined in: [clickgo.ts:68](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L68)
 
 获取当前版本
 
