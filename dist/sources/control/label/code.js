@@ -4,7 +4,7 @@ export default class extends clickgo.control.AbstractControl {
         'mode': 'default',
         'content': '',
         'size': 's',
-        'align': 'left',
+        'align': undefined,
         'nowrap': false,
         'copy': false,
         'thru': false,
@@ -66,6 +66,9 @@ export default class extends clickgo.control.AbstractControl {
     };
     /** --- 获取 align 的 css 属性模式 --- */
     get alignComp() {
+        if (this.props.align === undefined) {
+            return undefined;
+        }
         switch (this.props.align) {
             case 'center': {
                 return 'center';

@@ -1,5 +1,5 @@
 .wrap {
-    display: inline-block; transition: var(--g-transition); position: relative; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding: 0.2em 0; margin: -0.2em 0;
+    display: inline-flex; transition: var(--g-transition); position: relative; overflow: hidden; text-overflow: ellipsis; max-width: 100%; padding: 0.2em 0; margin: -0.2em 0;
 
     &.nowrap {
         white-space: nowrap;
