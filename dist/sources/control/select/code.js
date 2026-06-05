@@ -113,13 +113,10 @@ export default class extends clickgo.control.AbstractControl {
     /** --- list 是否多选 --- */
     get listMulti() {
         if (this.propBoolean('editable')) {
-            // --- 输入模式的 list 必定不是 must ---
+            // --- 输入模式的 list 不支持多选 ---
             return false;
         }
-        if (this.propBoolean('search')) {
-            // --- 搜索模式的 list 必定不是 must ---
-            return false;
-        }
+        // --- 搜索模式下也需要 list 为多选，以回显已选中的多个项 ---
         return this.propBoolean('multi');
     }
     /** --- 判断是输入框模式还是 label 模式 --- */
@@ -165,8 +162,10 @@ export default class extends clickgo.control.AbstractControl {
                         value = item;
                     }
                     else {
-                        label = item.label ?? item.value ?? '';
-                        value = item.value ?? item.label ?? '';
+                        const mapLabel = this.props.map.label ?? 'label';
+                        const mapValue = this.props.map.value ?? 'value';
+                        label = item[mapLabel] ?? item[mapValue] ?? '';
+                        value = item[mapValue] ?? item[mapLabel] ?? '';
                     }
                     // --- 判断是否在忽略大小写的情况下 value 相等 ---
                     if ((value.toLowerCase() === this.inputValue.toLowerCase()) ||
@@ -181,9 +180,10 @@ export default class extends clickgo.control.AbstractControl {
                 }
             }
             else {
+                const mapLabel = this.props.map.label ?? 'label';
                 for (const key in this.dataComp) {
                     const label = typeof this.dataComp[key] === 'string' ? this.dataComp[key] :
-                        (this.dataComp[key].label ?? key ?? '');
+                        (this.dataComp[key][mapLabel] ?? key ?? '');
                     const value = key;
                     if ((value.toLowerCase() === this.inputValue.toLowerCase()) ||
                         (label.toLowerCase() === this.inputValue.toLowerCase())) {
@@ -495,12 +495,14 @@ export default class extends clickgo.control.AbstractControl {
                 await success?.();
                 return;
             }
+            const mapLabel = this.props.map.label ?? 'label';
+            const mapValue = this.props.map.value ?? 'value';
             if (Array.isArray(this.props.data)) {
                 // --- Array ---
                 this.searchData = [];
                 for (const item of this.props.data) {
-                    const val = (typeof item === 'object' ? item.value ?? '' : item).toString().toLowerCase();
-                    const lab = (typeof item === 'object' ? item.label ?? '' : '').toLowerCase();
+                    const val = (typeof item === 'object' ? (item[mapValue] ?? item[mapLabel] ?? '') : item).toString().toLowerCase();
+                    const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : '').toLowerCase();
                     let include = true;
                     for (const char of searchValue) {
                         const c = char.toLowerCase();
@@ -523,7 +525,7 @@ export default class extends clickgo.control.AbstractControl {
                 for (const key in this.props.data) {
                     const item = this.props.data[key];
                     const val = key.toLowerCase();
-                    const lab = '';
+                    const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : '').toLowerCase();
                     let include = true;
                     for (const char of searchValue) {
                         const c = char.toLowerCase();
@@ -547,9 +549,15 @@ export default class extends clickgo.control.AbstractControl {
     async updateSearchValue(value) {
         // --- 只有 search 并且非 editable 时会触发 ---
         this.searchValue = value.trim();
-        await this._search(() => {
-            this.listValue = [this.searchValue];
-        });
+        if (this.propBoolean('multi')) {
+            // --- 多选模式下，onPop 已同步 listValue，搜索数据变化后 list 的 checkValue 会自动按新数据过滤，无需额外处理 ---
+            await this._search();
+        }
+        else {
+            await this._search(() => {
+                this.listValue = [this.searchValue];
+            });
+        }
     }
     // --- text 的值变更事件（只有 editable 时会触发） ----
     async updateInputValue(value) {
@@ -708,7 +716,9 @@ export default class extends clickgo.control.AbstractControl {
             if (this.propBoolean('multi')) {
                 // --- 多选 ---
                 if (this.propBoolean('search')) {
-                    if (this.value.includes(this.listValue[0] ?? '')) {
+                    // --- 使用 e.detail.value 获取实际点击的项（listValue[0] 在多选模式下不一定是被点击的项） ---
+                    const clickedValue = e.detail.value;
+                    if (this.value.includes(clickedValue)) {
                         this.refs.gs.hidePop();
                         this.searchValue = '';
                         await this._search();
@@ -723,13 +733,14 @@ export default class extends clickgo.control.AbstractControl {
                         },
                         'detail': {
                             'index': addIndex,
-                            'value': this.listValue[0] ?? ''
+                            'value': clickedValue
                         }
                     };
                     this.emit('add', event);
                     if (event.go) {
-                        this.value.push(this.listValue[0] ?? '');
-                        this.label.push(this.listLabel[0] ?? '');
+                        this.value.push(clickedValue);
+                        const result = this.refs.list.findFormat(clickedValue, false);
+                        this.label.push(result?.[clickedValue]?.label ?? clickedValue);
                         this.updateValue({
                             'clearInput': true,
                             'clearList': true
@@ -737,7 +748,7 @@ export default class extends clickgo.control.AbstractControl {
                         this.emit('added', {
                             'detail': {
                                 'index': addIndex,
-                                'value': this.inputValue
+                                'value': clickedValue
                             }
                         });
                         this.refs.gs.hidePop();
@@ -799,6 +810,8 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         if (this.propBoolean('search')) {
+            // --- 搜索模式下，阻止 list 内部的多选切换，由 select 自行管理 ---
+            e.preventDefault();
             return;
         }
         const addIndex = this.value.length;
@@ -829,6 +842,8 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         if (this.propBoolean('search')) {
+            // --- 搜索模式下，阻止 list 内部的多选切换，由 select 自行管理 ---
+            e.preventDefault();
             return;
         }
         const removeIndex = e.detail.index;
@@ -950,6 +965,10 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 只要 pop 弹出，就要刷新一下 --- */
     onPop() {
         this.refs.list.refreshOffset();
+        // --- 多选+搜索模式下，同步 listValue 以回显已选中项 ---
+        if (this.propBoolean('multi') && this.propBoolean('search') && !this.propBoolean('editable')) {
+            this.listValue = clickgo.tool.clone(this.value);
+        }
     }
     onMounted() {
         let mvimmediate = true;
