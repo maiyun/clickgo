@@ -24,7 +24,7 @@ export default class extends clickgo.form.AbstractForm {
 
     public async end(): Promise<void> {
         if (await clickgo.form.confirm(this, `Are you sure to end Task ${this.tid[0]}?`)) {
-            clickgo.task.end(this.tid[0]);
+            await clickgo.task.end(this.tid[0]);
         }
     }
 
@@ -59,10 +59,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public onMounted(): void {
         const list = clickgo.task.getList();
-        for (const tid in list) {
+        for (const task of list) {
             this.tlist.push({
-                'label': 'Task ' + tid,
-                'value': parseInt(tid)
+                'label': `Task ${task.id}`,
+                'value': task.id
             });
         }
     }

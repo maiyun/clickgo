@@ -1398,6 +1398,7 @@ export interface ISelectTagclickEvent {
 export interface ISelectRemoteEvent {
     'detail': {
         'value': string;
+        /** --- 返回远程结果的一次性回调；过期搜索结果不会覆盖当前结果 --- */
         'callback': (data?: any[] | Record<string, string>) => Promise<void>;
     };
 }

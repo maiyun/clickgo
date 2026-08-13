@@ -263,8 +263,9 @@ export default class extends clickgo.control.AbstractControl {
             };
             this.emit('add', event);
             if (event.go) {
-                this.value.push(this.inputValue);
-                this.label.push(this.listLabel[0] ?? this.inputValue);
+                const value = this.inputValue;
+                this.value.push(value);
+                this.label.push(this.listLabel[0] ?? value);
                 this.updateValue({
                     'clearInput': true,
                     'clearList': true
@@ -272,7 +273,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('added', {
                     'detail': {
                         'index': addIndex,
-                        'value': this.inputValue
+                        'value': value
                     }
                 });
                 if (this.propBoolean('search')) {
@@ -440,27 +441,23 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
     }
-    /** --- 当前需要发起请求的次数 --- */
-    _needSearch = 0;
+    /** --- 搜索版本，仅允许最后一次搜索更新结果 --- */
+    _searchVersion = 0;
     /** --- 当前搜索中的个数（远程） --- */
     searching = 0;
     /** --- 私有搜索方法 --- */
     async _search(success) {
         /** --- 当前要搜索的值 --- */
         const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
+        /** --- 本次搜索版本 --- */
+        const searchVersion = ++this._searchVersion;
         if (this.propBoolean('remote')) {
             // --- 远程搜索 ---
             const delay = this.propInt('remoteDelay');
-            ++this._needSearch;
             await clickgo.tool.sleep(delay);
-            if (this._needSearch > 1) {
-                --this._needSearch;
+            if (searchVersion !== this._searchVersion) {
                 return;
             }
-            if (this._needSearch === 0) {
-                return;
-            }
-            --this._needSearch;
             if (searchValue === '') {
                 this.searchData = [];
                 await this.nextTick();
@@ -468,11 +465,19 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             ++this.searching;
+            let completed = false;
             const event = {
                 'detail': {
                     'value': searchValue,
                     'callback': async (data) => {
+                        if (completed) {
+                            return;
+                        }
+                        completed = true;
                         --this.searching;
+                        if (searchVersion !== this._searchVersion) {
+                            return;
+                        }
                         this.searchData = data ? clickgo.tool.clone(data) : [];
                         await this.nextTick();
                         await success?.();
@@ -484,11 +489,9 @@ export default class extends clickgo.control.AbstractControl {
         else {
             // --- 本地搜索 ---
             await this.nextTick();
-            if (this._needSearch > 1) {
-                --this._needSearch;
+            if (searchVersion !== this._searchVersion) {
                 return;
             }
-            --this._needSearch;
             if (searchValue === '') {
                 this.searchData = [];
                 await this.nextTick();
@@ -497,6 +500,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             const mapLabel = this.props.map.label ?? 'label';
             const mapValue = this.props.map.value ?? 'value';
+            const searchChars = new Set(searchValue.toLowerCase());
             if (Array.isArray(this.props.data)) {
                 // --- Array ---
                 this.searchData = [];
@@ -504,9 +508,8 @@ export default class extends clickgo.control.AbstractControl {
                     const val = (typeof item === 'object' ? (item[mapValue] ?? item[mapLabel] ?? '') : item).toString().toLowerCase();
                     const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : '').toLowerCase();
                     let include = true;
-                    for (const char of searchValue) {
-                        const c = char.toLowerCase();
-                        if (val.includes(c) || lab.includes(c)) {
+                    for (const char of searchChars) {
+                        if (val.includes(char) || lab.includes(char)) {
                             continue;
                         }
                         // --- 没包含 ---
@@ -527,9 +530,8 @@ export default class extends clickgo.control.AbstractControl {
                     const val = key.toLowerCase();
                     const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : '').toLowerCase();
                     let include = true;
-                    for (const char of searchValue) {
-                        const c = char.toLowerCase();
-                        if (val.includes(c) || lab.includes(c)) {
+                    for (const char of searchChars) {
+                        if (val.includes(char) || lab.includes(char)) {
                             continue;
                         }
                         // --- 没包含 ---
@@ -665,7 +667,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.emit('added', {
                         'detail': {
                             'index': addIndex,
-                            'value': this.inputValue
+                            'value': v
                         }
                     });
                     if (this.propBoolean('search')) {

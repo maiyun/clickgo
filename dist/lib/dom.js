@@ -358,8 +358,10 @@ const resizeObserver = new ResizeObserver(function (entries) {
         const el = entrie.target;
         if (!document.body.contains(el)) {
             resizeObserver.unobserve(el);
-            if (watchSizeList[el.dataset.cgRoindex]) {
-                delete watchSizeList[el.dataset.cgRoindex];
+            const index = el.dataset.cgRoindex;
+            el.removeAttribute('data-cg-roindex');
+            if (index !== undefined) {
+                delete watchSizeList[index];
             }
             continue;
         }
@@ -545,9 +547,8 @@ export function watch(current, el, cb, mode = 'default', immediate = false) {
     const mo = new MutationObserver((mutations) => {
         if (!document.body.contains(el)) {
             mo.disconnect();
-            if (watchList[index]) {
-                delete watchList[index];
-            }
+            el.removeAttribute('data-cg-moindex');
+            delete watchList[index];
             return;
         }
         try {
@@ -634,6 +635,8 @@ const watchCgTimerHandler = function () {
         if (document.body.contains(item.el)) {
             continue;
         }
+        resizeObserver.unobserve(item.el);
+        item.el.removeAttribute('data-cg-roindex');
         delete watchSizeList[index];
     }
     for (const index in watchList) {
@@ -641,6 +644,8 @@ const watchCgTimerHandler = function () {
         if (document.body.contains(item.el)) {
             continue;
         }
+        item.mo.disconnect();
+        item.el.removeAttribute('data-cg-moindex');
         delete watchList[index];
     }
     window.setTimeout(watchCgTimerHandler, 1000 * 60 * 7);

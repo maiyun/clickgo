@@ -186,9 +186,9 @@
 
 #### remote
 
-`(value: string, callback: () => void) => void`
+`(event: ISelectRemoteEvent) => void`
 
-远程搜索时触发。
+远程搜索时触发。通过 `event.detail.value` 获取查询值，并调用一次 `event.detail.callback(data)` 返回结果；过期结果不会覆盖当前查询。
 
 #### load
 

@@ -109,6 +109,7 @@ export function get(taskId: lCore.TCurrent): ITaskInfo | null {
         return null;
     }
     return {
+        'id': taskId,
         'name': task.app.config.name,
         'locale': task.locale.lang,
         'customTheme': task.customTheme,
@@ -268,8 +269,11 @@ export function onFrame(current: lCore.TCurrent, fun: () => void | Promise<void>
             delete frameMaps[ft];
             return;
         }
-        await fun();
-        if (task.timers['1x' + ft.toString()] == undefined) {
+        try {
+            await fun();
+        }
+        catch {}
+        if (task.timers['1x' + ft.toString()] === undefined) {
             return;
         }
         if (count > 1) {
@@ -352,6 +356,7 @@ export function getList(): ITaskInfo[] {
     for (const tid in list) {
         const item = list[tid];
         rtn.push({
+            'id': tid,
             'name': item.app.config.name,
             'locale': item.locale.lang,
             'customTheme': item.customTheme,
@@ -1769,6 +1774,8 @@ export interface ICreateTimerOptions {
 
 /** --- Task 的简略情况，通常在 list 当中 --- */
 export interface ITaskInfo {
+    /** --- 任务 ID --- */
+    'id': string;
     'name': string;
     'locale': string;
     'customTheme': boolean;

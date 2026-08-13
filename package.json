@@ -14,6 +14,7 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish",
     "native": "electron ./dist/test/native",
     "native2": "electron ./dist/test/native/index2",
     "native3": "electron ./dist/test/native/index3",

@@ -304,6 +304,50 @@ export default class extends clickgo.control.AbstractControl {
         }
         return true;
     }
+    /**
+     * --- 根据 min/max 同步当前值 ---
+     * @returns 无返回值
+     */
+    async _syncRange() {
+        await this.nextTick();
+        if (!this.checkNumber()) {
+            return;
+        }
+        const value = this.refs.text.value;
+        const mxEvent = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'before': this.value,
+                'value': value
+            }
+        };
+        this.emit('minmaxchange', mxEvent);
+        if (!mxEvent.go) {
+            this.refs.text.value = this.value;
+            return;
+        }
+        const event = {
+            'go': true,
+            preventDefault: function () {
+                this.go = false;
+            },
+            'detail': {
+                'value': value,
+                'change': undefined
+            }
+        };
+        this.emit('beforechange', event);
+        if (!event.go) {
+            this.refs.text.value = this.value;
+            return;
+        }
+        this.value = event.detail.change ?? value;
+        this.emit('update:modelValue', this.value);
+        this.emit('changed');
+    }
     onMounted() {
         // --- prop 修改值 ---
         this.watch('modelValue', async () => {
@@ -346,82 +390,10 @@ export default class extends clickgo.control.AbstractControl {
             'immediate': true
         });
         this.watch('max', async () => {
-            await this.nextTick();
-            if (this.checkNumber()) {
-                const mxEvent = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'before': this.value,
-                        'value': this.refs.text.value
-                    }
-                };
-                this.emit('minmaxchange', mxEvent);
-                if (!mxEvent.go) {
-                    this.refs.text.value = this.value;
-                    return;
-                }
-                const event = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'value': this.value,
-                        'change': undefined
-                    }
-                };
-                this.emit('beforechange', event);
-                if (!event.go) {
-                    this.refs.text.value = this.value;
-                    return;
-                }
-                this.value = event.detail.change ?? this.refs.text.value;
-                this.emit('update:modelValue', this.value);
-                // --- changed ---
-                this.emit('changed');
-            }
+            await this._syncRange();
         });
         this.watch('min', async () => {
-            await this.nextTick();
-            if (this.checkNumber()) {
-                const mxEvent = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'before': this.value,
-                        'value': this.refs.text.value
-                    }
-                };
-                this.emit('minmaxchange', mxEvent);
-                if (!mxEvent.go) {
-                    this.refs.text.value = this.value;
-                    return;
-                }
-                const event = {
-                    'go': true,
-                    preventDefault: function () {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'value': this.value,
-                        'change': undefined
-                    }
-                };
-                this.emit('beforechange', event);
-                if (!event.go) {
-                    this.refs.text.value = this.value;
-                    return;
-                }
-                this.value = event.detail.change ?? this.refs.text.value;
-                this.emit('update:modelValue', this.value);
-                // --- changed ---
-                this.emit('changed');
-            }
+            await this._syncRange();
         });
         const content = this.parentByName('content');
         if (content) {

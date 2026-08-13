@@ -96,6 +96,7 @@ export function get(taskId) {
         return null;
     }
     return {
+        'id': taskId,
         'name': task.app.config.name,
         'locale': task.locale.lang,
         'customTheme': task.customTheme,
@@ -243,8 +244,11 @@ export function onFrame(current, fun, opt = {}) {
             delete frameMaps[ft];
             return;
         }
-        await fun();
-        if (task.timers['1x' + ft.toString()] == undefined) {
+        try {
+            await fun();
+        }
+        catch { }
+        if (task.timers['1x' + ft.toString()] === undefined) {
             return;
         }
         if (count > 1) {
@@ -324,6 +328,7 @@ export function getList() {
     for (const tid in list) {
         const item = list[tid];
         rtn.push({
+            'id': tid,
             'name': item.app.config.name,
             'locale': item.locale.lang,
             'customTheme': item.customTheme,
