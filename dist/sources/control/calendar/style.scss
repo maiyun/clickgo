@@ -86,8 +86,33 @@
                 outline: solid .5px var(--cg);
             }
 
-            cg-check {
-                position: absolute; left: var(--g-padding-s); top: var(--g-padding-s);
+            .day-check {
+                appearance: none; position: absolute; left: var(--g-padding-s); top: var(--g-padding-s); display: flex; justify-content: center; align-items: center; width: var(--g-control); height: var(--g-control); padding: 0; border: solid .5px var(--g-plain-border-color); border-radius: var(--g-radius); color: oklch(1 0 0); background: var(--g-plain-background); box-shadow: none; font: inherit; line-height: 1; transition: var(--g-transition); cursor: pointer;
+
+                svg {
+                    display: none; width: 14px; height: 14px; fill: currentColor;
+                }
+                &.checked {
+                    border-color: var(--cg); background: var(--cg);
+
+                    svg {
+                        display: block;
+                    }
+                }
+                &:hover {
+                    border-color: var(--g-plain-border-color-hover); background: var(--g-plain-background-hover);
+
+                    &.checked {
+                        border-color: var(--cg-hover); background: var(--cg-hover);
+                    }
+                }
+                &:focus-visible {
+                    border-color: var(--g-plain-border-color-focus); box-shadow: var(--g-outline-shadow); outline: none;
+
+                    &.checked {
+                        border-color: var(--cg-focus); background: var(--cg-focus);
+                    }
+                }
             }
 
             .colh {

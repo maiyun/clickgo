@@ -39,6 +39,8 @@ export default class extends clickgo.control.AbstractControl {
     zones = [];
     vzdec = [];
     zdecs = ['00', '15', '30', '45'];
+    /** --- 日期面板仅在首次打开时挂载，避免阻塞所在窗体的初始显示 --- */
+    datePanelMounted = false;
     /** --- 语言包 --- */
     localeData = {
         'en': {
@@ -151,11 +153,15 @@ export default class extends clickgo.control.AbstractControl {
         },
     };
     // --- 单击事件 ---
-    click(type) {
+    async click(type) {
         const el = this.refs[type];
         if (el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(el);
             return;
+        }
+        if ((type === 'first') && this.propBoolean('date') && !this.datePanelMounted) {
+            this.datePanelMounted = true;
+            await this.nextTick();
         }
         if (type === 'first' && !this.propBoolean('date')) {
             clickgo.form.showPop(el, this.refs['timepop'], 'v');

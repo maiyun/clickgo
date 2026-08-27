@@ -453,6 +453,11 @@ export default class extends clickgo.control.AbstractControl {
         'str': string;
     }>> = [];
 
+    /** --- 禁用日期索引，避免每个日期格重复线性查找 --- */
+    public get disabledSet(): Set<string> {
+        return new Set(this.propArray('disabledList').map(item => item.toString()));
+    }
+
     // --- 上面的选项 ---
 
     public vyear: string[] = [''];
@@ -737,7 +742,7 @@ export default class extends clickgo.control.AbstractControl {
         this.vmonth[0] = (month + 1).toString();
     }
 
-    public onMounted(): void | Promise<void> {
+    public onBeforeMount(): void | Promise<void> {
         // --- 监听最大最小值限定 ---
         this.watch('start', () => {
             if (this.props.start === undefined) {
@@ -1014,10 +1019,8 @@ export default class extends clickgo.control.AbstractControl {
             'year': number;
         }): string | undefined => {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
-            if (this.propArray('disabledList').length) {
-                if (this.propArray('disabledList').includes(cols)) {
-                    return '';
-                }
+            if (this.disabledSet.has(cols)) {
+                return '';
             }
             return cols > this.endYmd || cols < this.startYmd ? '' : undefined;
         };

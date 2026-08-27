@@ -23,6 +23,14 @@ export default class extends clickgo.control.AbstractControl {
     };
     /** --- 当前选中的日期数组 --- */
     values = [];
+    /** --- 已选日期索引，避免视图渲染时反复扫描全部选中值 --- */
+    get valueSet() {
+        return new Set(this.values);
+    }
+    /** --- 禁用日期索引，避免每个日期格重复线性查找 --- */
+    get disabledSet() {
+        return new Set(this.propArray('disabledList').map(item => item.toString()));
+    }
     /** --- 当前选中的日期 --- */
     dateValue = {
         'year': '0',
@@ -539,8 +547,10 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('update:modelValue', clickgo.tool.clone(this.values));
         this.emit('changed');
     }
-    checkClick(e) {
+    /** --- 日期勾选按钮点击，阻止继续触发日期格选择 --- */
+    checkClick(e, col) {
         e.stopPropagation();
+        this.checkChanged(col);
     }
     /** --- 将当前的 select 的日期的情况向上同步 --- */
     updateSelect(type = 'default') {
@@ -594,7 +604,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.vmonth[0] = (month + 1).toString().padStart(2, '0');
     }
-    onMounted() {
+    onBeforeMount() {
         // --- 监听最大最小值限定 ---
         this.watch('start', () => {
             this.refreshStartValue();
@@ -716,10 +726,8 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前日期是否可选 --- */
     get isDisabled() {
         return (col) => {
-            if (this.propArray('disabledList').length) {
-                if (this.propArray('disabledList').includes(col.value)) {
-                    return '';
-                }
+            if (this.disabledSet.has(col.value)) {
+                return '';
             }
             return col.value > this.endYmd || col.value < this.startYmd ? '' : undefined;
         };
