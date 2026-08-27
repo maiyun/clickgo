@@ -1,348 +1,525 @@
 global {
-    --g-padding-xs:3px;
-    --g-padding-s:6px;
-    --g-padding:12px;
-    --g-padding-h:6px var(--g-padding);
-    --g-padding-l:18px;
-    --g-padding-l-h:12px var(--g-padding-l);
-    --g-padding-xl:28px;
-    --g-padding-xl-h:14px var(--g-padding-xl);
-    --g-bpadding:25px;
-    --g-margin:7px;
-    --g-radius:5px;
-    --g-radius-l:8px;
-    --g-radius-xl:12px;
-    --g-size-xs:12px;
-    --g-size:14px;
-    --g-size-m:20px;
-    --g-size-l:28px;
-    --g-size-xl:38px;
-    --g-control:20px;
-    --g-control-m:24px;
-    --g-control-l:28px;
-    --g-transition:all .25s cubic-bezier(0.25, 0.8, 0.5, 1);
-    --g-cubic:cubic-bezier(0.25, 0.8, 0.5, 1);
-    --g-line:1.6;
+    // --- 尺寸与节奏：面向高信息密度后台界面 ---
+
+    --g-padding-xs:2px;
+    --g-padding-s:4px;
+    --g-padding:10px;
+    --g-padding-h:5px var(--g-padding);
+    --g-padding-l:16px;
+    --g-padding-l-h:10px var(--g-padding-l);
+    --g-padding-xl:24px;
+    --g-padding-xl-h:12px var(--g-padding-xl);
+    --g-bpadding:20px;
+    --g-margin:6px;
+    --g-radius:4px;
+    --g-radius-l:6px;
+    --g-radius-xl:8px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:18px;
+    --g-size-l:26px;
+    --g-size-xl:36px;
+    --g-control:18px;
+    --g-control-m:22px;
+    --g-control-l:26px;
+    --g-cubic:cubic-bezier(.2, 0, 0, 1);
+    --g-transition:all .16s var(--g-cubic);
+    --g-line:1.5;
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
-    // --- 基础颜色 (Admin: Clean White/Gray) ---
+    // --- 主色与语义色：稳重蓝灰基底，降低状态色饱和度 ---
 
-    --g-pure:oklch(1 0 0);
-    --face:oklch(.97 0 0);
-    --face-hover:oklch(.95 0 0);
-    --face-selected:oklch(.93 0 0);
-    --g-pop-background:oklch(1 0 0 / .9);
-    --g-pop-backdrop:blur(10px);
-    --g-pop-border:none;
-    --g-shadow:0 1px 2px oklch(.45 .12 260 / .1);
-    --g-shadow-m:0 4px 12px oklch(.45 .12 260 / .15);
-    --g-shadow-d:0 8px 24px oklch(.45 .12 260 / .2);
-    --g-outline-shadow:0 0 0 3px oklch(.45 .12 260 / .15); 
+    --main:oklch(.55 .17 258);
+    --cg:var(--main);
+    --cg-hover:oklch(.6 .17 258);
+    --cg-active:oklch(.48 .17 258);
+    --cg-focus:oklch(.52 .17 258);
+    --cg-disabled:oklch(.82 .035 258);
+    --cg-bg:oklch(.96 .025 258);
 
-    // --- 组件默认颜色 ---
+    --success:oklch(.57 .15 151);
+    --success-hover:oklch(.62 .15 151);
+    --success-active:oklch(.5 .15 151);
+    --success-focus:oklch(.54 .15 151);
+    --success-disabled:oklch(.82 .03 151);
+    --success-bg:oklch(.96 .035 151);
 
-    --g-background:oklch(1 0 0);
-    --g-background-hover:oklch(.985 0 0);
-    --g-background-active:oklch(.97 0 0);
-    --g-background-opacity:oklch(.985 0 0 / .3);
-    --g-background-focus:oklch(1 0 0);
-    --g-background-disabled:oklch(.98 0 0);
-
-    --g-border-color:oklch(.92 0 0);
-    --g-border-color-hover:oklch(.85 0 0);
-    --g-border-color-active:oklch(.45 .12 260); // Admin Blue
-    --g-border-color-focus:oklch(.45 .12 260);
-    --g-border-color-disabled:oklch(.95 0 0);
-    --g-border-size:1px;
-
-    // --- 字体颜色 ---
-
-    --g-color:oklch(.25 0 0);
-    --g-color-hover:oklch(.15 0 0);
-    --g-color-active:oklch(0 0 0);
-    --g-color-focus:oklch(0 0 0);
-    --g-color-disabled:oklch(.75 0 0);
-    --g-color-placeholder:oklch(.65 0 0);
-    --g-color-error:oklch(.6 .18 25);
-    --g-color-warning:oklch(.8 .15 85);
-    --g-color-success:oklch(.62 .17 150);
-
-    // --- 主题色 (Admin Blue) ---
-
-    --cg:oklch(.45 .12 260); // Steady Blue
-    --cg-hover:oklch(.4 .12 260);
-    --cg-active:oklch(.35 .12 260);
-    --cg-focus:oklch(.45 .12 260);
-    --cg-disabled:oklch(.85 .02 260);
-    --cg-bg:oklch(.96 .02 260); // Steady Light Blue
-
-    // --- 主题色文本 ---
-
-    --cg-color:oklch(1 0 0);
-    --cg-color-hover:oklch(1 0 0);
-    --cg-color-active:oklch(1 0 0);
-    --cg-color-focus:oklch(1 0 0);
-    --cg-color-disabled:oklch(1 0 0);
-
-    // --- 状态背景 ---
-
-    --success-bg:oklch(.96 .03 145);
-    --error-bg:oklch(.96 .03 20);
-    --warning-bg:oklch(.96 .03 85);
+    --info:oklch(.59 .15 250);
+    --info-hover:oklch(.64 .15 250);
+    --info-active:oklch(.52 .15 250);
+    --info-focus:oklch(.56 .15 250);
+    --info-disabled:oklch(.83 .03 250);
     --info-bg:oklch(.96 .03 250);
 
-    // --- 组件轻量颜色 ---
+    --warning:oklch(.68 .16 67);
+    --warning-hover:oklch(.73 .16 67);
+    --warning-active:oklch(.6 .16 67);
+    --warning-focus:oklch(.65 .16 67);
+    --warning-disabled:oklch(.85 .035 67);
+    --warning-bg:oklch(.97 .045 75);
+
+    --danger:oklch(.6 .18 25);
+    --danger-hover:oklch(.65 .18 25);
+    --danger-active:oklch(.53 .18 25);
+    --danger-focus:oklch(.57 .18 25);
+    --danger-disabled:oklch(.83 .035 25);
+    --danger-bg:oklch(.97 .035 25);
+
+    // --- 页面层级：以边框区分结构，仅在浮层使用阴影 ---
+
+    --g-pure:oklch(1 0 0);
+    --face:oklch(.975 .006 255);
+    --face-hover:oklch(.95 .012 255);
+    --face-selected:oklch(.925 .025 258);
+    --g-pop-background:oklch(1 0 0);
+    --g-pop-backdrop:none;
+    --g-pop-border:solid .5px oklch(.87 .012 255);
+    --g-shadow:none;
+    --g-shadow-m:0 4px 14px oklch(.28 .03 258 / .09);
+    --g-shadow-d:0 12px 32px oklch(.24 .035 258 / .14);
+    --g-outline-shadow:0 0 0 2px oklch(.55 .17 258 / .16);
+
+    // --- 正文与基础控件 ---
+
+    --g-color:oklch(.34 .018 255);
+    --g-color-hover:oklch(.25 .025 255);
+    --g-color-active:oklch(.2 .025 255);
+    --g-color-focus:oklch(.23 .025 255);
+    --g-color-disabled:oklch(.67 .012 255);
+    --g-color-tip:oklch(.56 .016 255);
+    --g-color-placeholder:oklch(.66 .012 255);
+    --g-color-error:var(--danger);
+    --g-color-warning:var(--warning);
+    --g-color-success:var(--success);
+
+    --g-background:oklch(1 0 0);
+    --g-background-hover:oklch(.975 .008 255);
+    --g-background-active:oklch(.945 .018 258);
+    --g-background-opacity:oklch(.25 .025 258 / .16);
+    --g-background-focus:oklch(1 0 0);
+    --g-background-disabled:oklch(.965 .004 255);
+
+    --g-border-color:oklch(.875 .012 255);
+    --g-border-color-hover:oklch(.76 .035 258);
+    --g-border-color-active:var(--cg);
+    --g-border-color-focus:var(--cg);
+    --g-border-color-disabled:oklch(.91 .008 255);
+    --g-focusbox-border-width:0;
+    --g-focusbox-border-color:var(--cg);
+
+    // --- 输入类和轻量控件 ---
+
+    --g-plain-color:var(--g-color);
+    --g-plain-color-hover:var(--g-color-hover);
+    --g-plain-color-active:var(--g-color-active);
+    --g-plain-color-focus:var(--g-color-focus);
+    --g-plain-color-disabled:var(--g-color-disabled);
 
     --g-plain-background:oklch(1 0 0);
-    --g-plain-background-hover:oklch(.97 0 0);
-    --g-plain-background-active:oklch(.95 0 0);
+    --g-plain-background-hover:oklch(.975 .008 255);
+    --g-plain-background-active:oklch(.95 .018 258);
     --g-plain-background-focus:oklch(1 0 0);
-    --g-plain-background-disabled:oklch(.98 0 0);
-    --g-plain-background-selected:oklch(.94 0 0);
+    --g-plain-background-disabled:oklch(.965 .004 255);
+    --g-plain-background-selected:oklch(.95 .025 258);
 
-    --g-plain-border-color:oklch(.88 0 0);
-    --g-plain-border-color-hover:oklch(.75 0 0);
-    --g-plain-border-color-active:oklch(.45 .12 260);
-    --g-plain-border-color-focus:oklch(.45 .12 260);
-    --g-plain-border-color-disabled:oklch(.92 0 0);
-    --g-plain-border-color-plain:oklch(.92 0 0);
+    --g-plain-border-color:oklch(.865 .014 255);
+    --g-plain-border-color-hover:oklch(.72 .055 258);
+    --g-plain-border-color-active:var(--cg);
+    --g-plain-border-color-focus:var(--cg);
+    --g-plain-border-color-disabled:oklch(.91 .008 255);
+    --g-plain-border-color-plain:oklch(.925 .008 255);
 
-    --g-block-background:oklch(.85 0 0); // Darker scroll thumb for visibility
-    --g-block-background-hover:oklch(.7 0 0);
-    --g-block-dark-background:oklch(.15 .04 260);
-    --g-block-dark-background-hover:oklch(.22 .06 260);
+    --g-block-background:oklch(.84 .012 255);
+    --g-block-background-hover:oklch(.72 .02 255);
+    --g-block-dark-background:oklch(.24 .035 258);
+    --g-block-dark-background-hover:oklch(.31 .04 258);
 
     ::selection {
-        background-color: oklch(.45 .12 260 / 0.15);
+        background-color: oklch(.55 .17 258 / .18);
     }
 }
 
-// -- CONTROL -- form --
+// --- CONTROL -- form ---
+
+@keyframes form_flash {
+    0%, 50% {
+        border-color: var(--cg);
+        box-shadow: var(--g-shadow-d), var(--g-outline-shadow);
+    }
+    51%, 100% {
+        border-color: var(--g-border-color);
+        box-shadow: var(--g-shadow-m);
+    }
+}
 
 .form_wrap {
+    &:not(.form_border-none):not([data-cg-max]) {
+        border: solid .5px var(--g-border-color);
+        box-shadow: var(--g-shadow-m);
+    }
+    &.form_focus:not(.form_border-none):not([data-cg-max]) {
+        border-color: oklch(.79 .025 258);
+        box-shadow: var(--g-shadow-d);
+    }
+
     .form_inner {
         .form_header {
+            padding: 0;
+            background: var(--g-pure);
             border-bottom: solid .5px var(--g-border-color);
-            padding: var(--g-padding-s);
+
+            .form_title {
+                font-weight: 500;
+            }
             .form_controls {
-                gap: var(--g-padding-xs);
+                gap: 2px;
+
                 .form_min, .form_max, .form_close {
                     border-radius: var(--g-radius);
                 }
             }
         }
-        // --- 主体内容 ---
         .form_content {
+            background-color: var(--face);
+
             .form_loading {
-                background: radial-gradient(circle, oklch(1 0 0 / .9) 10%, oklch(1 0 0 / .4) 80%);
+                background: oklch(1 0 0 / .82);
                 &:not(.form_show) {
-                    transform: scale(1.3);
+                    transform: scale(1.03);
                 }
             }
         }
     }
 }
 
-// -- CONTROL -- group --
+// --- CONTROL -- group ---
 
 .group_wrap {
     border-radius: var(--g-radius-xl);
-    &.group_hover:hover, &:not(.group_hover) {
-        box-shadow: 0 12px 16px -4px oklch(.2 0 0 / .08), 0 4px 6px -2px oklch(.2 0 0 / 0.03);
+    box-shadow: none;
+
+    &.group_hover:hover {
+        border-color: oklch(.8 .025 258);
+        box-shadow: var(--g-shadow-m);
     }
-    &.group_plain {
-        &.group_hover:hover, &:not(.group_hover) {
-            box-shadow: 0px 3px 16px 0px oklch(.2 0 0 / .06);
-        }
+    &:not(.group_hover), &.group_plain {
+        box-shadow: none;
     }
 }
 
-// -- CONTROL -- scroll --
-
-.scroll_wrap {
-    background-color: transparent;
-    .scroll_start, .scroll_end {
-        display: none;
-    }
-    .scroll_bar {
-        .scroll_block {
-            transition-property: background-color; border-radius: var(--g-radius-xl);
-        }
-    }
-}
-
-// -- CONTROL -- tab --
+// --- CONTROL -- tab ---
 
 .tab_wrap {
-    // --- 通用 tab 标签样式，去掉边框 ---
     > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+        color: var(--g-color-tip);
+        background: transparent;
         border: none;
+        border-radius: 0;
+        font-weight: 400;
+
+        &::after {
+            background: var(--cg);
+            opacity: 0;
+            transition: opacity .16s var(--g-cubic);
+        }
         &:not(.tab_selected):not([data-hover]):hover {
-            background: var(--face-hover); color: var(--g-color);
+            color: var(--g-color-hover);
+            background: transparent;
         }
         &.tab_selected {
-            background: var(--g-background); font-weight: 600; color: var(--cg);
-            box-shadow: var(--g-shadow-m);
-        }
-    }
-    // --- 消除所有方向选中 tab 的下划线指示器 ---
-    &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
-        > .tab_tabs-wrap > .tab_tabs > .tab_tab.tab_selected::after { content: none; }
-    }
-    // --- top/bottom 水平布局 ---
-    &.tab_top, &.tab_bottom {
-        > .tab_tabs-wrap > .tab_tabs {
-            background: var(--face); border-radius: var(--g-radius-l);
-            padding: 3px; gap: 2px; align-items: center;
-            > :not(:last-child) { margin-right: 0; }
-        }
-    }
-    &.tab_top {
-        > .tab_tabs-wrap { padding-bottom: var(--g-padding-s); }
-        > .tab_tabs-wrap > .tab_tabs { transform: none; }
-        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
-            border-radius: var(--g-radius);
-            &.tab_selected { padding-bottom: 0; }    // --- 用来覆盖控件默认样式的 ---
-        }
-    }
-    &.tab_bottom {
-        > .tab_tabs-wrap { padding-top: var(--g-padding-s); }
-        > .tab_tabs-wrap > .tab_tabs { transform: none; }
-        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
-            border-radius: var(--g-radius);
-            &.tab_selected { padding-top: 0; }     // --- 用来覆盖控件默认样式的 ---
-        }
-    }
-    // --- left/right 垂直布局 ---
-    &.tab_left, &.tab_right {
-        > .tab_tabs-wrap > .tab_tabs {
-            background: var(--face); border-radius: var(--g-radius-l);
-            padding: 3px; gap: 2px;
-            > :not(:last-child) { margin-bottom: 0; }
-        }
-    }
-    &.tab_left {
-        > .tab_tabs-wrap { padding-right: var(--g-padding-s); }
-        > .tab_tabs-wrap > .tab_tabs { transform: none; }
-        > .tab_tabs-wrap > .tab_tabs > .tab_tab { border-radius: var(--g-radius); }
-    }
-    &.tab_right {
-        > .tab_tabs-wrap { padding-left: var(--g-padding-s); }
-        > .tab_tabs-wrap > .tab_tabs { transform: none; }
-        > .tab_tabs-wrap > .tab_tabs > .tab_tab { border-radius: var(--g-radius); }
-    }
-    // --- 面板 ---
-    > .tab_panel {
-        background: transparent; border: none;
-    }
-}
+            color: var(--cg);
+            background: transparent;
+            box-shadow: none;
+            font-weight: 600;
 
-// -- CONTROL -- button --
-
-.button_wrap {
-    font-weight: 500;
-    &:not([data-cg-disabled]) {
-        &:hover {
-            transform: translateY(-1px); box-shadow: 0 4px 12px oklch(.45 .12 260 / .25);
-        }
-        &:active {
-            transform: translateY(0);
-        }
-    }
-}
-
-// -- CONTROL -- nav --
-
-.nav_wrap {
-    .nav_menuwrap {
-        --face: oklch(.18 .04 260); 
-        --g-color: oklch(.85 .01 260);
-        --g-color-hover: oklch(1 0 0);
-        --g-border-color: oklch(.25 .05 260);
-        
-        box-shadow: 4px 0 16px oklch(0 0 0 / .15);
-        z-index: 10;
-
-        .nav_menu {
-            background: var(--face);
-            .nav_logo {
-                border-bottom: solid 1px var(--g-border-color);
-                margin-bottom: 10px;
-                padding: 15px;
+            &::after {
+                opacity: 1;
             }
         }
     }
-    
+
+    &.tab_top, &.tab_bottom {
+        > .tab_tabs-wrap > .tab_tabs {
+            align-items: stretch;
+            gap: var(--g-padding-l);
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            transform: none;
+
+            > :not(:last-child) {
+                margin-right: 0;
+            }
+        }
+    }
+    &.tab_top {
+        > .tab_tabs-wrap {
+            padding-bottom: 0;
+            border-bottom: solid .5px var(--g-border-color);
+        }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            padding-bottom: 0;
+
+            &.tab_selected {
+                padding-bottom: 0;
+            }
+            &.tab_selected::after {
+                top: initial;
+                bottom: -1px;
+                height: 2px;
+            }
+        }
+    }
+    &.tab_bottom {
+        > .tab_tabs-wrap {
+            padding-top: 0;
+            border-top: solid .5px var(--g-border-color);
+        }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            padding-top: 0;
+
+            &.tab_selected {
+                padding-top: 0;
+            }
+            &.tab_selected::after {
+                top: -1px;
+                height: 2px;
+            }
+        }
+    }
+
+    &.tab_left, &.tab_right {
+        > .tab_tabs-wrap > .tab_tabs {
+            gap: var(--g-padding-s);
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            transform: none;
+
+            > :not(:last-child) {
+                margin-bottom: 0;
+            }
+        }
+    }
+    &.tab_left {
+        > .tab_tabs-wrap {
+            padding-right: 0;
+            border-right: solid .5px var(--g-border-color);
+        }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            padding-right: 0;
+
+            &.tab_selected::after {
+                left: initial;
+                right: -1px;
+                width: 2px;
+            }
+        }
+    }
+    &.tab_right {
+        > .tab_tabs-wrap {
+            padding-left: 0;
+            border-left: solid .5px var(--g-border-color);
+        }
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            padding-left: 0;
+
+            &.tab_selected::after {
+                left: -1px;
+                width: 2px;
+            }
+        }
+    }
+
+    > .tab_panel {
+        background: transparent;
+        border: none;
+    }
+}
+
+// --- CONTROL -- button ---
+
+.button_wrap {
+    font-weight: 500;
+
+    &:not([data-cg-disabled]):hover, &:not([data-cg-disabled]):active {
+        transform: none;
+    }
+}
+
+// --- CONTROL -- nav ---
+
+.nav_wrap {
+    .nav_menuwrap {
+        --face:oklch(.2 .035 258);
+        --face-hover:oklch(.25 .04 258);
+        --face-selected:oklch(.29 .055 258);
+        --g-color:oklch(.82 .015 255);
+        --g-color-hover:oklch(.97 .005 255);
+        --g-color-disabled:oklch(.55 .015 255);
+        --g-border-color:oklch(.29 .035 258);
+
+        z-index: 10;
+        border-right: solid .5px var(--g-border-color);
+        box-shadow: none;
+
+        .nav_menu {
+            background: var(--face);
+
+            .nav_logo {
+                margin-bottom: var(--g-padding-s);
+                padding: var(--g-padding-l);
+                border-bottom: solid .5px var(--g-border-color);
+            }
+        }
+    }
+
     .nav_content {
         .nav_header {
-            background: var(--g-background);
-            box-shadow: 0 1px 4px oklch(0 0 0 / .05);
-            border-bottom: solid 1px var(--g-border-color);
+            background: var(--g-pure);
+            border-bottom: solid .5px var(--g-border-color);
+            box-shadow: none;
         }
     }
 }
 
-// -- CONTROL -- nav-item --
+// --- CONTROL -- nav-item ---
 
 .nav-item_wrap {
-    margin: 4px 8px;
+    --face-hover:oklch(.25 .04 258);
+    --face-selected:oklch(.29 .055 258);
+    --g-color:oklch(.82 .015 255);
+    --g-color-hover:oklch(.97 .005 255);
+    --g-color-disabled:oklch(.55 .015 255);
+
+    color: var(--g-color);
+    margin: 2px 8px;
+
     > .nav-item_text {
-        color: var(--g-color);
-        height: 40px;
-        padding: 0 12px;
-        border-radius: var(--g-radius-l);
+        color: inherit;
+        min-height: 36px;
+        height: auto;
+        padding: 0 var(--g-padding);
+        border-radius: var(--g-radius);
     }
-
-    &:not(.nav-item_selected) {
-        > .nav-item_text:hover {
-            color: var(--g-color-hover);
-            background: oklch(1 0 0 / .08);
-        }
+    &:not(.nav-item_selected) > .nav-item_text:hover {
+        color: var(--g-color-hover);
+        background: oklch(1 0 0 / .06);
     }
-
-    &.nav-item_selected {
-        > .nav-item_text {
-            color: oklch(1 0 0);
-            background: var(--cg);
-            box-shadow: 0 4px 12px oklch(0 0 0 / .2);
-        }
+    &.nav-item_selected > .nav-item_text {
+        color: oklch(1 0 0);
+        background: var(--cg);
+        box-shadow: none;
     }
 }
 
-// -- CONTROL -- nav-title --
+// --- CONTROL -- nav-title ---
 
 .nav-title_wrap {
-    color: oklch(.55 .02 260);
-    margin: 15px 20px 5px;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    margin: var(--g-padding-l) var(--g-padding-l) var(--g-padding-s);
+    color: oklch(.68 .018 255);
+    font-size: var(--g-size-xs);
     font-weight: 600;
+    letter-spacing: .04em;
 }
 
-// -- CONTROL -- menulist --
+// --- CONTROL -- scroll ---
+
+.scroll_wrap {
+    background-color: transparent;
+
+    .scroll_start, .scroll_end {
+        display: none;
+    }
+    .scroll_bar .scroll_block {
+        border-radius: var(--g-radius-xl);
+        transition-property: background-color;
+    }
+}
+
+// --- CONTROL -- menu and pop ---
 
 .menulist_wrap {
+    padding: var(--g-padding-s);
     background: var(--g-pop-background);
-    padding: 6px;
+    border: var(--g-pop-border);
+    border-radius: var(--g-radius-l);
     box-shadow: var(--g-shadow-d);
-    border: solid 1px var(--g-border-color);
 }
 
-// -- CONTROL -- select / greatselect --
+.menulist-item_pop, .menu-item_pop {
+    border-radius: var(--g-radius-l);
+    box-shadow: var(--g-shadow-d);
+
+    > .menulist_wrap {
+        border: none;
+        border-radius: inherit;
+        box-shadow: none;
+    }
+}
 
 .greatselect_pop {
-    box-shadow: var(--g-shadow-d);
     border-radius: var(--g-radius-l);
+    box-shadow: var(--g-shadow-d);
 }
 
-// -- CONTROL -- check / radio --
+// --- CONTROL -- table and list ---
+
+.table_wrap, .list_wrap, .greatlist_wrap {
+    box-shadow: none;
+}
+
+.table_wrap {
+    border-radius: var(--g-radius-l);
+
+    .table_header {
+        border-radius: var(--g-radius-l) var(--g-radius-l) 0 0;
+    }
+}
+
+// --- CONTROL -- select ---
+
+.select_tag-cg-greatselect {
+    .select_op .select_tags .select_tag {
+        border-radius: var(--g-radius);
+
+        .select_label {
+            padding: 0 var(--g-padding-s);
+        }
+        .select_close {
+            width: var(--g-control-m);
+            height: var(--g-control-m);
+        }
+    }
+}
+
+// --- CONTROL -- check and radio ---
 
 .check_wrap, .radio_wrap {
     .check_check, .radio_check {
+        box-shadow: none;
         transition: var(--g-transition);
     }
     &:hover .check_check, &:hover .radio_check {
         border-color: var(--cg);
+    }
+}
+
+// --- CONTROL -- dialog ---
+
+.dialog_wrap {
+    .dialog_controls {
+        background: var(--face);
+    }
+}
+
+// --- CONTROL -- task ---
+
+.task_wrap {
+    background: oklch(.18 .025 258 / .82);
+    backdrop-filter: blur(8px);
+
+    .task_date {
+        color: oklch(.96 .005 255);
     }
 }

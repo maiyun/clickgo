@@ -218,7 +218,7 @@ export class AbstractBoot {
 export async function launcher(boot) {
     // --- 先加载核心库 ---
     await lTool.loadScripts([
-        `${cdn}/npm/vue@3.5.26/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`,
+        `${cdn}/npm/vue@3.5.42/dist/vue.global${boot.isDebug() ? '' : '.prod.min'}.js`,
     ]);
     // --- 再加载三方库，防止 Vue 没加载好，三方库加载会有异常 ---
     await lTool.loadScripts([
