@@ -118,11 +118,62 @@ export function setGlobalTransition(enable) {
 document.addEventListener('touchstart', function () {
     // --- 空操作，仅为了激活某些浏览器的点击行为 ---
 });
+/** --- 已插入的 form/panel 样式及引用数，task -> style --- */
+const formStyleCache = new Map();
+/** --- form/panel 实例持有的样式，task -> form -> panel --- */
+const formStyleOwners = new Map();
+/**
+ * --- 释放 form/panel 实例持有的共享样式 ---
+ * @param taskId 任务 ID
+ * @param formId 窗体 ID
+ * @param panelId 面板 ID，不传时释放窗体及其全部面板
+ * @returns 是否找到共享样式记录
+ */
+function removeFormStyle(taskId, formId, panelId) {
+    const taskOwners = formStyleOwners.get(taskId);
+    const panelOwners = taskOwners?.get(formId);
+    const taskStyles = formStyleCache.get(taskId);
+    if (!panelOwners || !taskStyles) {
+        return false;
+    }
+    const panelIds = panelId === undefined ? [...panelOwners.keys()] : [panelId];
+    for (const id of panelIds) {
+        const styles = panelOwners.get(id);
+        if (!styles) {
+            continue;
+        }
+        for (const style of styles) {
+            const entry = taskStyles.get(style);
+            if (!entry) {
+                continue;
+            }
+            --entry.refs;
+            if (entry.refs > 0) {
+                continue;
+            }
+            entry.element.remove();
+            taskStyles.delete(style);
+        }
+        panelOwners.delete(id);
+    }
+    if (!panelOwners.size) {
+        taskOwners.delete(formId);
+    }
+    if (!taskOwners.size) {
+        formStyleOwners.delete(taskId);
+    }
+    if (!taskStyles.size) {
+        formStyleCache.delete(taskId);
+    }
+    return true;
+}
 /**
  * --- 创建任务时连同一起创建的 style 标签 ---
  * @param taskId 任务 id
  */
 export function createToStyleList(taskId) {
+    formStyleCache.delete(taskId);
+    formStyleOwners.delete(taskId);
     styleList.insertAdjacentHTML('beforeend', `<div id="cg-style-task${taskId}"><div class="cg-style-control"></div><div class="cg-style-theme"></div><style class="cg-style-global"></style><div class="cg-style-form"></div></div>`);
 }
 /**
@@ -131,6 +182,8 @@ export function createToStyleList(taskId) {
  */
 export function removeFromStyleList(taskId) {
     document.getElementById('cg-style-task' + taskId)?.remove();
+    formStyleCache.delete(taskId);
+    formStyleOwners.delete(taskId);
 }
 /**
  * --- 将 style 内容写入 dom ---
@@ -153,7 +206,45 @@ export function pushStyle(taskId, style, type = 'global', formId = '', panelId) 
     }
     else {
         // --- form ---
-        el.insertAdjacentHTML('beforeend', `<style class="cg-style-form${formId}" data-panel="${panelId ? panelId.toString() : ''}">${style}</style>`);
+        let taskOwners = formStyleOwners.get(taskId);
+        if (!taskOwners) {
+            taskOwners = new Map();
+            formStyleOwners.set(taskId, taskOwners);
+        }
+        let panelOwners = taskOwners.get(formId);
+        if (!panelOwners) {
+            panelOwners = new Map();
+            taskOwners.set(formId, panelOwners);
+        }
+        const panelKey = panelId ?? '';
+        let styles = panelOwners.get(panelKey);
+        if (!styles) {
+            styles = new Set();
+            panelOwners.set(panelKey, styles);
+        }
+        if (styles.has(style)) {
+            return;
+        }
+        styles.add(style);
+        let taskStyles = formStyleCache.get(taskId);
+        if (!taskStyles) {
+            taskStyles = new Map();
+            formStyleCache.set(taskId, taskStyles);
+        }
+        const cached = taskStyles.get(style);
+        if (cached) {
+            ++cached.refs;
+            return;
+        }
+        const styleElement = document.createElement('style');
+        styleElement.className = 'cg-style-form' + formId;
+        styleElement.dataset.panel = panelKey;
+        styleElement.textContent = style;
+        el.appendChild(styleElement);
+        taskStyles.set(style, {
+            'element': styleElement,
+            'refs': 1
+        });
     }
 }
 /**
@@ -192,6 +283,9 @@ export function removeStyle(taskId, type = 'global', formId = '', panelId) {
     }
     else {
         // --- form ---
+        if (removeFormStyle(taskId, formId, panelId)) {
+            return;
+        }
         const elist = styleTask.querySelectorAll('.cg-style-form' + formId.toString() + (panelId ? '[data-panel="' + panelId.toString() + '"]' : ''));
         for (let i = 0; i < elist.length; ++i) {
             elist.item(i).remove();

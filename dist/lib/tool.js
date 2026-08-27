@@ -1374,23 +1374,32 @@ export function blob2Text(blob) {
         fr.readAsText(blob);
     });
 }
+/** --- Blob 对应的 base64 URL 转换结果 --- */
+const blobDataUrlCache = new WeakMap();
 /**
  * --- 将 blob 对象转换为 base64 url ---
  * @param blob 对象
+ * @returns base64 URL
  */
 export function blob2DataUrl(blob) {
-    return new Promise(function (resove) {
+    const cached = blobDataUrlCache.get(blob);
+    if (cached) {
+        return cached;
+    }
+    const converting = new Promise(function (resolve) {
         const fr = new FileReader();
         fr.addEventListener('load', function (e) {
             if (e.target) {
-                resove(e.target.result);
+                resolve(e.target.result);
             }
             else {
-                resove('');
+                resolve('');
             }
         });
         fr.readAsDataURL(blob);
     });
+    blobDataUrlCache.set(blob, converting);
+    return converting;
 }
 export function execCommand(ac) {
     if (!['copy', 'cut'].includes(ac)) {

@@ -972,100 +972,85 @@ export default class extends clickgo.control.AbstractControl {
             this.listValue = clickgo.tool.clone(this.value);
         }
     }
-    onMounted() {
-        let mvimmediate = true;
-        this.watch('modelValue', async () => {
-            if (mvimmediate) {
-                // --- 首次进入 ---
-                mvimmediate = false;
-            }
-            else {
-                if (JSON.stringify(this.value) === JSON.stringify(this.props.modelValue)) {
-                    return;
-                }
-            }
-            if (this.propBoolean('editable')) {
-                // --- 可输入模式 ---
-                if (this.props.modelValue.length) {
-                    // --- 传入值了 ---
-                    if (this.propBoolean('multi')) {
-                        // --- 多值模式 ---
-                        this.inputValue = '';
-                        this.searchValue = '';
-                        this.value.length = 0;
-                        this.label.length = 0;
-                        for (const item of this.props.modelValue) {
-                            const items = item.toString();
-                            const result = this.refs.list.findFormat(items, false);
-                            if (result?.[items]) {
-                                this.value.push(result[items].value);
-                                this.label.push(result[items].label);
-                            }
-                            else {
-                                this.value.push(items);
-                                this.label.push(items);
-                            }
-                        }
-                        this.updateValue();
-                        return;
-                    }
-                    // --- 单条 ---
-                    this.inputValue = (this.props.modelValue[0]).toString();
-                    this.value = [this.inputValue];
-                    const result = this.refs.list.findFormat(this.inputValue, false);
-                    this.label = [result?.[this.inputValue] ? result[this.inputValue].label : this.inputValue];
-                    this.listValue = [this.inputValue];
-                    this.updateValue();
-                    return;
-                }
-                // --- 没传值 ---
-                this.value.length = 0;
-                this.label.length = 0;
-                this.updateValue({
-                    'clearInput': true,
-                    'clearList': true
-                });
-                return;
-            }
-            // --- 不可输入模式 ---
+    /**
+     * --- 根据外部值同步控件的初始选择，不依赖子 List 的异步事件回传 ---
+     * @returns void
+     */
+    _syncModelValue() {
+        if (this.propBoolean('editable')) {
+            // --- 可输入模式 ---
             if (this.props.modelValue.length) {
-                // --- 传入值了 ---
                 if (this.propBoolean('multi')) {
-                    // --- 多值模式 ---
+                    this.inputValue = '';
+                    this.searchValue = '';
                     this.value.length = 0;
                     this.label.length = 0;
                     for (const item of this.props.modelValue) {
-                        const items = item.toString();
-                        const result = this.refs.list.findFormat(items, false);
-                        if (result?.[items]) {
-                            this.value.push(result[items].value);
-                            this.label.push(result[items].label);
-                        }
+                        const value = item.toString();
+                        const result = this.refs.list.findFormat(value, false);
+                        this.value.push(result?.[value]?.value ?? value);
+                        this.label.push(result?.[value]?.label ?? value);
                     }
+                    this.listValue = clickgo.tool.clone(this.value);
                     this.updateValue();
-                    this.listValue = this.value;
                     return;
                 }
-                // --- 单条 ---
-                this.listValue = [this.props.modelValue[0].toString()];
-                await this.nextTick();
-                await clickgo.tool.sleep(0);
-                this.value = clickgo.tool.clone(this.listValue);
-                this.label = clickgo.tool.clone(this.listLabel);
+                this.inputValue = this.props.modelValue[0].toString();
+                this.value = [this.inputValue];
+                const result = this.refs.list.findFormat(this.inputValue, false);
+                this.label = [result?.[this.inputValue]?.label ?? this.inputValue];
+                this.listValue = [this.inputValue];
                 this.updateValue();
                 return;
             }
-            // --- 不可输入还没值 ---
-            this.listValue = [];
-            await this.nextTick();
-            await clickgo.tool.sleep(0);
-            this.value = clickgo.tool.clone(this.listValue);
-            this.label = clickgo.tool.clone(this.listLabel);
-            this.updateValue();
+            this.value.length = 0;
+            this.label.length = 0;
+            this.updateValue({
+                'clearInput': true,
+                'clearList': true
+            });
+            return;
+        }
+        // --- 先展开外部值所在的树节点，使 dataGl 包含对应项目 ---
+        for (const item of this.props.modelValue) {
+            this.refs.list.findFormat(item.toString());
+        }
+        const data = this.refs.list.dataGl;
+        const selected = [];
+        for (const item of this.props.modelValue) {
+            const value = item.toString();
+            const row = data.find(d => d.value === value);
+            if (!row || row.disabled || (row.control === 'split')) {
+                continue;
+            }
+            selected.push(row);
+            if (!this.propBoolean('multi')) {
+                break;
+            }
+        }
+        if (!selected.length && this.isMust) {
+            const row = data.find(d => !d.disabled && (d.control !== 'split'));
+            if (row) {
+                selected.push(row);
+            }
+        }
+        this.value = selected.map(item => item.value);
+        this.label = selected.map(item => item.label);
+        this.listValue = clickgo.tool.clone(this.value);
+        this.listLabel = clickgo.tool.clone(this.label);
+        this.listItem = selected;
+        this.updateValue();
+    }
+    onMounted() {
+        this.watch('modelValue', () => {
+            if (JSON.stringify(this.value) === JSON.stringify(this.props.modelValue)) {
+                return;
+            }
+            this._syncModelValue();
         }, {
-            'immediate': true,
             'deep': true
         });
+        this._syncModelValue();
         this.watch('search', async () => {
             await this.nextTick();
             this.listValue = clickgo.tool.clone(this.value);

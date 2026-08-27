@@ -6,6 +6,4 @@ export default class extends clickgo.control.AbstractControl {
         'type': 'default',
         'size': 'm'
     };
-    /** --- 子组件 --- */
-    itemsLength = 0;
 }

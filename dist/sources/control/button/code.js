@@ -234,45 +234,11 @@ export default class extends clickgo.control.AbstractControl {
             }
         }
     }
-    /** --- 当前是第几列，从 0 开始 --- */
-    index = 0;
     /** --- 是否在按钮贴贴内部 --- */
     inBgroup = false;
-    /** --- 当前按钮在贴贴的位置 --- */
-    get bgroupPos() {
-        if (!this.inBgroup) {
-            return '';
-        }
-        if (this.index === 0) {
-            // --- 第一个 ---
-            if (this.parent.itemsLength === 1) {
-                // --- 只有一个 ---
-                return '';
-            }
-            return 'first';
-        }
-        if (this.parent.itemsLength === this.index + 1) {
-            // --- 最后一个 ---
-            return 'end';
-        }
-        // --- 中间 ---
-        return 'center';
-    }
-    onMounted() {
+    onCreated() {
         if (this.parent.controlName === 'bgroup') {
             this.inBgroup = true;
-            this.index = clickgo.dom.index(this.element);
-            ++this.parent.itemsLength;
-            this.watch(() => {
-                return this.parent.itemsLength;
-            }, () => {
-                this.index = clickgo.dom.index(this.element);
-            });
-        }
-    }
-    onUnmounted() {
-        if (this.parent.controlName === 'bgroup') {
-            --this.parent.itemsLength;
         }
     }
 }

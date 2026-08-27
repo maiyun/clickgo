@@ -1081,6 +1081,7 @@ export async function end(taskId: lCore.TCurrent): Promise<boolean> {
     }
     // --- 移除 style ---
     lDom.removeFromStyleList(taskId);
+    lControl.clearComponents(taskId);
     // --- 移除所有 timer ---
     for (const timer in list[taskId].timers) {
         if (timer.startsWith('1x')) {

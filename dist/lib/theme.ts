@@ -38,6 +38,34 @@ export function initSysId(id: string): void {
 /** --- 当前全局主题 --- */
 export let global: ITheme | null = null;
 
+/** --- 主题任务前缀占位符 --- */
+const taskIdPlaceholder = '__CLICKGO_THEME_TASK_ID__';
+
+/** --- 主题对象对应的预处理样式 --- */
+const styleCache = new WeakMap<ITheme, Promise<string | false>>();
+
+/**
+ * --- 预处理主题样式，任务 ID 在实际加载时再替换 ---
+ * @param theme 主题对象
+ * @returns 带任务 ID 占位符的样式
+ */
+async function prepareStyle(theme: ITheme): Promise<string | false> {
+    const cached = styleCache.get(theme);
+    if (cached) {
+        return cached;
+    }
+    const preparing = (async (): Promise<string | false> => {
+        const style = theme.files[theme.config.style + '.css'];
+        if (typeof style !== 'string') {
+            return false;
+        }
+        const scoped = lTool.stylePrepend(style, `cg-theme-task${taskIdPlaceholder}-`).style;
+        return lTool.styleUrl2DataUrl(theme.config.style, scoped, theme.files);
+    })();
+    styleCache.set(theme, preparing);
+    return preparing;
+}
+
 /**
  * --- cgt 文件 blob 转 IThemePkg 对象，会自动创建 object url，请注意释放 ---
  * @param blob blob 对象
@@ -112,12 +140,11 @@ export async function load(taskId: lCore.TCurrent, theme?: ITheme): Promise<bool
         // --- 当前任务非自定，可以设置为系统主题 ---
         theme = global;
     }
-    let style = theme.files[theme.config.style + '.css'] as string;
-    if (!style) {
+    const preparedStyle = await prepareStyle(theme);
+    if (!preparedStyle) {
         return false;
     }
-    style = lTool.stylePrepend(style, `cg-theme-task${taskId}-`).style;
-    style = await lTool.styleUrl2DataUrl(theme.config.style, style, theme.files);
+    let style = preparedStyle.replaceAll(taskIdPlaceholder, taskId);
     // --- 替换 [CGTMP-GLOBAL] ---
     style = style.replace(/\[CGTMP-GLOBAL\] +::selection/g, `#cg-form-list > [data-task-id="${taskId}"] ::selection, #cg-pop-list > [data-task-id="${taskId}"] ::selection`);
     style = style.replace(/\[CGTMP-GLOBAL\]/g, `#cg-form-list > [data-task-id="${taskId}"], #cg-pop-list > [data-task-id="${taskId}"]`);
@@ -209,9 +236,7 @@ export async function setGlobal(theme: ITheme | string, current: lCore.TCurrent 
     }
     global = theme;
     const tlist = await lTask.getOriginList(sysId);
-    for (const taskId in tlist) {
-        await load(taskId);
-    }
+    await Promise.all(Object.keys(tlist).map(taskId => load(taskId)));
     return 1;
 }
 

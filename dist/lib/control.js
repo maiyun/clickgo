@@ -23,6 +23,8 @@ import * as lForm from './form';
 import * as lFs from './fs';
 /** --- 系统级 ID --- */
 let sysId = '';
+/** --- task -> form -> path 的控件组件定义缓存；组件定义由用户控件动态生成，无法使用固定结构类型 --- */
+const componentCache = new Map();
 /**
  * --- 初始化系统级 ID，仅能设置一次 ---
  * @param id 系统级 ID
@@ -32,6 +34,25 @@ export function initSysId(id) {
         return;
     }
     sysId = id;
+}
+/**
+ * --- 清理控件组件定义缓存 ---
+ * @param taskId 任务 ID
+ * @param formId 窗体 ID，不传时清理整个任务
+ */
+export function clearComponents(taskId, formId) {
+    if (!formId) {
+        componentCache.delete(taskId);
+        return;
+    }
+    const taskCache = componentCache.get(taskId);
+    if (!taskCache) {
+        return;
+    }
+    taskCache.delete(formId);
+    if (!taskCache.size) {
+        componentCache.delete(taskId);
+    }
 }
 /** --- 窗体的抽象类 --- */
 export class AbstractControl {
@@ -430,6 +451,7 @@ export async function init(taskId, opt = {}) {
     if (!task) {
         return -1;
     }
+    clearComponents(taskId);
     let loaded = 0;
     for (let path of task.app.config.controls) {
         if (!path.endsWith('.cgc')) {
@@ -495,6 +517,10 @@ export async function init(taskId, opt = {}) {
                     // --- 给 teleport 做处理 ---
                     if (task.controls[name].layout.includes('<teleport')) {
                         task.controls[name].layout = lTool.teleportGlue(task.controls[name].layout, '{{{formId}}}');
+                    }
+                    // --- @click 在所有窗体中转换结果相同，只需在控件初始化时处理一次 ---
+                    if (task.controls[name].layout.includes('@click="')) {
+                        task.controls[name].layout = task.controls[name].layout.replaceAll('@click="', '@tap="');
                     }
                     // --- 添加父子组件的映射关系 ---
                     task.controls[name].access['cgPCMap'] = lTool.random(8, lTool.RANDOM_LUNS, '"<>$');
@@ -656,10 +682,32 @@ export function buildComponents(taskId, formId, path) {
     if (!task) {
         return false;
     }
+    let taskCache = componentCache.get(taskId);
+    if (!taskCache) {
+        taskCache = new Map();
+        componentCache.set(taskId, taskCache);
+    }
+    let formCache = taskCache.get(formId);
+    if (!formCache) {
+        formCache = new Map();
+        taskCache.set(formId, formCache);
+    }
+    const cached = formCache.get(path);
+    if (cached) {
+        return cached;
+    }
     /** --- 要返回的控件列表 --- */
     const components = {};
     for (const name in task.controls) {
         const control = task.controls[name];
+        const hasBeforeCreate = control.methods.onBeforeCreate !== AbstractControl.prototype.onBeforeCreate;
+        const hasCreated = control.methods.onCreated !== AbstractControl.prototype.onCreated;
+        const hasBeforeMount = control.methods.onBeforeMount !== AbstractControl.prototype.onBeforeMount;
+        const hasMounted = control.methods.onMounted !== AbstractControl.prototype.onMounted;
+        const hasBeforeUpdate = control.methods.onBeforeUpdate !== AbstractControl.prototype.onBeforeUpdate;
+        const hasUpdated = control.methods.onUpdated !== AbstractControl.prototype.onUpdated;
+        const hasBeforeUnmount = control.methods.onBeforeUnmount !== AbstractControl.prototype.onBeforeUnmount;
+        const hasUnmounted = control.methods.onUnmounted !== AbstractControl.prototype.onUnmounted;
         // --- 准备相关变量 ---
         const computed = Object.assign({}, control.computed);
         computed.findex = {
@@ -699,7 +747,7 @@ export function buildComponents(taskId, formId, path) {
             }
         };
         components['cg-' + name] = {
-            'template': control.layout.replace(/{{{formId}}}/g, formId.toString()).replaceAll('@click="', '@tap="'),
+            'template': control.layout.replace(/{{{formId}}}/g, formId.toString()),
             'props': control.props,
             'emits': control.emits,
             'data': function () {
@@ -714,21 +762,19 @@ export function buildComponents(taskId, formId, path) {
             },
             'methods': control.methods,
             'computed': computed,
-            beforeCreate: control.methods.onBeforeCreate,
+            beforeCreate: hasBeforeCreate ? control.methods.onBeforeCreate : undefined,
             created: function () {
                 this.props = this.$props;
                 this.slots = this.$slots;
                 this.access = lTool.clone(control.access);
-                this.packageFiles = {};
-                for (const fname in control.files) {
-                    this.packageFiles[fname] = control.files[fname];
+                // --- 包资源为只读数据，同一 task 的同类控件实例直接共享，避免逐实例复制 ---
+                this.packageFiles = control.files;
+                if (hasCreated) {
+                    this.onCreated();
                 }
-                this.onCreated();
             },
-            beforeMount: function () {
-                this.onBeforeMount();
-            },
-            mounted: async function () {
+            beforeMount: hasBeforeMount ? control.methods.onBeforeMount : undefined,
+            mounted: hasMounted ? async function () {
                 if (this.element.dataset?.cgRootcontrol !== undefined) {
                     const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
                     if (rc) {
@@ -736,23 +782,28 @@ export function buildComponents(taskId, formId, path) {
                     }
                 }
                 await this.$nextTick();
-                this.onMounted();
+                await this.onMounted();
+            } : function () {
+                if (this.element.dataset?.cgRootcontrol === undefined) {
+                    return;
+                }
+                const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
+                if (rc) {
+                    this._rootControl = rc;
+                }
             },
-            beforeUpdate: function () {
-                this.onBeforeUpdate();
-            },
-            updated: async function () {
+            beforeUpdate: hasBeforeUpdate ? control.methods.onBeforeUpdate : undefined,
+            updated: hasUpdated ? async function () {
                 await this.$nextTick();
                 this.onUpdated();
-            },
-            beforeUnmount: function () {
-                this.onBeforeUnmount();
-            },
-            unmounted: async function () {
+            } : undefined,
+            beforeUnmount: hasBeforeUnmount ? control.methods.onBeforeUnmount : undefined,
+            unmounted: hasUnmounted ? async function () {
                 await this.$nextTick();
                 this.onUnmounted();
-            }
+            } : undefined
         };
     }
+    formCache.set(path, components);
     return components;
 }

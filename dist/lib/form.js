@@ -23,6 +23,64 @@ import * as lFs from './fs';
 import * as lNative from './native';
 /** --- 系统级 ID --- */
 let sysId = '';
+/** --- task -> path -> layout -> style 的视图预处理缓存 --- */
+const preparedViewCache = new WeakMap();
+/**
+ * --- 预处理 form/panel 的布局和样式；相同源码在同一 task 内共享隔离前缀 ---
+ * @param task 当前任务
+ * @param path 文件基准路径
+ * @param layout 布局源码
+ * @param style 样式源码
+ * @returns 处理后的布局、样式和隔离前缀
+ */
+async function prepareView(task, path, layout, style) {
+    const styleKey = style;
+    let taskCache = preparedViewCache.get(task);
+    if (!taskCache) {
+        taskCache = new Map();
+        preparedViewCache.set(task, taskCache);
+    }
+    let pathCache = taskCache.get(path);
+    if (!pathCache) {
+        pathCache = new Map();
+        taskCache.set(path, pathCache);
+    }
+    let layoutCache = pathCache.get(layout);
+    if (!layoutCache) {
+        layoutCache = new Map();
+        pathCache.set(layout, layoutCache);
+    }
+    const cached = layoutCache.get(styleKey);
+    if (cached) {
+        return cached;
+    }
+    const preparing = (async () => {
+        let prep = '';
+        if (style) {
+            const r = lTool.stylePrepend(style);
+            prep = r.prep;
+            style = await lTool.styleUrl2DataUrl(path + '/', r.style, task.app.files);
+        }
+        layout = lTool.purify(layout);
+        layout = lTool.layoutAddTagClassAndReTagName(layout, true);
+        const prepList = ['cg-task' + task.id + '_'];
+        if (prep) {
+            prepList.push(prep);
+        }
+        layout = lTool.layoutClassPrepend(layout, prepList);
+        layout = lTool.eventsAttrWrap(layout);
+        if (layout.includes('@click="')) {
+            layout = layout.replaceAll('@click="', '@tap="');
+        }
+        return {
+            'layout': layout,
+            'style': style,
+            'prep': prep
+        };
+    })();
+    layoutCache.set(styleKey, preparing);
+    return preparing;
+}
 /**
  * --- 初始化系统级 ID，仅能设置一次 ---
  * @param id 系统级 ID
@@ -2561,6 +2619,7 @@ export function remove(formId) {
                 task.forms[formId].vroot.cgDialogCallback();
             }
             delete task.forms[formId];
+            lControl.clearComponents(taskId, formId);
             // --- 移除 form 的 style ---
             lDom.removeStyle(taskId, 'form', formId);
             // --- 触发 formRemoved 事件 ---
@@ -2726,37 +2785,13 @@ export async function createPanel(rootPanel, cls, opt = {}) {
             style = s;
         }
     }
-    if (style) {
-        // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
-        const r = lTool.stylePrepend(style);
-        prep = r.prep;
-        style = await lTool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
-    }
-    // --- 纯净化 ---
-    layout = lTool.purify(layout);
-    // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
-    layout = lTool.layoutAddTagClassAndReTagName(layout, true);
-    // --- 给所有控件传递窗体的 focus 信息 ---
-    /*
-    layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
-        'include': [/^cg-.+/]
-    });
-    */
-    // --- 给 layout 的 class 增加前置 ---
-    const prepList = ['cg-task' + t.id + '_'];
-    if (prep !== '') {
-        prepList.push(prep);
-    }
-    layout = lTool.layoutClassPrepend(layout, prepList);
-    // --- 给 event 增加包裹 ---
-    layout = lTool.eventsAttrWrap(layout);
+    const prepared = await prepareView(t, path, layout, style);
+    layout = prepared.layout;
+    style = prepared.style;
+    prep = prepared.prep;
     // --- 给 teleport 做处理 ---
     if (layout.includes('<teleport')) {
         layout = lTool.teleportGlue(layout, formId);
-    }
-    // --- 给 @click 做处理转换为 @tap ---
-    if (layout.includes('@click="')) {
-        layout = layout.replaceAll('@click="', '@tap="');
     }
     // --- 获取要定义的控件列表 ---
     const components = lControl.buildComponents(t.id, formId, path);
@@ -2952,8 +2987,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
             lCore.trigger('error', t.id, formId, err, err.message).catch(() => { });
         }
     });
-    // --- 执行 mounted ---
-    await lTool.sleep(34);
+    // --- 根组件 mounted 已等待 nextTick，此处可直接执行 panel 的 mounted ---
     try {
         await panel.onMounted.call(rtn.vroot);
     }
@@ -3073,42 +3107,13 @@ export async function create(current, cls, data, opt = {}) {
             style = s;
         }
     }
-    if (style) {
-        // --- 将 style 中的 tag 标签转换为 class，如 button 变为 .tag-button，然后将 class 进行标准程序，添加 prep 进行区分隔离 ---
-        const r = lTool.stylePrepend(style);
-        prep = r.prep;
-        style = await lTool.styleUrl2DataUrl(path + '/', r.style, t.app.files);
-    }
-    // --- 纯净化 ---
-    layout = lTool.purify(layout);
-    // --- 标签增加 cg- 前缀，增加 class 为 tag-xxx ---
-    layout = lTool.layoutAddTagClassAndReTagName(layout, true);
-    // --- 给所有控件传递窗体的 focus 信息 ---
-    /*
-    layout = tool.layoutInsertAttr(layout, ':form-focus=\'formFocus\'', {
-        'include': [/^cg-.+/]
-    });
-    */
-    // --- 给 layout 的 class 增加前置 ---
-    const prepList = ['cg-task' + t.id + '_'];
-    if (prep !== '') {
-        prepList.push(prep);
-    }
-    layout = lTool.layoutClassPrepend(layout, prepList);
-    // --- 给 event 增加包裹 ---
-    layout = lTool.eventsAttrWrap(layout);
-    // --- 给 touchstart 增加 .passive 防止 [Violation] Added non-passive event listener to a scroll-blocking ---
-    /*
-    layout = layout.replace(/@(touchstart|touchmove|wheel)=/g, '@$1.passive=');
-    layout = layout.replace(/@(touchstart|touchmove|wheel)\.not=/g, '@$1=');
-    */
+    const prepared = await prepareView(t, path, layout, style);
+    layout = prepared.layout;
+    style = prepared.style;
+    prep = prepared.prep;
     // --- 给 teleport 做处理 ---
     if (layout.includes('<teleport')) {
         layout = lTool.teleportGlue(layout, formId);
-    }
-    // --- 给 @click 做处理转换为 @tap ---
-    if (layout.includes('@click="')) {
-        layout = layout.replaceAll('@click="', '@tap="');
     }
     // --- 获取要定义的控件列表 ---
     const components = lControl.buildComponents(t.id, formId, path);
@@ -3423,8 +3428,7 @@ export async function create(current, cls, data, opt = {}) {
     };
     // --- 挂载 form ---
     t.forms[formId] = nform;
-    // --- 执行 mounted ---
-    await lTool.sleep(34);
+    // --- 根组件 mounted 已等待 nextTick，此处可直接执行 form 的 mounted ---
     try {
         await frm.onMounted.call(rtn.vroot, data ?? {});
     }
@@ -3432,6 +3436,7 @@ export async function create(current, cls, data, opt = {}) {
         // --- 窗体创建失败，做垃圾回收 ---
         lCore.trigger('error', rtn.vroot.taskId, rtn.vroot.formId, err, 'Create form mounted error: -6.').catch(() => { });
         delete t.forms[formId];
+        lControl.clearComponents(t.id, formId);
         try {
             rtn.vapp.unmount();
         }
