@@ -6,7 +6,7 @@
 
 # Interface: IObjviewerLine
 
-Defined in: [lib/control.ts:1531](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1531)
+Defined in: [lib/control.ts:1585](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1585)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1531](https://github.com/maiyun/clickgo/blob/master/
 
 > **end**: [`IObjviewerLineObj`](IObjviewerLineObj.md)
 
-Defined in: [lib/control.ts:1535](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1535)
+Defined in: [lib/control.ts:1589](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1589)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [lib/control.ts:1535](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **hue?**: `string`
 
-Defined in: [lib/control.ts:1537](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1537)
+Defined in: [lib/control.ts:1591](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1591)
 
 默认 255
 
@@ -32,7 +32,7 @@ Defined in: [lib/control.ts:1537](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **name?**: `string`
 
-Defined in: [lib/control.ts:1533](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1533)
+Defined in: [lib/control.ts:1587](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1587)
 
 -- 可自定义线段的名称
 
@@ -42,7 +42,7 @@ Defined in: [lib/control.ts:1533](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **path?**: `string`
 
-Defined in: [lib/control.ts:1538](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1538)
+Defined in: [lib/control.ts:1592](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1592)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [lib/control.ts:1538](https://github.com/maiyun/clickgo/blob/master/
 
 > **start**: [`IObjviewerLineObj`](IObjviewerLineObj.md)
 
-Defined in: [lib/control.ts:1534](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1534)
+Defined in: [lib/control.ts:1588](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1588)
 
 ***
 
@@ -58,6 +58,6 @@ Defined in: [lib/control.ts:1534](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **stroke?**: `"down"` \| `"solid"` \| `"dashed"` \| `"up"`
 
-Defined in: [lib/control.ts:1540](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1540)
+Defined in: [lib/control.ts:1594](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1594)
 
 默认 solid

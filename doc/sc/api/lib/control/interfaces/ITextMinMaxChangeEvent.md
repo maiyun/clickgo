@@ -6,7 +6,7 @@
 
 # Interface: ITextMinMaxChangeEvent
 
-Defined in: [lib/control.ts:925](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L925)
+Defined in: [lib/control.ts:978](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L978)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:926](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L926)
+Defined in: [lib/control.ts:979](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L979)
 
 #### before
 
@@ -36,7 +36,7 @@ Defined in: [lib/control.ts:926](https://github.com/maiyun/clickgo/blob/master/d
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L878)
+Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L931)
 
 #### Inherited from
 
@@ -48,7 +48,7 @@ Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:879](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L879)
+Defined in: [lib/control.ts:932](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L932)
 
 #### Returns
 

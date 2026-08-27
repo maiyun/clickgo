@@ -6,7 +6,7 @@
 
 # Interface: ICustomEvent
 
-Defined in: [lib/control.ts:877](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L877)
+Defined in: [lib/control.ts:930](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L930)
 
 Custom Event
 
@@ -52,7 +52,7 @@ Custom Event
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L878)
+Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L931)
 
 ***
 
@@ -60,7 +60,7 @@ Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:879](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L879)
+Defined in: [lib/control.ts:932](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L932)
 
 #### Returns
 

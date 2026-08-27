@@ -94,6 +94,7 @@
 ## Functions
 
 - [buildComponents](functions/buildComponents.md)
+- [clearComponents](functions/clearComponents.md)
 - [init](functions/init.md)
 - [initSysId](functions/initSysId.md)
 - [read](functions/read.md)

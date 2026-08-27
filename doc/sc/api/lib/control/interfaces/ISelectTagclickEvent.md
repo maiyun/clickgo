@@ -6,7 +6,7 @@
 
 # Interface: ISelectTagclickEvent
 
-Defined in: [lib/control.ts:1391](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1391)
+Defined in: [lib/control.ts:1444](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1444)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1391](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1392](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1392)
+Defined in: [lib/control.ts:1445](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1445)
 
 #### index
 

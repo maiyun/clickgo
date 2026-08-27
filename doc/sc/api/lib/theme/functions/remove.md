@@ -8,7 +8,7 @@
 
 > **remove**(`taskId`, `name`): `Promise`\<`void`\>
 
-Defined in: [lib/theme.ts:142](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L142)
+Defined in: [lib/theme.ts:169](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L169)
 
 移除当前 task 的 theme（只能移除自定的）
 

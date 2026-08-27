@@ -8,7 +8,7 @@
 
 > **showCircular**(`x`, `y`): `void`
 
-Defined in: [lib/form.ts:2090](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2090)
+Defined in: [lib/form.ts:2157](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2157)
 
 显示从小到大的圆圈动画特效对象
 

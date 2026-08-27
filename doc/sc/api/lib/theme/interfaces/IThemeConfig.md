@@ -6,7 +6,7 @@
 
 # Interface: IThemeConfig
 
-Defined in: [lib/theme.ts:268](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L268)
+Defined in: [lib/theme.ts:293](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L293)
 
 主题文件包的 config
 
@@ -16,7 +16,7 @@ Defined in: [lib/theme.ts:268](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **author**: `string`
 
-Defined in: [lib/theme.ts:272](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L272)
+Defined in: [lib/theme.ts:297](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L297)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/theme.ts:272](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **files**: `string`[]
 
-Defined in: [lib/theme.ts:278](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L278)
+Defined in: [lib/theme.ts:303](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L303)
 
 将要加载的文件
 
@@ -34,7 +34,7 @@ Defined in: [lib/theme.ts:278](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **name**: `string`
 
-Defined in: [lib/theme.ts:269](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L269)
+Defined in: [lib/theme.ts:294](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L294)
 
 ***
 
@@ -42,7 +42,7 @@ Defined in: [lib/theme.ts:269](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **style**: `string`
 
-Defined in: [lib/theme.ts:275](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L275)
+Defined in: [lib/theme.ts:300](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L300)
 
 不带扩展名，系统会在末尾添加 .css
 
@@ -52,7 +52,7 @@ Defined in: [lib/theme.ts:275](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **ver**: `number`
 
-Defined in: [lib/theme.ts:270](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L270)
+Defined in: [lib/theme.ts:295](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L295)
 
 ***
 
@@ -60,4 +60,4 @@ Defined in: [lib/theme.ts:270](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **version**: `string`
 
-Defined in: [lib/theme.ts:271](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L271)
+Defined in: [lib/theme.ts:296](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L296)

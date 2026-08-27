@@ -8,7 +8,7 @@
 
 > **queryStringify**(`query`, `encode?`): `string`
 
-Defined in: [lib/tool.ts:1637](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1637)
+Defined in: [lib/tool.ts:1647](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1647)
 
 将对象转换为 query string
 

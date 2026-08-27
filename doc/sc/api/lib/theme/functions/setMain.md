@@ -8,7 +8,7 @@
 
 > **setMain**(`color?`, `hue?`): `void`
 
-Defined in: [lib/theme.ts:241](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L241)
+Defined in: [lib/theme.ts:266](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L266)
 
 设置全局主色
 

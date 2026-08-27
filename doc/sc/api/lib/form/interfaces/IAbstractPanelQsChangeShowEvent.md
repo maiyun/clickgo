@@ -6,7 +6,7 @@
 
 # Interface: IAbstractPanelQsChangeShowEvent
 
-Defined in: [lib/form.ts:4190](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4190)
+Defined in: [lib/form.ts:4202](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4202)
 
 AbstractPanel qsChange 显示事件
 
@@ -16,7 +16,7 @@ AbstractPanel qsChange 显示事件
 
 > **detail**: `object`
 
-Defined in: [lib/form.ts:4191](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4191)
+Defined in: [lib/form.ts:4203](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4203)
 
 #### action
 

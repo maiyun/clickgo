@@ -6,7 +6,7 @@
 
 # Interface: IMenulistItemCheckEvent
 
-Defined in: [lib/control.ts:934](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L934)
+Defined in: [lib/control.ts:987](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L987)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:935](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L935)
+Defined in: [lib/control.ts:988](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L988)
 
 #### label?
 
@@ -40,7 +40,7 @@ radio 模式下，当前项的 label 内容
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L878)
+Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L931)
 
 #### Inherited from
 
@@ -52,7 +52,7 @@ Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:879](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L879)
+Defined in: [lib/control.ts:932](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L932)
 
 #### Returns
 

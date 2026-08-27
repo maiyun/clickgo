@@ -8,7 +8,7 @@
 
 > **init**(`taskId`, `opt?`): `Promise`\<`number`\>
 
-Defined in: [lib/control.ts:491](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L491)
+Defined in: [lib/control.ts:514](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L514)
 
 任务创建过程中，需要对 control 进行先行初始化，并将样式表插入到实际的任务 DOM 中
 

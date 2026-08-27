@@ -8,7 +8,7 @@
 
 > **getStyleCount**(`taskId`, `type`): `number`
 
-Defined in: [lib/dom.ts:221](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L221)
+Defined in: [lib/dom.ts:321](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L321)
 
 获取任务中子类有几个子元素
 

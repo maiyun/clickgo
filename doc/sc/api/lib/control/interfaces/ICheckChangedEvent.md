@@ -6,7 +6,7 @@
 
 # Interface: ICheckChangedEvent
 
-Defined in: [lib/control.ts:892](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L892)
+Defined in: [lib/control.ts:945](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L945)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:892](https://github.com/maiyun/clickgo/blob/master/d
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:893](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L893)
+Defined in: [lib/control.ts:946](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L946)
 
 #### indeterminate
 

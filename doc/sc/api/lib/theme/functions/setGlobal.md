@@ -8,7 +8,7 @@
 
 > **setGlobal**(`theme`, `current?`): `Promise`\<`number`\>
 
-Defined in: [lib/theme.ts:194](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L194)
+Defined in: [lib/theme.ts:221](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L221)
 
 将 cgt 主题设置到全局所有任务
 

@@ -6,7 +6,7 @@
 
 # Interface: IFormMaxEvent
 
-Defined in: [lib/control.ts:999](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L999)
+Defined in: [lib/control.ts:1052](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1052)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:999](https://github.com/maiyun/clickgo/blob/master/d
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1000](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1000)
+Defined in: [lib/control.ts:1053](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1053)
 
 #### action
 

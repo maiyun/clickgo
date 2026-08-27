@@ -8,7 +8,7 @@
 
 > **setLocaleLang**(`current`, `lang`): `void`
 
-Defined in: [lib/task.ts:1194](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1194)
+Defined in: [lib/task.ts:1200](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1200)
 
 设置本 task 的语言 name
 

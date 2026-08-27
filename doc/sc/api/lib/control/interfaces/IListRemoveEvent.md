@@ -6,7 +6,7 @@
 
 # Interface: IListRemoveEvent
 
-Defined in: [lib/control.ts:1235](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1235)
+Defined in: [lib/control.ts:1288](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1288)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1236](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1236)
+Defined in: [lib/control.ts:1289](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1289)
 
 #### index
 
@@ -36,7 +36,7 @@ Defined in: [lib/control.ts:1236](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L878)
+Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L931)
 
 #### Inherited from
 
@@ -48,7 +48,7 @@ Defined in: [lib/control.ts:878](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:879](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L879)
+Defined in: [lib/control.ts:932](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L932)
 
 #### Returns
 

@@ -6,7 +6,7 @@
 
 # Interface: IColoristChangedEvent
 
-Defined in: [lib/control.ts:1326](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1326)
+Defined in: [lib/control.ts:1379](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1379)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1326](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1327](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1327)
+Defined in: [lib/control.ts:1380](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1380)
 
 #### hsl?
 

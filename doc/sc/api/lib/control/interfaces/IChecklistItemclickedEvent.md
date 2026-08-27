@@ -6,7 +6,7 @@
 
 # Interface: IChecklistItemclickedEvent
 
-Defined in: [lib/control.ts:1213](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1213)
+Defined in: [lib/control.ts:1266](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1266)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1213](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1214](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1214)
+Defined in: [lib/control.ts:1267](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1267)
 
 #### arrow
 

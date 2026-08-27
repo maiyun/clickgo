@@ -6,7 +6,7 @@
 
 # Interface: IIconviewDropEvent
 
-Defined in: [lib/control.ts:1152](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1152)
+Defined in: [lib/control.ts:1205](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1205)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1152](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1153](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1153)
+Defined in: [lib/control.ts:1206](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1206)
 
 #### from
 

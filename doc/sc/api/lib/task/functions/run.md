@@ -8,7 +8,7 @@
 
 > **run**(`current`, `url`, `opt?`): `Promise`\<`string` \| `number`\>
 
-Defined in: [lib/task.ts:386](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L386)
+Defined in: [lib/task.ts:391](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L391)
 
 运行一个应用
 
