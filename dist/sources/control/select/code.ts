@@ -1061,7 +1061,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /**
-     * --- 根据外部值同步控件的初始选择，不依赖子 List 的异步事件回传 ---
+     * --- 根据外部值同步控件选择，不依赖子 List 的异步事件回传 ---
      * @returns void
      */
     private _syncModelValue(): void {
@@ -1105,6 +1105,19 @@ export default class extends clickgo.control.AbstractControl {
             this.refs.list.findFormat(item.toString());
         }
         const data: Array<Record<string, any>> = this.refs.list.dataGl;
+        if (!data.length) {
+            // --- data 为空时无法判定外部值是否有效，先保留并等待 data 变动后重新同步 ---
+            this.value = this.props.modelValue.map(item => item.toString());
+            if (!this.propBoolean('multi')) {
+                this.value.splice(1);
+            }
+            this.label = [];
+            this.listValue = clickgo.tool.clone(this.value);
+            this.listLabel = [];
+            this.listItem = [];
+            this.updateValue();
+            return;
+        }
         const selected: Array<Record<string, any>> = [];
         for (const item of this.props.modelValue) {
             const value = item.toString();
@@ -1231,14 +1244,8 @@ export default class extends clickgo.control.AbstractControl {
             }
             await this.nextTick();
             await clickgo.tool.sleep(0);
-            if (JSON.stringify(this.value) !== JSON.stringify(this.listValue)) {
-                this.value = clickgo.tool.clone(this.listValue);
-                this.emit('update:modelValue', clickgo.tool.clone(this.value));
-            }
-            if (JSON.stringify(this.label) !== JSON.stringify(this.listLabel)) {
-                this.label = clickgo.tool.clone(this.listLabel);
-                this.emit('label', clickgo.tool.clone(this.label));
-            }
+            // --- 子 List 完成 data 格式化后，优先重新应用外部值，再处理必选回退 ---
+            this._syncModelValue();
         });
     }
 
