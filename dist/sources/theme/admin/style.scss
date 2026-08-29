@@ -447,14 +447,20 @@ global {
     box-shadow: var(--g-shadow-d);
 }
 
-.menulist-item_pop, .menu-item_pop {
-    border-radius: var(--g-radius-l);
-    box-shadow: var(--g-shadow-d);
+.button_pop, .greatlist_pop, .iconview_pop, .jodit_pop, .label_pop, .link_pop,
+.map_pop, .menu-item_pop, .menulist-item_pop, .monaco_pop, .number_pop,
+.property_pop, .task-item_pop, .text_pop, .tuieditor_pop {
+    &:has(> .menulist_wrap) {
+        border-radius: var(--g-radius-l);
+        box-shadow: var(--g-shadow-d);
+        overflow: hidden;
 
-    > .menulist_wrap {
-        border: none;
-        border-radius: inherit;
-        box-shadow: none;
+        > .menulist_wrap {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
     }
 }
 

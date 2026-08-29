@@ -1,17 +1,17 @@
 global {
     --g-padding-xs:3px;
     --g-padding-s:6px;
-    --g-padding:12px;
+    --g-padding:10px;
     --g-padding-h:6px var(--g-padding);
-    --g-padding-l:18px;
-    --g-padding-l-h:12px var(--g-padding-l);
-    --g-padding-xl:28px;
-    --g-padding-xl-h:14px var(--g-padding-xl);
-    --g-bpadding:25px;
-    --g-margin:7px;
-    --g-radius:12px;
-    --g-radius-l:18px;
-    --g-radius-xl:24px;
+    --g-padding-l:16px;
+    --g-padding-l-h:10px var(--g-padding-l);
+    --g-padding-xl:24px;
+    --g-padding-xl-h:12px var(--g-padding-xl);
+    --g-bpadding:22px;
+    --g-margin:6px;
+    --g-radius:10px;
+    --g-radius-l:14px;
+    --g-radius-xl:18px;
     --g-size-xs:11px;
     --g-size:13px;
     --g-size-m:20px;
@@ -20,65 +20,84 @@ global {
     --g-control:18px;   // --- 如 check、radio 等的宽度 ---
     --g-control-m:22px;
     --g-control-l:26px;
-    --g-transition:all .3s var(--g-cubic);
+    --g-transition:all .18s var(--g-cubic);
     --g-line:1.5;
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
 
-    --g-pure:oklch(.995 0 0);
-    --face:oklch(.98 0 0);
-    --face-hover:oklch(.95 0 0);
-    --face-selected:oklch(.92 0 0);
-    --g-pop-background:oklch(.98 0 0 / .6);
-    --g-pop-backdrop:blur(10px) saturate(2);
-    --g-pop-border:none;
-    --g-shadow:0 1px 3px oklch(.2 0 0 / .05);
-    --g-shadow-d:0 1px 3px oklch(.2 0 0 / .35);
-    --g-outline-shadow:0 0 0 4px oklch(.95 0 0); 
+    --cg:color-mix(in oklch, var(--main), black 12%);
+    --cg-hover:color-mix(in oklch, var(--cg), white 10%);
+    --cg-active:color-mix(in oklch, var(--cg), black 10%);
+    --cg-focus:color-mix(in oklch, var(--cg), black 5%);
+    --cg-bg:color-mix(in oklch, var(--cg), white 88%);
+
+    --g-pure:oklch(.995 .003 255);
+    --face:oklch(.968 .006 255);
+    --face-hover:oklch(.945 .009 255);
+    --face-selected:oklch(.915 .012 255);
+    --g-pop-background:oklch(.995 .004 255 / .94);
+    --g-pop-backdrop:blur(18px) saturate(1.25);
+    --g-pop-border:solid .5px oklch(.875 .012 255);
+    --g-shadow:0 1px 2px oklch(.24 .02 255 / .05);
+    --g-shadow-d:0 18px 48px -20px oklch(.2 .025 255 / .32), 0 4px 14px -6px oklch(.2 .025 255 / .16);
+    --g-outline-shadow:0 0 0 3px color-mix(in oklch, var(--cg), transparent 80%);
 
     // --- 组件默认颜色（如按钮） ---
 
-    --g-background:oklch(1 0 0);
-    --g-background-hover:oklch(.98 0 0);
-    --g-background-active:oklch(.93 0 0);
-    --g-background-opacity:oklch(.98 0 0 / .2);
-    --g-background-focus:oklch(1 0 0);
-    --g-background-disabled:oklch(1 0 0);
+    --g-color:oklch(.34 .014 255);
+    --g-color-hover:oklch(.25 .018 255);
+    --g-color-active:oklch(.2 .018 255);
+    --g-color-focus:oklch(.27 .018 255);
+    --g-color-disabled:oklch(.65 .008 255);
+    --g-color-tip:oklch(.55 .01 255);
 
-    --g-border-color:oklch(.94 0 0);
-    --g-border-color-hover:oklch(.94 0 0);
-    --g-border-color-active:oklch(.94 0 0);
-    --g-border-color-focus:oklch(.94 0 0);
-    --g-border-color-disabled:oklch(.94 0 0);
+    --g-background:oklch(.997 .002 255);
+    --g-background-hover:oklch(.98 .006 255);
+    --g-background-active:oklch(.945 .012 255);
+    --g-background-opacity:oklch(.55 .02 255 / .16);
+    --g-background-focus:oklch(1 0 0);
+    --g-background-disabled:oklch(.955 .004 255);
+
+    --g-border-color:oklch(.885 .012 255);
+    --g-border-color-hover:oklch(.805 .02 255);
+    --g-border-color-active:color-mix(in oklch, var(--cg), white 45%);
+    --g-border-color-focus:color-mix(in oklch, var(--cg), white 38%);
+    --g-border-color-disabled:oklch(.91 .006 255);
 
     --g-focusbox-border-width:0;
     
     // --- 组件轻量颜色（如文本框） ---
 
-    --g-plain-background:oklch(.98 0 0);
-    --g-plain-background-hover:oklch(.96 0 0);
-    --g-plain-background-active:oklch(.94 0 0);
-    --g-plain-background-focus:oklch(.98 0 0);
-    --g-plain-background-disabled:oklch(.98 0 0);
-    --g-plain-background-selected:oklch(.95 0 0);
-    
-    --g-plain-border-color:transparent;
-    --g-plain-border-color-hover:oklch(.96 0 0);
-    --g-plain-border-color-active:oklch(.92 0 0);
-    --g-plain-border-color-focus:oklch(.92 0 0);
-    --g-plain-border-color-disabled:oklch(.92 0 0);
-    --g-plain-border-color-plain:oklch(.98 0 0);
+    --g-plain-color:var(--g-color);
+    --g-plain-color-hover:var(--g-color-hover);
+    --g-plain-color-active:var(--g-color-active);
+    --g-plain-color-focus:var(--g-color-focus);
+    --g-plain-color-disabled:var(--g-color-disabled);
+
+    --g-plain-background:oklch(.975 .006 255);
+    --g-plain-background-hover:oklch(.95 .01 255);
+    --g-plain-background-active:oklch(.925 .015 255);
+    --g-plain-background-focus:oklch(.995 .003 255);
+    --g-plain-background-disabled:oklch(.95 .004 255);
+    --g-plain-background-selected:color-mix(in oklch, var(--cg), white 88%);
+
+    --g-plain-border-color:oklch(.9 .01 255);
+    --g-plain-border-color-hover:oklch(.82 .018 255);
+    --g-plain-border-color-active:color-mix(in oklch, var(--cg), white 50%);
+    --g-plain-border-color-focus:color-mix(in oklch, var(--cg), white 42%);
+    --g-plain-border-color-disabled:oklch(.91 .006 255);
+    --g-plain-border-color-plain:oklch(.945 .006 255);
 
     // --- 特殊组件颜色 ---
 
-    --g-block-background:oklch(.96 0 0);
-    --g-block-background-hover:oklch(.94 0 0);
-    --g-block-dark-background:oklch(.04 0 0);
-    --g-block-dark-background-hover:oklch(.06 0 0);
+    --g-block-background:oklch(.93 .01 255);
+    --g-block-background-hover:oklch(.895 .015 255);
+    --g-block-dark-background:oklch(.18 .012 255);
+    --g-block-dark-background-hover:oklch(.22 .016 255);
 
     ::selection {
-        background-color: oklch(0 0 0 / 0.1);
+        background-color: color-mix(in oklch, var(--cg), transparent 78%);
     }
 }
 
@@ -87,6 +106,10 @@ global {
 .form_wrap {
     // --- 内部 ---
     .form_inner {
+        // --- 头部 ---
+        .form_header {
+            border-bottom: solid .5px var(--g-plain-border-color);
+        }
         // --- 主体内容 ---
         .form_content {
             .form_loading {
@@ -104,11 +127,11 @@ global {
 .group_wrap {
     border-radius: var(--g-radius-xl);
     &.group_hover:hover, &:not(.group_hover) {
-        box-shadow: 0 12px 16px -4px oklch(.2 0 0 / .08), 0 4px 6px -2px oklch(.2 0 0 / 0.03);
+        box-shadow: 0 12px 28px -18px oklch(.2 .025 255 / .3), 0 2px 8px -4px oklch(.2 .025 255 / .12);
     }
     &.group_plain {
         &.group_hover:hover, &:not(.group_hover) {
-            box-shadow: 0px 3px 16px 0px oklch(.2 0 0 / .06);
+            box-shadow: 0 8px 24px -18px oklch(.2 .025 255 / .28);
         }
     }
 }
