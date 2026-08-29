@@ -146,6 +146,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- list 的选中的 item 属性包列表 --- */
     public listItem: any[] = [];
 
+    /** --- data 为空时，是否有尚待 List 解析的外部值 --- */
+    private _modelValuePending = false;
+
     /** --- pop 的 loading --- */
     public loading = 0;
 
@@ -1066,6 +1069,7 @@ export default class extends clickgo.control.AbstractControl {
      */
     private _syncModelValue(): void {
         if (this.propBoolean('editable')) {
+            this._modelValuePending = false;
             // --- 可输入模式 ---
             if (this.props.modelValue.length) {
                 if (this.propBoolean('multi')) {
@@ -1107,6 +1111,7 @@ export default class extends clickgo.control.AbstractControl {
         const data: Array<Record<string, any>> = this.refs.list.dataGl;
         if (!data.length) {
             // --- data 为空时无法判定外部值是否有效，先保留并等待 data 变动后重新同步 ---
+            this._modelValuePending = true;
             this.value = this.props.modelValue.map(item => item.toString());
             if (!this.propBoolean('multi')) {
                 this.value.splice(1);
@@ -1115,9 +1120,9 @@ export default class extends clickgo.control.AbstractControl {
             this.listValue = clickgo.tool.clone(this.value);
             this.listLabel = [];
             this.listItem = [];
-            this.updateValue();
             return;
         }
+        this._modelValuePending = false;
         const selected: Array<Record<string, any>> = [];
         for (const item of this.props.modelValue) {
             const value = item.toString();
@@ -1244,8 +1249,20 @@ export default class extends clickgo.control.AbstractControl {
             }
             await this.nextTick();
             await clickgo.tool.sleep(0);
-            // --- 子 List 完成 data 格式化后，优先重新应用外部值，再处理必选回退 ---
-            this._syncModelValue();
+            // --- data 为空或此前有待解析外部值时，才重新应用 modelValue ---
+            if (!this.refs.list.dataGl.length || this._modelValuePending) {
+                this._syncModelValue();
+                return;
+            }
+            // --- 普通 data 刷新沿用 List 的选择结果，避免重复向外发出相同的 modelValue ---
+            if (JSON.stringify(this.value) !== JSON.stringify(this.listValue)) {
+                this.value = clickgo.tool.clone(this.listValue);
+                this.emit('update:modelValue', clickgo.tool.clone(this.value));
+            }
+            if (JSON.stringify(this.label) !== JSON.stringify(this.listLabel)) {
+                this.label = clickgo.tool.clone(this.listLabel);
+                this.emit('label', clickgo.tool.clone(this.label));
+            }
         });
     }
 

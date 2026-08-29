@@ -524,6 +524,22 @@ export async function init(taskId: string, opt: {
     if (!task) {
         return -1;
     }
+    /**
+     * --- 处理控件包加载失败 ---
+     * @param path 控件包路径
+     * @returns 控件初始化错误码
+     */
+    const failLoad = async (path: string): Promise<number> => {
+        const info = `Control package failed to load.\nTask id: ${task.id}\nPath: ${path}\nReason: The package is missing, invalid, or corrupted.`;
+        const error = new Error(info);
+        lForm.notify({
+            'title': 'Error',
+            'content': info,
+            'type': 'danger'
+        });
+        await lCore.trigger('error', task.id, '', error, info);
+        return -5;
+    };
     clearComponents(taskId);
     let loaded = 0;
     for (let path of task.app.config.controls) {
@@ -733,13 +749,11 @@ export async function init(taskId: string, opt: {
                 }
             }
             else {
-                lForm.notify({
-                    'title': 'Error',
-                    'content': 'Control failed to load.\nTask id: ' + task.id.toString() + '\nPath: ' + path,
-                    'type': 'danger'
-                });
-                return -5;
+                return failLoad(path);
             }
+        }
+        else {
+            return failLoad(path);
         }
         // --- 不能等待他，影响加载效率 ---
         opt.progress?.(++loaded, task.app.config.controls.length, path) as unknown;
