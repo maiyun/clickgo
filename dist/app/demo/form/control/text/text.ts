@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import numFrm from './num';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -125,6 +126,13 @@ long`;
 
     public onMinMaxChange(e: clickgo.control.ITextMinMaxChangeEvent): void {
         console.log('onMinMaxChange', e);
+    }
+
+    public async newForm(): Promise<void> {
+        const f = await clickgo.form.create(this, numFrm, {
+            'value': 2017,
+        });
+        await f.show();
     }
 
 }

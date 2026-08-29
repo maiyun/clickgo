@@ -50,6 +50,7 @@
             <label>min:</label>
             <label style="flex: 1;">{{min}}</label>
             <button @click="require = !require" style="flex: 1;">{{require ? '' : '!'}}require</button>
+            <button @click="newForm">Form</button>
         </layout>
         <layout gutter="10">
             <button @click="max = '200'; min = '10'" style="flex: 2;">max 200 min 10</button>

@@ -1,0 +1,6 @@
+<form width="300" height="200" title="Num" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1">
+        <label>Value: {{value}}</label>
+        <text v-model="value" type="number" :max="5000" :min="500"></text>
+    </layout>
+</form>
