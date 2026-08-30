@@ -2987,7 +2987,8 @@ export async function createPanel(rootPanel, cls, opt = {}) {
             lCore.trigger('error', t.id, formId, err, err.message).catch(() => { });
         }
     });
-    // --- 根组件 mounted 已等待 nextTick，此处可直接执行 panel 的 mounted ---
+    // --- 等待子控件完成首次挂载，确保 panel mounted 修改的数据能被控件监听到 ---
+    await lTool.nextFrame();
     try {
         await panel.onMounted.call(rtn.vroot);
     }
@@ -3428,7 +3429,8 @@ export async function create(current, cls, data, opt = {}) {
     };
     // --- 挂载 form ---
     t.forms[formId] = nform;
-    // --- 根组件 mounted 已等待 nextTick，此处可直接执行 form 的 mounted ---
+    // --- 等待子控件完成首次挂载，确保 form mounted 修改的数据能被控件监听到 ---
+    await lTool.nextFrame();
     try {
         await frm.onMounted.call(rtn.vroot, data ?? {});
     }
