@@ -258,69 +258,17 @@ global {
 
 // -- CONTROL -- nav --
 
-@keyframes nav_float {
-    0% {
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-    50% {
-        transform: translate3d(3vw, -2vh, 0) scale(1.05);
-    }
-    100% {
-        transform: translate3d(-2vw, 3vh, 0) scale(.96);
-    }
-}
-
 .nav_wrap {
-    background: oklch(.09 .022 274);
+    background: oklch(.09 .016 274);
     .nav_bg {
         display: block;
         position: absolute;
         inset: 0;
         overflow: hidden;
-        background: linear-gradient(145deg, oklch(.095 .028 277), oklch(.075 .018 262));
+        background: oklch(.09 .016 274);
         z-index: 0;
         .nav_bg-item {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(110px);
-            opacity: .22;
-            animation: nav_float infinite ease-in-out alternate;
-            &.nav_bg-item-1 {
-                width: 52vw;
-                height: 52vw;
-                left: -12%;
-                bottom: -28%;
-                background: var(--cg);
-                animation-duration: 24s;
-            }
-            &.nav_bg-item-2 {
-                width: 40vw;
-                height: 40vw;
-                right: -8%;
-                bottom: -18%;
-                background: var(--modern-accent-shift);
-                animation-duration: 28s;
-                animation-delay: -8s;
-            }
-            &.nav_bg-item-3 {
-                width: 48vw;
-                height: 48vw;
-                right: -12%;
-                top: -24%;
-                background: color-mix(in oklch, var(--cg), white 36%);
-                animation-duration: 26s;
-                animation-delay: -13s;
-            }
-            &.nav_bg-item-4 {
-                width: 30vw;
-                height: 30vw;
-                left: 32%;
-                top: -22%;
-                background: color-mix(in oklch, var(--modern-accent-shift), white 18%);
-                opacity: .14;
-                animation-duration: 30s;
-                animation-delay: -5s;
-            }
+            display: none;
         }
     }
     .nav_menuwrap {
