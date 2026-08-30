@@ -6,7 +6,7 @@
 
 # Interface: IUploaderRemoveEvent
 
-Defined in: [lib/control.ts:1184](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1184)
+Defined in: [lib/control.ts:1198](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1198)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1185](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1185)
+Defined in: [lib/control.ts:1199](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1199)
 
 #### index
 
@@ -32,7 +32,7 @@ Defined in: [lib/control.ts:1185](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L931)
+Defined in: [lib/control.ts:945](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L945)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:932](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L932)
+Defined in: [lib/control.ts:946](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L946)
 
 #### Returns
 

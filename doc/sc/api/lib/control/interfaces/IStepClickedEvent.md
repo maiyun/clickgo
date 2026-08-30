@@ -6,7 +6,7 @@
 
 # Interface: IStepClickedEvent
 
-Defined in: [lib/control.ts:1539](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1539)
+Defined in: [lib/control.ts:1553](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1553)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1539](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1540](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1540)
+Defined in: [lib/control.ts:1554](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1554)
 
 #### index
 

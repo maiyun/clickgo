@@ -6,7 +6,7 @@
 
 # Interface: IPaletteChangedEvent
 
-Defined in: [lib/control.ts:1357](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1357)
+Defined in: [lib/control.ts:1371](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1371)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1357](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1358](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1358)
+Defined in: [lib/control.ts:1372](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1372)
 
 #### hsl?
 

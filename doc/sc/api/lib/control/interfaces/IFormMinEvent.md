@@ -6,7 +6,7 @@
 
 # Interface: IFormMinEvent
 
-Defined in: [lib/control.ts:1068](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1068)
+Defined in: [lib/control.ts:1082](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1082)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1068](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1069](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1069)
+Defined in: [lib/control.ts:1083](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1083)
 
 #### action
 

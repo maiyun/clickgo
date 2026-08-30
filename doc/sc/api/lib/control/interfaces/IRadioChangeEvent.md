@@ -6,7 +6,7 @@
 
 # Interface: IRadioChangeEvent
 
-Defined in: [lib/control.ts:1346](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1346)
+Defined in: [lib/control.ts:1360](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1360)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1347](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1347)
+Defined in: [lib/control.ts:1361](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1361)
 
 #### selected
 
@@ -40,7 +40,7 @@ Defined in: [lib/control.ts:1347](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L931)
+Defined in: [lib/control.ts:945](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L945)
 
 #### Inherited from
 
@@ -52,7 +52,7 @@ Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:932](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L932)
+Defined in: [lib/control.ts:946](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L946)
 
 #### Returns
 

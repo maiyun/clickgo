@@ -8,7 +8,7 @@
 
 > **buildComponents**(`taskId`, `formId`, `path`): `false` \| `Record`\<`string`, `any`\>
 
-Defined in: [lib/control.ts:756](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L756)
+Defined in: [lib/control.ts:770](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L770)
 
 初始化获取新窗体的控件 component（init 后执行）
 

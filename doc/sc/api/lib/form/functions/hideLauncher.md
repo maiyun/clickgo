@@ -8,7 +8,7 @@
 
 > **hideLauncher**(): `void`
 
-Defined in: [lib/form.ts:4162](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4162)
+Defined in: [lib/form.ts:4164](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4164)
 
 隐藏 launcher 界面
 

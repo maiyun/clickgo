@@ -6,7 +6,7 @@
 
 # Interface: IGreatlistItemclickedEvent
 
-Defined in: [lib/control.ts:1112](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1112)
+Defined in: [lib/control.ts:1126](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1126)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1112](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1113](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1113)
+Defined in: [lib/control.ts:1127](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1127)
 
 #### arrow
 
