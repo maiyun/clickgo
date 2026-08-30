@@ -1,0 +1,34 @@
+<form width="980" height="680" title="Local component + Dock demo">
+    <layout class="workspace">
+        <!-- 工具栏和画布 -->
+        <layout class="editor" direction="v" gutter="10">
+            <layout align-v="center" gutter="8">
+                <button :type="activeTool === 'brush' ? 'cg' : 'default'" @click="selectTool('brush')">Brush</button>
+                <button :type="activeTool === 'pencil' ? 'cg' : 'default'" @click="selectTool('pencil')">Pencil</button>
+                <button @click="undo" :disabled="history.undo === 0">Undo</button>
+                <button @click="redo" :disabled="history.redo === 0">Redo</button>
+                <button @click="clear">Clear</button>
+                <label style="flex: 1">Active: {{activeTool}}</label>
+                <button @click="dockExpanded = !dockExpanded">Toggle Dock</button>
+            </layout>
+            <canvas ref="canvas" class="canvas" width="720" height="540" @pointerdown="pointerDown($event)" @pointermove="pointerMove($event)" @pointerup="pointerUp($event)" @pointercancel="pointerUp($event)"></canvas>
+        </layout>
+
+        <!-- Dock 只负责布局，内容来自局部应用组件 -->
+        <dock v-model:expanded="dockExpanded" :width="320">
+            <dock-group v-model="optionTab">
+                <dock-item name="brush" label="Brush" lazy cache>
+                    <brush-options v-model="brush" @select="selectTool('brush')"></brush-options>
+                </dock-item>
+                <dock-item name="pencil" label="Pencil" lazy cache>
+                    <pencil-options v-model="pencil" @select="selectTool('pencil')"></pencil-options>
+                </dock-item>
+            </dock-group>
+            <dock-group v-model="historyTab" v-model:collapsed="historyCollapsed" grow>
+                <dock-item name="history" label="History" lazy cache="false">
+                    <history-state :state="history"></history-state>
+                </dock-item>
+            </dock-group>
+        </dock>
+    </layout>
+</form>

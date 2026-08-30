@@ -54,7 +54,6 @@ import cvideoFrm from './control/video/video';
 import cmpegtsFrm from './control/mpegts/mpegts';
 import cimgviewerFrm from './control/imgviewer/imgviewer';
 import cstabFrm from './control/stab/stab';
-import csformFrm from './control/sform/sform';
 import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
 import cechartsFrm from './control/echarts/echarts';
@@ -96,7 +95,7 @@ import mtoolFrm from './method/tool/tool';
 import mzipFrm from './method/zip/zip';
 
 import sbackpanelFrm from './solution/backpanel/backpanel';
-import ssplitFrm from './solution/split/split';
+import scomponentFrm from './solution/component/component';
 
 export default class extends clickgo.form.AbstractForm {
 
@@ -216,10 +215,6 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cstab': {
                 frm = await clickgo.form.create(this, cstabFrm);
-                break;
-            }
-            case 'csform': {
-                frm = await clickgo.form.create(this, csformFrm);
                 break;
             }
             case 'cstep': {
@@ -520,8 +515,8 @@ export default class extends clickgo.form.AbstractForm {
                 frm = await clickgo.form.create(this, sbackpanelFrm, data);
                 break;
             }
-            case 'ssplit': {
-                frm = await clickgo.form.create(this, ssplitFrm);
+            case 'scomponent': {
+                frm = await clickgo.form.create(this, scomponentFrm);
                 break;
             }
             default: {

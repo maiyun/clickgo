@@ -70,7 +70,6 @@
                     <button @click="openForm('cscroll')">Scroll</button>
                     <button @click="openForm('cselect')">Select</button>
                     <button @click="openForm('csetting')">Setting</button>
-                    <button @click="openForm('csform')">Sform</button>
                     <button @click="openForm('csgroup')">Sgroup</button>
                     <button @click="openForm('cstab')">Stab</button>
                     <button @click="openForm('cstep')">Step</button>
@@ -126,7 +125,7 @@
                 <button @click="openForm('sbackpanel')">Backend panel</button>
                 <button @click="openForm('sbackpanel', {'hash': 'test1?a=1&b=2'})">Backend panel with hash</button>
                 <button @click="openForm('shue')">Hue</button>
-                <button @click="openForm('ssplit')">Form split</button>
+                <button @click="openForm('scomponent')">Local component + Dock</button>
             </layout>
         </flow>
     </tab>

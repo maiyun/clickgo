@@ -1,0 +1,7 @@
+<flow class="history" direction="v" gutter="8">
+    <label>Independent history component</label>
+    <label>Mounted at {{mountedAt}}</label>
+    <label>Strokes: {{state.stroke}}</label>
+    <label>Undo available: {{state.undo}}</label>
+    <label>Redo available: {{state.redo}}</label>
+</flow>

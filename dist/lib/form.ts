@@ -233,6 +233,9 @@ const info: {
 /** --- Panel 与 Form 共用的抽象类 --- */
 abstract class AbstractCommon {
 
+    /** --- 当前视图内局部注册的应用组件 --- */
+    public readonly components: Record<string, new () => AbstractComponent> = {};
+
     /** --- 当前文件在包内的路径 --- */
     public get filename(): string {
         // --- pack 时系统自动在继承类中重写本函数 ---
@@ -538,6 +541,376 @@ export abstract class AbstractPanel extends AbstractCommon {
         return;
     }
 
+}
+
+/** --- Form/Panel 内使用的应用局部组件抽象类 --- */
+export abstract class AbstractComponent extends AbstractCommon {
+
+    /** --- 当前组件内继续局部注册的应用组件 --- */
+    public readonly components: Record<string, new () => AbstractComponent> = {};
+
+    /** --- 当前组件所在窗体的创建序号 --- */
+    public get findex(): number {
+        return 0;
+    }
+
+    /** --- 当前组件所在窗体的窗体对象 --- */
+    private _rootForm: (AbstractForm & Record<string, any>) | null = null;
+
+    public get rootForm(): AbstractForm & Record<string, any> {
+        if (!this._rootForm) {
+            this._rootForm = this.parentByName('root') as AbstractForm & Record<string, any>;
+            if (!this._rootForm) {
+                notify({
+                    'title': 'Error',
+                    'content': `The "rootForm" is not ready yet.\nComponent: "${this.controlName}".`,
+                    'type': 'danger'
+                });
+            }
+        }
+        return this._rootForm;
+    }
+
+    /** --- 当前组件是否跟随宿主窗体获得焦点 --- */
+    public get formFocus(): boolean {
+        return this.rootForm?.formFocus ?? false;
+    }
+
+    /** --- 获取宿主 Form/Panel 的语言内容 --- */
+    public override get l(): (key: string, data?: string[]) => string {
+        return (key: string, data?: string[]): string => {
+            return this.rootForm.l(key, data);
+        };
+    }
+
+    /** --- 获取宿主窗体语言内容 --- */
+    public get fl(): (key: string, data?: string[]) => string {
+        return (key: string, data?: string[]): string => {
+            if (!key.startsWith('l:')) {
+                return key;
+            }
+            return this.rootForm.l(key.slice(2), data, true);
+        };
+    }
+
+    /** --- 应用组件动态 class 的隔离前缀 --- */
+    public override get classPrepend(): (cla: any) => string {
+        return (cla: any): string => {
+            if (typeof cla !== 'string') {
+                return cla;
+            }
+            return `cg-task${this.taskId}_${cla}${this.prep ? (' ' + this.prep + cla) : ''}`;
+        };
+    }
+
+    /** --- 组件内部文件，由系统重写 --- */
+    public readonly packageFiles: Record<string, Blob | string> = {};
+
+    /** --- 组件参数，由用户定义重写 --- */
+    public readonly props = {};
+
+    /** --- 组件事件，由用户定义重写 --- */
+    public readonly emits: Record<string, null | ((payload: any) => boolean)> = {};
+
+    /** --- 组件的子插槽 --- */
+    public readonly slots: Record<string, () => any[]> = {};
+
+    /** --- 获取某插槽所有子项 --- */
+    public get slotsAll(): (name: string) => any[] {
+        return (name: string): any[] => {
+            if (!this.slots[name]) {
+                return [];
+            }
+            const rtn: any[] = [];
+            for (const slot of this.slots[name]()) {
+                if (slot.props) {
+                    rtn.push(slot);
+                    continue;
+                }
+                if ((typeof slot.children !== 'string') && slot.children.length) {
+                    rtn.push(...slot.children);
+                }
+            }
+            return rtn;
+        };
+    }
+
+    /** --- 获取 props 中的 boolean 类型值 --- */
+    public get propBoolean(): (name: keyof this['props']) => boolean {
+        return (name: keyof this['props']): boolean => lTool.getBoolean((this.props as any)[name]);
+    }
+
+    /** --- 获取 props 中的 number 类型值 --- */
+    public get propNumber(): (name: keyof this['props']) => number {
+        return (name: keyof this['props']): number => lTool.getNumber((this.props as any)[name]);
+    }
+
+    /** --- 获取 props 中的 int 类型值 --- */
+    public get propInt(): (name: keyof this['props']) => number {
+        return (name: keyof this['props']): number => Math.round(this.propNumber(name));
+    }
+
+    /** --- 获取 props 中的 array 类型值 --- */
+    public get propArray(): (name: keyof this['props']) => any[] {
+        return (name: keyof this['props']): any[] => lTool.getArray((this.props as any)[name]);
+    }
+
+    /** --- 向上触发组件事件 --- */
+    public emit(name: string, ...v: any[]): void {
+        (this as any).$emit(name, ...v);
+    }
+
+    /** --- 获取上层控件或组件 --- */
+    public get parent(): lControl.AbstractControl & AbstractComponent & AbstractForm & Record<string, any> {
+        return (this as any).$parent;
+    }
+
+    /** --- 根据 controlName 查询上层对象 --- */
+    public get parentByName(): (controlName: string) => Record<string, any> | null {
+        return (controlName: string): Record<string, any> | null => {
+            let parent = (this as any).$parent;
+            while (parent) {
+                if (parent.controlName === controlName) {
+                    return parent;
+                }
+                parent = parent.$parent;
+            }
+            return null;
+        };
+    }
+
+    /** --- 根据 access 查询上层对象 --- */
+    public get parentByAccess(): (name: string, val: string) => Record<string, any> | null {
+        return (name: string, val: string): Record<string, any> | null => {
+            let parent = (this as any).$parent;
+            while (parent) {
+                if (parent.access?.[name] === val) {
+                    return parent;
+                }
+                parent = parent.$parent;
+            }
+            return null;
+        };
+    }
+
+    /** --- 组件挂载好后触发 --- */
+    public onMounted(): void | Promise<void> {
+        return;
+    }
+
+}
+
+/**
+ * --- 构建 Form/Panel 内局部应用组件 ---
+ * @param task 当前任务
+ * @param formId 所属窗体 ID
+ * @param findex 所属窗体创建序号
+ * @param componentClasses 要注册的组件类
+ * @param panelId 所属 Panel ID
+ * @param chain 当前递归构建链
+ * @returns Vue 局部组件定义
+ */
+async function buildLocalComponents(
+    task: lTask.ITask,
+    formId: string,
+    findex: number,
+    componentClasses: Record<string, new () => AbstractComponent>,
+    panelId?: string,
+    chain: Array<new () => AbstractComponent> = []
+): Promise<Record<string, any>> {
+    const rtn: Record<string, any> = {};
+    for (const name in componentClasses) {
+        if (!/^[a-z][a-z0-9]*(?:-[a-z0-9]+)+$/.test(name)) {
+            throw new Error(`The component name must be lowercase kebab-case and contain "-".\nName: ${name}`);
+        }
+        const cls = componentClasses[name];
+        if (chain.includes(cls)) {
+            throw new Error(`Circular local component registration.\nName: ${name}`);
+        }
+        Object.defineProperty(cls.prototype, 'taskId', {
+            get: () => task.id,
+            'configurable': true,
+        });
+        const component = new cls();
+        const filename = component.filename;
+        if (!filename) {
+            throw new Error(`The component filename is empty.\nName: ${name}`);
+        }
+        const path = filename.slice(0, filename.lastIndexOf('/'));
+        const layoutSource = task.app.files[filename.slice(0, -2) + 'xml'];
+        if (typeof layoutSource !== 'string') {
+            throw new Error(`The component layout was not found.\nFile: ${filename.slice(0, -2)}xml`);
+        }
+        const styleSource = task.app.files[filename.slice(0, -2) + 'css'];
+        const prepared = await prepareView(task, path, layoutSource, typeof styleSource === 'string' ? styleSource : '');
+        let layout = prepared.layout;
+        if (layout.includes('<teleport')) {
+            layout = lTool.teleportGlue(layout, formId);
+        }
+        if (prepared.style) {
+            lDom.pushStyle(task.id, prepared.style, 'form', formId, panelId);
+        }
+        const controls = lControl.buildComponents(task.id, formId, path);
+        if (!controls) {
+            throw new Error(`Build controls failed.\nComponent: ${name}`);
+        }
+        const childComponents = await buildLocalComponents(
+            task,
+            formId,
+            findex,
+            component.components,
+            panelId,
+            [...chain, cls]
+        );
+        for (const childName in childComponents) {
+            if (controls[childName]) {
+                throw new Error(`The component name conflicts with a control.\nName: ${childName.slice(3)}`);
+            }
+            controls[childName] = childComponents[childName];
+        }
+
+        const props: Record<string, { 'default': unknown | (() => unknown); }> = {};
+        for (const key in component.props) {
+            const val = (component.props as Record<string, unknown>)[key];
+            props[key] = {
+                'default': (val !== null) && (typeof val === 'object') ? (): unknown => lTool.clone(val) : val
+            };
+        }
+        const idata: Record<string, unknown> = {};
+        let access: Record<string, unknown> | null = null;
+        for (const item of Object.entries(component)) {
+            if (['components', 'emits', 'packageFiles', 'props', 'slots'].includes(item[0])) {
+                continue;
+            }
+            if (item[0] === 'access') {
+                access = item[1] as Record<string, unknown>;
+                continue;
+            }
+            idata[item[0]] = item[1];
+        }
+        const prot = lTool.getClassPrototype(component);
+        const methods = prot.method;
+        const computed = prot.access;
+        computed.controlName = {
+            get: function(): string {
+                return name;
+            },
+            set: function(): void {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "controlName".\nComponent: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
+        computed.taskId = {
+            get: function(): string {
+                return task.id;
+            },
+            set: function(): void {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "taskId".\nComponent: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
+        computed.formId = {
+            get: function(): string {
+                return formId;
+            },
+            set: function(): void {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "formId".\nComponent: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
+        computed.findex = {
+            get: function(): number {
+                return findex;
+            },
+            set: function(): void {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "findex".\nComponent: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
+        computed.path = {
+            get: function(): string {
+                return path;
+            },
+            set: function(): void {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "path".\nComponent: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
+        computed.prep = {
+            get: function(): string {
+                return prepared.prep;
+            },
+            set: function(): void {
+                notify({
+                    'title': 'Error',
+                    'content': `The software tries to modify the system variable "prep".\nComponent: ${name}`,
+                    'type': 'danger'
+                });
+            }
+        };
+
+        const hasBeforeCreate = methods.onBeforeCreate !== AbstractComponent.prototype.onBeforeCreate;
+        const hasCreated = methods.onCreated !== AbstractComponent.prototype.onCreated;
+        const hasBeforeMount = methods.onBeforeMount !== AbstractComponent.prototype.onBeforeMount;
+        const hasMounted = methods.onMounted !== AbstractComponent.prototype.onMounted;
+        const hasBeforeUpdate = methods.onBeforeUpdate !== AbstractComponent.prototype.onBeforeUpdate;
+        const hasUpdated = methods.onUpdated !== AbstractComponent.prototype.onUpdated;
+        const hasBeforeUnmount = methods.onBeforeUnmount !== AbstractComponent.prototype.onBeforeUnmount;
+        const hasUnmounted = methods.onUnmounted !== AbstractComponent.prototype.onUnmounted;
+        rtn['cg-' + name] = {
+            'template': layout,
+            'components': controls,
+            'props': props,
+            'emits': component.emits,
+            'data': function(): Record<string, unknown> {
+                return lTool.clone(idata);
+            },
+            'methods': methods,
+            'computed': computed,
+            beforeCreate: hasBeforeCreate ? methods.onBeforeCreate : undefined,
+            created: function(this: lCore.IVue): void {
+                this.props = this.$props;
+                this.slots = this.$slots;
+                if (access) {
+                    this.access = lTool.clone(access);
+                }
+                if (hasCreated) {
+                    this.onCreated();
+                }
+            },
+            beforeMount: hasBeforeMount ? methods.onBeforeMount : undefined,
+            mounted: hasMounted ? async function(this: lCore.IVue): Promise<void> {
+                await this.$nextTick();
+                await this.onMounted();
+            } : undefined,
+            beforeUpdate: hasBeforeUpdate ? methods.onBeforeUpdate : undefined,
+            updated: hasUpdated ? async function(this: lCore.IVue): Promise<void> {
+                await this.$nextTick();
+                await this.onUpdated();
+            } : undefined,
+            beforeUnmount: hasBeforeUnmount ? methods.onBeforeUnmount : undefined,
+            unmounted: hasUnmounted ? async function(this: lCore.IVue): Promise<void> {
+                await this.$nextTick();
+                await this.onUnmounted();
+            } : undefined
+        };
+    }
+    return rtn;
 }
 
 /** --- 窗体的抽象类 --- */
@@ -3150,10 +3523,22 @@ export async function createPanel<T extends AbstractPanel>(
         lCore.trigger('error', '', '', err, err.message).catch(() => {});
         throw err;
     }
+    const localComponents = await buildLocalComponents(
+        t, formId, t.forms[formId].vroot.findex, panel.components, panelId
+    );
+    for (const name in localComponents) {
+        if (components[name]) {
+            throw new Error(`The component name conflicts with a control.\nName: ${name.slice(3)}`);
+        }
+        components[name] = localComponents[name];
+    }
     /** --- class 对象类的属性列表 --- */
     const idata: Record<string, any> = {};
     const cdata = Object.entries(panel);
     for (const item of cdata) {
+        if (item[0] === 'components') {
+            continue;
+        }
         if (item[0] === 'access') {
             // --- access 属性不放在 data 当中 ---
             continue;
@@ -3492,10 +3877,20 @@ export async function create<T extends AbstractForm>(
         lCore.trigger('error', '', '', err, err.message).catch(() => {});
         throw err;
     }
+    const localComponents = await buildLocalComponents(t, formId, findex, frm.components);
+    for (const name in localComponents) {
+        if (components[name]) {
+            throw new Error(`The component name conflicts with a control.\nName: ${name.slice(3)}`);
+        }
+        components[name] = localComponents[name];
+    }
     /** --- class 对象类的属性列表 --- */
     const idata: Record<string, any> = {};
     const cdata = Object.entries(frm);
     for (const item of cdata) {
+        if (item[0] === 'components') {
+            continue;
+        }
         if (item[0] === 'access') {
             // --- access 属性不放在 data 当中 ---
             continue;

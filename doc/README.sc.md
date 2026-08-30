@@ -60,6 +60,8 @@ clickgo = {
 
 需要借助 [ClickGo Compiler](https://github.com/maiyun/clickgo-compiler) 将 app 文件夹编译为 cga 文件，然后编译入口文件，并在浏览器中引用入口文件。
 
+大型软件的 Form 拆分请参考[局部应用组件与 Dock](./sc/local-component.md)。
+
 **index.html**
 
 ```html

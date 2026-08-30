@@ -1,0 +1,26 @@
+<div class="wrap" :class="[isExpanded ? 'expanded' : 'collapsed', isFloating && 'floating', isCollapsed && 'group-collapsed', canGrow && 'grow']">
+    <!-- 展开模式标签栏 -->
+    <div v-if="isExpanded" class="tabs">
+        <div v-for="item of items" :key="item.name" class="tab" :class="[selectedData === item.name && 'selected']" @click="select(item.name)">{{item.label}}</div>
+        <div v-if="canCollapse" class="collapse-btn" @click.stop="toggleCollapsed">
+            <svg :class="[isCollapsed && 'collapsed']" viewBox="0 0 24 24" stroke="none"><path d="m8.46967 3.46967c.29289-.29289.76777-.29289 1.06066 0l8.00007 8.00003c.2929.2929.2929.7677 0 1.0606l-8.00007 8.0001c-.29289.2929-.76777.2929-1.06066 0-.29289-.2929-.29289-.7678 0-1.0607l7.46963-7.4697-7.46963-7.46967c-.29289-.29289-.29289-.76777 0-1.06066z" /></svg>
+        </div>
+    </div>
+    <!-- 收起模式图标栏 -->
+    <template v-if="!isExpanded">
+        <div v-for="item of items" :key="item.name" class="icon-btn" :class="[isFloating && selectedData === item.name && 'active']" @click="iconClick(item.name)">
+            <cg-svg v-if="item.icon && item.icon.endsWith('svg')" :src="item.icon" />
+            <cg-img v-else-if="item.icon" :src="item.icon" />
+            <div v-else class="icon-text">{{item.label.slice(0, 1)}}</div>
+        </div>
+    </template>
+    <!-- 选中内容区 -->
+    <div class="content" :style="isFloating ? {'width': floatWidth} : undefined">
+        <div v-if="!isExpanded && isFloating" class="float-tabs">
+            <div v-for="item of items" :key="item.name" class="float-tab" :class="[selectedData === item.name && 'selected']" @click="select(item.name)">{{item.label}}</div>
+        </div>
+        <div class="panel">
+            <slot></slot>
+        </div>
+    </div>
+</div>
