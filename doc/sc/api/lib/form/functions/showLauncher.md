@@ -8,7 +8,7 @@
 
 > **showLauncher**(): `void`
 
-Defined in: [lib/form.ts:4154](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4154)
+Defined in: [lib/form.ts:4549](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4549)
 
 显示 launcher 界面
 

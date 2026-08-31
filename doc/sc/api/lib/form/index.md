@@ -8,6 +8,7 @@
 
 ## Classes
 
+- [AbstractComponent](classes/AbstractComponent.md)
 - [AbstractForm](classes/AbstractForm.md)
 - [AbstractPanel](classes/AbstractPanel.md)
 

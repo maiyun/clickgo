@@ -24,7 +24,7 @@ Defined in: [lib/dom.ts:1554](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### pos
 
-`"b"` \| `"tr"` \| `"lt"` \| `"t"` \| `"r"` \| `"rb"` \| `"bl"` \| `"l"`
+`"b"` \| `"tr"` \| `"l"` \| `"lt"` \| `"t"` \| `"r"` \| `"rb"` \| `"bl"`
 
 ## Returns
 

@@ -20,6 +20,6 @@ Defined in: [lib/control.ts:1612](https://github.com/maiyun/clickgo/blob/master/
 
 ### pos
 
-> **pos**: `"b"` \| `"tr"` \| `"lt"` \| `"t"` \| `"r"` \| `"rb"` \| `"bl"` \| `"l"`
+> **pos**: `"b"` \| `"tr"` \| `"l"` \| `"lt"` \| `"t"` \| `"r"` \| `"rb"` \| `"bl"`
 
 Defined in: [lib/control.ts:1613](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1613)
