@@ -16,23 +16,17 @@ const runPath = process.cwd().replace(/\\/g, '/') + '/';
 /** --- 匹配直接继承 ClickGo 抽象视图类的类声明开头花括号 --- */
 const regExtends = /(?:extends.+?(?:AbstractForm|AbstractPanel|AbstractComponent|AbstractControl|AbstractThread))\s*{/g;
 
-/** --- 保留组合式 Control/Thread 的文件名注入兼容 --- */
-const regStatic = /cgType\s*=\s*['"](?:AbstractControl|AbstractThread)['"]\s*;/g;
-
 /** --- 增加些必备数据，如 filename --- */
 function preTransformPlugin(base: string): rollup.InputPluginOption {
     return {
         'name': 'pre-transform',
         transform: function(code, id) {
             id = id.replace(/\\/g, '/');
-            if (!regExtends.test(code) && !regStatic.test(code)) {
+            if (!regExtends.test(code)) {
                 return null;
             }
             const filename = id.slice(base.length);
-            const newCode = code
-                .replace(regExtends, m => `${m}get filename(){return '${filename}';}`)
-                .replace(regStatic, m => `${m}get filename(){return '${filename}';}`)
-            ;
+            const newCode = code.replace(regExtends, m => `${m}get filename(){return '${filename}';}`);
             return {
                 'code': newCode,
                 'map': null,

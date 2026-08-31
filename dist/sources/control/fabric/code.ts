@@ -1,26 +1,50 @@
 import * as clickgo from 'clickgo';
+import type * as fabric from 'fabric';
 
-import * as pCore from './part/core';
-import * as pLayer from './part/layer';
-import * as pArtboard from './part/artboard';
-import * as pZoom from './part/zoom';
-import * as pMarquee from './part/marquee';
-import * as pSnap from './part/snap';
+import * as mHost from './module/host';
+import * as mLayer from './module/layer';
+import * as mArtboard from './module/artboard';
+import * as mZoom from './module/zoom';
+import * as mMarquee from './module/marquee';
+import * as mSnap from './module/snap';
 
 // --- 当前 fabric 库版本为 7.2.0，文档：https://fabricjs.com/docs/ ---
 
-const base1 = pLayer.layerMixin(clickgo.control.AbstractControl);
-const base2 = pArtboard.artboardMixin(base1);
-const base3 = pZoom.zoomMixin(base2);
-const base4 = pMarquee.marqueeMixin(base3);
-const base5 = pSnap.snapMixin(base4);
+interface IFabricModules {
+    'layer': mLayer.LayerModule;
+    'artboard': mArtboard.ArtboardModule;
+    'zoom': mZoom.ZoomModule;
+    'marquee': mMarquee.MarqueeModule;
+    'snap': mSnap.SnapModule;
+}
 
-export default class extends base5 implements pCore.ICore {
+/** --- 功能对象不进入 Vue data，避免宿主引用形成循环克隆。 --- */
+const fabricModules = new WeakMap<object, IFabricModules>();
 
-    /** --- 编译器通过此字段识别基类类型，自动注入 get filename() --- */
-    public cgType = 'AbstractControl';
+function getModules(host: mHost.TFabricHost): IFabricModules {
+    let modules = fabricModules.get(host);
+    if (modules) {
+        return modules;
+    }
+    modules = {
+        'layer': new mLayer.LayerModule(host),
+        'artboard': new mArtboard.ArtboardModule(host),
+        'zoom': new mZoom.ZoomModule(host),
+        'marquee': new mMarquee.MarqueeModule(host),
+        'snap': new mSnap.SnapModule(host),
+    };
+    fabricModules.set(host, modules);
+    return modules;
+}
 
-    public emits: pCore.ICore['emits'] = {
+export default class extends clickgo.control.AbstractControl implements mHost.IFabricControl,
+    mLayer.ILayerModule,
+    mArtboard.IArtboardModule,
+    mZoom.IZoomModule,
+    mMarquee.IMarqueeModule,
+    mSnap.ISnapModule {
+
+    public emits: mHost.IFabricControl['emits'] = {
         'init': null,
         'update:layer': null,
         'layerchange': null,
@@ -29,7 +53,7 @@ export default class extends base5 implements pCore.ICore {
         'objectchanged': null,
     };
 
-    public props: pCore.ICore['props'] = {
+    public props: mHost.IFabricControl['props'] = {
         'disabled': false,
         'autoLayer': true,
         'transform': true,
@@ -52,11 +76,191 @@ export default class extends base5 implements pCore.ICore {
 
     public isLoading = true;
 
-    public access: pCore.ICore['access'] = {
+    public access: mHost.IFabricControl['access'] = {
         'fabric': null,
         'canvas': null,
         'marquee': [],
     };
+
+    /** --- 对外公开且需要参与 Vue 响应式追踪的功能状态。 --- */
+    public layerList: mLayer.ILayerItem[] = [];
+
+    public artboard: mHost.TArtboard = null;
+
+    public artboardBeforeRender: ((e: any) => void) | null = null;
+
+    /** --- 各功能以普通对象组合到真实控件中，不再生成匿名继承链。 --- */
+    private get _layerModule(): mLayer.LayerModule {
+        return getModules(this).layer;
+    }
+
+    private get _artboardModule(): mArtboard.ArtboardModule {
+        return getModules(this).artboard;
+    }
+
+    private get _zoomModule(): mZoom.ZoomModule {
+        return getModules(this).zoom;
+    }
+
+    private get _marqueeModule(): mMarquee.MarqueeModule {
+        return getModules(this).marquee;
+    }
+
+    private get _snapModule(): mSnap.SnapModule {
+        return getModules(this).snap;
+    }
+
+    public layerUpdateStyle(isDragging: boolean): void {
+        this._layerModule.layerUpdateStyle(isDragging);
+    }
+
+    public layerApplyMode(): void {
+        this._layerModule.layerApplyMode();
+    }
+
+    public layerSetup(): void {
+        this._layerModule.layerSetup();
+    }
+
+    public layerOnObjectAdded(obj: fabric.FabricObject): void {
+        this._layerModule.layerOnObjectAdded(obj);
+    }
+
+    public layerOnSelectionCleared(): void {
+        this._layerModule.layerOnSelectionCleared();
+    }
+
+    public layerGetNames(): string[] {
+        return this._layerModule.layerGetNames();
+    }
+
+    public addLayer(name: string, title?: string): boolean {
+        return this._layerModule.addLayer(name, title);
+    }
+
+    public removeLayer(name: string): void {
+        this._layerModule.removeLayer(name);
+    }
+
+    public renameLayer(name: string, title: string): boolean {
+        return this._layerModule.renameLayer(name, title);
+    }
+
+    public setLayerVisible(name: string, visible: boolean): boolean {
+        return this._layerModule.setLayerVisible(name, visible);
+    }
+
+    public setLayerLocked(name: string, locked: boolean): boolean {
+        return this._layerModule.setLayerLocked(name, locked);
+    }
+
+    public addFolder(name: string, title?: string): boolean {
+        return this._layerModule.addFolder(name, title);
+    }
+
+    public moveLayer(
+        names: string | string[],
+        refName: string | null,
+        position: 'before' | 'after' | 'inside'
+    ): boolean {
+        return this._layerModule.moveLayer(names, refName, position);
+    }
+
+    public artboardApplyObjClip(obj: fabric.FabricObject): void {
+        this._artboardModule.artboardApplyObjClip(obj);
+    }
+
+    public artboardApply(): void {
+        this._artboardModule.artboardApply();
+    }
+
+    public zoomResetDrag(): void {
+        this._zoomModule.zoomResetDrag();
+    }
+
+    public zoomHandleMouseDown(e: any): boolean {
+        return this._zoomModule.zoomHandleMouseDown(e);
+    }
+
+    public zoomHandleMouseMove(e: any): boolean {
+        return this._zoomModule.zoomHandleMouseMove(e);
+    }
+
+    public zoomHandleMouseUp(): boolean {
+        return this._zoomModule.zoomHandleMouseUp();
+    }
+
+    public zoomTo(zoom: number, screenX?: number, screenY?: number): void {
+        this._zoomModule.zoomTo(zoom, screenX, screenY);
+    }
+
+    public zoomActual(): void {
+        this._zoomModule.zoomActual();
+    }
+
+    public zoomFit(): void {
+        this._zoomModule.zoomFit();
+    }
+
+    public zoomIn(): void {
+        this._zoomModule.zoomIn();
+    }
+
+    public zoomOut(): void {
+        this._zoomModule.zoomOut();
+    }
+
+    public marqueeSetup(): void {
+        this._marqueeModule.marqueeSetup();
+    }
+
+    public marqueeResetDrag(): void {
+        this._marqueeModule.marqueeResetDrag();
+    }
+
+    public marqueeHandleMouseDown(e: any): boolean {
+        return this._marqueeModule.marqueeHandleMouseDown(e);
+    }
+
+    public marqueeHandleMouseMove(e: any): boolean {
+        return this._marqueeModule.marqueeHandleMouseMove(e);
+    }
+
+    public marqueeHandleMouseUp(): boolean {
+        return this._marqueeModule.marqueeHandleMouseUp();
+    }
+
+    public clearMarquee(): void {
+        this._marqueeModule.clearMarquee();
+    }
+
+    public setMarqueeRect(x: number, y: number, width: number, height: number): void {
+        this._marqueeModule.setMarqueeRect(x, y, width, height);
+    }
+
+    public getMarqueeRect(): mMarquee.IRect | null {
+        return this._marqueeModule.getMarqueeRect();
+    }
+
+    public getMarqueeObjects(): fabric.FabricObject[] {
+        return this._marqueeModule.getMarqueeObjects();
+    }
+
+    public getMarqueePolygon(): mMarquee.IPoint[][] {
+        return this._marqueeModule.getMarqueePolygon();
+    }
+
+    public snapSetup(): void {
+        this._snapModule.snapSetup();
+    }
+
+    public snapApply(target: fabric.FabricObject, rawLeft?: number, rawTop?: number): void {
+        this._snapModule.snapApply(target, rawLeft, rawTop);
+    }
+
+    public snapClearGuides(): void {
+        this._snapModule.snapClearGuides();
+    }
 
     // ==============================
     // --- PS 拖拽状态（transform=false 时从空白区域拖动激活图层）---
@@ -82,6 +286,9 @@ export default class extends base5 implements pCore.ICore {
 
     /** --- 恢复 discardActiveObject 原始方法的回调 --- */
     private _restoreDiscard: (() => void) | null = null;
+
+    /** --- 异步加载 Fabric 期间控件是否已开始卸载 --- */
+    private _isUnmounting: boolean = false;
 
     /**
      * --- 临时屏蔽 discardActiveObject，防止 fabric 清除当前激活对象 ---
@@ -115,6 +322,9 @@ export default class extends base5 implements pCore.ICore {
         // --- 加载 fabric 模块 ---
 
         const fabricModule = await clickgo.core.getModule('fabric');
+        if (this._isUnmounting) {
+            return;
+        }
         if (!fabricModule) {
             this.isLoading = false;
             this.notInit = true;
@@ -151,10 +361,10 @@ export default class extends base5 implements pCore.ICore {
 
         // --- 画板 prop 监听 ---
         this.watch('artboardWidth', () => {
-            this.artboardApply();
+            this._artboardModule.artboardScheduleApply();
         });
         this.watch('artboardHeight', () => {
-            this.artboardApply();
+            this._artboardModule.artboardScheduleApply();
         });
         this.watch('artboardBg', () => {
             if (!this.access.canvas || !this.artboard) {
@@ -166,7 +376,7 @@ export default class extends base5 implements pCore.ICore {
             if (!this.access.canvas || !this.artboard) {
                 return;
             }
-            const artboardRect = this.access.canvas.getObjects().find(o => pLayer.isArtboard(o));
+            const artboardRect = this.access.canvas.getObjects().find(o => mLayer.isArtboard(o));
             if (artboardRect) {
                 artboardRect.set('fill', (this.props.artboardFill || null) as any);
                 artboardRect.dirty = true;
@@ -222,14 +432,14 @@ export default class extends base5 implements pCore.ICore {
 
         // --- 新对象加入时同步图层和画板裁剪 ---
         this.access.canvas.on('object:added', (e: any) => {
-            if (pLayer.isArtboard(e.target)) {
+            if (mLayer.isArtboard(e.target)) {
                 return;
             }
             if (this.artboard) {
                 this.artboardApplyObjClip(e.target);
             }
             this.layerOnObjectAdded(e.target);
-            this.layerApplyMode();
+            this._layerModule.layerScheduleApplyMode();
         });
 
         this.access.canvas.on('selection:cleared', () => {
@@ -307,9 +517,14 @@ export default class extends base5 implements pCore.ICore {
             if (!this.access.canvas) {
                 return;
             }
+            const width = this.element.clientWidth;
+            const height = this.element.clientHeight;
+            if (this.access.canvas.getWidth() === width && this.access.canvas.getHeight() === height) {
+                return;
+            }
             this.access.canvas.setDimensions({
-                'width': this.element.clientWidth,
-                'height': this.element.clientHeight,
+                'width': width,
+                'height': height,
             });
         }, true);
 
@@ -323,12 +538,19 @@ export default class extends base5 implements pCore.ICore {
         this.emit('init', this.access.canvas);
     }
 
+    public onBeforeUnmount(): void {
+        this._isUnmounting = true;
+        this._resetDragState();
+    }
+
     public async onUnmounted(): Promise<void> {
-        if (!this.access.canvas) {
-            return;
+        try {
+            await this.access.canvas?.dispose();
         }
-        await this.access.canvas.dispose();
-        this.access.canvas = null;
+        finally {
+            this.access.canvas = null;
+            fabricModules.delete(this);
+        }
     }
 
 }

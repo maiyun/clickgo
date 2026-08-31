@@ -176,7 +176,7 @@
 
 fabric.js Canvas 对象，在 `init` 事件触发后可用。可通过此对象调用所有 fabric.js 原生 API，如添加/移除对象、获取图层列表、设置视图变换等。
 
-#### access.artboard
+#### artboard
 
 `{ left: number; top: number; width: number; height: number; } | null`
 
@@ -186,7 +186,7 @@ fabric.js Canvas 对象，在 `init` 事件触发后可用。可通过此对象�
 - `width` — 画板宽度
 - `height` — 画板高度
 
-未启用画板模式时为 `null`。用户可据此计算对象相对于画板的坐标（如 `objLeft - access.artboard.left`）。
+未启用画板模式时为 `null`。用户可通过控件引用读取此属性，并据此计算对象相对于画板的坐标（如 `objLeft - this.refs.fabric.artboard.left`）。
 
 #### access.marquee
 
@@ -303,7 +303,7 @@ setMarqueeRect(x: number, y: number, width: number, height: number): void
 addLayer(name: string, title?: string): boolean
 ```
 
-新建一个空图层。若 `name` 已在图层树中则返回 `false`，否则将新图层添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。
+新建一个空图层。若 `name` 为空、使用控件内部保留名称或已在图层树中，则返回 `false`；否则将新图层添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。
 
 **参数**：
 - `name` — 图层唯一标识，须与树中其他层级的名称不重复
@@ -315,7 +315,7 @@ addLayer(name: string, title?: string): boolean
 removeLayer(name: string): void
 ```
 
-移除图层及其下属的所有 fabric 对象，并触发 `layerlistchange` 事件。支持跨级查找和删除。若当前激活图层包含该 `name`，会同时从 `layer` prop 中移除并触发 `update:layer`。`name` 不存在时不做任何操作。
+移除图层及其下属的所有 fabric 对象，并触发 `layerlistchange` 事件。删除文件夹时会递归删除所有子图层对象。若当前激活范围包含该文件夹或任一子图层，会同时从 `layer` prop 中移除并触发 `update:layer`。`name` 不存在时不做任何操作。
 
 **参数**：
 - `name` — 要移除的图层 name
@@ -371,7 +371,7 @@ setLayerLocked(name: string, locked: boolean): boolean
 addFolder(name: string, title?: string): boolean
 ```
 
-新建一个文件夹图层。若 `name` 已在图层树中则返回 `false`，否则将新文件夹添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。文件夹内可嵌套其他图层和文件夹。
+新建一个文件夹图层。若 `name` 为空、使用控件内部保留名称或已在图层树中，则返回 `false`；否则将新文件夹添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。文件夹内可嵌套其他图层和文件夹。
 
 **参数**：
 - `name` — 文件夹唯一标识，须与树中其他层级的名称不重复
@@ -400,7 +400,10 @@ moveLayer(names: string | string[], refName: string | null, position: 'before' |
 
 **安全校验**：
 - `refName` 不能在被移动项中（避免自身参考自身）
-- `position='inside'` 时，refName 文件夹不能是被移动项的子孙（避免循环嵌套）
+- 参考目标必须在移动前存在，`position='inside'` 时目标必须是文件夹
+- 参考目标不能是被移动文件夹的子孙（避免循环嵌套）
+- 不允许重复传入同一名称，也不允许同时移动父文件夹及其子项
+- 所有校验均在修改图层树之前完成，失败时原结构保持不变
 
 #### layerGetNames
 
@@ -430,7 +433,7 @@ const names = this.refs.fabric.layerGetNames();
 snapApply(target: fabric.FabricObject, rawLeft?: number, rawTop?: number): void
 ```
 
-对目标对象应用像素取整（`pixel` 开启时）和吸附调整（`snap` 开启时）。通常由控件内部在 `object:moving` 事件中自动调用，外部一般无需直接使用。但如果通过编程方式移动对象后希望应用吸附效果，可以手动调用此方法。
+对目标对象应用吸附调整（`snap` 开启时）。通常由控件内部在 `object:moving` 事件中自动调用，外部一般无需直接使用。但如果通过编程方式移动对象后希望应用吸附效果，可以手动调用此方法。
 
 **参数**：
 - `target` — 要调整的 fabric 对象或 ActiveSelection
@@ -473,17 +476,8 @@ snapApply(target: fabric.FabricObject, rawLeft?: number, rawTop?: number): void
 <!-- 透明画板：透过到背景 -->
 <fabric :artboard-width="800" :artboard-height="600" :artboard-bg="''" :artboard-fill="''" @init="init"></fabric>
 
-<!-- 开启像素模式：逐像素移动，放大后显示像素网格 -->
-<fabric :pixel="true" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
-
-<!-- 开启像素渲染：放大后图像以像素块显示 -->
-<fabric :pixel-render="true" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
-
 <!-- 开启吸附模式：移动时显示对齐辅助线 -->
 <fabric :snap="true" @init="init"></fabric>
-
-<!-- 同时开启像素和吸附：先吸附再取整 -->
-<fabric :pixel="true" :snap="true" :snap-threshold="8" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
 
 <!-- 开启平移模式（类似 PS 空格键） -->
 <fabric mode="pan" @init="init"></fabric>
@@ -596,15 +590,16 @@ public init(canvas: fabric.Canvas): void {
     }));
     
     // 访问画板位置信息
-    if (this.access.artboard) {
-        console.log(`画板位置: (${this.access.artboard.left}, ${this.access.artboard.top})`);
-        console.log(`画板尺寸: ${this.access.artboard.width} × ${this.access.artboard.height}`);
+    const artboard = this.refs.fabric.artboard;
+    if (artboard) {
+        console.log(`画板位置: (${artboard.left}, ${artboard.top})`);
+        console.log(`画板尺寸: ${artboard.width} × ${artboard.height}`);
         
         // 计算对象相对于画板的坐标
         const allObjs = canvas.getObjects();
         allObjs.forEach(obj => {
-            const relX = obj.left - this.access.artboard.left;
-            const relY = obj.top - this.access.artboard.top;
+            const relX = obj.left - artboard.left;
+            const relY = obj.top - artboard.top;
             console.log(`对象在画板中的相对位置: (${relX}, ${relY})`);
         });
     }

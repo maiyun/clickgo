@@ -1,10 +1,10 @@
+import * as clickgo from 'clickgo';
 import * as fabric from 'fabric';
 
 /**
- * --- split.ts 主 form 暴露给分包访问的公共接口 ---
- * 分包文件通过 (this as unknown as ISplitForm) 读取主 form 的属性和方法
+ * --- Fabric 控件宿主公开给各功能模块的状态 ---
  */
-export interface ICore {
+export interface IFabricControl {
 
     'emits': {
         'init': null;
@@ -70,3 +70,15 @@ export interface ICore {
     'isLoading': boolean;
 
 }
+
+/** --- 当前画板的位置与尺寸 --- */
+export type TArtboard = { 'left': number; 'top': number; 'width': number; 'height': number; } | null;
+
+/**
+ * --- Fabric 功能模块的显式宿主类型 ---
+ * --- 功能模块只保存宿主引用，不参与控件继承链。 ---
+ */
+export type TFabricHost = clickgo.control.AbstractControl & IFabricControl & {
+    'artboard': TArtboard;
+    'artboardBeforeRender': ((e: any) => void) | null;
+};

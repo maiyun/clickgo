@@ -2109,7 +2109,7 @@ public async onLoad(): Promise<void> {
 
 fabric.js Canvas 对象，在 `init` 事件触发后可用。可通过此对象调用所有 fabric.js 原生 API，如添加/移除对象、获取图层列表、设置视图变换等。
 
-#### access.artboard
+#### artboard
 
 `{ left: number; top: number; width: number; height: number; } | null`
 
@@ -2119,7 +2119,7 @@ fabric.js Canvas 对象，在 `init` 事件触发后可用。可通过此对象�
 - `width` — 画板宽度
 - `height` — 画板高度
 
-未启用画板模式时为 `null`。用户可据此计算对象相对于画板的坐标（如 `objLeft - access.artboard.left`）。
+未启用画板模式时为 `null`。用户可通过控件引用读取此属性，并据此计算对象相对于画板的坐标（如 `objLeft - this.refs.fabric.artboard.left`）。
 
 #### access.marquee
 
@@ -2236,7 +2236,7 @@ setMarqueeRect(x: number, y: number, width: number, height: number): void
 addLayer(name: string, title?: string): boolean
 ```
 
-新建一个空图层。若 `name` 已在图层树中则返回 `false`，否则将新图层添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。
+新建一个空图层。若 `name` 为空、使用控件内部保留名称或已在图层树中，则返回 `false`；否则将新图层添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。
 
 **参数**：
 - `name` — 图层唯一标识，须与树中其他层级的名称不重复
@@ -2248,7 +2248,7 @@ addLayer(name: string, title?: string): boolean
 removeLayer(name: string): void
 ```
 
-移除图层及其下属的所有 fabric 对象，并触发 `layerlistchange` 事件。支持跨级查找和删除。若当前激活图层包含该 `name`，会同时从 `layer` prop 中移除并触发 `update:layer`。`name` 不存在时不做任何操作。
+移除图层及其下属的所有 fabric 对象，并触发 `layerlistchange` 事件。删除文件夹时会递归删除所有子图层对象。若当前激活范围包含该文件夹或任一子图层，会同时从 `layer` prop 中移除并触发 `update:layer`。`name` 不存在时不做任何操作。
 
 **参数**：
 - `name` — 要移除的图层 name
@@ -2304,7 +2304,7 @@ setLayerLocked(name: string, locked: boolean): boolean
 addFolder(name: string, title?: string): boolean
 ```
 
-新建一个文件夹图层。若 `name` 已在图层树中则返回 `false`，否则将新文件夹添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。文件夹内可嵌套其他图层和文件夹。
+新建一个文件夹图层。若 `name` 为空、使用控件内部保留名称或已在图层树中，则返回 `false`；否则将新文件夹添加到根列表末尾并触发 `layerlistchange` 事件，返回 `true`。文件夹内可嵌套其他图层和文件夹。
 
 **参数**：
 - `name` — 文件夹唯一标识，须与树中其他层级的名称不重复
@@ -2333,7 +2333,10 @@ moveLayer(names: string | string[], refName: string | null, position: 'before' |
 
 **安全校验**：
 - `refName` 不能在被移动项中（避免自身参考自身）
-- `position='inside'` 时，refName 文件夹不能是被移动项的子孙（避免循环嵌套）
+- 参考目标必须在移动前存在，`position='inside'` 时目标必须是文件夹
+- 参考目标不能是被移动文件夹的子孙（避免循环嵌套）
+- 不允许重复传入同一名称，也不允许同时移动父文件夹及其子项
+- 所有校验均在修改图层树之前完成，失败时原结构保持不变
 
 #### layerGetNames
 
@@ -2363,7 +2366,7 @@ const names = this.refs.fabric.layerGetNames();
 snapApply(target: fabric.FabricObject, rawLeft?: number, rawTop?: number): void
 ```
 
-对目标对象应用像素取整（`pixel` 开启时）和吸附调整（`snap` 开启时）。通常由控件内部在 `object:moving` 事件中自动调用，外部一般无需直接使用。但如果通过编程方式移动对象后希望应用吸附效果，可以手动调用此方法。
+对目标对象应用吸附调整（`snap` 开启时）。通常由控件内部在 `object:moving` 事件中自动调用，外部一般无需直接使用。但如果通过编程方式移动对象后希望应用吸附效果，可以手动调用此方法。
 
 **参数**：
 - `target` — 要调整的 fabric 对象或 ActiveSelection
@@ -2406,17 +2409,8 @@ snapApply(target: fabric.FabricObject, rawLeft?: number, rawTop?: number): void
 <!-- 透明画板：透过到背景 -->
 <fabric :artboard-width="800" :artboard-height="600" :artboard-bg="''" :artboard-fill="''" @init="init"></fabric>
 
-<!-- 开启像素模式：逐像素移动，放大后显示像素网格 -->
-<fabric :pixel="true" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
-
-<!-- 开启像素渲染：放大后图像以像素块显示 -->
-<fabric :pixel-render="true" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
-
 <!-- 开启吸附模式：移动时显示对齐辅助线 -->
 <fabric :snap="true" @init="init"></fabric>
-
-<!-- 同时开启像素和吸附：先吸附再取整 -->
-<fabric :pixel="true" :snap="true" :snap-threshold="8" :artboard-width="800" :artboard-height="600" @init="init"></fabric>
 
 <!-- 开启平移模式（类似 PS 空格键） -->
 <fabric mode="pan" @init="init"></fabric>
@@ -2529,15 +2523,16 @@ public init(canvas: fabric.Canvas): void {
     }));
     
     // 访问画板位置信息
-    if (this.access.artboard) {
-        console.log(`画板位置: (${this.access.artboard.left}, ${this.access.artboard.top})`);
-        console.log(`画板尺寸: ${this.access.artboard.width} × ${this.access.artboard.height}`);
+    const artboard = this.refs.fabric.artboard;
+    if (artboard) {
+        console.log(`画板位置: (${artboard.left}, ${artboard.top})`);
+        console.log(`画板尺寸: ${artboard.width} × ${artboard.height}`);
         
         // 计算对象相对于画板的坐标
         const allObjs = canvas.getObjects();
         allObjs.forEach(obj => {
-            const relX = obj.left - this.access.artboard.left;
-            const relY = obj.top - this.access.artboard.top;
+            const relX = obj.left - artboard.left;
+            const relY = obj.top - artboard.top;
             console.log(`对象在画板中的相对位置: (${relX}, ${relY})`);
         });
     }
@@ -6232,174 +6227,6 @@ QR 码组件，用于生成二维码。
     <switch v-model="darkMode"></switch>
 </setting-item>
 ```
-
-## sform
----
-
-侧栏面板容器控件，类似 Adobe Photoshop 右侧面板区域。支持展开和收起两种模式，与 `sform-group` 和 `sform-item` 搭配使用。展开模式下显示分组面板，收起模式下显示图标栏并支持浮动面板弹出。
-
-### 参数
-
-#### expanded
-
-`boolean` | `string`
-
-双向绑定，是否展开，默认 `true`。
-
-#### width
-
-`number` | `string`
-
-展开模式下的面板宽度，默认 `280`。
-
-### 事件
-
-无。
-
-### 方法
-
-#### toggle
-
-`() => void`
-
-切换展开/收起状态。
-
-#### toggleFloat
-
-`(groupIndex: number, itemIndex: number) => void`
-
-收起模式下打开或关闭指定分组的浮动面板。
-
-#### closeFloat
-
-`() => void`
-
-关闭当前浮动面板。
-
-### 样式
-
-**布局结构**：垂直 flex 容器，顶部为展开/收起切换按钮，下方为内容区域。展开时显示完整面板宽度，收起时压缩为 40px 图标栏。
-
-**视觉特征**：左侧带边框分隔，背景使用 `--g-plain-background`。切换按钮悬停时显示背景色变化。
-
-**交互响应**：点击顶部按钮切换展开/收起状态；收起模式下点击分组图标弹出浮动面板。
-
-### 示例
-
-```xml
-<sform :expanded="expanded" @update:expanded="expanded = $event">
-    <sform-group>
-        <sform-item label="Colors" icon="/package/res/color.svg">
-            <label>Color settings</label>
-        </sform-item>
-        <sform-item label="Layers" icon="/package/res/layer.svg">
-            <label>Layer list</label>
-        </sform-item>
-    </sform-group>
-</sform>
-```
-
-
-## sform-group
----
-
-侧栏面板分组控件，与 `sform` 和 `sform-item` 搭配使用。在展开模式下作为选项卡面板显示，在收起模式下作为图标按钮列显示。
-
-### 参数
-
-#### modelValue
-
-`number`
-
-双向绑定，当前选中的子项索引，从 0 开始，默认 `0`。
-
-### 事件
-
-无。
-
-### 方法
-
-#### select
-
-`(index: number) => void`
-
-选中指定索引的子项。
-
-#### iconClick
-
-`(index: number) => void`
-
-收起模式下触发，通知父级 `sform` 打开浮动面板。
-
-### 样式
-
-**布局结构**：垂直 flex 容器。展开模式下上方为选项卡栏、下方为内容区域；收起模式下为垂直排列的图标按钮。
-
-**视觉特征**：展开模式选项卡选中态显示主题色文字与底部指示线；收起模式图标按钮激活态显示主题色淡背景。
-
-**交互响应**：展开模式下点击 tab 切换内容；收起模式下点击图标按钮弹出浮动面板。
-
-### 示例
-
-```xml
-<sform>
-    <sform-group>
-        <sform-item label="Colors" icon="/package/res/color.svg">
-            <label>Color content</label>
-        </sform-item>
-    </sform-group>
-</sform>
-```
-
-
-## sform-item
----
-
-侧栏面板子项控件，与 `sform-group` 搭配使用。每个子项在展开模式下作为选项卡页面显示内容，在收起模式下显示为图标按钮。
-
-### 参数
-
-#### label
-
-`string`
-
-选项卡显示文本。
-
-#### icon
-
-`string`
-
-收起模式下显示的图标路径，支持 svg、图片或 Data URL。
-
-### 事件
-
-无。
-
-### 方法
-
-无。
-
-### 样式
-
-**布局结构**：flex 容器，默认隐藏，选中时显示，内容占满可用空间。
-
-**视觉特征**：选中态通过 `display: flex` 切换显示，支持内容溢出滚动。
-
-**交互响应**：由父级 `sform-group` 控制选中状态切换，无自身交互。
-
-### 示例
-
-```xml
-<sform-group>
-    <sform-item label="Colors" icon="/package/res/color.svg">
-        <label>Color settings</label>
-    </sform-item>
-    <sform-item label="Layers" icon="/package/res/layer.svg">
-        <label>Layer list</label>
-    </sform-item>
-</sform-group>
-```
-
 
 ## sgroup
 ---

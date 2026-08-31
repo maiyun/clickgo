@@ -1,18 +1,27 @@
 import * as clickgo from 'clickgo';
-import * as pLayer from './part/layer';
-import * as pArtboard from './part/artboard';
-import * as pZoom from './part/zoom';
-import * as pMarquee from './part/marquee';
-import * as pSnap from './part/snap';
-// --- 当前 fabric 库版本为 7.2.0，文档：https://fabricjs.com/docs/ ---
-const base1 = pLayer.layerMixin(clickgo.control.AbstractControl);
-const base2 = pArtboard.artboardMixin(base1);
-const base3 = pZoom.zoomMixin(base2);
-const base4 = pMarquee.marqueeMixin(base3);
-const base5 = pSnap.snapMixin(base4);
-export default class extends base5 {
-    /** --- 编译器通过此字段识别基类类型，自动注入 get filename() --- */
-    cgType = 'AbstractControl';
+import * as mLayer from './module/layer';
+import * as mArtboard from './module/artboard';
+import * as mZoom from './module/zoom';
+import * as mMarquee from './module/marquee';
+import * as mSnap from './module/snap';
+/** --- 功能对象不进入 Vue data，避免宿主引用形成循环克隆。 --- */
+const fabricModules = new WeakMap();
+function getModules(host) {
+    let modules = fabricModules.get(host);
+    if (modules) {
+        return modules;
+    }
+    modules = {
+        'layer': new mLayer.LayerModule(host),
+        'artboard': new mArtboard.ArtboardModule(host),
+        'zoom': new mZoom.ZoomModule(host),
+        'marquee': new mMarquee.MarqueeModule(host),
+        'snap': new mSnap.SnapModule(host),
+    };
+    fabricModules.set(host, modules);
+    return modules;
+}
+export default class extends clickgo.control.AbstractControl {
     emits = {
         'init': null,
         'update:layer': null,
@@ -46,6 +55,137 @@ export default class extends base5 {
         'canvas': null,
         'marquee': [],
     };
+    /** --- 对外公开且需要参与 Vue 响应式追踪的功能状态。 --- */
+    layerList = [];
+    artboard = null;
+    artboardBeforeRender = null;
+    /** --- 各功能以普通对象组合到真实控件中，不再生成匿名继承链。 --- */
+    get _layerModule() {
+        return getModules(this).layer;
+    }
+    get _artboardModule() {
+        return getModules(this).artboard;
+    }
+    get _zoomModule() {
+        return getModules(this).zoom;
+    }
+    get _marqueeModule() {
+        return getModules(this).marquee;
+    }
+    get _snapModule() {
+        return getModules(this).snap;
+    }
+    layerUpdateStyle(isDragging) {
+        this._layerModule.layerUpdateStyle(isDragging);
+    }
+    layerApplyMode() {
+        this._layerModule.layerApplyMode();
+    }
+    layerSetup() {
+        this._layerModule.layerSetup();
+    }
+    layerOnObjectAdded(obj) {
+        this._layerModule.layerOnObjectAdded(obj);
+    }
+    layerOnSelectionCleared() {
+        this._layerModule.layerOnSelectionCleared();
+    }
+    layerGetNames() {
+        return this._layerModule.layerGetNames();
+    }
+    addLayer(name, title) {
+        return this._layerModule.addLayer(name, title);
+    }
+    removeLayer(name) {
+        this._layerModule.removeLayer(name);
+    }
+    renameLayer(name, title) {
+        return this._layerModule.renameLayer(name, title);
+    }
+    setLayerVisible(name, visible) {
+        return this._layerModule.setLayerVisible(name, visible);
+    }
+    setLayerLocked(name, locked) {
+        return this._layerModule.setLayerLocked(name, locked);
+    }
+    addFolder(name, title) {
+        return this._layerModule.addFolder(name, title);
+    }
+    moveLayer(names, refName, position) {
+        return this._layerModule.moveLayer(names, refName, position);
+    }
+    artboardApplyObjClip(obj) {
+        this._artboardModule.artboardApplyObjClip(obj);
+    }
+    artboardApply() {
+        this._artboardModule.artboardApply();
+    }
+    zoomResetDrag() {
+        this._zoomModule.zoomResetDrag();
+    }
+    zoomHandleMouseDown(e) {
+        return this._zoomModule.zoomHandleMouseDown(e);
+    }
+    zoomHandleMouseMove(e) {
+        return this._zoomModule.zoomHandleMouseMove(e);
+    }
+    zoomHandleMouseUp() {
+        return this._zoomModule.zoomHandleMouseUp();
+    }
+    zoomTo(zoom, screenX, screenY) {
+        this._zoomModule.zoomTo(zoom, screenX, screenY);
+    }
+    zoomActual() {
+        this._zoomModule.zoomActual();
+    }
+    zoomFit() {
+        this._zoomModule.zoomFit();
+    }
+    zoomIn() {
+        this._zoomModule.zoomIn();
+    }
+    zoomOut() {
+        this._zoomModule.zoomOut();
+    }
+    marqueeSetup() {
+        this._marqueeModule.marqueeSetup();
+    }
+    marqueeResetDrag() {
+        this._marqueeModule.marqueeResetDrag();
+    }
+    marqueeHandleMouseDown(e) {
+        return this._marqueeModule.marqueeHandleMouseDown(e);
+    }
+    marqueeHandleMouseMove(e) {
+        return this._marqueeModule.marqueeHandleMouseMove(e);
+    }
+    marqueeHandleMouseUp() {
+        return this._marqueeModule.marqueeHandleMouseUp();
+    }
+    clearMarquee() {
+        this._marqueeModule.clearMarquee();
+    }
+    setMarqueeRect(x, y, width, height) {
+        this._marqueeModule.setMarqueeRect(x, y, width, height);
+    }
+    getMarqueeRect() {
+        return this._marqueeModule.getMarqueeRect();
+    }
+    getMarqueeObjects() {
+        return this._marqueeModule.getMarqueeObjects();
+    }
+    getMarqueePolygon() {
+        return this._marqueeModule.getMarqueePolygon();
+    }
+    snapSetup() {
+        this._snapModule.snapSetup();
+    }
+    snapApply(target, rawLeft, rawTop) {
+        this._snapModule.snapApply(target, rawLeft, rawTop);
+    }
+    snapClearGuides() {
+        this._snapModule.snapClearGuides();
+    }
     // ==============================
     // --- PS 拖拽状态（transform=false 时从空白区域拖动激活图层）---
     // ==============================
@@ -62,6 +202,8 @@ export default class extends base5 {
     _isTransformKeep = false;
     /** --- 恢复 discardActiveObject 原始方法的回调 --- */
     _restoreDiscard = null;
+    /** --- 异步加载 Fabric 期间控件是否已开始卸载 --- */
+    _isUnmounting = false;
     /**
      * --- 临时屏蔽 discardActiveObject，防止 fabric 清除当前激活对象 ---
      */
@@ -90,6 +232,9 @@ export default class extends base5 {
     async onMounted() {
         // --- 加载 fabric 模块 ---
         const fabricModule = await clickgo.core.getModule('fabric');
+        if (this._isUnmounting) {
+            return;
+        }
         if (!fabricModule) {
             this.isLoading = false;
             this.notInit = true;
@@ -119,10 +264,10 @@ export default class extends base5 {
         this.marqueeSetup();
         // --- 画板 prop 监听 ---
         this.watch('artboardWidth', () => {
-            this.artboardApply();
+            this._artboardModule.artboardScheduleApply();
         });
         this.watch('artboardHeight', () => {
-            this.artboardApply();
+            this._artboardModule.artboardScheduleApply();
         });
         this.watch('artboardBg', () => {
             if (!this.access.canvas || !this.artboard) {
@@ -134,7 +279,7 @@ export default class extends base5 {
             if (!this.access.canvas || !this.artboard) {
                 return;
             }
-            const artboardRect = this.access.canvas.getObjects().find(o => pLayer.isArtboard(o));
+            const artboardRect = this.access.canvas.getObjects().find(o => mLayer.isArtboard(o));
             if (artboardRect) {
                 artboardRect.set('fill', (this.props.artboardFill || null));
                 artboardRect.dirty = true;
@@ -186,14 +331,14 @@ export default class extends base5 {
         });
         // --- 新对象加入时同步图层和画板裁剪 ---
         this.access.canvas.on('object:added', (e) => {
-            if (pLayer.isArtboard(e.target)) {
+            if (mLayer.isArtboard(e.target)) {
                 return;
             }
             if (this.artboard) {
                 this.artboardApplyObjClip(e.target);
             }
             this.layerOnObjectAdded(e.target);
-            this.layerApplyMode();
+            this._layerModule.layerScheduleApplyMode();
         });
         this.access.canvas.on('selection:cleared', () => {
             this.layerUpdateStyle(false);
@@ -267,9 +412,14 @@ export default class extends base5 {
             if (!this.access.canvas) {
                 return;
             }
+            const width = this.element.clientWidth;
+            const height = this.element.clientHeight;
+            if (this.access.canvas.getWidth() === width && this.access.canvas.getHeight() === height) {
+                return;
+            }
             this.access.canvas.setDimensions({
-                'width': this.element.clientWidth,
-                'height': this.element.clientHeight,
+                'width': width,
+                'height': height,
             });
         }, true);
         // --- 像素和吸附功能初始化 ---
@@ -280,11 +430,17 @@ export default class extends base5 {
         this.isLoading = false;
         this.emit('init', this.access.canvas);
     }
+    onBeforeUnmount() {
+        this._isUnmounting = true;
+        this._resetDragState();
+    }
     async onUnmounted() {
-        if (!this.access.canvas) {
-            return;
+        try {
+            await this.access.canvas?.dispose();
         }
-        await this.access.canvas.dispose();
-        this.access.canvas = null;
+        finally {
+            this.access.canvas = null;
+            fabricModules.delete(this);
+        }
     }
 }

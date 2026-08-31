@@ -51,6 +51,38 @@ export default class extends clickgo.form.AbstractForm {
 
 局部组件支持 props、emits、slot、生命周期、样式隔离、ClickGo 控件和继续嵌套注册局部组件。需要保存 Canvas 编辑器等非响应式服务时，放入 `access`，并在 `onUnmounted` 中释放。
 
+## 无独立界面的功能模块
+
+如果拆出的文件只有算法、交互状态或服务逻辑，没有独立 HTML，不要创建 `AbstractComponent`，也不要使用 mixin 拼接继承链。主 Form、Panel 或 Control 仍直接继承对应的 ClickGo 抽象类，各功能文件导出普通类，并通过明确的宿主接口组合。
+
+```ts
+interface IEditorHost {
+    readonly canvas: HTMLCanvasElement;
+    tool: string;
+    emit(name: string, value: unknown): void;
+}
+
+export class SelectionModule {
+
+    public constructor(private readonly host: IEditorHost) {
+    }
+
+    public clear(): void {
+        this.host.emit('selectionchange', []);
+    }
+
+}
+```
+
+主类负责创建模块，并显式转发需要作为组件公共 API 暴露的方法。这样调用关系、模块依赖和公开边界都能从类型中直接看出，不依赖继承顺序。
+
+需要注意 ClickGo 会先实例化控件类，再把实例字段提取、克隆为 Vue `data`：
+
+- 模板或外部界面需要追踪的状态留在主类实例字段中，由模块通过宿主访问。
+- Canvas、编辑器等非响应式服务使用 `access`，并在卸载时释放。
+- 持有宿主反向引用的模块对象不要在类初始化阶段放入实例字段或 `access`，否则会形成循环克隆；可在生命周期中创建，或像 Fabric 控件一样使用模块级 `WeakMap` 按运行时实例懒加载。
+- 主类必须直接 `extends AbstractForm`、`AbstractPanel`、`AbstractComponent` 或 `AbstractControl`；不要再声明 `cgType`，编译器会依据直接继承关系注入 `filename`。
+
 ## Dock
 
 Dock 只负责桌面软件侧栏的布局和生命周期，业务内容仍由局部组件实现。
