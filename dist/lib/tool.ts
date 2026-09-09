@@ -1052,24 +1052,30 @@ export function request(url: string, opt: IRequestOptions): Promise<null | any> 
         if (opt.credentials === false) {
             xhr.withCredentials = false;
         }
-        xhr.upload.onloadstart = function(e: ProgressEvent): void {
-            const r = opt.uploadStart?.(e.total);
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-        };
-        xhr.upload.onprogress = function(e: ProgressEvent): void {
-            const r = opt.uploadProgress?.(e.loaded, e.total);
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-        };
-        xhr.upload.onloadend = function(): void {
-            const r = opt.uploadEnd?.();
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-        };
+        if (opt.uploadStart) {
+            xhr.upload.onloadstart = function(e: ProgressEvent): void {
+                const r = opt.uploadStart?.(e.total);
+                if (r && (r instanceof Promise)) {
+                    r.catch(() => {});
+                }
+            };
+        }
+        if (opt.uploadProgress) {
+            xhr.upload.onprogress = function(e: ProgressEvent): void {
+                const r = opt.uploadProgress?.(e.loaded, e.total);
+                if (r && (r instanceof Promise)) {
+                    r.catch(() => {});
+                }
+            };
+        }
+        if (opt.uploadEnd) {
+            xhr.upload.onloadend = function(): void {
+                const r = opt.uploadEnd?.();
+                if (r && (r instanceof Promise)) {
+                    r.catch(() => {});
+                }
+            };
+        }
         xhr.onloadstart = function(e: ProgressEvent): void {
             const r = opt.start?.(e.total);
             if (r && (r instanceof Promise)) {
