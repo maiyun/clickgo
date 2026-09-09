@@ -59,7 +59,7 @@ async function prepareView(task, path, layout, style) {
         if (style) {
             const r = lTool.stylePrepend(style);
             prep = r.prep;
-            style = await lTool.styleUrl2DataUrl(path + '/', r.style, task.app.files);
+            style = await lTool.styleUrl2DataUrl(path + '/', r.style, (filePath) => task.app.package.getContent(filePath));
         }
         layout = lTool.purify(layout);
         layout = lTool.layoutAddTagClassAndReTagName(layout, true);
@@ -602,11 +602,11 @@ async function buildLocalComponents(task, formId, findex, componentClasses, pane
             throw new Error(`The component filename is empty.\nName: ${name}`);
         }
         const path = filename.slice(0, filename.lastIndexOf('/'));
-        const layoutSource = task.app.files[filename.slice(0, -2) + 'xml'];
+        const layoutSource = await task.app.package.getContent(filename.slice(0, -2) + 'xml');
         if (typeof layoutSource !== 'string') {
             throw new Error(`The component layout was not found.\nFile: ${filename.slice(0, -2)}xml`);
         }
-        const styleSource = task.app.files[filename.slice(0, -2) + 'css'];
+        const styleSource = await task.app.package.getContent(filename.slice(0, -2) + 'css');
         const prepared = await prepareView(task, path, layoutSource, typeof styleSource === 'string' ? styleSource : '');
         let layout = prepared.layout;
         if (layout.includes('<teleport')) {
@@ -3066,7 +3066,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
     if (typeof cls === 'string') {
         filename = lTool.urlResolve(opt.path ?? '/', cls) + '.js';
         if (!layout) {
-            const l = t.app.files[cls + '.xml'];
+            const l = await t.app.package.getContent(cls + '.xml');
             if (typeof l !== 'string') {
                 const err = new Error('form.createPanel: -2');
                 lCore.trigger('error', '', '', err, err.message).catch(() => { });
@@ -3075,7 +3075,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
             layout = l;
         }
         if (!style) {
-            const s = t.app.files[cls + '.css'];
+            const s = await t.app.package.getContent(cls + '.css');
             if (typeof s === 'string') {
                 style = s;
             }
@@ -3101,7 +3101,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
     const path = filename.slice(0, filename.lastIndexOf('/'));
     // --- 布局 ---
     if (!layout) {
-        const l = t.app.files[filename.slice(0, -2) + 'xml'];
+        const l = await t.app.package.getContent(filename.slice(0, -2) + 'xml');
         if (typeof l !== 'string') {
             const err = new Error('form.createPanel: -3');
             lCore.trigger('error', '', '', err, err.message).catch(() => { });
@@ -3111,7 +3111,7 @@ export async function createPanel(rootPanel, cls, opt = {}) {
     }
     // --- 样式 ---
     if (!style) {
-        const s = t.app.files[filename.slice(0, -2) + 'css'];
+        const s = await t.app.package.getContent(filename.slice(0, -2) + 'css');
         if (typeof s === 'string') {
             style = s;
         }
@@ -3397,7 +3397,7 @@ export async function create(current, cls, data, opt = {}) {
     if (typeof cls === 'string') {
         filename = lTool.urlResolve(opt.path ?? '/', cls);
         if (!layout) {
-            const l = t.app.files[filename + '.xml'];
+            const l = await t.app.package.getContent(filename + '.xml');
             if (typeof l !== 'string') {
                 const err = new Error('form.create: -2');
                 lCore.trigger('error', '', '', err, err.message).catch(() => { });
@@ -3406,7 +3406,7 @@ export async function create(current, cls, data, opt = {}) {
             layout = l;
         }
         if (!style) {
-            const s = t.app.files[filename + '.css'];
+            const s = await t.app.package.getContent(filename + '.css');
             if (typeof s === 'string') {
                 style = s;
             }
@@ -3434,7 +3434,7 @@ export async function create(current, cls, data, opt = {}) {
     const path = filename.slice(0, filename.lastIndexOf('/'));
     // --- 布局 ---
     if (!layout) {
-        const l = t.app.files[filename.slice(0, -2) + 'xml'];
+        const l = await t.app.package.getContent(filename.slice(0, -2) + 'xml');
         if (typeof l !== 'string') {
             const err = new Error('form.create: -3');
             lCore.trigger('error', '', '', err, err.message).catch(() => { });
@@ -3444,7 +3444,7 @@ export async function create(current, cls, data, opt = {}) {
     }
     // --- 样式 ---
     if (!style) {
-        const s = t.app.files[filename.slice(0, -2) + 'css'];
+        const s = await t.app.package.getContent(filename.slice(0, -2) + 'css');
         if (typeof s === 'string') {
             style = s;
         }

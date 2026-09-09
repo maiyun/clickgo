@@ -532,7 +532,7 @@ export async function run(current, url, opt = {}) {
                 }
             }
         }
-        const code = app.files['/app.js'];
+        const code = await app.package.getContent('/app.js');
         if (typeof code !== 'string') {
             if (notifyId) {
                 lForm.notifyContent(notifyId, {
@@ -686,7 +686,7 @@ export async function run(current, url, opt = {}) {
                     'progress': per,
                 });
             }
-            lDom.pushStyle(taskId, await lTool.styleUrl2DataUrl(app.config.style, r.style, app.files));
+            lDom.pushStyle(taskId, await lTool.styleUrl2DataUrl(app.config.style, r.style, (path) => app.package.getContent(path)));
         }
     }
     // --- 触发 taskStarted 事件 ---
@@ -1041,6 +1041,7 @@ export async function end(taskId) {
     lDom.clearWatchSize(taskId);
     lDom.clearWatch(taskId);
     lNative.clear(taskId);
+    task.app.package.clear();
     // --- 移除 task ---
     delete list[taskId];
     delete runtime[taskId];

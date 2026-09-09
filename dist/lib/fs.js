@@ -227,7 +227,7 @@ export async function getContent(current, path, options) {
         if (path.startsWith('/current/')) {
             return getContent(current, task.current + fpath, options);
         }
-        const file = task.app.files[fpath];
+        const file = await task.app.package.getContent(fpath);
         if (!file) {
             return null;
         }
@@ -674,74 +674,33 @@ export async function stats(current, path) {
         if (path.startsWith('/current/')) {
             return stats(current, task.current + fpath);
         }
-        if (task.app.files[fpath]) {
-            // --- 文件 ---
-            const file = task.app.files[fpath];
-            const date = new Date();
-            const ms = date.getTime();
-            let size = 0;
-            if (typeof file !== 'string') {
-                size = file.size;
-            }
-            else {
-                size = new Blob([file]).size;
-            }
-            return {
-                isFile: function () {
-                    return true;
-                },
-                isDirectory: function () {
-                    return false;
-                },
-                isSymbolicLink: function () {
-                    return false;
-                },
-                'size': size,
-                'blksize': size,
-                'atimeMs': ms,
-                'mtimeMs': ms,
-                'ctimeMs': ms,
-                'birthtimeMs': ms,
-                'atime': date,
-                'mtime': date,
-                'ctime': date,
-                'birthtime': date
-            };
+        const packageStats = task.app.package.stats(fpath);
+        if (!packageStats) {
+            return null;
         }
-        // --- 检测是否是文件夹 ---
-        if (!fpath.endsWith('/')) {
-            fpath += '/';
-        }
-        for (const p in task.app.files) {
-            if (!p.startsWith(fpath)) {
-                continue;
-            }
-            // --- 文件夹 ---
-            const date = new Date();
-            const ms = date.getTime();
-            return {
-                isFile: function () {
-                    return false;
-                },
-                isDirectory: function () {
-                    return true;
-                },
-                isSymbolicLink: function () {
-                    return false;
-                },
-                'size': 0,
-                'blksize': 0,
-                'atimeMs': ms,
-                'mtimeMs': ms,
-                'ctimeMs': ms,
-                'birthtimeMs': ms,
-                'atime': date,
-                'mtime': date,
-                'ctime': date,
-                'birthtime': date
-            };
-        }
-        return null;
+        const date = new Date();
+        const ms = date.getTime();
+        return {
+            isFile: function () {
+                return packageStats.isFile;
+            },
+            isDirectory: function () {
+                return packageStats.isDirectory;
+            },
+            isSymbolicLink: function () {
+                return false;
+            },
+            'size': packageStats.size,
+            'blksize': packageStats.size,
+            'atimeMs': ms,
+            'mtimeMs': ms,
+            'ctimeMs': ms,
+            'birthtimeMs': ms,
+            'atime': date,
+            'mtime': date,
+            'ctime': date,
+            'birthtime': date
+        };
     }
     else {
         return null;
@@ -1189,49 +1148,18 @@ export async function readDir(current, path, encoding) {
         if (path.startsWith('/current/')) {
             return readDir(current, task.current + fpath, encoding);
         }
-        const list = [];
-        const dirs = [];
-        for (const p in task.app.files) {
-            if (!p.startsWith(fpath)) {
-                continue;
-            }
-            const rpath = p.slice(fpath.length);
-            const sio = rpath.indexOf('/');
-            if (sio !== -1) {
-                // --- 一定是下级文件，因此加入文件夹项目到 dirs ---
-                const name = rpath.slice(0, sio);
-                if (!dirs.includes(name)) {
-                    dirs.push(name);
-                    list.push({
-                        isFile: function () {
-                            return false;
-                        },
-                        isDirectory: function () {
-                            return true;
-                        },
-                        isSymbolicLink: function () {
-                            return false;
-                        },
-                        'name': name
-                    });
-                }
-                continue;
-            }
-            // --- 本层文件 ---
-            list.push({
-                isFile: function () {
-                    return true;
-                },
-                isDirectory: function () {
-                    return false;
-                },
-                isSymbolicLink: function () {
-                    return false;
-                },
-                'name': rpath
-            });
-        }
-        return list;
+        return task.app.package.readDir(fpath).map((item) => ({
+            isFile: function () {
+                return item.isFile;
+            },
+            isDirectory: function () {
+                return item.isDirectory;
+            },
+            isSymbolicLink: function () {
+                return false;
+            },
+            'name': item.name
+        }));
     }
     else {
         return [];

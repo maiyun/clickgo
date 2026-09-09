@@ -320,12 +320,12 @@ export function match(str: string, regs: RegExp[]): boolean {
  * --- 将 style 中的 url 转换成 base64 data url ---
  * @param path 路径基准或以文件的路径为基准，以 / 结尾
  * @param style 样式表
- * @param files 在此文件列表中查找
+ * @param files 在此文件列表或读取器中查找
  */
 export async function styleUrl2DataUrl(
     path: string,
     style: string,
-    files: Record<string, Blob | string>
+    files: Record<string, Blob | string> | ((path: string) => Promise<Blob | string | null>)
 ): Promise<string> {
     const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
     let match: RegExpExecArray | null = null;
@@ -335,11 +335,12 @@ export async function styleUrl2DataUrl(
             // --- 处理 form 里面的路径 ---
             realPath = realPath.slice(8);
         }
-        if (!files[realPath]) {
+        const file = typeof files === 'function' ? await files(realPath) : files[realPath];
+        if (!file) {
             continue;
         }
-        if (typeof files[realPath] !== 'string') {
-            style = style.replace(match[0], `url('${await blob2DataUrl(files[realPath] as Blob)}')`);
+        if (typeof file !== 'string') {
+            style = style.replace(match[0], `url('${await blob2DataUrl(file)}')`);
         }
     }
     return style;
