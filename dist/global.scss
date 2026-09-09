@@ -494,3 +494,33 @@
         }
     }
 }
+
+// --- Browser warning ---
+
+#cg-browser-warning {
+    z-index: 2147483647; position: fixed; left: 16px; bottom: 16px; box-sizing: border-box; display: flex; gap: 12px; width: 360px; max-width: calc(100% - 32px); padding: 16px; color: #242424; background: #fff; border: solid 1px #e1e1e1; border-radius: 10px; box-shadow: 0 12px 36px rgba(0, 0, 0, .18); font-family: Arial, 'Microsoft Yahei', sans-serif; font-size: 14px; line-height: 1.5;
+}
+.cg-browser-warning-icon {
+    flex: none; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; color: #fff; background: #d97706; border-radius: 50%; font-weight: bold;
+}
+.cg-browser-warning-body {
+    flex: 1; min-width: 0;
+}
+.cg-browser-warning-title {
+    margin-bottom: 4px; font-size: 15px; font-weight: bold;
+}
+.cg-browser-warning-content {
+    color: #595959;
+}
+.cg-browser-warning-button {
+    margin-top: 12px; padding: 5px 14px; color: #fff; background: #2563eb; border: 0; border-radius: 5px; font: inherit; cursor: pointer;
+    &:hover {
+        background: #1d4ed8;
+    }
+    &:active {
+        background: #1e40af;
+    }
+    &:focus-visible {
+        outline: solid 2px #93c5fd; outline-offset: 2px;
+    }
+}

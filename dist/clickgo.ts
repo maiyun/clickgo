@@ -337,6 +337,70 @@ export abstract class AbstractBoot {
 }
 
 /**
+ * --- 检查浏览器是否支持 ClickGo 使用的现代颜色语法，不支持时显示升级提示 ---
+ */
+function checkBrowserColorSupport(): void {
+    if (
+        (typeof CSS !== 'undefined') &&
+        CSS.supports('color', 'oklch(.7 .2 43)') &&
+        CSS.supports('color', 'color-mix(in oklch, #000000, #ffffff)') &&
+        CSS.supports('color', 'oklch(from #ff6600 l c h)')
+    ) {
+        return;
+    }
+
+    const locale = lCore.config.locale;
+    const text = locale === 'sc' ? {
+        'title': '浏览器版本较低',
+        'content': '当前浏览器无法完整显示界面颜色，建议升级浏览器后继续使用。',
+        'button': '知道了'
+    } : (locale === 'tc' ? {
+        'title': '瀏覽器版本較低',
+        'content': '目前瀏覽器無法完整顯示介面色彩，建議升級瀏覽器後繼續使用。',
+        'button': '知道了'
+    } : {
+        'title': 'Browser update recommended',
+        'content': 'Your browser cannot display all interface colors. Please update it for the best experience.',
+        'button': 'Got it'
+    });
+
+    const el = document.createElement('div');
+    el.id = 'cg-browser-warning';
+    el.setAttribute('role', 'alert');
+    el.setAttribute('aria-live', 'polite');
+
+    const icon = document.createElement('div');
+    icon.className = 'cg-browser-warning-icon';
+    icon.textContent = '!';
+    el.appendChild(icon);
+
+    const body = document.createElement('div');
+    body.className = 'cg-browser-warning-body';
+    el.appendChild(body);
+
+    const title = document.createElement('div');
+    title.className = 'cg-browser-warning-title';
+    title.textContent = text.title;
+    body.appendChild(title);
+
+    const content = document.createElement('div');
+    content.className = 'cg-browser-warning-content';
+    content.textContent = text.content;
+    body.appendChild(content);
+
+    const button = document.createElement('button');
+    button.className = 'cg-browser-warning-button';
+    button.type = 'button';
+    button.textContent = text.button;
+    button.addEventListener('click', () => {
+        el.remove();
+    });
+    body.appendChild(button);
+
+    lForm.elements.wrap.appendChild(el);
+}
+
+/**
  * --- 启动 ClickGo ---
  * @param boot 启动类
  */
@@ -382,6 +446,7 @@ export async function launcher(boot: AbstractBoot): Promise<void> {
     // --- 初始化各个模块 ---
     lForm.init();
     lCore.init();
+    checkBrowserColorSupport();
     lDom.init();
     lTask.init();
     lNative.init();
