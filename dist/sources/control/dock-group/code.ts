@@ -9,7 +9,9 @@ interface IDockItemInfo {
 type TDock = clickgo.control.AbstractControl & {
     'expandedData': boolean;
     'floatGroup': number;
+    'floatAreaHeight': number;
     'widthComp': string;
+    getFloatArea(): HTMLElement | null;
     toggleFloat(groupIndex: number): void;
 };
 
@@ -44,6 +46,9 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前 group 在 Dock 中的索引 --- */
     public index: number = 0;
 
+    /** --- 浮动面板相对当前分组的顶部偏移 --- */
+    public floatTop: number = 0;
+
     /** --- 是否处于展开模式 --- */
     public get isExpanded(): boolean {
         return this.dock?.expandedData ?? true;
@@ -72,6 +77,27 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 浮动面板宽度 --- */
     public get floatWidth(): string {
         return this.dock?.widthComp ?? '280px';
+    }
+
+    /** --- 浮动面板最大高度 --- */
+    public get floatMaxHeight(): string {
+        if (!this.dock?.floatAreaHeight) {
+            return '400px';
+        }
+        return `${Math.min(this.dock.floatAreaHeight, 400)}px`;
+    }
+
+    /** --- 浮动面板布局样式 --- */
+    public get floatStyle(): Record<string, string> | undefined {
+        if (!this.isFloating) {
+            return undefined;
+        }
+        return {
+            'width': this.floatWidth,
+            'height': this.floatMaxHeight,
+            'max-height': this.floatMaxHeight,
+            'top': `${this.floatTop}px`
+        };
     }
 
     /** --- 子项信息列表 --- */
@@ -137,6 +163,24 @@ export default class extends clickgo.control.AbstractControl {
         this.select(name);
     }
 
+    /** --- 根据 Dock 内容区自动调整浮动面板高度和垂直位置 --- */
+    public updateFloatLayout(): void {
+        if (!this.isFloating || !this.dock) {
+            this.floatTop = 0;
+            return;
+        }
+        const area = this.dock.getFloatArea();
+        const content = this.refs.content;
+        if (!area || !content) {
+            return;
+        }
+        const areaRect = area.getBoundingClientRect();
+        const groupRect = this.element.getBoundingClientRect();
+        const topLimit = areaRect.top - groupRect.top;
+        const bottomLimit = areaRect.bottom - groupRect.top - content.offsetHeight;
+        this.floatTop = Math.max(topLimit, Math.min(0, bottomLimit));
+    }
+
     public onMounted(): void {
         this.dock = this.parentByName('dock') as TDock | null;
         if (this.dock) {
@@ -158,6 +202,21 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'deep': true,
             'immediate': true
+        });
+        this.watch(() => this.isFloating, () => {
+            this.nextTick().then(() => {
+                this.updateFloatLayout();
+            }).catch(() => {});
+        }, {
+            'immediate': true
+        });
+        this.watch(() => this.dock?.floatAreaHeight, () => {
+            this.nextTick().then(() => {
+                this.updateFloatLayout();
+            }).catch(() => {});
+        });
+        clickgo.dom.watchSize(this, this.refs.content, () => {
+            this.updateFloatLayout();
         });
     }
 

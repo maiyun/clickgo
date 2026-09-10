@@ -15,12 +15,12 @@
         </div>
     </template>
     <!-- 选中内容区 -->
-    <div class="content" :style="isFloating ? {'width': floatWidth} : undefined">
+    <div ref="content" class="content" :style="floatStyle">
         <div v-if="!isExpanded && isFloating" class="float-tabs">
             <div v-for="item of items" :key="item.name" class="float-tab" :class="[selectedData === item.name && 'selected']" @click="select(item.name)">{{item.label}}</div>
         </div>
-        <div class="panel">
+        <cg-flow class="panel" direction="v">
             <slot></slot>
-        </div>
+        </cg-flow>
     </div>
 </div>

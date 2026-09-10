@@ -27,6 +27,9 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
     /** --- 浮动面板当前指向的 group 索引，-1 表示关闭 --- */
     public floatGroup: number = -1;
 
+    /** --- 浮动面板可使用的 Dock 内容区高度 --- */
+    public floatAreaHeight: number = 0;
+
     /** --- 展开时的宽度 --- */
     public get widthComp(): string {
         if (typeof this.props.width === 'number') {
@@ -72,6 +75,14 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         this.floatGroup = -1;
     }
 
+    /**
+     * --- 获取浮动面板所在的 Dock 内容区 ---
+     * @returns Dock 内容区元素
+     */
+    public getFloatArea(): HTMLElement | null {
+        return this.refs.body ?? null;
+    }
+
     public onMounted(): void {
         const form = this.rootForm;
         if (!formDocks.has(form)) {
@@ -87,6 +98,10 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         }, {
             'immediate': true
         });
+
+        clickgo.dom.watchSize(this, this.refs.body, () => {
+            this.floatAreaHeight = this.refs.body.clientHeight;
+        }, true);
     }
 
     public onUnmounted(): void {

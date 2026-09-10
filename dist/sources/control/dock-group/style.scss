@@ -56,7 +56,7 @@
             flex: 1 1 auto; flex-shrink: 1 !important; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--g-pure);
 
             > .panel {
-                flex: 1 1 auto; flex-shrink: 1 !important; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
+                flex: 1 1 auto; flex-shrink: 1 !important; min-height: 0; display: flex; flex-direction: column;
             }
         }
     }
@@ -94,10 +94,10 @@
 
         &.floating {
             > .content {
-                display: flex; flex-direction: column; position: absolute; right: 100%; top: 0; max-height: 400px; background: var(--g-plain-background); border: solid .5px var(--g-border-color); box-shadow: 0 8px 24px rgba(0, 0, 0, .12); z-index: 10; border-radius: var(--g-radius);
+                display: flex; flex-direction: column; box-sizing: border-box; position: absolute; right: 100%; top: 0; max-height: 400px; overflow: hidden; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border); box-shadow: var(--g-shadow-d); z-index: 10; border-radius: var(--g-radius);
 
                 > .float-tabs {
-                    display: flex; border-bottom: solid .5px var(--g-plain-border-color); background: var(--face); border-radius: var(--g-radius) var(--g-radius) 0 0;
+                    display: flex; flex: 0 0 auto; border-bottom: solid .5px var(--g-plain-border-color); background: var(--face); border-radius: var(--g-radius) var(--g-radius) 0 0;
 
                     > .float-tab {
                         padding: var(--g-padding-h); transition: var(--g-transition); white-space: nowrap; font-size: var(--g-size); border-bottom: solid 2px transparent;
@@ -113,7 +113,11 @@
                 }
 
                 > .panel {
-                    flex: 1; display: flex; flex-direction: column; overflow: auto;
+                    flex: 1; min-height: 0;
+
+                    > [data-cg-control='dock-item'] {
+                        flex: none; overflow: visible;
+                    }
                 }
             }
         }

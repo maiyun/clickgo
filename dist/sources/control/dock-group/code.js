@@ -18,6 +18,8 @@ export default class extends clickgo.control.AbstractControl {
     dock = null;
     /** --- 当前 group 在 Dock 中的索引 --- */
     index = 0;
+    /** --- 浮动面板相对当前分组的顶部偏移 --- */
+    floatTop = 0;
     /** --- 是否处于展开模式 --- */
     get isExpanded() {
         return this.dock?.expandedData ?? true;
@@ -41,6 +43,25 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 浮动面板宽度 --- */
     get floatWidth() {
         return this.dock?.widthComp ?? '280px';
+    }
+    /** --- 浮动面板最大高度 --- */
+    get floatMaxHeight() {
+        if (!this.dock?.floatAreaHeight) {
+            return '400px';
+        }
+        return `${Math.min(this.dock.floatAreaHeight, 400)}px`;
+    }
+    /** --- 浮动面板布局样式 --- */
+    get floatStyle() {
+        if (!this.isFloating) {
+            return undefined;
+        }
+        return {
+            'width': this.floatWidth,
+            'height': this.floatMaxHeight,
+            'max-height': this.floatMaxHeight,
+            'top': `${this.floatTop}px`
+        };
     }
     /** --- 子项信息列表 --- */
     get items() {
@@ -100,6 +121,23 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.select(name);
     }
+    /** --- 根据 Dock 内容区自动调整浮动面板高度和垂直位置 --- */
+    updateFloatLayout() {
+        if (!this.isFloating || !this.dock) {
+            this.floatTop = 0;
+            return;
+        }
+        const area = this.dock.getFloatArea();
+        const content = this.refs.content;
+        if (!area || !content) {
+            return;
+        }
+        const areaRect = area.getBoundingClientRect();
+        const groupRect = this.element.getBoundingClientRect();
+        const topLimit = areaRect.top - groupRect.top;
+        const bottomLimit = areaRect.bottom - groupRect.top - content.offsetHeight;
+        this.floatTop = Math.max(topLimit, Math.min(0, bottomLimit));
+    }
     onMounted() {
         this.dock = this.parentByName('dock');
         if (this.dock) {
@@ -121,6 +159,21 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'deep': true,
             'immediate': true
+        });
+        this.watch(() => this.isFloating, () => {
+            this.nextTick().then(() => {
+                this.updateFloatLayout();
+            }).catch(() => { });
+        }, {
+            'immediate': true
+        });
+        this.watch(() => this.dock?.floatAreaHeight, () => {
+            this.nextTick().then(() => {
+                this.updateFloatLayout();
+            }).catch(() => { });
+        });
+        clickgo.dom.watchSize(this, this.refs.content, () => {
+            this.updateFloatLayout();
         });
     }
 }
