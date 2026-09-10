@@ -2,8 +2,8 @@
     <layout direction="v" gutter="10" style="flex: 1; width: 0;">
         <label>Radio, Check, Split, Custom:</label>
         <menulist>
-            <menulist-item>Item1</menulist-item>
-            <menulist-item>Item2</menulist-item>
+            <menulist-item alt="Ctrl+Enter">Item1</menulist-item>
+            <menulist-item alt="Alt+Enter">Item2</menulist-item>
             <menulist-item>
                 <template v-slot>Radio</template>
                 <template v-slot:pop>
@@ -100,7 +100,7 @@
                 <template v-slot:pop>
                     <menulist>
                         <menulist-item alt="V">Item4</menulist-item>
-                        <menulist-item alt="W" @click="dialogClick">Dialog</menulist-item>
+                        <menulist-item alt="Ctrl+Shift+F12" @click="dialogClick">Dialog</menulist-item>
                         <menulist-split></menulist-split>
                         <menulist-item>
                             <template v-slot>Radio</template>
@@ -114,10 +114,10 @@
                                         <template v-slot>Check</template>
                                         <template v-slot:pop>
                                             <menulist>
-                                                <menulist-item type="check" v-model="check1">Check1</menulist-item>
-                                                <menulist-item type="check" v-model="check2">Check2</menulist-item>
-                                                <menulist-item type="check" v-model="check3" @check="onCheck">Check3 (not)</menulist-item>
-                                                <menulist-item type="check">Check4 (nov)</menulist-item>
+                                                <menulist-item type="check" alt="Ctrl+Shift+A" v-model="check1">Check1</menulist-item>
+                                                <menulist-item type="check" alt="Ctrl+Alt+B" v-model="check2">Check2</menulist-item>
+                                                <menulist-item type="check" alt="Ctrl+Alt+Shift+C" v-model="check3" @check="onCheck">Check3 (not)</menulist-item>
+                                                <menulist-item type="check" alt="Alt+Shift+D">Check4 (nov)</menulist-item>
                                             </menulist>
                                         </template>
                                     </menulist-item>
@@ -132,9 +132,9 @@
                                     <template v-slot>Icon</template>
                                     <template v-slot:pop>
                                         <menulist>
-                                            <menulist-item><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label>Txt</label></menulist-item>
-                                            <menulist-item><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label>Sql</label></menulist-item>
-                                            <menulist-item><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label>Zip</label></menulist-item>
+                                            <menulist-item alt="Shift+F1"><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label>Txt</label></menulist-item>
+                                            <menulist-item alt="Alt+F2"><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label>Sql</label></menulist-item>
+                                            <menulist-item alt="Meta+F3"><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label>Zip</label></menulist-item>
                                         </menulist>
                                     </template>
                                 </menulist-item>
@@ -142,13 +142,13 @@
                                     <template v-slot>Control</template>
                                     <template v-slot:pop>
                                         <menulist>
-                                            <menulist-item>
+                                            <menulist-item alt="Ctrl+Shift+F4">
                                                 <button @click="$event.stopPropagation()" style="flex: 1; width: 0;">Button</button>
                                             </menulist-item>
-                                            <menulist-item>
+                                            <menulist-item alt="Ctrl+Alt+F5">
                                                 <scroll direction="h" @click="$event.stopPropagation()" style="width: 150px; height: 30px;"></scroll>
                                             </menulist-item>
-                                            <menulist-item>
+                                            <menulist-item alt="Ctrl+Alt+Shift+F6">
                                                 <text @click="$event.stopPropagation()" style="flex: 1; width: 0;"></text>
                                             </menulist-item>
                                         </menulist>
@@ -159,17 +159,17 @@
                                     <template v-slot:pop>
                                         <menulist>
                                             <layout>
-                                                <menulist-item>Box 1</menulist-item>
+                                                <menulist-item alt="Alt+Shift+F7">Box 1</menulist-item>
                                                 <menulist-item>
                                                     <template v-slot>Box 2</template>
                                                     <template v-slot:pop>
                                                         <menulist>
-                                                            <menulist-item>Child</menulist-item>
+                                                            <menulist-item alt="Shift+F8">Child</menulist-item>
                                                         </menulist>
                                                     </template>
                                                 </menulist-item>
                                             </layout>
-                                            <menulist-item>Other item</menulist-item>
+                                            <menulist-item alt="Meta+Shift+F9">Other item</menulist-item>
                                         </menulist>
                                     </template>
                                 </menulist-item>
@@ -183,7 +183,7 @@
                 <template v-slot>Item2</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item>Item6</menulist-item>
+                        <menulist-item alt="Ctrl+Shift+F10">Item6</menulist-item>
                     </menulist>
                 </template>
             </menu-item>
@@ -191,7 +191,7 @@
                 <template v-slot>Item3</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item>Item5</menulist-item>
+                        <menulist-item alt="Alt+Shift+F11">Item5</menulist-item>
                     </menulist>
                 </template>
             </menu-item>

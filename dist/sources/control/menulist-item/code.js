@@ -175,6 +175,13 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
         }
         MenulistItem._$shortcutEvents.add(e);
         e.preventDefault();
+        this.element.dispatchEvent(new CustomEvent('tap', {
+            'bubbles': true,
+            'cancelable': true,
+            'detail': {
+                'originalEvent': e
+            }
+        }));
         this._select();
         this.element.click();
     }
