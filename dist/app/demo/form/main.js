@@ -10,6 +10,7 @@ import ccalendarFrm from './control/calendar/calendar';
 import cdateFrm from './control/date/date';
 import cdaterangeFrm from './control/daterange/daterange';
 import cdialogFrm from './control/dialog/dialog';
+import cdockFrm from './control/dock/dock';
 import cdrawerFrm from './control/drawer/drawer';
 import cfileFrm from './control/file/file';
 import cformFrm from './control/form/form';
@@ -42,6 +43,8 @@ import cswitchFrm from './control/switch/switch';
 import cswiperFrm from './control/swiper/swiper';
 import cscrollFrm from './control/scroll/scroll';
 import cselectFrm from './control/select/select';
+import csliderFrm from './control/slider/slider';
+import cstatusbarFrm from './control/statusbar/statusbar';
 import cuploaderFrm from './control/uploader/uploader';
 import csvgFrm from './control/svg/svg';
 import ctabFrm from './control/tab/tab';
@@ -147,6 +150,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdialog': {
                 frm = await clickgo.form.create(this, cdialogFrm);
+                break;
+            }
+            case 'cdock': {
+                frm = await clickgo.form.create(this, cdockFrm);
                 break;
             }
             case 'cdrawer': {
@@ -347,6 +354,14 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cselect': {
                 frm = await clickgo.form.create(this, cselectFrm);
+                break;
+            }
+            case 'cslider': {
+                frm = await clickgo.form.create(this, csliderFrm);
+                break;
+            }
+            case 'cstatusbar': {
+                frm = await clickgo.form.create(this, cstatusbarFrm);
                 break;
             }
             case 'cuploader': {

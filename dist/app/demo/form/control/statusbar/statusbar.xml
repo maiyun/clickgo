@@ -1,0 +1,41 @@
+<form title="Statusbar" width="680" height="520" min-width="500" min-height="420" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; min-width: 0; min-height: 0;">
+        <!-- 模拟工作区底部状态栏 -->
+        <layout class="preview" direction="v">
+            <layout class="workspace" direction="v" align-h="center" align-v="center">
+                <label>Workspace</label>
+                <label>The status bar remains independent from the content area.</label>
+            </layout>
+            <statusbar :border="border" :separator="separator" :plain="plain">
+                <statusbar-item :type="type[0]">{{message}}</statusbar-item>
+                <statusbar-item :grow="grow">24 items</statusbar-item>
+                <statusbar-item>1280 × 720</statusbar-item>
+                <template v-if="showRight" v-slot:right>
+                    <statusbar-item type="cg">
+                        <label>{{online ? 'Online' : 'Offline'}}</label>
+                        <switch v-model="online" size="s"></switch>
+                    </statusbar-item>
+                </template>
+            </statusbar>
+        </layout>
+
+        <!-- Statusbar 与 Statusbar Item 参数 -->
+        <setting>
+            <setting-item title="message" note="First item content">
+                <text v-model="message" style="min-width: 200px"></text>
+            </setting-item>
+            <setting-item title="type" note="First item semantic color">
+                <select v-model="type" :data="['default', 'primary', 'info', 'warning', 'danger', 'cg']"></select>
+            </setting-item>
+        </setting>
+        <layout gutter="10">
+            <button @click="border = !border" style="flex: 1;">{{border ? '' : '!'}}border</button>
+            <button @click="separator = !separator" style="flex: 1;">{{separator ? '' : '!'}}separator</button>
+            <button @click="plain = !plain" style="flex: 1;">{{plain ? '' : '!'}}plain</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="grow = !grow" style="flex: 1;">{{grow ? '' : '!'}}grow</button>
+            <button @click="showRight = !showRight" style="flex: 1;">{{showRight ? '' : '!'}}right slot</button>
+        </layout>
+    </layout>
+</form>

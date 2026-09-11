@@ -1,0 +1,5 @@
+<div class="wrap" :class="[!propBoolean('border') && 'borderless', propBoolean('separator') && 'separator', propBoolean('plain') && 'plain']">
+    <slot></slot>
+    <div class="space"></div>
+    <slot name="right"></slot>
+</div>

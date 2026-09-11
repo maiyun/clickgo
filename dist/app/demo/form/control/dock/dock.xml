@@ -1,0 +1,57 @@
+<form title="Dock" width="760" height="560" min-width="560" min-height="460" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; min-width: 0; min-height: 0;">
+        <label>Expanded: {{expanded}}, position: {{position[0]}}, selected: {{optionTab}}</label>
+
+        <!-- 可实时调整的侧栏预览 -->
+        <layout class="preview">
+            <dock v-model:expanded="expanded" :position="position[0]" :width="width" :style="{'order': position[0] === 'left' ? 0 : 2}">
+                <dock-group v-model="optionTab" v-model:collapsed="groupCollapsed" :collapsible="collapsible">
+                    <dock-item name="project" label="Project" :lazy="lazy" :cache="cache">
+                        <flow direction="v" gutter="8" style="padding: 10px;">
+                            <label>Project content</label>
+                            <button>Open project</button>
+                            <button>Project settings</button>
+                        </flow>
+                    </dock-item>
+                    <dock-item name="assets" label="Assets" :lazy="lazy" :cache="cache">
+                        <flow direction="v" gutter="8" style="padding: 10px;">
+                            <label>Asset library</label>
+                            <button>Images</button>
+                            <button>Documents</button>
+                        </flow>
+                    </dock-item>
+                </dock-group>
+                <dock-group v-model="historyTab" :grow="grow">
+                    <dock-item name="history" label="History" :lazy="lazy" :cache="cache">
+                        <flow direction="v" gutter="8" style="padding: 10px;">
+                            <label>Latest actions</label>
+                            <label>3. Adjust color</label>
+                            <label>2. Resize image</label>
+                            <label>1. Import image</label>
+                        </flow>
+                    </dock-item>
+                </dock-group>
+            </dock>
+            <layout class="workspace" direction="v" align-h="center" align-v="center" :style="{'order': 1}">
+                <label>Workspace</label>
+                <label>Collapse the Dock to test its floating panels.</label>
+            </layout>
+        </layout>
+
+        <!-- Dock、Dock Group 与 Dock Item 参数 -->
+        <layout gutter="10" align-v="center">
+            <label>width</label>
+            <number v-model="width" min="160" max="400"></number>
+            <label>position</label>
+            <select v-model="position" :data="['left', 'right']" style="flex: 1;"></select>
+            <button @click="expanded = !expanded">{{expanded ? '' : '!'}}expanded</button>
+        </layout>
+        <layout gutter="10">
+            <button @click="collapsible = !collapsible" style="flex: 1;">{{collapsible ? '' : '!'}}collapsible</button>
+            <button @click="groupCollapsed = !groupCollapsed" style="flex: 1;">{{groupCollapsed ? '' : '!'}}collapsed</button>
+            <button @click="grow = !grow" style="flex: 1;">{{grow ? '' : '!'}}grow</button>
+            <button @click="lazy = !lazy" style="flex: 1;">{{lazy ? '' : '!'}}lazy</button>
+            <button @click="cache = !cache" style="flex: 1;">{{cache ? '' : '!'}}cache</button>
+        </layout>
+    </layout>
+</form>

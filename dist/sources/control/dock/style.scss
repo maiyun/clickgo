@@ -1,8 +1,16 @@
 .wrap {
-    display: flex; flex-direction: column; min-height: 0; border-left: solid .5px var(--g-border-color); background: var(--g-plain-background);
+    display: flex; flex-direction: column; min-height: 0; background: var(--g-plain-background);
+
+    &.left {
+        border-right: solid .5px var(--g-border-color);
+    }
+
+    &.right {
+        border-left: solid .5px var(--g-border-color);
+    }
 
     > .toggle-btn {
-        display: flex; align-items: center; justify-content: center; height: 28px; transition: var(--g-transition); border-bottom: solid .5px var(--g-plain-border-color);
+        display: flex; align-items: center; justify-content: center; height: 28px; outline: none; transition: var(--g-transition); border-bottom: solid .5px var(--g-plain-border-color);
 
         svg {
             width: 14px; height: 14px;
@@ -10,6 +18,10 @@
 
         &:hover {
             background: var(--face-hover);
+        }
+
+        &:focus-visible {
+            box-shadow: inset var(--g-outline-shadow);
         }
     }
 

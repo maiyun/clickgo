@@ -14,10 +14,15 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
     };
 
     public props: {
+        /** --- expanded，是否展开侧栏 --- */
         'expanded': boolean | string;
+        /** --- position，侧栏位于内容区域的左侧或右侧 --- */
+        'position': 'left' | 'right';
+        /** --- width，侧栏展开时的宽度 --- */
         'width': number | string;
     } = {
             'expanded': true,
+            'position': 'right',
             'width': 280
         };
 
@@ -29,6 +34,16 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
 
     /** --- 浮动面板可使用的 Dock 内容区高度 --- */
     public floatAreaHeight: number = 0;
+
+    /** --- 侧栏所在位置 --- */
+    public get positionData(): 'left' | 'right' {
+        return this.props.position === 'left' ? 'left' : 'right';
+    }
+
+    /** --- 当前折叠按钮是否显示向右箭头 --- */
+    public get chevronRight(): boolean {
+        return (this.positionData === 'right') === this.expandedData;
+    }
 
     /** --- 展开时的宽度 --- */
     public get widthComp(): string {
@@ -48,6 +63,18 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         if (!this.expandedData) {
             this.floatGroup = -1;
         }
+    }
+
+    /**
+     * --- 使用键盘切换展开状态 ---
+     * @param event 键盘事件
+     */
+    public toggleKeydown(event: KeyboardEvent): void {
+        if ((event.key !== 'Enter') && (event.key !== ' ')) {
+            return;
+        }
+        event.preventDefault();
+        this.toggle();
     }
 
     /**

@@ -44,6 +44,10 @@ export default class extends clickgo.control.AbstractControl {
     get floatWidth() {
         return this.dock?.widthComp ?? '280px';
     }
+    /** --- 浮动面板相对折叠侧栏的展开方向 --- */
+    get floatPosition() {
+        return this.dock?.positionData ?? 'right';
+    }
     /** --- 浮动面板最大高度 --- */
     get floatMaxHeight() {
         if (!this.dock?.floatAreaHeight) {

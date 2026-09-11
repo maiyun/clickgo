@@ -38,12 +38,30 @@ export default class extends clickgo.form.AbstractComponent {
         this.update('opacity', value);
     }
 
+    /** --- 供滑块使用的数值透明度 --- */
+    public get opacitySliderData(): number {
+        return parseFloat(this.opacityData);
+    }
+
+    public set opacitySliderData(value: number) {
+        this.opacityData = value.toString();
+    }
+
     public get sizeData(): string {
         return this.props.modelValue.size;
     }
 
     public set sizeData(value: string) {
         this.update('size', value);
+    }
+
+    /** --- 供滑块使用的数值笔刷大小 --- */
+    public get sizeSliderData(): number {
+        return parseFloat(this.sizeData);
+    }
+
+    public set sizeSliderData(value: number) {
+        this.sizeData = value.toString();
     }
 
     /**

@@ -7,6 +7,7 @@ export default class extends clickgo.control.AbstractControl {
     };
     props = {
         'expanded': true,
+        'position': 'right',
         'width': 280
     };
     /** --- 当前是否展开 --- */
@@ -15,6 +16,14 @@ export default class extends clickgo.control.AbstractControl {
     floatGroup = -1;
     /** --- 浮动面板可使用的 Dock 内容区高度 --- */
     floatAreaHeight = 0;
+    /** --- 侧栏所在位置 --- */
+    get positionData() {
+        return this.props.position === 'left' ? 'left' : 'right';
+    }
+    /** --- 当前折叠按钮是否显示向右箭头 --- */
+    get chevronRight() {
+        return (this.positionData === 'right') === this.expandedData;
+    }
     /** --- 展开时的宽度 --- */
     get widthComp() {
         if (typeof this.props.width === 'number') {
@@ -32,6 +41,17 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.expandedData) {
             this.floatGroup = -1;
         }
+    }
+    /**
+     * --- 使用键盘切换展开状态 ---
+     * @param event 键盘事件
+     */
+    toggleKeydown(event) {
+        if ((event.key !== 'Enter') && (event.key !== ' ')) {
+            return;
+        }
+        event.preventDefault();
+        this.toggle();
     }
     /**
      * --- 收起模式下打开或关闭浮动分组 ---

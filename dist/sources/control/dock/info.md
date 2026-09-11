@@ -14,6 +14,12 @@
 
 展开宽度，默认 `280`。
 
+#### position
+
+`'left'` | `'right'`
+
+侧栏所在位置，控制边框、折叠箭头和浮动面板的展开方向，默认 `right`。
+
 ### 方法
 
 #### toggle
@@ -31,7 +37,7 @@
 ### 示例
 
 ```xml
-<dock v-model:expanded="expanded">
+<dock v-model:expanded="expanded" position="left">
     <dock-group v-model="selected">
         <dock-item name="layers" label="Layers" lazy cache>
             <layer-list></layer-list>

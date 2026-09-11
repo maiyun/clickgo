@@ -1,0 +1,7 @@
+.preview {
+    flex: 1; min-width: 0; min-height: 0; overflow: hidden; border: solid .5px var(--g-border-color); background: var(--g-background);
+
+    > .workspace {
+        flex: 1; min-width: 0; min-height: 0; gap: var(--g-padding);
+    }
+}

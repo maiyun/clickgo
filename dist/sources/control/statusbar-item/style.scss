@@ -1,0 +1,27 @@
+.wrap {
+    display: flex; align-items: center; gap: var(--g-padding-s); min-width: 0; padding: 0 var(--g-padding); white-space: nowrap;
+
+    &.grow {
+        flex: 1;
+    }
+
+    &.primary {
+        color: var(--success);
+    }
+
+    &.info {
+        color: var(--info);
+    }
+
+    &.warning {
+        color: var(--warning);
+    }
+
+    &.danger {
+        color: var(--danger);
+    }
+
+    &.cg {
+        color: var(--cg);
+    }
+}

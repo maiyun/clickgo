@@ -10,6 +10,7 @@ type TDock = clickgo.control.AbstractControl & {
     'expandedData': boolean;
     'floatGroup': number;
     'floatAreaHeight': number;
+    'positionData': 'left' | 'right';
     'widthComp': string;
     getFloatArea(): HTMLElement | null;
     toggleFloat(groupIndex: number): void;
@@ -23,9 +24,13 @@ export default class extends clickgo.control.AbstractControl {
     };
 
     public props: {
+        /** --- collapsed，当前分组是否折叠 --- */
         'collapsed': boolean | string;
+        /** --- collapsible，当前分组是否允许折叠 --- */
         'collapsible': boolean | string;
+        /** --- grow，当前分组是否优先占用 Dock 的剩余高度 --- */
         'grow': boolean | string;
+        /** --- modelValue，当前选中的 Dock Item 名称 --- */
         'modelValue': string;
     } = {
             'collapsed': false,
@@ -77,6 +82,11 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 浮动面板宽度 --- */
     public get floatWidth(): string {
         return this.dock?.widthComp ?? '280px';
+    }
+
+    /** --- 浮动面板相对折叠侧栏的展开方向 --- */
+    public get floatPosition(): 'left' | 'right' {
+        return this.dock?.positionData ?? 'right';
     }
 
     /** --- 浮动面板最大高度 --- */

@@ -1,0 +1,4 @@
+<div class="wrap" :class="[size]" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+    <input class="input" type="range" :aria-label="label || undefined" :disabled="propBoolean('disabled')" :max="maxComp" :min="minComp" :step="stepComp" :value="valueComp" :style="{'--slider-progress': progressComp}" @input="input" @change="change">
+    <div v-if="propBoolean('showValue')" class="value">{{valueComp}}</div>
+</div>

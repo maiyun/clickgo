@@ -7,10 +7,15 @@ type TDockGroup = clickgo.control.AbstractControl & {
 export default class extends clickgo.control.AbstractControl {
 
     public props: {
+        /** --- name，当前内容项在 Dock Group 中的唯一名称 --- */
         'name': string;
+        /** --- label，当前内容项在标签栏或浮动面板中显示的名称 --- */
         'label': string;
+        /** --- icon，Dock 收起时当前内容项显示的图标路径 --- */
         'icon': string;
+        /** --- lazy，是否在当前内容项首次选中时才挂载内容 --- */
         'lazy': boolean | string;
+        /** --- cache，当前内容项切换隐藏后是否保留已挂载内容 --- */
         'cache': boolean | string;
     } = {
             'name': '',

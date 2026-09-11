@@ -1,0 +1,37 @@
+<form title="Slider" width="520" height="590" min-width="420" min-height="500" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; min-width: 0; min-height: 0;">
+        <!-- 当前参数组合的实时预览 -->
+        <group title="Preview" direction="v" gutter="10">
+            <slider v-model="value" :disabled="disabled" :label="label" :max="max" :min="min" :show-value="showValue" :size="size[0]" :step="step" @input="onInput" @change="onChange"></slider>
+            <label>modelValue: {{value}}, input: {{inputValue}}, change: {{changeValue}}</label>
+        </group>
+
+        <!-- 数值与范围参数 -->
+        <setting>
+            <setting-item title="modelValue" note="Current slider value">
+                <number v-model="value"></number>
+            </setting-item>
+            <setting-item title="min" note="Minimum value">
+                <number v-model="min"></number>
+            </setting-item>
+            <setting-item title="max" note="Maximum value">
+                <number v-model="max"></number>
+            </setting-item>
+            <setting-item title="step" note="Value increment">
+                <number v-model="step" min="0.01"></number>
+            </setting-item>
+            <setting-item title="label" note="Accessible name">
+                <text v-model="label"></text>
+            </setting-item>
+            <setting-item title="size" note="Thumb size">
+                <select v-model="size" :data="['s', 'm', 'l']"></select>
+            </setting-item>
+        </setting>
+
+        <!-- 状态参数 -->
+        <layout gutter="10">
+            <button @click="disabled = !disabled" style="flex: 1;">{{disabled ? '' : '!'}}disabled</button>
+            <button @click="showValue = !showValue" style="flex: 1;">{{showValue ? '' : '!'}}showValue</button>
+        </layout>
+    </layout>
+</form>
