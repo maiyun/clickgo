@@ -13,6 +13,11 @@
     }
     .right {
         display: flex;
+
+        > [data-cg-control='text'] {
+            width: calc(var(--g-boxsize) * 5);
+        }
+
         &.v {
             flex-direction: column;
         }

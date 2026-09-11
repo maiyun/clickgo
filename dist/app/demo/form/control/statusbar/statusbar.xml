@@ -22,7 +22,7 @@
         <!-- Statusbar 与 Statusbar Item 参数 -->
         <setting>
             <setting-item title="message" note="First item content">
-                <text v-model="message" style="min-width: 200px"></text>
+                <text v-model="message"></text>
             </setting-item>
             <setting-item title="type" note="First item semantic color">
                 <select v-model="type" :data="['default', 'primary', 'info', 'warning', 'danger', 'cg']"></select>
