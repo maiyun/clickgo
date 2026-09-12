@@ -24,6 +24,7 @@ export default class extends clickgo.control.AbstractControl {
 
         'max': number | string | undefined;
         'min': number | string | undefined;
+        'step': number | string;
     } = {
             'disabled': false,
             'readonly': false,
@@ -34,7 +35,8 @@ export default class extends clickgo.control.AbstractControl {
             'placeholder': '',
 
             'max': undefined,
-            'min': undefined
+            'min': undefined,
+            'step': 1
         };
 
     // --- 其他 ---
@@ -42,6 +44,12 @@ export default class extends clickgo.control.AbstractControl {
     public isFocus = false;
 
     public value = '';
+
+    /** --- 有效步长 --- */
+    public get stepComp(): number {
+        const step = this.propNumber('step');
+        return Number.isFinite(step) && (step > 0) ? step : 1;
+    }
 
     /** --- 语言包 --- */
     public localeData = {
@@ -259,14 +267,37 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /**
-     * --- number 模式下，点击右侧的控制按钮 ---
-     * @param num 增加或者是减少
+     * --- 按原生 number 规则计算步进后的值 ---
+     * @param stepCount 步进次数，正数增加、负数减少
+     * @returns 步进后的数值字符串
      */
-    public numberClick(num: number): void {
-        if (!this.value) {
-            this.value = '0';
+    private _getSteppedValue(stepCount: number): string {
+        if (stepCount === 0) {
+            return this.value;
         }
-        const n = (parseFloat(this.value) + num).toString();
+        const target = this.refs.text as unknown as HTMLInputElement;
+        const value = target.value;
+        target.value = this.value;
+        if (stepCount > 0) {
+            target.stepUp(stepCount);
+        }
+        else {
+            target.stepDown(-stepCount);
+        }
+        const stepped = target.value;
+        target.value = value;
+        return stepped;
+    }
+
+    /**
+     * --- number 模式下，点击右侧的控制按钮 ---
+     * @param stepCount 步进次数，正数增加、负数减少
+     */
+    public numberClick(stepCount: number): void {
+        const n = this._getSteppedValue(stepCount);
+        if (n === this.value) {
+            return;
+        }
         const event: clickgo.control.INumberBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {

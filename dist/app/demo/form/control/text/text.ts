@@ -5,7 +5,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public value = '';
 
-    public nvalue = '';
+    public nvalue = '0.25';
+
+    public step = 0.05;
 
     public isFocus = false;
 

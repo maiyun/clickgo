@@ -122,6 +122,12 @@
 
 最小值（仅 number 类型有效）。
 
+#### step
+
+`number` | `string`
+
+number 类型下增减按钮、键盘上下键及拖拽调值的步长，必须大于 0，默认 `1`。
+
 ### 事件
 
 #### focus
@@ -238,4 +244,5 @@
 
 ```xml
 <text v-model="val" placeholder="Please input"></text>
+<text v-model="opacity" type="number" min="0" max="1" step="0.05"></text>
 ```

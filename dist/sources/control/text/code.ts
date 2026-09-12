@@ -47,6 +47,7 @@ export default class extends clickgo.control.AbstractControl {
 
         'max': number | string | undefined;
         'min': number | string | undefined;
+        'step': number | string;
     } = {
             'disabled': false,
             'readonly': false,
@@ -69,7 +70,8 @@ export default class extends clickgo.control.AbstractControl {
             'scrollTop': 0,
 
             'max': undefined,
-            'min': undefined
+            'min': undefined,
+            'step': 1
         };
 
     /** --- 当前是否正在显示密码的状态 --- */
@@ -80,6 +82,12 @@ export default class extends clickgo.control.AbstractControl {
     public isFocus = false;
 
     public value = '';
+
+    /** --- number 模式下的有效步长 --- */
+    public get stepComp(): number {
+        const step = this.propNumber('step');
+        return Number.isFinite(step) && (step > 0) ? step : 1;
+    }
 
     /** --- size，主要是 scroll 用 --- */
     public size = {
@@ -410,14 +418,37 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /**
-     * --- number 模式下，点击右侧的控制按钮 ---
-     * @param num 增加或者是减少
+     * --- 按原生 number 规则计算步进后的值 ---
+     * @param stepCount 步进次数，正数增加、负数减少
+     * @returns 步进后的数值字符串
      */
-    public numberClick(num: number): void {
-        if (!this.value) {
-            this.value = '0';
+    private _getSteppedValue(stepCount: number): string {
+        if (stepCount === 0) {
+            return this.value;
         }
-        const n = (parseFloat(this.value) + num).toString();
+        const target = this.refs.text as unknown as HTMLInputElement;
+        const value = target.value;
+        target.value = this.value;
+        if (stepCount > 0) {
+            target.stepUp(stepCount);
+        }
+        else {
+            target.stepDown(-stepCount);
+        }
+        const stepped = target.value;
+        target.value = value;
+        return stepped;
+    }
+
+    /**
+     * --- number 模式下，点击右侧的控制按钮 ---
+     * @param stepCount 步进次数，正数增加、负数减少
+     */
+    public numberClick(stepCount: number): void {
+        const n = this._getSteppedValue(stepCount);
+        if (n === this.value) {
+            return;
+        }
         const event: clickgo.control.ITextBeforeChangeEvent = {
             'go': true,
             preventDefault: function() {
@@ -457,21 +488,16 @@ export default class extends clickgo.control.AbstractControl {
         const onMove = (me: PointerEvent): void => {
             accumulate += me.clientX - lastX;
             lastX = me.clientX;
-            // --- 每 5px 变化 1 个单位 ---
-            const step = Math.trunc(accumulate / 5);
-            if (step === 0) {
+            // --- 每 5px 变化 1 个步长 ---
+            const steps = Math.trunc(accumulate / 5);
+            if (steps === 0) {
                 return;
             }
-            accumulate -= step * 5;
-            const current = parseFloat(this.value) || 0;
-            let newVal = current + step;
-            if (this.props.max !== undefined && this.props.max !== 'undefined') {
-                newVal = Math.min(newVal, this.propNumber('max'));
+            accumulate -= steps * 5;
+            const n = this._getSteppedValue(steps);
+            if (n === this.value) {
+                return;
             }
-            if (this.props.min !== undefined && this.props.min !== 'undefined') {
-                newVal = Math.max(newVal, this.propNumber('min'));
-            }
-            const n = newVal.toString();
             const event: clickgo.control.ITextBeforeChangeEvent = {
                 'go': true,
                 preventDefault: function() {

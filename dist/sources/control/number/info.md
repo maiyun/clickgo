@@ -50,6 +50,12 @@
 
 最小值。
 
+#### step
+
+`number` | `string`
+
+增减按钮及键盘上下键的步长，必须大于 0，默认 `1`。
+
 ### 事件
 
 #### focus
@@ -107,5 +113,5 @@
 ### 示例
 
 ```xml
-<number v-model="val" :min="0" :max="100"></number>
+<number v-model="price" min="0" max="100" step="0.01"></number>
 ```

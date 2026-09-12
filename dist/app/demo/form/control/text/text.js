@@ -2,7 +2,8 @@ import * as clickgo from 'clickgo';
 import numFrm from './num';
 export default class extends clickgo.form.AbstractForm {
     value = '';
-    nvalue = '';
+    nvalue = '0.25';
+    step = 0.05;
     isFocus = false;
     nisFocus = false;
     // --- 属性 ---
