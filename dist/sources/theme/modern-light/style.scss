@@ -41,60 +41,60 @@ global {
 
     // --- 亮色半透明工作台 ---
 
-    --g-pure:color-mix(in oklch, oklch(.985 .008 270 / .62), var(--cg) 3%);
-    --face:color-mix(in oklch, oklch(.97 .01 270 / .56), var(--cg) 3%);
-    --face-hover:color-mix(in oklch, oklch(.95 .016 270 / .66), var(--cg) 5%);
-    --face-selected:color-mix(in oklch, oklch(.925 .02 270 / .72), var(--cg) 11%);
-    --g-pop-background:color-mix(in oklch, oklch(.985 .012 270 / .48), var(--cg) 5%);
+    --g-pure:oklch(from var(--cg) .985 calc(c * .06) h / .62);
+    --face:oklch(from var(--cg) .97 calc(c * .07) h / .56);
+    --face-hover:oklch(from var(--cg) .95 calc(c * .12) h / .66);
+    --face-selected:oklch(from var(--cg) .925 calc(c * .17) h / .72);
+    --g-pop-background:oklch(from var(--cg) .985 calc(c * .1) h / .48);
     --g-pop-backdrop:blur(26px) saturate(1.5) brightness(1.03);
     --modern-form-backdrop:blur(24px) saturate(1.45) brightness(1.03);
     --g-pop-border:solid .5px color-mix(in oklch, var(--cg), transparent 50%);
-    --g-shadow:0 1px 1px oklch(.24 .025 270 / .045), inset 0 1px 0 oklch(1 0 0 / .56);
-    --g-shadow-m:0 18px 46px -30px oklch(.22 .035 270 / .28), 0 3px 10px -8px oklch(.22 .035 270 / .1), inset 0 1px 0 oklch(1 0 0 / .66);
-    --g-shadow-d:0 30px 76px -34px oklch(.2 .04 270 / .36), 0 0 38px -22px color-mix(in oklch, var(--cg), transparent 66%), inset 0 1px 0 oklch(1 0 0 / .74);
+    --g-shadow:0 1px 1px oklch(.24 0 0 / .045), inset 0 1px 0 oklch(1 0 0 / .56);
+    --g-shadow-m:0 18px 46px -30px oklch(.22 0 0 / .28), 0 3px 10px -8px oklch(.22 0 0 / .1), inset 0 1px 0 oklch(1 0 0 / .66);
+    --g-shadow-d:0 30px 76px -34px oklch(.2 0 0 / .36), 0 0 38px -22px color-mix(in oklch, var(--cg), transparent 66%), inset 0 1px 0 oklch(1 0 0 / .74);
     --g-outline-shadow:0 0 0 2px color-mix(in oklch, var(--cg), transparent 78%), 0 0 22px color-mix(in oklch, var(--cg), transparent 84%);
 
     // --- 清晰的文字与控件层级 ---
 
-    --g-color:oklch(.3 .028 270);
-    --g-color-hover:oklch(.2 .038 270);
-    --g-color-active:oklch(.16 .038 270);
-    --g-color-focus:oklch(.22 .038 270);
-    --g-color-disabled:oklch(.68 .012 270);
-    --g-color-tip:oklch(.5 .022 270);
-    --g-color-placeholder:oklch(.59 .018 270);
+    --g-color:oklch(from var(--cg) .3 calc(c * .12) h);
+    --g-color-hover:oklch(from var(--cg) .2 calc(c * .16) h);
+    --g-color-active:oklch(from var(--cg) .16 calc(c * .16) h);
+    --g-color-focus:oklch(from var(--cg) .22 calc(c * .16) h);
+    --g-color-disabled:oklch(from var(--cg) .68 calc(c * .05) h);
+    --g-color-tip:oklch(from var(--cg) .5 calc(c * .09) h);
+    --g-color-placeholder:oklch(from var(--cg) .59 calc(c * .075) h);
 
-    --g-background:oklch(.99 .008 270 / .62);
-    --g-background-hover:color-mix(in oklch, oklch(.97 .014 270 / .68), var(--cg) 5%);
-    --g-background-active:color-mix(in oklch, oklch(.94 .022 270 / .74), var(--cg) 10%);
-    --g-background-opacity:oklch(.62 .025 270 / .14);
-    --g-background-focus:color-mix(in oklch, oklch(.985 .012 270 / .7), var(--cg) 3%);
-    --g-background-disabled:oklch(.95 .008 270 / .54);
+    --g-background:oklch(from var(--cg) .99 calc(c * .04) h / .62);
+    --g-background-hover:oklch(from var(--cg) .97 calc(c * .1) h / .68);
+    --g-background-active:oklch(from var(--cg) .94 calc(c * .18) h / .74);
+    --g-background-opacity:oklch(from var(--cg) .62 calc(c * .08) h / .14);
+    --g-background-focus:oklch(from var(--cg) .985 calc(c * .08) h / .7);
+    --g-background-disabled:oklch(from var(--cg) .95 calc(c * .025) h / .54);
 
-    --g-border-color:oklch(.82 .035 275 / .62);
-    --g-border-color-hover:oklch(.7 .07 280 / .76);
+    --g-border-color:oklch(from var(--cg) .82 calc(c * .14) h / .62);
+    --g-border-color-hover:oklch(from var(--cg) .7 calc(c * .26) h / .76);
     --g-border-color-active:color-mix(in oklch, var(--cg), white 38%);
     --g-border-color-focus:color-mix(in oklch, var(--cg), white 46%);
-    --g-border-color-disabled:oklch(.89 .014 270 / .52);
+    --g-border-color-disabled:oklch(from var(--cg) .89 calc(c * .04) h / .52);
 
-    --g-plain-background:oklch(.965 .012 270 / .5);
-    --g-plain-background-hover:color-mix(in oklch, oklch(.945 .02 270 / .6), var(--cg) 5%);
-    --g-plain-background-active:color-mix(in oklch, oklch(.92 .028 270 / .68), var(--cg) 9%);
-    --g-plain-background-focus:color-mix(in oklch, oklch(.98 .012 270 / .62), var(--cg) 3%);
-    --g-plain-background-disabled:oklch(.945 .008 270 / .44);
+    --g-plain-background:oklch(from var(--cg) .965 calc(c * .04) h / .5);
+    --g-plain-background-hover:oklch(from var(--cg) .945 calc(c * .09) h / .6);
+    --g-plain-background-active:oklch(from var(--cg) .92 calc(c * .15) h / .68);
+    --g-plain-background-focus:oklch(from var(--cg) .98 calc(c * .07) h / .62);
+    --g-plain-background-disabled:oklch(from var(--cg) .945 calc(c * .02) h / .44);
     --g-plain-background-selected:color-mix(in oklch, var(--cg), white 84%);
 
-    --g-plain-border-color:oklch(.85 .03 275 / .58);
-    --g-plain-border-color-hover:oklch(.73 .065 280 / .72);
+    --g-plain-border-color:oklch(from var(--cg) .85 calc(c * .12) h / .58);
+    --g-plain-border-color-hover:oklch(from var(--cg) .73 calc(c * .24) h / .72);
     --g-plain-border-color-active:color-mix(in oklch, var(--cg), white 42%);
     --g-plain-border-color-focus:color-mix(in oklch, var(--cg), white 50%);
-    --g-plain-border-color-disabled:oklch(.9 .012 270 / .46);
-    --g-plain-border-color-plain:oklch(.9 .018 270 / .5);
+    --g-plain-border-color-disabled:oklch(from var(--cg) .9 calc(c * .04) h / .46);
+    --g-plain-border-color-plain:oklch(from var(--cg) .9 calc(c * .07) h / .5);
 
-    --g-block-background:oklch(.91 .025 275 / .78);
-    --g-block-background-hover:color-mix(in oklch, oklch(.875 .035 278 / .86), var(--cg) 5%);
-    --g-block-dark-background:oklch(.25 .025 270);
-    --g-block-dark-background-hover:oklch(.3 .035 275);
+    --g-block-background:oklch(from var(--cg) .91 calc(c * .1) h / .78);
+    --g-block-background-hover:oklch(from var(--cg) .875 calc(c * .18) h / .86);
+    --g-block-dark-background:oklch(from var(--cg) .25 calc(c * .08) h);
+    --g-block-dark-background-hover:oklch(from var(--cg) .3 calc(c * .14) h);
 
     ::selection {
         background-color: color-mix(in oklch, var(--cg), transparent 74%);
@@ -108,7 +108,7 @@ global {
     &:not(.form_border-none):not([data-cg-max]) {
         background:
             linear-gradient(135deg, color-mix(in oklch, var(--cg), transparent 70%), oklch(1 0 0 / .42) 24%, transparent 48%, color-mix(in oklch, var(--modern-accent-shift), transparent 82%)),
-            oklch(.9 .018 270 / .46);
+            oklch(from var(--cg) .9 calc(c * .08) h / .46);
     }
     .form_inner {
         .form_header {
@@ -118,10 +118,10 @@ global {
             .form_controls {
                 .form_min, .form_max {
                     &:hover {
-                        background: oklch(.2 .02 270 / .06);
+                        background: oklch(from var(--cg) .2 calc(c * .08) h / .06);
                     }
                     &:active {
-                        background: oklch(.2 .02 270 / .11);
+                        background: oklch(from var(--cg) .2 calc(c * .12) h / .11);
                     }
                 }
             }
@@ -131,7 +131,7 @@ global {
                 linear-gradient(145deg, color-mix(in oklch, var(--cg), transparent 97%), transparent 38%),
                 var(--face);
             .form_loading {
-                background: radial-gradient(circle, oklch(.99 .015 275 / .94) 12%, oklch(.93 .025 275 / .68) 80%);
+                background: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%);
             }
         }
     }
@@ -142,7 +142,7 @@ global {
 .group_wrap {
     &.group_plain {
         &.group_hover:hover, &:not(.group_hover) {
-            box-shadow: 0 10px 28px -22px oklch(.22 .035 270 / .2);
+            box-shadow: 0 10px 28px -22px oklch(.22 0 0 / .2);
         }
     }
 }
@@ -152,35 +152,35 @@ global {
 .levelselect_tag-cg-greatselect {
     .levelselect_op {
         .levelselect_oploading {
-            background: radial-gradient(circle, oklch(.99 .015 275 / .94) 12%, oklch(.93 .025 275 / .68) 80%);
+            background: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%);
         }
     }
 }
 .levelselect_pop {
     .levelselect_loading {
-        background: radial-gradient(circle, oklch(.99 .015 275 / .94) 12%, oklch(.93 .025 275 / .68) 80%);
+        background: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%);
     }
 }
 
 // -- CONTROL -- nav --
 
 .nav_wrap {
-    background: oklch(.955 .014 270);
+    background: oklch(from var(--cg) .955 calc(c * .06) h);
     .nav_bg {
-        background: oklch(.955 .014 270);
+        background: oklch(from var(--cg) .955 calc(c * .06) h);
         .nav_bg-item {
             display: none;
         }
     }
     .nav_menuwrap {
         .nav_menu {
-            background: oklch(.975 .018 270 / .46);
+            background: oklch(from var(--cg) .975 calc(c * .08) h / .46);
         }
     }
     .nav_content {
         .nav_header {
-            background: oklch(.985 .014 270 / .48);
-            box-shadow: 0 8px 24px -20px oklch(.22 .035 270 / .24);
+            background: oklch(from var(--cg) .985 calc(c * .07) h / .48);
+            box-shadow: 0 8px 24px -20px oklch(.22 0 0 / .24);
         }
     }
 }
@@ -190,7 +190,7 @@ global {
 .nav-item_wrap {
     &:not(.nav-item_selected) {
         > .nav-item_text:hover {
-            background: oklch(.2 .025 270 / .045);
+            background: oklch(.2 0 0 / .045);
         }
     }
     &.nav-item_selected {
@@ -251,9 +251,16 @@ global {
             box-shadow: 0 0 0 1px color-mix(in oklch, var(--cg), transparent 88%), 0 6px 18px -14px color-mix(in oklch, var(--cg), transparent 54%), inset 0 1px 0 oklch(1 0 0 / .62);
         }
         &:active {
-            box-shadow: 0 0 0 2px color-mix(in oklch, var(--cg), transparent 82%), inset 0 1px 3px oklch(.25 .03 270 / .06);
+            box-shadow: 0 0 0 2px color-mix(in oklch, var(--cg), transparent 82%), inset 0 1px 3px oklch(.25 0 0 / .06);
         }
     }
+}
+
+// -- CONTROL -- slider --
+
+.slider_wrap {
+    --slider-thumb-background:oklch(from var(--cg) .965 calc(c * .04) h);
+    --slider-thumb-background-disabled:oklch(from var(--cg) .945 calc(c * .02) h);
 }
 
 // --- CONTROL -- cube ---

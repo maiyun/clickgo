@@ -1,5 +1,7 @@
 .wrap {
     --slider-size:var(--g-control-m);
+    --slider-thumb-background:var(--g-plain-background);
+    --slider-thumb-background-disabled:var(--g-plain-background-disabled);
     display: flex; align-items: center; gap: var(--g-padding-s); min-width: 60px;
 
     &.s {
@@ -18,7 +20,7 @@
         }
 
         &::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: var(--slider-size); height: var(--slider-size); margin-top: calc((4px - var(--slider-size)) / 2); border: solid 2px var(--cg); border-radius: 50%; background: var(--g-plain-background); box-shadow: var(--g-shadow); transition: var(--g-transition);
+            -webkit-appearance: none; appearance: none; width: var(--slider-size); height: var(--slider-size); margin-top: calc((4px - var(--slider-size)) / 2); border: solid 2px var(--cg); border-radius: 50%; background: var(--slider-thumb-background); box-shadow: var(--g-shadow); transition: var(--g-transition);
         }
 
         &::-moz-range-track {
@@ -30,7 +32,7 @@
         }
 
         &::-moz-range-thumb {
-            box-sizing: border-box; width: var(--slider-size); height: var(--slider-size); border: solid 2px var(--cg); border-radius: 50%; background: var(--g-plain-background); box-shadow: var(--g-shadow); transition: var(--g-transition);
+            box-sizing: border-box; width: var(--slider-size); height: var(--slider-size); border: solid 2px var(--cg); border-radius: 50%; background: var(--slider-thumb-background); box-shadow: var(--g-shadow); transition: var(--g-transition);
         }
 
         &:hover::-webkit-slider-thumb {
@@ -59,11 +61,11 @@
             cursor: default; background: linear-gradient(to right, var(--g-plain-border-color-disabled) 0 var(--slider-progress), var(--g-plain-background-disabled) var(--slider-progress) 100%); background-position: center; background-repeat: no-repeat; background-size: 100% 4px;
 
             &::-webkit-slider-thumb {
-                border-color: var(--g-plain-border-color-disabled); background: var(--g-plain-background-disabled); box-shadow: none;
+                border-color: var(--g-plain-border-color-disabled); background: var(--slider-thumb-background-disabled); box-shadow: none;
             }
 
             &::-moz-range-thumb {
-                border-color: var(--g-plain-border-color-disabled); background: var(--g-plain-background-disabled); box-shadow: none;
+                border-color: var(--g-plain-border-color-disabled); background: var(--slider-thumb-background-disabled); box-shadow: none;
             }
         }
 
