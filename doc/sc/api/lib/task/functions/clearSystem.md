@@ -8,7 +8,7 @@
 
 > **clearSystem**(`taskId`): `Promise`\<`boolean`\>
 
-Defined in: [lib/task.ts:1385](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1385)
+Defined in: [lib/task.ts:1423](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1423)
 
 清除系统任务设定
 

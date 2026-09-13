@@ -8,7 +8,7 @@
 
 > **loadLocaleData**(`taskId`, `lang`, `data`, `pre?`): `void`
 
-Defined in: [lib/task.ts:1120](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1120)
+Defined in: [lib/task.ts:1158](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1158)
 
 加载 locale data 对象到 task
 

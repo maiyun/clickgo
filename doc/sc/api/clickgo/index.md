@@ -25,6 +25,7 @@
 - [hasFrame](functions/hasFrame.md)
 - [isNative](functions/isNative.md)
 - [launcher](functions/launcher.md)
+- [showBrowserWarning](functions/showBrowserWarning.md)
 
 ## References
 

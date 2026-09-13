@@ -8,7 +8,7 @@
 
 > **createTimer**(`current`, `fun`, `delay`, `opt?`): `number`
 
-Defined in: [lib/task.ts:1236](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1236)
+Defined in: [lib/task.ts:1274](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1274)
 
 创建 timer
 

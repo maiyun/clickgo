@@ -8,7 +8,7 @@
 
 > **runThread**(`current`, `cls`, `data?`): [`IThread`](../interfaces/IThread.md)
 
-Defined in: [lib/task.ts:1575](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1575)
+Defined in: [lib/task.ts:1613](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1613)
 
 运行线程（同一个线程文件只能运行一个）
 

@@ -8,7 +8,7 @@
 
 > **launcher**(`boot`): `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:407](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L407)
+Defined in: [clickgo.ts:415](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L415)
 
 启动 ClickGo
 

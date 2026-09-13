@@ -6,7 +6,7 @@
 
 # Interface: ITaskInfo
 
-Defined in: [lib/task.ts:1780](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1780)
+Defined in: [lib/task.ts:1818](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1818)
 
 Task 的简略情况，通常在 list 当中
 
@@ -16,7 +16,7 @@ Task 的简略情况，通常在 list 当中
 
 > **current**: `string`
 
-Defined in: [lib/task.ts:1789](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1789)
+Defined in: [lib/task.ts:1827](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1827)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/task.ts:1789](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **customTheme**: `boolean`
 
-Defined in: [lib/task.ts:1785](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1785)
+Defined in: [lib/task.ts:1823](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1823)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/task.ts:1785](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **formCount**: `number`
 
-Defined in: [lib/task.ts:1786](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1786)
+Defined in: [lib/task.ts:1824](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1824)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/task.ts:1786](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **icon**: `string`
 
-Defined in: [lib/task.ts:1787](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1787)
+Defined in: [lib/task.ts:1825](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1825)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/task.ts:1787](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **id**: `string`
 
-Defined in: [lib/task.ts:1782](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1782)
+Defined in: [lib/task.ts:1820](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1820)
 
 任务 ID
 
@@ -58,7 +58,7 @@ Defined in: [lib/task.ts:1782](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **locale**: `string`
 
-Defined in: [lib/task.ts:1784](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1784)
+Defined in: [lib/task.ts:1822](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1822)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: [lib/task.ts:1784](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **name**: `string`
 
-Defined in: [lib/task.ts:1783](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1783)
+Defined in: [lib/task.ts:1821](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1821)
 
 ***
 
@@ -74,4 +74,4 @@ Defined in: [lib/task.ts:1783](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **path**: `string`
 
-Defined in: [lib/task.ts:1788](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1788)
+Defined in: [lib/task.ts:1826](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1826)

@@ -8,7 +8,7 @@
 
 > **loadLocale**(`taskId`, `lang`, `path`): `Promise`\<`boolean`\>
 
-Defined in: [lib/task.ts:1147](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1147)
+Defined in: [lib/task.ts:1185](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1185)
 
 加载 locale 文件 json
 
