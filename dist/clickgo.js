@@ -241,7 +241,7 @@ export function showBrowserWarning(text) {
         el.remove();
     });
     body.appendChild(button);
-    lForm.elements.wrap.appendChild(el);
+    document.body.appendChild(el);
 }
 /**
  * --- 检查浏览器是否支持 ClickGo 使用的现代颜色语法，不支持时显示升级提示 ---

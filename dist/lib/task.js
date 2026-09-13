@@ -580,7 +580,7 @@ export async function run(current, url, opt = {}) {
             if (event.state !== lTool.ESTATE.WORD) {
                 return true;
             }
-            if (!['eval', 'Function'].includes(event.word)) {
+            if (event.word !== 'eval') {
                 return true;
             }
             lForm.notify({

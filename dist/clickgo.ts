@@ -376,7 +376,7 @@ export function showBrowserWarning(text: {
     });
     body.appendChild(button);
 
-    lForm.elements.wrap.appendChild(el);
+    document.body.appendChild(el);
 }
 
 /**
