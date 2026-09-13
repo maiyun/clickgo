@@ -86,7 +86,6 @@
                     <button @click="openForm('ctimeline')">Timeline</button>
                     <button @click="openForm('ctip')">Tip</button>
                     <button @click="openForm('ctoolbar')">Toolbar</button>
-                    <button @click="openForm('ctplink')">Tplink</button>
                     <button @click="openForm('ctuieditor')">Tuieditor</button>
                     <button @click="openForm('ctuiviewer')">Tuiviewer</button>
                     <button @click="openForm('ctums')">Tums</button>

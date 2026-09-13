@@ -29,7 +29,6 @@
         "/clickgo/control/jodit",
         "/clickgo/control/qrcode",
         "/clickgo/control/mpegts",
-        "/clickgo/control/tplink",
         "/clickgo/control/tums",
         "/clickgo/control/novnc",
         "/clickgo/control/objviewer",

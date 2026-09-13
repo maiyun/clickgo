@@ -1018,19 +1018,6 @@ const modules = {
         'loading': false,
         'resolve': [],
     },
-    'tplinkhd': {
-        func: async function () {
-            await lTool.loadScripts([
-                `${clickgo.getDirname()}/ext/tplinkhd.min.js`,
-            ]);
-            if (!window.HDPluginControl) {
-                throw Error('Tplink load failed.');
-            }
-            return window.HDPluginControl;
-        },
-        'loading': false,
-        'resolve': [],
-    },
     'tums-player': {
         func: async function () {
             await lTool.loadScripts([
