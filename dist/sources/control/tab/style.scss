@@ -240,5 +240,13 @@
 
     > .panel {
         background: var(--g-plain-background); display: flex; flex: 1; border: solid .5px var(--g-plain-border-color);
-    }    
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .wrap {
+        > .tabs-wrap > .tabs > .tab > .close {
+            opacity: 1;
+        }
+    }
 }

@@ -90,3 +90,13 @@
         }
     }
 }
+
+@media (hover: none), (pointer: coarse) {
+    .wrap:not([data-cg-disabled]) {
+        .item {
+            .bottom {
+                pointer-events: initial; opacity: 1;
+            }
+        }
+    }
+}

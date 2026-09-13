@@ -13,6 +13,13 @@ export default class extends clickgo.form.AbstractForm {
     minHeight = 100;
     resize = true;
     border = 'normal';
+    size = {
+        'width': 0,
+        'height': 0
+    };
+    onSize(size) {
+        this.size = size;
+    }
     async showLoading() {
         this.loading = true;
         await clickgo.tool.sleep(1000);

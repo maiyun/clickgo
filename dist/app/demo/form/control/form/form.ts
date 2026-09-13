@@ -28,6 +28,15 @@ export default class extends clickgo.form.AbstractForm {
 
     public border = 'normal';
 
+    public size = {
+        'width': 0,
+        'height': 0
+    };
+
+    public onSize(size: { width: number; height: number; }): void {
+        this.size = size;
+    }
+
     public async showLoading(): Promise<void> {
         this.loading = true;
         await clickgo.tool.sleep(1000);

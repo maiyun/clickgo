@@ -142,6 +142,12 @@
 
 关闭时触发。
 
+#### size
+
+`(size: { width: number; height: number }) => void`
+
+窗体实际显示尺寸变化时触发，首次挂载也会触发。框架只报告尺寸，不自动改变窗体位置、大小或窗口能力；应用可据此自行切换 `move`、`resize`、`min`、`max` 等参数。
+
 ### 样式
 
 使用 flex 布局，包含标题栏和内容区域。标题栏显示图标、标题文本和控制按钮（最小化/最大化/关闭）。
@@ -153,5 +159,5 @@
 ### 示例
 
 ```xml
-<form title="My Form" :width="500" :height="400">Content</form>
+<form title="My Form" :width="500" :height="400" :move="move" :resize="resize" :max="max" @size="onSize">Content</form>
 ```

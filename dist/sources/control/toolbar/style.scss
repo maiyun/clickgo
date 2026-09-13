@@ -1,0 +1,50 @@
+.wrap {
+    display: flex; flex: 0 0 auto; align-items: stretch; min-width: 0; min-height: var(--g-boxsize); color: var(--g-plain-color); background: var(--g-plain-background); border-bottom: solid .5px var(--g-plain-border-color); box-sizing: border-box;
+
+    &.borderless {
+        border-bottom-color: transparent;
+    }
+
+    &.plain {
+        background: transparent;
+    }
+
+    > .body, > .right {
+        display: flex; align-items: center; gap: var(--g-padding); padding: var(--g-padding); box-sizing: border-box;
+
+        > * {
+            flex: 0 0 auto;
+        }
+    }
+
+    > .body {
+        flex: 1; width: 0; overflow: hidden;
+
+        &.scroll {
+            overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            &.scroll-start:not(.scroll-end) {
+                -webkit-mask-image: linear-gradient(to right, transparent, #000 calc(var(--g-padding-l) + var(--g-padding)), #000);
+                mask-image: linear-gradient(to right, transparent, #000 calc(var(--g-padding-l) + var(--g-padding)), #000);
+            }
+
+            &.scroll-end:not(.scroll-start) {
+                -webkit-mask-image: linear-gradient(to right, #000, #000 calc(100% - var(--g-padding-l) - var(--g-padding)), transparent);
+                mask-image: linear-gradient(to right, #000, #000 calc(100% - var(--g-padding-l) - var(--g-padding)), transparent);
+            }
+
+            &.scroll-start.scroll-end {
+                -webkit-mask-image: linear-gradient(to right, transparent, #000 calc(var(--g-padding-l) + var(--g-padding)), #000 calc(100% - var(--g-padding-l) - var(--g-padding)), transparent);
+                mask-image: linear-gradient(to right, transparent, #000 calc(var(--g-padding-l) + var(--g-padding)), #000 calc(100% - var(--g-padding-l) - var(--g-padding)), transparent);
+            }
+        }
+    }
+
+    > .right {
+        flex: 0 0 auto; padding-left: 0; background: inherit;
+    }
+}

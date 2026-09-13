@@ -2523,11 +2523,49 @@ export function appendToPop(el) {
 export function removeFromPop(el) {
     elements.popList.removeChild(el);
 }
+/** --- 保存弹层原有的最大尺寸样式，避免视口约束覆盖控件自己的限制 --- */
+const popViewportStyles = new WeakMap();
 /** --- 重新调整 pop 的位置 --- */
 function refreshPopPosition(el, pop, direction, size = {}) {
+    /** --- 弹层与视口边缘之间保留的最小距离 --- */
+    const viewportPadding = 4;
+    /** --- 弹层在当前视口内可使用的最大尺寸 --- */
+    const maxWidth = Math.max(0, window.innerWidth - viewportPadding * 2);
+    const maxHeight = Math.max(0, window.innerHeight - viewportPadding * 2);
+    let viewportStyle = popViewportStyles.get(pop);
+    if (!viewportStyle) {
+        viewportStyle = {
+            'maxWidthSource': pop.style.maxWidth === 'none' ? '' : pop.style.maxWidth,
+            'maxWidthApplied': '',
+            'maxHeightSource': pop.style.maxHeight === 'none' ? '' : pop.style.maxHeight,
+            'maxHeightApplied': ''
+        };
+        popViewportStyles.set(pop, viewportStyle);
+    }
+    else {
+        if (pop.style.maxWidth !== viewportStyle.maxWidthApplied) {
+            viewportStyle.maxWidthSource = pop.style.maxWidth === 'none' ? '' : pop.style.maxWidth;
+        }
+        if (pop.style.maxHeight !== viewportStyle.maxHeightApplied) {
+            viewportStyle.maxHeightSource = pop.style.maxHeight === 'none' ? '' : pop.style.maxHeight;
+        }
+    }
+    pop.style.maxWidth = viewportStyle.maxWidthSource ? `min(${viewportStyle.maxWidthSource}, ${maxWidth}px)` : `${maxWidth}px`;
+    pop.style.maxHeight = viewportStyle.maxHeightSource ? `min(${viewportStyle.maxHeightSource}, ${maxHeight}px)` : `${maxHeight}px`;
+    viewportStyle.maxWidthApplied = pop.style.maxWidth;
+    viewportStyle.maxHeightApplied = pop.style.maxHeight;
+    pop.style.boxSizing = 'border-box';
+    pop.style.overflow = 'auto';
+    pop.style.overscrollBehavior = 'contain';
+    if (size.width !== undefined) {
+        pop.style.width = `${Math.max(0, Math.min(size.width, maxWidth))}px`;
+    }
+    if (size.height !== undefined) {
+        pop.style.height = `${Math.max(0, Math.min(size.height, maxHeight))}px`;
+    }
     // --- 最终 pop 的大小 ---
-    const width = size.width ?? pop.offsetWidth;
-    const height = size.height ?? pop.offsetHeight;
+    const width = Math.min(pop.offsetWidth, maxWidth);
+    const height = Math.min(pop.offsetHeight, maxHeight);
     // --- 最终显示位置 ---
     let left, top;
     if (typeof direction === 'string') {
@@ -2551,7 +2589,7 @@ function refreshPopPosition(el, pop, direction, size = {}) {
         }
         // --- 下面检测是否出框 ---
         // --- 检查水平是否出框 ---
-        if (width + left > window.innerWidth) {
+        if (width + left > window.innerWidth - viewportPadding) {
             if (direction === 'v') {
                 // --- 垂直弹出 ---
                 left = bcr.left + bcr.width - width;
@@ -2562,11 +2600,11 @@ function refreshPopPosition(el, pop, direction, size = {}) {
             }
             else {
                 // --- 垂直水平居中，水平超出 ---
-                left = window.innerWidth - width;
+                left = window.innerWidth - viewportPadding - width;
             }
         }
         // --- 检测垂直是否下侧出框 ---
-        if (height + top > window.innerHeight) {
+        if (height + top > window.innerHeight - viewportPadding) {
             if (direction === 'v') {
                 top = bcr.top - height;
             }
@@ -2597,29 +2635,19 @@ function refreshPopPosition(el, pop, direction, size = {}) {
         left = x + 5;
         top = y + 7;
         // --- 水平 ---
-        if (width + left > window.innerWidth) {
+        if (width + left > window.innerWidth - viewportPadding) {
             left = x - width - 5;
         }
         // --- 垂直 ---
-        if (height + top > window.innerHeight) {
+        if (height + top > window.innerHeight - viewportPadding) {
             top = y - height - 5;
         }
     }
-    if (left < 0) {
-        left = 0;
-    }
-    if (top < 0) {
-        top = 0;
-    }
+    left = Math.max(viewportPadding, Math.min(left, window.innerWidth - viewportPadding - width));
+    top = Math.max(viewportPadding, Math.min(top, window.innerHeight - viewportPadding - height));
     pop.style.left = left.toString() + 'px';
     pop.style.top = top.toString() + 'px';
     pop.style.zIndex = (++popInfo.lastZIndex).toString();
-    if (size.width) {
-        pop.style.width = size.width.toString() + 'px';
-    }
-    if (size.height) {
-        pop.style.height = size.height.toString() + 'px';
-    }
 }
 /** --- 最后一次 touchstart 的时间戳 */
 let lastShowPopTime = 0;

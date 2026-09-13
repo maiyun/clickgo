@@ -6,6 +6,7 @@ export default class extends clickgo.control.AbstractControl {
         'max': null,
         'min': null,
         'close': null,
+        'size': null,
 
         'update:width': null,
         'update:height': null,
@@ -1047,6 +1048,14 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('top', () => {
             this.topData = this.propInt('top');
         });
+
+        // --- 通知业务层窗体的实际显示尺寸，由业务层自行决定小屏行为 ---
+        clickgo.dom.watchSize(this, this.element, () => {
+            this.emit('size', {
+                'width': this.element.offsetWidth,
+                'height': this.element.offsetHeight
+            });
+        }, true);
 
         // --- 监听 native 窗体状态变化 ---
 

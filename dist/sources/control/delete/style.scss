@@ -22,3 +22,11 @@
         }
     }
 }
+
+@media (hover: none), (pointer: coarse) {
+    .wrap {
+        .control {
+            opacity: 1; pointer-events: initial;
+        }
+    }
+}

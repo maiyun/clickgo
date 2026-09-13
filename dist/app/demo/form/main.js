@@ -45,6 +45,7 @@ import cscrollFrm from './control/scroll/scroll';
 import cselectFrm from './control/select/select';
 import csliderFrm from './control/slider/slider';
 import cstatusbarFrm from './control/statusbar/statusbar';
+import ctoolbarFrm from './control/toolbar/toolbar';
 import cuploaderFrm from './control/uploader/uploader';
 import csvgFrm from './control/svg/svg';
 import ctabFrm from './control/tab/tab';
@@ -362,6 +363,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cstatusbar': {
                 frm = await clickgo.form.create(this, cstatusbarFrm);
+                break;
+            }
+            case 'ctoolbar': {
+                frm = await clickgo.form.create(this, ctoolbarFrm);
                 break;
             }
             case 'cuploader': {

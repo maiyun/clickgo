@@ -1,0 +1,42 @@
+<form title="Toolbar" width="620" height="420" min-width="360" min-height="320" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; min-width: 0; min-height: 0;">
+        <!-- 正常宽度，完整显示所有命令 -->
+        <label>Normal width:</label>
+        <toolbar :border="border" :plain="plain" :scroll="scroll">
+            <button v-for="command in commands" :key="command" type="tool" @click="run(command)">{{command}}</button>
+        </toolbar>
+
+        <!-- 窄宽度，主命令区可横向滚动，右侧菜单保持固定 -->
+        <label>Narrow width — the faded edge indicates hidden commands:</label>
+        <layout class="narrow" direction="v">
+            <toolbar :border="border" :plain="plain" :scroll="scroll">
+                <button v-for="command in commands" :key="command" type="tool" @click="run(command)">{{command}}</button>
+                <template v-slot:right>
+                    <button type="tool" area="mark">
+                        More
+                        <template v-slot:pop>
+                            <menulist>
+                                <menulist-item @click="run('Help')">Help</menulist-item>
+                                <menulist-item @click="run('Feedback')">Feedback</menulist-item>
+                                <menulist-split></menulist-split>
+                                <menulist-item @click="run('Settings')">Settings</menulist-item>
+                            </menulist>
+                        </template>
+                    </button>
+                </template>
+            </toolbar>
+        </layout>
+        <label>Last command: {{message}}</label>
+        <setting>
+            <setting-item title="border">
+                <switch v-model="border"></switch>
+            </setting-item>
+            <setting-item title="plain">
+                <switch v-model="plain"></switch>
+            </setting-item>
+            <setting-item title="scroll">
+                <switch v-model="scroll"></switch>
+            </setting-item>
+        </setting>
+    </layout>
+</form>

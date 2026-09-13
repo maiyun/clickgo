@@ -14,13 +14,19 @@ cell 之间的间距，默认 0。
 
 是否显示条纹，默认 `false`。
 
+#### breakpoint
+
+`number` | `string`
+
+切换为纵向布局的容器宽度断点，默认 `600`。容器宽度大于等于断点时为横向布局，否则为纵向布局。
+
 ### 事件
 
 #### direction
 
 `(direction: 'h' | 'v') => void`
 
-布局方向变化时触发，宽度 >= 600 时为 h，否则为 v。
+布局方向变化时触发。
 
 ### 样式
 
@@ -31,7 +37,7 @@ cell 之间的间距，默认 0。
 ### 示例
 
 ```xml
-<alayout2 :gutter="10" @direction="onDirection">
+<alayout2 :gutter="10" :breakpoint="480" @direction="onDirection">
     <alayout2-cell>Sidebar</alayout2-cell>
     <alayout2-cell>Content</alayout2-cell>
 </alayout2>
