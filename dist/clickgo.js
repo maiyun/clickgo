@@ -211,30 +211,9 @@ export class AbstractBoot {
         return;
     }
 }
-/**
- * --- 检查浏览器是否支持 ClickGo 使用的现代颜色语法，不支持时显示升级提示 ---
- */
-function checkBrowserColorSupport() {
-    if ((typeof CSS !== 'undefined') &&
-        CSS.supports('color', 'oklch(.7 .2 43)') &&
-        CSS.supports('color', 'color-mix(in oklch, #000000, #ffffff)') &&
-        CSS.supports('color', 'oklch(from #ff6600 l c h)')) {
-        return;
-    }
-    const locale = lCore.config.locale;
-    const text = locale === 'sc' ? {
-        'title': '浏览器版本较低',
-        'content': '当前浏览器无法完整显示界面颜色，建议升级浏览器后继续使用。',
-        'button': '知道了'
-    } : (locale === 'tc' ? {
-        'title': '瀏覽器版本較低',
-        'content': '目前瀏覽器無法完整顯示介面色彩，建議升級瀏覽器後繼續使用。',
-        'button': '知道了'
-    } : {
-        'title': 'Browser update recommended',
-        'content': 'Your browser cannot display all interface colors. Please update it for the best experience.',
-        'button': 'Got it'
-    });
+/** --- 显示浏览器运行环境提示 --- */
+export function showBrowserWarning(text) {
+    document.getElementById('cg-browser-warning')?.remove();
     const el = document.createElement('div');
     el.id = 'cg-browser-warning';
     el.setAttribute('role', 'alert');
@@ -263,6 +242,31 @@ function checkBrowserColorSupport() {
     });
     body.appendChild(button);
     lForm.elements.wrap.appendChild(el);
+}
+/**
+ * --- 检查浏览器是否支持 ClickGo 使用的现代颜色语法，不支持时显示升级提示 ---
+ */
+function checkBrowserColorSupport() {
+    if ((typeof CSS !== 'undefined') &&
+        CSS.supports('color', 'oklch(.7 .2 43)') &&
+        CSS.supports('color', 'color-mix(in oklch, #000000, #ffffff)') &&
+        CSS.supports('color', 'oklch(from #ff6600 l c h)')) {
+        return;
+    }
+    const locale = lCore.config.locale;
+    showBrowserWarning(locale === 'sc' ? {
+        'title': '浏览器版本较低',
+        'content': '当前浏览器无法完整显示界面颜色，建议升级浏览器后继续使用。',
+        'button': '知道了'
+    } : (locale === 'tc' ? {
+        'title': '瀏覽器版本較低',
+        'content': '目前瀏覽器無法完整顯示介面色彩，建議升級瀏覽器後繼續使用。',
+        'button': '知道了'
+    } : {
+        'title': 'Browser update recommended',
+        'content': 'Your browser cannot display all interface colors. Please update it for the best experience.',
+        'button': 'Got it'
+    }));
 }
 /**
  * --- 启动 ClickGo ---

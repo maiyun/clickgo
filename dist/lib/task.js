@@ -206,6 +206,32 @@ const localeData = {
         'loading': 'Đang tải...'
     }
 };
+/** --- 检查浏览器是否可安全加载加密的 CGA 文件 --- */
+function checkCgaLoadEnvironment(current) {
+    if (clickgo.isNative() ||
+        (globalThis.crypto?.subtle && (location.hostname === '127.0.0.1' ||
+            (location.protocol === 'https:' && globalThis.isSecureContext)))) {
+        return true;
+    }
+    const locale = lCore.config.locale;
+    const text = locale === 'sc' ? {
+        'title': '无法加载应用',
+        'content': '当前页面不是 HTTPS 安全上下文，无法解密并加载 CGA 应用。请使用 HTTPS 访问后重试。',
+        'button': '知道了'
+    } : (locale === 'tc' ? {
+        'title': '無法載入應用程式',
+        'content': '目前頁面不是 HTTPS 安全內容，無法解密並載入 CGA 應用程式。請使用 HTTPS 存取後重試。',
+        'button': '知道了'
+    } : {
+        'title': 'Unable to load app',
+        'content': 'This page is not an HTTPS secure context, so the CGA app cannot be decrypted and loaded. Please use HTTPS and try again.',
+        'button': 'Got it'
+    });
+    const error = new Error(text.content);
+    clickgo.showBrowserWarning(text);
+    lCore.trigger('error', current, '', error, error.message).catch(() => { });
+    return false;
+}
 // --- 创建 frame 监听 ---
 let frameTimer = 0;
 const frameMaps = {};
@@ -365,6 +391,12 @@ export async function run(current, url, opt = {}) {
     }
     if (!isSys(current) && !list[current]) {
         return 0;
+    }
+    if (typeof url === 'string' && url.endsWith('.cga')) {
+        // --- Web Crypto 仅可在 HTTPS 安全上下文中解密 CGA ---
+        if (!checkCgaLoadEnvironment(current)) {
+            return -9;
+        }
     }
     /** --- 总步骤 --- */
     const initTotal = 7;
