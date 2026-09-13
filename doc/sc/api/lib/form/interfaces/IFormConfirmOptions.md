@@ -6,7 +6,7 @@
 
 # Interface: IFormConfirmOptions
 
-Defined in: [lib/form.ts:4724](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4724)
+Defined in: [lib/form.ts:4760](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4760)
 
 Confirm 选项
 
@@ -16,7 +16,7 @@ Confirm 选项
 
 > `optional` **cancel?**: `boolean`
 
-Defined in: [lib/form.ts:4727](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4727)
+Defined in: [lib/form.ts:4763](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4763)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/form.ts:4727](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **content**: `string`
 
-Defined in: [lib/form.ts:4726](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4726)
+Defined in: [lib/form.ts:4762](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4762)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/form.ts:4726](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **title?**: `string`
 
-Defined in: [lib/form.ts:4725](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4725)
+Defined in: [lib/form.ts:4761](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4761)

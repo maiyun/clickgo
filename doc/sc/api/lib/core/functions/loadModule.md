@@ -8,7 +8,7 @@
 
 > **loadModule**(`name`): `Promise`\<`boolean`\>
 
-Defined in: [lib/core.ts:1387](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1387)
+Defined in: [lib/core.ts:1374](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1374)
 
 加载模块，返回 true / false
 

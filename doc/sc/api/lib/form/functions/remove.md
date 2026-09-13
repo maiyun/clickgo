@@ -8,7 +8,7 @@
 
 > **remove**(`formId`): `boolean`
 
-Defined in: [lib/form.ts:3278](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3278)
+Defined in: [lib/form.ts:3314](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3314)
 
 移除一个 form（关闭窗口）
 

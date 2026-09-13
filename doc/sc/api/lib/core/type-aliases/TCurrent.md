@@ -8,4 +8,4 @@
 
 > **TCurrent** = `string` \| [`AbstractForm`](../../form/classes/AbstractForm.md) \| [`AbstractPanel`](../../form/classes/AbstractPanel.md) \| [`AbstractControl`](../../control/classes/AbstractControl.md) \| [`AbstractApp`](../classes/AbstractApp.md)
 
-Defined in: [lib/core.ts:1704](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1704)
+Defined in: [lib/core.ts:1691](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1691)

@@ -6,7 +6,7 @@
 
 # Interface: IAbstractPanelShowEvent
 
-Defined in: [lib/form.ts:4586](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4586)
+Defined in: [lib/form.ts:4622](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4622)
 
 AbstractPanel 显示事件
 
@@ -16,7 +16,7 @@ AbstractPanel 显示事件
 
 > **detail**: `object`
 
-Defined in: [lib/form.ts:4587](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4587)
+Defined in: [lib/form.ts:4623](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4623)
 
 #### action
 

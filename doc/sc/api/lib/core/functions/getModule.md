@@ -16,7 +16,7 @@
 
 > **getModule**(`name`): `Promise`\<[`ITumsPlayer`](../interfaces/ITumsPlayer.md) \| `null`\>
 
-Defined in: [lib/core.ts:1367](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1367)
+Defined in: [lib/core.ts:1354](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1354)
 
 ### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1367](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getModule**(`name`): `Promise`\<\{ \} \| `null`\>
 
-Defined in: [lib/core.ts:1368](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1368)
+Defined in: [lib/core.ts:1355](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1355)
 
 ### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [lib/core.ts:1368](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getModule**(`name`): `Promise`\<`__module` \| `null`\>
 
-Defined in: [lib/core.ts:1369](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1369)
+Defined in: [lib/core.ts:1356](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1356)
 
 ### Parameters
 
@@ -64,7 +64,7 @@ Defined in: [lib/core.ts:1369](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getModule**(`name`): `Promise`\<`any`\>
 
-Defined in: [lib/core.ts:1370](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1370)
+Defined in: [lib/core.ts:1357](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1357)
 
 ### Parameters
 
