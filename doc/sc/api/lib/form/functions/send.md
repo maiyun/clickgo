@@ -8,7 +8,7 @@
 
 > **send**(`formId`, `obj`): `void`
 
-Defined in: [lib/form.ts:2092](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2092)
+Defined in: [lib/form.ts:2094](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2094)
 
 给一个窗体发送一个对象，不会知道成功与失败状态，用 this.send 替代
 

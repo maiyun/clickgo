@@ -8,7 +8,7 @@
 
 > **copyFolder**(`current`, `from`, `to`, `ignore?`): `Promise`\<`number`\>
 
-Defined in: [lib/fs.ts:1300](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1300)
+Defined in: [lib/fs.ts:1228](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1228)
 
 复制文件夹里的内容到另一个地方，失败不会回滚
 

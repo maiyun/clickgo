@@ -8,7 +8,7 @@
 
 > **random**(`length?`, `source?`, `block?`): `string`
 
-Defined in: [lib/tool.ts:690](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L690)
+Defined in: [lib/tool.ts:691](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L691)
 
 生成随机字符串
 

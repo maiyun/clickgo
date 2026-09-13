@@ -8,7 +8,7 @@
 
 > **mkdir**(`current`, `path`, `mode?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:827](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L827)
+Defined in: [lib/fs.ts:786](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L786)
 
 深度创建目录，如果最末目录存在，则自动创建成功
 

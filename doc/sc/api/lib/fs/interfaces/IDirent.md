@@ -6,7 +6,7 @@
 
 # Interface: IDirent
 
-Defined in: [lib/fs.ts:1450](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1450)
+Defined in: [lib/fs.ts:1378](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1378)
 
 目录下项目
 
@@ -16,7 +16,7 @@ Defined in: [lib/fs.ts:1450](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **name**: `string`
 
-Defined in: [lib/fs.ts:1454](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1454)
+Defined in: [lib/fs.ts:1382](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1382)
 
 ## Methods
 
@@ -24,7 +24,7 @@ Defined in: [lib/fs.ts:1454](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **isDirectory**(): `boolean`
 
-Defined in: [lib/fs.ts:1452](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1452)
+Defined in: [lib/fs.ts:1380](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1380)
 
 #### Returns
 
@@ -36,7 +36,7 @@ Defined in: [lib/fs.ts:1452](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **isFile**(): `boolean`
 
-Defined in: [lib/fs.ts:1451](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1451)
+Defined in: [lib/fs.ts:1379](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1379)
 
 #### Returns
 
@@ -48,7 +48,7 @@ Defined in: [lib/fs.ts:1451](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **isSymbolicLink**(): `boolean`
 
-Defined in: [lib/fs.ts:1453](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1453)
+Defined in: [lib/fs.ts:1381](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1381)
 
 #### Returns
 

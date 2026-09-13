@@ -8,7 +8,7 @@
 
 > **max**(`formId`): `boolean`
 
-Defined in: [lib/form.ts:1953](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1953)
+Defined in: [lib/form.ts:1955](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1955)
 
 最大化某个窗体
 

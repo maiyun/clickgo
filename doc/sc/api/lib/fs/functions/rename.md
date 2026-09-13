@@ -8,7 +8,7 @@
 
 > **rename**(`current`, `oldPath`, `newPath`): `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1004](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1004)
+Defined in: [lib/fs.ts:963](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L963)
 
 重命名/移动 文件文件夹
 

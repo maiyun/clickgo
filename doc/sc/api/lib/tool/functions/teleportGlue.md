@@ -8,7 +8,7 @@
 
 > **teleportGlue**(`layout`, `formId`): `string`
 
-Defined in: [lib/tool.ts:543](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L543)
+Defined in: [lib/tool.ts:544](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L544)
 
 对 layout 的 teleport 做转义处理为 vue 识别的内容
 

@@ -28,9 +28,9 @@ Defined in: [lib/tool.ts:325](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### files
 
-`Record`\<`string`, `Blob` \| `string`\>
+`Record`\<`string`, `string` \| `Blob`\> \| ((`path`) => `Promise`\<`string` \| `Blob` \| `null`\>)
 
-在此文件列表中查找
+在此文件列表或读取器中查找
 
 ## Returns
 

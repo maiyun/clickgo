@@ -8,7 +8,7 @@
 
 > **appendToPop**(`el`): `void`
 
-Defined in: [lib/form.ts:2871](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2871)
+Defined in: [lib/form.ts:2873](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2873)
 
 将标签追加到 pop 层
 

@@ -8,6 +8,6 @@
 
 > `const` **activePanels**: `Record`\<`string`, `string`[]\> = `{}`
 
-Defined in: [lib/form.ts:2144](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2144)
+Defined in: [lib/form.ts:2146](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2146)
 
 当前活跃中的 panelId 列表

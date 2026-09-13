@@ -6,7 +6,7 @@
 
 # Interface: IStats
 
-Defined in: [lib/fs.ts:1433](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1433)
+Defined in: [lib/fs.ts:1361](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1361)
 
 文件/文件夹信息对象
 
@@ -16,7 +16,7 @@ Defined in: [lib/fs.ts:1433](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **atime**: `Date`
 
-Defined in: [lib/fs.ts:1443](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1443)
+Defined in: [lib/fs.ts:1371](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1371)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/fs.ts:1443](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **atimeMs**: `number`
 
-Defined in: [lib/fs.ts:1439](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1439)
+Defined in: [lib/fs.ts:1367](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1367)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/fs.ts:1439](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **birthtime**: `Date`
 
-Defined in: [lib/fs.ts:1446](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1446)
+Defined in: [lib/fs.ts:1374](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1374)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/fs.ts:1446](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **birthtimeMs**: `number`
 
-Defined in: [lib/fs.ts:1442](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1442)
+Defined in: [lib/fs.ts:1370](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1370)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/fs.ts:1442](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **blksize**: `number`
 
-Defined in: [lib/fs.ts:1438](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1438)
+Defined in: [lib/fs.ts:1366](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1366)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [lib/fs.ts:1438](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **ctime**: `Date`
 
-Defined in: [lib/fs.ts:1445](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1445)
+Defined in: [lib/fs.ts:1373](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1373)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [lib/fs.ts:1445](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **ctimeMs**: `number`
 
-Defined in: [lib/fs.ts:1441](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1441)
+Defined in: [lib/fs.ts:1369](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1369)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [lib/fs.ts:1441](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **mtime**: `Date`
 
-Defined in: [lib/fs.ts:1444](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1444)
+Defined in: [lib/fs.ts:1372](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1372)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [lib/fs.ts:1444](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **mtimeMs**: `number`
 
-Defined in: [lib/fs.ts:1440](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1440)
+Defined in: [lib/fs.ts:1368](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1368)
 
 ***
 
@@ -88,7 +88,7 @@ Defined in: [lib/fs.ts:1440](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **size**: `number`
 
-Defined in: [lib/fs.ts:1437](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1437)
+Defined in: [lib/fs.ts:1365](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1365)
 
 ## Methods
 
@@ -96,7 +96,7 @@ Defined in: [lib/fs.ts:1437](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **isDirectory**(): `boolean`
 
-Defined in: [lib/fs.ts:1435](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1435)
+Defined in: [lib/fs.ts:1363](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1363)
 
 #### Returns
 
@@ -108,7 +108,7 @@ Defined in: [lib/fs.ts:1435](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **isFile**(): `boolean`
 
-Defined in: [lib/fs.ts:1434](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1434)
+Defined in: [lib/fs.ts:1362](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1362)
 
 #### Returns
 
@@ -120,7 +120,7 @@ Defined in: [lib/fs.ts:1434](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **isSymbolicLink**(): `boolean`
 
-Defined in: [lib/fs.ts:1436](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1436)
+Defined in: [lib/fs.ts:1364](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1364)
 
 #### Returns
 

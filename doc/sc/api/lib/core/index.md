@@ -14,6 +14,9 @@
 
 - [IApp](interfaces/IApp.md)
 - [IAppConfig](interfaces/IAppConfig.md)
+- [IAppPackage](interfaces/IAppPackage.md)
+- [IAppPackageEntry](interfaces/IAppPackageEntry.md)
+- [IAppPackageStats](interfaces/IAppPackageStats.md)
 - [IAvailArea](interfaces/IAvailArea.md)
 - [IConfig](interfaces/IConfig.md)
 - [IConfigLauncherItem](interfaces/IConfigLauncherItem.md)
