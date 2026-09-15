@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import * as nodePath from 'path';
 import * as lFs from './lib/fs.js';
 import * as lTool from './lib/tool.js';
 // npm publish --tag dev --access public
@@ -456,6 +457,15 @@ export class AbstractBoot {
         });
     }
 }
+/**
+ * --- 加载本地路径需要使用本函数加载 ---
+ * @param importUrl 传入 import.meta.url
+ * @param p 要加载的相对路径，如 ./index.html
+ */
+export function path(importUrl, p) {
+    const url = decodeURIComponent(importUrl).replace('file://', '').replace(/^\/(\w:)/, '$1');
+    return nodePath.join(url.slice(0, url.lastIndexOf('/') + 1), p);
+}
 export function showMainForm(path, opt = {}) {
     if (form) {
         // --- 有主窗体了就不能创建了 ---
@@ -525,7 +535,8 @@ export function verifyToken(t) {
  * @param p 窗体网页路径
  */
 function createForm(p, opt = {}) {
-    let pre = new URL('./pre.js', import.meta.url).pathname.replace(/^\/(\w:)/, '$1');
+    const url = decodeURIComponent(import.meta.url).replace('file://', '').replace(/^\/(\w:)/, '$1');
+    let pre = nodePath.join(url.slice(0, url.lastIndexOf('/') + 1), './pre.js');
     const op = {
         'webPreferences': {
             'nodeIntegration': false,

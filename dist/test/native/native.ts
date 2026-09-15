@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import * as nodePath from 'path';
 import * as lFs from './lib/fs.js';
 import * as lTool from './lib/tool.js';
 
@@ -554,6 +555,16 @@ export abstract class AbstractBoot {
 
 }
 
+/**
+ * --- 加载本地路径需要使用本函数加载 ---
+ * @param importUrl 传入 import.meta.url
+ * @param p 要加载的相对路径，如 ./index.html
+ */
+export function path(importUrl: string, p: string): string {
+    const url = decodeURIComponent(importUrl).replace('file://', '').replace(/^\/(\w:)/, '$1');
+    return nodePath.join(url.slice(0, url.lastIndexOf('/') + 1), p);
+}
+
 export function showMainForm(path: string, opt: {
     /** --- 是否是开发模式，默认 false --- */
     'dev'?: boolean;
@@ -650,7 +661,8 @@ function createForm(p: string, opt: {
     /** --- 设置透明窗体，resizable、frame 均不能开启 --- */
     'transparent'?: boolean;
 } = {}): electron.BrowserWindow {
-    let pre = new URL('./pre.js', import.meta.url).pathname.replace(/^\/(\w:)/, '$1');
+    const url = decodeURIComponent(import.meta.url).replace('file://', '').replace(/^\/(\w:)/, '$1');
+    let pre = nodePath.join(url.slice(0, url.lastIndexOf('/') + 1), './pre.js');
     const op: Electron.BrowserWindowConstructorOptions = {
         'webPreferences': {
             'nodeIntegration': false,
