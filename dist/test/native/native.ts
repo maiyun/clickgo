@@ -52,6 +52,8 @@ const methods: Record<string, {
             }
             form.setSize(width, height);
             form.center();
+            // --- 首个应用窗体设置尺寸后再允许缩放，启动屏保持固定大小 ---
+            form.resizable = true;
         }
     },
     // --- 设置窗体最大化、最小化、还原（从最大化还原） ---
@@ -583,7 +585,7 @@ export function showMainForm(path: string, opt: {
         // --- 有主窗体了就不能创建了 ---
         return;
     }
-    // --- 成功运行一个 task 后再次添加 init ---
+    // --- 初始化网页通讯，无边框窗体等应用设置尺寸后再开放缩放 ---
     methods['cg-init'] = {
         'once': true,
         handler: function(t: string) {
@@ -591,7 +593,9 @@ export function showMainForm(path: string, opt: {
             if (!t || !form) {
                 return;
             }
-            form.resizable = true;
+            if (hasFrame) {
+                form.resizable = true;
+            }
             token = t;
         },
     };
