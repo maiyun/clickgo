@@ -1,5 +1,6 @@
 import * as electron from 'electron';
 import * as nodePath from 'path';
+import { pathToFileURL } from 'node:url';
 import * as lFs from './lib/fs.js';
 import * as lTool from './lib/tool.js';
 
@@ -17,6 +18,12 @@ let form: electron.BrowserWindow | undefined;
 
 /** --- 当前设定的通讯 token --- */
 let token: string = '';
+
+/** --- 主窗体唯一允许使用 Native 通讯的页面地址（不含 hash） --- */
+let mainPage: string = '';
+
+/** --- 主框架正在更换文档时暂停 Native 通讯 --- */
+let mainNavigating: boolean = false;
 
 /** --- 当前系统平台 --- */
 const platform: NodeJS.Platform = process.platform;
@@ -585,20 +592,7 @@ export function showMainForm(path: string, opt: {
         // --- 有主窗体了就不能创建了 ---
         return;
     }
-    // --- 初始化网页通讯，无边框窗体等应用设置尺寸后再开放缩放 ---
-    methods['cg-init'] = {
-        'once': true,
-        handler: function(t: string) {
-            // --- t 是网页传来的 token ---
-            if (!t || !form) {
-                return;
-            }
-            if (hasFrame) {
-                form.resizable = true;
-            }
-            token = t;
-        },
-    };
+    resetMainSession();
     const frm = createForm(path, {
         'width': opt.width,
         'height': opt.height,
@@ -610,6 +604,27 @@ export function showMainForm(path: string, opt: {
         // --- 开发模式 ---
         frm.webContents.openDevTools();
     }
+}
+
+/**
+ * --- 更换主页面文档时撤销旧 token，重新允许一次合法初始化 ---
+ * @returns 无
+ */
+function resetMainSession(): void {
+    token = '';
+    methods['cg-init'] = {
+        'once': true,
+        handler: function(t: string) {
+            // --- t 是网页传来的 token ---
+            if ((typeof t !== 'string') || !t || !form || token) {
+                return;
+            }
+            if (hasFrame) {
+                form.resizable = true;
+            }
+            token = t;
+        },
+    };
 }
 
 /** --- 用户调用运行 boot 类 --- */
@@ -631,25 +646,48 @@ electron.Menu.setApplicationMenu(null);
 
 // --- 实际用来监听网页传输过来的数据 ---
 electron.ipcMain.handle('pre', function(e: electron.IpcMainInvokeEvent, name: string, ...param: any[]): any {
-    if (!methods[name]) {
+    if (
+        !form || form.isDestroyed() || mainNavigating ||
+        (e.sender !== form.webContents) ||
+        !e.senderFrame || (e.senderFrame !== form.webContents.mainFrame) ||
+        !mainPage || (getPageUrl(e.senderFrame.url) !== mainPage) ||
+        (typeof name !== 'string') || !Object.hasOwn(methods, name)
+    ) {
         return;
     }
-    const r = methods[name].handler(...param);
-    if (methods[name].once) {
+    // --- 无效初始化不能消耗一次性监听 ---
+    if ((name === 'cg-init') && ((typeof param[0] !== 'string') || !param[0] || token)) {
+        return;
+    }
+    const method = methods[name];
+    if (method.once) {
         delete methods[name];
     }
-    return r;
+    return method.handler(...param);
 });
+
+/**
+ * --- 精确匹配页面地址，允许同一页面改变 hash ---
+ * @param value 页面地址
+ * @returns 不含 hash 的地址，无效地址返回空字符串
+ */
+function getPageUrl(value: string): string {
+    try {
+        const url = new URL(value);
+        url.hash = '';
+        return url.href;
+    }
+    catch {
+        return '';
+    }
+}
 
 /**
  * --- 验证 token 是否正确 ---
  * @param t 要验证的 token
  */
 export function verifyToken(t: string): boolean {
-    if (t !== token) {
-        return false;
-    }
-    return true;
+    return (typeof t === 'string') && (token !== '') && (t === token);
 }
 
 /**
@@ -684,6 +722,52 @@ function createForm(p: string, opt: {
         'transparent': opt.transparent,
     };
     form = new electron.BrowserWindow(op);
+    // --- 页面地址由本地主进程确定，不接受网页修改 ---
+    const lio = p.indexOf('?');
+    const pageUrl = (p.startsWith('https://') || p.startsWith('http://')) ?
+        new URL(p) : pathToFileURL(lio === -1 ? p : p.slice(0, lio));
+    if ((pageUrl.protocol === 'file:') && (lio !== -1)) {
+        pageUrl.search = p.slice(lio + 1);
+    }
+    mainPage = getPageUrl(pageUrl.href);
+    mainNavigating = true;
+    /** --- 主动拦截初始页面重定向产生的加载失败无需再次抛出 --- */
+    let redirectBlocked = false;
+    form.webContents.on('will-navigate', (event): void => {
+        if (getPageUrl(event.url) !== mainPage) {
+            event.preventDefault();
+        }
+    });
+    form.webContents.on('will-redirect', (event): void => {
+        if (event.isMainFrame && (getPageUrl(event.url) !== mainPage)) {
+            redirectBlocked = true;
+            event.preventDefault();
+            mainNavigating = false;
+        }
+    });
+    form.webContents.setWindowOpenHandler(() => ({ 'action': 'deny' }));
+    form.webContents.on('did-start-navigation', (event): void => {
+        if (event.isMainFrame && !event.isSameDocument && (getPageUrl(event.url) === mainPage)) {
+            mainNavigating = true;
+            resetMainSession();
+        }
+    });
+    form.webContents.on('did-navigate', (): void => {
+        mainNavigating = false;
+        if (form && (getPageUrl(form.webContents.getURL()) !== mainPage)) {
+            token = '';
+            delete methods['cg-init'];
+        }
+    });
+    form.webContents.on('did-fail-load', (_event, _code, _description, _url, isMainFrame): void => {
+        if (isMainFrame) {
+            mainNavigating = false;
+        }
+    });
+    form.webContents.on('render-process-gone', (): void => {
+        token = '';
+        mainNavigating = true;
+    });
     form.webContents.userAgent = 'electron/' + electron.app.getVersion() + ' ' + platform + '/' + process.arch + ' frame/' + (hasFrame ? '1' : '0') + ' chrome/' + process.versions.chrome;
     form.once('ready-to-show', function(): void {
         if (!form) {
@@ -700,6 +784,9 @@ function createForm(p: string, opt: {
     if (p.startsWith('https://') || p.startsWith('http://')) {
         // --- 加载网页 ---
         form.loadURL(p).catch(function(e): void {
+            if (redirectBlocked) {
+                return;
+            }
             throw e;
         });
     }
@@ -716,8 +803,12 @@ function createForm(p: string, opt: {
             throw e;
         });
     }
-    form.on('close', function() {
+    form.on('closed', function() {
         form = undefined;
+        token = '';
+        mainPage = '';
+        mainNavigating = false;
+        delete methods['cg-init'];
     });
     // --- 最大化事件 ---
     form.on('maximize', function() {
