@@ -6,7 +6,7 @@
 
 # Interface: IMoveDragOptions
 
-Defined in: [lib/form.ts:4673](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4673)
+Defined in: [lib/form.ts:4703](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4703)
 
 移动 drag 到新位置函数的选项
 
@@ -16,7 +16,7 @@ Defined in: [lib/form.ts:4673](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **height?**: `number`
 
-Defined in: [lib/form.ts:4677](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4677)
+Defined in: [lib/form.ts:4707](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4707)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/form.ts:4677](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **icon?**: `boolean`
 
-Defined in: [lib/form.ts:4678](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4678)
+Defined in: [lib/form.ts:4708](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4708)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/form.ts:4678](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **left?**: `number`
 
-Defined in: [lib/form.ts:4675](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4675)
+Defined in: [lib/form.ts:4705](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4705)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/form.ts:4675](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **top?**: `number`
 
-Defined in: [lib/form.ts:4674](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4674)
+Defined in: [lib/form.ts:4704](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4704)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [lib/form.ts:4674](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **width?**: `number`
 
-Defined in: [lib/form.ts:4676](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4676)
+Defined in: [lib/form.ts:4706](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4706)

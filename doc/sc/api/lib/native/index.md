@@ -21,6 +21,7 @@
 - [max](functions/max.md)
 - [maximizable](functions/maximizable.md)
 - [min](functions/min.md)
+- [minSize](functions/minSize.md)
 - [off](functions/off.md)
 - [on](functions/on.md)
 - [once](functions/once.md)

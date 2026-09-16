@@ -8,7 +8,7 @@
 
 > **isMax**(): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:384](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L384)
+Defined in: [lib/native.ts:404](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L404)
 
 判断窗体是否是最大化状态
 

@@ -8,7 +8,7 @@
 
 > **hidePop**(`pop?`): `void`
 
-Defined in: [lib/form.ts:3144](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3144)
+Defined in: [lib/form.ts:3155](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3155)
 
 隐藏正在显示中的所有 pop，或指定 pop/el
 

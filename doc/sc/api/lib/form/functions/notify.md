@@ -8,7 +8,7 @@
 
 > **notify**(`opt`): `number`
 
-Defined in: [lib/form.ts:2685](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2685)
+Defined in: [lib/form.ts:2696](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2696)
 
 弹出右下角信息框
 

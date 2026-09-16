@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:1061](https://github.com/maiyun/clickgo/blob/master/
 
 #### event
 
-> **event**: `MouseEvent`
+> **event**: `MouseEvent` \| `null`
 
 ***
 

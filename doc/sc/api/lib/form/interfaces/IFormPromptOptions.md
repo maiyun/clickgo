@@ -6,7 +6,7 @@
 
 # Interface: IFormPromptOptions
 
-Defined in: [lib/form.ts:4775](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4775)
+Defined in: [lib/form.ts:4805](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4805)
 
 Prompt 选项
 
@@ -16,7 +16,7 @@ Prompt 选项
 
 > `optional` **cancel?**: `boolean`
 
-Defined in: [lib/form.ts:4783](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4783)
+Defined in: [lib/form.ts:4813](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4813)
 
 是否显示取消按钮，默认显示
 
@@ -26,7 +26,7 @@ Defined in: [lib/form.ts:4783](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **content**: `string`
 
-Defined in: [lib/form.ts:4779](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4779)
+Defined in: [lib/form.ts:4809](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4809)
 
 内容说明
 
@@ -36,7 +36,7 @@ Defined in: [lib/form.ts:4779](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **select?**: (`this`, `e`, `button`) => `void`
 
-Defined in: [lib/form.ts:4790](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4790)
+Defined in: [lib/form.ts:4820](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4820)
 
 点击按钮触发事件
 
@@ -68,7 +68,7 @@ true 代表确定，false 代表取消
 
 > `optional` **text?**: `string`
 
-Defined in: [lib/form.ts:4781](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4781)
+Defined in: [lib/form.ts:4811](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4811)
 
 文本默认值
 
@@ -78,6 +78,6 @@ Defined in: [lib/form.ts:4781](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **title?**: `string`
 
-Defined in: [lib/form.ts:4777](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4777)
+Defined in: [lib/form.ts:4807](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4807)
 
 标题

@@ -8,7 +8,7 @@
 
 > **init**(): `void`
 
-Defined in: [lib/native.ts:391](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L391)
+Defined in: [lib/native.ts:411](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L411)
 
 ## Returns
 
