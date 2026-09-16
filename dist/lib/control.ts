@@ -1059,7 +1059,7 @@ export interface IDatepanelSelectedEvent {
 
 export interface IFormCloseEvent extends ICustomEvent {
     'detail': {
-        'event': MouseEvent;
+        'event': MouseEvent | null;
     };
 }
 

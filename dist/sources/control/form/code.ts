@@ -644,7 +644,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     // --- 关闭窗体 ---
-    public closeMethod(e: MouseEvent): void {
+    public closeMethod(e: MouseEvent | null = null): void {
         if (this.isInside) {
             return;
         }
@@ -1062,6 +1062,19 @@ export default class extends clickgo.control.AbstractControl {
         if (this.parent.controlName === 'root') {
             this.isNativeNoFrameFirst = this.parent.isNativeNoFrameFirst;
             if (this.isNativeNoFrameFirst) {
+                clickgo.native.on(this, 'close-request', () => {
+                    if (this.isClose) {
+                        this.closeMethod();
+                    }
+                }, false, this.formId);
+                this.watch('minWidth', () => {
+                    clickgo.native.minSize(this, Math.max(0, this.propInt('minWidth')),
+                        Math.max(0, this.propInt('minHeight'))).catch(() => {});
+                }, { 'immediate': true });
+                this.watch('minHeight', () => {
+                    clickgo.native.minSize(this, Math.max(0, this.propInt('minWidth')),
+                        Math.max(0, this.propInt('minHeight'))).catch(() => {});
+                }, { 'immediate': true });
                 clickgo.native.on(this, 'maximize', () => {
                     this.element.dataset.cgMax = '';
                     this.stateMaxData = true;

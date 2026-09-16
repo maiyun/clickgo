@@ -54,13 +54,13 @@
 
 `number` | `string`
 
-最小宽度，默认 200。
+最小宽度，默认 200。沉浸式 Native 首个窗体会同步到实体窗口，后续修改也会同步。
 
 #### minHeight
 
 `number` | `string`
 
-最小高度，默认 100。
+最小高度，默认 100。沉浸式 Native 首个窗体会同步到实体窗口，后续修改也会同步。
 
 #### border
 
@@ -140,7 +140,7 @@
 
 `() => void`
 
-关闭时触发。
+关闭时触发，参数为 `IFormCloseEvent`，可调用 `event.preventDefault()` 阻止默认关闭。沉浸式 Native 首个窗体的系统关闭（如 Alt+F4）也会触发，此时 `event.detail.event` 为 `null`。程序调用 `form.close()` 不触发此事件，确认完成后可用它关闭窗体。
 
 #### size
 

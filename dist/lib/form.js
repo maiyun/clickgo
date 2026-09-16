@@ -2996,7 +2996,7 @@ export function remove(formId) {
             lDom.clearWatchStyle(formId);
             lDom.clearWatchProperty(formId);
             lDom.clearWatchPosition(formId);
-            lNative.clear(formId, taskId);
+            lNative.clear(taskId, formId);
             delete activePanels[formId];
             // --- 检测是否已经没有窗体了，如果没有了的话就要结束任务了 ---
             if (Object.keys(task.forms).length === 0) {
@@ -3845,7 +3845,7 @@ export async function create(current, cls, data, opt = {}) {
         lDom.clearWatchStyle(rtn.vroot.formId);
         lDom.clearWatchProperty(rtn.vroot.formId);
         lDom.clearWatchPosition(rtn.vroot.formId);
-        lNative.clear(formId, t.id);
+        lNative.clear(t.id, formId);
         // --- 移除 style ---
         lDom.removeStyle(rtn.vroot.taskId, 'form', rtn.vroot.formId);
         throw err;

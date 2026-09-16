@@ -50,11 +50,13 @@ const methods: Record<string,
 // --- 供 native 调用的 web 上的对象 ---
 (window as any).clickgoNativeWeb = {
     invoke: function(name: string, ...param: any[]) {
+        let handled = false;
         for (const taskId in methods) {
             for (const n in methods[taskId]) {
                 if (!n.startsWith(name + '-')) {
                     continue;
                 }
+                handled = true;
                 methods[taskId][n].handler(...param);
                 if (methods[taskId][n].once) {
                     delete methods[taskId][n];
@@ -64,6 +66,7 @@ const methods: Record<string,
                 }
             }
         }
+        return handled;
     }
 };
 
@@ -241,6 +244,23 @@ export async function size(current: lCore.TCurrent, width: number, height: numbe
         return false;
     }
     await invoke('cg-set-size', token, width, height);
+    return true;
+}
+
+/**
+ * --- 设置实体窗体的最小尺寸，0 表示不限制对应方向 ---
+ * @param current 当前任务
+ * @param width 最小宽度
+ * @param height 最小高度
+ */
+export async function minSize(current: lCore.TCurrent, width: number, height: number): Promise<boolean> {
+    if (!Number.isInteger(width) || !Number.isInteger(height) || (width < 0) || (height < 0)) {
+        return false;
+    }
+    if (!(await lTask.checkPermission(current, 'native.form'))[0]) {
+        return false;
+    }
+    await invoke('cg-set-min-size', token, width, height);
     return true;
 }
 
