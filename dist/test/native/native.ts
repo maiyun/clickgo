@@ -57,10 +57,10 @@ const methods: Record<string, {
             if (!verifyToken(t)) {
                 return;
             }
+            // --- 首个应用窗体先解除启动屏尺寸限制，再设置尺寸 ---
+            form.resizable = true;
             form.setSize(width, height);
             form.center();
-            // --- 首个应用窗体设置尺寸后再允许缩放，启动屏保持固定大小 ---
-            form.resizable = true;
         }
     },
     // --- 设置窗体最大化、最小化、还原（从最大化还原） ---
@@ -627,6 +627,22 @@ function resetMainSession(): void {
     };
 }
 
+/**
+ * --- 获取当前桌面应用的版本，来自应用 package.json ---
+ * @returns 应用版本
+ */
+export function getAppVersion(): string {
+    return electron.app.getVersion();
+}
+
+/**
+ * --- 判断当前应用是否为已打包运行 ---
+ * @returns 是否已打包
+ */
+export function isPackaged(): boolean {
+    return electron.app.isPackaged;
+}
+
 /** --- 用户调用运行 boot 类 --- */
 export function launcher(boot: AbstractBoot): void {
     (async function() {
@@ -724,8 +740,9 @@ function createForm(p: string, opt: {
     form = new electron.BrowserWindow(op);
     // --- 页面地址由本地主进程确定，不接受网页修改 ---
     const lio = p.indexOf('?');
+    // --- 本地相对路径与 Electron loadFile 一样以应用根目录为基准 ---
     const pageUrl = (p.startsWith('https://') || p.startsWith('http://')) ?
-        new URL(p) : pathToFileURL(lio === -1 ? p : p.slice(0, lio));
+        new URL(p) : pathToFileURL(nodePath.resolve(electron.app.getAppPath(), lio === -1 ? p : p.slice(0, lio)));
     if ((pageUrl.protocol === 'file:') && (lio !== -1)) {
         pageUrl.search = p.slice(lio + 1);
     }
