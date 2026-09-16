@@ -17,6 +17,8 @@ let token = '';
 let mainPage = '';
 /** --- 主框架正在更换文档时暂停 Native 通讯 --- */
 let mainNavigating = false;
+/** --- 应用已确认关闭，避免再次进入网页关闭事件 --- */
+let closeAllowed = false;
 /** --- 当前系统平台 --- */
 const platform = process.platform;
 // const platform: NodeJS.Platform = 'darwin';
@@ -32,6 +34,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return;
             }
+            closeAllowed = true;
             electron.app.quit();
         }
     },
@@ -49,6 +52,21 @@ const methods = {
             form.resizable = true;
             form.setSize(width, height);
             form.center();
+        }
+    },
+    // --- 设置实体窗体最小尺寸 ---
+    'cg-set-min-size': {
+        'once': false,
+        handler: function (t, width, height) {
+            if (!form || !verifyToken(t) || !Number.isInteger(width) || !Number.isInteger(height) ||
+                (width < 0) || (height < 0)) {
+                return;
+            }
+            form.setMinimumSize(width, height);
+            const [currentWidth, currentHeight] = form.getSize();
+            if ((currentWidth < width) || (currentHeight < height)) {
+                form.setSize(Math.max(currentWidth, width), Math.max(currentHeight, height));
+            }
         }
     },
     // --- 设置窗体最大化、最小化、还原（从最大化还原） ---
@@ -111,6 +129,7 @@ const methods = {
             if (!verifyToken(t)) {
                 return;
             }
+            closeAllowed = true;
             form.close();
         }
     },
@@ -386,6 +405,7 @@ export class AbstractBoot {
             'max': opt.max,
             'stateMax': opt.stateMax,
             'background': opt.background,
+            'icon': opt.icon,
         });
         // --- 监听所有实体窗体关闭事件 ---
         electron.app.on('window-all-closed', function () {
@@ -407,6 +427,7 @@ export class AbstractBoot {
                 'max': opt.max,
                 'stateMax': opt.stateMax,
                 'background': opt.background,
+                'icon': opt.icon,
             });
         });
     }
@@ -485,6 +506,7 @@ export function showMainForm(path, opt = {}) {
         'max': opt.max,
         'stateMax': opt.stateMax,
         'background': opt.background,
+        'icon': opt.icon,
     });
     if (opt.dev) {
         // --- 开发模式 ---
@@ -601,9 +623,36 @@ function createForm(p, opt = {}) {
         'center': true,
         'maximizable': opt.max ?? true,
         'backgroundColor': opt.background ?? 'rgba(0, 0, 0, 1)',
+        'icon': opt.icon,
         'transparent': opt.transparent,
     };
     form = new electron.BrowserWindow(op);
+    closeAllowed = false;
+    const frm = form;
+    let closePending = false;
+    // --- 沉浸式窗口的系统关闭（如 Alt+F4）交给首个 ClickGo Form 确认 ---
+    frm.on('close', (event) => {
+        if (hasFrame || closeAllowed || !token || mainNavigating) {
+            return;
+        }
+        event.preventDefault();
+        if (closePending) {
+            return;
+        }
+        closePending = true;
+        const sessionToken = token;
+        frm.webContents.executeJavaScript('Boolean(window.clickgoNativeWeb?.invoke("close-request"))').then((handled) => {
+            // --- 尚未挂载 ClickGo 窗体的启动页仍可正常关闭 ---
+            if (!handled && !frm.isDestroyed() && (form === frm) && (token === sessionToken)) {
+                closeAllowed = true;
+                frm.close();
+            }
+        }).catch(() => {
+            // --- 网页异常时不静默丢弃可能尚未保存的文档 ---
+        }).finally(() => {
+            closePending = false;
+        });
+    });
     // --- 页面地址由本地主进程确定，不接受网页修改 ---
     const lio = p.indexOf('?');
     // --- 本地相对路径与 Electron loadFile 一样以应用根目录为基准 ---
