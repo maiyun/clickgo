@@ -111,6 +111,9 @@ let index = -1;
 /** --- 当前有焦点的窗体 id --- */
 let focusId: string | null = null;
 
+/** --- Native 实体窗体失焦前最后一个内部焦点窗体 id --- */
+let nativeWindowFocusId: string | null = null;
+
 /** --- form 相关信息 --- */
 const info: {
     /** --- 最后一个置底窗体层级，1000（一千）开始 --- */
@@ -2278,6 +2281,14 @@ export async function hashBack(formId: string): Promise<boolean> {
  * @param formId 变更后的 form id
  */
 export async function changeFocus(formId: string = ''): Promise<void> {
+    // --- Native 实体窗体未激活时只记录待恢复焦点，内部窗体保持失焦 ---
+    if (clickgo.isNative() && formId && !document.hasFocus()) {
+        nativeWindowFocusId = formId;
+        return;
+    }
+    if (clickgo.isNative() && formId) {
+        nativeWindowFocusId = null;
+    }
     const dataFormId = getFocus();
     if (dataFormId) {
         if (dataFormId === formId) {
@@ -4614,6 +4625,25 @@ export function init(): void {
     }
     inited = true;
     elements.init();
+    if (clickgo.isNative()) {
+        // --- 点击实体窗体外部不会产生页面 pointerdown，通过 Window 焦点同步内部窗体状态 ---
+        window.addEventListener('blur', () => {
+            const formId = getFocus();
+            if (formId) {
+                nativeWindowFocusId = formId;
+            }
+            hidePop();
+            changeFocus().catch(() => {});
+        });
+        window.addEventListener('focus', () => {
+            const formId = nativeWindowFocusId;
+            nativeWindowFocusId = null;
+            if (!formId) {
+                return;
+            }
+            changeFocus(formId).catch(() => {});
+        });
+    }
 }
 
 // --- 类型 ---
