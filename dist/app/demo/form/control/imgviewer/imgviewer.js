@@ -4,4 +4,5 @@ export default class extends clickgo.form.AbstractForm {
         '../../../res/img.jpg', '../../../res/icon.svg'
     ];
     value = 0;
+    zoom = 1;
 }

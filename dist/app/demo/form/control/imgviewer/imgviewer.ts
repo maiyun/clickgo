@@ -8,4 +8,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public value = 0;
 
+    public zoom = 1;
+
 }

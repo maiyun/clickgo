@@ -1,0 +1,5 @@
+<div class="wrap" :class="{'disabled': propBoolean('disabled'), 'editing': props.mode === 'edit'}" :tabindex="propBoolean('disabled') ? -1 : 0" @pointerdown="gesture" @wheel="gesture" @keydown="keydown" @dragstart.prevent>
+    <div class="content" :style="{width: contentWidthComp + 'px', height: contentHeightComp + 'px', transform: 'translate(' + xData + 'px,' + yData + 'px) scale(' + zoomData + ')'}">
+        <slot></slot>
+    </div>
+</div>

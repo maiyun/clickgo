@@ -59,7 +59,7 @@ export function clearComponents(taskId: string, formId?: string): void {
     }
 }
 
-/** --- 窗体的抽象类 --- */
+/** --- 控件的抽象类 --- */
 export abstract class AbstractControl {
 
     /** --- 当前文件在包内的路径 --- */
@@ -1172,6 +1172,27 @@ export interface ICaptchaResultEvent {
         'result': number;
         'token': string;
     };
+}
+
+// --- Panzoom Control ---
+
+/** --- Panzoom 视图状态，偏移单位为视口 CSS 像素 --- */
+export interface IPanzoomView {
+    'zoom': number;
+    'x': number;
+    'y': number;
+}
+
+/** --- Panzoom 内容坐标，单位为缩放前的内容像素 --- */
+export interface IPanzoomPoint {
+    'x': number;
+    'y': number;
+    'inside': boolean;
+}
+
+/** --- 编辑事件；editcancel 时 event 可能因主动销毁而不存在 --- */
+export interface IPanzoomEditEvent extends IPanzoomPoint {
+    'event': Event | undefined;
 }
 
 // --- Pdf Control ---

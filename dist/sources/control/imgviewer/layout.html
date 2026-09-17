@@ -1,5 +1,3 @@
-<div class="wrap" @pointerdown="scale" @wheel="scale">
-    <div class="content" :style="{'left': -((10000 - width) / 2) + 'px', 'top': -((10000 - height) / 2) + 'px'}">
-        <img ref="img" :src="imgData" @load="load" @dragstart="$event.preventDefault()" :style="{'transform': 'translate3d(' + scaleX + 'px, ' + scaleY + 'px, 0) scale(' + scaleS + ')'}">
-    </div>
-</div>
+<cg-panzoom ref="viewer" class="wrap" v-model="scaleS" v-model:x="scaleX" v-model:y="scaleY" :content-width="width" :content-height="height" zoom-max="5" @change="changed">
+    <img v-if="imgData" :key="imgData" ref="img" :src="imgData" @load="load" draggable="false" :width="width || undefined" :height="height || undefined">
+</cg-panzoom>

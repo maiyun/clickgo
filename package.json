@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.3.1",
-    "@litert/pointer": "^1.7.5",
+    "@litert/pointer": "^1.7.6",
     "@types/clean-css": "^4.2.11",
     "@types/google.maps": "^3.58.1",
     "@types/node": "^25.5.2",

@@ -54,7 +54,7 @@ export function clearComponents(taskId, formId) {
         componentCache.delete(taskId);
     }
 }
-/** --- 窗体的抽象类 --- */
+/** --- 控件的抽象类 --- */
 export class AbstractControl {
     /** --- 当前文件在包内的路径 --- */
     get filename() {

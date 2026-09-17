@@ -1,6 +1,12 @@
 <form title="Imgviewer" width="600" height="450" padding="10">
     <layout direction="v" gutter="10" style="flex: 1;">
-        <imgviewer v-model="value" :src="src" style="flex: 1;"></imgviewer>
+        <imgviewer ref="viewer" v-model="value" v-model:zoom="zoom" :src="src" style="flex: 1;"></imgviewer>
+        <layout gutter="10" align-v="center">
+            <slider v-model="zoom" min="0.05" max="5" step="0.01" label="Zoom" style="flex: 1;"></slider>
+            <label>{{Math.round(zoom * 100)}}%</label>
+            <button @click="refs.viewer.zoomFit()">Fit</button>
+            <button @click="refs.viewer.zoomActual()">1:1</button>
+        </layout>
         <layout gutter="10">
             <button style="flex: 1;" @click="value = 0">Value 0</button>
             <button style="flex: 1;" @click="value = 1">Value 1</button>

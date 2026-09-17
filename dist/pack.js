@@ -164,7 +164,7 @@ for (const item of list) {
     if (item.name.startsWith('.')) {
         continue;
     }
-    if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'dock', 'dock-group', 'dock-item', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'eflow', 'radio', 'scroll', 'select', 'sgroup', 'slider', 'stab', 'stab-item', 'statusbar', 'statusbar-item', 'toolbar', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-body', 'desc-cell', 'desc-head', 'desc-header', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'calendar', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web', 'objviewer-item'].includes(item.name)) {
+    if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'dock', 'dock-group', 'dock-item', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'panzoom', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'eflow', 'radio', 'scroll', 'select', 'sgroup', 'slider', 'stab', 'stab-item', 'statusbar', 'statusbar-item', 'toolbar', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-body', 'desc-cell', 'desc-head', 'desc-header', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'calendar', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web', 'objviewer-item'].includes(item.name)) {
         continue;
     }
     try {
@@ -199,6 +199,7 @@ for (const item of list) {
             paths.push(base + 'eflow');
             paths.push(base + 'video');
             paths.push(base + 'img');
+            paths.push(base + 'panzoom');
             paths.push(base + 'imgviewer');
             paths.push(base + 'label');
             paths.push(base + 'layout');

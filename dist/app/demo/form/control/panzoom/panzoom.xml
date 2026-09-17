@@ -1,0 +1,26 @@
+<form title="Panzoom" width="800" height="650" min-width="360" min-height="400" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; min-width: 0; min-height: 0;">
+        <!-- Canvas 保持原始坐标，视图变换交给原生控件 -->
+        <panzoom v-if="mounted" ref="viewer" v-model="zoom" v-model:x="x" v-model:y="y" content-width="640" content-height="480" :mode="edit ? 'edit' : 'pan'" :disabled="disabled" @editstart="editstart" @editmove="editmove" @editend="editend" @editcancel="editcancel" style="flex: 1;">
+            <canvas ref="canvas" width="640" height="480"></canvas>
+        </panzoom>
+        <layout gutter="10" align-v="center">
+            <button :disabled="!mounted" @click="refs.viewer.zoomTo(zoom / 1.2)">−</button>
+            <slider v-model="zoom" min="0.05" max="20" step="0.01" label="Zoom" style="flex: 1;"></slider>
+            <button :disabled="!mounted" @click="refs.viewer.zoomTo(zoom * 1.2)">+</button>
+            <label>{{Math.round(zoom * 100)}}%</label>
+            <button :disabled="!mounted" @click="refs.viewer.zoomFit()">Fit</button>
+            <button :disabled="!mounted" @click="refs.viewer.zoomActual()">1:1</button>
+        </layout>
+        <!-- 编辑预览可回滚，双指缩放不产生编辑提交 -->
+        <layout gutter="10" align-v="center">
+            <check v-model="edit">Edit</check>
+            <check v-model="disabled">Disabled</check>
+            <check v-model="mounted">Mounted</check>
+            <tip label="Redraw the canvas while preserving the current zoom and position.">
+                <button @click="draw">Redraw</button>
+            </tip>
+        </layout>
+        <label>Committed: {{committed}} · Cancelled: {{cancelled}} · Offset: {{Math.round(x)}}, {{Math.round(y)}}</label>
+    </layout>
+</form>

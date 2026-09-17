@@ -57,6 +57,7 @@ import cvflowFrm from './control/vflow/vflow';
 import cvideoFrm from './control/video/video';
 import cmpegtsFrm from './control/mpegts/mpegts';
 import cimgviewerFrm from './control/imgviewer/imgviewer';
+import cpanzoomFrm from './control/panzoom/panzoom';
 import cstabFrm from './control/stab/stab';
 import cstepFrm from './control/step/step';
 import cxtermFrm from './control/xterm/xterm';
@@ -210,6 +211,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cimgviewer': {
                 frm = await clickgo.form.create(this, cimgviewerFrm);
+                break;
+            }
+            case 'cpanzoom': {
+                frm = await clickgo.form.create(this, cpanzoomFrm);
                 break;
             }
             case 'cvideo': {

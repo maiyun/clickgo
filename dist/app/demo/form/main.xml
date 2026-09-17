@@ -63,6 +63,7 @@
                     <button @click="openForm('cpage')">Page</button>
                     <button @click="openForm('cpalette')">Palette + Colorist</button>
                     <button @click="openForm('cpanel')">Panel</button>
+                    <button @click="openForm('cpanzoom')">Panzoom</button>
                     <button @click="openForm('cpdf')">Pdf</button>
                     <button @click="openForm('cprogress')">Progress</button>
                     <button @click="openForm('cproperty')">Property</button>

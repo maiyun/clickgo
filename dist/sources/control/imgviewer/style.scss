@@ -1,6 +1,4 @@
 .wrap {
-    overflow: hidden; position: relative;
-    .content {
-        position: absolute; width: 10000px; height: 10000px; display: flex; align-items: center; justify-content: center;
-    }
+    min-width: 0; min-height: 0;
+    img { display: block; max-width: none; }
 }

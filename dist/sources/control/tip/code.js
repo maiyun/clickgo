@@ -102,6 +102,12 @@ export default class extends clickgo.control.AbstractControl {
         pop.dataset.tipDirection = position.direction;
         pop.style.left = position.left.toString() + 'px';
         pop.style.top = position.top.toString() + 'px';
+        // --- 弹层靠近视口边缘被平移后，箭头仍指向触发元素 ---
+        const rect = el.getBoundingClientRect();
+        const x = Math.max(10, Math.min(pop.offsetWidth - 10, rect.left + rect.width / 2 - position.left));
+        const y = Math.max(10, Math.min(pop.offsetHeight - 10, rect.top + rect.height / 2 - position.top));
+        pop.style.setProperty('--tip-arrow-x', `${x}px`);
+        pop.style.setProperty('--tip-arrow-y', `${y}px`);
     }
     /** --- 隐藏 tip --- */
     async hideTip() {
@@ -156,7 +162,8 @@ export default class extends clickgo.control.AbstractControl {
                 enter: () => {
                     this.inTip = true;
                     clickgo.form.showPop(el, this.refs.pop, this.getShowDirection(), {
-                        'flow': false
+                        'flow': false,
+                        'overflow': 'visible'
                     });
                     clickgo.tool.sleep(34).then(() => {
                         if (this.refs.pop.dataset.cgOpen === undefined) {
