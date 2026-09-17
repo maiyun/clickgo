@@ -1,4 +1,5 @@
-<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, stateMinData ? 'state-min-' + taskPosition : undefined, isShow && 'show', isInside && 'inside', !heightData && 'height-auto', !widthData && 'width-auto', formFocus && 'focus']" :style="{'width': widthData ? (widthData + 'px') : undefined, 'height': heightData ? (heightData + 'px') : undefined, 'left': isNativeNoFrameFirst ? '0' : (Math.round(leftData) + 'px'), 'top': isNativeNoFrameFirst ? 0 : (Math.round(topData) + 'px'), 'z-index': zIndex}">
+<!-- Native 首个沉浸式窗体的外形交给系统，强制覆盖主题的圆角、边框和阴影。 -->
+<div class="wrap" :class="[border !== 'normal' && 'border-' + border, flashTimer !== undefined ? 'flash' : undefined, stateMinData ? 'state-min-' + taskPosition : undefined, isShow && 'show', isInside && 'inside', !heightData && 'height-auto', !widthData && 'width-auto', formFocus && 'focus']" :style="{'width': widthData ? (widthData + 'px') : undefined, 'height': heightData ? (heightData + 'px') : undefined, 'left': isNativeNoFrameFirst ? '0' : (Math.round(leftData) + 'px'), 'top': isNativeNoFrameFirst ? 0 : (Math.round(topData) + 'px'), 'z-index': zIndex, 'border-radius': isNativeNoFrameFirst ? '0 !important' : undefined, 'border': isNativeNoFrameFirst ? '0 !important' : undefined, 'box-shadow': isNativeNoFrameFirst ? 'none !important' : undefined}">
     <template v-if="!stateMaxData && !stateMinData && !isMask && isResize">
         <div class="pop-resize-lt" @pointerdown="resizeMethod($event, 'lt')"></div>
         <div class="pop-resize-t" @pointerdown="resizeMethod($event, 't')"></div>
@@ -10,8 +11,8 @@
         <div class="pop-resize-l" @pointerdown="resizeMethod($event, 'l')"></div>
     </template>
     <div v-if="isMask" class="mask"></div>
-    <div class="inner">
-        <div class="header" v-if="border !== 'none' && border !== 'plain'">
+    <div class="inner" :style="{'border-radius': isNativeNoFrameFirst ? '0 !important' : undefined}">
+        <div class="header" v-if="border !== 'none' && border !== 'plain'" :style="{'border-radius': isNativeNoFrameFirst ? '0 !important' : undefined}">
             <div class="icon"><img v-if="border !== 'thin' && iconDataUrl !== ''" :src="iconDataUrl" width="16" height="16" @dragstart="$event.preventDefault();"></div>
             <div class="title" :class="[isNativeNoFrameFirst && 'native-drag']" @pointerdown="moveMethod($event)">{{title}}</div>
             <div class="controls">
@@ -27,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <div class="content" ref="content" :class="[direction, !(border !== 'none' && border !== 'plain') && 'noheader']" :style="{'background': background, 'padding': padding ? padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined}">
+        <div class="content" ref="content" :class="[direction, !(border !== 'none' && border !== 'plain') && 'noheader']" :style="{'background': background, 'padding': padding ? padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined, 'border-radius': isNativeNoFrameFirst ? '0 !important' : undefined}">
             <div class="step" :class="[stepShowData && 'show']" ref="step" @pointerdown="stepDown">
                 <cg-step :data="stepData" :modelValue="stepValue" plain></cg-step>
             </div>
