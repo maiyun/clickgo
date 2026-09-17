@@ -11,6 +11,8 @@ let hasFrame = true;
 let isNoFormQuit = true;
 /** --- 主窗体 --- */
 let form;
+/** --- 首个 Form 指定的最小尺寸，解锁启动窗口后重新应用 --- */
+let minimumSize = [0, 0];
 /** --- 当前设定的通讯 token --- */
 let token = '';
 /** --- 主窗体唯一允许使用 Native 通讯的页面地址（不含 hash） --- */
@@ -50,7 +52,9 @@ const methods = {
             }
             // --- 首个应用窗体先解除启动屏尺寸限制，再设置尺寸 ---
             form.resizable = true;
-            form.setSize(width, height);
+            // --- Linux 解锁会恢复锁定前的约束，须在解锁后应用 Form 的最小尺寸 ---
+            form.setMinimumSize(...minimumSize);
+            form.setSize(Math.max(width, minimumSize[0]), Math.max(height, minimumSize[1]));
             form.center();
         }
     },
@@ -60,6 +64,11 @@ const methods = {
         handler: function (t, width, height) {
             if (!form || !verifyToken(t) || !Number.isInteger(width) || !Number.isInteger(height) ||
                 (width < 0) || (height < 0)) {
+                return;
+            }
+            minimumSize = [width, height];
+            // --- 启动屏仍锁定时只记录约束，避免被后续解锁覆盖或改变启动屏尺寸 ---
+            if (!form.resizable) {
                 return;
             }
             form.setMinimumSize(width, height);
@@ -627,6 +636,7 @@ function createForm(p, opt = {}) {
         'transparent': opt.transparent,
     };
     form = new electron.BrowserWindow(op);
+    minimumSize = [0, 0];
     closeAllowed = false;
     const frm = form;
     let closePending = false;
