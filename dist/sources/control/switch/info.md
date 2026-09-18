@@ -32,7 +32,7 @@
 
 `(event: ISwitchChangeEvent) => void`
 
-值改变时触发。
+值切换前触发，可调用 `event.preventDefault()` 阻止本次切换。`event.detail.value` 是切换前的当前值；未阻止时，随后更新状态并触发 `update:modelValue`。需要根据新状态执行重绘等操作时，应监听双向绑定的值，不要在此事件中读取尚未更新的值。
 
 ### 样式
 

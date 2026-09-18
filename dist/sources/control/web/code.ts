@@ -8,4 +8,9 @@ export default class extends clickgo.control.AbstractControl {
             'src': ''
         };
 
+    /** --- 拖拽时遮住 iframe，防止鼠标事件进入子页面后丢失 --- */
+    public get showMask(): boolean {
+        return clickgo.dom.is.move;
+    }
+
 }
