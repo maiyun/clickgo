@@ -3,15 +3,22 @@
         <!-- 正常宽度，完整显示所有命令 -->
         <label>Normal width:</label>
         <toolbar :border="border" :plain="plain" :scroll="scroll">
-            <button v-for="command in commands" :key="command" type="tool" @click="run(command)">{{command}}</button>
+            <template v-for="command in commands" :key="command">
+                <button type="tool" @click="run(command)">{{command}}</button>
+                <toolbar-split v-if="command === 'Save'"></toolbar-split>
+            </template>
         </toolbar>
 
         <!-- 窄宽度，主命令区可横向滚动，右侧菜单保持固定 -->
         <label>Narrow width — the faded edge indicates hidden commands:</label>
         <layout class="narrow" direction="v">
             <toolbar :border="border" :plain="plain" :scroll="scroll">
-                <button v-for="command in commands" :key="command" type="tool" @click="run(command)">{{command}}</button>
+                <template v-for="command in commands" :key="command">
+                    <button type="tool" @click="run(command)">{{command}}</button>
+                    <toolbar-split v-if="command === 'Save'"></toolbar-split>
+                </template>
                 <template v-slot:right>
+                    <toolbar-split></toolbar-split>
                     <button type="tool" area="mark">
                         More
                         <template v-slot:pop>

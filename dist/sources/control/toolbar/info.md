@@ -26,6 +26,8 @@
 
 工具栏主要命令。
 
+使用 `<toolbar-split></toolbar-split>` 分隔不同功能组，无需业务侧自定义分隔线样式。
+
 #### right
 
 始终固定在工具栏右侧的命令。可在这里放置带 `pop` 插槽的按钮，将低优先级命令保留为 ClickGo 菜单。
@@ -36,6 +38,8 @@
 <toolbar>
     <button type="tool">Open</button>
     <button type="tool">Save</button>
+    <toolbar-split></toolbar-split>
+    <button type="tool">Undo</button>
     <template v-slot:right>
         <button type="tool" area="mark">
             More
