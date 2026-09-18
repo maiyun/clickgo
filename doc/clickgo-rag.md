@@ -8033,6 +8033,8 @@ number 类型下增减按钮、键盘上下键及拖拽调值的步长，必须�
 
 工具栏主要命令。
 
+使用 `<toolbar-split></toolbar-split>` 分隔不同功能组，无需业务侧自定义分隔线样式。
+
 #### right
 
 始终固定在工具栏右侧的命令。可在这里放置带 `pop` 插槽的按钮，将低优先级命令保留为 ClickGo 菜单。
@@ -8043,6 +8045,8 @@ number 类型下增减按钮、键盘上下键及拖拽调值的步长，必须�
 <toolbar>
     <button type="tool">Open</button>
     <button type="tool">Save</button>
+    <toolbar-split></toolbar-split>
+    <button type="tool">Undo</button>
     <template v-slot:right>
         <button type="tool" area="mark">
             More
@@ -8053,6 +8057,32 @@ number 类型下增减按钮、键盘上下键及拖拽调值的步长，必须�
             </template>
         </button>
     </template>
+</toolbar>
+```
+
+
+## toolbar-split
+---
+
+工具栏分隔线组件，用于分隔不同功能组的命令。
+
+### 样式
+
+作为 Toolbar 默认插槽或右侧插槽的子组件，显示居中的竖向分隔线。
+
+线宽为 1px，高度使用主题的 `--g-size-m`，颜色使用 `--g-border-color`，自动适应亮暗主题。命令间距由 Toolbar 管理，组件不额外添加边距，也不参与点击和键盘焦点。
+
+组件无参数、事件或插槽，提供 `separator` 角色和 `vertical` 方向供辅助技术识别。
+
+### 示例
+
+```xml
+<toolbar>
+    <button type="tool">Open</button>
+    <button type="tool">Save</button>
+    <toolbar-split></toolbar-split>
+    <button type="tool">Undo</button>
+    <button type="tool">Redo</button>
 </toolbar>
 ```
 
