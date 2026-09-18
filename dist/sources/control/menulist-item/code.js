@@ -9,6 +9,7 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
     props = {
         'disabled': false,
         'alt': '',
+        'altOnly': false,
         'type': '',
         'label': '',
         'modelValue': ''
@@ -167,7 +168,8 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
      * @param e 键盘事件
      */
     _keydown(e) {
-        if (e.repeat || e.isComposing || !this.props.alt || this.propBoolean('disabled')) {
+        if (e.repeat || e.isComposing || !this.props.alt ||
+            this.propBoolean('altOnly') || this.propBoolean('disabled')) {
             return;
         }
         if (MenulistItem._$shortcutEvents.has(e) || !this._matchShortcut(e) || !this._isActive()) {
@@ -185,6 +187,15 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
         this._select();
         this.element.click();
     }
+    /**
+     * --- 按当前模式注册快捷键；仅显示模式不监听键盘 ---
+     */
+    _updateShortcut() {
+        window.removeEventListener('keydown', this._keydown);
+        if (this.device.type === 'desktop' && this.props.alt && !this.propBoolean('altOnly')) {
+            window.addEventListener('keydown', this._keydown);
+        }
+    }
     onBeforeUnmount() {
         if (this.device.type === 'desktop') {
             window.removeEventListener('keydown', this._keydown);
@@ -201,9 +212,13 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
     /** --- 设备信息 ---· */
     device = clickgo.getDevice();
     onMounted() {
-        if (this.device.type === 'desktop') {
-            window.addEventListener('keydown', this._keydown);
-        }
+        this._updateShortcut();
+        this.watch('alt', () => {
+            this._updateShortcut();
+        });
+        this.watch('altOnly', () => {
+            this._updateShortcut();
+        });
         this.watch('type', () => {
             const menulist = this.parentByName('menulist');
             if (!menulist) {

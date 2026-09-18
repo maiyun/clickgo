@@ -49,6 +49,8 @@ export const modules: {
     'jszip': typeof import('jszip');
     /** --- 原生 pointer --- */
     'pointer': typeof import('@litert/pointer');
+    /** --- Monaco 模块的加载资源 --- */
+    'monaco-editor': lCore.IMonacoLoader;
     /** --- 原生 tums-player 对象（在 default 里） --- */
     'tums-player': lCore.ITumsPlayer;
     /** --- 原生 mpegts 对象 --- */

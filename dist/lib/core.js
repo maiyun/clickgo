@@ -859,17 +859,21 @@ window.addEventListener('hashchange', function () {
 const modules = {
     'monaco-editor': {
         func: async function () {
-            return new Promise(resolve => {
-                fetch(clickgo.getCdn() + '/npm/monaco-editor@0.52.2/min/vs/loader.js')
-                    .then(r => r.blob())
-                    .then(b => lTool.blob2DataUrl(b))
-                    .then(d => {
-                    resolve(d);
-                })
-                    .catch(() => {
-                    resolve(null);
-                });
-            });
+            /** --- loader、编辑器和 Worker 使用同一资源根路径 --- */
+            const baseUrl = `${clickgo.getCdn()}/npm/monaco-editor@0.56.0/min/`;
+            try {
+                const response = await fetch(baseUrl + 'vs/loader.js');
+                if (!response.ok) {
+                    return null;
+                }
+                return {
+                    'loader': await lTool.blob2DataUrl(await response.blob()),
+                    'baseUrl': baseUrl,
+                };
+            }
+            catch {
+                return null;
+            }
         },
         'loading': false,
         'resolve': [],

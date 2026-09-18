@@ -15,6 +15,7 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
         'disabled': boolean | string;
 
         'alt': string;
+        'altOnly': boolean | string;
         'type': string;
         'label': string;
         'modelValue': string | boolean;
@@ -22,6 +23,7 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
             'disabled': false,
 
             'alt': '',
+            'altOnly': false,
             'type': '',
             'label': '',
             'modelValue': ''
@@ -188,7 +190,8 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
      * @param e 键盘事件
      */
     private _keydown(e: KeyboardEvent): void {
-        if (e.repeat || e.isComposing || !this.props.alt || this.propBoolean('disabled')) {
+        if (e.repeat || e.isComposing || !this.props.alt ||
+            this.propBoolean('altOnly') || this.propBoolean('disabled')) {
             return;
         }
         if (MenulistItem._$shortcutEvents.has(e) || !this._matchShortcut(e) || !this._isActive()) {
@@ -205,6 +208,16 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
         }));
         this._select();
         this.element.click();
+    }
+
+    /**
+     * --- 按当前模式注册快捷键；仅显示模式不监听键盘 ---
+     */
+    private _updateShortcut(): void {
+        window.removeEventListener('keydown', this._keydown);
+        if (this.device.type === 'desktop' && this.props.alt && !this.propBoolean('altOnly')) {
+            window.addEventListener('keydown', this._keydown);
+        }
     }
 
     public onBeforeUnmount(): void | Promise<void> {
@@ -225,9 +238,13 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
     public device = clickgo.getDevice();
 
     public onMounted(): void {
-        if (this.device.type === 'desktop') {
-            window.addEventListener('keydown', this._keydown);
-        }
+        this._updateShortcut();
+        this.watch('alt', (): void => {
+            this._updateShortcut();
+        });
+        this.watch('altOnly', (): void => {
+            this._updateShortcut();
+        });
         this.watch('type', (): void => {
             const menulist = this.parentByName('menulist');
             if (!menulist) {

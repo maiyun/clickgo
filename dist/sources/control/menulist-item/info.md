@@ -14,6 +14,14 @@
 
 快捷键，以 `+` 分隔各键名，如 `Ctrl+Alt+T`、`Ctrl+Shift+S`。支持的修饰键：`Ctrl`、`Alt`、`Shift`、`Meta`，在 macOS 上会自动替换为对应符号（`⌘` `⌥` `⇧`）。若只传单个键名（如 `T`），则自动前置 `Ctrl`/`⌘`。快捷键仅在菜单项所属窗体获得焦点时生效，触发效果与点击菜单项一致。
 
+#### altOnly
+
+`boolean` | `string`
+
+是否仅显示 `alt` 的快捷键提示，默认 false。模板中写作 `alt-only`。
+开启后不注册、不拦截快捷键，鼠标点击和 check/radio 行为保持正常。
+支持动态切换。适合快捷键已由编辑器或浏览器处理的菜单项。
+
 #### type
 
 `string`
@@ -52,4 +60,8 @@ radio 类型时的标签值。
 
 ```xml
 <menulist-item label="Open" alt="Ctrl+O" @click="onOpen"></menulist-item>
+```
+
+```xml
+<menulist-item alt="X" alt-only @click="onCut">剪切</menulist-item>
 ```

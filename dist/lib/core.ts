@@ -1030,18 +1030,22 @@ const modules: Record<string, {
     'resolve': Array<() => void>;
 }> = {
     'monaco-editor': {
-        func: async function(): Promise<any> {
-            return new Promise(resolve => {
-                fetch(clickgo.getCdn() + '/npm/monaco-editor@0.52.2/min/vs/loader.js')
-                    .then(r => r.blob())
-                    .then(b => lTool.blob2DataUrl(b))
-                    .then(d => {
-                        resolve(d);
-                    })
-                    .catch(() => {
-                        resolve(null);
-                    });
-            });
+        func: async function(): Promise<IMonacoLoader | null> {
+            /** --- loader、编辑器和 Worker 使用同一资源根路径 --- */
+            const baseUrl = `${clickgo.getCdn()}/npm/monaco-editor@0.56.0/min/`;
+            try {
+                const response = await fetch(baseUrl + 'vs/loader.js');
+                if (!response.ok) {
+                    return null;
+                }
+                return {
+                    'loader': await lTool.blob2DataUrl(await response.blob()),
+                    'baseUrl': baseUrl,
+                };
+            }
+            catch {
+                return null;
+            }
         },
         'loading': false,
         'resolve': [],
@@ -1351,6 +1355,7 @@ export function checkModule(name: string): boolean {
     return modules[name] !== undefined;
 }
 
+export async function getModule(name: 'monaco-editor'): Promise<IMonacoLoader | null>;
 export async function getModule(name: 'tums-player'): Promise<ITumsPlayer | null>;
 export async function getModule(name: 'mpegts'): Promise<typeof mpegts.default | null>;
 export async function getModule(name: 'fabric'): Promise<typeof fabric | null>;
@@ -1705,4 +1710,12 @@ export interface ITumsPlayer {
     }) => Promise<void>;
     /** --- 停止对讲 --- */
     'stopTalk': () => void;
+}
+
+/** --- Monaco 模块的加载资源，编辑器实例由控件在独立 iframe 内创建 --- */
+export interface IMonacoLoader {
+    /** --- AMD loader 的 data URL --- */
+    'loader': string;
+    /** --- 编辑器和 Worker 的资源根路径，以 / 结尾 --- */
+    'baseUrl': string;
 }
