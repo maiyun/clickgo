@@ -6,7 +6,7 @@
 
 # Interface: ISelectItemclickedEvent
 
-Defined in: [lib/control.ts:1473](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1473)
+Defined in: [lib/control.ts:1494](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1494)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1473](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1474](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1474)
+Defined in: [lib/control.ts:1495](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1495)
 
 #### arrow
 

@@ -21,6 +21,7 @@
 - [IConfig](interfaces/IConfig.md)
 - [IConfigLauncherItem](interfaces/IConfigLauncherItem.md)
 - [ICoreFetchAppOptions](interfaces/ICoreFetchAppOptions.md)
+- [IMonacoLoader](interfaces/IMonacoLoader.md)
 - [ITumsPlayer](interfaces/ITumsPlayer.md)
 - [IVApp](interfaces/IVApp.md)
 - [IVNode](interfaces/IVNode.md)

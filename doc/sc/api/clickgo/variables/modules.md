@@ -36,6 +36,12 @@ Defined in: [clickgo.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/c
 
 原生 jszip
 
+### monaco-editor
+
+> **monaco-editor**: [`IMonacoLoader`](../../lib/core/interfaces/IMonacoLoader.md)
+
+Monaco 模块的加载资源
+
 ### mpegts
 
 > **mpegts**: `__module`

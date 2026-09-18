@@ -8,7 +8,7 @@
 
 > **showPop**(`el`, `pop`, `direction`, `opt?`): `void`
 
-Defined in: [lib/form.ts:3041](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3041)
+Defined in: [lib/form.ts:3048](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3048)
 
 获取 pop 显示出来的坐标并报系统全局记录
 
@@ -51,6 +51,12 @@ width / height 显示的 pop 定义自定义宽/高度，可省略；null，true
 #### null?
 
 `boolean`
+
+#### overflow?
+
+`"auto"` \| `"visible"`
+
+滚动内容默认 auto；带外部箭头的提示框使用 visible
 
 #### size?
 

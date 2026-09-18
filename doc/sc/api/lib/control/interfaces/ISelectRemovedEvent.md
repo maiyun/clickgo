@@ -6,7 +6,7 @@
 
 # Interface: ISelectRemovedEvent
 
-Defined in: [lib/control.ts:1437](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1437)
+Defined in: [lib/control.ts:1458](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1458)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1437](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1438](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1438)
+Defined in: [lib/control.ts:1459](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1459)
 
 #### index
 

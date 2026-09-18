@@ -8,7 +8,7 @@
 
 > **isJustPop**(`el`): `boolean`
 
-Defined in: [lib/form.ts:3237](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3237)
+Defined in: [lib/form.ts:3246](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3246)
 
 检测 pop 是不是刚刚显示的
 

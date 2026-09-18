@@ -8,7 +8,7 @@
 
 > **init**(): `void`
 
-Defined in: [lib/form.ts:4622](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4622)
+Defined in: [lib/form.ts:4631](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4631)
 
 ## Returns
 

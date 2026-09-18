@@ -6,7 +6,7 @@
 
 # Interface: ITableSortEvent
 
-Defined in: [lib/control.ts:1520](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1520)
+Defined in: [lib/control.ts:1541](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1541)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1521](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1521)
+Defined in: [lib/control.ts:1542](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1542)
 
 #### index
 

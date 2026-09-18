@@ -8,7 +8,7 @@
 
 > **doFocusAndPopEvent**(`e`): `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:3256](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3256)
+Defined in: [lib/form.ts:3265](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3265)
 
 点下 pointerdown 屏幕任意一位置时根据点击处处理隐藏 pop 和焦点丢失事件，鼠标和 touch 只会响应一个
 

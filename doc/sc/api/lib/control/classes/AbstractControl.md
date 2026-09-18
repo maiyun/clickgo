@@ -8,7 +8,7 @@
 
 Defined in: [lib/control.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L63)
 
-窗体的抽象类
+控件的抽象类
 
 ## Constructors
 

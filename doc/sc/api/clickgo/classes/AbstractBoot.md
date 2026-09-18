@@ -6,7 +6,7 @@
 
 # Abstract Class: AbstractBoot
 
-Defined in: [clickgo.ts:164](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L164)
+Defined in: [clickgo.ts:166](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L166)
 
 全局类
 
@@ -16,7 +16,7 @@ Defined in: [clickgo.ts:164](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **new AbstractBoot**(`opt?`): `AbstractBoot`
 
-Defined in: [clickgo.ts:184](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L184)
+Defined in: [clickgo.ts:186](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L186)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [clickgo.ts:184](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `protected` **\_sysId**: `string` = `''`
 
-Defined in: [clickgo.ts:170](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L170)
+Defined in: [clickgo.ts:172](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L172)
 
 切勿传给 App
 
@@ -46,7 +46,7 @@ Defined in: [clickgo.ts:170](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **isDebug**(): `boolean`
 
-Defined in: [clickgo.ts:180](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L180)
+Defined in: [clickgo.ts:182](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L182)
 
 判断当前是否是 debug 模式
 
@@ -60,7 +60,7 @@ Defined in: [clickgo.ts:180](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `abstract` **main**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:193](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L193)
+Defined in: [clickgo.ts:195](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L195)
 
 入口方法
 
@@ -74,7 +74,7 @@ Defined in: [clickgo.ts:193](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onConfigChanged**\<`T`, `TK`\>(`n`, `v`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:208](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L208)
+Defined in: [clickgo.ts:210](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L210)
 
 系统配置变更事件
 
@@ -108,7 +108,7 @@ Defined in: [clickgo.ts:208](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onError**(`taskId`, `formId`, `error`, `info`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:196](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L196)
+Defined in: [clickgo.ts:198](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L198)
 
 全局错误事件
 
@@ -140,7 +140,7 @@ Defined in: [clickgo.ts:196](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormBlurred**(`taskId`, `formId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:264](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L264)
+Defined in: [clickgo.ts:266](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L266)
 
 窗体丢失焦点事件
 
@@ -164,7 +164,7 @@ Defined in: [clickgo.ts:264](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormCreated**(`taskId`, `formId`, `title`, `icon`, `showInSystemTask`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:214](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L214)
+Defined in: [clickgo.ts:216](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L216)
 
 窗体创建事件
 
@@ -200,7 +200,7 @@ Defined in: [clickgo.ts:214](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormFlash**(`taskId`, `formId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:270](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L270)
+Defined in: [clickgo.ts:272](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L272)
 
 窗体闪烁事件
 
@@ -224,7 +224,7 @@ Defined in: [clickgo.ts:270](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormFocused**(`taskId`, `formId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:258](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L258)
+Defined in: [clickgo.ts:260](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L260)
 
 窗体获得焦点事件
 
@@ -248,7 +248,7 @@ Defined in: [clickgo.ts:258](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormHashChange**(`taskId`, `formId`, `value`, `data`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:282](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L282)
+Defined in: [clickgo.ts:284](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L284)
 
 窗体的 formHash 改变事件
 
@@ -280,7 +280,7 @@ Defined in: [clickgo.ts:282](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormIconChanged**(`taskId`, `formId`, `icon`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:234](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L234)
+Defined in: [clickgo.ts:236](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L236)
 
 窗体图标改变事件
 
@@ -308,7 +308,7 @@ Defined in: [clickgo.ts:234](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormRemoved**(`taskId`, `formId`, `title`, `icon`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:222](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L222)
+Defined in: [clickgo.ts:224](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L224)
 
 窗体销毁事件
 
@@ -340,7 +340,7 @@ Defined in: [clickgo.ts:222](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormShowChanged**(`taskId`, `formId`, `state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:252](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L252)
+Defined in: [clickgo.ts:254](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L254)
 
 窗体显示状态改变事件
 
@@ -368,7 +368,7 @@ Defined in: [clickgo.ts:252](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormShowInSystemTaskChange**(`taskId`, `formId`, `value`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:276](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L276)
+Defined in: [clickgo.ts:278](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L278)
 
 窗体是否显示在任务栏属性改变事件
 
@@ -396,7 +396,7 @@ Defined in: [clickgo.ts:276](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormStateMaxChanged**(`taskId`, `formId`, `state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:246](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L246)
+Defined in: [clickgo.ts:248](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L248)
 
 窗体最大化状态改变事件
 
@@ -424,7 +424,7 @@ Defined in: [clickgo.ts:246](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormStateMinChanged**(`taskId`, `formId`, `state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:240](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L240)
+Defined in: [clickgo.ts:242](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L242)
 
 窗体最小化状态改变事件
 
@@ -452,7 +452,7 @@ Defined in: [clickgo.ts:240](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onFormTitleChanged**(`taskId`, `formId`, `title`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:228](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L228)
+Defined in: [clickgo.ts:230](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L230)
 
 窗体标题改变事件
 
@@ -480,7 +480,7 @@ Defined in: [clickgo.ts:228](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onHashChanged**(`hash`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:308](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L308)
+Defined in: [clickgo.ts:310](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L310)
 
 location hash 改变事件
 
@@ -500,7 +500,7 @@ location hash 改变事件
 
 > **onKeydown**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:314](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L314)
+Defined in: [clickgo.ts:316](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L316)
 
 键盘按下事件
 
@@ -520,7 +520,7 @@ Defined in: [clickgo.ts:314](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onKeyup**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:320](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L320)
+Defined in: [clickgo.ts:322](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L322)
 
 键盘弹起事件
 
@@ -540,7 +540,7 @@ Defined in: [clickgo.ts:320](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onLauncherFolderNameChanged**(`id`, `name`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:302](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L302)
+Defined in: [clickgo.ts:304](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L304)
 
 launcher 文件夹名称修改事件
 
@@ -564,7 +564,7 @@ launcher 文件夹名称修改事件
 
 > **onRuntimeFileLoad**(`url`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:326](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L326)
+Defined in: [clickgo.ts:328](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L328)
 
 环境文件准备加载时的事件
 
@@ -584,7 +584,7 @@ Defined in: [clickgo.ts:326](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onRuntimeFileLoaded**(`url`, `state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:332](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L332)
+Defined in: [clickgo.ts:334](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L334)
 
 环境文件加载完成的事件
 
@@ -608,7 +608,7 @@ Defined in: [clickgo.ts:332](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onScreenResize**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:202](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L202)
+Defined in: [clickgo.ts:204](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L204)
 
 屏幕大小改变事件
 
@@ -622,7 +622,7 @@ Defined in: [clickgo.ts:202](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onTaskEnded**(`taskId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:296](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L296)
+Defined in: [clickgo.ts:298](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L298)
 
 任务结束事件
 
@@ -642,7 +642,7 @@ Defined in: [clickgo.ts:296](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onTaskStarted**(`taskId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:290](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L290)
+Defined in: [clickgo.ts:292](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L292)
 
 任务开始事件
 
@@ -662,7 +662,7 @@ Defined in: [clickgo.ts:290](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **setSysId**(`sysId`): `void`
 
-Defined in: [clickgo.ts:172](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L172)
+Defined in: [clickgo.ts:174](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L174)
 
 #### Parameters
 

@@ -6,7 +6,7 @@
 
 # Interface: IChecklistAddEvent
 
-Defined in: [lib/control.ts:1273](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1273)
+Defined in: [lib/control.ts:1294](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1294)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1274](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1274)
+Defined in: [lib/control.ts:1295](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1295)
 
 #### index
 
