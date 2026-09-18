@@ -37,10 +37,8 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 切换展开/收起 --- */
     toggle() {
         this.expandedData = !this.expandedData;
+        this.floatGroup = -1;
         this.emit('update:expanded', this.expandedData);
-        if (!this.expandedData) {
-            this.floatGroup = -1;
-        }
     }
     /**
      * --- 使用键盘切换展开状态 ---
@@ -91,9 +89,7 @@ export default class extends clickgo.control.AbstractControl {
         formDocks.get(form).add(this);
         this.watch('expanded', () => {
             this.expandedData = this.propBoolean('expanded');
-            if (!this.expandedData) {
-                this.floatGroup = -1;
-            }
+            this.floatGroup = -1;
         }, {
             'immediate': true
         });

@@ -61,7 +61,7 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 是否正在浮动显示 --- */
     public get isFloating(): boolean {
-        return this.dock?.floatGroup === this.index;
+        return !this.isExpanded && (this.dock?.floatGroup === this.index);
     }
 
     /** --- 当前展开 Dock 中的分组是否折叠 --- */

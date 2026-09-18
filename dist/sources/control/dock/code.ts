@@ -59,10 +59,8 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
     /** --- 切换展开/收起 --- */
     public toggle(): void {
         this.expandedData = !this.expandedData;
+        this.floatGroup = -1;
         this.emit('update:expanded', this.expandedData);
-        if (!this.expandedData) {
-            this.floatGroup = -1;
-        }
     }
 
     /**
@@ -119,9 +117,7 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
 
         this.watch('expanded', () => {
             this.expandedData = this.propBoolean('expanded');
-            if (!this.expandedData) {
-                this.floatGroup = -1;
-            }
+            this.floatGroup = -1;
         }, {
             'immediate': true
         });
