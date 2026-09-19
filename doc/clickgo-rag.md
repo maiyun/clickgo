@@ -7076,7 +7076,7 @@ SVG 内容或 URL 地址。
 
 `(event: ISwitchChangeEvent) => void`
 
-值改变时触发。
+值切换前触发，可调用 `event.preventDefault()` 阻止本次切换。`event.detail.value` 是切换前的当前值；未阻止时，随后更新状态并触发 `update:modelValue`。需要根据新状态执行重绘等操作时，应监听双向绑定的值，不要在此事件中读取尚未更新的值。
 
 ### 样式
 
@@ -7091,6 +7091,7 @@ SVG 内容或 URL 地址。
 ```xml
 <switch v-model="val"></switch>
 ```
+
 
 ## tab
 ---
@@ -8710,11 +8711,14 @@ TUMS 监控组件。
 
 使用 iframe 元素，填满容器空间。无边框显示。
 
+拖动或调整窗体大小时，会临时遮住网页以保持拖拽操作连续；结束后恢复网页交互。
+
 ### 示例
 
 ```xml
 <web :src="pageUrl"></web>
 ```
+
 
 ## xterm
 ---
