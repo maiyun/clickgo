@@ -177,7 +177,12 @@ export default class extends clickgo.control.AbstractControl {
         }
         event.stopPropagation();
         if (event.type === 'pointerdown') {
-            this.element.focus({ 'preventScroll': true });
+            // --- 等浏览器切换到指针输入状态后再聚焦，避免空格按下后误显示键盘焦点框 ---
+            window.setTimeout(() => {
+                if (this.element.isConnected && !this.propBoolean('disabled')) {
+                    this.element.focus({ 'preventScroll': true });
+                }
+            });
         }
         else {
             this.cancelEdit(event);
