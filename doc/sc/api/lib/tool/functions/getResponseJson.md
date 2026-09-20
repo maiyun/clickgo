@@ -8,7 +8,7 @@
 
 > **getResponseJson**(`url`, `init?`): `Promise`\<`any`\>
 
-Defined in: [lib/tool.ts:1220](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1220)
+Defined in: [lib/tool.ts:1230](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1230)
 
 发起 GET 请求并解析 JSON 响应
 

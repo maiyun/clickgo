@@ -8,7 +8,7 @@
 
 > **rgb2hex**(`r`, `g?`, `b?`, `a?`): `string`
 
-Defined in: [lib/tool.ts:808](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L808)
+Defined in: [lib/tool.ts:818](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L818)
 
 将 r, g, b 转换为 hex 字符串，不含 #
 

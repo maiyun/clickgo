@@ -8,7 +8,7 @@
 
 > **init**(): `void`
 
-Defined in: [lib/dom.ts:1849](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1849)
+Defined in: [lib/dom.ts:1986](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1986)
 
 ## Returns
 

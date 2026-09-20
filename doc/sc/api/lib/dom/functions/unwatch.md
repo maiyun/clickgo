@@ -8,7 +8,7 @@
 
 > **unwatch**(`taskId`, `el`): `void`
 
-Defined in: [lib/dom.ts:747](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L747)
+Defined in: [lib/dom.ts:884](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L884)
 
 移除监视 Element 对象变动
 

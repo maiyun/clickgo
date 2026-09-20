@@ -8,7 +8,7 @@
 
 > **isWatchSize**(`el`): `boolean`
 
-Defined in: [lib/dom.ts:587](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L587)
+Defined in: [lib/dom.ts:720](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L720)
 
 检测一个标签是否正在被 watchSize
 

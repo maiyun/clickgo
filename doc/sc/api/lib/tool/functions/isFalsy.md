@@ -8,7 +8,7 @@
 
 > **isFalsy**(`val`): `val is TFalsy`
 
-Defined in: [lib/tool.ts:2543](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2543)
+Defined in: [lib/tool.ts:2553](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2553)
 
 判断一个值是否是虚假的（为 null/undefined/空字符串/false/0）
 

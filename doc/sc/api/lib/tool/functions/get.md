@@ -8,7 +8,7 @@
 
 > **get**(`url`, `init?`, `opt?`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [lib/tool.ts:1168](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1168)
+Defined in: [lib/tool.ts:1178](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1178)
 
 发起 GET 请求
 

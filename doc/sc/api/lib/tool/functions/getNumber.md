@@ -8,7 +8,7 @@
 
 > **getNumber**(`param`): `number`
 
-Defined in: [lib/tool.ts:729](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L729)
+Defined in: [lib/tool.ts:739](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L739)
 
 根据参数获取最终的数字型
 

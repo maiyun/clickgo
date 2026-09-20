@@ -8,7 +8,7 @@
 
 > **stateMachine**(`code`, `start`, `process`): `void`
 
-Defined in: [lib/tool.ts:1810](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1810)
+Defined in: [lib/tool.ts:1820](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1820)
 
 状态机
 

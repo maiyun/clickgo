@@ -8,7 +8,7 @@
 
 > **findParentByClass**(`el`, `name`): `HTMLElement` \| `null`
 
-Defined in: [lib/dom.ts:1396](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1396)
+Defined in: [lib/dom.ts:1533](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1533)
 
 通过 class 名查找上层所有标签是否存在
 

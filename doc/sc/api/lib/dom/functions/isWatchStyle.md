@@ -8,7 +8,7 @@
 
 > **isWatchStyle**(`el`): `boolean`
 
-Defined in: [lib/dom.ts:929](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L929)
+Defined in: [lib/dom.ts:1066](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1066)
 
 检测一个标签是否正在被 watchStyle
 

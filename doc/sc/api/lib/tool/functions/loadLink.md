@@ -8,7 +8,7 @@
 
 > **loadLink**(`url`, `pos?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/tool.ts:2494](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2494)
+Defined in: [lib/tool.ts:2504](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2504)
 
 加载 css 文件
 

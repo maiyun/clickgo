@@ -8,7 +8,7 @@
 
 > **clearWatchSize**(`taskId`): `void`
 
-Defined in: [lib/dom.ts:595](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L595)
+Defined in: [lib/dom.ts:728](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L728)
 
 清除某个任务的所有 watch size 监视
 

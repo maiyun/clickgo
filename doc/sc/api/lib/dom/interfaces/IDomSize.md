@@ -6,7 +6,7 @@
 
 # Interface: IDomSize
 
-Defined in: [lib/dom.ts:1939](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1939)
+Defined in: [lib/dom.ts:2076](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2076)
 
 Element 的大小
 
@@ -16,7 +16,7 @@ Element 的大小
 
 > **border**: `object`
 
-Defined in: [lib/dom.ts:1952](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1952)
+Defined in: [lib/dom.ts:2089](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2089)
 
 #### bottom
 
@@ -40,7 +40,7 @@ Defined in: [lib/dom.ts:1952](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **bottom**: `number`
 
-Defined in: [lib/dom.ts:1942](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1942)
+Defined in: [lib/dom.ts:2079](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2079)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/dom.ts:1942](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **clientHeight**: `number`
 
-Defined in: [lib/dom.ts:1958](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1958)
+Defined in: [lib/dom.ts:2095](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2095)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [lib/dom.ts:1958](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **clientWidth**: `number`
 
-Defined in: [lib/dom.ts:1959](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1959)
+Defined in: [lib/dom.ts:2096](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2096)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [lib/dom.ts:1959](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **height**: `number`
 
-Defined in: [lib/dom.ts:1945](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1945)
+Defined in: [lib/dom.ts:2082](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2082)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [lib/dom.ts:1945](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **innerHeight**: `number`
 
-Defined in: [lib/dom.ts:1961](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1961)
+Defined in: [lib/dom.ts:2098](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2098)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [lib/dom.ts:1961](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **innerWidth**: `number`
 
-Defined in: [lib/dom.ts:1960](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1960)
+Defined in: [lib/dom.ts:2097](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2097)
 
 ***
 
@@ -88,7 +88,7 @@ Defined in: [lib/dom.ts:1960](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **left**: `number`
 
-Defined in: [lib/dom.ts:1943](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1943)
+Defined in: [lib/dom.ts:2080](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2080)
 
 ***
 
@@ -96,7 +96,7 @@ Defined in: [lib/dom.ts:1943](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **padding**: `object`
 
-Defined in: [lib/dom.ts:1946](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1946)
+Defined in: [lib/dom.ts:2083](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2083)
 
 #### bottom
 
@@ -120,7 +120,7 @@ Defined in: [lib/dom.ts:1946](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **right**: `number`
 
-Defined in: [lib/dom.ts:1941](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1941)
+Defined in: [lib/dom.ts:2078](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2078)
 
 ***
 
@@ -128,7 +128,7 @@ Defined in: [lib/dom.ts:1941](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **scrollHeight**: `number`
 
-Defined in: [lib/dom.ts:1963](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1963)
+Defined in: [lib/dom.ts:2100](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2100)
 
 ***
 
@@ -136,7 +136,7 @@ Defined in: [lib/dom.ts:1963](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **scrollWidth**: `number`
 
-Defined in: [lib/dom.ts:1962](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1962)
+Defined in: [lib/dom.ts:2099](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2099)
 
 ***
 
@@ -144,7 +144,7 @@ Defined in: [lib/dom.ts:1962](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **top**: `number`
 
-Defined in: [lib/dom.ts:1940](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1940)
+Defined in: [lib/dom.ts:2077](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2077)
 
 ***
 
@@ -152,4 +152,4 @@ Defined in: [lib/dom.ts:1940](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **width**: `number`
 
-Defined in: [lib/dom.ts:1944](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1944)
+Defined in: [lib/dom.ts:2081](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2081)

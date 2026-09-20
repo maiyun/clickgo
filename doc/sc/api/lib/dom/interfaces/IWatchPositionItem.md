@@ -6,7 +6,7 @@
 
 # Interface: IWatchPositionItem
 
-Defined in: [lib/dom.ts:1967](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1967)
+Defined in: [lib/dom.ts:2104](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2104)
 
 监视位置中的元素
 
@@ -16,7 +16,7 @@ Defined in: [lib/dom.ts:1967](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **el**: `HTMLElement`
 
-Defined in: [lib/dom.ts:1968](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1968)
+Defined in: [lib/dom.ts:2105](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2105)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/dom.ts:1968](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **handler**: (`state`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/dom.ts:1970](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1970)
+Defined in: [lib/dom.ts:2107](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2107)
 
 #### Parameters
 
@@ -48,4 +48,4 @@ Defined in: [lib/dom.ts:1970](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **rect**: `DOMRect`
 
-Defined in: [lib/dom.ts:1969](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1969)
+Defined in: [lib/dom.ts:2106](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2106)

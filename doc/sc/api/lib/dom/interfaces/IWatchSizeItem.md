@@ -6,7 +6,7 @@
 
 # Interface: IWatchSizeItem
 
-Defined in: [lib/dom.ts:1977](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1977)
+Defined in: [lib/dom.ts:2114](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2114)
 
 监视大小中的元素
 
@@ -16,24 +16,44 @@ Defined in: [lib/dom.ts:1977](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **el**: `HTMLElement`
 
-Defined in: [lib/dom.ts:1978](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1978)
+Defined in: [lib/dom.ts:2115](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2115)
 
 ***
 
-### handler
+### handler?
+
+> `optional` **handler?**: `object`
+
+Defined in: [lib/dom.ts:2116](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2116)
+
+#### handler
 
 > **handler**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/dom.ts:1979](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1979)
-
-#### Returns
+##### Returns
 
 `void` \| `Promise`\<`void`\>
 
+#### taskId
+
+> **taskId**: `string`
+
 ***
 
-### taskId
+### handlers
 
-> **taskId**: `string` \| `null`
+> **handlers**: `object`[]
 
-Defined in: [lib/dom.ts:1980](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1980)
+Defined in: [lib/dom.ts:2120](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2120)
+
+#### handler
+
+> **handler**: () => `void` \| `Promise`\<`void`\>
+
+##### Returns
+
+`void` \| `Promise`\<`void`\>
+
+#### taskId
+
+> **taskId**: `string`
