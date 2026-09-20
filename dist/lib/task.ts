@@ -97,7 +97,7 @@ const getRetry: {
 };
 
 /**
- * --- 获取任务简略信息 ---
+ * --- 获取任务及其应用包简略信息 ---
  * @param taskId 任务 id
  */
 export function get(taskId: lCore.TCurrent): ITaskInfo | null {
@@ -111,6 +111,9 @@ export function get(taskId: lCore.TCurrent): ITaskInfo | null {
     return {
         'id': taskId,
         'name': task.app.config.name,
+        'ver': task.app.config.ver,
+        'version': task.app.config.version,
+        'author': task.app.config.author,
         'locale': task.locale.lang,
         'customTheme': task.customTheme,
         'formCount': Object.keys(task.forms).length,
@@ -386,17 +389,10 @@ export function getPermissions(current: lCore.TCurrent): string[] {
 export function getList(): ITaskInfo[] {
     const rtn: ITaskInfo[] = [];
     for (const tid in list) {
-        const item = list[tid];
-        rtn.push({
-            'id': tid,
-            'name': item.app.config.name,
-            'locale': item.locale.lang,
-            'customTheme': item.customTheme,
-            'formCount': Object.keys(item.forms).length,
-            'icon': item.app.icon,
-            'path': item.path,
-            'current': item.current
-        });
+        const item = get(tid);
+        if (item) {
+            rtn.push(item);
+        }
     }
     return rtn;
 }
@@ -1814,11 +1810,18 @@ export interface ICreateTimerOptions {
     'count'?: number;
 }
 
-/** --- Task 的简略情况，通常在 list 当中 --- */
+/** --- Task 及其应用包的简略信息，通常在 list 当中 --- */
 export interface ITaskInfo {
     /** --- 任务 ID --- */
     'id': string;
+    /** --- 应用名 --- */
     'name': string;
+    /** --- 发行版本 --- */
+    'ver': number;
+    /** --- 发行版本字符串 --- */
+    'version': string;
+    /** --- 作者 --- */
+    'author': string;
     'locale': string;
     'customTheme': boolean;
     'formCount': number;
