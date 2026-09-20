@@ -10,7 +10,7 @@
 
 Defined in: [lib/task.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L103)
 
-获取任务简略信息
+获取任务及其应用包简略信息
 
 ## Parameters
 

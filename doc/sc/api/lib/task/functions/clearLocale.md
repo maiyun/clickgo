@@ -8,7 +8,7 @@
 
 > **clearLocale**(`taskId`): `void`
 
-Defined in: [lib/task.ts:1214](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1214)
+Defined in: [lib/task.ts:1210](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1210)
 
 清除任务的所有加载的语言包
 
