@@ -12,6 +12,44 @@ export default class extends clickgo.control.AbstractControl {
     scaleY = 0;
     /** --- 当前有的线段 --- */
     lines = [];
+    /** --- 不参与响应式处理的连线端点监听状态 --- */
+    access = {
+        'resizeElements': new Map(),
+        'resizeHandler': null
+    };
+    /**
+     * --- 增加连线端点的尺寸监听引用 ---
+     * @param el 连线端点
+     */
+    _bindResize(el) {
+        const count = this.access.resizeElements.get(el) ?? 0;
+        if (count) {
+            this.access.resizeElements.set(el, count + 1);
+            return;
+        }
+        if (!this.access.resizeHandler || !clickgo.dom.watchSizeMulti(this, el, this.access.resizeHandler)) {
+            return;
+        }
+        this.access.resizeElements.set(el, 1);
+    }
+    /**
+     * --- 减少连线端点的尺寸监听引用 ---
+     * @param el 连线端点
+     */
+    _unbindResize(el) {
+        const count = this.access.resizeElements.get(el);
+        if (!count) {
+            return;
+        }
+        if (count > 1) {
+            this.access.resizeElements.set(el, count - 1);
+            return;
+        }
+        if (this.access.resizeHandler) {
+            clickgo.dom.unwatchSizeMulti(this, el, this.access.resizeHandler);
+        }
+        this.access.resizeElements.delete(el);
+    }
     // --- 供用户调用 ---
     /** --- 添加连接线 --- */
     addLine(line) {
@@ -22,30 +60,20 @@ export default class extends clickgo.control.AbstractControl {
         if (!(line.end.obj instanceof HTMLElement)) {
             line.end.obj = line.end.obj.element;
         }
-        clickgo.dom.watchSize(this, line.start.obj, () => {
-            if (this.refreshLineTimer) {
-                return;
-            }
-            this.refreshLineTimer = window.setTimeout(() => {
-                this.refreshLines();
-                this.refreshLineTimer = 0;
-            }, 100);
-        });
-        clickgo.dom.watchSize(this, line.end.obj, () => {
-            if (this.refreshLineTimer) {
-                return;
-            }
-            this.refreshLineTimer = window.setTimeout(() => {
-                this.refreshLines();
-                this.refreshLineTimer = 0;
-            }, 100);
-        });
+        this._bindResize(line.start.obj);
+        this._bindResize(line.end.obj);
         this.refreshLines();
         return rtn;
     }
     /** --- 删除连接线 --- */
     removeLine(index) {
+        const line = this.lines[index];
+        if (!line) {
+            return;
+        }
         this.lines.splice(index, 1);
+        this._unbindResize(line.start.obj);
+        this._unbindResize(line.end.obj);
         this.refreshLines();
     }
     /** --- 用 name 删除连接线 --- */
@@ -54,8 +82,7 @@ export default class extends clickgo.control.AbstractControl {
         if (index === -1) {
             return false;
         }
-        this.lines.splice(index, 1);
-        this.refreshLines();
+        this.removeLine(index);
         return true;
     }
     /** --- 刷新连线 --- */
@@ -191,6 +218,18 @@ export default class extends clickgo.control.AbstractControl {
     // --- 供用户调用结束 ---
     /** --- 有些时候要刷新 --- */
     refreshLineTimer = 0;
+    onCreated() {
+        // --- 回调需要绑定当前控件实例 ---
+        this.access.resizeHandler = () => {
+            if (this.refreshLineTimer) {
+                return;
+            }
+            this.refreshLineTimer = window.setTimeout(() => {
+                this.refreshLines();
+                this.refreshLineTimer = 0;
+            }, 100);
+        };
+    }
     /** --- 绑定缩放事件 --- */
     scale(oe) {
         clickgo.modules.pointer.scale(oe, (e, scale, cpos) => {
@@ -215,6 +254,13 @@ export default class extends clickgo.control.AbstractControl {
         this.refresh();
     }
     onUnmounted() {
+        if (this.access.resizeHandler) {
+            for (const el of this.access.resizeElements.keys()) {
+                clickgo.dom.unwatchSizeMulti(this, el, this.access.resizeHandler);
+            }
+        }
+        this.access.resizeElements.clear();
+        this.access.resizeHandler = null;
         if (this.refreshLineTimer) {
             clearTimeout(this.refreshLineTimer);
             this.refreshLineTimer = 0;

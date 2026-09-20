@@ -159,61 +159,70 @@ export function weightFormat(weight, spliter = ' ') {
     return (Math.round(weight * 100) / 100).toString() + spliter + units[i];
 }
 /**
+ * --- 递归克隆数据 ---
+ * @param value 要克隆的数据
+ * @param cache 已克隆对象的映射，用于保留重复引用并避免循环递归
+ * @returns 克隆后的数据
+ */
+function cloneValue(value, cache) {
+    if ((value === null) || (typeof value !== 'object')) {
+        return value;
+    }
+    const cached = cache.get(value);
+    if (cached !== undefined) {
+        return cached;
+    }
+    if (value instanceof Date) {
+        const date = new Date(value.getTime());
+        cache.set(value, date);
+        return date;
+    }
+    if (value instanceof FormData) {
+        const formData = new FormData();
+        cache.set(value, formData);
+        for (const item of value) {
+            formData.append(item[0], item[1]);
+        }
+        return formData;
+    }
+    if (value instanceof Map) {
+        const map = new Map();
+        cache.set(value, map);
+        for (const item of value) {
+            map.set(cloneValue(item[0], cache), cloneValue(item[1], cache));
+        }
+        return map;
+    }
+    if (value instanceof Set) {
+        const set = new Set();
+        cache.set(value, set);
+        for (const item of value) {
+            set.add(cloneValue(item, cache));
+        }
+        return set;
+    }
+    if (Array.isArray(value)) {
+        const array = [];
+        cache.set(value, array);
+        for (let i = 0; i < value.length; ++i) {
+            array[i] = cloneValue(value[i], cache);
+        }
+        return array;
+    }
+    const object = {};
+    cache.set(value, object);
+    for (const key in value) {
+        object[key] = cloneValue(value[key], cache);
+    }
+    return object;
+}
+/**
  * --- 完整的克隆一份数组/对象 ---
  * @param obj 要克隆的对象
+ * @returns 克隆后的对象
  */
 export function clone(obj) {
-    if (Array.isArray(obj)) {
-        // --- 数组 ---
-        const newObj = [];
-        for (let i = 0; i < obj.length; ++i) {
-            if (obj[i] instanceof Date) {
-                newObj[i] = new Date(obj[i].getTime());
-            }
-            else if (obj[i] instanceof FormData) {
-                const fd = new FormData();
-                for (const item of obj[i]) {
-                    fd.append(item[0], item[1]);
-                }
-                newObj[i] = fd;
-            }
-            else if (obj[i] === null) {
-                newObj[i] = null;
-            }
-            else if (typeof obj[i] === 'object') {
-                newObj[i] = clone(obj[i]);
-            }
-            else {
-                newObj[i] = obj[i];
-            }
-        }
-        return newObj;
-    }
-    // --- 对象 ---
-    /** --- 初始化为空对象，后续动态赋值 --- */
-    const newObj = {};
-    for (const key in obj) {
-        if (obj[key] instanceof Date) {
-            newObj[key] = new Date(obj[key].getTime());
-        }
-        else if (obj[key] instanceof FormData) {
-            const fd = new FormData();
-            for (const item of obj[key]) {
-                fd.append(item[0], item[1]);
-            }
-            newObj[key] = fd;
-        }
-        else if (obj[key] === null) {
-            newObj[key] = null;
-        }
-        else if (typeof obj[key] === 'object') {
-            newObj[key] = clone(obj[key]);
-        }
-        else {
-            newObj[key] = obj[key];
-        }
-    }
-    return newObj;
+    return cloneValue(obj, new WeakMap());
 }
 /**
  * --- 等待毫秒 ---

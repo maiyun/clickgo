@@ -25,6 +25,50 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 当前有的线段 --- */
     public lines: clickgo.control.IObjviewerLine[] = [];
 
+    /** --- 不参与响应式处理的连线端点监听状态 --- */
+    public access: {
+        'resizeElements': Map<HTMLElement, number>;
+        'resizeHandler': (() => void) | null;
+    } = {
+            'resizeElements': new Map(),
+            'resizeHandler': null
+        };
+
+    /**
+     * --- 增加连线端点的尺寸监听引用 ---
+     * @param el 连线端点
+     */
+    private _bindResize(el: HTMLElement): void {
+        const count = this.access.resizeElements.get(el) ?? 0;
+        if (count) {
+            this.access.resizeElements.set(el, count + 1);
+            return;
+        }
+        if (!this.access.resizeHandler || !clickgo.dom.watchSizeMulti(this, el, this.access.resizeHandler)) {
+            return;
+        }
+        this.access.resizeElements.set(el, 1);
+    }
+
+    /**
+     * --- 减少连线端点的尺寸监听引用 ---
+     * @param el 连线端点
+     */
+    private _unbindResize(el: HTMLElement): void {
+        const count = this.access.resizeElements.get(el);
+        if (!count) {
+            return;
+        }
+        if (count > 1) {
+            this.access.resizeElements.set(el, count - 1);
+            return;
+        }
+        if (this.access.resizeHandler) {
+            clickgo.dom.unwatchSizeMulti(this, el, this.access.resizeHandler);
+        }
+        this.access.resizeElements.delete(el);
+    }
+
     // --- 供用户调用 ---
 
     /** --- 添加连接线 --- */
@@ -36,31 +80,21 @@ export default class extends clickgo.control.AbstractControl {
         if (!(line.end.obj instanceof HTMLElement)) {
             line.end.obj = line.end.obj.element;
         }
-        clickgo.dom.watchSize(this, line.start.obj, () => {
-            if (this.refreshLineTimer) {
-                return;
-            }
-            this.refreshLineTimer = window.setTimeout(() => {
-                this.refreshLines();
-                this.refreshLineTimer = 0;
-            }, 100);
-        });
-        clickgo.dom.watchSize(this, line.end.obj, () => {
-            if (this.refreshLineTimer) {
-                return;
-            }
-            this.refreshLineTimer = window.setTimeout(() => {
-                this.refreshLines();
-                this.refreshLineTimer = 0;
-            }, 100);
-        });
+        this._bindResize(line.start.obj);
+        this._bindResize(line.end.obj);
         this.refreshLines();
         return rtn;
     }
 
     /** --- 删除连接线 --- */
     public removeLine(index: number): void {
+        const line = this.lines[index];
+        if (!line) {
+            return;
+        }
         this.lines.splice(index, 1);
+        this._unbindResize(line.start.obj as HTMLElement);
+        this._unbindResize(line.end.obj as HTMLElement);
         this.refreshLines();
     }
 
@@ -70,8 +104,7 @@ export default class extends clickgo.control.AbstractControl {
         if (index === -1) {
             return false;
         }
-        this.lines.splice(index, 1);
-        this.refreshLines();
+        this.removeLine(index);
         return true;
     }
 
@@ -218,6 +251,19 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 有些时候要刷新 --- */
     public refreshLineTimer = 0;
 
+    public onCreated(): void {
+        // --- 回调需要绑定当前控件实例 ---
+        this.access.resizeHandler = () => {
+            if (this.refreshLineTimer) {
+                return;
+            }
+            this.refreshLineTimer = window.setTimeout(() => {
+                this.refreshLines();
+                this.refreshLineTimer = 0;
+            }, 100);
+        };
+    }
+
     /** --- 绑定缩放事件 --- */
     public scale(oe: PointerEvent | WheelEvent): void {
         clickgo.modules.pointer.scale(oe, (e, scale, cpos) => {
@@ -244,6 +290,13 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onUnmounted(): void {
+        if (this.access.resizeHandler) {
+            for (const el of this.access.resizeElements.keys()) {
+                clickgo.dom.unwatchSizeMulti(this, el, this.access.resizeHandler);
+            }
+        }
+        this.access.resizeElements.clear();
+        this.access.resizeHandler = null;
         if (this.refreshLineTimer) {
             clearTimeout(this.refreshLineTimer);
             this.refreshLineTimer = 0;

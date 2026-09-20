@@ -487,7 +487,8 @@ export function getWatchSizeCount(taskId?: lCore.TCurrent): number {
     }
     let count = 0;
     for (const id in watchSizeList) {
-        if (watchSizeList[id].taskId !== taskId) {
+        const item = watchSizeList[id];
+        if ((item.handler?.taskId !== taskId) && !item.handlers.some(handler => handler.taskId === taskId)) {
             continue;
         }
         ++count;
@@ -511,19 +512,89 @@ const resizeObserver = new ResizeObserver(function(entries): void {
             }
             continue;
         }
-        const item = watchSizeList[el.dataset.cgRoindex!];
-        try {
-            const r = item.handler();
-            if (r instanceof Promise) {
-                r.catch(() => {});
-            }
+        const info = getWatchSizeInfo(el);
+        if (!info) {
+            continue;
         }
-        catch {}
+        const handlers = info.item.handler ? [info.item.handler, ...info.item.handlers] : [...info.item.handlers];
+        for (const handler of handlers) {
+            try {
+                const r = handler.handler();
+                if (r instanceof Promise) {
+                    r.catch(() => {});
+                }
+            }
+            catch {}
+        }
     }
 });
 
 /**
- * --- 添加监视 Element 对象大小，元素移除后自动停止监视（浏览器原生效果），已经监视中的不会再次监视 ---
+ * --- 获取元素的尺寸监听记录，索引残留或被复制时自动清理 ---
+ * @param el 要查询的元素
+ */
+function getWatchSizeInfo(el: HTMLElement): {
+    'index': string;
+    'item': IWatchSizeItem;
+} | null {
+    const index = el.dataset.cgRoindex;
+    if (index === undefined) {
+        return null;
+    }
+    const item = watchSizeList[index];
+    if (item?.el === el) {
+        return {
+            'index': index,
+            'item': item
+        };
+    }
+    el.removeAttribute('data-cg-roindex');
+    return null;
+}
+
+/**
+ * --- 创建元素的尺寸监听记录 ---
+ * @param el 要监听的元素
+ */
+function createWatchSizeInfo(el: HTMLElement): {
+    'index': string;
+    'item': IWatchSizeItem;
+} {
+    const index = watchSizeIndex.toString();
+    const item: IWatchSizeItem = {
+        'el': el,
+        'handlers': []
+    };
+    resizeObserver.observe(el, {
+        'box': 'border-box',
+    });
+    watchSizeList[index] = item;
+    el.dataset.cgRoindex = index;
+    ++watchSizeIndex;
+    return {
+        'index': index,
+        'item': item
+    };
+}
+
+/**
+ * --- 移除没有订阅者的尺寸监听记录 ---
+ * @param info 尺寸监听记录
+ */
+function removeWatchSizeInfo(info: {
+    'index': string;
+    'item': IWatchSizeItem;
+}): void {
+    if (info.item.handler || info.item.handlers.length) {
+        return;
+    }
+    resizeObserver.unobserve(info.item.el);
+    info.item.el.removeAttribute('data-cg-roindex');
+    delete watchSizeList[info.index];
+}
+
+/**
+ * --- 添加监视 Element 对象大小，元素移除后自动停止监视，已经通过本方法监视的不会再次监视 ---
  * @param current 当前执行的任务
  * @param el 要监视的大小
  * @param cb 回调函数
@@ -541,7 +612,8 @@ export function watchSize(
     if ((current !== sysId) && !lTask.getOrigin(current)) {
         return false;
     }
-    if (isWatchSize(el)) {
+    const info = getWatchSizeInfo(el);
+    if (info?.item.handler) {
         return false;
     }
     if (immediate) {
@@ -553,16 +625,11 @@ export function watchSize(
         }
         catch {}
     }
-    resizeObserver.observe(el, {
-        'box': 'border-box',
-    });
-    watchSizeList[watchSizeIndex] = {
-        'el': el,
+    const item = info?.item ?? createWatchSizeInfo(el).item;
+    item.handler = {
         'handler': cb,
-        'taskId': current,
+        'taskId': current
     };
-    el.dataset.cgRoindex = watchSizeIndex.toString();
-    ++watchSizeIndex;
     return true;
 }
 
@@ -571,13 +638,79 @@ export function watchSize(
  * @param el 要移除监视
  */
 export function unwatchSize(el: HTMLElement): void {
-    const index = el.dataset.cgRoindex;
-    if (index === undefined) {
+    const info = getWatchSizeInfo(el);
+    if (!info?.item.handler) {
         return;
     }
-    resizeObserver.unobserve(el);
-    el.removeAttribute('data-cg-roindex');
-    delete watchSizeList[index];
+    delete info.item.handler;
+    removeWatchSizeInfo(info);
+}
+
+/**
+ * --- 添加可与其他订阅者共存的 Element 大小监视 ---
+ * @param current 当前执行的任务
+ * @param el 要监视的大小
+ * @param cb 回调函数
+ * @param immediate 立刻先执行一次回调
+ */
+export function watchSizeMulti(
+    current: lCore.TCurrent,
+    el: HTMLElement,
+    cb: () => void | Promise<void>,
+    immediate: boolean = false,
+): boolean {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    if ((current !== sysId) && !lTask.getOrigin(current)) {
+        return false;
+    }
+    const info = getWatchSizeInfo(el);
+    if (info?.item.handlers.some(handler => (handler.handler === cb) && (handler.taskId === current))) {
+        return false;
+    }
+    if (immediate) {
+        try {
+            const r = cb();
+            if (r instanceof Promise) {
+                r.catch(() => {});
+            }
+        }
+        catch {}
+    }
+    const item = info?.item ?? createWatchSizeInfo(el).item;
+    item.handlers.push({
+        'handler': cb,
+        'taskId': current
+    });
+    return true;
+}
+
+/**
+ * --- 移除当前任务的可共存 Element 大小监视 ---
+ * @param current 当前执行的任务
+ * @param el 要移除监视的元素
+ * @param cb 只移除此回调，留空则移除当前任务在本元素上的全部可共存回调
+ */
+export function unwatchSizeMulti(
+    current: lCore.TCurrent,
+    el: HTMLElement,
+    cb?: () => void | Promise<void>
+): void {
+    if (typeof current !== 'string') {
+        current = current.taskId;
+    }
+    const info = getWatchSizeInfo(el);
+    if (!info) {
+        return;
+    }
+    info.item.handlers = info.item.handlers.filter(handler => {
+        if (handler.taskId !== current) {
+            return true;
+        }
+        return cb ? handler.handler !== cb : false;
+    });
+    removeWatchSizeInfo(info);
 }
 
 /**
@@ -585,7 +718,7 @@ export function unwatchSize(el: HTMLElement): void {
  * @param el 要检测的标签
  */
 export function isWatchSize(el: HTMLElement): boolean {
-    return el.dataset.cgRoindex ? true : false;
+    return getWatchSizeInfo(el) ? true : false;
 }
 
 /**
@@ -598,7 +731,11 @@ export function clearWatchSize(taskId: lCore.TCurrent): void {
     }
     for (const index in watchSizeList) {
         const item = watchSizeList[index];
-        if (taskId !== item.taskId) {
+        if (item.handler?.taskId === taskId) {
+            delete item.handler;
+        }
+        item.handlers = item.handlers.filter(handler => handler.taskId !== taskId);
+        if (item.handler || item.handlers.length) {
             continue;
         }
         resizeObserver.unobserve(item.el);
@@ -1976,8 +2113,14 @@ export interface IWatchPositionItem {
 /** --- 监视大小中的元素 --- */
 export interface IWatchSizeItem {
     'el': HTMLElement;
-    'handler': () => void | Promise<void>;
-    'taskId': string | null;
+    'handler'?: {
+        'handler': () => void | Promise<void>;
+        'taskId': string;
+    };
+    'handlers': Array<{
+        'handler': () => void | Promise<void>;
+        'taskId': string;
+    }>;
 }
 
 /** --- 监视变化中的元素 --- */

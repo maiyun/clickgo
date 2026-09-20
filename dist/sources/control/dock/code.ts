@@ -7,6 +7,9 @@ interface IDockInstance {
 /** --- 同一窗体内的 Dock 实例注册表，确保同时只有一个浮动面板打开 --- */
 const formDocks = new WeakMap<object, Set<IDockInstance>>();
 
+/** --- Dock 进入窄布局的宽度，与 Nav 的浮层模式断点保持一致 --- */
+const narrowWidth = 600;
+
 export default class extends clickgo.control.AbstractControl implements IDockInstance {
 
     public emits = {
@@ -26,8 +29,21 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
             'width': 280
         };
 
+    /** --- 不参与响应式处理的 Form 尺寸监听状态 --- */
+    public access: {
+        'formSizeWatch': {
+            'element': HTMLElement;
+            'handler': () => void;
+        } | null;
+    } = {
+            'formSizeWatch': null
+        };
+
     /** --- 当前是否展开 --- */
     public expandedData: boolean = true;
+
+    /** --- 当前是否因所在布局区域过窄而强制收起 --- */
+    public narrow: boolean = false;
 
     /** --- 浮动面板当前指向的 group 索引，-1 表示关闭 --- */
     public floatGroup: number = -1;
@@ -58,6 +74,9 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
 
     /** --- 切换展开/收起 --- */
     public toggle(): void {
+        if (this.narrow) {
+            return;
+        }
         this.expandedData = !this.expandedData;
         this.floatGroup = -1;
         this.emit('update:expanded', this.expandedData);
@@ -108,7 +127,7 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         return this.refs.body ?? null;
     }
 
-    public onMounted(): void {
+    public async onMounted(): Promise<void> {
         const form = this.rootForm;
         if (!formDocks.has(form)) {
             formDocks.set(form, new Set());
@@ -116,11 +135,32 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         formDocks.get(form)!.add(this);
 
         this.watch('expanded', () => {
-            this.expandedData = this.propBoolean('expanded');
+            this.expandedData = !this.narrow && this.propBoolean('expanded');
             this.floatGroup = -1;
         }, {
             'immediate': true
         });
+
+        await this.nextTick();
+        const formElement = this.rootForm.element;
+        if (!formElement.isConnected) {
+            return;
+        }
+        const handler = (): void => {
+            const narrow = formElement.offsetWidth < narrowWidth;
+            if (this.narrow === narrow) {
+                return;
+            }
+            this.narrow = narrow;
+            this.expandedData = !narrow && this.propBoolean('expanded');
+            this.floatGroup = -1;
+        };
+        if (clickgo.dom.watchSizeMulti(this, formElement, handler, true)) {
+            this.access.formSizeWatch = {
+                'element': formElement,
+                'handler': handler
+            };
+        }
 
         clickgo.dom.watchSize(this, this.refs.body, () => {
             this.floatAreaHeight = this.refs.body.clientHeight;
@@ -128,6 +168,11 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
     }
 
     public onUnmounted(): void {
+        const sizeWatch = this.access.formSizeWatch;
+        if (sizeWatch) {
+            clickgo.dom.unwatchSizeMulti(this, sizeWatch.element, sizeWatch.handler);
+            this.access.formSizeWatch = null;
+        }
         const siblings = formDocks.get(this.rootForm);
         siblings?.delete(this);
         if (!siblings?.size) {

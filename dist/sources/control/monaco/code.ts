@@ -410,11 +410,6 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('error', { 'stage': stage, 'error': error });
     }
 
-    public onCreated(): void {
-        // --- 框架按普通对象克隆 access，Map 必须在每个实例创建后独立初始化 ---
-        this.access.models = new Map();
-    }
-
     public async onMounted(): Promise<void> {
         // --- mounted 包装等待 nextTick 时，控件可能已经被移除 ---
         if (this.isUnmounting) {
