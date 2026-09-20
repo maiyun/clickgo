@@ -1,4 +1,5 @@
 import * as electron from 'electron';
+import * as nodeFs from 'node:fs';
 import * as nodePath from 'path';
 import { pathToFileURL } from 'node:url';
 import * as lFs from './lib/fs.js';
@@ -21,6 +22,8 @@ let mainPage = '';
 let mainNavigating = false;
 /** --- 应用已确认关闭，避免再次进入网页关闭事件 --- */
 let closeAllowed = false;
+/** --- 当前启用系统文件打开处理的启动类 --- */
+let fileOpenBoot;
 /** --- 当前系统平台 --- */
 const platform = process.platform;
 // const platform: NodeJS.Platform = 'darwin';
@@ -113,19 +116,10 @@ const methods = {
     'cg-activate': {
         'once': false,
         handler: function (t) {
-            if (!form) {
-                return;
-            }
             if (!verifyToken(t)) {
                 return;
             }
-            if (form.isMinimized()) {
-                form.restore();
-            }
-            form.setAlwaysOnTop(true);
-            form.show();
-            form.focus();
-            form.setAlwaysOnTop(false);
+            activateMainForm();
         },
     },
     // --- 关闭窗体（可能软件进程不会被退出） ---
@@ -366,6 +360,68 @@ const methods = {
         }
     },
 };
+/**
+ * --- 激活已有主窗体 ---
+ * @returns 无
+ */
+function activateMainForm() {
+    if (!form || form.isDestroyed()) {
+        return;
+    }
+    if (form.isMinimized()) {
+        form.restore();
+    }
+    form.setAlwaysOnTop(true);
+    form.show();
+    form.focus();
+    form.setAlwaysOnTop(false);
+}
+/**
+ * --- 规范化操作系统交给应用的文件路径，仅保留实际存在的普通文件 ---
+ * @param paths 原始文件路径
+ * @param cwd 相对路径使用的工作目录
+ * @returns ClickGo storage 路径格式的文件列表
+ */
+function normalizeFilePaths(paths, cwd) {
+    const result = [];
+    const exists = new Set();
+    for (const item of paths) {
+        if ((typeof item !== 'string') || !item || item.startsWith('-')) {
+            continue;
+        }
+        const path = nodePath.resolve(cwd, item);
+        try {
+            if (!nodeFs.statSync(path).isFile()) {
+                continue;
+            }
+        }
+        catch {
+            continue;
+        }
+        const parsed = lTool.parsePath(path);
+        if (exists.has(parsed)) {
+            continue;
+        }
+        exists.add(parsed);
+        result.push(parsed);
+    }
+    return result;
+}
+/**
+ * --- 将操作系统文件打开请求转给启用该能力的应用 ---
+ * @param paths 原始文件路径
+ * @param cwd 相对路径使用的工作目录
+ * @returns 无
+ */
+function dispatchOpenFiles(paths, cwd) {
+    if (!fileOpenBoot) {
+        return;
+    }
+    const parsed = normalizeFilePaths(paths, cwd);
+    if (parsed.length) {
+        fileOpenBoot.onOpenFiles(parsed);
+    }
+}
 /** --- 全局类 --- */
 export class AbstractBoot {
     /**
@@ -391,6 +447,31 @@ export class AbstractBoot {
      */
     get token() {
         return token;
+    }
+    /**
+     * --- 接收操作系统交给应用的文件，仅在 launcher 的 openFiles 为 true 时触发 ---
+     * @param paths 不含 /storage/ 的 ClickGo 文件路径
+     * @returns 无
+     */
+    onOpenFiles(paths) {
+        void paths;
+    }
+    /**
+     * --- 向 ClickGo 页面发送 Native 事件 ---
+     * @param name 事件名称
+     * @param param 事件参数
+     * @returns 页面是否有对应监听器
+     */
+    async emit(name, ...param) {
+        if (!form || !token || mainNavigating || !name) {
+            return false;
+        }
+        try {
+            return (await form.webContents.executeJavaScript(`Boolean(window.clickgoNativeWeb?.invoke(${JSON.stringify(name)}, ...${JSON.stringify(param)}))`)) === true;
+        }
+        catch {
+            return false;
+        }
     }
     /**
      * --- 开始运行起来一个主实体窗体，整个进程本方法只能执行一次 ---
@@ -556,9 +637,37 @@ export function getAppVersion() {
 export function isPackaged() {
     return electron.app.isPackaged;
 }
-/** --- 用户调用运行 boot 类 --- */
-export function launcher(boot) {
+/**
+ * --- 用户调用运行 boot 类 ---
+ * @param boot 启动类实例
+ * @param options 进程启动选项
+ * @returns 无
+ */
+export function launcher(boot, options = {}) {
     (async function () {
+        if (options.singleInstance && !electron.app.requestSingleInstanceLock()) {
+            electron.app.quit();
+            return;
+        }
+        fileOpenBoot = options.openFiles ? boot : undefined;
+        if (options.openFiles) {
+            electron.app.on('open-file', function (event, path) {
+                event.preventDefault();
+                activateMainForm();
+                dispatchOpenFiles([path], process.cwd());
+            });
+            const offset = process.defaultApp ? 2 : 1;
+            dispatchOpenFiles(process.argv.slice(offset), process.cwd());
+        }
+        if (options.singleInstance) {
+            electron.app.on('second-instance', function (_event, argv, cwd) {
+                activateMainForm();
+                if (options.openFiles) {
+                    const offset = process.defaultApp ? 2 : 1;
+                    dispatchOpenFiles(argv.slice(offset), cwd);
+                }
+            });
+        }
         // --- 等到 native 环境装载完毕 ---
         await electron.app.whenReady();
         await lFs.refreshDrives();
@@ -588,6 +697,17 @@ electron.ipcMain.handle('pre', function (e, name, ...param) {
         delete methods[name];
     }
     return method.handler(...param);
+});
+// --- 预加载层已用 webUtils 取得真实拖入文件，主进程仍须限制为当前实体窗体 ---
+electron.ipcMain.on('drop-files', function (event, paths) {
+    if (!form || form.isDestroyed() || (event.sender !== form.webContents) || !Array.isArray(paths)) {
+        return;
+    }
+    dispatchOpenFiles(paths, process.cwd());
+});
+// --- 只有显式启用 openFiles 的应用才由预加载层接管文件拖入 ---
+electron.ipcMain.on('file-open-enabled', function (event) {
+    event.returnValue = Boolean(fileOpenBoot && form && !form.isDestroyed() && (event.sender === form.webContents));
 });
 /**
  * --- 精确匹配页面地址，允许同一页面改变 hash ---
