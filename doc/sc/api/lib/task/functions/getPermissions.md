@@ -8,7 +8,7 @@
 
 > **getPermissions**(`current`): `string`[]
 
-Defined in: [lib/task.ts:376](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L376)
+Defined in: [lib/task.ts:392](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L392)
 
 获取某个任务的已授权权限列表
 

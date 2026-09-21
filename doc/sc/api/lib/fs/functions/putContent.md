@@ -8,7 +8,7 @@
 
 > **putContent**(`current`, `path`, `data`, `options?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:298](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L298)
+Defined in: [lib/fs.ts:310](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L310)
 
 写入文件内容
 

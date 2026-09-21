@@ -24,7 +24,7 @@
 
 > **getContent**(`current`, `path`, `options?`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [lib/fs.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L129)
+Defined in: [lib/fs.ts:141](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L141)
 
 ### Parameters
 
@@ -64,7 +64,7 @@ Defined in: [lib/fs.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 > **getContent**(`current`, `path`, `options`): `Promise`\<`string` \| `null`\>
 
-Defined in: [lib/fs.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L136)
+Defined in: [lib/fs.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L148)
 
 ### Parameters
 

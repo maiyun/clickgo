@@ -8,7 +8,7 @@
 
 > **watchSize**(`current`, `el`, `cb`, `immediate?`): `boolean`
 
-Defined in: [lib/dom.ts:603](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L603)
+Defined in: [lib/dom.ts:719](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L719)
 
 添加监视 Element 对象大小，元素移除后自动停止监视，已经通过本方法监视的不会再次监视
 

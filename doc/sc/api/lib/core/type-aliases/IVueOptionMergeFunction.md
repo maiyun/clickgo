@@ -8,7 +8,7 @@
 
 > **IVueOptionMergeFunction** = (`to`, `from`, `instance`) => `any`
 
-Defined in: [lib/core.ts:1668](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1668)
+Defined in: [lib/core.ts:1671](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1671)
 
 Vue 选项合并函数
 

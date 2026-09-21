@@ -8,7 +8,7 @@
 
 > **siblingsData**(`el`, `name`): `HTMLElement`[]
 
-Defined in: [lib/dom.ts:1616](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1616)
+Defined in: [lib/dom.ts:1732](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1732)
 
 查找指定 el 的同级的存在 data 的元素
 

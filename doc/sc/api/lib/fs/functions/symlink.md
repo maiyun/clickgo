@@ -8,7 +8,7 @@
 
 > **symlink**(`current`, `filePath`, `linkPath`, `type?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:401](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L401)
+Defined in: [lib/fs.ts:413](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L413)
 
 把源文件创建一个 link
 

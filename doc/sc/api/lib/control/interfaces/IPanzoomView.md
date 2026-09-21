@@ -6,7 +6,7 @@
 
 # Interface: IPanzoomView
 
-Defined in: [lib/control.ts:1180](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1180)
+Defined in: [lib/control.ts:1198](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1198)
 
 Panzoom 视图状态，偏移单位为视口 CSS 像素
 
@@ -16,7 +16,7 @@ Panzoom 视图状态，偏移单位为视口 CSS 像素
 
 > **x**: `number`
 
-Defined in: [lib/control.ts:1182](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1182)
+Defined in: [lib/control.ts:1200](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1200)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:1182](https://github.com/maiyun/clickgo/blob/master/
 
 > **y**: `number`
 
-Defined in: [lib/control.ts:1183](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1183)
+Defined in: [lib/control.ts:1201](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1201)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/control.ts:1183](https://github.com/maiyun/clickgo/blob/master/
 
 > **zoom**: `number`
 
-Defined in: [lib/control.ts:1181](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1181)
+Defined in: [lib/control.ts:1199](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1199)

@@ -8,7 +8,7 @@
 
 > **rmdirDeep**(`current`, `path`): `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:880](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L880)
+Defined in: [lib/fs.ts:892](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L892)
 
 删除一个非空目录
 [ Danger ] [ 危险 ]

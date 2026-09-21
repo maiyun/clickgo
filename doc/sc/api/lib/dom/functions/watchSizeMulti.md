@@ -8,7 +8,7 @@
 
 > **watchSizeMulti**(`current`, `el`, `cb`, `immediate?`): `boolean`
 
-Defined in: [lib/dom.ts:656](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L656)
+Defined in: [lib/dom.ts:772](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L772)
 
 添加可与其他订阅者共存的 Element 大小监视
 

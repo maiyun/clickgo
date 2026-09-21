@@ -8,7 +8,7 @@
 
 > **removeActivePanel**(`current`, `formId`, `panelId`): `boolean`
 
-Defined in: [lib/form.ts:2165](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2165)
+Defined in: [lib/form.ts:2240](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2240)
 
 移除 form 中正在活跃中的 panel id （panel 本身被置于隐藏时）
 

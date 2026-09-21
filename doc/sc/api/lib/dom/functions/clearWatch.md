@@ -8,7 +8,7 @@
 
 > **clearWatch**(`taskId`): `void`
 
-Defined in: [lib/dom.ts:913](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L913)
+Defined in: [lib/dom.ts:1029](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1029)
 
 清除某个任务下面的所有 watch 监视
 

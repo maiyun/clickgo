@@ -8,7 +8,7 @@
 
 > **unmount**(`name`): `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:117](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L117)
+Defined in: [lib/fs.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L129)
 
 卸载 mounted
 

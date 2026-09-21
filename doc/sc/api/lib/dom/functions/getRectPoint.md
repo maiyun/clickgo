@@ -8,7 +8,7 @@
 
 > **getRectPoint**(`el`, `wrap`, `pos`): `object`
 
-Defined in: [lib/dom.ts:1691](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1691)
+Defined in: [lib/dom.ts:1807](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1807)
 
 根据角位置获取八角坐标
 
@@ -24,7 +24,7 @@ Defined in: [lib/dom.ts:1691](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### pos
 
-`"b"` \| `"tr"` \| `"l"` \| `"lt"` \| `"t"` \| `"r"` \| `"rb"` \| `"bl"`
+`"b"` \| `"tr"` \| `"l"` \| `"rb"` \| `"lt"` \| `"t"` \| `"r"` \| `"bl"`
 
 ## Returns
 

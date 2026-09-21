@@ -8,7 +8,7 @@
 
 > **end**(`taskId`): `Promise`\<`boolean`\>
 
-Defined in: [lib/task.ts:1069](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1069)
+Defined in: [lib/task.ts:1125](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1125)
 
 完全结束任务
 

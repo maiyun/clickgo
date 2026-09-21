@@ -8,6 +8,6 @@
 
 > **systemTaskInfo**: [`ISystemTaskInfo`](../interfaces/ISystemTaskInfo.md)
 
-Defined in: [lib/task.ts:1374](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1374)
+Defined in: [lib/task.ts:1432](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1432)
 
 task 的信息

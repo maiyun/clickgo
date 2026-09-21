@@ -8,7 +8,7 @@
 
 > **watchProperty**(`el`, `name`, `cb`, `immediate?`): `void`
 
-Defined in: [lib/dom.ts:1136](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1136)
+Defined in: [lib/dom.ts:1252](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1252)
 
 监听一个对象的属性变化
 

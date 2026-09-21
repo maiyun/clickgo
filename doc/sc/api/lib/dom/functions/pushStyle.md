@@ -8,7 +8,7 @@
 
 > **pushStyle**(`taskId`, `style`, `type?`, `formId?`, `panelId?`): `void`
 
-Defined in: [lib/dom.ts:215](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L215)
+Defined in: [lib/dom.ts:331](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L331)
 
 将 style 内容写入 dom
 

@@ -8,7 +8,7 @@
 
 > **setGlobalTransition**(`enable`): `void`
 
-Defined in: [lib/dom.ts:114](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L114)
+Defined in: [lib/dom.ts:230](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L230)
 
 启用/禁用全局 transition
 

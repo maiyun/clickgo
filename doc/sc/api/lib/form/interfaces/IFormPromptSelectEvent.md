@@ -6,7 +6,7 @@
 
 # Interface: IFormPromptSelectEvent
 
-Defined in: [lib/form.ts:4836](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4836)
+Defined in: [lib/form.ts:4930](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4930)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/form.ts:4837](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4837)
+Defined in: [lib/form.ts:4931](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4931)
 
 #### button
 
@@ -38,7 +38,7 @@ true 代表确定，false 代表取消
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:945](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L945)
+Defined in: [lib/control.ts:963](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L963)
 
 #### Inherited from
 
@@ -50,7 +50,7 @@ Defined in: [lib/control.ts:945](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:946](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L946)
+Defined in: [lib/control.ts:964](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L964)
 
 #### Returns
 

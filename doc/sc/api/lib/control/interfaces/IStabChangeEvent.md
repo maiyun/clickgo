@@ -6,7 +6,7 @@
 
 # Interface: IStabChangeEvent
 
-Defined in: [lib/control.ts:1504](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1504)
+Defined in: [lib/control.ts:1522](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1522)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1505](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1505)
+Defined in: [lib/control.ts:1523](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1523)
 
 #### value
 
@@ -32,7 +32,7 @@ Defined in: [lib/control.ts:1505](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:945](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L945)
+Defined in: [lib/control.ts:963](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L963)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [lib/control.ts:945](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:946](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L946)
+Defined in: [lib/control.ts:964](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L964)
 
 #### Returns
 

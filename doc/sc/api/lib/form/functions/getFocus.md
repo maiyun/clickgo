@@ -8,7 +8,7 @@
 
 > **getFocus**(): `string` \| `null`
 
-Defined in: [lib/form.ts:2142](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2142)
+Defined in: [lib/form.ts:2217](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2217)
 
 获取当前有焦点的窗体 form id
 

@@ -6,7 +6,7 @@
 
 # Interface: ILevelselectLevelEvent
 
-Defined in: [lib/control.ts:1274](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1274)
+Defined in: [lib/control.ts:1292](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1292)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1274](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1275](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1275)
+Defined in: [lib/control.ts:1293](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1293)
 
 #### labels
 

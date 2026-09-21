@@ -8,7 +8,7 @@
 
 > **chmod**(`current`, `path`, `mod`): `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:917](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L917)
+Defined in: [lib/fs.ts:929](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L929)
 
 修改权限
 

@@ -8,4 +8,4 @@
 
 > **launcherRoot**: [`IVue`](../../core/interfaces/IVue.md)
 
-Defined in: [lib/form.ts:1373](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1373)
+Defined in: [lib/form.ts:1415](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1415)

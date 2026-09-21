@@ -8,7 +8,7 @@
 
 > **removeFromStyleList**(`taskId`): `void`
 
-Defined in: [lib/dom.ts:201](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L201)
+Defined in: [lib/dom.ts:317](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L317)
 
 任务结束时需要移除 task 的所有 style
 

@@ -8,7 +8,7 @@
 
 > **list**(`current`): `Record`\<`string`, `number`\>
 
-Defined in: [lib/storage.ts:183](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L183)
+Defined in: [lib/storage.ts:195](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L195)
 
 获取当前任务的所有存储列表，key: size
 

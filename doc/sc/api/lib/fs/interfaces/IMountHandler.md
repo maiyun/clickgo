@@ -6,7 +6,7 @@
 
 # Interface: IMountHandler
 
-Defined in: [lib/fs.ts:1334](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1334)
+Defined in: [lib/fs.ts:1346](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1346)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/fs.ts:1334](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **chmod?**: (`path`, `mod`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1354](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1354)
+Defined in: [lib/fs.ts:1366](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1366)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [lib/fs.ts:1354](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **copyFile?**: (`src`, `dest`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1357](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1357)
+Defined in: [lib/fs.ts:1369](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1369)
 
 #### Parameters
 
@@ -58,7 +58,7 @@ Defined in: [lib/fs.ts:1357](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **date?**: `Date`
 
-Defined in: [lib/fs.ts:1336](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1336)
+Defined in: [lib/fs.ts:1348](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1348)
 
 挂载时间，无需设置
 
@@ -68,7 +68,7 @@ Defined in: [lib/fs.ts:1336](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **getContent?**: (`path`, `options?`) => `string` \| `Blob` \| `Promise`\<`string` \| `Blob` \| `null`\> \| `null`
 
-Defined in: [lib/fs.ts:1337](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1337)
+Defined in: [lib/fs.ts:1349](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1349)
 
 #### Parameters
 
@@ -90,7 +90,7 @@ Defined in: [lib/fs.ts:1337](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **mkdir?**: (`path`, `mode?`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1352](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1352)
+Defined in: [lib/fs.ts:1364](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1364)
 
 #### Parameters
 
@@ -112,7 +112,7 @@ Defined in: [lib/fs.ts:1352](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **putContent?**: (`path`, `data`, `options?`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1343](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1343)
+Defined in: [lib/fs.ts:1355](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1355)
 
 #### Parameters
 
@@ -148,7 +148,7 @@ Defined in: [lib/fs.ts:1343](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **readDir?**: (`path`, `encoding?`) => [`IDirent`](IDirent.md)[] \| `Promise`\<[`IDirent`](IDirent.md)[]\>
 
-Defined in: [lib/fs.ts:1356](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1356)
+Defined in: [lib/fs.ts:1368](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1368)
 
 #### Parameters
 
@@ -170,7 +170,7 @@ Defined in: [lib/fs.ts:1356](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **readLink?**: (`path`, `encoding?`) => `string` \| `Promise`\<`string` \| `null`\> \| `null`
 
-Defined in: [lib/fs.ts:1348](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1348)
+Defined in: [lib/fs.ts:1360](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1360)
 
 #### Parameters
 
@@ -192,7 +192,7 @@ Defined in: [lib/fs.ts:1348](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **rename?**: (`oldPath`, `newPath`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1355](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1355)
+Defined in: [lib/fs.ts:1367](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1367)
 
 #### Parameters
 
@@ -214,7 +214,7 @@ Defined in: [lib/fs.ts:1355](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **rmdir?**: (`path`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1353](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1353)
+Defined in: [lib/fs.ts:1365](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1365)
 
 #### Parameters
 
@@ -232,7 +232,7 @@ Defined in: [lib/fs.ts:1353](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **stats?**: (`path`) => [`IStats`](IStats.md) \| `Promise`\<[`IStats`](IStats.md) \| `null`\> \| `null`
 
-Defined in: [lib/fs.ts:1351](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1351)
+Defined in: [lib/fs.ts:1363](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1363)
 
 #### Parameters
 
@@ -250,7 +250,7 @@ Defined in: [lib/fs.ts:1351](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **symlink?**: (`filePath`, `linkPath`, `type?`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1349](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1349)
+Defined in: [lib/fs.ts:1361](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1361)
 
 #### Parameters
 
@@ -276,7 +276,7 @@ Defined in: [lib/fs.ts:1349](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **unlink?**: (`path`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [lib/fs.ts:1350](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1350)
+Defined in: [lib/fs.ts:1362](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L1362)
 
 #### Parameters
 

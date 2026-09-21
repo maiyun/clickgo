@@ -8,7 +8,7 @@
 
 > **get**(`current`, `key`): `any`
 
-Defined in: [lib/storage.ts:85](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L85)
+Defined in: [lib/storage.ts:97](https://github.com/maiyun/clickgo/blob/master/dist/lib/storage.ts#L97)
 
 获取小型存储数据
 

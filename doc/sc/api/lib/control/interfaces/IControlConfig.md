@@ -6,7 +6,7 @@
 
 # Interface: IControlConfig
 
-Defined in: [lib/control.ts:910](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L910)
+Defined in: [lib/control.ts:928](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L928)
 
 控件文件包的 config
 
@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:910](https://github.com/maiyun/clickgo/blob/master/d
 
 > **author**: `string`
 
-Defined in: [lib/control.ts:914](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L914)
+Defined in: [lib/control.ts:932](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L932)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:914](https://github.com/maiyun/clickgo/blob/master/d
 
 > **code**: `string`
 
-Defined in: [lib/control.ts:917](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L917)
+Defined in: [lib/control.ts:935](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L935)
 
 不带扩展名，系统会在末尾添加 .js
 
@@ -34,7 +34,7 @@ Defined in: [lib/control.ts:917](https://github.com/maiyun/clickgo/blob/master/d
 
 > **layout**: `string`
 
-Defined in: [lib/control.ts:919](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L919)
+Defined in: [lib/control.ts:937](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L937)
 
 不带扩展名，系统会在末尾添加 .html
 
@@ -44,7 +44,7 @@ Defined in: [lib/control.ts:919](https://github.com/maiyun/clickgo/blob/master/d
 
 > `optional` **modules?**: `string`[]
 
-Defined in: [lib/control.ts:924](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L924)
+Defined in: [lib/control.ts:942](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L942)
 
 要提前加载的库名
 
@@ -54,7 +54,7 @@ Defined in: [lib/control.ts:924](https://github.com/maiyun/clickgo/blob/master/d
 
 > **name**: `string`
 
-Defined in: [lib/control.ts:911](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L911)
+Defined in: [lib/control.ts:929](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L929)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [lib/control.ts:911](https://github.com/maiyun/clickgo/blob/master/d
 
 > **style**: `string`
 
-Defined in: [lib/control.ts:921](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L921)
+Defined in: [lib/control.ts:939](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L939)
 
 不带扩展名，系统会在末尾添加 .css
 
@@ -72,7 +72,7 @@ Defined in: [lib/control.ts:921](https://github.com/maiyun/clickgo/blob/master/d
 
 > **ver**: `number`
 
-Defined in: [lib/control.ts:912](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L912)
+Defined in: [lib/control.ts:930](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L930)
 
 ***
 
@@ -80,4 +80,4 @@ Defined in: [lib/control.ts:912](https://github.com/maiyun/clickgo/blob/master/d
 
 > **version**: `string`
 
-Defined in: [lib/control.ts:913](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L913)
+Defined in: [lib/control.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L931)

@@ -38,6 +38,42 @@ Defined in: [lib/tool.ts:2575](https://github.com/maiyun/clickgo/blob/master/dis
 
 `string`
 
+### getDirection
+
+> **getDirection**: (`locale`) => `"ltr"` \| `"rtl"`
+
+获取语言书写方向
+
+#### Parameters
+
+##### locale
+
+`string`
+
+ClickGo 语言代号或浏览器语言字符串
+
+#### Returns
+
+`"ltr"` \| `"rtl"`
+
+### getTag
+
+> **getTag**: (`locale`) => `string`
+
+获取标准 HTML lang 标签
+
+#### Parameters
+
+##### locale
+
+`string`
+
+ClickGo 语言代号或浏览器语言字符串
+
+#### Returns
+
+`string`
+
 ### map
 
 > **map**: `Record`\<`string`, `string`\>
@@ -49,3 +85,9 @@ Defined in: [lib/tool.ts:2575](https://github.com/maiyun/clickgo/blob/master/dis
 > **names**: `string`[]
 
 语言名称
+
+### tags
+
+> **tags**: `Record`\<`string`, `string`\>
+
+语言代号对应的标准 HTML lang 标签

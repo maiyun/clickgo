@@ -76,6 +76,7 @@
 - [notifyContent](functions/notifyContent.md)
 - [notifyProgress](functions/notifyProgress.md)
 - [prompt](functions/prompt.md)
+- [refreshLocaleDirection](functions/refreshLocaleDirection.md)
 - [refreshMaxPosition](functions/refreshMaxPosition.md)
 - [remove](functions/remove.md)
 - [removeActivePanel](functions/removeActivePanel.md)

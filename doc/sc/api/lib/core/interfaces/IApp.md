@@ -6,7 +6,7 @@
 
 # Interface: IApp
 
-Defined in: [lib/core.ts:1556](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1556)
+Defined in: [lib/core.ts:1559](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1559)
 
 应用包解包后对象
 
@@ -16,7 +16,7 @@ Defined in: [lib/core.ts:1556](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **config**: [`IAppConfig`](IAppConfig.md)
 
-Defined in: [lib/core.ts:1559](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1559)
+Defined in: [lib/core.ts:1562](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1562)
 
 控件对象配置文件
 
@@ -26,7 +26,7 @@ Defined in: [lib/core.ts:1559](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **icon**: `string`
 
-Defined in: [lib/core.ts:1561](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1561)
+Defined in: [lib/core.ts:1564](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1564)
 
 应用图标
 
@@ -36,7 +36,7 @@ Defined in: [lib/core.ts:1561](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **package**: [`IAppPackage`](IAppPackage.md)
 
-Defined in: [lib/core.ts:1563](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1563)
+Defined in: [lib/core.ts:1566](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1566)
 
 新 CGA 的按需解密包读取器
 
@@ -46,4 +46,4 @@ Defined in: [lib/core.ts:1563](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **type**: `"app"`
 
-Defined in: [lib/core.ts:1557](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1557)
+Defined in: [lib/core.ts:1560](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1560)
