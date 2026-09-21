@@ -31,6 +31,18 @@ export default class extends clickgo.control.AbstractControl {
     get itemsLength() {
         return this.items.length;
     }
+    /** --- 方向变化版本，用于重新计算固定列的 DOM 下标 --- */
+    fixedIndexVersion = 0;
+    /** --- 物理左侧固定列的 DOM 下标；RTL 下首列位于物理右侧 --- */
+    get fixedLeftIndex() {
+        void this.fixedIndexVersion;
+        return this.localeDirection === 'rtl' ? this.itemsLength - 1 : 0;
+    }
+    /** --- 物理右侧固定列的 DOM 下标；RTL 下首列位于物理右侧 --- */
+    get fixedRightIndex() {
+        void this.fixedIndexVersion;
+        return this.localeDirection === 'rtl' ? 0 : this.itemsLength - 1;
+    }
     /** --- item width 的映射 --- */
     widthMap = [];
     /** --- item min width 的映射 --- */
@@ -86,8 +98,9 @@ export default class extends clickgo.control.AbstractControl {
     }
     // --- 内部 ---
     updateScrollLeft(sl) {
-        this.refs.header.scrollLeft = sl;
-        this.scrollLeft = sl;
+        clickgo.dom.setScrollInlineOffset(this.refs.header, sl);
+        // --- 固定列仍使用公开的物理 left/right 语义判断阴影 ---
+        this.scrollLeft = clickgo.dom.getScrollLeft(this.refs.header);
     }
     refreshHeader() {
         const slots = this.slotsAll('default');
@@ -193,7 +206,7 @@ export default class extends clickgo.control.AbstractControl {
         const el = e.currentTarget.parentNode;
         clickgo.modules.pointer.resize(e, {
             'object': el,
-            'border': 'r',
+            'border': this.localeDirection === 'rtl' ? 'l' : 'r',
             'minWidth': this.minWidthMap[i],
             'move': (left, top, width) => {
                 this.widthMap[i] = width;
@@ -206,6 +219,12 @@ export default class extends clickgo.control.AbstractControl {
         'right': undefined,
     };
     onMounted() {
+        this.watch('locale', async () => {
+            // --- 固定列阴影判断使用物理 left，方向切换后重新读取 header 位置 ---
+            await this.nextTick();
+            ++this.fixedIndexVersion;
+            this.scrollLeft = clickgo.dom.getScrollLeft(this.refs.header);
+        });
         this.watch('sort', () => {
             this.checkNowSort();
         });

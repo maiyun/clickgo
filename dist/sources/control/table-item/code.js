@@ -26,10 +26,10 @@ export default class extends clickgo.control.AbstractControl {
         if (this.table.clientWidth < 500) {
             return undefined;
         }
-        if (this.index === 0) {
+        if (this.index === this.table.fixedLeftIndex) {
             return this.table.isFixed?.left;
         }
-        if (this.index === this.table.itemsLength - 1) {
+        if (this.index === this.table.fixedRightIndex) {
             return this.table.isFixed?.right;
         }
         return undefined;

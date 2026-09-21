@@ -84,10 +84,10 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         if (e.deltaX !== 0) {
-            this.refs.tabs.scrollLeft += e.deltaX;
+            clickgo.dom.setScrollLeft(this.refs.tabs, clickgo.dom.getScrollLeft(this.refs.tabs) + e.deltaX);
             return;
         }
-        this.refs.tabs.scrollLeft += e.deltaY;
+        clickgo.dom.setScrollLeft(this.refs.tabs, clickgo.dom.getScrollLeft(this.refs.tabs) + e.deltaY);
     }
     down(e, index) {
         const nval = this.tabsComp[index].value;
@@ -160,7 +160,8 @@ export default class extends clickgo.control.AbstractControl {
             down: () => {
                 this.timer = clickgo.task.onFrame(this, () => {
                     if (this.props.tabPosition === 'top' || this.props.tabPosition === 'bottom') {
-                        this.refs.tabs.scrollLeft += num;
+                        const offset = clickgo.dom.getScrollInlineOffset(this.refs.tabs);
+                        clickgo.dom.setScrollInlineOffset(this.refs.tabs, offset + num);
                     }
                     else {
                         this.refs.tabs.scrollTop += num;

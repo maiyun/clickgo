@@ -15,13 +15,13 @@
             }
         }
     }
-    
+
     .before, .after {
         display: flex;
     }
 
     .prepend {
-        display: flex; align-items: center; padding-left: var(--g-padding);
+        display: flex; align-items: center; padding-inline-start: var(--g-padding);
     }
 
     .text {
@@ -37,12 +37,12 @@
             border-style: none;
         }
         &.require::after {
-            content: ''; width: var(--g-padding-s); height: var(--g-padding-s); position: absolute; right: calc(0px - var(--g-padding-s) / 2); bottom: calc(0px - var(--g-padding-s) / 2); background: var(--danger); border-radius: 50%; pointer-events: none;
+            content: ''; width: var(--g-padding-s); height: var(--g-padding-s); position: absolute; inset-inline-end: calc(0px - var(--g-padding-s) / 2); bottom: calc(0px - var(--g-padding-s) / 2); background: var(--danger); border-radius: 50%; pointer-events: none;
         }
     }
 
     .append {
-        display: flex; align-items: center; padding-right: var(--g-padding);
+        display: flex; align-items: center; padding-inline-end: var(--g-padding);
     }
 
     &:not([data-cg-disabled]) {
@@ -54,7 +54,7 @@
             &:not(.plain) {
                 background: var(--g-plain-background);
             }
- 
+
             &.focus {
                 border-color: var(--g-plain-border-color-focus); box-shadow: var(--g-outline-shadow);
             }

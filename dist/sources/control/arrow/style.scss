@@ -21,4 +21,13 @@
             transform: rotate(45deg);
         }
     }
+
+    &:dir(rtl) {
+        .block {
+            transform: scaleX(-1) rotate(-45deg);
+        }
+        &.checked .block {
+            transform: scaleX(-1) rotate(45deg);
+        }
+    }
 }

@@ -57,7 +57,7 @@
             // --- 列表项 ---
             display: flex; flex: 1; height: 0;
             > :not(:last-child) {
-                margin-right: var(--g-padding);
+                margin-inline-end: var(--g-padding);
             }
     
             .item {
@@ -74,7 +74,7 @@
             // --- 控制按钮 ---
             display: flex; margin-top: var(--g-padding);
             > :first-child {
-                margin-right: var(--g-padding);
+                margin-inline-end: var(--g-padding);
             }
             > * {
                 flex: 1;

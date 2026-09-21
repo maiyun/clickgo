@@ -10,12 +10,12 @@
     }
 
     > .space {
-        min-width: var(--g-padding); margin-left: auto;
+        min-width: var(--g-padding); margin-inline-start: auto;
     }
 
     &.separator {
         > [data-cg-control='statusbar-item']:not(:first-child) {
-            border-left: solid .5px var(--g-plain-border-color-plain);
+            border-inline-start: solid .5px var(--g-plain-border-color-plain);
         }
     }
 }

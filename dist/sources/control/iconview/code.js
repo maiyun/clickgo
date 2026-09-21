@@ -448,10 +448,20 @@ export default class extends clickgo.control.AbstractControl {
             this.arrowDown();
         }
         else if (e.key === 'ArrowLeft') {
-            this.arrowLeft();
+            if (clickgo.dom.isRtl(this.element)) {
+                this.arrowRight();
+            }
+            else {
+                this.arrowLeft();
+            }
         }
         else if (e.key === 'ArrowRight') {
-            this.arrowRight();
+            if (clickgo.dom.isRtl(this.element)) {
+                this.arrowLeft();
+            }
+            else {
+                this.arrowRight();
+            }
         }
         else {
             // --- Enter ---
@@ -507,8 +517,13 @@ export default class extends clickgo.control.AbstractControl {
         // --- 判断同行有哪些可能要被选中的 index ---
         /** --- 列宽度 --- */
         const cellw = this.cw / this.rowCount;
-        const cellStart = Math.floor(area.x / cellw);
-        const cellEnd = Math.floor((area.x + area.width) / cellw);
+        let cellStart = Math.min(this.rowCount - 1, Math.max(0, Math.floor(area.x / cellw)));
+        let cellEnd = Math.min(this.rowCount - 1, Math.max(0, Math.floor((area.x + area.width) / cellw)));
+        if (clickgo.dom.isRtl(this.element)) {
+            const start = this.rowCount - 1 - cellEnd;
+            cellEnd = this.rowCount - 1 - cellStart;
+            cellStart = start;
+        }
         if (this.propBoolean('multi')) {
             // --- 多行 ---
             if (area.shift || area.ctrl) {

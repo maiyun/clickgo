@@ -117,6 +117,22 @@ export default class extends clickgo.control.AbstractControl {
         'vi': {
             'total-of': 'Tổng cộng ?',
             'page': 'Trang'
+        },
+        'ar': {
+            'total-of': 'من ?',
+            'page': 'صفحة'
+        },
+        'id': {
+            'total-of': 'dari ?',
+            'page': 'Halaman'
+        },
+        'it': {
+            'total-of': 'di ?',
+            'page': 'Pagina'
+        },
+        'tr': {
+            'total-of': '? toplam',
+            'page': 'Sayfa'
         }
     };
 

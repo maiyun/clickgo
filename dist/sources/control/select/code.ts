@@ -121,6 +121,18 @@ export default class extends clickgo.control.AbstractControl {
         },
         'vi': {
             'search': 'tìm kiếm'
+        },
+        'ar': {
+            'search': 'بحث'
+        },
+        'id': {
+            'search': 'cari'
+        },
+        'it': {
+            'search': 'cerca'
+        },
+        'tr': {
+            'search': 'ara'
         }
     };
 
@@ -1041,7 +1053,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         e.preventDefault();
-        this.refs.tags.scrollLeft += e.deltaY;
+        clickgo.dom.setScrollLeft(this.refs.tags, clickgo.dom.getScrollLeft(this.refs.tags) + e.deltaY);
     }
 
     public async tagdown(e: PointerEvent): Promise<void> {

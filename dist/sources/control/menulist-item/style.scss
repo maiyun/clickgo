@@ -29,11 +29,11 @@
     }
     
     .inner {
-        flex: 1; display: flex; align-items: center; padding: var(--g-padding) 0 var(--g-padding) 10px; gap: var(--g-padding);
+        flex: 1; display: flex; align-items: center; padding-block: var(--g-padding); padding-inline: 10px 0; gap: var(--g-padding);
     }
 
     .right {
-        padding: 0 10px 0 35px; color: var(--g-color-tip); font-size: var(--g-size-xs); display: flex; align-items: center; gap: 2px;
+        padding-block: 0; padding-inline: 35px 10px; color: var(--g-color-tip); font-size: var(--g-size-xs); display: flex; align-items: center; gap: 2px;
 
         .btn {
             border: solid .5px var(--g-color-tip); padding: 1px 2px; border-radius: var(--g-radius);
@@ -43,8 +43,14 @@
     .arrow {
         display: flex; justify-content: center; align-items: center; width: 20px;
         &::after {
-            content: ''; border: solid 1px var(--g-color); border-width: 1px 1px 0 0; width: 6px; height: 6px; transform: rotate(45deg); margin-left: -3px;
+            content: ''; border: solid 1px var(--g-color); border-width: 1px 1px 0 0; width: 6px; height: 6px; transform: rotate(45deg); margin-inline-start: -3px;
         }
+    }
+}
+
+.wrap:dir(rtl) {
+    .arrow::after {
+        transform: scaleX(-1) rotate(45deg);
     }
 }
 

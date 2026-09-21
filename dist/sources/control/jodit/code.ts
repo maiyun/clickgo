@@ -91,6 +91,26 @@ export default class extends clickgo.control.AbstractControl {
             'copy': 'Sao chép',
             'cut': 'Cắt',
             'paste': 'Dán'
+        },
+        'ar': {
+            'copy': 'نسخ',
+            'cut': 'قص',
+            'paste': 'لصق'
+        },
+        'id': {
+            'copy': 'Salin',
+            'cut': 'Potong',
+            'paste': 'Tempel'
+        },
+        'it': {
+            'copy': 'Copia',
+            'cut': 'Taglia',
+            'paste': 'Incolla'
+        },
+        'tr': {
+            'copy': 'Kopyala',
+            'cut': 'Kes',
+            'paste': 'Yapıştır'
         }
     };
 
@@ -120,6 +140,11 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 获得语言 --- */
     public getLanguage(): string {
+        // --- Jodit 的语言包不一定与 ClickGo 的语言集合完全同步，未知语言使用英文工具栏 ---
+        const supported = ['ar', 'de', 'en', 'es', 'fr', 'id', 'it', 'ja', 'ko', 'pt', 'ru', 'sc', 'tc', 'th', 'tr', 'vi'];
+        if (!supported.includes(this.locale)) {
+            return 'en';
+        }
         switch (this.locale) {
             case 'sc': {
                 return 'zh_cn';
@@ -158,11 +183,13 @@ export default class extends clickgo.control.AbstractControl {
             'allowResizeY': false,
             'addNewLine': false,
             'language': this.getLanguage(),
+            'direction': this.locale === 'ar' ? 'rtl' : 'ltr',
             'theme': this.props.theme === 'dark' ? 'dark' : undefined,
             'toolbarAdaptive': false,
             'beautifyHTMLCDNUrlsJS': [],
             'sourceEditorCDNUrlsJS': []
         });
+        this._refreshDirection();
         this.access.editor.value = this.props.modelValue;
         this.access.editor.events.on('change', () => {
             this.emit('update:modelValue', this.access.editor.value);
@@ -192,7 +219,8 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.access.editor) {
                 return;
             }
-            // --- 暂时无法动态修改语言 ---
+            this._refreshDirection();
+            // --- Jodit 当前实例不支持可靠地动态替换工具栏语言，保留当前编辑内容 ---
         });
         // --- 监听 readonly 变动 ---
         this.watch('readonly', () => {
@@ -218,6 +246,21 @@ export default class extends clickgo.control.AbstractControl {
         this.emit('init', this.access.editor);
         if (this.props.modelValue) {
             this.emit('text', this.access.editor.text);
+        }
+    }
+
+    /** --- 编辑正文跟随阿语方向，代码/弹出菜单仍由 ClickGo 外层管理 --- */
+    private _refreshDirection(): void {
+        const rtl = this.locale === 'ar';
+        this.refs.content.dir = rtl ? 'rtl' : 'ltr';
+        const editor = this.access.editor?.container as HTMLElement | undefined;
+        const wysiwyg = editor?.querySelector('.jodit-wysiwyg');
+        if (wysiwyg instanceof HTMLElement) {
+            wysiwyg.dir = rtl ? 'rtl' : 'ltr';
+        }
+        const source = editor?.querySelector('.jodit-source');
+        if (source instanceof HTMLElement) {
+            source.dir = 'ltr';
         }
     }
 

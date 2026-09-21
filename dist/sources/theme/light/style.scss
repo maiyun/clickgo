@@ -182,10 +182,10 @@ global {
 .property_wrap {
     .property_controls {
         .property_tag-cg-button {
-            margin-right: 5px;
+            margin-inline-end: 5px;
         }
         .property_split {
-            margin: 0 5px 0 0;
+            margin-block: 0; margin-inline: 0 5px;
         }
     }
 }
@@ -248,7 +248,7 @@ global {
                 }
             }
             > :not(:last-child) {
-                margin-right: var(--g-padding);
+                margin-inline-end: var(--g-padding);
             }
         }
     }
@@ -264,7 +264,7 @@ global {
                 }
             }
             > :not(:last-child) {
-                margin-right: var(--g-padding);
+                margin-inline-end: var(--g-padding);
             }
         }
     }

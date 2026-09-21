@@ -14,7 +14,9 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale",
+    "test:archive": "node test/rtl-archive.mjs",
+    "test:locale": "node --experimental-vm-modules test/locale-integrity.mjs && node --experimental-vm-modules test/rtl-direction.mjs",
     "native": "electron ./dist/test/native",
     "native2": "electron ./dist/test/native/index2",
     "native3": "electron ./dist/test/native/index3",
@@ -33,6 +35,7 @@
     "electron": "^44.3.0",
     "fabric": "^7.2.0",
     "javascript-obfuscator": "^5.7.0",
+    "jsdom": "^26.1.0",
     "jszip": "^3.10.1",
     "mpegts.js": "^1.8.0",
     "rollup": "^4.60.1",

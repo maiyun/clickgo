@@ -89,6 +89,26 @@ export default class extends clickgo.control.AbstractControl {
             'copy': 'Sao chép',
             'cut': 'Cắt',
             'paste': 'Dán'
+        },
+        'ar': {
+            'copy': 'نسخ',
+            'cut': 'قص',
+            'paste': 'لصق'
+        },
+        'id': {
+            'copy': 'Salin',
+            'cut': 'Potong',
+            'paste': 'Tempel'
+        },
+        'it': {
+            'copy': 'Copia',
+            'cut': 'Taglia',
+            'paste': 'Incolla'
+        },
+        'tr': {
+            'copy': 'Kopyala',
+            'cut': 'Kes',
+            'paste': 'Yapıştır'
         }
     };
 
@@ -166,6 +186,19 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 获得语言 --- */
     public getLanguage(): string {
+        // --- Toast UI 仅加载了下列 i18n 脚本，阿语及其它未加载语言安全回退英文 ---
+        const supported: Record<string, string> = {
+            'de': 'de-DE',
+            'en': 'en',
+            'es': 'es-ES',
+            'fr': 'fr-FR',
+            'ja': 'ja-JP',
+            'ko': 'ko-KR',
+            'pt': 'pt-BR',
+            'ru': 'ru-RU',
+            'sc': 'zh-CN',
+            'tc': 'zh-TW'
+        };
         switch (this.locale) {
             case 'sc': {
                 return 'zh-CN';
@@ -174,7 +207,17 @@ export default class extends clickgo.control.AbstractControl {
                 return 'zh-TW';
             }
         }
-        return this.locale;
+        return supported[this.locale.toLowerCase()] ?? 'en';
+    }
+
+    /** --- 编辑正文跟随阿语方向，工具栏语言可独立回退英文 --- */
+    private _refreshDirection(): void {
+        const rtl = this.locale === 'ar';
+        this.refs.content.dir = rtl ? 'rtl' : 'ltr';
+        const proseMirror = this.refs.content.querySelector<HTMLElement>('.ProseMirror');
+        if (proseMirror) {
+            proseMirror.dir = rtl ? 'rtl' : 'ltr';
+        }
     }
 
     public async onMounted(): Promise<void> {
@@ -239,6 +282,7 @@ export default class extends clickgo.control.AbstractControl {
                 ['scrollSync'],
             ]
         });
+        this._refreshDirection();
         const cgimage = clickgo.dom.createElement('button');
         cgimage.className = 'image toastui-editor-toolbar-icons';
         cgimage.style.margin = '0';
@@ -312,7 +356,8 @@ export default class extends clickgo.control.AbstractControl {
             if (!this.access.tuieditor) {
                 return;
             }
-            // --- 暂时无法动态修改语言 ---
+            this._refreshDirection();
+            // --- Toast UI 当前实例不支持可靠地动态替换工具栏语言 ---
             // this.access.tuieditor.i18n.setCode(this.getLanguage());
         });
         // --- 监听 prop 变动 ---

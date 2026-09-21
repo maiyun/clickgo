@@ -61,6 +61,18 @@ const localeData = {
     },
     'vi': {
         'apply-unmount': 'Bạn có chắc chắn muốn tháo dỡ điểm gắn "?" không?'
+    },
+    'ar': {
+        'apply-unmount': 'هل أنت متأكد من إلغاء تحميل نقطة التحميل "?"؟'
+    },
+    'id': {
+        'apply-unmount': 'Apakah Anda yakin ingin melepas titik pemasangan "?"?'
+    },
+    'it': {
+        'apply-unmount': 'Sei sicuro di voler smontare il punto di montaggio "?"?'
+    },
+    'tr': {
+        'apply-unmount': '"?" bağlama noktasının bağlantısını kaldırmak istediğinizden emin misiniz?'
     }
 };
 /** --- 已经挂载的列表 --- */

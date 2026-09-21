@@ -1,1 +1,1 @@
-.wrap{border-left:solid 3px var(--g-plain-border-color);transform:translateX(calc((var(--g-control) + 1px) / 2))}
+.wrap{border-inline-start:solid 3px var(--g-plain-border-color);transform:translateX(calc((var(--g-control) + 1px) / 2))}.wrap:dir(rtl){transform:translateX(calc((0px - var(--g-control) - 1px) / 2))}

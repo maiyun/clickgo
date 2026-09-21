@@ -207,6 +207,18 @@ const localeData = {
     },
     'vi': {
         'loading': 'Đang tải...'
+    },
+    'ar': {
+        'loading': 'جارٍ التحميل...'
+    },
+    'id': {
+        'loading': 'Memuat...'
+    },
+    'it': {
+        'loading': 'Caricamento...'
+    },
+    'tr': {
+        'loading': 'Yükleniyor...'
     }
 };
 /** --- 检查浏览器是否可安全加载加密的 CGA 文件 --- */
@@ -217,7 +229,11 @@ function checkCgaLoadEnvironment(current) {
         return true;
     }
     const locale = lCore.config.locale;
-    const text = locale === 'sc' ? {
+    const text = locale === 'ar' ? {
+        'title': 'تعذر تحميل التطبيق',
+        'content': 'هذه الصفحة ليست ضمن سياق HTTPS آمن، لذلك لا يمكن فك تشفير تطبيق CGA وتحميله. استخدم HTTPS ثم حاول مجددًا.',
+        'button': 'حسنًا'
+    } : (locale === 'sc' ? {
         'title': '无法加载应用',
         'content': '当前页面不是 HTTPS 安全上下文，无法解密并加载 CGA 应用。请使用 HTTPS 访问后重试。',
         'button': '知道了'
@@ -229,7 +245,7 @@ function checkCgaLoadEnvironment(current) {
         'title': 'Unable to load app',
         'content': 'This page is not an HTTPS secure context, so the CGA app cannot be decrypted and loaded. Please use HTTPS and try again.',
         'button': 'Got it'
-    });
+    }));
     const error = new Error(text.content);
     clickgo.showBrowserWarning(text);
     lCore.trigger('error', current, '', error, error.message).catch(() => { });
@@ -883,6 +899,46 @@ const locale = {
         'fs': 'Hệ thống tập tin',
         'readonly': 'Chỉ đọc',
         'read-write': 'Đọc/ghi'
+    },
+    'ar': {
+        'unknown': 'صلاحية غير معروفة',
+        'root': '<b>تحذير:</b> هذه أعلى صلاحية. تحقق جيدًا قبل السماح بها.',
+        'apply-permission': 'يطلب التطبيق صلاحيات. يرجى التحقق بعناية',
+        'native.form': 'التحكم في نافذة النظام',
+        'hash': 'تعديل "hash" في شريط العنوان',
+        'fs': 'نظام الملفات',
+        'readonly': 'للقراءة فقط',
+        'read-write': 'قراءة وكتابة'
+    },
+    'id': {
+        'unknown': 'Izin tidak dikenal',
+        'root': '<b>Bahaya:</b> Ini adalah izin tertinggi. Pastikan sebelum mengizinkannya.',
+        'apply-permission': 'Aplikasi meminta izin. Harap periksa dengan cermat',
+        'native.form': 'Kontrol jendela native',
+        'hash': 'Mengubah "hash" bilah alamat',
+        'fs': 'Sistem berkas',
+        'readonly': 'Hanya baca',
+        'read-write': 'Baca dan tulis'
+    },
+    'it': {
+        'unknown': 'Autorizzazione sconosciuta',
+        'root': '<b>Pericolo:</b> questa è l’autorizzazione massima. Verifica prima di consentirla.',
+        'apply-permission': 'L’app richiede autorizzazioni. Verifica attentamente',
+        'native.form': 'Controllo finestra nativa',
+        'hash': 'Modifica dell’"hash" nella barra degli indirizzi',
+        'fs': 'File system',
+        'readonly': 'Sola lettura',
+        'read-write': 'Lettura e scrittura'
+    },
+    'tr': {
+        'unknown': 'Bilinmeyen izin',
+        'root': '<b>Tehlike:</b> Bu en yüksek izindir. İzin vermeden önce dikkatle doğrulayın.',
+        'apply-permission': 'Uygulama izin istiyor. Lütfen dikkatle kontrol edin',
+        'native.form': 'Yerel pencere denetimi',
+        'hash': 'Adres çubuğundaki "hash" değerini değiştirme',
+        'fs': 'Dosya sistemi',
+        'readonly': 'Salt okunur',
+        'read-write': 'Okuma ve yazma'
     }
 };
 // fs.{path}{r/w}，path 以 / 结尾则是路径权限，不以 / 结尾是文件权限
@@ -1174,6 +1230,7 @@ export function setLocaleLang(current, lang) {
         return;
     }
     task.locale.lang = lang;
+    lForm.refreshLocaleDirection(current);
 }
 /**
  * --- 清除 task 的语言设置 ---
@@ -1188,6 +1245,7 @@ export function clearLocaleLang(current) {
         return;
     }
     task.locale.lang = '';
+    lForm.refreshLocaleDirection(current);
 }
 /**
  * --- 创建 timer ---

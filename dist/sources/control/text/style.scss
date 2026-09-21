@@ -4,7 +4,7 @@
         border-style: none;
     }
     &.require::after {
-        content: ''; width: var(--g-padding-s); height: var(--g-padding-s); position: absolute; right: calc(0px - var(--g-padding-s) / 2); bottom: calc(0px - var(--g-padding-s) / 2); background-color: var(--danger); background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); border-radius: 50%; pointer-events: none; box-shadow: var(--g-shadow);
+        content: ''; width: var(--g-padding-s); height: var(--g-padding-s); position: absolute; inset-inline-end: calc(0px - var(--g-padding-s) / 2); bottom: calc(0px - var(--g-padding-s) / 2); background-color: var(--danger); background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); border-radius: 50%; pointer-events: none; box-shadow: var(--g-shadow);
     }
 
     .multi-t {
@@ -30,7 +30,7 @@
         display: flex; flex: 1; height: 0;
 
         .sicon {
-            display: flex; align-items: center; padding-right: var(--padding); opacity: .6; transition: var(--g-transition);
+            display: flex; align-items: center; padding-inline-end: var(--padding); opacity: .6; transition: var(--g-transition);
             &:hover {
                 opacity: 1;
             }
@@ -42,7 +42,7 @@
     }
 
     .prepend {
-        display: flex; align-items: center; padding-left: var(--padding);
+        display: flex; align-items: center; padding-inline-start: var(--padding);
         &.drag {
             cursor: ew-resize; touch-action: none;
         }
@@ -99,7 +99,7 @@
     }
 
     .append {
-        display: flex; align-items: center; padding-right: var(--padding);
+        display: flex; align-items: center; padding-inline-end: var(--padding);
     }
 
     &:not([data-cg-disabled]) {
@@ -110,7 +110,7 @@
         &:not(.plain) {
             background: var(--g-plain-background);
         }
-        
+
         &.focus {
             border-color: var(--g-plain-border-color-focus);
             &:not(.plain) {

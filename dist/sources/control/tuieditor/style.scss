@@ -6,6 +6,10 @@
     .content {
         flex: 1; width: 0;
 
+        &[dir='rtl'], .ProseMirror[dir='rtl'] {
+            direction: rtl; text-align: right;
+        }
+
         ::-webkit-scrollbar {
             width: 6px; cursor: default;
         }

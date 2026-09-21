@@ -1,0 +1,11 @@
+{
+    "position": "Position",
+    "left": "Gauche",
+    "right": "Droite",
+    "top": "Haut",
+    "bottom": "Bas",
+    "close all windows": "Fermer toutes les fenêtres",
+    "close window": "Fermer la fenêtre",
+    "pin to taskbar": "Épingler à la barre des tâches",
+    "unpin from taskbar": "Désépingler de la barre des tâches"
+}

@@ -34,6 +34,8 @@ export default class extends clickgo.control.AbstractControl {
     clientData = 0;
     /** --- bar 的 px --- */
     barPx = 0;
+    /** --- 方向变化版本，用于让依赖计算样式方向的模板重新计算 --- */
+    directionVersion = 0;
     /** --- block 的 px --- */
     get blockPx() {
         const px = this.clientData / this.lengthData * this.barPx;
@@ -60,11 +62,22 @@ export default class extends clickgo.control.AbstractControl {
     get outBlockPx() {
         return this.barPx - this.blockPx;
     }
+    /** --- 水平滚动条是否使用 RTL inline 顺序 --- */
+    get isRtl() {
+        void this.directionVersion;
+        return this.props.direction === 'h' && clickgo.dom.isRtl(this.element);
+    }
     /**
-     * --- 当前位置（像素） ---
+     * --- 当前位置相对于逻辑 inline-start 的像素 ---
+     */
+    get logicalOffsetPx() {
+        return this.outBlockPx * this.offsetRatio;
+    }
+    /**
+     * --- 滑块在物理轨道内的像素位置 ---
      */
     get offsetPx() {
-        return this.outBlockPx * this.offsetRatio;
+        return this.isRtl ? this.outBlockPx - this.logicalOffsetPx : this.logicalOffsetPx;
     }
     /** --- 检查 offset 是否超限 --- */
     checkOffset() {
@@ -143,14 +156,14 @@ export default class extends clickgo.control.AbstractControl {
             'areaObject': this.refs.bar,
             'object': this.refs.block,
             'move': (e, o) => {
-                if ((this.props.direction === 'v' && o.inBorder.top) || (this.props.direction === 'h' && o.inBorder.left)) {
+                if ((this.props.direction === 'v' && o.inBorder.top) || (this.props.direction === 'h' && (this.isRtl ? o.inBorder.right : o.inBorder.left))) {
                     this.offsetData = 0;
                 }
-                else if ((this.props.direction === 'v' && o.inBorder.bottom) || (this.props.direction === 'h' && o.inBorder.right)) {
+                else if ((this.props.direction === 'v' && o.inBorder.bottom) || (this.props.direction === 'h' && (this.isRtl ? o.inBorder.left : o.inBorder.right))) {
                     this.offsetData = this.maxOffset;
                 }
                 else {
-                    const offsetPx = this.offsetPx + (this.props.direction === 'v' ? o.oy : o.ox);
+                    const offsetPx = this.logicalOffsetPx + (this.props.direction === 'v' ? o.oy : (this.isRtl ? -o.ox : o.ox));
                     /** --- 滚动百分比 --- */
                     const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
                     this.offsetData = Math.round(ratio * this.maxOffset);
@@ -181,6 +194,9 @@ export default class extends clickgo.control.AbstractControl {
         }
         if (offsetPx + this.blockPx > this.barPx) {
             offsetPx = this.barPx - this.blockPx;
+        }
+        if (this.isRtl) {
+            offsetPx = this.outBlockPx - offsetPx;
         }
         /** --- 滚动百分比 --- */
         const ratio = (this.outBlockPx > 0) ? (offsetPx / this.outBlockPx) : 0;
@@ -226,6 +242,10 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('direction', () => {
             this._initLength();
             this._initClient();
+        });
+        this.watch('locale', () => {
+            // --- dir 位于祖先时不会成为计算属性依赖，显式触发滑块位置重算 ---
+            ++this.directionVersion;
         });
         // --- 监听 prop 用户的 offset 设定 ---
         this.watch('offset', () => {

@@ -198,6 +198,9 @@ global {
             color: var(--g-color-focus);
             background: color-mix(in oklch, var(--cg), transparent 86%);
             box-shadow: inset 2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 91%);
+            &:dir(rtl) {
+                box-shadow: inset -2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 91%);
+            }
         }
     }
 }

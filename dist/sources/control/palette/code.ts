@@ -85,6 +85,22 @@ export default class extends clickgo.control.AbstractControl {
         'vi': {
             'clear': 'Xóa',
             'ok': 'OK',
+        },
+        'ar': {
+            'clear': 'مسح',
+            'ok': 'موافق',
+        },
+        'id': {
+            'clear': 'Hapus',
+            'ok': 'OK',
+        },
+        'it': {
+            'clear': 'Cancella',
+            'ok': 'OK',
+        },
+        'tr': {
+            'clear': 'Temizle',
+            'ok': 'Tamam',
         }
     };
 

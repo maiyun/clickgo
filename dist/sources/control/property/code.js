@@ -61,6 +61,22 @@ export default class extends clickgo.control.AbstractControl {
         'vi': {
             'reset': 'Đặt lại',
             'description': 'Mô tả'
+        },
+        'ar': {
+            'reset': 'إعادة ضبط',
+            'description': 'الوصف'
+        },
+        'id': {
+            'reset': 'Atur ulang',
+            'description': 'Deskripsi'
+        },
+        'it': {
+            'reset': 'Reimposta',
+            'description': 'Descrizione'
+        },
+        'tr': {
+            'reset': 'Sıfırla',
+            'description': 'Açıklama'
         }
     };
     sortData = 'kind';

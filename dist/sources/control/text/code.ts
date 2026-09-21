@@ -160,6 +160,26 @@ export default class extends clickgo.control.AbstractControl {
             'copy': 'Sao chép',
             'cut': 'Cắt',
             'paste': 'Dán'
+        },
+        'ar': {
+            'copy': 'نسخ',
+            'cut': 'قص',
+            'paste': 'لصق'
+        },
+        'id': {
+            'copy': 'Salin',
+            'cut': 'Potong',
+            'paste': 'Tempel'
+        },
+        'it': {
+            'copy': 'Copia',
+            'cut': 'Taglia',
+            'paste': 'Incolla'
+        },
+        'tr': {
+            'copy': 'Kopyala',
+            'cut': 'Kes',
+            'paste': 'Yapıştır'
         }
     };
 
@@ -311,7 +331,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- input 的 scroll 事件 --- */
     public scrollEvent(): void {
         // --- scroll left ---
-        let sl = Math.round(this.refs.text.scrollLeft);
+        let sl = Math.round(clickgo.dom.getScrollInlineOffset(this.refs.text));
         const msl = this.maxScrollLeft();
         if (sl > msl) {
             sl = msl;
@@ -358,7 +378,7 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'left': {
-                    if (this.refs.text.scrollLeft > 0) {
+                    if (clickgo.dom.getScrollLeft(this.refs.text) > 0) {
                         return -1;
                     }
                     else {
@@ -369,7 +389,7 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 default: {
-                    if (Math.round(this.refs.text.scrollLeft) < this.maxScrollLeft()) {
+                    if (Math.round(clickgo.dom.getScrollLeft(this.refs.text)) < this.maxScrollLeft()) {
                         return -1;
                     }
                     else {
@@ -852,10 +872,15 @@ export default class extends clickgo.control.AbstractControl {
         });
         this.watch('scrollLeft', (): void => {
             const prop = this.propInt('scrollLeft');
-            if (prop === Math.round(this.refs.text.scrollLeft)) {
+            if (prop === Math.round(clickgo.dom.getScrollInlineOffset(this.refs.text))) {
                 return;
             }
-            this.refs.text.scrollLeft = prop;
+            clickgo.dom.setScrollInlineOffset(this.refs.text, prop);
+        });
+        this.watch('locale', async (): Promise<void> => {
+            // --- 祖先 dir 变更后，按公开的逻辑 inline 偏移恢复输入框位置 ---
+            await this.nextTick();
+            clickgo.dom.setScrollInlineOffset(this.refs.text, this.propInt('scrollLeft'));
         });
         this.watch('scrollTop', (): void => {
             const prop = this.propInt('scrollTop');
@@ -900,7 +925,7 @@ export default class extends clickgo.control.AbstractControl {
 
         // --- 对 scroll 位置进行归位 ---
         this.refs.text.scrollTop = this.propInt('scrollTop');
-        this.refs.text.scrollLeft = this.propInt('scrollLeft');
+        clickgo.dom.setScrollInlineOffset(this.refs.text, this.propInt('scrollLeft'));
         if (this.props.type !== 'number') {
             this.refs.text.selectionStart = this.propInt('selectionStart');
             this.refs.text.selectionEnd = this.propInt('selectionEnd');

@@ -148,6 +148,34 @@ export default class extends clickgo.control.AbstractControl {
             'cancel': 'Hủy',
             'ok': 'OK',
             'please click select': 'Nhấn chọn'
+        },
+        'ar': {
+            'minute': 'دقيقة',
+            'zone': 'منطقة',
+            'cancel': 'إلغاء',
+            'ok': 'موافق',
+            'please click select': 'انقر للاختيار'
+        },
+        'id': {
+            'minute': 'Menit',
+            'zone': 'Zona',
+            'cancel': 'Batal',
+            'ok': 'OK',
+            'please click select': 'Klik untuk memilih'
+        },
+        'it': {
+            'minute': 'Min',
+            'zone': 'Fuso',
+            'cancel': 'Annulla',
+            'ok': 'OK',
+            'please click select': 'Fai clic per selezionare'
+        },
+        'tr': {
+            'minute': 'Dak',
+            'zone': 'Bölge',
+            'cancel': 'İptal',
+            'ok': 'Tamam',
+            'please click select': 'Seçmek için tıklayın'
         }
     };
 
@@ -172,7 +200,10 @@ export default class extends clickgo.control.AbstractControl {
                 await this.nextTick();
             }
         }
-        clickgo.form.showPop(el, this.refs[type + 'pop'], 'v');
+        clickgo.form.showPop(el, this.refs[type + 'pop'], 'v', {
+            'autoPosition': true,
+            'autoScroll': true
+        });
     }
 
     public zoneOk(): void {

@@ -336,7 +336,7 @@
 }
 
 .cg-notify-wrap {
-    background: var(--system-background); position: fixed; padding: 15px; border-radius: 10px; right: 0; bottom: 0; width: 280px; font-size: 14px; display: flex; transition: .3s var(--g-cubic); transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
+    background: var(--system-background); position: fixed; padding: 15px; border-radius: 10px; inset-inline-end: 0; bottom: 0; width: 280px; font-size: 14px; display: flex; transition: .3s var(--g-cubic); transition-property: transform, opacity; overflow: hidden; color: var(--system-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5);
     &.cg-notify-only {
         align-items: center;
     }
@@ -347,7 +347,7 @@
     }
 }
 .cg-notify-icon {
-    margin-right: 10px; width: 14px; height: 14px; border-radius: 50%;
+    margin-inline-end: 10px; width: 14px; height: 14px; border-radius: 50%;
     &.cg-primary {
         background: var(--success);
     }
@@ -377,7 +377,7 @@
     line-height: 1.5; word-break: break-word; color: var(--system-color-note); margin-top: 4px;
 }
 .cg-notify-progress {
-    position: absolute; bottom: 0; left: 0; border-radius: 1px; background: var(--cg); transition: width 1s ease-out; width: 0%; height: 2px;
+    position: absolute; bottom: 0; inset-inline-start: 0; border-radius: 1px; background: var(--cg); transition: width 1s ease-out; width: 0%; height: 2px;
 }
 
 // --- Alert ---
@@ -444,17 +444,17 @@
     padding: 15px; background: var(--system-background); display: flex; align-items: center; box-shadow: 0px 15px 30px rgba(0,0,0,.07); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); border: solid .5px transparent; border-radius: 10px;
 }
 .cg-alert-icon {
-    margin-right: 10px; width: 14px; height: 14px; border-radius: 50%;
+    margin-inline-end: 10px; width: 14px; height: 14px; border-radius: 50%;
 }
 
 #cg-simpletask {
-    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); padding: 5px 0 5px 5px; display: flex; color: var(--system-color); transition: bottom .3s var(--g-cubic); overflow-x: auto; position: fixed;
+    left: 0; bottom: -46px; width: 100%; height: 46px; top: initial; background: var(--system-background); -webkit-backdrop-filter: blur(30px) saturate(1.5); backdrop-filter: blur(30px) saturate(1.5); padding-block: 5px; padding-inline: 5px 0; display: flex; color: var(--system-color); transition: bottom .3s var(--g-cubic); overflow-x: auto; position: fixed;
     &::-webkit-scrollbar {
         display: none;
     }
 }
 .cg-simpletask-item {
-    background: oklch(0 0 0 / .05); border-radius: 3px; padding: 10px; display: flex; align-items: center; margin-right: 5px;
+    background: oklch(0 0 0 / .05); border-radius: 3px; padding: 10px; display: flex; align-items: center; margin-inline-end: 5px;
     &:hover {
         background: oklch(0 0 0 / .1);
     }
@@ -463,7 +463,7 @@
     }
 }
 .cg-simpletask-icon {
-    margin-right: 5px; background-size: cover; width: 16px; height: 16px;
+    margin-inline-end: 5px; background-size: cover; width: 16px; height: 16px;
 }
 
 #cg-confirm {
@@ -482,7 +482,7 @@
             > div {
                 padding: 20px; flex: 1; text-align: center;
                 &:last-child {
-                    border-left: solid .5px var(--system-border-color);
+                    border-inline-start: solid .5px var(--system-border-color);
                 }
                 &:hover {
                     background: var(--system-background-hover);
@@ -498,7 +498,7 @@
 // --- Browser warning ---
 
 #cg-browser-warning {
-    z-index: 2147483647; position: fixed; left: 16px; bottom: 16px; box-sizing: border-box; display: flex; gap: 12px; width: 360px; max-width: calc(100% - 32px); padding: 16px; color: #242424; background: #fff; border: solid 1px #e1e1e1; border-radius: 10px; box-shadow: 0 12px 36px rgba(0, 0, 0, .18); font-family: Arial, 'Microsoft Yahei', sans-serif; font-size: 14px; line-height: 1.5;
+    z-index: 2147483647; position: fixed; inset-inline-start: 16px; bottom: 16px; box-sizing: border-box; display: flex; gap: 12px; width: 360px; max-width: calc(100% - 32px); padding: 16px; color: #242424; background: #fff; border: solid 1px #e1e1e1; border-radius: 10px; box-shadow: 0 12px 36px rgba(0, 0, 0, .18); font-family: Arial,'Microsoft Yahei',sans-serif; font-size: 14px; line-height: 1.5;
 }
 .cg-browser-warning-icon {
     flex: none; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; color: #fff; background: #d97706; border-radius: 50%; font-weight: bold;

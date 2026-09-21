@@ -26,6 +26,8 @@ export default class extends clickgo.control.AbstractControl {
     resolvedItems = [];
     /** --- 用于防止旧的异步任务覆盖新结果的计数器 --- */
     resolveCount = 0;
+    /** --- 方向变化版本，用于让轨道位移重新按当前 dir 计算 --- */
+    directionVersion = 0;
     /**
      * --- 标准化 items prop 为统一结构 ---
      */
@@ -40,14 +42,19 @@ export default class extends clickgo.control.AbstractControl {
     }
     /**
      * --- 轨道 X 方向的位移百分比（相对于轨道自身宽度）---
-     * 轨道宽度 = n * wrapWidth，translateX(-i/n * 100%) 恰好将第 i 张对齐到 wrap 左侧
+     * 轨道宽度 = n * wrapWidth。RTL 下首张位于 inline-start（视觉右侧），所以以相反的物理位移对齐。
      */
     get trackX() {
+        void this.directionVersion;
         const n = this.resolvedItems.length;
         if (n === 0 || this.wrapWidth === 0) {
             return 0;
         }
-        return (-this.currentIndex + this.dragOffset / this.wrapWidth) / n * 100;
+        const offset = this.dragOffset / this.wrapWidth;
+        if (clickgo.dom.isRtl(this.element)) {
+            return (this.currentIndex - (n - 1) + offset) / n * 100;
+        }
+        return (-this.currentIndex + offset) / n * 100;
     }
     /**
      * --- 解析所有 items 的 src 为可用 URL ---
@@ -158,7 +165,15 @@ export default class extends clickgo.control.AbstractControl {
             const offset = this.dragOffset;
             this.dragOffset = 0;
             this.isAni = true;
-            if (offset < -threshold) {
+            if (clickgo.dom.isRtl(this.element)) {
+                if (offset > threshold) {
+                    this.next();
+                }
+                else if (offset < -threshold) {
+                    this.prev();
+                }
+            }
+            else if (offset < -threshold) {
                 this.next();
             }
             else if (offset > threshold) {
@@ -208,6 +223,9 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 this._stopAutoplay();
             }
+        });
+        this.watch('locale', () => {
+            ++this.directionVersion;
         });
         this.watch('items', async () => {
             await this.resolveItems();

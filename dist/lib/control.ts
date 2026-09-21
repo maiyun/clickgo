@@ -154,12 +154,23 @@ export abstract class AbstractControl {
         return lTool.logicalOr(task?.locale.lang ?? '', lCore.config.locale);
     }
 
+    /** --- 当前语言的标准 HTML lang 标签 --- */
+    public get localeTag(): string {
+        return lTool.lang.getTag(this.locale);
+    }
+
+    /** --- 当前语言的书写方向 --- */
+    public get localeDirection(): 'ltr' | 'rtl' {
+        return lTool.lang.getDirection(this.locale);
+    }
+
     /**
      * --- 获取语言内容 ---
      */
     public get l(): (key: string, data?: string[]) => string {
         return (key: string, data?: string[]): string => {
-            const loc = (this as any).localeData?.[this.locale][key] ?? '[LocaleError]' + key;
+            const localeData = (this as any).localeData;
+            const loc = localeData?.[this.locale]?.[key] ?? localeData?.['en']?.[key] ?? '[LocaleError]' + key;
             if (!data) {
                 return loc;
             }
@@ -209,9 +220,14 @@ export abstract class AbstractControl {
             case 'center': {
                 return 'center';
             }
-            case 'left':
             case 'start': {
                 return 'flex-start';
+            }
+            case 'left': {
+                return this.localeDirection === 'rtl' ? 'flex-end' : 'flex-start';
+            }
+            case 'right': {
+                return this.localeDirection === 'rtl' ? 'flex-start' : 'flex-end';
             }
         }
         return 'flex-end';
@@ -871,8 +887,9 @@ export function buildComponents(
             },
             beforeMount: hasBeforeMount ? control.methods.onBeforeMount : undefined,
             mounted: hasMounted ? async function(this: lCore.IVue) {
-                if (this.element.dataset?.cgRootcontrol !== undefined) {
-                    const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
+                const element = this.element;
+                if (element?.dataset?.cgRootcontrol !== undefined) {
+                    const rc = this.parentByAccess('cgPCMap', element.dataset.cgRootcontrol);
                     if (rc) {
                         this._rootControl = rc;
                     }
@@ -880,10 +897,11 @@ export function buildComponents(
                 await this.$nextTick();
                 await this.onMounted();
             } : function(this: lCore.IVue) {
-                if (this.element.dataset?.cgRootcontrol === undefined) {
+                const element = this.element;
+                if (element?.dataset?.cgRootcontrol === undefined) {
                     return;
                 }
-                const rc = this.parentByAccess('cgPCMap', this.element.dataset.cgRootcontrol);
+                const rc = this.parentByAccess('cgPCMap', element.dataset.cgRootcontrol);
                 if (rc) {
                     this._rootControl = rc;
                 }

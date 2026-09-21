@@ -53,7 +53,7 @@
     }
 
     > .value {
-        min-width: 3ch; color: var(--g-color-tip); text-align: right; font-variant-numeric: tabular-nums;
+        min-width: 3ch; color: var(--g-color-tip); text-align: end; font-variant-numeric: tabular-nums;
     }
 
     &[data-cg-disabled] {
@@ -71,6 +71,15 @@
 
         > .value {
             color: var(--g-color-disabled, var(--g-color-tip));
+        }
+    }
+
+    &:dir(rtl) {
+        > .input {
+            direction: rtl; background-image: linear-gradient(to left, var(--cg) 0 var(--slider-progress), var(--g-plain-border-color) var(--slider-progress) 100%);
+        }
+        &[data-cg-disabled] > .input {
+            background-image: linear-gradient(to left, var(--g-plain-border-color-disabled) 0 var(--slider-progress), var(--g-plain-background-disabled) var(--slider-progress) 100%);
         }
     }
 }

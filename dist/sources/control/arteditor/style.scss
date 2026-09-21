@@ -32,7 +32,7 @@
                 padding: 0 25px; display: flex; align-items: center; border-bottom: solid .5px transparent; transition: var(--g-transition);
             }
             .write {
-                border-right: solid .5px var(--g-plain-border-color);
+                border-inline-end: solid .5px var(--g-plain-border-color);
             }
 
             .selected {
@@ -74,7 +74,7 @@
             display: flex;
     
             > :first-child {
-                flex: 1; width: 0; margin-right: var(--g-padding);
+                flex: 1; width: 0; margin-inline-end: var(--g-padding);
             }
     
             .remove {

@@ -43,12 +43,12 @@
                 // --- 首列去掉左边框 ---
                 [data-tr] > [data-th]:first-child,
                 [data-tr] > [data-td]:first-child {
-                    border-left: none;
+                    border-inline-start: none;
                 }
                 // --- 末列去掉右边框 ---
                 [data-tr] > [data-th]:last-child,
                 [data-tr] > [data-td]:last-child {
-                    border-right: none;
+                    border-inline-end: none;
                 }
             }
             // --- 内容填满或溢出时末行去掉下边框，避免与外框底部重叠 ---
@@ -74,4 +74,3 @@
     }
 
 }
-

@@ -45,10 +45,10 @@
         > .tabs-wrap > .arrow {
             width: 20px;
             &.start::before {
-                border-width: 0 0 1px 1px; margin-left: 3px;
+                border-width: 0 0 1px 1px; margin-inline-start: 3px;
             }
             &.end::before {
-                border-width: 1px 1px 0 0; margin-right: 3px;
+                border-width: 1px 1px 0 0; margin-inline-end: 3px;
             }
         }
     }
@@ -109,11 +109,11 @@
         }
 
         > .drag {
-            cursor: move; padding-left: 8px; font-family: 'ifont'; opacity: .5;
+            cursor: move; padding-inline-start: 8px; font-family: 'ifont'; opacity: .5;
         }
         
         > .prepend {
-            display: flex; align-items: center; padding-left: var(--g-padding);
+            display: flex; align-items: center; padding-inline-start: var(--g-padding);
         }
 
         > .content {
@@ -121,11 +121,11 @@
         }
 
         > .append {
-            display: flex; align-items: center; padding-right: var(--g-padding);
+            display: flex; align-items: center; padding-inline-end: var(--g-padding);
         }
 
         > .close {
-            margin-right: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px; transition: var(--g-transition); border: solid .5px transparent;
+            margin-inline-end: 8px; font-family: 'ifont'; opacity: 0; font-weight: bold; padding: 2px; border-radius: 3px; transition: var(--g-transition); border: solid .5px transparent;
             &:hover {
                 background: var(--g-background-hover); border: solid .5px var(--g-border-color-hover);
             }
@@ -143,14 +143,14 @@
         > .tabs-wrap > .tabs {
             > .tab {
                 &.selected {
-                    border-right-width: .5px;
+                    border-inline-end-width: .5px;
                     + * {
-                        border-left-width: 0;
+                        border-inline-start-width: 0;
                     }
                 }
             }
             > .tab:last-child {
-                border-right-width: .5px;
+                border-inline-end-width: .5px;
             }
         }
         > .panel {
@@ -160,7 +160,7 @@
     &.top {
         > .tabs-wrap > .tabs {
             > .tab {
-                border-width: .5px 0 0 .5px; border-radius: var(--g-radius) var(--g-radius) 0 0;
+                border-width: .5px 0 0; border-inline-start-width: .5px; border-radius: var(--g-radius) var(--g-radius) 0 0;
                 &.selected {
                     padding-bottom: 3px;
                     &::after {
@@ -176,7 +176,7 @@
     &.bottom {
         > .tabs-wrap > .tabs {
             > .tab {
-                border-width: 0 0 .5px .5px; border-radius: 0 0 var(--g-radius) var(--g-radius);
+                border-width: 0 0 .5px; border-inline-start-width: .5px; border-radius: 0 0 var(--g-radius) var(--g-radius);
                 &.selected {
                     padding-top: 3px;
                     &::after {
@@ -240,6 +240,23 @@
 
     > .panel {
         background: var(--g-plain-background); display: flex; flex: 1; border: solid .5px var(--g-plain-border-color);
+    }
+
+    &:dir(rtl) {
+        // --- left/right 是物理 API，不能随文字方向交换位置 ---
+        &.left {
+            flex-direction: row-reverse;
+        }
+        &.right {
+            flex-direction: row;
+        }
+        &.top, &.bottom {
+            > .tabs-wrap > .arrow {
+                &.start::before, &.end::before {
+                    transform: scaleX(-1) rotate(45deg);
+                }
+            }
+        }
     }
 }
 

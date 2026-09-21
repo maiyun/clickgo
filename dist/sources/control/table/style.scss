@@ -13,7 +13,7 @@
     .header {
         position: sticky; top: 0; z-index: 2; display: flex; border-bottom: solid .5px var(--g-plain-border-color); overflow: hidden; border-radius: var(--g-radius) var(--g-radius) 0 0; background: var(--face); padding: 0 2px; /* list 的边框和间距 */
         > :not(:last-child) {
-            border-right: solid .5px var(--g-plain-border-color);
+            border-inline-end: solid .5px var(--g-plain-border-color);
         }
 
         // --- 头部的项 ---
@@ -25,7 +25,7 @@
 
             &.desc, &.asc {
                 &::after {
-                    content: ''; border: solid 1px var(--g-color); width: 6px; height: 6px; display: block; position: absolute; right: var(--g-padding); top: calc(50% - 3px);
+                    content: ''; border: solid 1px var(--g-color); width: 6px; height: 6px; display: block; position: absolute; inset-inline-end: var(--g-padding); top: calc(50% - 3px);
                 }
             }
             &.desc::after {
@@ -73,7 +73,7 @@
             }
 
             .split {
-                position: absolute; right: -5px; top: 0; height: 100%; width: 10px; z-index: 2; cursor: ew-resize;
+                position: absolute; inset-inline-end: -5px; top: 0; height: 100%; width: 10px; z-index: 2; cursor: ew-resize;
             }
         }
     }
@@ -81,7 +81,7 @@
         .header {
             border-bottom-color: var(--g-plain-border-color-plain);
             > :not(:last-child) {
-                border-right: none;
+                border-inline-end: none;
             }
         }
     }
@@ -99,7 +99,7 @@
                 display: flex;
             }
             .bottom {
-                display: flex; position: sticky; left: 0; margin: 0 -2px; padding: var(--g-padding); border-top: solid .5px var(--g-plain-border-color); max-width: calc(var(--bottom-width) - 2px);
+                display: flex; position: sticky; inset-inline-start: 0; margin: 0 -2px; padding: var(--g-padding); border-top: solid .5px var(--g-plain-border-color); max-width: calc(var(--bottom-width) - 2px);
             }
         }
     }

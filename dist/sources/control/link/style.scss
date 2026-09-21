@@ -60,7 +60,7 @@
         // --- 内有 menu ---
         &.spop {
             &::after {
-                content: ''; border: solid 1px var(--default); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px; margin-left: 5px;
+                content: ''; border: solid 1px var(--default); border-width: 0 1px 1px 0; width: 6px; height: 6px; transform: rotate(45deg); margin-top: -3px; margin-inline-start: 5px;
             }
         }
 

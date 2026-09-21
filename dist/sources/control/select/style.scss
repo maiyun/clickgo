@@ -3,7 +3,7 @@ cg-greatselect {
         display: flex; align-items: center;
     }
     .tags {
-        display: flex; align-items: center; max-width: 100%; overflow-y: auto; position: relative; padding: var(--select-padding); padding-right: 0;
+        display: flex; align-items: center; max-width: 100%; overflow-y: auto; position: relative; padding: var(--select-padding); padding-inline-end: 0;
         &.editable {
             max-width: 80%;
         }
@@ -38,7 +38,7 @@ cg-greatselect {
         }
 
         > :not(:first-child) {
-            margin-left: var(--g-padding);
+            margin-inline-start: var(--g-padding);
         }
     }
 

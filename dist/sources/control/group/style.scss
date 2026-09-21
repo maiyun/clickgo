@@ -113,4 +113,17 @@
             width: 0;
         }
     }
+
+    &:dir(rtl) {
+        // --- left/right 表示物理停靠侧，RTL 下须抵消 flex 对 row 的自动反转 ---
+        &.left {
+            flex-direction: row-reverse;
+        }
+        &.right {
+            flex-direction: row;
+        }
+        .title {
+            flex-direction: row-reverse;
+        }
+    }
 }

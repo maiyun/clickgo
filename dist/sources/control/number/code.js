@@ -89,6 +89,26 @@ export default class extends clickgo.control.AbstractControl {
             'copy': 'Sao chép',
             'cut': 'Cắt',
             'paste': 'Dán'
+        },
+        'ar': {
+            'copy': 'نسخ',
+            'cut': 'قص',
+            'paste': 'لصق'
+        },
+        'id': {
+            'copy': 'Salin',
+            'cut': 'Potong',
+            'paste': 'Tempel'
+        },
+        'it': {
+            'copy': 'Copia',
+            'cut': 'Taglia',
+            'paste': 'Incolla'
+        },
+        'tr': {
+            'copy': 'Kopyala',
+            'cut': 'Kes',
+            'paste': 'Yapıştır'
         }
     };
     /** --- 供外部调用的使框获取焦点的事件 --- */

@@ -26,17 +26,17 @@
             }
             .monthleft {
                 .arrow::after {
-                    border-width: 0 0 1px 1px; margin-left: 3px;
+                    border-width: 0 0 1px 1px; margin-inline-start: 3px;
                 }
             }
             .monthright {
                 .arrow::after {
-                    border-width: 1px 1px 0 0; margin-right: 3px;
+                    border-width: 1px 1px 0 0; margin-inline-end: 3px;
                 }
             }
         }
         .right {
-            justify-content: right; display: flex; gap: var(--g-padding-s); padding-left: var(--g-padding-s);
+            justify-content: end; display: flex; gap: var(--g-padding-s); padding-inline-start: var(--g-padding-s);
         }
     }
 
@@ -74,10 +74,10 @@
                 content: ''; position: absolute; top: 0; bottom: 0; width: var(--g-padding-s); background: var(--g-plain-border-color); opacity: 0; transition: var(--g-transition);
             }
             &::before {
-                left: calc(0px - var(--g-padding-s));
+                inset-inline-start: calc(0px - var(--g-padding-s));
             }
             &::after {
-                right: calc(0px - var(--g-padding-s));
+                inset-inline-end: calc(0px - var(--g-padding-s));
             }
 
             &.range {
@@ -110,5 +110,11 @@
 
     .footer {
         display: flex; gap: var(--g-padding-s); align-items: center; justify-content: center;
+    }
+
+    &:dir(rtl) {
+        .monthleft .arrow::after, .monthright .arrow::after {
+            transform: scaleX(-1) rotate(45deg);
+        }
     }
 }

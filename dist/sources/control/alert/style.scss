@@ -87,6 +87,6 @@
     }
 
     svg {
-        margin-left: var(--g-padding); transition: var(--g-transition); border-radius: var(--g-radius);
+        margin-inline-start: var(--g-padding); transition: var(--g-transition); border-radius: var(--g-radius);
     }
 }

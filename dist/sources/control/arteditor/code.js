@@ -102,6 +102,34 @@ export default class extends clickgo.control.AbstractControl {
             'select': 'Chọn',
             'write': 'Viết',
             'preview': 'Xem trước'
+        },
+        'ar': {
+            'passage': 'فقرة',
+            'image': 'صورة',
+            'select': 'اختيار',
+            'write': 'كتابة',
+            'preview': 'معاينة'
+        },
+        'id': {
+            'passage': 'Paragraf',
+            'image': 'Gambar',
+            'select': 'Pilih',
+            'write': 'Tulis',
+            'preview': 'Pratinjau'
+        },
+        'it': {
+            'passage': 'Paragrafo',
+            'image': 'Immagine',
+            'select': 'Seleziona',
+            'write': 'Scrivi',
+            'preview': 'Anteprima'
+        },
+        'tr': {
+            'passage': 'Paragraf',
+            'image': 'Görsel',
+            'select': 'Seç',
+            'write': 'Yaz',
+            'preview': 'Ön izleme'
         }
     };
     /** --- 获取最终图像 --- */

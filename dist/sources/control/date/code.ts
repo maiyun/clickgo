@@ -194,6 +194,42 @@ export default class extends clickgo.control.AbstractControl {
             'ok': 'OK',
             'please click select': 'Nhấn chọn'
         },
+        'ar': {
+            'hour': 'ساعة',
+            'minute': 'دقيقة',
+            'second': 'ثانية',
+            'zone': 'منطقة',
+            'cancel': 'إلغاء',
+            'ok': 'موافق',
+            'please click select': 'انقر للاختيار'
+        },
+        'id': {
+            'hour': 'Jam',
+            'minute': 'Menit',
+            'second': 'Detik',
+            'zone': 'Zona',
+            'cancel': 'Batal',
+            'ok': 'OK',
+            'please click select': 'Klik untuk memilih'
+        },
+        'it': {
+            'hour': 'Ora',
+            'minute': 'Min',
+            'second': 'Sec',
+            'zone': 'Fuso',
+            'cancel': 'Annulla',
+            'ok': 'OK',
+            'please click select': 'Fai clic per selezionare'
+        },
+        'tr': {
+            'hour': 'Saat',
+            'minute': 'Dak',
+            'second': 'San',
+            'zone': 'Bölge',
+            'cancel': 'İptal',
+            'ok': 'Tamam',
+            'please click select': 'Seçmek için tıklayın'
+        },
     };
 
     // --- 单击事件 ---
@@ -208,10 +244,16 @@ export default class extends clickgo.control.AbstractControl {
             await this.nextTick();
         }
         if (type === 'first' && !this.propBoolean('date')) {
-            clickgo.form.showPop(el, this.refs['timepop'], 'v');
+            clickgo.form.showPop(el, this.refs['timepop'], 'v', {
+                'autoPosition': true,
+                'autoScroll': true
+            });
             return;
         }
-        clickgo.form.showPop(el, this.refs[type + 'pop'], 'v');
+        clickgo.form.showPop(el, this.refs[type + 'pop'], 'v', {
+            'autoPosition': true,
+            'autoScroll': true
+        });
     }
 
     public zoneOk(): void {

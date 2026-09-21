@@ -21,7 +21,7 @@
             }
         }
         > :not(:first-child) {
-            margin-left: 10px;
+            margin-inline-start: 10px;
         }
 
         .left, .right {
@@ -39,5 +39,11 @@
     
     .total {
         margin-top: 10px; text-align: center;
+    }
+
+    &:dir(rtl) {
+        .left::before, .right::before {
+            transform: scaleX(-1) rotate(45deg);
+        }
     }
 }

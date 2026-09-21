@@ -215,7 +215,10 @@ export class AbstractBoot {
 export function showBrowserWarning(text) {
     document.getElementById('cg-browser-warning')?.remove();
     const el = document.createElement('div');
+    const locale = lCore.config?.locale ?? lTool.lang.getCodeByAccept();
     el.id = 'cg-browser-warning';
+    el.lang = lTool.lang.getTag(locale);
+    el.dir = lTool.lang.getDirection(locale);
     el.setAttribute('role', 'alert');
     el.setAttribute('aria-live', 'polite');
     const icon = document.createElement('div');

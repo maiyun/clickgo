@@ -2382,6 +2382,24 @@ export const lang = {
         'it': 'it',
         'tr': 'tr',
     },
+    'tags': {
+        'sc': 'zh-CN',
+        'tc': 'zh-TW',
+        'ja': 'ja',
+        'ko': 'ko',
+        'th': 'th',
+        'vi': 'vi',
+        'ar': 'ar',
+        'id': 'id',
+        'en': 'en',
+        'es': 'es',
+        'de': 'de',
+        'fr': 'fr',
+        'pt': 'pt',
+        'ru': 'ru',
+        'it': 'it',
+        'tr': 'tr',
+    },
     getCodeByAccept: (accept) => {
         accept ??= navigator.language;
         if (accept === '*') {
@@ -2395,5 +2413,17 @@ export const lang = {
             return lang.map[l];
         }
         return 'en';
+    },
+    getTag: (locale) => {
+        if (lang.tags[locale]) {
+            return lang.tags[locale];
+        }
+        return lang.tags[lang.getCodeByAccept(locale)] ?? (locale || 'en');
+    },
+    getDirection: (locale) => {
+        if (/^ar(?:[-_]|$)/i.test(locale)) {
+            return 'rtl';
+        }
+        return 'ltr';
     },
 };

@@ -1,4 +1,4 @@
-<div class="wrap" :class="[theme,isFocus&&'focus']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
+<div class="wrap" :class="[theme,isFocus&&'focus']" :dir="locale === 'ar' ? 'rtl' : 'ltr'" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div v-if="notInit" class="notInit">Jodit module not found.</div>
     <div v-else class="content" ref="content" data-cg-scroll>
         <textarea ref="editor"></textarea>

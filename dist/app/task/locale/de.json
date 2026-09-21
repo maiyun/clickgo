@@ -1,0 +1,11 @@
+{
+    "position": "Position",
+    "left": "Links",
+    "right": "Rechts",
+    "top": "Oben",
+    "bottom": "Unten",
+    "close all windows": "Alle Fenster schließen",
+    "close window": "Fenster schließen",
+    "pin to taskbar": "An Taskleiste anheften",
+    "unpin from taskbar": "Von Taskleiste lösen"
+}

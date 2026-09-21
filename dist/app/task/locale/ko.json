@@ -1,0 +1,11 @@
+{
+    "position": "위치",
+    "left": "왼쪽",
+    "right": "오른쪽",
+    "top": "위",
+    "bottom": "아래",
+    "close all windows": "모든 창 닫기",
+    "close window": "창 닫기",
+    "pin to taskbar": "작업 표시줄에 고정",
+    "unpin from taskbar": "작업 표시줄에서 고정 해제"
+}

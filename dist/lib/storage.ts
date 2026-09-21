@@ -47,7 +47,7 @@ const localeData: Record<string, {
         'sure-clear': '確定清除應用程式「?」的所有臨時儲存嗎？'
     },
     'ja': {
-        'sure-clear': 'アプリ「？」の一時的な保存データをすべて削除しますか？'
+        'sure-clear': 'アプリ「?」の一時的な保存データをすべて削除しますか？'
     },
     'ko': {
         'sure-clear': '"?" 앱의 모든 임시 저장소를 지우시겠습니까?'
@@ -72,6 +72,18 @@ const localeData: Record<string, {
     },
     'vi': {
         'sure-clear': 'Bạn có chắc chắn muốn xóa tất cả lưu trữ tạm thời cho ứng dụng "?" không?'
+    },
+    'ar': {
+        'sure-clear': 'هل أنت متأكد من رغبتك في مسح كل التخزين المؤقت للتطبيق "?"؟'
+    },
+    'id': {
+        'sure-clear': 'Yakin ingin menghapus semua penyimpanan sementara aplikasi "?"?'
+    },
+    'it': {
+        'sure-clear': 'Sei sicuro di voler cancellare tutto lo spazio di archiviazione temporaneo dell\'app "?"?'
+    },
+    'tr': {
+        'sure-clear': '"?" uygulamasının tüm geçici depolama alanını temizlemek istediğinizden emin misiniz?'
     }
 };
 

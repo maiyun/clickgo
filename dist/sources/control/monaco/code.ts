@@ -138,6 +138,26 @@ export default class extends clickgo.control.AbstractControl {
             'copy': 'Sao chép',
             'cut': 'Cắt',
             'paste': 'Dán'
+        },
+        'ar': {
+            'copy': 'نسخ',
+            'cut': 'قص',
+            'paste': 'لصق'
+        },
+        'id': {
+            'copy': 'Salin',
+            'cut': 'Potong',
+            'paste': 'Tempel'
+        },
+        'it': {
+            'copy': 'Copia',
+            'cut': 'Taglia',
+            'paste': 'Incolla'
+        },
+        'tr': {
+            'copy': 'Kopyala',
+            'cut': 'Kes',
+            'paste': 'Yapıştır'
         }
     };
 
@@ -434,9 +454,13 @@ export default class extends clickgo.control.AbstractControl {
         // --- AMD 运行时由第三方 loader 注入 iframe，无法使用静态 Window 类型 ---
         const runtime = iwindow as any;
         const idoc = iwindow.document;
+        // --- 源码编辑器的语法、光标和行号按 LTR 处理，即使外围 ClickGo 任务是 RTL ---
+        idoc.documentElement.dir = 'ltr';
+        idoc.documentElement.lang = 'en';
         idoc.body.style.margin = '0';
         idoc.body.style.overflow = 'hidden';
         const monacoEl = idoc.createElement('div');
+        monacoEl.dir = 'ltr';
         monacoEl.style.height = '100vh';
         idoc.body.append(monacoEl);
         this.access.timer = setTimeout(() => {

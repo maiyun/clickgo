@@ -2579,11 +2579,23 @@ export const lang: {
     'names': string[];
     /** --- 浏览器常用映射为本语言 --- */
     'map': Record<string, string>;
+    /** --- 语言代号对应的标准 HTML lang 标签 --- */
+    'tags': Record<string, string>;
     /**
      * --- 根据常用语言字符串获取语言 code ---
      * @param accept 常用字符串，如 zh-cn，或包含 zh-cn 的字符串，默认取浏览器的语言
      */
     getCodeByAccept: (accept?: string) => string;
+    /**
+     * --- 获取标准 HTML lang 标签 ---
+     * @param locale ClickGo 语言代号或浏览器语言字符串
+     */
+    getTag: (locale: string) => string;
+    /**
+     * --- 获取语言书写方向 ---
+     * @param locale ClickGo 语言代号或浏览器语言字符串
+     */
+    getDirection: (locale: string) => 'ltr' | 'rtl';
 } = {
     'codes': [
         'sc', 'tc', 'ja', 'ko', 'th', 'vi', 'ar', 'id',
@@ -2596,6 +2608,24 @@ export const lang: {
     'map': {
         'cn': 'sc',
         'zh': 'tc',
+        'ja': 'ja',
+        'ko': 'ko',
+        'th': 'th',
+        'vi': 'vi',
+        'ar': 'ar',
+        'id': 'id',
+        'en': 'en',
+        'es': 'es',
+        'de': 'de',
+        'fr': 'fr',
+        'pt': 'pt',
+        'ru': 'ru',
+        'it': 'it',
+        'tr': 'tr',
+    },
+    'tags': {
+        'sc': 'zh-CN',
+        'tc': 'zh-TW',
         'ja': 'ja',
         'ko': 'ko',
         'th': 'th',
@@ -2624,6 +2654,18 @@ export const lang: {
             return lang.map[l];
         }
         return 'en';
+    },
+    getTag: (locale: string): string => {
+        if (lang.tags[locale]) {
+            return lang.tags[locale];
+        }
+        return lang.tags[lang.getCodeByAccept(locale)] ?? (locale || 'en');
+    },
+    getDirection: (locale: string): 'ltr' | 'rtl' => {
+        if (/^ar(?:[-_]|$)/i.test(locale)) {
+            return 'rtl';
+        }
+        return 'ltr';
     },
 };
 

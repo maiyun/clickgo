@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; position: relative; flex: 1; padding: 10px 12px; margin-right: 1px; transition: var(--g-transition);
+    display: flex; position: relative; flex: 1; padding: 10px 12px; margin-inline-end: 1px; transition: var(--g-transition);
     &.top, &.bottom {
         display: inline-block;
     }

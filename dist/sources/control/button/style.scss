@@ -71,13 +71,13 @@
 
     // --- bgroup position ---
     &.bgroup:not(:last-child) {
-        margin-right: -.5px; border-radius: 0;
+        margin-inline-end: -.5px; border-radius: 0;
         &::before {
             border-radius: 0;
         }
     }
     &.bgroup:first-child:not(:last-child) {
-        margin-right: -.5px; border-radius: var(--g-radius) 0 0 var(--g-radius);
+        margin-inline-end: -.5px; border-radius: var(--g-radius) 0 0 var(--g-radius);
         &::before {
             border-radius: var(--g-radius) 0 0 var(--g-radius);
         }
@@ -86,6 +86,21 @@
         border-radius: 0 var(--g-radius) var(--g-radius) 0;
         &::before {
             border-radius: 0 var(--g-radius) var(--g-radius) 0;
+        }
+    }
+
+    &:dir(rtl) {
+        &.bgroup:first-child:not(:last-child) {
+            border-radius: 0 var(--g-radius) var(--g-radius) 0;
+            &::before {
+                border-radius: 0 var(--g-radius) var(--g-radius) 0;
+            }
+        }
+        &.bgroup:last-child:not(:first-child) {
+            border-radius: var(--g-radius) 0 0 var(--g-radius);
+            &::before {
+                border-radius: var(--g-radius) 0 0 var(--g-radius);
+            }
         }
     }
     &.circle {
@@ -401,7 +416,7 @@
     }
     &.area-split {
         .inner::before {
-            border-right: var(--border);
+            border-inline-end: var(--border);
         }
     }
     &:not([data-cg-disabled]) {
@@ -417,7 +432,7 @@
             }
             &.area-split {
                 .inner::before {                // --- 里边框 ---
-                    border-right: var(--border-focus);
+                    border-inline-end: var(--border-focus);
                 }
             }
             &.checked {
@@ -437,7 +452,7 @@
             }
             &.area-split {
                 .inner::before {                // --- 里边框 ---
-                    border-right: var(--border-hover);
+                    border-inline-end: var(--border-hover);
                 }
             }
             &.checked {
@@ -459,7 +474,7 @@
             }
             &.area-split {
                 .inner::before {                // --- 里边框 ---
-                    border-right: var(--border-active);
+                    border-inline-end: var(--border-active);
                 }
             }
             &.checked {
@@ -523,6 +538,15 @@
             &::before {
                 border: solid 2px var(--cg-disabled);
             }
+        }
+    }
+
+    &:dir(rtl).area-split {
+        .inner {
+            border-radius: 0 var(--g-radius) var(--g-radius) 0;
+        }
+        .arrow {
+            border-radius: var(--g-radius) 0 0 var(--g-radius);
         }
     }
 }

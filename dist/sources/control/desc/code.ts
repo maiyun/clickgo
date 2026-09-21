@@ -52,16 +52,20 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 横向滚动条的滚动事件 --- */
     public rollh(): void {
-        this.refs.inner.scrollLeft = this.offseth;
+        clickgo.dom.setScrollInlineOffset(this.refs.inner, this.offseth);
     }
 
     /** --- 滚动处理 --- */
     public scrollHandler(): void {
         this.offset = this.refs.inner.scrollTop;
-        this.offseth = this.refs.inner.scrollLeft;
+        this.offseth = clickgo.dom.getScrollInlineOffset(this.refs.inner);
     }
 
     public onMounted(): void {
+        this.watch('locale', async (): Promise<void> => {
+            await this.nextTick();
+            this.scrollHandler();
+        });
         // --- 容器大小改变 ---
         clickgo.dom.watchSize(this, this.refs.inner, () => {
             this.client = this.refs.inner.clientHeight;

@@ -183,7 +183,7 @@ global {
                 letter-spacing: .01em;
             }
             .form_controls {
-                padding-right: 4px;
+                padding-inline-end: 4px;
                 gap: 2px;
                 .form_min, .form_max, .form_close {
                     border-radius: var(--g-radius);
@@ -272,7 +272,7 @@ global {
         }
     }
     .nav_menuwrap {
-        border-right: solid .5px var(--g-border-color);
+        border-inline-end: solid .5px var(--g-border-color);
         .nav_menu {
             background: oklch(from var(--cg) .14 calc(c * .13) h / .91);
             -webkit-backdrop-filter: var(--g-pop-backdrop);
@@ -304,6 +304,9 @@ global {
             color: oklch(from var(--cg) .97 calc(c * .03) h);
             background: color-mix(in oklch, var(--cg), black 40%);
             box-shadow: inset 2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 88%);
+            &:dir(rtl) {
+                box-shadow: inset -2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 88%);
+            }
         }
     }
 }
@@ -313,10 +316,10 @@ global {
 .property_wrap {
     .property_controls {
         .property_tag-cg-button {
-            margin-right: 5px;
+            margin-inline-end: 5px;
         }
         .property_split {
-            margin: 0 5px 0 0;
+            margin-block: 0; margin-inline: 0 5px;
         }
     }
 }
@@ -403,7 +406,7 @@ global {
                     }
                 }
                 > :not(:last-child) {
-                    margin-right: var(--g-padding);
+                    margin-inline-end: var(--g-padding);
                 }
             }
         }
@@ -423,7 +426,7 @@ global {
                     }
                 }
                 > :not(:last-child) {
-                    margin-right: var(--g-padding);
+                    margin-inline-end: var(--g-padding);
                 }
             }
         }

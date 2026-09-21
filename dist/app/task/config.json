@@ -12,7 +12,19 @@
     "locales": {
         "/package/locale/sc": "sc",
         "/package/locale/tc": "tc",
+        "/package/locale/ja": "ja",
+        "/package/locale/ko": "ko",
+        "/package/locale/th": "th",
+        "/package/locale/vi": "vi",
+        "/package/locale/ar": "ar",
+        "/package/locale/id": "id",
         "/package/locale/en": "en",
-        "/package/locale/ja": "ja"
+        "/package/locale/es": "es",
+        "/package/locale/de": "de",
+        "/package/locale/fr": "fr",
+        "/package/locale/pt": "pt",
+        "/package/locale/ru": "ru",
+        "/package/locale/it": "it",
+        "/package/locale/tr": "tr"
     }
 }

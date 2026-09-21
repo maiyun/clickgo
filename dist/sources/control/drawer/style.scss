@@ -5,14 +5,14 @@
     }
 
     .body {
-        background: var(--face); border-left: solid .5px var(--g-border-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); display: flex; flex-direction: column; transform: translateX(1500px); transition: all .3s var(--g-cubic); transition-property: transform;
+        background: var(--face); border-inline-start: solid .5px var(--g-border-color); box-shadow: 0px 15px 30px rgba(0,0,0,.07); display: flex; flex-direction: column; transform: translateX(1500px); transition: all .3s var(--g-cubic); transition-property: transform;
         .header {
             display: flex; align-items: center;
             .title {
                 flex: 1; padding: var(--g-bpadding); font-size: var(--g-size-m);
             }
             .close {
-                padding: var(--g-padding); margin-right: var(--g-bpadding); display: flex; align-items: center; transition: var(--g-transition); border-radius: var(--g-radius); border: solid .5px transparent;
+                padding: var(--g-padding); margin-inline-end: var(--g-bpadding); display: flex; align-items: center; transition: var(--g-transition); border-radius: var(--g-radius); border: solid .5px transparent;
                 &:hover {
                     background: var(--g-background-hover); fill: var(--g-color-hover); stroke: var(--g-color-hover); border: solid .5px var(--g-border-color-hover);
                 }
@@ -35,6 +35,16 @@
     &.show {
         background-color: var(--g-background-opacity);
         .body {
+            transform: translateX(0);
+        }
+    }
+
+    &:dir(rtl) {
+        justify-content: flex-start;
+        .body {
+            transform: translateX(-1500px);
+        }
+        &.show .body {
             transform: translateX(0);
         }
     }

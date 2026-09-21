@@ -52,7 +52,7 @@
 
     &.first {
         > :first-child {
-            border-right: solid .5px var(--g-plain-border-color);
+            border-inline-end: solid .5px var(--g-plain-border-color);
         }
     }
     &.list {
@@ -61,7 +61,7 @@
             // --- 列表项 ---
             display: flex; flex: 1; height: 0;
             > :not(:last-child) {
-                margin-right: var(--g-padding);
+                margin-inline-end: var(--g-padding);
             }
     
             .item {
@@ -78,7 +78,7 @@
             // --- 控制按钮 ---
             display: flex; margin-top: var(--g-padding);
             > :first-child {
-                margin-right: var(--g-padding);
+                margin-inline-end: var(--g-padding);
             }
             > * {
                 flex: 1;

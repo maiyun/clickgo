@@ -1,0 +1,11 @@
+{
+    "position": "Положение",
+    "left": "Слева",
+    "right": "Справа",
+    "top": "Сверху",
+    "bottom": "Снизу",
+    "close all windows": "Закрыть все окна",
+    "close window": "Закрыть окно",
+    "pin to taskbar": "Закрепить на панели задач",
+    "unpin from taskbar": "Открепить от панели задач"
+}

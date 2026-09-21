@@ -114,6 +114,11 @@ export default class extends clickgo.control.AbstractControl {
         return this.props.direction === 'v' ? this.clientHeight : this.clientWidth;
     }
 
+    /** --- 横向虚拟列表是否使用 RTL inline 顺序 --- */
+    public get isRtl(): boolean {
+        return this.props.direction === 'h' && clickgo.dom.isRtl(this.element);
+    }
+
     /**
      * --- 获取单虚拟项的 element 的 style 值 ---
      */
@@ -121,12 +126,10 @@ export default class extends clickgo.control.AbstractControl {
         return (index: number): any => {
             return {
                 'left': (this.props.direction === 'v' ?
-                    this.padding.left :
-                    (this.pos[index] ?
-                        this.pos[index].start :
-                        '0'
-                    )
-                ) as string + 'px',
+                    this.padding.left + 'px' :
+                    (this.isRtl ? undefined : (this.pos[index] ? this.pos[index].start + 'px' : '0px'))
+                ),
+                'right': this.isRtl ? (this.pos[index] ? this.pos[index].start + 'px' : '0px') : undefined,
                 'top': (this.props.direction === 'v' ?
                     (this.pos[index] ?
                         this.pos[index].start :
@@ -327,7 +330,7 @@ export default class extends clickgo.control.AbstractControl {
         this.pos = [];
         /** --- 已计算的胖度 --- */
         this.length = 0;
-        const padding = this.props.direction === 'h' ? this.padding.left : this.padding.top;
+        const padding = this.props.direction === 'h' ? (this.isRtl ? this.padding.right : this.padding.left) : this.padding.top;
         for (let i = 0; i < this.dataFormat.length; ++i) {
             /** --- 当前项的胖度 --- */
             const isize = this.props.sizes[i] ?? this.size;
@@ -417,7 +420,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public onSelect(area: Record<string, any>): void {
-        const offset = this.props.direction === 'v' ? area.y : area.x;
+        const offset = this.props.direction === 'v' ? area.y : (this.isRtl ? this.element.scrollWidth - area.x - area.width : area.x);
         const length = this.props.direction === 'v' ? area.height : area.width;
         const rtn = this.getNewPos(this.selectPos, {
             'start': offset,
@@ -441,6 +444,11 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('direction', async (): Promise<void> => {
             await this.nextTick();
             this.refreshSize();
+        });
+        this.watch('locale', async (): Promise<void> => {
+            // --- locale 会改变祖先 dir，需重建使用 left/right 的虚拟项内联样式 ---
+            await this.nextTick();
+            this.refreshSize(true);
         });
         // --- watch props 的 scroll 项 ---
         this.watch('scrollLeft', (): void => {

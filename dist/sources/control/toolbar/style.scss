@@ -45,6 +45,19 @@
     }
 
     > .right {
-        flex: 0 0 auto; padding-left: 0; background: inherit;
+        flex: 0 0 auto; padding-inline-start: 0; background: inherit;
+    }
+
+    &:dir(rtl) {
+        > .body.scroll {
+            &.scroll-start:not(.scroll-end) {
+                -webkit-mask-image: linear-gradient(to left, transparent, #000 calc(var(--g-padding-l) + var(--g-padding)), #000);
+                mask-image: linear-gradient(to left, transparent, #000 calc(var(--g-padding-l) + var(--g-padding)), #000);
+            }
+            &.scroll-end:not(.scroll-start) {
+                -webkit-mask-image: linear-gradient(to left, #000, #000 calc(100% - var(--g-padding-l) - var(--g-padding)), transparent);
+                mask-image: linear-gradient(to left, #000, #000 calc(100% - var(--g-padding-l) - var(--g-padding)), transparent);
+            }
+        }
     }
 }

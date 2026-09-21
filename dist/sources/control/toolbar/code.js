@@ -17,8 +17,9 @@ export default class extends clickgo.control.AbstractControl {
         const body = this.refs.body;
         const max = body.scrollWidth - body.clientWidth;
         const scroll = this.propBoolean('scroll') && (max > 1);
-        this.scrollStart = scroll && (body.scrollLeft > 1);
-        this.scrollEnd = scroll && (body.scrollLeft < (max - 1));
+        const offset = clickgo.dom.getScrollInlineOffset(body);
+        this.scrollStart = scroll && (offset > 1);
+        this.scrollEnd = scroll && (offset < (max - 1));
     }
     /**
      * --- 将鼠标滚轮转换为工具栏横向滚动 ---
@@ -35,7 +36,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         event.preventDefault();
-        body.scrollLeft += delta;
+        clickgo.dom.setScrollLeft(body, clickgo.dom.getScrollLeft(body) + delta);
     }
     onMounted() {
         const body = this.refs.body;
@@ -46,6 +47,9 @@ export default class extends clickgo.control.AbstractControl {
             this.refreshScroll();
         });
         this.watch('scroll', () => {
+            this.refreshScroll();
+        });
+        this.watch('locale', () => {
             this.refreshScroll();
         });
     }

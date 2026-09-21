@@ -5,13 +5,13 @@
         display: flex;
 
         cg-button {
-            margin-right: 1px;
+            margin-inline-end: 1px;
             svg {
                 width: calc(var(--g-size) + 2px); height: calc(var(--g-size) + 2px);
             }
         }
         .split {
-            width: .5px; background: var(--g-border-color); margin: 0 3px 0 2px;
+            width: .5px; background: var(--g-border-color); margin-block: 0; margin-inline: 2px 3px;
         }
     }
 
@@ -59,7 +59,7 @@
             .title {
                 padding: var(--g-padding); flex: 1; width: 0; overflow: hidden;
                 .sub {
-                    padding-left: 10px;
+                    padding-inline-start: 10px;
                 }
             }
             &.selected .title {
@@ -70,14 +70,14 @@
                 flex: 1; width: 0; display: flex; flex-direction: column; justify-content: center;
 
                 .text {
-                    height: var(--g-boxsize); align-items: center; padding-left: var(--g-padding); display: flex;
+                    height: var(--g-boxsize); align-items: center; padding-inline-start: var(--g-padding); display: flex;
                 }
                 .tcontrol {
                     height: var(--g-boxsize);
                 }
 
                 cg-check {
-                    margin-left: var(--g-padding);
+                    margin-inline-start: var(--g-padding);
                 }
 
                 .dock {
@@ -113,6 +113,15 @@
 
 }
 
+.wrap:dir(rtl) {
+    .bigTitle .control.arrow::after, .line .control.arrow::after {
+        transform: scaleX(-1) rotate(-45deg);
+    }
+    .bigTitle .control.arrow.open::after, .line .control.arrow.open::after {
+        transform: scaleX(-1) rotate(45deg);
+    }
+}
+
 // --- POP ---
 
 .dock-pop {
@@ -126,7 +135,7 @@
         height: 22px;
     }
     .center {
-        height: 70px; display: flex;
+        height: 70px; display: flex; direction: ltr;
         .left, .right {
             width: 22px;
         }
@@ -135,7 +144,7 @@
         }
 
         > :not(:last-child) {
-            margin-right: 1px;
+            margin-inline-end: 1px;
         }
     }
 }

@@ -62,6 +62,22 @@ export default class extends clickgo.control.AbstractControl {
         'vi': {
             'copy': 'Sao chép',
             'copied': 'Đã sao chép'
+        },
+        'ar': {
+            'copy': 'نسخ',
+            'copied': 'تم النسخ'
+        },
+        'id': {
+            'copy': 'Salin',
+            'copied': 'Disalin'
+        },
+        'it': {
+            'copy': 'Copia',
+            'copied': 'Copiato'
+        },
+        'tr': {
+            'copy': 'Kopyala',
+            'copied': 'Kopyalandı'
         }
     };
     /** --- 获取 align 的 css 属性模式 --- */

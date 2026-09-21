@@ -26,17 +26,17 @@
             }
             .monthleft {
                 .arrow::after {
-                    border-width: 0 0 1px 1px; margin-left: 3px;
+                    border-width: 0 0 1px 1px; margin-inline-start: 3px;
                 }
             }
             .monthright {
                 .arrow::after {
-                    border-width: 1px 1px 0 0; margin-right: 3px;
+                    border-width: 1px 1px 0 0; margin-inline-end: 3px;
                 }
             }
         }
         .right {
-            justify-content: right; display: flex; gap: var(--g-padding-s); padding-left: var(--g-padding-s);
+            justify-content: end; display: flex; gap: var(--g-padding-s); padding-inline-start: var(--g-padding-s);
         }
     }
 
@@ -87,7 +87,7 @@
             }
 
             .day-check {
-                appearance: none; position: absolute; left: var(--g-padding-s); top: var(--g-padding-s); display: flex; justify-content: center; align-items: center; width: var(--g-control); height: var(--g-control); padding: 0; border: solid .5px var(--g-plain-border-color); border-radius: var(--g-radius); color: oklch(1 0 0); background: var(--g-plain-background); box-shadow: none; font: inherit; line-height: 1; transition: var(--g-transition); cursor: pointer;
+                appearance: none; position: absolute; inset-inline-start: var(--g-padding-s); top: var(--g-padding-s); display: flex; justify-content: center; align-items: center; width: var(--g-control); height: var(--g-control); padding: 0; border: solid .5px var(--g-plain-border-color); border-radius: var(--g-radius); color: oklch(1 0 0); background: var(--g-plain-background); box-shadow: none; font: inherit; line-height: 1; transition: var(--g-transition); cursor: pointer;
 
                 svg {
                     display: none; width: 14px; height: 14px; fill: currentColor;
@@ -128,5 +128,11 @@
 
     .footer {
         display: flex; gap: var(--g-padding-s); align-items: center; justify-content: center;
+    }
+
+    &:dir(rtl) {
+        .monthleft .arrow::after, .monthright .arrow::after {
+            transform: scaleX(-1) rotate(45deg);
+        }
     }
 }

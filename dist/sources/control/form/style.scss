@@ -116,14 +116,14 @@
             display: flex; background: var(--g-pure);
             // --- 图标 ---
             .icon {
-                display: flex; align-items: center; padding-left: 10px;
+                display: flex; align-items: center; padding-inline-start: 10px;
                 & > img {
-                    margin-right: 5px;
+                    margin-inline-end: 5px;
                 }
             }
             // --- 标题栏 ---
             .title {
-                padding: 10px 10px 10px 0; flex: 1; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; transition: var(--g-transition);
+                padding-block: 10px; padding-inline: 0 10px; flex: 1; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; transition: var(--g-transition);
             }
             .native-drag {
                 -webkit-app-region: drag;

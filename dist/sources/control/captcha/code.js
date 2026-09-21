@@ -81,6 +81,26 @@ export default class extends clickgo.control.AbstractControl {
             'click': 'Xác minh',
             'failed': 'Thất bại, thử lại',
             'successful': 'Thành công'
+        },
+        'ar': {
+            'click': 'انقر للتحقق',
+            'failed': 'فشل، أعد المحاولة',
+            'successful': 'تم التحقق'
+        },
+        'id': {
+            'click': 'Klik untuk memverifikasi',
+            'failed': 'Gagal, coba lagi',
+            'successful': 'Terverifikasi'
+        },
+        'it': {
+            'click': 'Fai clic per verificare',
+            'failed': 'Operazione non riuscita, riprova',
+            'successful': 'Verificato'
+        },
+        'tr': {
+            'click': 'Doğrulamak için tıklayın',
+            'failed': 'Başarısız, tekrar deneyin',
+            'successful': 'Doğrulandı'
         }
     };
     /** --- 供外部调用的 --- */

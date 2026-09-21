@@ -8,12 +8,12 @@
         display: block;
     }
     .block {
-        left: 3px; top: 3px; width: calc(var(--switch-size) - 6px); height: calc(100% - 6px); background: var(--g-plain-background); position: absolute; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow-d); border-radius: calc(var(--switch-size) - 6px); display: flex; align-items: center; justify-content: center;
+        inset-inline-start: 3px; top: 3px; width: calc(var(--switch-size) - 6px); height: calc(100% - 6px); background: var(--g-plain-background); position: absolute; transition: all .3s var(--g-cubic); box-shadow: var(--g-shadow-d); border-radius: calc(var(--switch-size) - 6px); display: flex; align-items: center; justify-content: center;
     }
     // --- 选中模式 ---
     &.checked {
         .block {
-            left: calc(var(--switch-size) + 3px);
+            inset-inline-start: calc(var(--switch-size) + 3px);
         }
     }
     &:not([data-cg-disabled]) {

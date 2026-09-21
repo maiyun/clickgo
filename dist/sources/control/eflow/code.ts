@@ -76,7 +76,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.refs.left.scrollTop -= detail.oy;
                 }
                 if (this.props.direction !== 'v') {
-                    this.refs.left.scrollLeft -= detail.ox;
+                    clickgo.dom.setScrollLeft(this.refs.left, clickgo.dom.getScrollLeft(this.refs.left) - detail.ox);
                 }
             }
         });
@@ -90,18 +90,23 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 横向滚动条的滚动事件 --- */
     public rollh(): void {
-        this.refs.left.scrollLeft = this.offseth;
+        clickgo.dom.setScrollInlineOffset(this.refs.left, this.offseth);
     }
 
     /** --- 滚动处理 --- */
     public scrollHandler(): void {
         this.offset = this.refs.left.scrollTop;
-        this.offseth = this.refs.left.scrollLeft;
+        this.offseth = clickgo.dom.getScrollInlineOffset(this.refs.left);
         // --- 触底时触发加载事件 ---
         this.checkLoad();
     }
 
     public onMounted(): void {
+        this.watch('locale', async (): Promise<void> => {
+            // --- 更新自定义横向滚动条的 logical inline 偏移 ---
+            await this.nextTick();
+            this.scrollHandler();
+        });
         // --- 容器大小改变 ---
         clickgo.dom.watchSize(this, this.refs.left, () => {
             this.client = this.refs.left.clientHeight;

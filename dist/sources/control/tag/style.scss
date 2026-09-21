@@ -150,11 +150,11 @@
     }
 
     .drag {
-        cursor: move; margin-right: var(--g-padding);
+        cursor: move; margin-inline-end: var(--g-padding);
     }
 
     .close {
-        margin-left: var(--g-padding); transition: var(--g-transition); border-radius: var(--g-radius-l);
+        margin-inline-start: var(--g-padding); transition: var(--g-transition); border-radius: var(--g-radius-l);
     }
 
 }

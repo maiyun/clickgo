@@ -1482,6 +1482,9 @@ export function init(): void {
                 if (key === 'task.position') {
                     lTask.refreshSystemPosition();
                 }
+                else if (key === 'locale') {
+                    lForm.refreshLocaleDirection();
+                }
                 await trigger('configChanged', key, (config as any)[key]);
             }
         }

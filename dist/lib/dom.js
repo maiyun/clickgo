@@ -72,6 +72,112 @@ ${classUnfold(' > div')} {font-family: var(--g-family); font-size: var(--g-size)
 export function inPage(el) {
     return document.body.contains(el);
 }
+/** --- 浏览器 RTL 横向原生 scrollLeft 的实现类型 --- */
+let rtlScrollType;
+/**
+ * --- 获取当前浏览器 RTL 横向原生 scrollLeft 的实现类型 ---
+ * @returns 原生 scrollLeft 的实现类型
+ */
+function getRtlScrollType() {
+    if (rtlScrollType) {
+        return rtlScrollType;
+    }
+    const el = document.createElement('div');
+    const child = document.createElement('div');
+    el.dir = 'rtl';
+    el.style.cssText = 'width:4px;height:1px;overflow:scroll;visibility:hidden;position:absolute;';
+    child.style.width = '8px';
+    el.appendChild(child);
+    document.body.appendChild(el);
+    if (el.scrollLeft > 0) {
+        rtlScrollType = 'default';
+    }
+    else {
+        el.scrollLeft = 1;
+        rtlScrollType = el.scrollLeft === 0 ? 'negative' : 'reverse';
+    }
+    el.remove();
+    return rtlScrollType;
+}
+/**
+ * --- 判断元素的 inline 方向是否为 RTL ---
+ * @param el 要判断的元素；控件首次渲染时可能尚未生成实际元素
+ * @returns 是否 RTL
+ */
+export function isRtl(el) {
+    if (!(el instanceof Element)) {
+        return false;
+    }
+    return getComputedStyle(el).direction === 'rtl';
+}
+/**
+ * --- 获取标准化后的物理横向滚动位置（距内容物理左侧） ---
+ * @param el 滚动元素
+ * @returns 物理横向滚动位置
+ */
+export function getScrollLeft(el) {
+    const max = Math.max(0, el.scrollWidth - el.clientWidth);
+    if (!isRtl(el) || !max) {
+        return Math.min(max, Math.max(0, el.scrollLeft));
+    }
+    switch (getRtlScrollType()) {
+        case 'negative': {
+            return Math.min(max, Math.max(0, max + el.scrollLeft));
+        }
+        case 'reverse': {
+            return Math.min(max, Math.max(0, max - el.scrollLeft));
+        }
+        default: {
+            return Math.min(max, Math.max(0, el.scrollLeft));
+        }
+    }
+}
+/**
+ * --- 设置标准化后的物理横向滚动位置（距内容物理左侧） ---
+ * @param el 滚动元素
+ * @param value 物理横向滚动位置
+ */
+export function setScrollLeft(el, value) {
+    const max = Math.max(0, el.scrollWidth - el.clientWidth);
+    value = Math.min(max, Math.max(0, value));
+    if (!isRtl(el) || !max) {
+        el.scrollLeft = value;
+        return;
+    }
+    switch (getRtlScrollType()) {
+        case 'negative': {
+            el.scrollLeft = value - max;
+            return;
+        }
+        case 'reverse': {
+            el.scrollLeft = max - value;
+            return;
+        }
+        default: {
+            el.scrollLeft = value;
+        }
+    }
+}
+/**
+ * --- 获取标准化后的逻辑 inline 横向滚动位置（距 inline-start） ---
+ * @param el 滚动元素
+ * @returns 逻辑横向滚动位置
+ */
+export function getScrollInlineOffset(el) {
+    const max = Math.max(0, el.scrollWidth - el.clientWidth);
+    const left = getScrollLeft(el);
+    return isRtl(el) ? max - left : left;
+}
+/**
+ * --- 设置标准化后的逻辑 inline 横向滚动位置（距 inline-start） ---
+ * @param el 滚动元素
+ * @param value 逻辑横向滚动位置
+ */
+export function setScrollInlineOffset(el, value) {
+    const max = Math.max(0, el.scrollWidth - el.clientWidth);
+    value = Math.min(max, Math.max(0, value));
+    setScrollLeft(el, isRtl(el) ? max - value : value);
+}
 // --- 计算 dpi ---
 const dpiDiv = document.createElement('div');
 dpiDiv.style.visibility = 'hidden';

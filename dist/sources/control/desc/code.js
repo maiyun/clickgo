@@ -27,14 +27,18 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- 横向滚动条的滚动事件 --- */
     rollh() {
-        this.refs.inner.scrollLeft = this.offseth;
+        clickgo.dom.setScrollInlineOffset(this.refs.inner, this.offseth);
     }
     /** --- 滚动处理 --- */
     scrollHandler() {
         this.offset = this.refs.inner.scrollTop;
-        this.offseth = this.refs.inner.scrollLeft;
+        this.offseth = clickgo.dom.getScrollInlineOffset(this.refs.inner);
     }
     onMounted() {
+        this.watch('locale', async () => {
+            await this.nextTick();
+            this.scrollHandler();
+        });
         // --- 容器大小改变 ---
         clickgo.dom.watchSize(this, this.refs.inner, () => {
             this.client = this.refs.inner.clientHeight;

@@ -47,6 +47,18 @@ export default class extends clickgo.control.AbstractControl {
         },
         'vi': {
             'no data': 'Không có dữ liệu'
+        },
+        'ar': {
+            'no data': 'لا توجد بيانات'
+        },
+        'id': {
+            'no data': 'Tidak ada data'
+        },
+        'it': {
+            'no data': 'Nessun dato'
+        },
+        'tr': {
+            'no data': 'Veri yok'
         }
     };
 

@@ -36,7 +36,7 @@
             }
 
             > .collapse-btn {
-                width: 30px; margin-left: auto; display: flex; align-items: center; justify-content: center; transition: var(--g-transition);
+                width: 30px; margin-inline-start: auto; display: flex; align-items: center; justify-content: center; transition: var(--g-transition);
 
                 &:hover {
                     background: var(--face-hover);

@@ -135,6 +135,18 @@ export default class extends clickgo.control.AbstractControl {
         },
         'vi': {
             'remove node': 'Xóa nút'
+        },
+        'ar': {
+            'remove node': 'إزالة العقدة'
+        },
+        'id': {
+            'remove node': 'Hapus simpul'
+        },
+        'it': {
+            'remove node': 'Rimuovi nodo'
+        },
+        'tr': {
+            'remove node': 'Düğümü kaldır'
         }
     };
     // --- iframe ---

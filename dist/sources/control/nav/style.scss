@@ -7,7 +7,7 @@
     .menuwrap {
         display: flex; overflow: hidden; z-index: 7; // --- 不设置的话，收起来的瞬间会到底部去，不能设置 2，会被 header 挡住 ---
         .menu {
-            background: var(--face); border-right: solid .5px var(--g-border-color); padding: 1px; width: 270px; transition: all .3s var(--g-cubic); transition-property: transform;
+            background: var(--face); border-inline-end: solid .5px var(--g-border-color); padding: 1px; width: 270px; transition: all .3s var(--g-cubic); transition-property: transform;
             .logo {
                 height: 60px; background-size: auto 50%; background-position: center; background-repeat: no-repeat; display: flex;
             }
@@ -65,6 +65,12 @@
         }
         .body {
             flex: 1; height: 0; display: flex;
+        }
+    }
+
+    &:dir(rtl) {
+        &.layer:not(.show) .menuwrap .menu, &:not(.layer):not(.show) .menuwrap .menu {
+            transform: translateX(300px);
         }
     }
 }

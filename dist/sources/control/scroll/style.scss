@@ -12,10 +12,10 @@
     }
     &.h {
         .start::before {
-            border-width: 0 0 1px 1px; margin-right: -12%;
+            border-width: 0 0 1px 1px; margin-inline-end: -12%;
         }
         .end::before {
-            border-width: 1px 1px 0 0; margin-left: -12%;
+            border-width: 1px 1px 0 0; margin-inline-start: -12%;
         }
         .block {
             height: 100%;
@@ -24,7 +24,7 @@
     &.float {
         position: absolute; z-index: 1;
         &.v {
-            height: 100% !important; right: 0; top: 0;
+            height: 100% !important; inset-inline-end: 0; top: 0;
         }
         &.h {
             width: 100% !important; left: 0; bottom: 0;
@@ -88,6 +88,12 @@
 
         .bar {
             visibility: hidden; pointer-events: none;
+        }
+    }
+
+    &:dir(rtl).h {
+        .start::before, .end::before {
+            transform: scaleX(-1) rotate(45deg);
         }
     }
 }

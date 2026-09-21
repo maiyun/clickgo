@@ -1,0 +1,11 @@
+{
+    "position": "Konum",
+    "left": "Sol",
+    "right": "Sağ",
+    "top": "Üst",
+    "bottom": "Alt",
+    "close all windows": "Tüm pencereleri kapat",
+    "close window": "Pencereyi kapat",
+    "pin to taskbar": "Görev çubuğuna sabitle",
+    "unpin from taskbar": "Görev çubuğundan kaldır"
+}

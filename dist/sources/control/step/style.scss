@@ -74,7 +74,7 @@
             .arrow {
                 flex: 1; display: flex; justify-content: center; padding: 0 calc(var(--g-padding) + 10px);
                 &::after {
-                    content: ''; display: block; border: solid 1px var(--g-plain-border-color); border-width: 0 1px 1px 0; width: 12px; height: 12px; transform: rotate(-45deg); margin-left: calc(-6px - var(--g-padding))
+                    content: ''; display: block; border: solid 1px var(--g-plain-border-color); border-width: 0 1px 1px 0; width: 12px; height: 12px; transform: rotate(-45deg); margin-inline-start: calc(-6px - var(--g-padding))
                 }
             }
 
@@ -85,6 +85,20 @@
                     }
                 }
             }
+        }
+    }
+
+    &:dir(rtl) {
+        .item.now .icon .line {
+            &.left {
+                border-bottom-color: var(--g-plain-border-color);
+            }
+            &.right {
+                border-bottom-color: var(--success);
+            }
+        }
+        &.plain .item .arrow::after {
+            transform: scaleX(-1) rotate(-45deg);
         }
     }
 }

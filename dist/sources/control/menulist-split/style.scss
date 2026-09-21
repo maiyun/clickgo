@@ -4,8 +4,8 @@
     .type {
         width: var(--g-boxsize);
     }
-    
+
     .line {
-        height: .5px; margin-left: 5px; flex-grow: 1; flex-basis: 0; background: var(--g-border-color);
-    }    
+        height: .5px; margin-inline-start: 5px; flex-grow: 1; flex-basis: 0; background: var(--g-border-color);
+    }
 }

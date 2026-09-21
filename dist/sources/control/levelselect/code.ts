@@ -83,6 +83,18 @@ export default class extends clickgo.control.AbstractControl {
         },
         'vi': {
             'back': 'Quay lại'
+        },
+        'ar': {
+            'back': 'رجوع'
+        },
+        'id': {
+            'back': 'Kembali'
+        },
+        'it': {
+            'back': 'Indietro'
+        },
+        'tr': {
+            'back': 'Geri'
         }
     };
 

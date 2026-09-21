@@ -72,7 +72,7 @@ export default class extends clickgo.control.AbstractControl {
      */
     public onScroll(): void {
         // --- scroll left ---
-        let sl = Math.round(this.element.scrollLeft);
+        let sl = Math.round(clickgo.dom.getScrollInlineOffset(this.element));
         const msl = this.maxScrollLeft();
         if (sl > msl) {
             sl = msl;
@@ -124,7 +124,7 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'left': {
-                    if (this.element.scrollLeft > 0) {
+                    if (clickgo.dom.getScrollLeft(this.element) > 0) {
                         return -1;
                     }
                     else {
@@ -135,7 +135,7 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 default: {
-                    if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
+                    if (Math.round(clickgo.dom.getScrollLeft(this.element)) < this.maxScrollLeft()) {
                         return -1;
                     }
                     else {
@@ -162,7 +162,7 @@ export default class extends clickgo.control.AbstractControl {
             clickgo.modules.pointer.down(e, {
                 start: (): void => {
                     const rect = this.element.getBoundingClientRect();
-                    this.access.selectionOrigin.x = x - rect.left + this.element.scrollLeft;
+                    this.access.selectionOrigin.x = x - rect.left + clickgo.dom.getScrollLeft(this.element);
                     this.access.selectionOrigin.y = y - rect.top + this.element.scrollTop;
                     this.refs.selection.style.opacity = '1';
                     this.access.selectionCurrent.x = x;
@@ -172,7 +172,8 @@ export default class extends clickgo.control.AbstractControl {
                         // --- 横向 ---
                         if (this.access.selectionCurrent.x < rect.left) {
                             // --- 向左滚动 ---
-                            if (this.element.scrollLeft > 0) {
+                            const scrollLeft = clickgo.dom.getScrollLeft(this.element);
+                            if (scrollLeft > 0) {
                                 /** --- 差值 --- */
                                 const x = rect.left - this.access.selectionCurrent.x;
                                 /** --- 移动的距离 --- */
@@ -185,17 +186,18 @@ export default class extends clickgo.control.AbstractControl {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.element.scrollLeft - dist < 0) {
-                                    dist = this.element.scrollLeft;
+                                if (scrollLeft - dist < 0) {
+                                    dist = scrollLeft;
                                 }
-                                this.element.scrollLeft -= dist;
-                                this.emit('update:scrollLeft', Math.round(this.element.scrollLeft));
+                                clickgo.dom.setScrollLeft(this.element, scrollLeft - dist);
+                                this.emit('update:scrollLeft', Math.round(clickgo.dom.getScrollInlineOffset(this.element)));
                             }
                         }
                         else if (this.access.selectionCurrent.x > rect.right) {
                             const maxLeft = this.maxScrollLeft();
                             // --- 向右滚动 ---
-                            if (this.element.scrollLeft < maxLeft) {
+                            const scrollLeft = clickgo.dom.getScrollLeft(this.element);
+                            if (scrollLeft < maxLeft) {
                                 /** --- 差值 --- */
                                 const x = this.access.selectionCurrent.x - rect.right;
                                 /** --- 移动的距离 --- */
@@ -208,11 +210,11 @@ export default class extends clickgo.control.AbstractControl {
                                 else {
                                     dist = x / 5;
                                 }
-                                if (this.element.scrollLeft + dist > maxLeft) {
-                                    dist = maxLeft - this.element.scrollLeft;
+                                if (scrollLeft + dist > maxLeft) {
+                                    dist = maxLeft - scrollLeft;
                                 }
-                                this.element.scrollLeft += dist;
-                                this.emit('update:scrollLeft', Math.round(this.element.scrollLeft));
+                                clickgo.dom.setScrollLeft(this.element, scrollLeft + dist);
+                                this.emit('update:scrollLeft', Math.round(clickgo.dom.getScrollInlineOffset(this.element)));
                             }
                         }
                         // --- 纵向 ---
@@ -314,7 +316,7 @@ export default class extends clickgo.control.AbstractControl {
                         break;
                     }
                     case 'left': {
-                        if (this.element.scrollLeft > 0) {
+                        if (clickgo.dom.getScrollLeft(this.element) > 0) {
                             return -1;
                         }
                         else {
@@ -325,7 +327,7 @@ export default class extends clickgo.control.AbstractControl {
                         break;
                     }
                     default: {
-                        if (Math.round(this.element.scrollLeft) < this.maxScrollLeft()) {
+                        if (Math.round(clickgo.dom.getScrollLeft(this.element)) < this.maxScrollLeft()) {
                             return -1;
                         }
                         else {
@@ -349,7 +351,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         const rect = this.element.getBoundingClientRect();
         /** --- 相对实际内容的 x 坐标 --- */
-        const x = this.access.selectionCurrent.x - rect.left + this.element.scrollLeft;
+        const x = this.access.selectionCurrent.x - rect.left + clickgo.dom.getScrollLeft(this.element);
         /** --- 相对实际内容的 y 坐标 --- */
         const y = this.access.selectionCurrent.y - rect.top + this.element.scrollTop;
         /** --- 要显示的区域 --- */
@@ -406,7 +408,7 @@ export default class extends clickgo.control.AbstractControl {
         this.refs.selection.style.width = area.width.toString() + 'px';
         this.refs.selection.style.height = area.height.toString() + 'px';
         // --- 查看选中了哪些子项 ---
-        const offset = this.props.direction === 'v' ? area.y : area.x;
+        const offset = this.props.direction === 'v' ? area.y : (clickgo.dom.isRtl(this.element) ? this.element.scrollWidth - area.x - area.width : area.x);
         const length = this.props.direction === 'v' ? area.height : area.width;
         const rtn = this.getNewPos(this.selectPos, {
             'start': offset,
@@ -443,12 +445,28 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /**
+     * --- 获取用于框选判断的逻辑 inline 位置；公开 getPos 保持物理 left 语义 ---
+     * @param val 项下标
+     * @returns 逻辑位置
+     */
+    public getSelectionPos(val: number): { 'start': number; 'end': number; } | undefined {
+        const pos = this.getPos(val);
+        if (!pos || this.props.direction !== 'h' || !clickgo.dom.isRtl(this.element)) {
+            return pos;
+        }
+        return {
+            'start': this.element.scrollWidth - pos.end,
+            'end': this.element.scrollWidth - pos.start
+        };
+    }
+
+    /**
      * --- 判断一个 item 项是否在一个 area 内 ---
      * @param i 项 index
      * @param area 区域像素
      */
     public inArea(i: number, area: { 'start': number; 'end': number; }): boolean {
-        const pos = this.getPos(i);
+        const pos = this.getSelectionPos(i);
         if (!pos) {
             return false;
         }
@@ -483,15 +501,15 @@ export default class extends clickgo.control.AbstractControl {
         }
         else {
             // --- 起项不在区域内 ---
-            let start = this.getPos(pos.start);
+            let start = this.getSelectionPos(pos.start);
             if (!start) {
                 // --- 起项不存在 ---
-                if (pos.start === 0 || !this.getPos(0)) {
+                if (pos.start === 0 || !this.getSelectionPos(0)) {
                     return { 'start': 0, 'end': 0, 'empty': true };
                 }
                 pos.start = 0;
                 rtn.start = 0;
-                start = this.getPos(0)!;
+                start = this.getSelectionPos(0)!;
             }
             if (area.start > start.start) {
                 // --- 区域顶部大于原起项的顶部 ---
@@ -540,7 +558,7 @@ export default class extends clickgo.control.AbstractControl {
             return rtn;
         }
         // --- 要找终项 ---
-        if (!this.getPos(pos.end)) {
+        if (!this.getSelectionPos(pos.end)) {
             // --- 终项不存在，指定为起项 ---
             pos.end = rtn.start;
         }
@@ -559,7 +577,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         else {
             // --- 终项不在区域内 ---
-            const end = this.getPos(pos.end)!;
+            const end = this.getSelectionPos(pos.end)!;
             if (area.end < end.end) {
                 // --- 区域底部小于终项的底部 ---
                 // --- 向上找 ---
@@ -598,13 +616,13 @@ export default class extends clickgo.control.AbstractControl {
     public onMounted(): void {
         this.watch('scrollLeft', (): void => {
             const prop = this.propInt('scrollLeft');
-            if (prop === Math.round(this.element.scrollLeft)) {
+            if (prop === Math.round(clickgo.dom.getScrollInlineOffset(this.element))) {
                 return;
             }
-            this.element.scrollLeft = prop;
-            if (this.element.scrollLeft !== prop) {
+            clickgo.dom.setScrollInlineOffset(this.element, prop);
+            if (Math.round(clickgo.dom.getScrollInlineOffset(this.element)) !== prop) {
                 // --- 设置失败，提交 element 实际的 scrollLeft ---
-                this.emit('update:scrollLeft', this.element.scrollLeft);
+                this.emit('update:scrollLeft', clickgo.dom.getScrollInlineOffset(this.element));
             }
         });
         this.watch('scrollTop', (): void => {
@@ -632,7 +650,7 @@ export default class extends clickgo.control.AbstractControl {
 
         // --- 对 scroll 位置进行归位 ---
         this.element.scrollTop = this.propInt('scrollTop');
-        this.element.scrollLeft = this.propInt('scrollLeft');
+        clickgo.dom.setScrollInlineOffset(this.element, this.propInt('scrollLeft'));
     }
 
 }

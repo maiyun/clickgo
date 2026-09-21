@@ -231,6 +231,38 @@ const info: {
             'cancel': 'Hủy bỏ',
             'search': 'Tìm kiếm',
             'confirmExitStep': 'Thao tác này sẽ thoát khỏi quy trình hiện tại. Bạn có chắc chắn muốn thoát không?'
+        },
+        'ar': {
+            'ok': 'موافق',
+            'yes': 'نعم',
+            'no': 'لا',
+            'cancel': 'إلغاء',
+            'search': 'بحث',
+            'confirmExitStep': 'ستؤدي هذه العملية إلى إنهاء الإجراء الحالي. هل تريد المتابعة؟'
+        },
+        'id': {
+            'ok': 'OK',
+            'yes': 'Ya',
+            'no': 'Tidak',
+            'cancel': 'Batal',
+            'search': 'Cari',
+            'confirmExitStep': 'Tindakan ini akan mengakhiri proses saat ini. Yakin ingin keluar?'
+        },
+        'it': {
+            'ok': 'OK',
+            'yes': 'Sì',
+            'no': 'No',
+            'cancel': 'Annulla',
+            'search': 'Cerca',
+            'confirmExitStep': 'Questa operazione terminerà il processo corrente. Vuoi uscire?'
+        },
+        'tr': {
+            'ok': 'Tamam',
+            'yes': 'Evet',
+            'no': 'Hayır',
+            'cancel': 'İptal',
+            'search': 'Ara',
+            'confirmExitStep': 'Bu işlem mevcut süreci sonlandıracak. Çıkmak istiyor musunuz?'
         }
     }
 };
@@ -297,6 +329,16 @@ abstract class AbstractCommon {
     public get locale(): string {
         const task = lTask.getOrigin(this.taskId);
         return lTool.logicalOr(task?.locale.lang ?? '', lCore.config.locale);
+    }
+
+    /** --- 当前语言的标准 HTML lang 标签 --- */
+    public get localeTag(): string {
+        return lTool.lang.getTag(this.locale);
+    }
+
+    /** --- 当前语言的书写方向 --- */
+    public get localeDirection(): 'ltr' | 'rtl' {
+        return lTool.lang.getDirection(this.locale);
     }
 
     /**
@@ -1025,7 +1067,7 @@ export abstract class AbstractForm extends AbstractCommon {
             if (v.$data._formHash) {
                 if (this.inStep) {
                     if (!await confirm(this, {
-                        'content': info.locale[this.locale].confirmExitStep
+                        'content': info.locale[this.locale]?.confirmExitStep ?? info.locale['en'].confirmExitStep
                     })) {
                         return;
                     }
@@ -1045,7 +1087,7 @@ export abstract class AbstractForm extends AbstractCommon {
             }
             else {
                 if (!await confirm(this, {
-                    'content': info.locale[this.locale].confirmExitStep
+                    'content': info.locale[this.locale]?.confirmExitStep ?? info.locale['en'].confirmExitStep
                 })) {
                     return;
                 }
@@ -1403,6 +1445,7 @@ export const elements: {
     'init': function() {
         /** --- clickgo 所有的 div wrap --- */
         this.wrap.id = 'cg-wrap';
+        setLocaleAttributes(this.wrap, lCore.config?.locale ?? lTool.lang.getCodeByAccept());
         document.getElementsByTagName('body')[0].appendChild(this.wrap);
         this.wrap.addEventListener('touchmove', function(e): void {
             // --- 防止拖动时整个网页跟着动 ---
@@ -1706,6 +1749,8 @@ export const elements: {
 
         // --- cg-keyboard ---
         this.keyboard.id = 'cg-keyboard';
+        this.keyboard.dir = 'ltr';
+        this.keyboard.lang = 'en';
         this.wrap.appendChild(this.keyboard);
         this.keyboard.innerHTML = `<div v-for="line of list">` +
     `<div v-for="row of line" :style="{'width': row[2] ? (row[2] * 50 + 'px') : '50px'}" :class="[!row[0]&&'cg-keyboard-null',row[0]==='Caps'&&caps&&'cg-keyboard-checked',row[0]==='Shift'&&shift&&'cg-keyboard-checked']" @click="click(row)">` +
@@ -1867,6 +1912,36 @@ export const elements: {
         this.keyboard.addEventListener('pointerdown', down);
     }
 };
+
+/**
+ * --- 将 ClickGo locale 转换为 DOM 语言属性 ---
+ * @param el 要更新的元素
+ * @param locale ClickGo 语言代号
+ */
+function setLocaleAttributes(el: HTMLElement, locale: string): void {
+    el.lang = lTool.lang.getTag(locale);
+    el.dir = lTool.lang.getDirection(locale);
+}
+
+/**
+ * --- 刷新系统根节点及任务窗体的语言方向 ---
+ * @param taskId 仅刷新指定任务，省略时刷新全部任务
+ */
+export function refreshLocaleDirection(taskId?: string): void {
+    const systemLocale = lCore.config?.locale ?? lTool.lang.getCodeByAccept();
+    setLocaleAttributes(elements.wrap, systemLocale);
+    const selector = taskId ? `[data-task-id="${taskId}"]` : '[data-task-id]';
+    const wraps = [
+        ...elements.list.querySelectorAll<HTMLElement>(`.cg-form-wrap${selector}`),
+        ...elements.popList.querySelectorAll<HTMLElement>(selector),
+    ];
+    for (const wrap of wraps) {
+        const currentTaskId = wrap.dataset.taskId;
+        const task = currentTaskId ? lTask.getOrigin(currentTaskId) : null;
+        const locale = lTool.logicalOr(task?.locale.lang ?? '', systemLocale);
+        setLocaleAttributes(wrap, locale);
+    }
+}
 
 /** --- 显示系统级询问框 --- */
 export function superConfirm(current: string, html: string): Promise<boolean> {
@@ -2720,19 +2795,20 @@ export function notify(opt: INotifyOptions): number {
     }
     // --- 创建 notify element ---
     const el = document.createElement('div');
+    const rtl = lTool.lang.getDirection(lCore.config.locale) === 'rtl';
     let y = notifyBottom;
-    let x = -10;
+    let x = rtl ? 10 : -10;
     if (lTask.systemTaskInfo.taskId) {
         if (lCore.config['task.position'] === 'bottom') {
             y -= lTask.systemTaskInfo.length;
         }
-        else if (lCore.config['task.position'] === 'right') {
-            x -= lTask.systemTaskInfo.length;
+        else if (lCore.config['task.position'] === (rtl ? 'left' : 'right')) {
+            x += (rtl ? 1 : -1) * lTask.systemTaskInfo.length;
         }
     }
     el.classList.add('cg-notify-wrap');
     el.setAttribute('data-notifyid', nid.toString());
-    el.style.transform = `translateY(${y}px) translateX(280px)`;
+    el.style.transform = `translateY(${y}px) translateX(${rtl ? -280 : 280}px)`;
     el.style.opacity = '0';
     el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
     el.innerHTML = `<div class="cg-notify-icon cg-${lTool.escapeHTML(opt.type ?? 'primary')}"></div>` +
@@ -2907,7 +2983,7 @@ const popViewportStyles = new WeakMap<HTMLElement, IPopViewportStyle>();
  * --- 根据触发元素或视口坐标重新调整弹层的位置与尺寸，并约束在视口内 ---
  * @param el 触发弹层的元素；direction 为字符串时，以其位置和尺寸作为定位基准
  * @param pop 待定位的弹层元素；更新其尺寸限制、溢出方式、位置和层级
- * @param direction 弹出方向或定位坐标：h 向右弹出，v 向下弹出，t 在上方水平居中；空间不足时调整方向或位置；PointerEvent 使用 clientX/clientY，坐标对象使用 x/y，均为视口 CSS 像素坐标
+ * @param direction 弹出方向或定位坐标：h 向行末方向弹出，v 向下并按行首对齐，t 在上方水平居中；空间不足时调整方向或位置；PointerEvent 使用 clientX/clientY，坐标对象使用 x/y，均为视口 CSS 像素坐标
  * @param size 可选的弹层宽高，默认空对象；width/height 单位为 CSS 像素，指定时限制在视口可用尺寸内，未指定时保留原有宽高
  * @param overflow 内容溢出方式，默认 auto，超出尺寸时滚动；visible 允许内容及箭头显示在弹层边界外，供 Tip 等带外部箭头的弹层使用
  */
@@ -2953,17 +3029,19 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
     const height = Math.min(pop.offsetHeight, maxHeight);
     // --- 最终显示位置 ---
     let left: number, top: number;
+    /** --- 弹层遵循触发元素所属任务的书写方向 --- */
+    const rtl = getComputedStyle(el).direction === 'rtl';
     if (typeof direction === 'string') {
         /** --- 母对象的位置 --- */
         const bcr = el.getBoundingClientRect();
         if (direction === 'v') {
             // --- 垂直弹出 ---
-            left = bcr.left;
+            left = rtl ? bcr.right - width : bcr.left;
             top = bcr.top + bcr.height;
         }
         else if (direction === 'h') {
             // --- 水平弹出 ---
-            left = bcr.left + bcr.width - 2;
+            left = rtl ? bcr.left - width + 2 : bcr.right - 2;
             top = bcr.top - 2;
         }
         else {
@@ -2986,6 +3064,18 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
             else {
                 // --- 垂直水平居中，水平超出 ---
                 left = window.innerWidth - viewportPadding - width;
+            }
+        }
+        // --- 检查左侧是否出框 ---
+        if (left < viewportPadding) {
+            if (direction === 'v') {
+                left = bcr.left;
+            }
+            else if (direction === 'h') {
+                left = bcr.right - 2;
+            }
+            else {
+                left = viewportPadding;
             }
         }
         // --- 检测垂直是否下侧出框 ---
@@ -3017,11 +3107,14 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
             x = direction.x;
             y = direction.y;
         }
-        left = x + 5;
+        left = rtl ? x - width - 5 : x + 5;
         top = y + 7;
         // --- 水平 ---
         if (width + left > window.innerWidth - viewportPadding) {
             left = x - width - 5;
+        }
+        else if (left < viewportPadding) {
+            left = x + 5;
         }
         // --- 垂直 ---
         if (height + top > window.innerHeight - viewportPadding) {
@@ -4104,7 +4197,7 @@ export async function create<T extends AbstractForm>(
                     else {
                         // --- 不应该 ---
                         if (!await confirm(current, {
-                            'content': info.locale[this.locale].confirmExitStep
+                            'content': info.locale[this.locale]?.confirmExitStep ?? info.locale['en'].confirmExitStep
                         })) {
                             return;
                         }
@@ -4163,6 +4256,7 @@ export async function create<T extends AbstractForm>(
     // --- 插入 dom ---
     elements.list.insertAdjacentHTML('beforeend', `<div class="cg-form-wrap" data-form-id="${formId}" data-task-id="${t.id}"></div>`);
     elements.popList.insertAdjacentHTML('beforeend', `<div data-form-id="${formId}" data-task-id="${t.id}"></div>`);
+    refreshLocaleDirection(t.id);
     if (style) {
         lDom.pushStyle(t.id, style, 'form', formId);
     }

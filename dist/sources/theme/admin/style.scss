@@ -248,7 +248,7 @@ global {
             transform: none;
 
             > :not(:last-child) {
-                margin-right: 0;
+                margin-inline-end: 0;
             }
         }
     }
@@ -360,7 +360,7 @@ global {
         --g-border-color:oklch(.29 .035 258);
 
         z-index: 10;
-        border-right: solid .5px var(--g-border-color);
+        border-inline-end: solid .5px var(--g-border-color);
         box-shadow: none;
 
         .nav_menu {
