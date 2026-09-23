@@ -1,5 +1,5 @@
 .wrap {
-    display: flex; flex: 0 0 auto; align-items: stretch; min-width: 0; min-height: var(--g-boxsize); overflow: hidden; color: var(--g-plain-color); background: var(--g-plain-background); border-top: solid .5px var(--g-plain-border-color); box-sizing: border-box;
+    display: flex; flex: 0 0 auto; align-items: stretch; min-width: 0; min-height: var(--g-boxsize); color: var(--g-plain-color); background: var(--g-plain-background); border-top: solid .5px var(--g-plain-border-color); box-sizing: border-box;
 
     &.borderless {
         border-top-color: transparent;
@@ -9,13 +9,63 @@
         background: transparent;
     }
 
-    > .space {
-        min-width: var(--g-padding); margin-inline-start: auto;
+    > .body, > .right {
+        display: flex; align-items: stretch; min-width: 0;
+
+        > * {
+            flex: 0 0 auto;
+        }
+    }
+
+    > .body {
+        flex: 1; width: 0; overflow: hidden;
+
+        &.scroll {
+            overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            &.scroll-start:not(.scroll-end) {
+                -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--g-padding-l), #000);
+                mask-image: linear-gradient(to right, transparent, #000 var(--g-padding-l), #000);
+            }
+
+            &.scroll-end:not(.scroll-start) {
+                -webkit-mask-image: linear-gradient(to right, #000, #000 calc(100% - var(--g-padding-l)), transparent);
+                mask-image: linear-gradient(to right, #000, #000 calc(100% - var(--g-padding-l)), transparent);
+            }
+
+            &.scroll-start.scroll-end {
+                -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--g-padding-l), #000 calc(100% - var(--g-padding-l)), transparent);
+                mask-image: linear-gradient(to right, transparent, #000 var(--g-padding-l), #000 calc(100% - var(--g-padding-l)), transparent);
+            }
+        }
+    }
+
+    > .right {
+        flex: 0 0 auto; background: inherit;
     }
 
     &.separator {
-        > [data-cg-control='statusbar-item']:not(:first-child) {
+        > .body > [data-cg-control='statusbar-item']:not(:first-child),
+        > .right > [data-cg-control='statusbar-item']:not(:first-child),
+        > .right {
             border-inline-start: solid .5px var(--g-plain-border-color-plain);
+        }
+    }
+
+    &:dir(rtl) {
+        > .body.scroll {
+            &.scroll-start:not(.scroll-end) {
+                -webkit-mask-image: linear-gradient(to left, transparent, #000 var(--g-padding-l), #000);
+                mask-image: linear-gradient(to left, transparent, #000 var(--g-padding-l), #000);
+            }
+            &.scroll-end:not(.scroll-start) {
+                -webkit-mask-image: linear-gradient(to left, #000, #000 calc(100% - var(--g-padding-l)), transparent);
+                mask-image: linear-gradient(to left, #000, #000 calc(100% - var(--g-padding-l)), transparent);
+            }
         }
     }
 }

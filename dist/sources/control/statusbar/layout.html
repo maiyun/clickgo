@@ -1,5 +1,8 @@
 <div class="wrap" :class="[!propBoolean('border') && 'borderless', propBoolean('separator') && 'separator', propBoolean('plain') && 'plain']">
-    <slot></slot>
-    <div class="space"></div>
-    <slot name="right"></slot>
+    <div ref="body" class="body" :class="[propBoolean('scroll') && 'scroll', scrollStart && 'scroll-start', scrollEnd && 'scroll-end']" :data-cg-scroll="propBoolean('scroll') ? '' : undefined" @scroll="refreshScroll" @wheel="wheel">
+        <slot></slot>
+    </div>
+    <div v-if="slots['right']" class="right">
+        <slot name="right"></slot>
+    </div>
 </div>

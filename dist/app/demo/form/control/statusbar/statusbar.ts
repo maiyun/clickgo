@@ -14,6 +14,8 @@ export default class extends clickgo.form.AbstractForm {
 
     public plain = false;
 
+    public scroll = true;
+
     public showRight = true;
 
     public type: Array<'default' | 'primary' | 'info' | 'warning' | 'danger' | 'cg'> = ['primary'];

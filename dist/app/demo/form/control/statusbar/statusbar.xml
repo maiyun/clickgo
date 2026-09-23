@@ -6,10 +6,12 @@
                 <label>Workspace</label>
                 <label>The status bar remains independent from the content area.</label>
             </layout>
-            <statusbar :border="border" :separator="separator" :plain="plain">
+            <statusbar :border="border" :separator="separator" :plain="plain" :scroll="scroll">
                 <statusbar-item :type="type[0]">{{message}}</statusbar-item>
                 <statusbar-item :grow="grow">24 items</statusbar-item>
                 <statusbar-item>1280 × 720</statusbar-item>
+                <statusbar-item>Selection: 120 × 96</statusbar-item>
+                <statusbar-item>Zoom: 100%</statusbar-item>
                 <template v-if="showRight" v-slot:right>
                     <statusbar-item type="cg">
                         <label>{{online ? 'Online' : 'Offline'}}</label>
@@ -36,6 +38,7 @@
         <layout gutter="10">
             <button @click="grow = !grow" style="flex: 1;">{{grow ? '' : '!'}}grow</button>
             <button @click="showRight = !showRight" style="flex: 1;">{{showRight ? '' : '!'}}right slot</button>
+            <button @click="scroll = !scroll" style="flex: 1;">{{scroll ? '' : '!'}}scroll</button>
         </layout>
     </layout>
 </form>

@@ -6,6 +6,7 @@ export default class extends clickgo.form.AbstractForm {
     message = 'Ready';
     online = true;
     plain = false;
+    scroll = true;
     showRight = true;
     type = ['primary'];
 }
