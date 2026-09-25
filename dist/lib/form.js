@@ -2623,20 +2623,23 @@ function refreshPopPosition(el, pop, direction, size = {}, overflow = 'auto') {
     const maxHeight = Math.max(0, window.innerHeight - viewportPadding * 2);
     let viewportStyle = popViewportStyles.get(pop);
     if (!viewportStyle) {
+        const computedStyle = getComputedStyle(pop);
         viewportStyle = {
-            'maxWidthSource': pop.style.maxWidth === 'none' ? '' : pop.style.maxWidth,
+            'maxWidthSource': computedStyle.maxWidth === 'none' ? '' : computedStyle.maxWidth,
             'maxWidthApplied': '',
-            'maxHeightSource': pop.style.maxHeight === 'none' ? '' : pop.style.maxHeight,
+            'maxHeightSource': computedStyle.maxHeight === 'none' ? '' : computedStyle.maxHeight,
             'maxHeightApplied': ''
         };
         popViewportStyles.set(pop, viewportStyle);
     }
     else {
         if (pop.style.maxWidth !== viewportStyle.maxWidthApplied) {
-            viewportStyle.maxWidthSource = pop.style.maxWidth === 'none' ? '' : pop.style.maxWidth;
+            const maxWidthSource = getComputedStyle(pop).maxWidth;
+            viewportStyle.maxWidthSource = maxWidthSource === 'none' ? '' : maxWidthSource;
         }
         if (pop.style.maxHeight !== viewportStyle.maxHeightApplied) {
-            viewportStyle.maxHeightSource = pop.style.maxHeight === 'none' ? '' : pop.style.maxHeight;
+            const maxHeightSource = getComputedStyle(pop).maxHeight;
+            viewportStyle.maxHeightSource = maxHeightSource === 'none' ? '' : maxHeightSource;
         }
     }
     pop.style.maxWidth = viewportStyle.maxWidthSource ? `min(${viewportStyle.maxWidthSource}, ${maxWidth}px)` : `${maxWidth}px`;
