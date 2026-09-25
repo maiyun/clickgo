@@ -18,14 +18,16 @@ theme.textContent = `
 `;
 document.head.append(theme);
 
-for (const nativeFirst of [true, false]) {
+for (const mode of ['web', 'native-framed', 'native-frameless']) {
+    const nativeFirst = mode === 'native-frameless';
+    const nativeMode = mode !== 'web';
     for (const border of ['normal', 'thin', 'plain', 'none']) {
         const host = document.createElement('div');
         document.body.append(host);
         const app = createApp({
             render,
             data: () => ({
-                border, isNativeNoFrameFirst: nativeFirst, flashTimer: undefined,
+                border, isNative: nativeMode, isNativeNoFrameFirst: nativeFirst, flashTimer: undefined,
                 stateMinData: false, stateMaxData: false, taskPosition: 'bottom',
                 isShow: true, isInside: false, formFocus: false, widthData: 500,
                 heightData: 400, leftData: 0, topData: 0, zIndex: 1,
@@ -40,6 +42,8 @@ for (const nativeFirst of [true, false]) {
         app.component('cg-loading', { render: () => null });
         const form = app.mount(host);
         const wrap = host.querySelector('.wrap');
+        assert.equal(wrap.style.maxWidth, nativeMode ? '' : '100vw');
+        assert.equal(wrap.style.maxHeight, nativeMode ? '' : '100vh');
         const inner = host.querySelector('.inner');
         const content = host.querySelector('.content');
         const header = host.querySelector('.header');
@@ -47,6 +51,12 @@ for (const nativeFirst of [true, false]) {
         const child = document.createElement('div');
         child.className = 'child-control';
         content.append(child);
+        if (!nativeMode && border === 'none') {
+            form.leftData = 700;
+            form.topData = 600;
+            await nextTick();
+            assert.deepEqual([wrap.style.left, wrap.style.top], ['700px', '600px']);
+        }
         for (const focused of [false, true]) {
             form.formFocus = focused;
             form.stateMaxData = focused;

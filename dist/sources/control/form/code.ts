@@ -107,6 +107,10 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 是否是内联窗体 --- */
     public isInside = false;
 
+    public get isNative(): boolean {
+        return clickgo.isNative();
+    }
+
     public get isMin(): boolean {
         return clickgo.tool.getBoolean(this.props.min);
     }
@@ -624,10 +628,15 @@ export default class extends clickgo.control.AbstractControl {
                 this.heightData = this.historyLocation.height;
                 this.emit('update:height', this.historyLocation.height);
             }
-            this.leftData = this.historyLocation.left;
-            this.emit('update:left', this.historyLocation.left);
-            this.topData = this.historyLocation.top;
-            this.emit('update:top', this.historyLocation.top);
+            // --- 还原到缩小后的视窗时，保留窗体大小设置并修正屏幕外的历史位置 ---
+            const maxLeft = window.innerWidth - Math.min(this.historyLocation.width, window.innerWidth);
+            const maxTop = window.innerHeight - Math.min(this.historyLocation.height, window.innerHeight);
+            this.leftData = this.isNative ? this.historyLocation.left :
+                Math.max(0, Math.min(this.historyLocation.left, maxLeft));
+            this.emit('update:left', this.leftData);
+            this.topData = this.isNative ? this.historyLocation.top :
+                Math.max(0, Math.min(this.historyLocation.top, maxTop));
+            this.emit('update:top', this.topData);
             // --- native 模式非 frame，要调整 size ---
             if (this.isNativeNoFrameFirst) {
                 clickgo.native.size(this, this.widthData, this.heightData).catch(() => {});
