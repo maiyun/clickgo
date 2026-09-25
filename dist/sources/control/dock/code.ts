@@ -35,8 +35,13 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
             'element': HTMLElement;
             'handler': () => void;
         } | null;
+        'viewportSizeWatch': {
+            'element': HTMLElement;
+            'handler': () => void;
+        } | null;
     } = {
-            'formSizeWatch': null
+            'formSizeWatch': null,
+            'viewportSizeWatch': null
         };
 
     /** --- 当前是否展开 --- */
@@ -50,6 +55,9 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
 
     /** --- 浮动面板可使用的 Dock 内容区高度 --- */
     public floatAreaHeight: number = 0;
+
+    /** --- 当前浏览器视窗宽度，用于在视窗缩放时刷新浮动面板 --- */
+    public viewportWidth: number = 0;
 
     /** --- 侧栏所在位置 --- */
     public get positionData(): 'left' | 'right' {
@@ -165,6 +173,15 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         clickgo.dom.watchSize(this, this.refs.body, () => {
             this.floatAreaHeight = this.refs.body.clientHeight;
         }, true);
+        const viewportHandler = (): void => {
+            this.viewportWidth = document.documentElement.clientWidth;
+        };
+        if (clickgo.dom.watchSizeMulti(this, document.documentElement, viewportHandler, true)) {
+            this.access.viewportSizeWatch = {
+                'element': document.documentElement,
+                'handler': viewportHandler
+            };
+        }
     }
 
     public onUnmounted(): void {
@@ -172,6 +189,11 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         if (sizeWatch) {
             clickgo.dom.unwatchSizeMulti(this, sizeWatch.element, sizeWatch.handler);
             this.access.formSizeWatch = null;
+        }
+        const viewportSizeWatch = this.access.viewportSizeWatch;
+        if (viewportSizeWatch) {
+            clickgo.dom.unwatchSizeMulti(this, viewportSizeWatch.element, viewportSizeWatch.handler);
+            this.access.viewportSizeWatch = null;
         }
         const siblings = formDocks.get(this.rootForm);
         siblings?.delete(this);

@@ -14,7 +14,8 @@ export default class extends clickgo.control.AbstractControl {
     };
     /** --- 不参与响应式处理的 Form 尺寸监听状态 --- */
     access = {
-        'formSizeWatch': null
+        'formSizeWatch': null,
+        'viewportSizeWatch': null
     };
     /** --- 当前是否展开 --- */
     expandedData = true;
@@ -24,6 +25,8 @@ export default class extends clickgo.control.AbstractControl {
     floatGroup = -1;
     /** --- 浮动面板可使用的 Dock 内容区高度 --- */
     floatAreaHeight = 0;
+    /** --- 当前浏览器视窗宽度，用于在视窗缩放时刷新浮动面板 --- */
+    viewportWidth = 0;
     /** --- 侧栏所在位置 --- */
     get positionData() {
         return this.props.position === 'left' ? 'left' : 'right';
@@ -127,12 +130,26 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.watchSize(this, this.refs.body, () => {
             this.floatAreaHeight = this.refs.body.clientHeight;
         }, true);
+        const viewportHandler = () => {
+            this.viewportWidth = document.documentElement.clientWidth;
+        };
+        if (clickgo.dom.watchSizeMulti(this, document.documentElement, viewportHandler, true)) {
+            this.access.viewportSizeWatch = {
+                'element': document.documentElement,
+                'handler': viewportHandler
+            };
+        }
     }
     onUnmounted() {
         const sizeWatch = this.access.formSizeWatch;
         if (sizeWatch) {
             clickgo.dom.unwatchSizeMulti(this, sizeWatch.element, sizeWatch.handler);
             this.access.formSizeWatch = null;
+        }
+        const viewportSizeWatch = this.access.viewportSizeWatch;
+        if (viewportSizeWatch) {
+            clickgo.dom.unwatchSizeMulti(this, viewportSizeWatch.element, viewportSizeWatch.handler);
+            this.access.viewportSizeWatch = null;
         }
         const siblings = formDocks.get(this.rootForm);
         siblings?.delete(this);

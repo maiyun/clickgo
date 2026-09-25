@@ -2,11 +2,11 @@
     display: flex; flex-direction: column; min-height: 0; background: var(--g-plain-background);
 
     &.left {
-        border-right: solid .5px var(--g-border-color);
+        border-inline-end: solid .5px var(--g-border-color);
     }
 
     &.right {
-        border-left: solid .5px var(--g-border-color);
+        border-inline-start: solid .5px var(--g-border-color);
     }
 
     > .toggle-btn {
@@ -23,6 +23,10 @@
         &:focus-visible {
             box-shadow: inset var(--g-outline-shadow);
         }
+    }
+
+    &:dir(rtl) > .toggle-btn svg {
+        transform: scaleX(-1);
     }
 
     &.expanded {

@@ -10,6 +10,7 @@ type TDock = clickgo.control.AbstractControl & {
     'expandedData': boolean;
     'floatGroup': number;
     'floatAreaHeight': number;
+    'viewportWidth': number;
     'positionData': 'left' | 'right';
     'widthComp': string;
     getFloatArea(): HTMLElement | null;
@@ -53,6 +54,9 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 浮动面板相对当前分组的顶部偏移 --- */
     public floatTop: number = 0;
+
+    /** --- 浮动面板在当前视窗中可使用的最大宽度 --- */
+    public floatMaxWidth: number = 0;
 
     /** --- 是否处于展开模式 --- */
     public get isExpanded(): boolean {
@@ -106,6 +110,7 @@ export default class extends clickgo.control.AbstractControl {
             'width': this.floatWidth,
             'height': this.floatMaxHeight,
             'max-height': this.floatMaxHeight,
+            'max-width': this.floatMaxWidth ? `${this.floatMaxWidth}px` : 'calc(100vw - 40px)',
             'top': `${this.floatTop}px`
         };
     }
@@ -186,6 +191,10 @@ export default class extends clickgo.control.AbstractControl {
         }
         const areaRect = area.getBoundingClientRect();
         const groupRect = this.element.getBoundingClientRect();
+        const opensInlineEnd = this.floatPosition === 'left';
+        const opensRight = opensInlineEnd !== clickgo.dom.isRtl(this.element);
+        this.floatMaxWidth = Math.max(0, opensRight ?
+            document.documentElement.clientWidth - areaRect.right : areaRect.left);
         const topLimit = areaRect.top - groupRect.top;
         const bottomLimit = areaRect.bottom - groupRect.top - content.offsetHeight;
         this.floatTop = Math.max(topLimit, Math.min(0, bottomLimit));
@@ -220,7 +229,12 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
-        this.watch(() => this.dock?.floatAreaHeight, () => {
+        this.watch(() => [
+            this.dock?.floatAreaHeight,
+            this.dock?.viewportWidth,
+            this.floatPosition,
+            this.localeDirection
+        ], () => {
             this.nextTick().then(() => {
                 this.updateFloatLayout();
             }).catch(() => {});

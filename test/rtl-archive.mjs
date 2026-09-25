@@ -364,6 +364,7 @@ const rtlCodeChecks = [
     ['dist/control/common.cgc', 'toolbar', ['getScrollInlineOffset', 'setScrollLeft']],
     ['dist/control/common.cgc', 'date', ['autoPosition', 'autoScroll']],
     ['dist/control/common.cgc', 'daterange', ['autoPosition', 'autoScroll']],
+    ['dist/control/common.cgc', 'dock-group', ['isRtl', 'floatMaxWidth']],
     ['dist/control/table.cgc', 'table', ['localeDirection', 'getScrollLeft', 'setScrollInlineOffset']],
     ['dist/control/desc.cgc', 'desc', ['getScrollInlineOffset', 'setScrollInlineOffset']],
     ['dist/control/iconview.cgc', 'iconview', ['isRtl']],
@@ -385,6 +386,8 @@ const rtlStyleChecks = [
     ['dist/control/common.cgc', 'list/style.css', 'dist/sources/control/list/style.css', [':dir(rtl)', 'margin-inline-end']],
     ['dist/control/common.cgc', 'tab/style.css', 'dist/sources/control/tab/style.css', ['border-inline-start-width', 'border-inline-end-width']],
     ['dist/control/common.cgc', 'timeline/style.css', 'dist/sources/control/timeline/style.css', ['border-inline-start']],
+    ['dist/control/common.cgc', 'dock/style.css', 'dist/sources/control/dock/style.css', [':dir(rtl)', 'border-inline-end']],
+    ['dist/control/common.cgc', 'dock-group/style.css', 'dist/sources/control/dock-group/style.css', ['inset-inline-start', 'max-width:calc(100vw - 40px)']],
     ['dist/control/table.cgc', 'table/style.css', 'dist/sources/control/table/style.css', ['border-inline-end', 'inset-inline-end']],
     ['dist/control/xterm.cgc', 'xterm/style.css', 'dist/sources/control/xterm/style.css', ['direction:ltr']],
 ];

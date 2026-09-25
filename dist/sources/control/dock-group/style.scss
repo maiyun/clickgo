@@ -94,7 +94,7 @@
 
         &.floating {
             > .content {
-                display: flex; flex-direction: column; box-sizing: border-box; position: absolute; top: 0; max-height: 400px; overflow: hidden; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border); box-shadow: var(--g-shadow-d); z-index: 10; border-radius: var(--g-radius);
+                display: flex; flex-direction: column; box-sizing: border-box; position: absolute; top: 0; max-width: calc(100vw - 40px); max-height: 400px; overflow: hidden; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border); box-shadow: var(--g-shadow-d); z-index: 10; border-radius: var(--g-radius);
 
                 > .float-tabs {
                     display: flex; flex: 0 0 auto; border-bottom: solid .5px var(--g-plain-border-color); background: var(--face); border-radius: var(--g-radius) var(--g-radius) 0 0;
@@ -122,11 +122,21 @@
             }
 
             &.left > .content {
-                left: 100%;
+                inset-inline-start: 100%;
             }
 
             &.right > .content {
-                right: 100%;
+                inset-inline-end: 100%;
+            }
+        }
+    }
+
+    &:dir(rtl) {
+        &.expanded > .tabs > .collapse-btn > svg {
+            transform: scaleX(-1) rotate(90deg);
+
+            &.collapsed {
+                transform: scaleX(-1);
             }
         }
     }
