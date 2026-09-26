@@ -346,10 +346,13 @@ global {
     &.dock-group_collapsed > .dock-group_icon-btn {
         width: 30px;
         height: 30px;
+        // --- 固定透明轮廓，仅过渡底色，避免 outline 从默认文字色插值时闪白或闪黑 ---
+        outline: solid 1px transparent;
+        outline-offset: -1px;
+        transition-property: background-color;
         &.dock-group_active {
             background: var(--compact-highlight);
-            outline: solid 1px var(--cg);
-            outline-offset: -1px;
+            outline-color: var(--cg);
         }
         &:hover { background: var(--compact-dock-hover); }
     }
