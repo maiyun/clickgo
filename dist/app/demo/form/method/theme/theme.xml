@@ -6,6 +6,7 @@
         <button @click="setGlobal('light')">setGlobal "/clickgo/theme/light.cgt"</button>
         <button @click="setGlobal('dark')">setGlobal "/clickgo/theme/dark.cgt"</button>
         <button @click="setGlobal('compact-dark')">setGlobal "/clickgo/theme/compact-dark.cgt"</button>
+        <button @click="setGlobal('compact-light')">setGlobal "/clickgo/theme/compact-light.cgt"</button>
         <button @click="setGlobal('cyber')">setGlobal "/clickgo/theme/cyber.cgt"</button>
         <button @click="setGlobal('admin')">setGlobal "/clickgo/theme/admin.cgt"</button>
         <button @click="setGlobal('modern')">setGlobal "/clickgo/theme/modern.cgt"</button>

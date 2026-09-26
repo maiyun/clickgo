@@ -25,48 +25,48 @@ global {
     --g-boxsize:26px;
 
     // --- 基础颜色 ---
-    --cg:color-mix(in oklch, var(--main), white 4%);
+    --cg:color-mix(in oklch, var(--main), black 12%);
     --cg-hover:color-mix(in oklch, var(--cg), white 10%);
     --cg-active:color-mix(in oklch, var(--cg), black 10%);
     --cg-focus:color-mix(in oklch, var(--cg), black 5%);
-    --cg-disabled:color-mix(in oklch, var(--cg), oklch(from var(--cg) l 0 none) 100%);
-    --cg-bg:color-mix(in oklch, var(--cg), black 65%);
+    --cg-disabled:oklch(.72 .005 255);
+    --cg-bg:color-mix(in srgb, var(--cg), white 88%);
 
     --success:oklch(.55 .15 150);
     --success-hover:oklch(.6 .15 150);
     --success-active:oklch(.45 .15 150);
     --success-focus:oklch(.5 .15 150);
     --success-disabled:oklch(.7 0 150);
-    --success-bg:color-mix(in oklch, var(--success), black 65%);
+    --success-bg:color-mix(in srgb, var(--success), white 88%);
 
     --info:oklch(.55 .15 255);
     --info-hover:oklch(.6 .15 255);
     --info-active:oklch(.45 .15 255);
     --info-focus:oklch(.5 .15 255);
     --info-disabled:oklch(.7 0 255);
-    --info-bg:color-mix(in oklch, var(--info), black 65%);
+    --info-bg:color-mix(in srgb, var(--info), white 88%);
 
     --warning:oklch(.55 .15 45);
     --warning-hover:oklch(.6 .15 45);
     --warning-active:oklch(.45 .15 45);
     --warning-focus:oklch(.5 .15 45);
     --warning-disabled:oklch(.7 0 45);
-    --warning-bg:color-mix(in oklch, var(--warning), black 65%);
+    --warning-bg:color-mix(in srgb, var(--warning), white 88%);
 
     --danger:oklch(.55 .15 25);
     --danger-hover:oklch(.6 .15 25);
     --danger-active:oklch(.45 .15 25);
     --danger-focus:oklch(.5 .15 25);
     --danger-disabled:oklch(.7 0 25);
-    --danger-bg:color-mix(in oklch, var(--danger), black 65%);
+    --danger-bg:color-mix(in srgb, var(--danger), white 88%);
 
-    --g-pure:oklch(.205 .01 255);
-    --face:oklch(.165 .009 255);
-    --face-hover:oklch(.235 .013 255);
-    --face-selected:oklch(.285 .017 255);
-    --g-pop-background:oklch(.235 .01 255);
+    --g-pure:oklch(.995 .003 255);
+    --face:oklch(.968 .006 255);
+    --face-hover:oklch(.945 .009 255);
+    --face-selected:oklch(.915 .012 255);
+    --g-pop-background:oklch(.995 .003 255);
     --g-pop-backdrop:none;
-    --g-pop-border:solid 1px oklch(.36 .012 255);
+    --g-pop-border:solid 1px oklch(.84 .008 255);
     --g-shadow:none;
     --g-shadow-m:none;
     --g-shadow-d:none;
@@ -74,30 +74,30 @@ global {
 
     // --- 默认底色用于悬停反馈，按钮的静止状态单独保持透明 ---
 
-    --g-color:oklch(.88 .008 255);
-    --g-color-hover:oklch(.96 .005 255);
-    --g-color-active:oklch(.8 .01 255);
-    --g-color-focus:oklch(.91 .008 255);
-    --g-color-disabled:oklch(.53 .008 255);
-    --g-color-tip:oklch(.66 .01 255);
+    --g-color:oklch(.34 .014 255);
+    --g-color-hover:oklch(.25 .018 255);
+    --g-color-active:oklch(.2 .018 255);
+    --g-color-focus:oklch(.27 .018 255);
+    --g-color-disabled:oklch(.65 .008 255);
+    --g-color-tip:oklch(.55 .01 255);
 
-    --g-background:oklch(.245 .012 255);
-    --g-background-hover:oklch(.285 .015 255);
-    --g-background-active:oklch(.325 .018 255);
-    --g-background-opacity:oklch(.75 .02 255 / .12);
-    --g-background-focus:oklch(.245 .012 255);
-    --g-background-disabled:oklch(.19 .007 255);
+    --g-background:oklch(.997 .002 255);
+    --g-background-hover:oklch(.925 .008 255);
+    --g-background-active:oklch(.885 .01 255);
+    --g-background-opacity:oklch(.55 .02 255 / .16);
+    --g-background-focus:oklch(1 0 0);
+    --g-background-disabled:oklch(.955 .004 255);
 
-    --g-border-color:oklch(.335 .014 255);
-    --g-border-color-hover:oklch(.43 .02 255);
-    --g-border-color-active:color-mix(in oklch, var(--cg), black 28%);
-    --g-border-color-focus:color-mix(in oklch, var(--cg), black 20%);
-    --g-border-color-disabled:oklch(.27 .008 255);
+    --g-border-color:oklch(.885 .012 255);
+    --g-border-color-hover:oklch(.805 .02 255);
+    --g-border-color-active:color-mix(in oklch, var(--cg), white 45%);
+    --g-border-color-focus:color-mix(in oklch, var(--cg), white 38%);
+    --g-border-color-disabled:oklch(.91 .006 255);
     
     --g-focusbox-border-width:0;
-    --compact-divider:oklch(.3 .01 255);
-    --compact-dock-hover:oklch(.285 .012 255);
-    --compact-highlight:color-mix(in srgb, var(--cg), var(--face) 78%);
+    --compact-divider:oklch(.86 .008 255);
+    --compact-dock-hover:oklch(.9 .008 255);
+    --compact-highlight:color-mix(in srgb, var(--cg), var(--face) 88%);
     
     // --- 输入区由底色区分，聚焦时才显示强调色轮廓 ---
 
@@ -107,26 +107,26 @@ global {
     --g-plain-color-focus:var(--g-color-focus);
     --g-plain-color-disabled:var(--g-color-disabled);
 
-    --g-plain-background:oklch(.205 .009 255);
-    --g-plain-background-hover:oklch(.25 .013 255);
-    --g-plain-background-active:oklch(.29 .017 255);
-    --g-plain-background-focus:oklch(.22 .011 255);
-    --g-plain-background-disabled:oklch(.18 .006 255);
+    --g-plain-background:oklch(.94 .005 255);
+    --g-plain-background-hover:oklch(.915 .008 255);
+    --g-plain-background-active:oklch(.89 .01 255);
+    --g-plain-background-focus:oklch(.96 .004 255);
+    --g-plain-background-disabled:oklch(.95 .004 255);
     --g-plain-background-selected:var(--face-selected);
 
     --g-plain-border-color:transparent;
-    --g-plain-border-color-hover:oklch(.4 .018 255);
-    --g-plain-border-color-active:color-mix(in oklch, var(--cg), black 30%);
+    --g-plain-border-color-hover:oklch(.82 .018 255);
+    --g-plain-border-color-active:color-mix(in oklch, var(--cg), white 50%);
     --g-plain-border-color-focus:var(--cg);
     --g-plain-border-color-disabled:transparent;
-    --g-plain-border-color-plain:oklch(.245 .01 255);
+    --g-plain-border-color-plain:oklch(.945 .006 255);
 
     // --- 特殊组件颜色 ---
 
-    --g-block-background:oklch(.285 .014 255);
-    --g-block-background-hover:oklch(.34 .018 255);
-    --g-block-dark-background:oklch(.105 .006 255);
-    --g-block-dark-background-hover:oklch(.135 .009 255);
+    --g-block-background:oklch(.93 .01 255);
+    --g-block-background-hover:oklch(.895 .015 255);
+    --g-block-dark-background:oklch(.18 .012 255);
+    --g-block-dark-background-hover:oklch(.22 .016 255);
 
     ::selection {
         background-color: color-mix(in oklch, var(--cg), transparent 68%);
@@ -259,7 +259,7 @@ global {
             border: none;
             padding: 1px 4px;
             border-radius: 3px;
-            background: oklch(1 0 0 / .07);
+            background: oklch(0 0 0 / .055);
             box-shadow: none;
         }
     }
@@ -433,5 +433,16 @@ global {
 
 .check_wrap, .radio_wrap {
     --g-plain-border-color:var(--g-border-color);
+    --g-plain-border-color-disabled:var(--compact-divider);
+}
+
+// --- 亮色标签使用深色文字；轨道颜色不复用输入区的透明边框 ---
+
+.tag_wrap.tag_default:not(.tag_plain) {
+    color: var(--g-color);
+    background: var(--face-selected);
+}
+.slider_wrap, .switch_wrap {
+    --g-plain-border-color:var(--compact-divider);
     --g-plain-border-color-disabled:var(--compact-divider);
 }
