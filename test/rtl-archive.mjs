@@ -21,8 +21,8 @@ const commonControls = new Set([
     'calendar', 'date', 'datepanel', 'daterange', 'empty', 'label', 'levelselect', 'number', 'palette',
     'select', 'text',
 ]);
-/** --- 六套内置主题 --- */
-const themes = ['admin', 'cyber', 'dark', 'light', 'modern', 'modern-light'];
+/** --- 全部内置主题 --- */
+const themes = ['admin', 'cyber', 'dark', 'light', 'modern', 'modern-light', 'compact-dark'];
 /** --- CGA 格式常量，与编译器的公开包格式保持一致 --- */
 const cgaHeaderLength = 106;
 const cgaKeyContext = Buffer.from('ClickGo/Application/Package');
@@ -398,7 +398,7 @@ for (const [archive, entry, sourcePath, tokens] of rtlStyleChecks) {
     }
 }
 
-// --- 六套主题必须全部包含最新的逻辑方向样式 ---
+// --- 全部主题必须全部包含最新的逻辑方向样式 ---
 for (const theme of themes) {
     const archive = `dist/theme/${theme}.cgt`;
     const archivedConfig = JSON.parse(await readZipText(archive, 'config.json'));
@@ -416,4 +416,4 @@ for (const theme of themes) {
     );
 }
 
-console.log('Archive check passed: task.cga has 16 locales, 19 control locale tables are current, and RTL output is present in all 6 themes.');
+console.log(`Archive check passed: task.cga has 16 locales, 19 control locale tables are current, and RTL output is present in all ${themes.length} themes.`);

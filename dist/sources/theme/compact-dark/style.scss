@@ -1,0 +1,415 @@
+global {
+    --g-padding-xs:2px;
+    --g-padding-s:3px;
+    --g-padding:4px;
+    --g-padding-h:3px 6px;
+    --g-padding-l:8px;
+    --g-padding-l-h:5px var(--g-padding-l);
+    --g-padding-xl:12px;
+    --g-padding-xl-h:7px var(--g-padding-xl);
+    --g-bpadding:12px;
+    --g-margin:4px;
+    --g-radius:4px;
+    --g-radius-l:6px;
+    --g-radius-xl:8px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:20px;
+    --g-size-l:28px;
+    --g-size-xl:38px;
+    --g-control:16px;   // --- 如 check、radio 等的宽度 ---
+    --g-control-m:20px;
+    --g-control-l:24px;
+    --g-transition:all .12s var(--g-cubic);
+    --g-line:1.4;
+    --g-boxsize:26px;
+
+    // --- 基础颜色 ---
+    --cg:color-mix(in oklch, var(--main), white 4%);
+    --cg-hover:color-mix(in oklch, var(--cg), white 10%);
+    --cg-active:color-mix(in oklch, var(--cg), black 10%);
+    --cg-focus:color-mix(in oklch, var(--cg), black 5%);
+    --cg-disabled:color-mix(in oklch, var(--cg), oklch(from var(--cg) l 0 none) 100%);
+    --cg-bg:color-mix(in oklch, var(--cg), black 65%);
+
+    --success:oklch(.55 .15 150);
+    --success-hover:oklch(.6 .15 150);
+    --success-active:oklch(.45 .15 150);
+    --success-focus:oklch(.5 .15 150);
+    --success-disabled:oklch(.7 0 150);
+    --success-bg:color-mix(in oklch, var(--success), black 65%);
+
+    --info:oklch(.55 .15 255);
+    --info-hover:oklch(.6 .15 255);
+    --info-active:oklch(.45 .15 255);
+    --info-focus:oklch(.5 .15 255);
+    --info-disabled:oklch(.7 0 255);
+    --info-bg:color-mix(in oklch, var(--info), black 65%);
+
+    --warning:oklch(.55 .15 45);
+    --warning-hover:oklch(.6 .15 45);
+    --warning-active:oklch(.45 .15 45);
+    --warning-focus:oklch(.5 .15 45);
+    --warning-disabled:oklch(.7 0 45);
+    --warning-bg:color-mix(in oklch, var(--warning), black 65%);
+
+    --danger:oklch(.55 .15 25);
+    --danger-hover:oklch(.6 .15 25);
+    --danger-active:oklch(.45 .15 25);
+    --danger-focus:oklch(.5 .15 25);
+    --danger-disabled:oklch(.7 0 25);
+    --danger-bg:color-mix(in oklch, var(--danger), black 65%);
+
+    --g-pure:oklch(.205 .01 255);
+    --face:oklch(.165 .009 255);
+    --face-hover:oklch(.235 .013 255);
+    --face-selected:oklch(.285 .017 255);
+    --g-pop-background:oklch(.235 .01 255);
+    --g-pop-backdrop:none;
+    --g-pop-border:solid 1px oklch(.36 .012 255);
+    --g-shadow:none;
+    --g-shadow-m:none;
+    --g-shadow-d:none;
+    --g-outline-shadow:0 0 0 1px var(--cg);
+
+    // --- 默认底色用于悬停反馈，按钮的静止状态单独保持透明 ---
+
+    --g-color:oklch(.88 .008 255);
+    --g-color-hover:oklch(.96 .005 255);
+    --g-color-active:oklch(.8 .01 255);
+    --g-color-focus:oklch(.91 .008 255);
+    --g-color-disabled:oklch(.53 .008 255);
+    --g-color-tip:oklch(.66 .01 255);
+
+    --g-background:oklch(.245 .012 255);
+    --g-background-hover:oklch(.285 .015 255);
+    --g-background-active:oklch(.325 .018 255);
+    --g-background-opacity:oklch(.75 .02 255 / .12);
+    --g-background-focus:oklch(.245 .012 255);
+    --g-background-disabled:oklch(.19 .007 255);
+
+    --g-border-color:oklch(.335 .014 255);
+    --g-border-color-hover:oklch(.43 .02 255);
+    --g-border-color-active:color-mix(in oklch, var(--cg), black 28%);
+    --g-border-color-focus:color-mix(in oklch, var(--cg), black 20%);
+    --g-border-color-disabled:oklch(.27 .008 255);
+    
+    --g-focusbox-border-width:0;
+    --compact-divider:oklch(.3 .01 255);
+    --compact-highlight:color-mix(in srgb, var(--cg), var(--face) 78%);
+    
+    // --- 输入区由底色区分，聚焦时才显示强调色轮廓 ---
+
+    --g-plain-color:var(--g-color);
+    --g-plain-color-hover:var(--g-color-hover);
+    --g-plain-color-active:var(--g-color-active);
+    --g-plain-color-focus:var(--g-color-focus);
+    --g-plain-color-disabled:var(--g-color-disabled);
+
+    --g-plain-background:oklch(.205 .009 255);
+    --g-plain-background-hover:oklch(.25 .013 255);
+    --g-plain-background-active:oklch(.29 .017 255);
+    --g-plain-background-focus:oklch(.22 .011 255);
+    --g-plain-background-disabled:oklch(.18 .006 255);
+    --g-plain-background-selected:var(--face-selected);
+
+    --g-plain-border-color:transparent;
+    --g-plain-border-color-hover:oklch(.4 .018 255);
+    --g-plain-border-color-active:color-mix(in oklch, var(--cg), black 30%);
+    --g-plain-border-color-focus:var(--cg);
+    --g-plain-border-color-disabled:transparent;
+    --g-plain-border-color-plain:oklch(.245 .01 255);
+
+    // --- 特殊组件颜色 ---
+
+    --g-block-background:oklch(.285 .014 255);
+    --g-block-background-hover:oklch(.34 .018 255);
+    --g-block-dark-background:oklch(.105 .006 255);
+    --g-block-dark-background-hover:oklch(.135 .009 255);
+
+    ::selection {
+        background-color: color-mix(in oklch, var(--cg), transparent 68%);
+    }
+}
+
+// --- 普通按钮保留轻量细框，工具按钮只用底色反馈；语义按钮保留颜色 ---
+
+.button_wrap {
+    // --- 按钮横向比通用控件再收紧 1px，不改变 circle 与 sizeh 的尺寸语义 ---
+    &:not(.button_circle):not(.button_sizeh) {
+        &.button_simple, .button_inner {
+            padding-inline: 3px;
+        }
+        &.button_size-s {
+            &.button_simple, .button_inner { padding-inline: 2px; }
+        }
+        &.button_size-l {
+            &.button_simple, .button_inner { padding-inline: 6px; }
+        }
+        &.button_size-xl {
+            &.button_simple, .button_inner { padding-inline: 8px; }
+        }
+    }
+    &.button_default {
+        &.button_plain, &:not(.button_plain) {
+            --background:transparent;
+            --background-focus:transparent;
+            --background-disabled:transparent;
+            --border:solid 1px var(--compact-divider);
+            --border-hover:solid 1px var(--g-border-color-hover);
+            --border-active:solid 1px var(--g-border-color-active);
+            --border-focus:solid 1px var(--g-border-color-focus);
+            --border-disabled:solid 1px var(--compact-divider);
+            --shadow:none;
+        }
+    }
+    &.button_tool {
+        &.button_plain, &:not(.button_plain) {
+            --background:transparent;
+            --background-focus:transparent;
+            --background-disabled:transparent;
+            --border:none;
+            --border-hover:none;
+            --border-active:none;
+            --border-focus:none;
+            --border-disabled:none;
+            --shadow:none;
+        }
+    }
+    &:not([data-cg-disabled]) {
+        &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] {
+            box-shadow: none;
+        }
+        &.button_checked {
+            &::before {
+                border: solid 1px var(--cg);
+            }
+            &.button_tool::before {
+                border: none;
+            }
+            &.button_area-all, &.button_area-mark {
+                background: var(--compact-highlight);
+            }
+        }
+    }
+    &[data-cg-disabled].button_checked::before {
+        border: solid 1px var(--compact-divider);
+    }
+    &[data-cg-disabled].button_tool.button_checked::before {
+        border: none;
+    }
+    &:focus-visible, .button_inner:focus-visible, .button_arrow:focus-visible {
+        outline: solid 1px var(--cg);
+        outline-offset: -1px;
+    }
+    .button_pointer {
+        display: none;
+    }
+}
+
+// --- 对话框正文适当留白；操作按钮仅收窄，保持主题通用高度 ---
+
+.dialog_wrap {
+    &.dialog_padding .dialog_content {
+        padding: 12px;
+    }
+    .dialog_controls .dialog_tag-cg-button {
+        min-width: 72px;
+        box-sizing: border-box;
+    }
+}
+
+// --- 菜单用不占布局空间的细框，密集条目仍有明确的位置反馈 ---
+
+.menulist_wrap {
+    padding: 3px;
+    background: var(--g-pop-background);
+}
+.menulist-item_wrap {
+    position: relative;
+    // --- 菜单密度独立于工具栏，标记槽与纯文字项使用相同的最低行高 ---
+    min-height: 28px;
+    box-sizing: border-box;
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border: solid 1px transparent;
+        border-radius: var(--g-radius);
+        pointer-events: none;
+    }
+    &:not([data-cg-disabled]) {
+        &:hover, &[data-cg-pop-open] {
+            background: var(--compact-highlight);
+            &::before {
+                border-color: color-mix(in oklch, var(--cg), transparent 35%);
+            }
+        }
+    }
+    .menulist-item_inner {
+        min-height: 28px;
+        box-sizing: border-box;
+        padding-block: 4px;
+        padding-inline: 8px 0;
+    }
+    .menulist-item_right {
+        padding-inline: 20px 8px;
+        .menulist-item_btn {
+            border: none;
+            padding: 1px 4px;
+            border-radius: 3px;
+            background: oklch(1 0 0 / .07);
+            box-shadow: none;
+        }
+    }
+    .menulist-item_check, .menulist-item_radio {
+        background: transparent;
+        height: 28px;
+        flex-shrink: 0;
+    }
+}
+.menu-item_wrap:not([data-cg-disabled]) {
+    &:hover, &:active, &[data-cg-pop-open] {
+        background: var(--compact-highlight);
+        border-color: color-mix(in oklch, var(--cg), transparent 35%);
+    }
+}
+
+// --- 工作区保持平面，只有窗口和侧栏边界保留分隔线 ---
+
+@keyframes compact_flash {
+    0%, 50% { border-color: var(--cg); }
+    51%, 100% { border-color: var(--compact-divider); }
+}
+.form_wrap {
+    &:not(.form_border-none):not([data-cg-max]),
+    &.form_focus:not(.form_border-none):not([data-cg-max]) {
+        box-shadow: none;
+        border-color: var(--compact-divider);
+    }
+    &.form_flash {
+        animation: compact_flash .2s linear infinite;
+    }
+    .form_inner {
+        .form_header {
+            border-bottom: solid 1px var(--compact-divider);
+            .form_controls {
+                .form_min, .form_max {
+                    &:hover { background: var(--face-hover); }
+                    &:active { background: var(--face-selected); }
+                }
+            }
+        }
+        .form_content .form_step {
+            box-shadow: none;
+        }
+    }
+}
+.group_wrap {
+    border-radius: var(--g-radius);
+    &.group_hover:hover, &:not(.group_hover) {
+        box-shadow: none;
+    }
+}
+.toolbar_wrap {
+    border-bottom-color: var(--compact-divider);
+    &.toolbar_borderless { border-bottom-color: transparent; }
+    > .toolbar_body, > .toolbar_right {
+        padding-block: 2px;
+        gap: 3px;
+    }
+}
+.dock_wrap {
+    &.dock_left, &.dock_right { border-color: var(--compact-divider); }
+    > .dock_toggle-btn { height: 24px; border-bottom-color: var(--compact-divider); }
+    &.dock_collapsed { width: 32px; }
+}
+.dock-group_wrap {
+    &.dock-group_expanded, &.dock-group_collapsed { border-bottom-color: var(--compact-divider); }
+    &.dock-group_expanded > .dock-group_tabs {
+        border-bottom-color: var(--compact-divider);
+        > .dock-group_collapse-btn { width: 24px; }
+    }
+    &.dock-group_collapsed > .dock-group_icon-btn {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+// --- 页签以细线标识选中项，内容区不再套框 ---
+
+.tab_wrap {
+    // --- 完整覆盖默认页签的选中留白和相邻边框，切换只改变颜色 ---
+    &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
+        > .tab_tabs-wrap > .tab_tabs {
+            > .tab_tab, > .tab_tab.tab_selected,
+            > .tab_tab.tab_selected + .tab_tab, > .tab_tab:last-child {
+                border-width: 0;
+                padding: 0;
+            }
+        }
+    }
+    > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+        transition-property: color, background-color;
+        border: none;
+        background: transparent;
+        &::after { background: var(--cg); }
+        &:not(.tab_selected):not([data-hover]):hover { background: var(--face-hover); }
+        &.tab_selected { background: var(--compact-highlight); color: var(--g-color-focus); }
+    }
+    &.tab_top > .tab_tabs-wrap > .tab_tabs > .tab_tab.tab_selected::after {
+        top: auto; bottom: 0; height: 2px;
+    }
+    &.tab_bottom > .tab_tabs-wrap > .tab_tabs > .tab_tab.tab_selected::after {
+        top: 0; height: 2px;
+    }
+    &.tab_left > .tab_tabs-wrap > .tab_tabs > .tab_tab.tab_selected::after {
+        left: auto; right: 0; width: 2px;
+    }
+    &.tab_right > .tab_tabs-wrap > .tab_tabs > .tab_tab.tab_selected::after {
+        left: 0; width: 2px;
+    }
+    > .tab_panel { border: none; background: transparent; }
+}
+
+// --- 导航与滚动条去除装饰性阴影 ---
+
+.nav_wrap {
+    .nav_menuwrap .nav_menu, .nav_content .nav_header { box-shadow: none; }
+    .nav_bg { display: none; }
+}
+.nav-item_wrap.nav-item_selected > .nav-item_text {
+    color: var(--g-color-focus);
+    background: var(--compact-highlight);
+}
+.scroll_wrap {
+    background: transparent;
+    .scroll_start, .scroll_end { display: none; }
+}
+.loading_wrap .loading_item2 { box-shadow: none; }
+.table_wrap .table_header .table_item.table_fixed-left::before,
+.table_wrap .table_header .table_item.table_fixed-right::before,
+.table-item_wrap.table-item_fixed-left::before,
+.table-item_wrap.table-item_fixed-right::before { box-shadow: none; }
+.drawer_wrap .drawer_body { box-shadow: none; }
+.task_wrap {
+    background: var(--g-pop-background);
+    .task_date { color: var(--g-color); }
+}
+.select_tag-cg-greatselect .select_op .select_tags .select_tag {
+    .select_label { padding: 0 6px; }
+    .select_close { width: 18px; height: 18px; }
+}
+
+// --- 默认进度条需要独立于透明边框的填充色，语义类型仍使用各自主色 ---
+
+.progress_wrap.progress_default .progress_block {
+    background: var(--g-color-tip);
+}
+
+// --- 复选框与单选框需要可识别的轮廓，不能随输入区一起隐去 ---
+
+.check_wrap, .radio_wrap {
+    --g-plain-border-color:var(--g-border-color);
+    --g-plain-border-color-disabled:var(--compact-divider);
+}

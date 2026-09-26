@@ -1,10 +1,11 @@
-<form width="350" height="500" title="Library theme" padding="10">
+<form width="350" height="560" title="Library theme" padding="10">
     <layout direction="v" gutter="10" style="flex: 1;">
         <button @click="load">Load "/clickgo/theme/dark.cgt"</button>
         <button @click="remove">remove('dark')</button>
         <button @click="clear">clear()</button>
         <button @click="setGlobal('light')">setGlobal "/clickgo/theme/light.cgt"</button>
         <button @click="setGlobal('dark')">setGlobal "/clickgo/theme/dark.cgt"</button>
+        <button @click="setGlobal('compact-dark')">setGlobal "/clickgo/theme/compact-dark.cgt"</button>
         <button @click="setGlobal('cyber')">setGlobal "/clickgo/theme/cyber.cgt"</button>
         <button @click="setGlobal('admin')">setGlobal "/clickgo/theme/admin.cgt"</button>
         <button @click="setGlobal('modern')">setGlobal "/clickgo/theme/modern.cgt"</button>
