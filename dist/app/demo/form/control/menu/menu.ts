@@ -10,6 +10,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public check3 = true;
 
+    /** --- 长菜单中最后点击的菜单项 --- */
+    public selectedItem = '';
+
     public onCheck(event: Event): void {
         event.preventDefault();
     }

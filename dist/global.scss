@@ -285,6 +285,10 @@
     &:not([data-cg-open]) {
         pointer-events: none;
     }
+    // --- 直接内容节点通过 data-cg-pop-content 声明由内部处理溢出，弹层负责限高 ---
+    &:has(> [data-cg-pop-content]) {
+        display: flex; flex-direction: column;
+    }
     &[data-cg-pop-none] {
         // --- 完全不显示时卸载显示，提高页面执行效率 ---
         display: none !important;

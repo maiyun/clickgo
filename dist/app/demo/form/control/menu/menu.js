@@ -4,6 +4,8 @@ export default class extends clickgo.form.AbstractForm {
     check1 = true;
     check2 = false;
     check3 = true;
+    /** --- 长菜单中最后点击的菜单项 --- */
+    selectedItem = '';
     onCheck(event) {
         event.preventDefault();
     }

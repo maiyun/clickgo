@@ -95,6 +95,24 @@
         </menulist>
         <label>Bar:</label>
         <menu>
+            <!-- 超出视窗高度的菜单和子菜单，可滚动至末项并点击。 -->
+            <menu-item>
+                <template v-slot>Long menu (80 items)</template>
+                <template v-slot:pop>
+                    <menulist>
+                        <menulist-item>
+                            <template v-slot>Long submenu (80 items)</template>
+                            <template v-slot:pop>
+                                <menulist>
+                                    <menulist-item v-for="n in 80" :key="n" @click="selectedItem = 'Submenu item ' + n">Submenu item {{n}}</menulist-item>
+                                </menulist>
+                            </template>
+                        </menulist-item>
+                        <menulist-split></menulist-split>
+                        <menulist-item v-for="n in 80" :key="n" @click="selectedItem = 'Menu item ' + n">Menu item {{n}}</menulist-item>
+                    </menulist>
+                </template>
+            </menu-item>
             <menu-item alt="U">
                 <template v-slot>Item1</template>
                 <template v-slot:pop>
@@ -197,5 +215,6 @@
             </menu-item>
             <menu-item>Item7</menu-item>
         </menu>
+        <label>Selected: {{selectedItem || 'None'}}</label>
     </layout>
 </form>

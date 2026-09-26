@@ -1,3 +1,33 @@
 .wrap {
-    padding: 2px; white-space: nowrap; background: var(--face);
+    display: flex; flex-direction: column; position: relative; min-height: 0; padding: 2px; white-space: nowrap; background: var(--face); overflow: hidden;
+
+    > .body {
+        min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    > .edge {
+        position: absolute; inset-inline: 2px; height: calc(var(--g-padding-l) + var(--g-padding)); display: flex; align-items: center; justify-content: center; color: var(--g-color);
+
+        &::after {
+            content: ''; width: 5px; height: 5px; border: solid 1px currentColor; border-width: 1px 1px 0 0;
+        }
+
+        &.start {
+            top: 2px; background: linear-gradient(to bottom, var(--face), var(--face) 40%, transparent);
+            &::after {
+                transform: rotate(-45deg);
+            }
+        }
+
+        &.end {
+            bottom: 2px; background: linear-gradient(to top, var(--face), var(--face) 40%, transparent);
+            &::after {
+                transform: rotate(135deg);
+            }
+        }
+    }
 }

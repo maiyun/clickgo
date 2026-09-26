@@ -1,3 +1,7 @@
-<div class="wrap">
-    <slot></slot>
+<div class="wrap" style="flex-shrink: 1;" data-cg-pop-content>
+    <div ref="body" class="body" style="flex-shrink: 1;" data-cg-scroll @scroll="refreshScroll(true)">
+        <slot></slot>
+    </div>
+    <div v-show="scrollStart" class="edge start" @pointerdown="scrollDown($event, 'start')" @click.stop></div>
+    <div v-show="scrollEnd" class="edge end" @pointerdown="scrollDown($event, 'end')" @click.stop></div>
 </div>
