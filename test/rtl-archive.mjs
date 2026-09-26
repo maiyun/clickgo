@@ -382,6 +382,7 @@ for (const [archive, control, tokens] of rtlCodeChecks) {
 
 // --- 控件 RTL 样式必须进入 cgc，并与 Sass 生成 CSS 一致 ---
 const rtlStyleChecks = [
+    ['dist/control/form.cgc', 'form/style.css', 'dist/sources/control/form/style.css', ['isolation:isolate']],
     ['dist/control/common.cgc', 'button/style.css', 'dist/sources/control/button/style.css', [':dir(rtl)', 'border-inline-end']],
     ['dist/control/common.cgc', 'list/style.css', 'dist/sources/control/list/style.css', [':dir(rtl)', 'margin-inline-end']],
     ['dist/control/common.cgc', 'tab/style.css', 'dist/sources/control/tab/style.css', ['border-inline-start-width', 'border-inline-end-width']],
