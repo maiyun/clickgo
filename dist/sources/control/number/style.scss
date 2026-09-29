@@ -25,7 +25,8 @@
     }
 
     .text {
-        flex: 1; -webkit-appearance: none; appearance: none; border: solid .5px transparent; margin: 0; outline: none; -webkit-overflow-scrolling: touch; color: inherit; min-height: 100%; transition: var(--g-transition); transition-property: color, background-color, border, box-shadow; padding: var(--g-padding); font: inherit !important; text-align: center; border-radius: var(--g-radius); width: 80px;
+        // --- 原生输入框的固有最小宽度会挤出增减按钮，允许按控件剩余空间收缩 ---
+        flex: 1; min-width: 0; -webkit-appearance: none; appearance: none; border: solid .5px transparent; margin: 0; outline: none; -webkit-overflow-scrolling: touch; color: inherit; min-height: 100%; transition: var(--g-transition); transition-property: color, background-color, border, box-shadow; padding: var(--g-padding); font: inherit !important; text-align: center; border-radius: var(--g-radius); width: 80px;
         &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
             -webkit-appearance: none;
         }

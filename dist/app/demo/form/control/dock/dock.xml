@@ -82,7 +82,7 @@
         <!-- Dock、Dock Group 与 Dock Item 参数 -->
         <layout wrap gutter="10" align-v="center">
             <check v-model="multiple">Two columns</check>
-            <layout align-v="center" gutter="8"><label>width</label><number v-model="width" min="160" max="400" style="width: 100px;"></number></layout>
+            <layout align-v="center" gutter="8"><label>width</label><number v-model="width" min="160" max="400" style="width: 140px;"></number></layout>
             <layout align-v="center" gutter="8" style="flex: 1; min-width: 150px;"><label>position</label><select v-model="position" :data="['left', 'right']" style="flex: 1; min-width: 0;"></select></layout>
             <button @click="expanded = !expanded">{{expanded ? '' : '!'}}expanded</button>
         </layout>
