@@ -45,7 +45,7 @@ export default class extends clickgo.control.AbstractControl {
      * @returns 无返回值
      */
     public resize(): void {
-        this.stab?.resize();
+        this.stab?.requestResize();
     }
 
     /**
@@ -66,8 +66,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         this.index = clickgo.dom.index(this.element);
         // --- 选中时更新 rect 滑块位置 ---
-        this.watch('isSelected', async () => {
-            await this.nextTick();
+        this.watch('isSelected', () => {
             this.resize();
         }, {
             'immediate': true

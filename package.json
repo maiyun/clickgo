@@ -14,7 +14,8 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale && npm run test:style",
+    "test:style": "node --experimental-vm-modules test/dom-style.mjs",
     "test:archive": "node test/rtl-archive.mjs",
     "test:locale": "node --experimental-vm-modules test/locale-integrity.mjs && node --experimental-vm-modules test/rtl-direction.mjs",
     "native": "electron ./dist/test/native",

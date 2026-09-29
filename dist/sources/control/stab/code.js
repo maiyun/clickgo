@@ -20,7 +20,9 @@ export default class extends clickgo.control.AbstractControl {
     tabItemTop = 0;
     /** --- 不参与响应式处理的尺寸监听回调 --- */
     access = {
-        'resizeHandler': null
+        'resizeHandler': null,
+        'resizePending': false,
+        'unmounting': false
     };
     /**
      * --- 由 stab-item 调用，设置选中值 ---
@@ -60,6 +62,22 @@ export default class extends clickgo.control.AbstractControl {
         this.tabItemHeight = item?.offsetHeight ?? 0;
         this.tabItemTop = item?.offsetTop ?? 0;
     }
+    /**
+     * --- 合并同一轮布局变化，在 Vue 更新完成后只测量一次 ---
+     * @returns 无返回值
+     */
+    requestResize() {
+        if (this.access.resizePending || this.access.unmounting || (this.props.type !== 'rect')) {
+            return;
+        }
+        this.access.resizePending = true;
+        this.nextTick().then(() => {
+            this.access.resizePending = false;
+            if (!this.access.unmounting) {
+                this.resize();
+            }
+        }).catch(() => { });
+    }
     onMounted() {
         this.watch('modelValue', () => {
             const v = this.props.modelValue;
@@ -70,18 +88,16 @@ export default class extends clickgo.control.AbstractControl {
         }, {
             'immediate': true
         });
-        this.watch('selected', async () => {
-            await this.nextTick();
-            this.resize();
+        this.watch('selected', () => {
+            this.requestResize();
         });
-        this.watch('type', async () => {
-            await this.nextTick();
-            this.resize();
+        this.watch('type', () => {
+            this.requestResize();
         }, {
             'immediate': true
         });
         this.access.resizeHandler = () => {
-            this.resize();
+            this.requestResize();
         };
         clickgo.dom.watchSizeMulti(this, this.element, this.access.resizeHandler);
         // --- 固定宽度下 padding、居中方式或 RTL 改变也可能只移动子项而不改变尺寸 ---
@@ -91,8 +107,10 @@ export default class extends clickgo.control.AbstractControl {
         ], this.access.resizeHandler);
     }
     onBeforeUnmount() {
+        this.access.unmounting = true;
         if (this.access.resizeHandler) {
             clickgo.dom.unwatchSizeMulti(this, this.element, this.access.resizeHandler);
+            clickgo.dom.unwatchStyle(this.element, undefined, this.access.resizeHandler);
         }
     }
 }

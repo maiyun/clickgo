@@ -1075,13 +1075,23 @@ watchCgTimerHandler();
 // --- watchStyle ---
 // ------------------
 
+/** --- 样式变化通知回调 --- */
+type TWatchStyleCallback = (name: string, value: string, old: string) => void | Promise<void>;
+
+/** --- 单个属性的上次值与订阅者 --- */
+interface IWatchStyleName {
+    'val': string;
+    'cb': TWatchStyleCallback[];
+}
+
+/** --- 元素所属 Form/Panel 的样式监听记录 --- */
 interface IWatchStyleItem {
     'el': HTMLElement;
-    'sd': CSSStyleDeclaration;
-    'names': Record<string, {
-        'val': string;
-        'cb': Array<(name: string, value: string, old: string) => void | Promise<void>>;
-    }>;
+    'sd': CSSStyleDeclaration & Record<string, string>;
+    'formId': string;
+    'panelId': string;
+    'index': string;
+    'names': Record<string, IWatchStyleName>;
 }
 
 const watchStyleList: Record<
@@ -1098,8 +1108,34 @@ const watchStyleList: Record<
     >
 > = {};
 
+/** --- 按真实元素查询记录，避免复制或移除后的 DOM 索引指向其他监听 --- */
+const watchStyleElements = new WeakMap<HTMLElement, IWatchStyleItem>();
+
 /** --- 监视元素的 data-cg-styleindex --- */
 let watchStyleIndex: number = 0;
+
+/**
+ * --- 移除一条样式监听记录及空的 Form/Panel 分组 ---
+ * @param item 要移除的监听记录
+ * @returns 无返回值
+ */
+function removeWatchStyleItem(item: IWatchStyleItem): void {
+    const panels = watchStyleList[item.formId];
+    const items = panels?.[item.panelId];
+    if (items?.[item.index] === item) {
+        delete items[item.index];
+        if (!Object.keys(items).length) {
+            delete panels[item.panelId];
+        }
+        if (!Object.keys(panels).length) {
+            delete watchStyleList[item.formId];
+        }
+    }
+    if (watchStyleElements.get(item.el) === item) {
+        watchStyleElements.delete(item.el);
+        item.el.removeAttribute('data-cg-styleindex');
+    }
+}
 
 /**
  * --- 监听一个标签的计算后样式的变化 ---
@@ -1107,107 +1143,207 @@ let watchStyleIndex: number = 0;
  * @param name 样式名
  * @param cb 变更回调
  * @param immediate 是否立刻执行一次
+ * @returns 无返回值
  */
 export function watchStyle(
     el: HTMLElement,
     name: string | string[],
-    cb: (name: string, value: string, old: string) => void | Promise<void>,
+    cb: TWatchStyleCallback,
     immediate: boolean = false
 ): void {
     if (typeof name === 'string') {
         name = [name];
     }
-    // --- 获取监视标签的所属 wrap ---
+    if (!name.length) {
+        return;
+    }
     const formWrap = findParentByData(el, 'form-id');
     if (!formWrap) {
         return;
     }
     const formId = formWrap.dataset.formId!;
-    // --- 获取监视标签的所属 panel ---
     const panelWrap = findParentByData(el, 'panel-id');
     const panelId = panelWrap ? panelWrap.dataset.panelId! : 'default';
-    /** --- 监视 index 值 --- */
-    const index = el.dataset.cgStyleindex;
-    if (index) {
-        // --- 已经有监听了 ---
-        const item = watchStyleList[formId][panelId][index];
-        for (const n of name) {
-            if (!item.names[n]) {
-                item.names[n] = {
-                    'val': (item.sd as any)[n],
-                    'cb': [cb]
-                };
-            }
-            else {
-                item.names[n].cb.push(cb);
-            }
-            if (immediate) {
-                cb(n, (item.sd as any)[n], '') as any;
+    let item = watchStyleElements.get(el);
+    if (item && ((item.formId !== formId) || (item.panelId !== panelId))) {
+        removeWatchStyleItem(item);
+        item = undefined;
+    }
+    if (!item) {
+        const index = (watchStyleIndex++).toString();
+        item = {
+            'el': el,
+            'sd': getComputedStyle(el) as CSSStyleDeclaration & Record<string, string>,
+            'formId': formId,
+            'panelId': panelId,
+            'index': index,
+            'names': {}
+        };
+        watchStyleList[formId] ??= {};
+        watchStyleList[formId][panelId] ??= {};
+        watchStyleList[formId][panelId][index] = item;
+        watchStyleElements.set(el, item);
+        el.dataset.cgStyleindex = index;
+    }
+    for (const n of name) {
+        if (watchStyleElements.get(el) !== item) {
+            return;
+        }
+        const entry = item.names[n];
+        const value = (!entry || immediate) ? item.sd[n] : entry.val;
+        if (!entry) {
+            item.names[n] = {
+                'val': value,
+                'cb': [cb]
+            };
+        }
+        else {
+            entry.cb.push(cb);
+        }
+        if (immediate) {
+            const result = cb(n, value, '');
+            if (result instanceof Promise) {
+                result.catch(() => {});
             }
         }
+    }
+}
+
+/**
+ * --- 取消元素的样式监听，可只移除指定属性或指定回调 ---
+ * @param el 要取消监听的元素，移出页面后仍可取消
+ * @param name 样式名，留空则匹配全部属性
+ * @param cb 只移除此回调，留空则移除匹配属性的全部回调
+ * @returns 无返回值
+ */
+export function unwatchStyle(el: HTMLElement, name?: string | string[], cb?: TWatchStyleCallback): void {
+    const item = watchStyleElements.get(el);
+    if (!item) {
         return;
     }
-    // --- 创建 object ---
-    if (!watchStyleList[formId]) {
-        watchStyleList[formId] = {};
-    }
-    if (!watchStyleList[formId][panelId]) {
-        watchStyleList[formId][panelId] = {};
-    }
-    // --- 创建监听 ---
-    const sd = getComputedStyle(el);
-    watchStyleList[formId][panelId][watchStyleIndex] = {
-        'el': el,
-        'sd': sd,
-        'names': {}
-    };
-    const item = watchStyleList[formId][panelId][watchStyleIndex];
-    for (const n of name) {
-        item.names[n] = {
-            'val': (item.sd as any)[n],
-            'cb': [cb]
-        };
-        if (immediate) {
-            cb(n, (item.sd as any)[n], '') as any;
+    const names = name === undefined ? Object.keys(item.names) : (typeof name === 'string' ? [name] : name);
+    for (const n of names) {
+        const entry = item.names[n];
+        if (!entry) {
+            continue;
         }
+        if (cb) {
+            entry.cb = entry.cb.filter(handler => handler !== cb);
+            if (entry.cb.length) {
+                continue;
+            }
+        }
+        delete item.names[n];
     }
-    el.dataset.cgStyleindex = watchStyleIndex.toString();
-    ++watchStyleIndex;
+    if (!Object.keys(item.names).length) {
+        removeWatchStyleItem(item);
+    }
 }
 
 /**
  * --- 检测一个标签是否正在被 watchStyle ---
  * @param el 要检测的标签
+ * @returns 是否有属于该元素的样式监听
  */
 export function isWatchStyle(el: HTMLElement): boolean {
-    return el.dataset.cgStyleindex ? true : false;
+    return watchStyleElements.has(el);
 }
 
 /**
  * --- 清除某个窗体的所有 watch style 监视 ---
  * @param formId 窗体 id
  * @param panelId 若指定则只清除当前窗体的某个 panel 的 watch
+ * @returns 无返回值
  */
 export function clearWatchStyle(formId: string, panelId?: string): void {
-    if (!watchStyleList[formId]) {
+    const panels = watchStyleList[formId];
+    if (!panels) {
         return;
     }
-    for (const panel in watchStyleList[formId]) {
-        if (panelId) {
-            if (panel !== panelId) {
+    for (const panel in panels) {
+        if ((panelId !== undefined) && (panel !== panelId)) {
+            continue;
+        }
+        for (const index in panels[panel]) {
+            removeWatchStyleItem(panels[panel][index]);
+        }
+    }
+}
+
+/**
+ * --- 先采集本轮全部样式变化，再通知订阅者，避免回调写入与计算样式读取交错 ---
+ * @param formId 当前焦点 Form
+ * @param panelIds 当前活跃 Panel 列表
+ * @returns 无返回值
+ */
+function checkWatchStyle(formId: string, panelIds: string[]): void {
+    const panels = watchStyleList[formId];
+    if (!panels) {
+        return;
+    }
+    const pending: Array<{
+        'item': IWatchStyleItem;
+        'entry': IWatchStyleName;
+        'name': string;
+        'value': string;
+        'old': string;
+        'callbacks': TWatchStyleCallback[];
+    }> = [];
+    const collect = (items: Record<string, IWatchStyleItem> | undefined): void => {
+        if (!items) {
+            return;
+        }
+        for (const index in items) {
+            const item = items[index];
+            if (!document.body.contains(item.el)) {
+                removeWatchStyleItem(item);
                 continue;
             }
+            for (const name in item.names) {
+                const entry = item.names[name];
+                const value = item.sd[name];
+                if (value === entry.val) {
+                    continue;
+                }
+                const old = entry.val;
+                entry.val = value;
+                pending.push({
+                    'item': item,
+                    'entry': entry,
+                    'name': name,
+                    'value': value,
+                    'old': old,
+                    'callbacks': [...entry.cb]
+                });
+            }
         }
-        for (const index in watchStyleList[formId][panel]) {
-            const item = watchStyleList[formId][panel][index];
-            item.el.removeAttribute('data-cg-styleindex');
+    };
+    collect(panels.default);
+    for (const id of panelIds) {
+        collect(panels[id]);
+    }
+    for (const change of pending) {
+        if (!document.body.contains(change.item.el)) {
+            removeWatchStyleItem(change.item);
+            continue;
         }
-        delete watchStyleList[formId][panel];
+        for (const cb of change.callbacks) {
+            // --- 前面的回调可能销毁控件、取消监听或重新注册，旧通知不能作用到新的记录 ---
+            if ((watchStyleElements.get(change.item.el) !== change.item)
+                || (change.item.names[change.name] !== change.entry)
+                || !change.entry.cb.includes(cb)) {
+                continue;
+            }
+            // --- 本轮已经保存所有新值，一个订阅者异常不能丢弃其他订阅者的通知 ---
+            try {
+                const result = cb(change.name, change.value, change.old);
+                if (result instanceof Promise) {
+                    result.catch(() => {});
+                }
+            }
+            catch {}
+        }
     }
-    if (Object.keys(watchStyleList[formId]).length) {
-        return;
-    }
-    delete watchStyleList[formId];
 }
 
 // ---------------------
@@ -1462,46 +1598,7 @@ const watchTimerHandler = function(): void {
         if (formId) {
             /** --- 活跃的 panel --- */
             const panelIds = lForm.getActivePanel(formId);
-            if (watchStyleList[formId]) {
-                // --- style ---
-                const handler = (item: IWatchStyleItem, panelId: string, index: string): void => {
-                    if (!document.body.contains(item.el)) {
-                        delete watchStyleList[formId][panelId][index];
-                        if (!Object.keys(watchStyleList[formId][panelId]).length) {
-                            delete watchStyleList[formId][panelId];
-                        }
-                        if (!Object.keys(watchStyleList[formId]).length) {
-                            delete watchStyleList[formId];
-                        }
-                        return;
-                    }
-                    // --- 执行 cb ---
-                    for (const name in item.names) {
-                        if ((item.sd as any)[name] === item.names[name].val) {
-                            continue;
-                        }
-                        const old = item.names[name].val;
-                        item.names[name].val = (item.sd as any)[name];
-                        for (const cb of item.names[name].cb) {
-                            cb(name, (item.sd as any)[name], old) as any;
-                        }
-                    }
-                };
-                // --- 先执行窗体默认的 ---
-                if (watchStyleList[formId].default) {
-                    for (const index in watchStyleList[formId].default) {
-                        handler(watchStyleList[formId].default[index], 'default', index);
-                    }
-                }
-                // --- 再执行活跃的 panel 的 ---
-                for (const id of panelIds) {
-                    if (watchStyleList[formId][id]) {
-                        for (const index in watchStyleList[formId][id]) {
-                            handler(watchStyleList[formId][id][index], id.toString(), index);
-                        }
-                    }
-                }
-            }
+            checkWatchStyle(formId, panelIds);
             // --- property ---
             if (watchPropertyObjects[formId]) {
                 // --- property ---
