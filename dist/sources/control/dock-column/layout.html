@@ -1,0 +1,4 @@
+<div class="wrap" :class="[expandedData ? 'expanded' : 'collapsed', positionData]" :style="expandedData ? {'width': widthComp} : undefined">
+    <cg-sidebar-toggle v-if="!narrow" :expanded="expandedData" :position="positionData" :label="label" @update:expanded="toggle" />
+    <div ref="body" class="body"><slot></slot></div>
+</div>

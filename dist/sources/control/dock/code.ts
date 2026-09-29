@@ -4,6 +4,13 @@ interface IDockInstance {
     'floatGroup': number;
 }
 
+type TDockColumn = clickgo.control.AbstractControl & {
+    'preferredWidth': number;
+    'expandedPreference': boolean;
+    'expandedData': boolean;
+    'autoCollapsed': boolean;
+};
+
 /** --- 同一窗体内的 Dock 实例注册表，确保同时只有一个浮动面板打开 --- */
 const formDocks = new WeakMap<object, Set<IDockInstance>>();
 
@@ -23,10 +30,13 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         'position': 'left' | 'right';
         /** --- width，侧栏展开时的宽度 --- */
         'width': number | string;
+        /** --- minContentWidth，多列布局为工作区预留的宽度 --- */
+        'minContentWidth': number | string;
     } = {
             'expanded': true,
             'position': 'right',
-            'width': 280
+            'width': 280,
+            'minContentWidth': 320
         };
 
     /** --- 不参与响应式处理的 Form 尺寸监听状态 --- */
@@ -39,9 +49,11 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
             'element': HTMLElement;
             'handler': () => void;
         } | null;
+        'nextGroupIndex': number;
     } = {
             'formSizeWatch': null,
-            'viewportSizeWatch': null
+            'viewportSizeWatch': null,
+            'nextGroupIndex': 0
         };
 
     /** --- 当前是否展开 --- */
@@ -59,18 +71,26 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
     /** --- 当前浏览器视窗宽度，用于在视窗缩放时刷新浮动面板 --- */
     public viewportWidth: number = 0;
 
+    /** --- 当前视窗高度，用于限制浮动面板的可用范围 --- */
+    public viewportHeight: number = 0;
+
+    /** --- 所属 Form 宽度，列的自动收起不会改写用户的展开偏好 --- */
+    public formWidth: number = 0;
+
+    /** --- 参与布局计算的列实例；业务状态仍由各列的 v-model 管理 --- */
+    public columns: TDockColumn[] = [];
+
     /** --- 侧栏所在位置 --- */
     public get positionData(): 'left' | 'right' {
         return this.props.position === 'left' ? 'left' : 'right';
     }
 
-    /** --- 当前折叠按钮是否显示向右箭头 --- */
-    public get chevronRight(): boolean {
-        return (this.positionData === 'right') === this.expandedData;
-    }
-
     /** --- 展开时的宽度 --- */
     public get widthComp(): string {
+        if (this.columns.length) {
+            return `calc(${this.columns.map(column => column.expandedData ?
+                `${column.preferredWidth}px` : 'var(--dock-collapsed-width)').join(' + ')} + 1px)`;
+        }
         if (typeof this.props.width === 'number') {
             return `${this.props.width}px`;
         }
@@ -78,6 +98,63 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
             return `${this.props.width}px`;
         }
         return this.props.width;
+    }
+
+    /**
+     * --- 注册独立停靠列 ---
+     * @param column 列实例
+     */
+    public registerColumn(column: TDockColumn): void {
+        this.columns.push(column);
+        this.updateColumns();
+    }
+
+    /**
+     * --- 移除停靠列并释放当前浮层 ---
+     * @param column 列实例
+     */
+    public unregisterColumn(column: TDockColumn): void {
+        this.columns = this.columns.filter(item => item !== column);
+        this.closeFloat();
+        this.updateColumns();
+    }
+
+    /** --- 为跨列分组分配不会发生碰撞的索引 --- */
+    public registerGroup(): number {
+        return this.access.nextGroupIndex++;
+    }
+
+    /**
+     * --- 分组卸载时释放其浮层状态 ---
+     * @param index 分组索引
+     */
+    public unregisterGroup(index: number): void {
+        if (this.floatGroup === index) {
+            this.closeFloat();
+        }
+    }
+
+    /** --- 空间不足时按列顺序收起，最后一列优先保留展开 --- */
+    public updateColumns(): void {
+        if (!this.columns.length || !this.formWidth) {
+            return;
+        }
+        const reserve = this.propNumber('minContentWidth');
+        const available = Math.max(0, Math.min(this.formWidth, this.viewportWidth || this.formWidth) -
+            Math.max(0, Number.isFinite(reserve) ? reserve : 320));
+        const columns = [...this.columns].sort((a, b) => clickgo.dom.index(a.element) - clickgo.dom.index(b.element));
+        let width = columns.reduce((total, column) => total +
+            (column.expandedPreference ? column.preferredWidth : 40), 1);
+        for (const column of columns) {
+            const collapsed = column.expandedPreference && (width > available);
+            if (column.autoCollapsed !== collapsed) {
+                column.autoCollapsed = collapsed;
+                this.closeFloat();
+            }
+            if (collapsed) {
+                width -= column.preferredWidth - 40;
+            }
+        }
     }
 
     /** --- 切换展开/收起 --- */
@@ -88,18 +165,6 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         this.expandedData = !this.expandedData;
         this.floatGroup = -1;
         this.emit('update:expanded', this.expandedData);
-    }
-
-    /**
-     * --- 使用键盘切换展开状态 ---
-     * @param event 键盘事件
-     */
-    public toggleKeydown(event: KeyboardEvent): void {
-        if ((event.key !== 'Enter') && (event.key !== ' ')) {
-            return;
-        }
-        event.preventDefault();
-        this.toggle();
     }
 
     /**
@@ -135,6 +200,17 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         return this.refs.body ?? null;
     }
 
+    /** --- 浮层同时受所属 Form 和浏览器视窗边界约束 --- */
+    public getFloatBounds(): { 'left': number; 'right': number; 'top': number; 'bottom': number; } {
+        const rect = this.rootForm.element.getBoundingClientRect();
+        return {
+            'left': Math.max(0, rect.left),
+            'right': Math.min(document.documentElement.clientWidth, rect.right),
+            'top': Math.max(0, rect.top),
+            'bottom': Math.min(document.documentElement.clientHeight, rect.bottom)
+        };
+    }
+
     public async onMounted(): Promise<void> {
         const form = this.rootForm;
         if (!formDocks.has(form)) {
@@ -155,13 +231,14 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
             return;
         }
         const handler = (): void => {
+            this.formWidth = formElement.offsetWidth;
             const narrow = formElement.offsetWidth < narrowWidth;
-            if (this.narrow === narrow) {
-                return;
+            if (this.narrow !== narrow) {
+                this.narrow = narrow;
+                this.expandedData = !narrow && this.propBoolean('expanded');
+                this.floatGroup = -1;
             }
-            this.narrow = narrow;
-            this.expandedData = !narrow && this.propBoolean('expanded');
-            this.floatGroup = -1;
+            this.updateColumns();
         };
         if (clickgo.dom.watchSizeMulti(this, formElement, handler, true)) {
             this.access.formSizeWatch = {
@@ -175,6 +252,8 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
         }, true);
         const viewportHandler = (): void => {
             this.viewportWidth = document.documentElement.clientWidth;
+            this.viewportHeight = document.documentElement.clientHeight;
+            this.updateColumns();
         };
         if (clickgo.dom.watchSizeMulti(this, document.documentElement, viewportHandler, true)) {
             this.access.viewportSizeWatch = {
@@ -182,6 +261,14 @@ export default class extends clickgo.control.AbstractControl implements IDockIns
                 'handler': viewportHandler
             };
         }
+        this.watch(() => this.columns.map(column => [column.preferredWidth, column.expandedPreference]), () => {
+            this.updateColumns();
+        }, {
+            'deep': true
+        });
+        this.watch('minContentWidth', () => {
+            this.updateColumns();
+        });
     }
 
     public onUnmounted(): void {

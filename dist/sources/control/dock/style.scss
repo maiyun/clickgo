@@ -1,5 +1,6 @@
 .wrap {
-    display: flex; flex-direction: column; min-height: 0; background: var(--g-plain-background);
+    --dock-collapsed-width: 40px;
+    display: flex; flex: none; flex-direction: column; min-height: 0; background: var(--g-plain-background); box-sizing: border-box;
 
     &.left {
         border-inline-end: solid .5px var(--g-border-color);
@@ -7,26 +8,6 @@
 
     &.right {
         border-inline-start: solid .5px var(--g-border-color);
-    }
-
-    > .toggle-btn {
-        display: flex; align-items: center; justify-content: center; height: 28px; outline: none; transition: var(--g-transition); border-bottom: solid .5px var(--g-plain-border-color);
-
-        svg {
-            width: 14px; height: 14px;
-        }
-
-        &:hover {
-            background: var(--face-hover);
-        }
-
-        &:focus-visible {
-            box-shadow: inset var(--g-outline-shadow);
-        }
-    }
-
-    &:dir(rtl) > .toggle-btn svg {
-        transform: scaleX(-1);
     }
 
     &.expanded {
@@ -38,10 +19,18 @@
     }
 
     &.collapsed {
-        width: 40px; overflow: visible;
+        width: var(--dock-collapsed-width); overflow: visible;
 
         > .body {
             flex: 1; display: flex; flex-direction: column; overflow: visible; position: relative;
+        }
+    }
+
+    &.columns {
+        overflow: visible;
+
+        > .body.columns {
+            flex-direction: row; overflow: visible;
         }
     }
 }

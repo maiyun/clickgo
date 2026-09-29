@@ -1,0 +1,6 @@
+<div class="wrap" :class="[position]" :style="{'--toolbox-columns': columnsData}" role="toolbar" aria-orientation="vertical" :aria-label="label || undefined" @keydown="keydown">
+    <cg-sidebar-toggle v-if="propBoolean('collapsible')" :expanded="columnsData === 2" :position="position" :tip-label="l(columnsData === 1 ? 'two-columns' : 'one-column')" @update:expanded="toggleColumns" />
+    <cg-flow class="body" direction="v">
+        <div ref="tools" class="tools"><slot></slot></div>
+    </cg-flow>
+</div>

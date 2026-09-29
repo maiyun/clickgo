@@ -1,0 +1,8 @@
+<div class="wrap">
+    <cg-tip :label="tipLabelComp" immediate>
+        <button class="button" type="button" :tabindex="formFocus ? '0' : '-1'" :aria-label="tipLabelComp" :aria-expanded="propBoolean('expanded')" @click="toggle" @keydown="keydown">
+            <svg v-if="chevronRight" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 7 5 5-5 5m7-10 5 5-5 5" /></svg>
+            <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="m19 7-5 5 5 5m-7-10-5 5 5 5" /></svg>
+        </button>
+    </cg-tip>
+</div>

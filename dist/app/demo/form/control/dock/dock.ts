@@ -16,6 +16,16 @@ export default class extends clickgo.form.AbstractForm {
 
     public lazy = true;
 
+    public multiple = true;
+
+    public projectExpanded = true;
+
+    public mainExpanded = true;
+
+    public showGrid = true;
+
+    public showCodes = false;
+
     public optionTab = 'project';
 
     public position: Array<'left' | 'right'> = ['left'];

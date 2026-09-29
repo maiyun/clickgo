@@ -11,9 +11,14 @@ type TDock = clickgo.control.AbstractControl & {
     'floatGroup': number;
     'floatAreaHeight': number;
     'viewportWidth': number;
+    'viewportHeight': number;
+    'formWidth': number;
     'positionData': 'left' | 'right';
     'widthComp': string;
     getFloatArea(): HTMLElement | null;
+    getFloatBounds?(): { 'left': number; 'right': number; 'top': number; 'bottom': number; };
+    registerGroup(): number;
+    unregisterGroup(index: number): void;
     toggleFloat(groupIndex: number): void;
 };
 
@@ -56,7 +61,10 @@ export default class extends clickgo.control.AbstractControl {
     public floatTop: number = 0;
 
     /** --- 浮动面板在当前视窗中可使用的最大宽度 --- */
-    public floatMaxWidth: number = 0;
+    public floatMaxWidth: number = -1;
+
+    /** --- 与 Form 和视窗交集相交后的浮动内容区高度 --- */
+    public floatAreaHeight: number = -1;
 
     /** --- 是否处于展开模式 --- */
     public get isExpanded(): boolean {
@@ -95,6 +103,9 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 浮动面板最大高度 --- */
     public get floatMaxHeight(): string {
+        if (this.floatAreaHeight >= 0) {
+            return `${Math.min(this.floatAreaHeight, 400)}px`;
+        }
         if (!this.dock?.floatAreaHeight) {
             return '400px';
         }
@@ -106,13 +117,16 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.isFloating) {
             return undefined;
         }
-        return {
+        const style: Record<string, string> = {
             'width': this.floatWidth,
-            'height': this.floatMaxHeight,
             'max-height': this.floatMaxHeight,
-            'max-width': this.floatMaxWidth ? `${this.floatMaxWidth}px` : 'calc(100vw - 40px)',
+            'max-width': this.floatMaxWidth >= 0 ? `${this.floatMaxWidth}px` : 'calc(100vw - 40px)',
             'top': `${this.floatTop}px`
         };
+        if (this.canGrow) {
+            style.height = this.floatMaxHeight;
+        }
+        return style;
     }
 
     /** --- 子项信息列表 --- */
@@ -178,6 +192,29 @@ export default class extends clickgo.control.AbstractControl {
         this.select(name);
     }
 
+    /**
+     * --- 标签、收起图标和折叠按钮支持键盘操作 ---
+     * @param event 键盘事件
+     * @param name 标签名称；省略时切换分组折叠
+     * @param floating 是否操作收起模式的图标
+     */
+    public activateKeydown(event: KeyboardEvent, name?: string, floating = false): void {
+        if ((event.key !== 'Enter') && (event.key !== ' ')) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        if (name === undefined) {
+            this.toggleCollapsed();
+        }
+        else if (floating) {
+            this.iconClick(name);
+        }
+        else {
+            this.select(name);
+        }
+    }
+
     /** --- 根据 Dock 内容区自动调整浮动面板高度和垂直位置 --- */
     public updateFloatLayout(): void {
         if (!this.isFloating || !this.dock) {
@@ -193,17 +230,26 @@ export default class extends clickgo.control.AbstractControl {
         const groupRect = this.element.getBoundingClientRect();
         const opensInlineEnd = this.floatPosition === 'left';
         const opensRight = opensInlineEnd !== clickgo.dom.isRtl(this.element);
+        const bounds = this.dock.getFloatBounds?.() ?? {
+            'left': 0,
+            'right': document.documentElement.clientWidth,
+            'top': areaRect.top,
+            'bottom': areaRect.bottom
+        };
         this.floatMaxWidth = Math.max(0, opensRight ?
-            document.documentElement.clientWidth - areaRect.right : areaRect.left);
-        const topLimit = areaRect.top - groupRect.top;
-        const bottomLimit = areaRect.bottom - groupRect.top - content.offsetHeight;
+            bounds.right - areaRect.right : areaRect.left - bounds.left);
+        const top = Math.max(areaRect.top, bounds.top);
+        const bottom = Math.min(areaRect.bottom, bounds.bottom);
+        this.floatAreaHeight = Math.max(0, bottom - top);
+        const topLimit = top - groupRect.top;
+        const bottomLimit = bottom - groupRect.top - Math.min(content.offsetHeight, this.floatAreaHeight);
         this.floatTop = Math.max(topLimit, Math.min(0, bottomLimit));
     }
 
     public onMounted(): void {
-        this.dock = this.parentByName('dock') as TDock | null;
+        this.dock = (this.parentByName('dock-column') ?? this.parentByName('dock')) as TDock | null;
         if (this.dock) {
-            this.index = clickgo.dom.index(this.element);
+            this.index = this.dock.registerGroup();
         }
         this.watch('modelValue', () => {
             this.selectedData = this.props.modelValue;
@@ -232,6 +278,8 @@ export default class extends clickgo.control.AbstractControl {
         this.watch(() => [
             this.dock?.floatAreaHeight,
             this.dock?.viewportWidth,
+            this.dock?.viewportHeight,
+            this.dock?.formWidth,
             this.floatPosition,
             this.localeDirection
         ], () => {
@@ -242,6 +290,10 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.dom.watchSize(this, this.refs.content, () => {
             this.updateFloatLayout();
         });
+    }
+
+    public onUnmounted(): void {
+        this.dock?.unregisterGroup(this.index);
     }
 
 }

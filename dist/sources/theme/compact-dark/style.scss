@@ -276,17 +276,19 @@ global {
     }
 }
 
-// --- 工作区保持平面，只有窗口和侧栏边界保留分隔线 ---
+// --- 工作区保持平面，窗口用紧凑阴影区分层级，侧栏保留分隔线 ---
 
 @keyframes compact_flash {
     0%, 50% { border-color: var(--cg); }
     51%, 100% { border-color: var(--compact-divider); }
 }
 .form_wrap {
-    &:not(.form_border-none):not([data-cg-max]),
-    &.form_focus:not(.form_border-none):not([data-cg-max]) {
-        box-shadow: none;
+    &:not(.form_border-none):not([data-cg-max]) {
+        box-shadow: 0 3px 10px -3px oklch(0 0 0 / .36), 0 1px 3px oklch(0 0 0 / .22);
         border-color: var(--compact-divider);
+        &.form_focus {
+            box-shadow: 0 5px 14px -4px oklch(0 0 0 / .48), 0 1px 4px oklch(0 0 0 / .28);
+        }
     }
     &.form_flash {
         animation: compact_flash .2s linear infinite;
@@ -321,16 +323,23 @@ global {
     }
 }
 .dock_wrap {
+    --dock-collapsed-width: 32px;
     // --- 不复用输入区底色，避免与按钮的悬停色落在相近亮度 ---
     background: var(--face);
     &.dock_left, &.dock_right { border-color: var(--compact-divider); }
-    > .dock_toggle-btn {
-        height: 24px;
-        border-bottom-color: var(--compact-divider);
-        &:hover { background: var(--compact-dock-hover); }
-    }
     &.dock_collapsed { width: 32px; }
 }
+.dock-column_wrap:not(:first-child) { border-color: var(--compact-divider); }
+.sidebar-toggle_wrap {
+    --sidebar-toggle-border: var(--compact-divider);
+    --sidebar-toggle-background-hover: var(--compact-dock-hover);
+}
+.toolbox_wrap {
+    background: var(--face);
+    &.toolbox_left, &.toolbox_right { border-color: var(--compact-divider); }
+}
+// --- 与控件的分组条件保持相同优先级，避免透明输入边框覆盖分隔线。 ---
+.toolbox-group_wrap:not(:last-child) { border-bottom: solid 1px var(--compact-divider); }
 .dock-group_wrap {
     &.dock-group_expanded, &.dock-group_collapsed { border-bottom-color: var(--compact-divider); }
     &.dock-group_expanded > .dock-group_tabs {

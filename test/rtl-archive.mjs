@@ -14,12 +14,12 @@ const codes = [
 /** --- 包含 localeData 的全部内置控件 --- */
 const localeControls = [
     'arteditor', 'calendar', 'captcha', 'date', 'datepanel', 'daterange', 'empty', 'jodit', 'label',
-    'levelselect', 'map', 'monaco', 'number', 'page', 'palette', 'property', 'select', 'text', 'tuieditor',
+    'levelselect', 'map', 'monaco', 'number', 'page', 'palette', 'property', 'select', 'sidebar-toggle', 'text', 'toolbox', 'tuieditor',
 ];
 /** --- 合并到 common.cgc 的多语言控件 --- */
 const commonControls = new Set([
     'calendar', 'date', 'datepanel', 'daterange', 'empty', 'label', 'levelselect', 'number', 'palette',
-    'select', 'text',
+    'select', 'sidebar-toggle', 'text', 'toolbox',
 ]);
 /** --- 全部内置主题 --- */
 const themes = ['admin', 'cyber', 'dark', 'light', 'modern', 'modern-light', 'compact-dark', 'compact-light'];
@@ -335,7 +335,7 @@ for (const code of codes) {
     }
 }
 
-// --- 19 个控件的归档语言表必须与 TypeScript 源码一致 ---
+// --- 所有多语言控件的归档语言表必须与 TypeScript 源码一致 ---
 const archivedControlCode = new Map();
 for (const control of localeControls) {
     const packageName = commonControls.has(control) ? 'common' : control;
@@ -365,6 +365,10 @@ const rtlCodeChecks = [
     ['dist/control/common.cgc', 'date', ['autoPosition', 'autoScroll']],
     ['dist/control/common.cgc', 'daterange', ['autoPosition', 'autoScroll']],
     ['dist/control/common.cgc', 'dock-group', ['isRtl', 'floatMaxWidth']],
+    ['dist/control/common.cgc', 'dock', ['updateColumns', 'getFloatBounds']],
+    ['dist/control/common.cgc', 'dock-column', ['registerGroup', 'expandedPreference']],
+    ['dist/control/common.cgc', 'toolbox', ['getBoundingClientRect', 'toggleColumns']],
+    ['dist/control/common.cgc', 'sidebar-toggle', ['chevronRight', 'tipLabelComp', 'update:expanded']],
     ['dist/control/table.cgc', 'table', ['localeDirection', 'getScrollLeft', 'setScrollInlineOffset']],
     ['dist/control/desc.cgc', 'desc', ['getScrollInlineOffset', 'setScrollInlineOffset']],
     ['dist/control/iconview.cgc', 'iconview', ['isRtl']],
@@ -387,8 +391,11 @@ const rtlStyleChecks = [
     ['dist/control/common.cgc', 'list/style.css', 'dist/sources/control/list/style.css', [':dir(rtl)', 'margin-inline-end']],
     ['dist/control/common.cgc', 'tab/style.css', 'dist/sources/control/tab/style.css', ['border-inline-start-width', 'border-inline-end-width']],
     ['dist/control/common.cgc', 'timeline/style.css', 'dist/sources/control/timeline/style.css', ['border-inline-start']],
-    ['dist/control/common.cgc', 'dock/style.css', 'dist/sources/control/dock/style.css', [':dir(rtl)', 'border-inline-end']],
+    ['dist/control/common.cgc', 'dock/style.css', 'dist/sources/control/dock/style.css', ['border-inline-end']],
     ['dist/control/common.cgc', 'dock-group/style.css', 'dist/sources/control/dock-group/style.css', ['inset-inline-start', 'max-width:calc(100vw - 40px)']],
+    ['dist/control/common.cgc', 'dock-column/style.css', 'dist/sources/control/dock-column/style.css', ['border-inline-start']],
+    ['dist/control/common.cgc', 'toolbox/style.css', 'dist/sources/control/toolbox/style.css', ['border-inline-end']],
+    ['dist/control/common.cgc', 'sidebar-toggle/style.css', 'dist/sources/control/sidebar-toggle/style.css', [':dir(rtl)', 'border-bottom', '--sidebar-toggle-background']],
     ['dist/control/table.cgc', 'table/style.css', 'dist/sources/control/table/style.css', ['border-inline-end', 'inset-inline-end']],
     ['dist/control/xterm.cgc', 'xterm/style.css', 'dist/sources/control/xterm/style.css', ['direction:ltr']],
 ];
@@ -417,4 +424,4 @@ for (const theme of themes) {
     );
 }
 
-console.log(`Archive check passed: task.cga has 16 locales, 19 control locale tables are current, and RTL output is present in all ${themes.length} themes.`);
+console.log(`Archive check passed: task.cga has 16 locales, ${localeControls.length} control locale tables are current, and RTL output is present in all ${themes.length} themes.`);

@@ -1,0 +1,30 @@
+<form title="Toolbox" width="620" height="440" min-width="360" min-height="300" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; min-width: 0; min-height: 0;">
+        <layout class="preview">
+            <toolbox v-model:columns="columns" :collapsible="collapsible" :position="position[0]" label="Drawing tools" :style="{'order': position[0] === 'left' ? 0 : 2}">
+                <toolbox-group>
+                    <tip label="Browse" :direction="(position[0] === 'left') !== (localeDirection === 'rtl') ? 'right' : 'left'" immediate><button type="tool" :checked="tool === 'browse'" aria-label="Browse" @click="tool = 'browse'"><icon name="eye" size="m"></icon></button></tip>
+                </toolbox-group>
+                <toolbox-group>
+                    <tip label="Draw" :direction="(position[0] === 'left') !== (localeDirection === 'rtl') ? 'right' : 'left'" immediate><button type="tool" :checked="tool === 'draw'" aria-label="Draw" @click="tool = 'draw'"><svg class="tool-icon" view-box="0 0 24 24" layout="&lt;path fill='none' stroke='currentColor' stroke-width='1.7' d='m4 20 1-5L16 4l4 4L9 19zM4 20h5'/&gt;"></svg></button></tip>
+                    <tip label="Erase" :direction="(position[0] === 'left') !== (localeDirection === 'rtl') ? 'right' : 'left'" immediate><button type="tool" :checked="tool === 'erase'" :disabled="disabled" aria-label="Erase" @click="tool = 'erase'"><svg class="tool-icon" view-box="0 0 24 24" layout="&lt;path fill='none' stroke='currentColor' stroke-width='1.7' d='m4 14 8-10 9 7-8 10H9zM7 10l9 7M13 21h8'/&gt;"></svg></button></tip>
+                </toolbox-group>
+                <toolbox-group>
+                    <tip label="Select" :direction="(position[0] === 'left') !== (localeDirection === 'rtl') ? 'right' : 'left'" immediate><button type="tool" :checked="tool === 'select'" aria-label="Select" @click="tool = 'select'"><svg class="tool-icon" view-box="0 0 24 24" layout="&lt;path fill='none' stroke='currentColor' stroke-width='1.7' stroke-dasharray='3 3' d='M4 4h16v16H4z'/&gt;"></svg></button></tip>
+                    <tip label="Add" :direction="(position[0] === 'left') !== (localeDirection === 'rtl') ? 'right' : 'left'" immediate><button type="tool" :checked="tool === 'add'" aria-label="Add" @click="tool = 'add'"><icon name="plus" size="m"></icon></button></tip>
+                </toolbox-group>
+            </toolbox>
+            <layout class="workspace" direction="v" align-h="center" align-v="center" :style="{'order': 1}">
+                <label>Current tool: {{tool}}</label>
+                <label>Use the header arrows to switch between one and two columns.</label>
+                <label>Focus a tool, then use arrow keys or Home/End.</label>
+            </layout>
+        </layout>
+        <layout wrap align-v="center" gutter="10">
+            <check v-model="collapsible">Show column switch</check>
+            <check v-model="disabled">Disable eraser</check>
+            <label>position</label>
+            <select v-model="position" :data="['left', 'right']" style="flex: 1;"></select>
+        </layout>
+    </layout>
+</form>

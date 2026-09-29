@@ -1,15 +1,20 @@
 .wrap {
     display: flex; flex-direction: column; padding: 1px; gap: 1px;
 
+    .tab, .float-tab, .collapse-btn, .icon-btn {
+        outline: none;
+        &:focus-visible { box-shadow: inset var(--g-outline-shadow); }
+    }
+
     &.expanded {
-        flex: 1 1 auto; flex-shrink: 1 !important; min-height: 30px; overflow: hidden; border-bottom: solid .5px var(--g-plain-border-color);
+        flex: 0 1 auto; flex-shrink: 1 !important; min-height: 30px; overflow: hidden; border-bottom: solid .5px var(--g-plain-border-color);
 
         &:last-child {
             border-bottom: none;
         }
 
         &.grow {
-            flex-grow: 2;
+            flex-grow: 1;
         }
 
         &.group-collapsed {

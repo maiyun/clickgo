@@ -7,6 +7,11 @@ export default class extends clickgo.form.AbstractForm {
     groupCollapsed = false;
     historyTab = 'history';
     lazy = true;
+    multiple = true;
+    projectExpanded = true;
+    mainExpanded = true;
+    showGrid = true;
+    showCodes = false;
     optionTab = 'project';
     position = ['left'];
     width = '240';

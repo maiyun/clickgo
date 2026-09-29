@@ -140,7 +140,7 @@ for (const path of localeSources) {
         tables.push({ ...table, path });
     }
 }
-assert.equal(tables.length, 24, 'all 24 built-in TypeScript locale tables must be present');
+assert.equal(tables.length, 26, 'all 26 built-in TypeScript locale tables must be present');
 for (const { node, path, line } of tables) {
     const tableCodes = node.properties.map(getPropertyName);
     assert.deepEqual([...tableCodes].sort(), [...codes].sort(), `${path}:${line} must contain exactly 16 locale entries`);
@@ -186,4 +186,4 @@ const demoLocaleCodes = [...demoLocaleData.matchAll(/'([^']+)'/g)].map((match) =
 assert.deepEqual(demoLocaleCodes, codes, 'demo global locale selector must expose all 16 locales in registry order');
 
 dom.window.close();
-console.log('Locale registry, 24 TypeScript tables, 16 task app locale JSON files and the Demo selector are complete.');
+console.log(`Locale registry, ${tables.length} TypeScript tables, 16 task app locale JSON files and the Demo selector are complete.`);

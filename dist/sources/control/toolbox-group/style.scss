@@ -1,0 +1,7 @@
+.wrap {
+    display: grid; grid-template-columns: repeat(var(--toolbox-columns, 1), max-content); gap: var(--g-padding-s);
+
+    &:not(:last-child) {
+        padding-bottom: var(--g-padding-s); border-bottom: solid .5px var(--g-plain-border-color);
+    }
+}

@@ -1,0 +1,14 @@
+.wrap {
+    display: flex; flex: none; flex-direction: column; min-height: 0; width: max-content; background: var(--g-plain-background); box-sizing: border-box;
+
+    &.left { border-inline-end: solid .5px var(--g-border-color); }
+    &.right { border-inline-start: solid .5px var(--g-border-color); }
+
+    > .body { flex: 1; min-height: 0; }
+
+    .tools {
+        display: grid; grid-template-columns: repeat(var(--toolbox-columns), max-content); align-content: start; gap: var(--g-padding-s); padding: var(--g-padding-s);
+
+        > [data-cg-control='toolbox-group'] { grid-column: 1 / -1; }
+    }
+}

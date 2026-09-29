@@ -858,6 +858,8 @@ export function buildComponents(
         };
         components['cg-' + name] = {
             'template': control.layout.replace(/{{{formId}}}/g, formId.toString()),
+            // --- Tip 用插槽和 Teleport 组成片段，不能向不存在的根节点自动继承属性。 ---
+            'inheritAttrs': name !== 'tip',
             'props': control.props,
             'emits': control.emits,
 

@@ -1,0 +1,17 @@
+.wrap {
+    display: flex; flex: none; flex-direction: column; min-height: 0; box-sizing: border-box;
+
+    &:not(:first-child) {
+        border-inline-start: solid .5px var(--g-border-color);
+    }
+
+    > .body {
+        display: flex; flex: 1; flex-direction: column; min-height: 0;
+    }
+
+    &.expanded { overflow: hidden; }
+    &.collapsed {
+        width: var(--dock-collapsed-width, 40px); overflow: visible;
+        > .body { position: relative; overflow: visible; }
+    }
+}
