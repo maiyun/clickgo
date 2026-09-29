@@ -6,7 +6,7 @@
 
 # Interface: IListChangedEvent
 
-Defined in: [lib/control.ts:1335](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1335)
+Defined in: [lib/control.ts:1337](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1337)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1335](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1336](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1336)
+Defined in: [lib/control.ts:1338](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1338)
 
 #### value
 

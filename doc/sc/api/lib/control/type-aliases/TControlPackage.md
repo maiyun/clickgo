@@ -8,6 +8,6 @@
 
 > **TControlPackage** = `Record`\<`string`, [`IControl`](../interfaces/IControl.md)\>
 
-Defined in: [lib/control.ts:955](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L955)
+Defined in: [lib/control.ts:957](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L957)
 
 控件文件包

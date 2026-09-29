@@ -6,7 +6,7 @@
 
 # Interface: IGreatlistChangedEvent
 
-Defined in: [lib/control.ts:1124](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1124)
+Defined in: [lib/control.ts:1126](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1126)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1124](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1125](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1125)
+Defined in: [lib/control.ts:1127](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1127)
 
 #### value
 
