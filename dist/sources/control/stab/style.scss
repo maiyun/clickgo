@@ -15,7 +15,7 @@
     &.rect {
         border-bottom: none; padding: var(--g-padding-xs); background: var(--g-block-background); border-radius: var(--g-radius); position: relative;
         &::before {
-            content: ''; border-radius: var(--g-radius); background: var(--g-plain-background); position: absolute; left: var(--g-padding-xs); top: var(--g-padding-xs); height: calc(100% - var(--g-padding-xs) * 2); width: var(--stab-item-width, 0px); transition: var(--g-transition); transform: translateX(calc(var(--stab-item-left, var(--g-padding-xs)) - var(--g-padding-xs))); box-shadow: var(--g-shadow);
+            content: ''; border-radius: var(--g-radius); background: var(--g-plain-background); position: absolute; left: 0; top: 0; height: var(--stab-item-height, 0px); width: var(--stab-item-width, 0px); transition: var(--g-transition); transform: translate(var(--stab-item-left, 0px), var(--stab-item-top, 0px)); box-shadow: var(--g-shadow);
         }
     }
 }

@@ -1,4 +1,5 @@
 import * as clickgo from 'clickgo';
+import type Stab from '../stab/code.js';
 
 export default class extends clickgo.control.AbstractControl {
 
@@ -20,7 +21,14 @@ export default class extends clickgo.control.AbstractControl {
         };
 
     /** --- 父级 stab 控件实例 --- */
-    public stab: (clickgo.control.AbstractControl & Record<string, any>) | null = null;
+    public stab: Stab | null = null;
+
+    /** --- 不参与响应式处理的尺寸监听回调 --- */
+    public access: {
+        'resizeHandler': (() => void) | null;
+    } = {
+            'resizeHandler': null
+        };
 
     /** --- 是否处于选中状态（优先按 value 比较，回退到 index） --- */
     public get isSelected(): boolean {
@@ -29,45 +37,52 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 父级 stab 的显示类型 --- */
     public get type(): string {
-        return (this.stab?.props as any)?.type ?? 'default';
+        return this.stab?.props.type ?? 'default';
     }
 
     /**
      * --- 更新 rect 模式下的滑块位置到父级 stab ---
+     * @returns 无返回值
      */
     public resize(): void {
-        if ((this.stab?.props as any)?.type !== 'rect') {
-            return;
-        }
-        this.stab?.select(this.itemValue, this.element.offsetWidth, this.element.offsetLeft);
+        this.stab?.resize();
     }
 
     /**
      * --- 点击 item 选中 ---
+     * @returns 无返回值
      */
     public click(): void {
         if (this.propBoolean('disabled') || !this.stab) {
             return;
         }
         this.stab.select(this.itemValue);
-        this.resize();
     }
 
     public onMounted(): void | Promise<void> {
-        this.stab = this.parentByName('stab');
+        this.stab = this.parentByName('stab') as Stab | null;
         if (!this.stab) {
             return;
         }
         this.index = clickgo.dom.index(this.element);
         // --- 选中时更新 rect 滑块位置 ---
-        this.watch('isSelected', () => {
-            if (!this.isSelected) {
-                return;
-            }
+        this.watch('isSelected', async () => {
+            await this.nextTick();
             this.resize();
         }, {
             'immediate': true
         });
+        // --- 任意子项变宽都会影响居中布局和后续选中项的偏移 ---
+        this.access.resizeHandler = () => {
+            this.resize();
+        };
+        clickgo.dom.watchSizeMulti(this, this.element, this.access.resizeHandler);
+    }
+
+    public onBeforeUnmount(): void {
+        if (this.access.resizeHandler) {
+            clickgo.dom.unwatchSizeMulti(this, this.element, this.access.resizeHandler);
+        }
     }
 
 }

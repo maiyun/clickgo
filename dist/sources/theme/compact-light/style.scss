@@ -406,6 +406,13 @@ global {
     > .tab_panel { border: none; background: transparent; }
 }
 
+// --- 矩形选项卡使用独立选中底色和强调色轮廓，避免与输入区底色混在一起 ---
+
+.stab_wrap.stab_rect::before {
+    background: var(--g-background);
+    box-shadow: inset 0 0 0 1px var(--cg);
+}
+
 // --- 导航与滚动条去除装饰性阴影 ---
 
 .nav_wrap {
