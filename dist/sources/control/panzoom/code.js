@@ -139,6 +139,8 @@ export default class extends clickgo.control.AbstractControl {
         }
         event.stopPropagation();
         if (event.type === 'pointerdown') {
+            // --- 手势阻止冒泡后，仍需按点击位置处理窗体焦点和弹出层 ---
+            clickgo.form.doFocusAndPopEvent(event).catch(() => { });
             // --- 等浏览器切换到指针输入状态后再聚焦，避免空格按下后误显示键盘焦点框 ---
             window.setTimeout(() => {
                 if (this.element.isConnected && !this.propBoolean('disabled')) {
