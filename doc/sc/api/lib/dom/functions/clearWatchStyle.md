@@ -8,7 +8,7 @@
 
 > **clearWatchStyle**(`formId`, `panelId?`): `void`
 
-Defined in: [lib/dom.ts:1191](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1191)
+Defined in: [lib/dom.ts:1258](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1258)
 
 清除某个窗体的所有 watch style 监视
 
@@ -29,3 +29,5 @@ Defined in: [lib/dom.ts:1191](https://github.com/maiyun/clickgo/blob/master/dist
 ## Returns
 
 `void`
+
+无返回值

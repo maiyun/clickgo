@@ -16,6 +16,12 @@ Defined in: [lib/control.ts:1260](https://github.com/maiyun/clickgo/blob/master/
 
 Defined in: [lib/control.ts:1261](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1261)
 
+#### event?
+
+> `optional` **event?**: `PointerEvent`
+
+原始松手指针事件，可读取 Ctrl/Shift/Alt；Pointer.js 1.8.0 起提供
+
 #### from
 
 > **from**: `object`[]

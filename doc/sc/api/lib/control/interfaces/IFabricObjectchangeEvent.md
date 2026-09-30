@@ -6,7 +6,7 @@
 
 # Interface: IFabricObjectchangeEvent
 
-Defined in: [lib/control.ts:1624](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1624)
+Defined in: [lib/control.ts:1704](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1704)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1624](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1625](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1625)
+Defined in: [lib/control.ts:1705](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1705)
 
 #### angle
 

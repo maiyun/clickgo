@@ -71,6 +71,7 @@
 - [unwatchPosition](functions/unwatchPosition.md)
 - [unwatchSize](functions/unwatchSize.md)
 - [unwatchSizeMulti](functions/unwatchSizeMulti.md)
+- [unwatchStyle](functions/unwatchStyle.md)
 - [watch](functions/watch.md)
 - [watchPosition](functions/watchPosition.md)
 - [watchProperty](functions/watchProperty.md)

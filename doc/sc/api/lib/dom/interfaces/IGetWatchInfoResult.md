@@ -6,7 +6,7 @@
 
 # Interface: IGetWatchInfoResult
 
-Defined in: [lib/dom.ts:2250](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2250)
+Defined in: [lib/dom.ts:2347](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2347)
 
 获取当前正在监视中的 property、style 和 position 的元素信息
 
@@ -16,7 +16,7 @@ Defined in: [lib/dom.ts:2250](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **default**: `Record`\<`string`, \{ `position`: \{ `count`: `number`; \}; `property`: \{ `count`: `number`; `list`: `string`[]; \}; `style`: \{ `count`: `number`; `list`: `string`[]; \}; \}\>
 
-Defined in: [lib/dom.ts:2252](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2252)
+Defined in: [lib/dom.ts:2349](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2349)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/dom.ts:2252](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **formId**: `string`
 
-Defined in: [lib/dom.ts:2251](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2251)
+Defined in: [lib/dom.ts:2348](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2348)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/dom.ts:2251](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **panels**: `Record`\<`string`, `Record`\<`string`, \{ `position`: \{ `count`: `number`; \}; `property`: \{ `count`: `number`; `list`: `string`[]; \}; `style`: \{ `count`: `number`; `list`: `string`[]; \}; \}\>\>
 
-Defined in: [lib/dom.ts:2265](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2265)
+Defined in: [lib/dom.ts:2362](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2362)

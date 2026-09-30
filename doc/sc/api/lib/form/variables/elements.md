@@ -8,7 +8,7 @@
 
 > `const` **elements**: `object`
 
-Defined in: [lib/form.ts:1420](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1420)
+Defined in: [lib/form.ts:1417](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1417)
 
 ## Type Declaration
 

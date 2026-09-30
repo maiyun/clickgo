@@ -6,7 +6,7 @@
 
 # Interface: ISelectAddedEvent
 
-Defined in: [lib/control.ts:1471](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1471)
+Defined in: [lib/control.ts:1551](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1551)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1471](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1472](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1472)
+Defined in: [lib/control.ts:1552](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1552)
 
 #### index
 

@@ -6,7 +6,7 @@
 
 # Interface: ITuieditorImguploadEvent
 
-Defined in: [lib/control.ts:1571](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1571)
+Defined in: [lib/control.ts:1651](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1651)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1571](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1572](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1572)
+Defined in: [lib/control.ts:1652](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1652)
 
 #### callback
 

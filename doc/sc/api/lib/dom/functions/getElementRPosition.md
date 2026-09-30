@@ -8,7 +8,7 @@
 
 > **getElementRPosition**(`el`, `wrap`): `object`
 
-Defined in: [lib/dom.ts:1789](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1789)
+Defined in: [lib/dom.ts:1886](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1886)
 
 获取元素的相对位置信息
 

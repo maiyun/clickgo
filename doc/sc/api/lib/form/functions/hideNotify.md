@@ -8,7 +8,7 @@
 
 > **hideNotify**(`notifyId`): `void`
 
-Defined in: [lib/form.ts:2926](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2926)
+Defined in: [lib/form.ts:2930](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2930)
 
 隐藏 notify
 

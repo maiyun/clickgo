@@ -8,7 +8,7 @@
 
 > **getWatchInfo**(): [`IGetWatchInfoResult`](../interfaces/IGetWatchInfoResult.md)
 
-Defined in: [lib/dom.ts:1356](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1356)
+Defined in: [lib/dom.ts:1492](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1492)
 
 ## Returns
 

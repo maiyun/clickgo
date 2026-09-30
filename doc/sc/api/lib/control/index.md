@@ -27,6 +27,13 @@
 - [IDatepanelChangedEvent](interfaces/IDatepanelChangedEvent.md)
 - [IDatepanelRangeEvent](interfaces/IDatepanelRangeEvent.md)
 - [IDatepanelSelectedEvent](interfaces/IDatepanelSelectedEvent.md)
+- [IDesktopDropEvent](interfaces/IDesktopDropEvent.md)
+- [IDesktopItem](interfaces/IDesktopItem.md)
+- [IDesktopLayoutEvent](interfaces/IDesktopLayoutEvent.md)
+- [IDesktopOpenEvent](interfaces/IDesktopOpenEvent.md)
+- [IDesktopOverflowEvent](interfaces/IDesktopOverflowEvent.md)
+- [IDesktopPosition](interfaces/IDesktopPosition.md)
+- [IDesktopSelectEvent](interfaces/IDesktopSelectEvent.md)
 - [IFabricLayerchangeEvent](interfaces/IFabricLayerchangeEvent.md)
 - [IFabricLayerlistchangeEvent](interfaces/IFabricLayerlistchangeEvent.md)
 - [IFabricObjectchangeEvent](interfaces/IFabricObjectchangeEvent.md)
@@ -93,6 +100,8 @@
 ## Type Aliases
 
 - [TControlPackage](type-aliases/TControlPackage.md)
+- [TDesktopLayoutReason](type-aliases/TDesktopLayoutReason.md)
+- [TDesktopPositions](type-aliases/TDesktopPositions.md)
 
 ## Functions
 

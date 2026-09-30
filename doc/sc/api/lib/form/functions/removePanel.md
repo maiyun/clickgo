@@ -8,7 +8,7 @@
 
 > **removePanel**(`id`, `vapp`, `el`): `boolean`
 
-Defined in: [lib/form.ts:3503](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3503)
+Defined in: [lib/form.ts:3507](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3507)
 
 移除 panel 挂载，通常发生在 panel 控件的 onBeforeUnmount 中
 

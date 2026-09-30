@@ -8,6 +8,6 @@
 
 > **TDomBorder** = `"lt"` \| `"t"` \| `"tr"` \| `"r"` \| `"rb"` \| `"b"` \| `"bl"` \| `"l"` \| `""`
 
-Defined in: [lib/dom.ts:2187](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2187)
+Defined in: [lib/dom.ts:2284](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2284)
 
 方向类型，从左上开始
