@@ -110,7 +110,9 @@
 
 `(event: IIconviewDropEvent) => void`
 
-拖放时触发，包含 `self`、`from` 和 `to`。
+拖放时触发，包含 `self`、`from` 和 `to`。拖入空白区时 `to` 为 `{ index: -1, type: -1, path: '' }`，拖入目录时保留目录的索引和路径；可选 `event` 为原始指针事件，旧拖拽源可能不提供。控件只报告请求，文件移动、复制及数据更新由应用处理。
+
+与 Desktop 共用 `clickgo.modules.pointer.drag()`，仍兼容 pointer 的 `type: 'fs'` 数据协议，可跨控件、Form 和 task 拖拽；取消、Esc、失焦和卸载不触发 drop。禁用控件不接收拖入，已被前景窗体遮挡的控件不会收到误投。
 
 #### client
 

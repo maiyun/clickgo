@@ -1259,6 +1259,8 @@ export interface IIconviewOpenEvent {
 
 export interface IIconviewDropEvent {
     'detail': {
+        /** --- 原始松手指针事件，可读取 Ctrl/Shift/Alt；Pointer.js 1.8.0 起提供 --- */
+        'event'?: PointerEvent;
         'self': boolean;
         'from': Array<{
             'index': number;
@@ -1286,6 +1288,84 @@ export interface IIconviewSelectEvent {
             'end': number;
             'empty': boolean;
         };
+    };
+}
+
+// --- Desktop Control ---
+
+/** --- 桌面图标；位置和选择使用稳定 ID，不依赖数据顺序 --- */
+export interface IDesktopItem {
+    'id': string;
+    'name': string;
+    'icon'?: string;
+    /** --- 通用文件拖拽路径，由应用解释和执行操作 --- */
+    'path'?: string;
+    /** --- 0: 文件夹，1: 文件 --- */
+    'type'?: 0 | 1;
+    /** --- 禁止用户拖动；区域变化时仍可自动调整位置 --- */
+    'locked'?: boolean;
+}
+
+/** --- 相对控件内边缘的物理像素坐标，RTL 下也不镜像 --- */
+export interface IDesktopPosition {
+    'x': number;
+    'y': number;
+}
+
+/** --- 图标 ID 到位置的映射，可独立保存和恢复 --- */
+export type TDesktopPositions = Record<string, IDesktopPosition>;
+
+/** --- 布局变化的来源 --- */
+export type TDesktopLayoutReason = 'data' | 'positions' | 'resize' | 'options' | 'arrange' | 'drag';
+
+/** --- 用户选择完成后的通知，属性同步不触发 --- */
+export interface IDesktopSelectEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+/** --- 双击、Enter 或溢出菜单请求打开图标 --- */
+export interface IDesktopOpenEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+/** --- 自动重排或用户拖动完成后的布局快照 --- */
+export interface IDesktopLayoutEvent {
+    'detail': {
+        'positions': TDesktopPositions;
+        /** --- 持久化位置，窗口临时缩小时不被覆盖 --- */
+        'preferredPositions': TDesktopPositions;
+        'overflow': string[];
+        'reason': TDesktopLayoutReason;
+    };
+}
+
+/** --- 未放入区域的图标 ID 发生变化；数据和已有位置仍保留 --- */
+export interface IDesktopOverflowEvent {
+    'detail': {
+        'value': string[];
+    };
+}
+
+/** --- 文件拖入桌面或目录，文件操作由应用决定 --- */
+export interface IDesktopDropEvent {
+    'detail': {
+        /** --- 原始松手指针事件，可读取 Ctrl/Shift/Alt；Pointer.js 1.8.0 起提供 --- */
+        'event'?: PointerEvent;
+        'self': boolean;
+        'from': Array<{
+            'id'?: string;
+            'index': number;
+            'type': -1 | 0 | 1;
+            'path': string;
+            'name'?: string;
+            'icon'?: string;
+        }>;
+        'to': IDesktopItem | null;
+        'position': IDesktopPosition;
     };
 }
 

@@ -1,0 +1,26 @@
+<!-- 无边框、不可拖动的置底 Form，唯一内容控件为 Desktop。 -->
+<form :background="background" title="Desktop workspace" border="none" viewport state-max padding="safe" :resize="false" :min="false" :max="false" :close="false">
+    <desktop ref="desktop" :data="list" v-model="selected" v-model:positions="positions" plain keep-active @open="onOpen" @layout="onLayout" @drop="onDrop" style="flex: 1;">
+        <template v-slot:pop>
+            <menulist>
+                <menulist-item @click="back">Back to demo</menulist-item>
+                <menulist-item @click="open(['parameters'])">Desktop parameters</menulist-item>
+                <menulist-item @click="add">Add shortcut</menulist-item>
+                <menulist-item @click="arrange">Arrange icons</menulist-item>
+                <menulist-item @click="toggleWallpaper">{{wallpaper ? 'Remove wallpaper' : 'Set sample wallpaper'}}</menulist-item>
+                <menulist-split></menulist-split>
+                <menulist-item :disabled="true">{{saved ? 'Positions saved' : 'Could not save positions'}}</menulist-item>
+                <menulist-item @click="finish">Close desktop workspace</menulist-item>
+            </menulist>
+        </template>
+        <template v-slot:itempop="d">
+            <menulist>
+                <menulist-item @click="open(d.selected)">Open</menulist-item>
+                <menulist-item @click="remove">Delete unlocked selected icons</menulist-item>
+                <menulist-split></menulist-split>
+                <menulist-item @click="back">Back to demo</menulist-item>
+                <menulist-item @click="finish">Close desktop workspace</menulist-item>
+            </menulist>
+        </template>
+    </desktop>
+</form>

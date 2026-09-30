@@ -27,6 +27,7 @@
                     <button @click="openForm('cdaterange')">Daterange</button>
                     <button @click="openForm('cdelete')">Delete</button>
                     <button @click="openForm('cdesc')">Desc</button>
+                    <button @click="openForm('cdesktop')">Desktop</button>
                     <button @click="openForm('cdialog')">Dialog</button>
                     <button @click="openForm('cdock')">Dock</button>
                     <button @click="openForm('cdrawer')">Drawer</button>
@@ -131,6 +132,7 @@
                 <button @click="openForm('sbackpanel', {'hash': 'test1?a=1&b=2'})">Backend panel with hash</button>
                 <button @click="openForm('shue')">Hue</button>
                 <button @click="openForm('scomponent')">Local component + Dock + Slider + Statusbar</button>
+                <button @click="openForm('sdesktop')">Desktop workspace</button>
             </layout>
         </flow>
     </tab>

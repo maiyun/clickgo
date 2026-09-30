@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <div class="content" ref="content" :class="[direction, !(border !== 'none' && border !== 'plain') && 'noheader']" :style="{'background': background, 'padding': padding ? padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined, 'border-radius': isNativeNoFrameFirst ? '0 !important' : undefined}">
+        <div class="content" ref="content" :class="[direction, !(border !== 'none' && border !== 'plain') && 'noheader']" :style="{'background': background, 'padding': contentPadding, 'border-radius': isNativeNoFrameFirst ? '0 !important' : undefined}">
             <div class="step" :class="[stepShowData && 'show']" ref="step" @pointerdown="stepDown">
                 <cg-step :data="stepData" :modelValue="stepValue" plain></cg-step>
             </div>

@@ -1,0 +1,71 @@
+<form title="Desktop" width="820" height="720" padding="10">
+    <layout direction="v" gutter="10" style="flex: 1; width: 0; min-height: 0; overflow: clip;">
+        <label>Selected IDs: {{selected.join(', ') || 'None'}} | Overflow: {{overflow.length}} | Layout: {{lastLayout}}</label>
+        <!-- 无滚动的桌面区域；拖动窗体边缘可查看越界重排。 -->
+        <desktop ref="desktop" :data="list" v-model="selected" v-model:positions="positions" :disabled="disabled" :multi="multi" :ctrl="ctrl" :selection="selection" :draggable="draggable" :auto-arrange="autoArrange" :snap="snap" :plain="plain" :keep-active="keepActive" :size="size[0]" :direction="direction[0]" :cell-width="cellWidth" :cell-height="cellHeight" :gap="gap" :padding="padding" @open="onOpen" @layout="onLayout" @drop="onDrop" @overflow="onOverflow" style="flex: 1; height: 0; min-height: 100px;">
+            <template v-if="custom" v-slot="d">
+                <label size="l">{{d.item.type === 0 ? '📁' : '📄'}}</label>
+                <label>{{d.item.name}}</label>
+            </template>
+            <template v-slot:pop>
+                <menulist>
+                    <menulist-item @click="add()">New folder</menulist-item>
+                    <menulist-item @click="arrange">Arrange icons</menulist-item>
+                    <menulist-item @click="openDesktop">Open desktop workspace</menulist-item>
+                </menulist>
+            </template>
+            <template v-slot:itempop="d">
+                <menulist>
+                    <menulist-item @click="open(d.selected)">Open selected icons</menulist-item>
+                    <menulist-item @click="toggleLock">Toggle drag lock</menulist-item>
+                    <menulist-item @click="remove">Delete selected icons</menulist-item>
+                </menulist>
+            </template>
+        </desktop>
+        <!-- 持久化位置，临时缩小窗口不会覆盖。 -->
+        <text :model-value="positionText" type="multi" readonly style="height: 64px; flex-shrink: 0;"></text>
+        <!-- 参数区域单独可滚动，窄窗体仍能访问所有操作。 -->
+        <flow direction="v" style="max-height: 290px; flex-shrink: 0;">
+            <layout direction="v" gutter="10">
+                <layout gutter="8" style="flex-wrap: wrap;">
+                    <check v-model="disabled">disabled</check>
+                    <check v-model="multi">multi</check>
+                    <check v-model="ctrl">ctrl</check>
+                    <check v-model="selection">selection</check>
+                    <check v-model="draggable">draggable</check>
+                    <check v-model="autoArrange">auto-arrange</check>
+                    <check v-model="snap">snap</check>
+                    <check v-model="plain">plain</check>
+                    <tip label="Keep normal colors when the Form loses focus. Keyboard focus stays unchanged."><check v-model="keepActive">keep-active</check></tip>
+                    <check v-model="custom">Custom icon slot</check>
+                </layout>
+                <layout gutter="8" align-v="center" style="flex-wrap: wrap;">
+                    <layout gutter="6" align-v="center"><label>size</label><select v-model="size" :data="[32, 48, 64]" style="width: 70px;"></select></layout>
+                    <layout gutter="6" align-v="center"><tip label="Controls the fill and arrange order. Saved manual positions stay unchanged."><label>Fill order</label></tip><select v-model="direction" :data="[{value: 'column', label: 'Columns first'}, {value: 'row', label: 'Rows first'}]" style="width: 160px;"></select></layout>
+                    <layout gutter="6" align-v="center"><label>cell-width</label><number v-model="cellWidth" min="24" style="width: 120px;"></number></layout>
+                    <layout gutter="6" align-v="center"><label>cell-height</label><number v-model="cellHeight" min="40" style="width: 120px;"></number></layout>
+                    <layout gutter="6" align-v="center"><label>gap</label><number v-model="gap" min="0" style="width: 120px;"></number></layout>
+                    <layout gutter="6" align-v="center"><label>padding</label><number v-model="padding" min="0" style="width: 120px;"></number></layout>
+                </layout>
+                <layout gutter="8" align-v="center" style="flex-wrap: wrap;">
+                    <select v-model="target" :data="targets" style="flex: 1; min-width: 120px;"></select>
+                    <layout gutter="6" align-v="center"><label>x</label><number v-model="x" style="width: 120px;"></number></layout>
+                    <layout gutter="6" align-v="center"><label>y</label><number v-model="y" style="width: 120px;"></number></layout>
+                    <button :disabled="autoArrange" @click="place">Set position</button>
+                </layout>
+                <layout gutter="8" style="flex-wrap: wrap;">
+                    <button @click="add()">Add</button>
+                    <button @click="add(12)">Add 12</button>
+                    <button :disabled="!selected.length" @click="remove">Delete selected</button>
+                    <button @click="arrange">Arrange</button>
+                    <button @click="save">Save positions</button>
+                    <button :disabled="!saved" @click="restore">Restore positions</button>
+                    <tip label="Reverses the data array to verify that positions follow stable IDs. Auto-arrange follows data order."><button @click="list = [...list].reverse()">Reverse data (stable IDs)</button></tip>
+                    <button @click="openDesktop">Desktop workspace</button>
+                    <button @click="openIconview">Cross-form drag</button>
+                </layout>
+                <label>Drop to place icons. Ctrl/Command: multi-select; Shift: range; double-click or Enter: open. Auto-arrange allows dragging out. Resize back to restore saved positions.</label>
+            </layout>
+        </flow>
+    </layout>
+</form>

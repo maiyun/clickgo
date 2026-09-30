@@ -136,4 +136,11 @@ export default class extends clickgo.form.AbstractForm {
     async onGesture(dir) {
         await clickgo.form.dialog(this, 'onGesture: ' + dir);
     }
+    /**
+     * --- 提供示例文件路径，便于跨控件或任务观察拖拽载荷 ---
+     * @returns 无返回值
+     */
+    onMounted() {
+        this.list = this.list.map((item, index) => ({ ...item, 'path': `/demo/iconview/${index}` }));
+    }
 }

@@ -16,6 +16,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public cclose = true;
 
+    public viewport = false;
+
+    public safeArea = false;
+
     public stateMax = false;
 
     public stateMin = false;

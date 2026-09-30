@@ -14,7 +14,9 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale && npm run test:style",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form",
+    "test:form": "node test/form-viewport.mjs && node --experimental-vm-modules test/form-native.mjs",
+    "test:desktop": "node --experimental-vm-modules test/desktop.mjs",
     "test:style": "node --experimental-vm-modules test/dom-style.mjs",
     "test:archive": "node test/rtl-archive.mjs",
     "test:locale": "node --experimental-vm-modules test/locale-integrity.mjs && node --experimental-vm-modules test/rtl-direction.mjs",
@@ -25,7 +27,7 @@
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.3.1",
-    "@litert/pointer": "^1.7.6",
+    "@litert/pointer": "^1.8.0",
     "@types/clean-css": "^4.2.11",
     "@types/google.maps": "^3.58.1",
     "@types/node": "^25.5.2",

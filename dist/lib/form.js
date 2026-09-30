@@ -1006,13 +1006,13 @@ export class AbstractForm extends AbstractCommon {
         if (this._firstShow) {
             this._firstShow = false;
             // --- 将窗体居中 ---
-            const area = lCore.getAvailArea();
+            const area = this.refs.form.getArea();
             if (!this.refs.form.stateMaxData) {
                 if (this.refs.form.left === -1) {
-                    this.refs.form.setPropData('left', (area.width - this.element.offsetWidth) / 2);
+                    this.refs.form.setPropData('left', area.left + (area.width - this.element.offsetWidth) / 2);
                 }
                 if (this.refs.form.top === -1) {
-                    this.refs.form.setPropData('top', (area.height - this.element.offsetHeight) / 2);
+                    this.refs.form.setPropData('top', area.top + (area.height - this.element.offsetHeight) / 2);
                 }
             }
             this.refs.form.$data.isShow = true;
@@ -1767,7 +1767,6 @@ export function bindDrag(e) {
  *  --- 重置所有已经最大化的窗体大小和位置 ---
  */
 export function refreshMaxPosition() {
-    const area = lCore.getAvailArea();
     for (let i = 0; i < elements.list.children.length; ++i) {
         const el = elements.list.children.item(i);
         const ef = el.children.item(0);
@@ -1781,18 +1780,7 @@ export function refreshMaxPosition() {
             continue;
         }
         const vroot = task.forms[formId].vroot;
-        if (ef.dataset.cgBottomMost === undefined) {
-            // --- 不是置底窗体 ---
-            vroot.$refs.form.setPropData('left', area.left);
-            vroot.$refs.form.setPropData('top', area.top);
-            vroot.$refs.form.setPropData('width', area.width);
-            vroot.$refs.form.setPropData('height', area.height);
-        }
-        else {
-            // --- 是置底窗体 ---
-            vroot.$refs.form.setPropData('width', area.owidth);
-            vroot.$refs.form.setPropData('height', area.oheight);
-        }
+        vroot.$refs.form.refreshMaxPosition();
     }
 }
 /**
@@ -2188,9 +2176,10 @@ export async function changeFocusMaxZIndex() {
 /**
  * --- 根据 border 方向 获取理论窗体大小 ---
  * @param border 显示的位置代号
+ * @param area 布局区域，默认避开任务栏
+ * @returns 对应区域内的窗体矩形
  */
-export function getRectByBorder(border) {
-    const area = lCore.getAvailArea();
+export function getRectByBorder(border, area = lCore.getAvailArea()) {
     let width, height, left, top;
     if (typeof border === 'string') {
         switch (border) {
@@ -2296,6 +2285,7 @@ export function showCircular(x, y) {
 /**
  * --- 移动矩形到新位置 ---
  * @param border 显示的位置代号
+ * @returns 无返回值
  */
 export function moveRectangle(border) {
     const dataReady = elements.rectangle.getAttribute('data-ready') ?? '0';

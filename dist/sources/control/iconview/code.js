@@ -26,6 +26,9 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': []
     };
     rand = '';
+    /** --- 公共拖拽取消句柄随实例释放 --- */
+    access = { 'drag': null };
+    dragging = false;
     /** --- 当前控件是否有焦点 --- */
     focus = false;
     /** --- 可视高度像素 --- */
@@ -405,14 +408,17 @@ export default class extends clickgo.control.AbstractControl {
             this.emit('itemclicked', event);
         });
         // --- 拖拽 ---
-        clickgo.modules.pointer.drag(e, e.currentTarget, {
+        this.access.drag?.();
+        this.access.drag = clickgo.modules.pointer.drag(e, e.currentTarget, {
             'start': () => {
                 if (!this.isSelected(v)) {
                     this.select(v);
                 }
+                this.dragging = true;
                 const list = [];
                 for (const v of this.valueData) {
                     list.push({
+                        ...this.props.data[v],
                         'index': v,
                         'type': this.props.data[v].type,
                         'path': this.props.data[v].path
@@ -423,6 +429,13 @@ export default class extends clickgo.control.AbstractControl {
                     'type': 'fs',
                     'list': list,
                 });
+                for (const item of this.element.querySelectorAll('[data-cg-item][aria-selected="true"]')) {
+                    item.removeAttribute('data-drop');
+                }
+            },
+            'finish': () => {
+                this.access.drag = null;
+                this.dragging = false;
             }
         });
         // --- 双击 ---
@@ -478,29 +491,36 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- 拖拽操作响应 --- */
     drop(e, dindex, index) {
-        if (typeof e.detail.value !== 'object') {
+        if (this.propBoolean('disabled') || !e.detail?.value || (typeof e.detail.value !== 'object')) {
             return;
         }
-        if (e.detail.value.type !== 'fs') {
+        if ((e.detail.value.type !== 'fs') || !Array.isArray(e.detail.value.list)) {
             return;
         }
         const list = [];
         for (const item of e.detail.value.list) {
+            if (!item || (typeof item !== 'object')) {
+                continue;
+            }
             list.push({
                 'index': item.index ?? 0,
                 'type': item.type ?? -1,
                 'path': item.path ?? ''
             });
         }
-        const tov = dindex * this.rowCount + index;
+        const tov = dindex < 0 ? -1 : dindex * this.rowCount + index;
+        if (!list.length || ((e.detail.value.rand === this.rand) && list.some(item => item.index === tov))) {
+            return;
+        }
         const event = {
             'detail': {
+                'event': e.detail.event,
                 'self': e.detail.value.rand === this.rand ? true : false,
                 'from': list,
                 'to': {
                     'index': tov,
-                    'type': this.props.data[tov].type,
-                    'path': this.props.data[tov].path ?? ''
+                    'type': this.props.data[tov]?.type ?? -1,
+                    'path': this.props.data[tov]?.path ?? ''
                 }
             }
         };
@@ -764,6 +784,7 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
     onMounted() {
+        this.watch('disabled', () => this.access.drag?.());
         this.watch('must', () => {
             // --- 检测是否必须，但却没选择 ---
             if (this.propBoolean('must') && (this.valueData.length === 0)) {
@@ -823,6 +844,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 监听 data 变动 ---
         this.watch('data', async () => {
+            this.access.drag?.();
             this.checkValue();
             await this.refreshIconsData();
         }, {
@@ -848,5 +870,13 @@ export default class extends clickgo.control.AbstractControl {
         this.checkValue();
         this.refreshIconsData();
         this.rand = clickgo.tool.random(16);
+    }
+    /**
+     * --- 销毁控件时取消拖拽，不能向其他窗体投递迟到的 drop ---
+     * @returns 无返回值
+     */
+    onBeforeUnmount() {
+        this.access.drag?.();
+        this.access.drag = null;
     }
 }

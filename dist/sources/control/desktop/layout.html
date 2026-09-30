@@ -1,0 +1,34 @@
+<div class="wrap" :class="[propBoolean('plain') && 'plain', propBoolean('keepActive') && 'keep-active']" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" :tabindex="!propBoolean('disabled') && formFocus ? '0' : undefined" role="listbox" :aria-multiselectable="propBoolean('multi')" :aria-disabled="propBoolean('disabled')" :aria-activedescendant="active ? uid + '-' + visible.indexOf(active) : undefined" :data-drop="!propBoolean('disabled') ? '' : undefined" @drop.stop="drop($event)" @pointerdown="down" @contextmenu.prevent.stop="context($event)" @keydown="keydown">
+    <!-- 图标的位置由有限区域布局管理，不引入滚动或虚拟列表。 -->
+    <div v-for="id of visible" :key="id" class="item" :id="uid + '-' + visible.indexOf(id)" :data-desktop-id="id" :class="[valueData.includes(id) && 'selected', active === id && 'active']" :style="itemStyle(id)" role="option" :aria-selected="valueData.includes(id)" :aria-label="itemMap[id].name" :data-drop="!propBoolean('disabled') && itemMap[id].type === 0 && !(dragging && valueData.includes(id)) ? '' : undefined" @drop.stop="drop($event, id)" @pointerdown="down($event, id)" @contextmenu.prevent.stop="context($event, id)">
+        <slot :item="itemMap[id]" :selected="valueData.includes(id)" :position="positionsData[id]">
+            <div class="icon" :class="[!itemMap[id].icon && 'type' + (itemMap[id].type ?? 1)]" :style="{'width': iconSize + 'px', 'height': iconSize + 'px'}">
+                <cg-img v-if="itemMap[id].icon" :src="itemMap[id].icon" mode="contain" style="width: 100%; height: 100%;"></cg-img>
+            </div>
+            <div class="name" dir="auto">{{itemMap[id].name}}</div>
+        </slot>
+    </div>
+    <!-- 满容量时占据预留格子；区域小于一个格子时提供紧凑入口。 -->
+    <div v-if="overflowData.length" class="more" data-desktop-more :class="[!more && 'compact']" :style="more ? itemStyle('') : undefined">
+        <slot name="overflow" :items="overflowItems">
+            <cg-button ref="moreButton" :disabled="disabled" style="max-width: 100%; max-height: 100%;">
+                <template v-slot>+{{overflowData.length}}</template>
+                <template v-slot:pop>
+                    <cg-menulist @keydown="popKeydown">
+                        <cg-menulist-item v-for="item of overflowItems" :key="item.id" @click="open([item.id])">{{item.name}}</cg-menulist-item>
+                    </cg-menulist>
+                </template>
+            </cg-button>
+        </slot>
+    </div>
+    <div v-if="selectionArea" class="selection" :style="{'left': selectionArea.x + 'px', 'top': selectionArea.y + 'px', 'width': selectionArea.width + 'px', 'height': selectionArea.height + 'px'}"></div>
+    <!-- 落点预览不参与指针命中，拖动期间保持原图标位置不变。 -->
+    <div v-for="(_position, id) of dropPositions" :key="id" class="drop-preview" data-desktop-drop :style="itemStyle(id, dropPositions)" aria-hidden="true"></div>
+    <!-- 空白区和图标的右键菜单均保留 Form 的弹层隔离。 -->
+    <teleport v-if="slots['pop']" to="system">
+        <div ref="pop" class="pop" @keydown="popKeydown"><slot name="pop" :position="contextPosition" :selected="valueData" :overflow="overflowItems"></slot></div>
+    </teleport>
+    <teleport v-if="slots['itempop']" to="system">
+        <div ref="itempop" class="pop" @keydown="popKeydown"><slot v-if="contextItem" name="itempop" :item="contextItem" :selected="valueData"></slot></div>
+    </teleport>
+</div>

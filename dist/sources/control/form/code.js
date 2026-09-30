@@ -20,6 +20,7 @@ export default class extends clickgo.control.AbstractControl {
         'close': true,
         'resize': true,
         'move': true,
+        'viewport': false,
         'loading': false,
         'minWidth': 200,
         'minHeight': 100,
@@ -34,6 +35,8 @@ export default class extends clickgo.control.AbstractControl {
         'left': -1,
         'top': -1,
     };
+    /** --- 最大化后根据任务栏占用计算的内容安全留白 --- */
+    safePadding = '0';
     /** --- 是否是 native 下无边框的第一个窗体 --- */
     isNativeNoFrameFirst = false;
     stateMinData = false;
@@ -96,6 +99,48 @@ export default class extends clickgo.control.AbstractControl {
         }
         return this.rootForm.isMask;
     }
+    /**
+     * --- 由 viewport 参数决定当前窗体的布局边界 ---
+     * @returns 布局区域及原始视口尺寸
+     */
+    getArea() {
+        const area = clickgo.core.getAvailArea();
+        return this.propBoolean('viewport') ? {
+            ...area, 'left': 0, 'top': 0, 'width': area.owidth, 'height': area.oheight
+        } : area;
+    }
+    /** --- 普通 padding 保留原有格式，safe 仅在外部窗体最大化时避开任务栏 --- */
+    get contentPadding() {
+        return this.props.padding === 'safe' ? (this.stateMaxData && !this.isInside ? this.safePadding : undefined) :
+            (this.props.padding ? this.props.padding.replace(/([0-9]+)($| )/g, '$1px$2') : undefined);
+    }
+    /**
+     * --- 首次最大化、视口变化和参数切换共用同一套几何规则 ---
+     * @returns 无返回值
+     */
+    refreshMaxPosition() {
+        if (this.isInside || !this.stateMaxData) {
+            return;
+        }
+        const area = this.getArea();
+        this.setPropData('left', area.left);
+        this.setPropData('top', area.top);
+        this.widthData = area.width;
+        this.heightData = area.height;
+        // --- 自动尺寸不能被最大化的输出改成固定尺寸，否则还原会丢失 auto 语义 ---
+        if (this.propInt('width') > 0) {
+            this.emit('update:width', this.widthData);
+        }
+        if (this.propInt('height') > 0) {
+            this.emit('update:height', this.heightData);
+        }
+        const available = clickgo.core.getAvailArea();
+        const top = Math.min(area.height, Math.max(0, available.top - area.top));
+        const left = Math.min(area.width, Math.max(0, available.left - area.left));
+        const right = Math.min(area.width, Math.max(0, area.left + area.width - available.left - available.width));
+        const bottom = Math.min(area.height, Math.max(0, area.top + area.height - available.top - available.height));
+        this.safePadding = `${top}px ${right}px ${bottom}px ${left}px`;
+    }
     // --- 拖动 ---
     moveMethod(e, custom = false) {
         if (!this.isMove && !custom) {
@@ -118,7 +163,7 @@ export default class extends clickgo.control.AbstractControl {
         });
         /** --- 当前所处边框 --- */
         let isBorder = '';
-        const aa = clickgo.core.getAvailArea();
+        const aa = this.getArea();
         clickgo.modules.pointer.move(e, {
             'left': aa.left,
             'top': aa.top,
@@ -258,11 +303,11 @@ export default class extends clickgo.control.AbstractControl {
                         if (isBorder === '') {
                             isBorder = o.border;
                             clickgo.form.showCircular(o.x, o.y);
-                            clickgo.form.showRectangle(o.x, o.y, o.border);
+                            clickgo.form.showRectangle(o.x, o.y, clickgo.form.getRectByBorder(o.border, this.getArea()));
                         }
                         else {
                             isBorder = o.border;
-                            clickgo.form.moveRectangle(o.border);
+                            clickgo.form.moveRectangle(clickgo.form.getRectByBorder(o.border, this.getArea()));
                         }
                     }
                     else {
@@ -305,7 +350,7 @@ export default class extends clickgo.control.AbstractControl {
                             }
                             */
                             this.stateAbs = isBorder;
-                            const pos = clickgo.form.getRectByBorder(isBorder);
+                            const pos = clickgo.form.getRectByBorder(isBorder, this.getArea());
                             this.widthData = pos.width;
                             if (this.propInt('width') > 0) {
                                 this.emit('update:width', this.widthData);
@@ -441,7 +486,7 @@ export default class extends clickgo.control.AbstractControl {
                 'left': this.leftData,
                 'top': this.topData
             };
-            const area = clickgo.core.getAvailArea();
+            const area = this.getArea();
             this.topData = area.top;
             this.emit('update:top', this.topData);
             this.heightData = area.height;
@@ -497,29 +542,7 @@ export default class extends clickgo.control.AbstractControl {
                     this.element.style.transition = '';
                 }).catch(() => { });
             }
-            const area = clickgo.core.getAvailArea();
-            if (this.rootForm.bottomMost) {
-                // --- 置底窗体 ---
-                this.leftData = 0;
-                this.topData = 0;
-                this.widthData = area.owidth;
-                this.heightData = area.oheight;
-            }
-            else {
-                // --- 其他类型 ---
-                this.leftData = area.left;
-                this.topData = area.top;
-                this.widthData = area.width;
-                this.heightData = area.height;
-            }
-            this.emit('update:left', this.leftData);
-            this.emit('update:top', this.topData);
-            if (this.propInt('width') > 0) {
-                this.emit('update:width', this.widthData);
-            }
-            if (this.propInt('height') > 0) {
-                this.emit('update:height', this.heightData);
-            }
+            this.refreshMaxPosition();
         }
         else {
             // --- 需要变正常 ---
@@ -676,7 +699,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         // --- 根据可用区域限制最大缩放尺寸，防止拖动超出 avail area ---
         // --- +1 是为了补偿 pointer.js clampToBorder 内部的 max-1 边界判断，确保能精确到 maxWidth/maxHeight ---
-        const area = clickgo.core.getAvailArea();
+        const area = this.getArea();
         let maxWidth;
         let maxHeight;
         if (border === 'tr' || border === 'r' || border === 'rb') {
@@ -728,7 +751,9 @@ export default class extends clickgo.control.AbstractControl {
                                 clickgo.form.showCircular(x, y);
                                 clickgo.form.showRectangle(x, y, {
                                     'left': left,
-                                    'width': width
+                                    'width': width,
+                                    'top': area.top,
+                                    'height': area.height
                                 });
                             }
                         }
@@ -737,7 +762,9 @@ export default class extends clickgo.control.AbstractControl {
                             if (!this.stateAbs) {
                                 clickgo.form.moveRectangle({
                                     'left': left,
-                                    'width': width
+                                    'width': width,
+                                    'top': area.top,
+                                    'height': area.height
                                 });
                             }
                         }
@@ -768,7 +795,7 @@ export default class extends clickgo.control.AbstractControl {
                     return;
                 }
                 // --- 当前不是吸附状态，判断是否要吸附 ---
-                const area = clickgo.core.getAvailArea();
+                const area = this.getArea();
                 this.stateAbs = 'l';
                 this.heightData = area.height;
                 this.emit('update:height', this.heightData);
@@ -928,6 +955,9 @@ export default class extends clickgo.control.AbstractControl {
             // --- 触发 formTitleChanged 事件 ---
             this.trigger('formTitleChanged', this.props.title).catch(() => { });
         });
+        this.watch('viewport', () => {
+            this.refreshMaxPosition();
+        });
         this.watch('isStateMin', () => {
             if (this.isStateMin === this.stateMinData) {
                 return;
@@ -1026,9 +1056,9 @@ export default class extends clickgo.control.AbstractControl {
             this.isShow = true;
         }
         if (this.isStateMax) {
-            const area = clickgo.core.getAvailArea();
-            this.leftData = (area.width - this.widthData) / 2;
-            this.topData = (area.height - this.heightData) / 2;
+            const area = this.getArea();
+            this.leftData = area.left + (area.width - this.widthData) / 2;
+            this.topData = area.top + (area.height - this.heightData) / 2;
             this.maxMethod();
         }
     }

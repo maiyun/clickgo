@@ -18,6 +18,7 @@ import cgroupFrm from './control/group/group';
 import chtmlFrm from './control/html/html';
 import cprogressFrm from './control/progress/progress';
 import calertFrm from './control/alert/alert';
+import cdesktopFrm from './control/desktop/desktop';
 import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
 import clabelFrm from './control/label/label';
@@ -97,6 +98,7 @@ import mtoolFrm from './method/tool/tool';
 import mzipFrm from './method/zip/zip';
 import sbackpanelFrm from './solution/backpanel/backpanel';
 import scomponentFrm from './solution/component/component';
+import sdesktopFrm from './solution/desktop/desktop';
 export default class extends clickgo.form.AbstractForm {
     ntab = '';
     adata = {};
@@ -148,6 +150,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdesc': {
                 frm = await clickgo.form.create(this, cdescFrm);
+                break;
+            }
+            case 'cdesktop': {
+                frm = await clickgo.form.create(this, cdesktopFrm);
                 break;
             }
             case 'cdialog': {
@@ -528,6 +534,13 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'sbackpanel': {
                 frm = await clickgo.form.create(this, sbackpanelFrm, data);
+                break;
+            }
+            case 'sdesktop': {
+                frm = await clickgo.form.create(this, sdesktopFrm, {
+                    'returnFormId': this.formId,
+                    'parametersForm': cdesktopFrm
+                });
                 break;
             }
             case 'scomponent': {

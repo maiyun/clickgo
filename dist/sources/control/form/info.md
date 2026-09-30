@@ -46,6 +46,12 @@
 
 是否允许移动，默认 true。
 
+#### viewport
+
+`boolean | string`，默认 `false`。以完整浏览器视口作为窗体布局边界，不扣除 ClickGo 任务栏；适用于最大化、拖动边界、缩放边界、吸附及初始居中。它不触发浏览器全屏、不改变窗体层级，也不自动最大化；配合 `state-max` 使用。最大化时切换此参数立即重新布局，视口和任务栏变化由框架统一刷新。还原保留最大化前的大小与位置。
+
+未开启 `viewport` 时，所有窗体最大化均避开任务栏。`bottomMost` 只控制层级，置底窗体同样需要显式开启 `viewport` 才覆盖完整视口。内联 Form 不使用视口最大化，Native 实体窗体的最大化仍由系统处理。
+
 #### loading
 
 `boolean` | `string`
@@ -80,7 +86,7 @@
 
 `string`
 
-内边距。
+内边距，保留原有数字/CSS 长度格式。设为 `safe` 时，最大化 Form 的内容区自动避开 ClickGo 任务栏，而背景仍铺满窗体；随任务栏换边、出现、消失和视口缩放更新。普通最大化已扣除任务栏，不重复预留。还原或内联 Form 不应用安全留白。此预设不与自定义 padding 叠加。
 
 #### direction
 
@@ -163,3 +169,14 @@
 ```xml
 <form title="My Form" :width="500" :height="400" :move="move" :resize="resize" :max="max" @size="onSize">Content</form>
 ```
+
+
+桌面底层可声明完整视口最大化及内容安全区，无需应用维护 left/top/width/height 或监听屏幕变化：
+
+```xml
+<form border="none" viewport state-max padding="safe" :background="wallpaper">
+    <desktop :data="icons" v-model:positions="positions" plain keep-active style="flex: 1;"></desktop>
+</form>
+```
+
+`bottomMost` 仍由所属 Form 设置，负责层级。
