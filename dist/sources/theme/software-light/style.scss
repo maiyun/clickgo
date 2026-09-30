@@ -271,7 +271,9 @@ global {
 
 // --- 深色命令浮层独立于白色面板，避免全局输入弹层一起变暗 ---
 
-.button_pop:has(> [data-cg-control="menulist"]), .menu-item_pop, .menulist-item_pop, .menulist_wrap {
+.button_pop:has(> [data-cg-control="menulist"]),
+.desktop_pop:has(> [data-cg-control="menulist"]), .iconview_pop:has(> [data-cg-control="menulist"]),
+.menu-item_pop, .menulist-item_pop, .menulist_wrap {
     --face:#242424;
     --face-hover:#383838;
     --face-selected:#444444;
@@ -293,6 +295,9 @@ global {
 .menulist_wrap {
     padding: 3px;
     background: var(--g-pop-background);
+}
+.menulist-split_wrap {
+    --g-border-color:#484848;
 }
 .menulist-item_wrap {
     position: relative;
