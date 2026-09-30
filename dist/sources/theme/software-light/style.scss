@@ -1,10 +1,4 @@
-@use 'sass:string';
-
-// --- 在线性 sRGB 中按亮度选择黑白前景，保留用户主色本身；.179 是两者对比度相等的阈值 ---
-@function on-accent($color) {
-    $channel: 'clamp(0, (.179 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
-    @return string.unquote('color(from #{$color} srgb-linear #{$channel} #{$channel} #{$channel} / 1)');
-}
+@use '../contrast';
 
 global {
     --g-padding-xs:2px;
@@ -34,9 +28,11 @@ global {
 
     // --- 主色保持用户设置的原色，前景按底色选择黑白，页签保持中性 ---
     --software-accent:var(--main);
-    --software-on-accent:#{on-accent('var(--cg)')};
-    --software-on-accent-hover:#{on-accent('var(--cg-hover)')};
-    --software-on-accent-active:#{on-accent('var(--cg-active)')};
+    --software-on-accent:#{contrast.on-accent('var(--cg)')};
+    --software-on-accent-hover:#{contrast.on-accent('var(--cg-hover)')};
+    --software-on-accent-active:#{contrast.on-accent('var(--cg-active)')};
+    --software-on-accent-focus:#{contrast.on-accent('var(--cg-focus)')};
+    --software-on-accent-disabled:#{contrast.on-accent('var(--cg-disabled)')};
     --cg:var(--software-accent);
     --cg-hover:color-mix(in oklch, var(--cg), black 8%);
     --cg-active:color-mix(in oklch, var(--cg), black 14%);
@@ -221,7 +217,7 @@ global {
         --color:var(--software-on-accent);
         --color-hover:var(--software-on-accent-hover);
         --color-active:var(--software-on-accent-active);
-        --color-focus:var(--software-on-accent);
+        --color-focus:var(--software-on-accent-focus);
         --shadow:none;
     }
     &:not([data-cg-disabled]) {
@@ -617,11 +613,8 @@ global {
     --g-plain-border-color:#858585;
     --g-plain-border-color-disabled:#d5d5d5;
     .switch_block { background: #fafafa; }
-    &:not([data-cg-disabled]).switch_checked .switch_block { background: var(--software-on-accent); }
 }
-.check_wrap:not([data-cg-disabled]).check_checked:not(.check_indeterminate) .check_check .check_tag-svg { color: var(--software-on-accent); }
-.check_wrap.check_indeterminate .check_check::after { background: var(--software-on-accent); }
-.radio_wrap.radio_selected .radio_radio::after { background: var(--software-on-accent); }
+@include contrast.accent-marks;
 
 // --- 提示采用低饱和底色和局部语义标记 ---
 

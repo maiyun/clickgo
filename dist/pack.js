@@ -301,7 +301,7 @@ list = await fs.promises.readdir('dist/sources/theme/', {
     'withFileTypes': true,
 });
 for (const item of list) {
-    if (item.name.startsWith('.')) {
+    if (!item.isDirectory() || item.name.startsWith('.')) {
         continue;
     }
     const result = await lCompiler.theme('dist/sources/theme/' + item.name, 'dist/theme/');

@@ -1,3 +1,5 @@
+@use '../contrast';
+
 global {
     --g-padding-xs:2px;
     --g-padding-s:4px;
@@ -24,9 +26,13 @@ global {
     --g-line:1.4;
     --g-boxsize:32px;
 
-    // --- 跟随用户主色并调整深色背景上的明度，常驻选中态仍使用中性灰 ---
-    --software-accent:oklch(from var(--main) clamp(.72, l, .88) min(c, .18) h);
-    --software-on-accent:#202020;
+    // --- 保留用户主色，前景按实际底色选择黑白；常驻选中态仍使用中性灰 ---
+    --software-accent:var(--main);
+    --software-on-accent:#{contrast.on-accent('var(--cg)')};
+    --software-on-accent-hover:#{contrast.on-accent('var(--cg-hover)')};
+    --software-on-accent-active:#{contrast.on-accent('var(--cg-active)')};
+    --software-on-accent-focus:#{contrast.on-accent('var(--cg-focus)')};
+    --software-on-accent-disabled:#{contrast.on-accent('var(--cg-disabled)')};
     --cg:var(--software-accent);
     --cg-hover:color-mix(in oklch, var(--cg), white 12%);
     --cg-active:color-mix(in oklch, var(--cg), black 6%);
@@ -191,9 +197,9 @@ global {
     }
     &.button_cg:not(.button_plain) {
         --color:var(--software-on-accent);
-        --color-hover:var(--software-on-accent);
-        --color-active:var(--software-on-accent);
-        --color-focus:var(--software-on-accent);
+        --color-hover:var(--software-on-accent-hover);
+        --color-active:var(--software-on-accent-active);
+        --color-focus:var(--software-on-accent-focus);
         --shadow:none;
     }
     &:not([data-cg-disabled]) {
@@ -555,11 +561,8 @@ global {
     --g-plain-border-color:#626262;
     --g-plain-border-color-disabled:#484848;
     .switch_block { background: #dedede; }
-    &:not([data-cg-disabled]).switch_checked .switch_block { background: var(--software-on-accent); }
 }
-.check_wrap:not([data-cg-disabled]).check_checked:not(.check_indeterminate) .check_check .check_tag-svg { color: var(--software-on-accent); }
-.check_wrap.check_indeterminate .check_check::after { background: var(--software-on-accent); }
-.radio_wrap.radio_selected .radio_radio::after { background: var(--software-on-accent); }
+@include contrast.accent-marks;
 
 // --- 提示采用低饱和底色和局部语义标记 ---
 

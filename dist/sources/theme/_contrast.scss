@@ -1,0 +1,28 @@
+@use 'sass:string';
+
+// --- 在线性 sRGB 中按亮度选择黑白前景，保留底色本身；.179 是两者对比度相等的阈值。 ---
+@function on-accent($color) {
+    $channel: 'clamp(0, (.179 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
+    @return string.unquote('color(from #{$color} srgb-linear #{$channel} #{$channel} #{$channel} / 1)');
+}
+
+// --- 标记前景跟随控件实际状态底色，禁用的复选/单选仍保留可辨识的选中标记。 ---
+@mixin accent-marks {
+    .check_wrap, .radio_wrap, .switch_wrap {
+        --software-mark-color:var(--software-on-accent);
+        &:not([data-cg-disabled]) {
+            &:focus { --software-mark-color:var(--software-on-accent-focus); }
+            &:hover { --software-mark-color:var(--software-on-accent-hover); }
+            &:active, &.check_active, &.radio_active, &.switch_active {
+                --software-mark-color:var(--software-on-accent-active);
+            }
+        }
+        &[data-cg-disabled] { --software-mark-color:var(--software-on-accent-disabled); }
+    }
+    .check_wrap.check_checked:not(.check_indeterminate) .check_check .check_tag-svg {
+        color: var(--software-mark-color);
+    }
+    .check_wrap.check_indeterminate .check_check::after { background: var(--software-mark-color); }
+    .radio_wrap.radio_selected .radio_radio::after { background: var(--software-mark-color); }
+    .switch_wrap:not([data-cg-disabled]).switch_checked .switch_block { background: var(--software-mark-color); }
+}
