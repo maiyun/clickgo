@@ -242,6 +242,9 @@
             padding: 50px 0 0 50px;
         }
         &:not(.cg-show) {
+            > * {
+                pointer-events: none;
+            }
             &:active {
                 filter: brightness(.6);
             }

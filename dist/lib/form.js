@@ -1248,19 +1248,19 @@ export const elements = {
                 return;
             }
             const launcherApp = clickgo.modules.vue.createApp({
-                'template': `<div class="cg-launcher-search">` +
+                'template': `<div class="cg-launcher-search" @pointerdown="listClick">` +
                     `<input v-if="folderName === ''" class="cg-launcher-sinput" :placeholder="search" v-model="name">` +
                     `<input v-else class="cg-launcher-foldername" :value="folderName" @change="folderNameChange">` +
                     `</div>` +
-                    `<div class="cg-launcher-list" @pointerdown="down" @click="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
+                    `<div class="cg-launcher-list" @pointerdown="listClick" :class="[folderName === '' ? '' : 'cg-folder-open']">` +
                     `<div v-for="item of list" class="cg-launcher-item">` +
                     `<div class="cg-launcher-inner">` +
-                    `<div v-if="!item.list || item.list.length === 0" class="cg-launcher-icon" :style="{'background-image': 'url(' + item.icon + ')'}" @click="iconClick($event, item)"></div>` +
-                    `<div v-else class="cg-launcher-folder" @click="openFolder($event, item)">` +
+                    `<div v-if="!item.list || item.list.length === 0" class="cg-launcher-icon" :style="{'background-image': 'url(' + item.icon + ')'}" @pointerdown="iconClick($event, item)"></div>` +
+                    `<div v-else class="cg-launcher-folder" @pointerdown="openFolder($event, item)">` +
                     `<div>` +
                     `<div v-for="sub of item.list" class="cg-launcher-item">` +
                     `<div class="cg-launcher-inner">` +
-                    `<div class="cg-launcher-icon" :style="{'background-image': 'url(' + sub.icon + ')'}" @click="subIconClick($event, sub)"></div>` +
+                    `<div class="cg-launcher-icon" :style="{'background-image': 'url(' + sub.icon + ')'}" @pointerdown="subIconClick($event, sub)"></div>` +
                     `<div class="cg-launcher-name">{{sub.name}}</div>` +
                     `</div>` +
                     `<div class="cg-launcher-space"></div>` +
@@ -1306,39 +1306,55 @@ export const elements = {
                     }
                 },
                 'methods': {
-                    down: function (e) {
-                        this.md = e.pageX + e.pageY;
-                    },
+                    /**
+                     * --- 点击启动器空白，文件夹打开时先返回列表 ---
+                     * @param e 指针按下事件
+                     * @returns 无返回值
+                     */
                     listClick: function (e) {
-                        if (this.md !== e.pageX + e.pageY) {
+                        if ((e.currentTarget !== e.target) &&
+                            !e.target.classList.contains('cg-launcher-space')) {
                             return;
                         }
-                        if (e.currentTarget !== e.target) {
-                            return;
-                        }
-                        if (this.folderName === '') {
-                            hideLauncher();
-                        }
-                        else {
-                            this.closeFolder();
-                        }
-                    },
-                    iconClick: async function (e, item) {
-                        if (this.md !== e.pageX + e.pageY) {
-                            return;
-                        }
-                        hideLauncher();
-                        await lTask.run(sysId, item.path, {
-                            'icon': item.icon
+                        clickgo.modules.pointer.click(e, () => {
+                            if (this.folderName === '') {
+                                hideLauncher();
+                            }
+                            else {
+                                this.closeFolder();
+                            }
                         });
                     },
-                    subIconClick: async function (e, item) {
-                        if (this.md !== e.pageX + e.pageY) {
+                    /**
+                     * --- 点击应用图标启动任务 ---
+                     * @param e 指针按下事件
+                     * @param item 应用配置
+                     * @returns 无返回值
+                     */
+                    iconClick: function (e, item) {
+                        clickgo.modules.pointer.click(e, async () => {
+                            hideLauncher();
+                            await lTask.run(sysId, item.path, {
+                                'icon': item.icon
+                            });
+                        });
+                    },
+                    /**
+                     * --- 点击文件夹内的应用图标启动任务 ---
+                     * @param e 指针按下事件
+                     * @param item 应用配置
+                     * @returns 无返回值
+                     */
+                    subIconClick: function (e, item) {
+                        // --- 缩略图只用于预览，点击统一交给文件夹处理 ---
+                        if (!e.currentTarget.closest('.cg-launcher-folder > div')?.classList.contains('cg-show')) {
                             return;
                         }
-                        hideLauncher();
-                        await lTask.run(sysId, item.path, {
-                            'icon': item.icon
+                        clickgo.modules.pointer.click(e, async () => {
+                            hideLauncher();
+                            await lTask.run(sysId, item.path, {
+                                'icon': item.icon
+                            });
                         });
                     },
                     closeFolder: function () {
@@ -1357,32 +1373,39 @@ export const elements = {
                             el.style.top = '';
                         }, 150);
                     },
+                    /**
+                     * --- 点击文件夹图标展开或收起文件夹 ---
+                     * @param e 指针按下事件
+                     * @param item 文件夹配置
+                     * @returns 无返回值
+                     */
                     openFolder: function (e, item) {
-                        if (this.md !== e.pageX + e.pageY) {
+                        const el = e.currentTarget.firstElementChild;
+                        if (el.classList.contains('cg-show') && (el !== e.target)) {
                             return;
                         }
-                        if (e.currentTarget.childNodes[0] !== e.target) {
-                            return;
-                        }
-                        if (this.folderName !== '') {
-                            this.closeFolder();
-                            return;
-                        }
-                        this.folderName = item.name;
-                        this.folderItem = item;
-                        const el = e.currentTarget.childNodes.item(0);
-                        this.folderEl = el;
-                        const searchEl = document.getElementsByClassName('cg-launcher-search')[0];
-                        const rect = el.getBoundingClientRect();
-                        el.style.left = rect.left.toString() + 'px';
-                        el.style.top = rect.top.toString() + 'px';
-                        el.style.position = 'fixed';
-                        requestAnimationFrame(() => {
-                            el.classList.add('cg-show');
-                            el.style.left = '50px';
-                            el.style.top = searchEl.offsetHeight.toString() + 'px';
-                            el.style.width = 'calc(100% - 100px)';
-                            el.style.height = 'calc(100% - 50px - ' + searchEl.offsetHeight.toString() + 'px)';
+                        // --- 收起时整个预览区域都是文件夹，避免空隙冒泡触发列表关闭 ---
+                        e.stopPropagation();
+                        clickgo.modules.pointer.click(e, () => {
+                            if (this.folderName !== '') {
+                                this.closeFolder();
+                                return;
+                            }
+                            this.folderName = item.name;
+                            this.folderItem = item;
+                            this.folderEl = el;
+                            const searchEl = document.getElementsByClassName('cg-launcher-search')[0];
+                            const rect = el.getBoundingClientRect();
+                            el.style.left = rect.left.toString() + 'px';
+                            el.style.top = rect.top.toString() + 'px';
+                            el.style.position = 'fixed';
+                            requestAnimationFrame(() => {
+                                el.classList.add('cg-show');
+                                el.style.left = '50px';
+                                el.style.top = searchEl.offsetHeight.toString() + 'px';
+                                el.style.width = 'calc(100% - 100px)';
+                                el.style.height = 'calc(100% - 50px - ' + searchEl.offsetHeight.toString() + 'px)';
+                            });
                         });
                     },
                     folderNameChange: function (e) {
