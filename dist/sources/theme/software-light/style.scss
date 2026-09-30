@@ -1,3 +1,11 @@
+@use 'sass:string';
+
+// --- 在线性 sRGB 中按亮度选择黑白前景，保留用户主色本身；.179 是两者对比度相等的阈值 ---
+@function on-accent($color) {
+    $channel: 'clamp(0, (.179 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
+    @return string.unquote('color(from #{$color} srgb-linear #{$channel} #{$channel} #{$channel} / 1)');
+}
+
 global {
     --g-padding-xs:2px;
     --g-padding-s:4px;
@@ -24,9 +32,11 @@ global {
     --g-line:1.4;
     --g-boxsize:32px;
 
-    // --- 跟随用户主色并调整浅色背景上的明度，常驻选中态仍使用中性灰 ---
-    --software-accent:oklch(from var(--main) clamp(.42, l, .52) min(c, .16) h);
-    --software-on-accent:#ffffff;
+    // --- 主色保持用户设置的原色，前景按底色选择黑白，页签保持中性 ---
+    --software-accent:var(--main);
+    --software-on-accent:#{on-accent('var(--cg)')};
+    --software-on-accent-hover:#{on-accent('var(--cg-hover)')};
+    --software-on-accent-active:#{on-accent('var(--cg-active)')};
     --cg:var(--software-accent);
     --cg-hover:color-mix(in oklch, var(--cg), black 8%);
     --cg-active:color-mix(in oklch, var(--cg), black 14%);
@@ -62,13 +72,13 @@ global {
     --danger-disabled:#b0a1a4;
     --danger-bg:#f2e2e5;
 
-    --g-pure:#f5f5f5;
-    --face:#ededed;
-    --face-hover:#dadada;
-    --face-selected:#d0d0d0;
-    --g-pop-background:#f7f7f7;
+    --g-pure:#ffffff;
+    --face:#ffffff;
+    --face-hover:#f0f0f0;
+    --face-selected:#eeeeee;
+    --g-pop-background:#ffffff;
     --g-pop-backdrop:none;
-    --g-pop-border:solid 1px #b7b7b7;
+    --g-pop-border:solid 1px #dedede;
     --g-shadow:none;
     --g-shadow-m:none;
     --g-shadow-d:none;
@@ -83,23 +93,29 @@ global {
     --g-color-disabled:#929292;
     --g-color-tip:#606060;
 
-    --g-background:#e4e4e4;
-    --g-background-hover:#dadada;
-    --g-background-active:#d0d0d0;
+    --g-background:#f5f5f5;
+    --g-background-hover:#f0f0f0;
+    --g-background-active:#e8e8e8;
     --g-background-opacity:rgb(0 0 0 / .08);
-    --g-background-focus:#e6e6e6;
-    --g-background-disabled:#e6e6e6;
+    --g-background-focus:#ffffff;
+    --g-background-disabled:#f4f4f4;
 
-    --g-border-color:#b7b7b7;
-    --g-border-color-hover:#999999;
+    --g-border-color:#dedede;
+    --g-border-color-hover:#b8b8b8;
     --g-border-color-active:#7a7a7a;
     --g-border-color-focus:var(--cg);
-    --g-border-color-disabled:#d5d5d5;
+    --g-border-color-disabled:#e7e7e7;
     
     --g-focusbox-border-width:0;
-    --software-divider:#cdcdcd;
+    --software-divider:#e5e5e5;
     --software-dock-hover:var(--face-hover);
     --software-highlight:var(--face-selected);
+    --software-selection-color:var(--g-color-focus);
+    --software-selection-color-hover:var(--g-color-hover);
+    --software-selection-color-active:var(--g-color-active);
+    --software-selection-background:color-mix(in srgb, var(--cg), white 92%);
+    --software-selection-hover:color-mix(in srgb, var(--cg), white 88%);
+    --software-selection-active:color-mix(in srgb, var(--cg), white 84%);
     
     // --- 输入区由底色区分，聚焦时才显示强调色轮廓 ---
 
@@ -109,24 +125,24 @@ global {
     --g-plain-color-focus:var(--g-color-focus);
     --g-plain-color-disabled:var(--g-color-disabled);
 
-    --g-plain-background:#fafafa;
-    --g-plain-background-hover:#f2f2f2;
-    --g-plain-background-active:#e9e9e9;
+    --g-plain-background:#f3f3f3;
+    --g-plain-background-hover:#ededed;
+    --g-plain-background-active:#e8e8e8;
     --g-plain-background-focus:#ffffff;
-    --g-plain-background-disabled:#e6e6e6;
+    --g-plain-background-disabled:#f5f5f5;
     --g-plain-background-selected:var(--face-selected);
 
     --g-plain-border-color:transparent;
-    --g-plain-border-color-hover:#999999;
+    --g-plain-border-color-hover:#b8b8b8;
     --g-plain-border-color-active:#7a7a7a;
     --g-plain-border-color-focus:var(--cg);
     --g-plain-border-color-disabled:transparent;
-    --g-plain-border-color-plain:#d5d5d5;
+    --g-plain-border-color-plain:#e7e7e7;
 
     // --- 特殊组件颜色 ---
 
-    --g-block-background:#f2f2f2;
-    --g-block-background-hover:#f7f7f7;
+    --g-block-background:#f5f5f5;
+    --g-block-background-hover:#eeeeee;
     --g-block-dark-background:#202020;
     --g-block-dark-background-hover:#292929;
 
@@ -152,11 +168,11 @@ global {
     }
     &.button_default, &.button_tool {
         &.button_plain, &:not(.button_plain) {
-            --background:#d8d8d8;
-            --background-hover:#cacaca;
-            --background-active:#c3c3c3;
-            --background-focus:#d8d8d8;
-            --background-disabled:#e3e3e3;
+            --background:#f2f2f2;
+            --background-hover:#eaeaea;
+            --background-active:#e2e2e2;
+            --background-focus:#f2f2f2;
+            --background-disabled:#f6f6f6;
             --border:solid 1px transparent;
             --border-hover:solid 1px transparent;
             --border-active:solid 1px transparent;
@@ -166,6 +182,13 @@ global {
         }
     }
     &.button_tool {
+        // --- 工具选中态用主色填充，普通参数按钮保留轻染色底块 ---
+        --software-selection-color:var(--software-on-accent);
+        --software-selection-color-hover:var(--software-on-accent-hover);
+        --software-selection-color-active:var(--software-on-accent-active);
+        --software-selection-background:var(--cg);
+        --software-selection-hover:var(--cg-hover);
+        --software-selection-active:var(--cg-active);
         &.button_plain, &:not(.button_plain) {
             --background:transparent;
             --background-hover:var(--face-hover);
@@ -174,47 +197,54 @@ global {
             --background-disabled:transparent;
         }
     }
-    // --- 语义操作用低饱和填充保留含义，避免抢过作品内容 ---
-    @each $type, $background in (primary: #d7e4da, info: #d7e2eb, warning: #ebe1cb, danger: #ead8db) {
+    // --- 浅色填充搭配同色系深色前景，保持语义辨识度和次于主色操作的强调层级 ---
+    @each $type, $background, $foreground in (
+        (primary, #c8e8d2, #245936),
+        (info, #cce6fa, #205a87),
+        (warning, #fae4ae, #6c4b0b),
+        (danger, #f7cdd2, #903240)
+    ) {
         &.button_#{$type}:not(.button_plain) {
-            --color:#202020;
-            --color-hover:#181818;
-            --color-active:#181818;
-            --color-focus:#202020;
+            --color:#{$foreground};
+            --color-hover:color-mix(in srgb, #{$foreground}, black 8%);
+            --color-active:color-mix(in srgb, #{$foreground}, black 12%);
+            --color-focus:#{$foreground};
             --background:#{$background};
             --background-hover:color-mix(in srgb, #{$background}, black 6%);
             --background-active:color-mix(in srgb, #{$background}, black 10%);
             --background-focus:#{$background};
-            --background-disabled:#e3e3e3;
+            --background-disabled:#f6f6f6;
             --shadow:none;
         }
     }
     &.button_cg:not(.button_plain) {
         --color:var(--software-on-accent);
-        --color-hover:var(--software-on-accent);
-        --color-active:var(--software-on-accent);
+        --color-hover:var(--software-on-accent-hover);
+        --color-active:var(--software-on-accent-active);
         --color-focus:var(--software-on-accent);
         --shadow:none;
     }
     &:not([data-cg-disabled]) {
         &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] { box-shadow: none; }
         &.button_checked {
-            color: var(--g-color-focus);
+            color: var(--software-selection-color);
             &::before { border: solid 1px #7a7a7a; }
             // --- 覆盖基础按钮各状态对 checked 的强调色文字和双像素描边 ---
             &:hover, &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] {
-                color: var(--g-color-focus);
+                color: var(--software-selection-color);
                 &::before { border: solid 1px #7a7a7a; }
             }
-            &.button_area-all, &.button_area-mark { background: var(--software-highlight); }
+            &.button_area-all, &.button_area-mark { background: var(--software-selection-background); }
             &.button_area-split {
                 .button_inner, .button_arrow { color: inherit; }
             }
             &:hover {
-                &.button_area-all, &.button_area-mark { background: #c4c4c4; }
+                color: var(--software-selection-color-hover);
+                &.button_area-all, &.button_area-mark { background: var(--software-selection-hover); }
             }
             &:active, &.button_active, &[data-cg-pop-open] {
-                &.button_area-all, &.button_area-mark { background: #c3c3c3; }
+                color: var(--software-selection-color-active);
+                &.button_area-all, &.button_area-mark { background: var(--software-selection-active); }
             }
         }
     }
@@ -243,7 +273,26 @@ global {
     }
 }
 
-// --- 菜单用中性底块反馈位置，键盘焦点保持独立标记 ---
+// --- 深色命令浮层独立于白色面板，避免全局输入弹层一起变暗 ---
+
+.button_pop:has(> [data-cg-control="menulist"]), .menu-item_pop, .menulist-item_pop, .menulist_wrap {
+    --face:#242424;
+    --face-hover:#383838;
+    --face-selected:#444444;
+    --g-color:#f5f5f5;
+    --g-color-hover:#ffffff;
+    --g-color-active:#ffffff;
+    --g-color-focus:#ffffff;
+    --g-color-tip:#bdbdbd;
+    --g-color-disabled:#8f8f8f;
+    --g-background-disabled:#242424;
+    --g-pop-background:#242424;
+    --g-pop-border:solid 1px #333333;
+    color: var(--g-color);
+    border-radius: var(--g-radius-l);
+}
+
+// --- 菜单行用主色定位，快捷键与选中标记保持相同对比 ---
 
 .menulist_wrap {
     padding: 3px;
@@ -264,7 +313,12 @@ global {
     }
     &:not([data-cg-disabled]) {
         &:hover, &[data-cg-pop-open] {
-            background: var(--software-highlight);
+            --g-color:var(--software-on-accent);
+            background: var(--cg);
+            color: var(--software-on-accent);
+            .menulist-item_right { color: inherit; }
+            .menulist-item_right .menulist-item_btn { background: transparent; }
+            .menulist-item_check, .menulist-item_radio { background: transparent; }
             &::before {
                 border-color: transparent;
             }
@@ -282,7 +336,7 @@ global {
             border: none;
             padding: 1px 4px;
             border-radius: 3px;
-            background: oklch(0 0 0 / .055);
+            background: oklch(1 0 0 / .09);
             box-shadow: none;
         }
     }
@@ -437,7 +491,10 @@ global {
     &.stab_rect {
         background: #f2f2f2;
         border-radius: var(--g-radius-l);
-        &::before { background: var(--software-highlight); }
+        &::before {
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgb(0 0 0 / .08);
+        }
     }
 }
 .stab-item_wrap {
