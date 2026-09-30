@@ -21,6 +21,10 @@
 
 .wrap {
     position: relative; color: var(--g-color-disabled); display: flex; -webkit-app-region: no-drag;
+    // --- Electron 按布局树顺序计算拖动区域，置底或不可交互的窗体不能扣除前景标题栏 ---
+    &[data-cg-bottom-most], &[data-cg-bottom-most] .wrap, &:not(.show), &[data-cg-min] {
+        -webkit-app-region: initial;
+    }
     &:not(.inside) {
         position: absolute; transition: .3s var(--g-cubic); transition-property: transform, opacity, box-shadow; transform: translateX(10px) translateY(0) translateZ(0); opacity: 0;
     }
