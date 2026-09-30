@@ -57,7 +57,7 @@
             }
 
             .title {
-                padding: var(--g-padding); flex: 1; width: 0; overflow: hidden;
+                padding: var(--g-padding); flex: 1; width: 0; overflow: hidden; display: flex; align-items: center;
                 .sub {
                     padding-inline-start: 10px;
                 }

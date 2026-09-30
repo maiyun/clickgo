@@ -1,0 +1,575 @@
+global {
+    --g-padding-xs:2px;
+    --g-padding-s:4px;
+    --g-padding:5px;
+    --g-padding-h:5px 9px;
+    --g-padding-l:8px;
+    --g-padding-l-h:7px 12px;
+    --g-padding-xl:12px;
+    --g-padding-xl-h:9px 16px;
+    --g-bpadding:16px;
+    --g-margin:5px;
+    --g-radius:5px;
+    --g-radius-l:8px;
+    --g-radius-xl:12px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:18px;
+    --g-size-l:26px;
+    --g-size-xl:36px;
+    --g-control:16px;   // --- 如 check、radio 等的宽度 ---
+    --g-control-m:20px;
+    --g-control-l:24px;
+    --g-transition:all .12s var(--g-cubic);
+    --g-line:1.4;
+    --g-boxsize:32px;
+
+    // --- 跟随用户主色并调整深色背景上的明度，常驻选中态仍使用中性灰 ---
+    --software-accent:oklch(from var(--main) clamp(.72, l, .88) min(c, .18) h);
+    --software-on-accent:#202020;
+    --cg:var(--software-accent);
+    --cg-hover:color-mix(in oklch, var(--cg), white 12%);
+    --cg-active:color-mix(in oklch, var(--cg), black 6%);
+    --cg-focus:var(--cg);
+    --cg-disabled:color-mix(in oklch, var(--cg), #727272 78%);
+    --cg-bg:color-mix(in srgb, var(--cg), var(--face) 86%);
+
+    --success:#9ccea7;
+    --success-hover:#b3ddbc;
+    --success-active:#82b68e;
+    --success-focus:#9ccea7;
+    --success-disabled:#727c75;
+    --success-bg:#303e34;
+
+    --info:#a1c8e6;
+    --info-hover:#bad8ee;
+    --info-active:#86aecf;
+    --info-focus:#a1c8e6;
+    --info-disabled:#727c84;
+    --info-bg:#303c45;
+
+    --warning:#e1c38d;
+    --warning-hover:#efd4a5;
+    --warning-active:#c7a873;
+    --warning-focus:#e1c38d;
+    --warning-disabled:#827c72;
+    --warning-bg:#423c30;
+
+    --danger:#e1a1a6;
+    --danger-hover:#edb9bd;
+    --danger-active:#c8868c;
+    --danger-focus:#e1a1a6;
+    --danger-disabled:#837578;
+    --danger-bg:#443236;
+
+    --g-pure:#343434;
+    --face:#2e2e2e;
+    --face-hover:#414141;
+    --face-selected:#4b4b4b;
+    --g-pop-background:#383838;
+    --g-pop-backdrop:none;
+    --g-pop-border:solid 1px #575757;
+    --g-shadow:none;
+    --g-shadow-m:none;
+    --g-shadow-d:none;
+    --g-outline-shadow:0 0 0 2px var(--cg);
+
+    // --- 画布、面板、标题条和输入区保持独立色阶 ---
+
+    --g-color:#dedede;
+    --g-color-hover:#f2f2f2;
+    --g-color-active:#ffffff;
+    --g-color-focus:#f2f2f2;
+    --g-color-disabled:#858585;
+    --g-color-tip:#b8b8b8;
+
+    --g-background:#262626;
+    --g-background-hover:#414141;
+    --g-background-active:#4b4b4b;
+    --g-background-opacity:rgb(255 255 255 / .12);
+    --g-background-focus:#303030;
+    --g-background-disabled:#303030;
+
+    --g-border-color:#575757;
+    --g-border-color-hover:#707070;
+    --g-border-color-active:#858585;
+    --g-border-color-focus:var(--cg);
+    --g-border-color-disabled:#484848;
+    
+    --g-focusbox-border-width:0;
+    --software-divider:#242424;
+    --software-dock-hover:var(--face-hover);
+    --software-highlight:var(--face-selected);
+    
+    // --- 输入区由底色区分，聚焦时才显示强调色轮廓 ---
+
+    --g-plain-color:var(--g-color);
+    --g-plain-color-hover:var(--g-color-hover);
+    --g-plain-color-active:var(--g-color-active);
+    --g-plain-color-focus:var(--g-color-focus);
+    --g-plain-color-disabled:var(--g-color-disabled);
+
+    --g-plain-background:#252525;
+    --g-plain-background-hover:#303030;
+    --g-plain-background-active:#383838;
+    --g-plain-background-focus:#292929;
+    --g-plain-background-disabled:#303030;
+    --g-plain-background-selected:var(--face-selected);
+
+    --g-plain-border-color:transparent;
+    --g-plain-border-color-hover:#707070;
+    --g-plain-border-color-active:#858585;
+    --g-plain-border-color-focus:var(--cg);
+    --g-plain-border-color-disabled:transparent;
+    --g-plain-border-color-plain:#484848;
+
+    // --- 特殊组件颜色 ---
+
+    --g-block-background:#292929;
+    --g-block-background-hover:#383838;
+    --g-block-dark-background:#202020;
+    --g-block-dark-background-hover:#292929;
+
+    ::selection {
+        background-color: color-mix(in oklch, var(--cg), transparent 68%);
+    }
+}
+
+// --- 命令按钮保留适当留白，工具按钮由状态底块定位 ---
+
+.button_wrap {
+    &:not(.button_circle):not(.button_sizeh) {
+        &.button_simple, .button_inner { padding: var(--g-padding-h); }
+        &.button_size-s {
+            &.button_simple, .button_inner { padding: 4px 7px; }
+        }
+        &.button_size-l {
+            &.button_simple, .button_inner { padding: var(--g-padding-l-h); }
+        }
+        &.button_size-xl {
+            &.button_simple, .button_inner { padding: var(--g-padding-xl-h); }
+        }
+    }
+    &.button_default, &.button_tool {
+        &.button_plain, &:not(.button_plain) {
+            --background:#505050;
+            --background-hover:#606060;
+            --background-active:#414141;
+            --background-focus:#505050;
+            --background-disabled:#3d3d3d;
+            --border:solid 1px transparent;
+            --border-hover:solid 1px transparent;
+            --border-active:solid 1px transparent;
+            --border-focus:solid 1px transparent;
+            --border-disabled:solid 1px transparent;
+            --shadow:none;
+        }
+    }
+    &.button_tool {
+        &.button_plain, &:not(.button_plain) {
+            --background:transparent;
+            --background-hover:var(--face-hover);
+            --background-active:var(--face-selected);
+            --background-focus:transparent;
+            --background-disabled:transparent;
+        }
+    }
+    // --- 语义操作用低饱和填充保留含义，避免抢过作品内容 ---
+    @each $type, $background in (primary: #3b5944, info: #3b5264, warning: #685535, danger: #694147) {
+        &.button_#{$type}:not(.button_plain) {
+            --color:#f2f2f2;
+            --color-hover:#ffffff;
+            --color-active:#ffffff;
+            --color-focus:#f2f2f2;
+            --background:#{$background};
+            --background-hover:color-mix(in srgb, #{$background}, white 12%);
+            --background-active:color-mix(in srgb, #{$background}, black 12%);
+            --background-focus:#{$background};
+            --background-disabled:#3d3d3d;
+            --shadow:none;
+        }
+    }
+    &.button_cg:not(.button_plain) {
+        --color:var(--software-on-accent);
+        --color-hover:var(--software-on-accent);
+        --color-active:var(--software-on-accent);
+        --color-focus:var(--software-on-accent);
+        --shadow:none;
+    }
+    &:not([data-cg-disabled]) {
+        &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] { box-shadow: none; }
+        &.button_checked {
+            color: var(--g-color-focus);
+            &::before { border: solid 1px #858585; }
+            // --- 覆盖基础按钮各状态对 checked 的强调色文字和双像素描边 ---
+            &:hover, &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] {
+                color: var(--g-color-focus);
+                &::before { border: solid 1px #858585; }
+            }
+            &.button_area-all, &.button_area-mark { background: var(--software-highlight); }
+            &.button_area-split {
+                .button_inner, .button_arrow { color: inherit; }
+            }
+            &:hover {
+                &.button_area-all, &.button_area-mark { background: #575757; }
+            }
+            &:active, &.button_active, &[data-cg-pop-open] {
+                &.button_area-all, &.button_area-mark { background: #414141; }
+            }
+        }
+    }
+    &[data-cg-disabled].button_checked {
+        color: var(--g-color-disabled);
+        &::before { border: solid 1px var(--g-border-color-disabled); }
+    }
+    &:not([data-cg-disabled]):focus-visible,
+    &:not([data-cg-disabled]) .button_inner:focus-visible,
+    &:not([data-cg-disabled]) .button_arrow:focus-visible {
+        outline: solid 2px var(--cg);
+        outline-offset: -2px;
+    }
+    .button_pointer { display: none; }
+}
+
+// --- 对话框保持统一控件尺度，正文保留阅读空间 ---
+
+.dialog_wrap {
+    &.dialog_padding .dialog_content {
+        padding: var(--g-bpadding);
+    }
+    .dialog_controls .dialog_tag-cg-button {
+        min-width: 72px;
+        box-sizing: border-box;
+    }
+}
+
+// --- 菜单用中性底块反馈位置，键盘焦点保持独立标记 ---
+
+.menulist_wrap {
+    padding: 3px;
+    background: var(--g-pop-background);
+}
+.menulist-item_wrap {
+    position: relative;
+    // --- 菜单密度独立于工具栏，标记槽与纯文字项使用相同的最低行高 ---
+    min-height: 28px;
+    box-sizing: border-box;
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border: solid 1px transparent;
+        border-radius: var(--g-radius);
+        pointer-events: none;
+    }
+    &:not([data-cg-disabled]) {
+        &:hover, &[data-cg-pop-open] {
+            background: var(--software-highlight);
+            &::before {
+                border-color: transparent;
+            }
+        }
+    }
+    .menulist-item_inner {
+        min-height: 28px;
+        box-sizing: border-box;
+        padding-block: 4px;
+        padding-inline: 8px 0;
+    }
+    .menulist-item_right {
+        padding-inline: 20px 8px;
+        .menulist-item_btn {
+            border: none;
+            padding: 1px 4px;
+            border-radius: 3px;
+            background: oklch(1 0 0 / .07);
+            box-shadow: none;
+        }
+    }
+    .menulist-item_check, .menulist-item_radio {
+        background: transparent;
+        height: 28px;
+        flex-shrink: 0;
+    }
+}
+.menu-item_wrap:not([data-cg-disabled]) {
+    &:hover, &:active, &[data-cg-pop-open] {
+        background: var(--software-highlight);
+        border-color: transparent;
+    }
+}
+
+// --- 面板保持平面，浮动窗口通过阴影分离层级 ---
+
+@keyframes software_flash {
+    0%, 50% { border-color: var(--cg); }
+    51%, 100% { border-color: var(--software-divider); }
+}
+.form_wrap {
+    &:not(.form_border-none):not([data-cg-max]) {
+        box-shadow: 0 3px 10px -3px oklch(0 0 0 / .36), 0 1px 3px oklch(0 0 0 / .22);
+        border-color: var(--software-divider);
+        &.form_focus {
+            box-shadow: 0 5px 14px -4px oklch(0 0 0 / .48), 0 1px 4px oklch(0 0 0 / .28);
+        }
+    }
+    &.form_flash {
+        animation: software_flash .2s linear infinite;
+    }
+    .form_inner {
+        .form_header {
+            border-bottom: solid 1px var(--software-divider);
+            .form_controls {
+                .form_min, .form_max {
+                    &:hover { background: var(--face-hover); }
+                    &:active { background: var(--face-selected); }
+                }
+            }
+        }
+        .form_content .form_step {
+            box-shadow: none;
+        }
+    }
+}
+.group_wrap {
+    border-radius: var(--g-radius);
+    &.group_hover:hover, &:not(.group_hover) {
+        box-shadow: none;
+    }
+}
+.toolbar_wrap {
+    background: var(--face);
+    &.toolbar_plain { background: transparent; }
+    border-bottom-color: var(--software-divider);
+    &.toolbar_borderless { border-bottom-color: transparent; }
+    > .toolbar_body, > .toolbar_right {
+        padding-block: 5px;
+        gap: 5px;
+    }
+}
+.dock_wrap {
+    --dock-collapsed-width: 36px;
+    // --- 不复用输入区底色，避免与按钮的悬停色落在相近亮度 ---
+    background: var(--face);
+    &.dock_left, &.dock_right { border-color: var(--software-divider); }
+    &.dock_collapsed { width: 36px; }
+}
+.dock-column_wrap:not(:first-child) { border-color: var(--software-divider); }
+.sidebar-toggle_wrap {
+    --sidebar-toggle-border: var(--software-divider);
+    --sidebar-toggle-background-hover: var(--software-dock-hover);
+}
+.toolbox_wrap {
+    background: var(--face);
+    &.toolbox_left, &.toolbox_right { border-color: var(--software-divider); }
+}
+// --- 与控件的分组条件保持相同优先级，避免透明输入边框覆盖分隔线。 ---
+.toolbox-group_wrap:not(:last-child) { border-bottom: solid 1px var(--software-divider); }
+// --- 面板页签使用圆角轻底块，选中不改变字重和位置 ---
+
+.dock-group_wrap {
+    &.dock-group_expanded, &.dock-group_collapsed { border-bottom-color: var(--software-divider); }
+    &.dock-group_expanded > .dock-group_tabs,
+    &.dock-group_collapsed.dock-group_floating > .dock-group_content > .dock-group_float-tabs {
+        padding: 4px;
+        gap: 3px;
+        border-bottom-color: var(--software-divider);
+        > .dock-group_tab, > .dock-group_float-tab {
+            padding: 3px 8px;
+            border: none;
+            border-radius: var(--g-radius);
+            transform: none;
+            font-weight: normal;
+            color: var(--g-color-tip);
+            &.dock-group_selected {
+                color: var(--g-color-focus);
+                background: var(--software-highlight);
+                font-weight: normal;
+                border-bottom-color: transparent;
+            }
+            &:not(.dock-group_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
+        }
+        > .dock-group_collapse-btn {
+            width: 26px;
+            border-radius: var(--g-radius);
+            &:hover { background: var(--face-hover); }
+        }
+    }
+    &.dock-group_collapsed > .dock-group_icon-btn {
+        width: 34px;
+        height: 34px;
+        outline: solid 1px transparent;
+        outline-offset: -1px;
+        transition-property: background-color;
+        &.dock-group_active { background: var(--software-highlight); outline-color: #858585; }
+        &:hover { background: var(--face-hover); }
+    }
+}
+
+.tab_wrap {
+    // --- 四种方位均解除默认连接内容框的边框与位移，保留关闭和拖动槽 ---
+    &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
+        > .tab_tabs-wrap > .tab_tabs {
+            padding: 4px;
+            gap: 3px;
+            transform: none;
+            > .tab_tab, > .tab_tab.tab_selected,
+            > .tab_tab.tab_selected + .tab_tab, > .tab_tab:last-child {
+                border: none;
+                border-radius: var(--g-radius);
+                padding: 0;
+                background: transparent;
+                color: var(--g-color-tip);
+                &::after { display: none; }
+                > .tab_content { padding: 5px 10px; }
+                &.tab_selected { background: var(--software-highlight); color: var(--g-color-focus); }
+                &:not(.tab_selected):not([data-hover]):hover { background: var(--face-hover); color: var(--g-color-hover); }
+                &[data-hover] { background: var(--face-selected); color: var(--g-color-focus); }
+            }
+        }
+    }
+    > .tab_panel { border: none; background: transparent; }
+}
+
+.stab_wrap {
+    border: none;
+    gap: 3px;
+    &.stab_rect {
+        background: #292929;
+        border-radius: var(--g-radius-l);
+        &::before { background: var(--software-highlight); }
+    }
+}
+.stab-item_wrap {
+    // --- 普通、胶囊和滑块页签共享文字状态，滑块保留控件自身动画 ---
+    &, &.stab-item_light, &.stab-item_rect {
+        padding: 5px 9px;
+        border: none;
+        border-radius: var(--g-radius);
+        transform: none;
+        font-weight: normal;
+        color: var(--g-color-tip);
+        &.stab-item_selected { color: var(--g-color-focus); font-weight: normal; }
+    }
+    &:not([data-cg-disabled]) {
+        &.stab-item_selected:not(.stab-item_rect) { background: var(--software-highlight); }
+        &:not(.stab-item_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
+    }
+    &[data-cg-disabled] {
+        color: var(--g-color-disabled);
+        &.stab-item_selected { background: var(--g-background-disabled); }
+    }
+}
+
+// --- 导航与滚动条去除装饰性阴影 ---
+
+.nav_wrap {
+    .nav_menuwrap .nav_menu, .nav_content .nav_header { box-shadow: none; }
+    .nav_bg { display: none; }
+}
+.nav-item_wrap.nav-item_selected > .nav-item_text {
+    color: var(--g-color-focus);
+    background: var(--software-highlight);
+}
+.scroll_wrap {
+    background: transparent;
+    .scroll_start, .scroll_end { display: none; }
+}
+.loading_wrap .loading_item2 { box-shadow: none; }
+.table_wrap .table_header .table_item.table_fixed-left::before,
+.table_wrap .table_header .table_item.table_fixed-right::before,
+.table-item_wrap.table-item_fixed-left::before,
+.table-item_wrap.table-item_fixed-right::before { box-shadow: none; }
+.drawer_wrap .drawer_body { box-shadow: none; }
+.task_wrap {
+    background: var(--g-pop-background);
+    .task_date { color: var(--g-color); }
+}
+.select_tag-cg-greatselect .select_op .select_tags .select_tag {
+    .select_label { padding: 0 6px; }
+    .select_close { width: 18px; height: 18px; }
+}
+
+// --- 默认进度条需要独立于透明边框的填充色，语义类型仍使用各自主色 ---
+
+.progress_wrap.progress_default .progress_block {
+    background: var(--g-color-tip);
+}
+
+// --- 复选框与单选框需要可识别的轮廓，不能随输入区一起隐去 ---
+
+.check_wrap, .radio_wrap {
+    --g-plain-border-color:#858585;
+    --g-plain-border-color-disabled:var(--software-divider);
+}
+
+// --- 辅助标签与禁用状态分离，面板标题以字重组织 ---
+
+.label_wrap.label_tip, .label_wrap.label_mtip { color: var(--g-color-tip); }
+.title_wrap .title_content { font-size: var(--g-size); font-weight: 600; }
+
+// --- Property 的纯图标命令保持正方形，不继承文字按钮的横向加宽留白 ---
+
+.property_wrap > .property_controls {
+    gap: var(--g-padding-s);
+    > .property_tag-cg-button {
+        width: var(--g-boxsize);
+        height: var(--g-boxsize);
+        box-sizing: border-box;
+        flex: none;
+        margin-inline-end: 0;
+        &.button_wrap.button_simple { padding: var(--g-padding); }
+    }
+    > .property_split { margin-inline: 0; }
+}
+
+// --- 下拉输入由底色识别，聚焦和展开时显示交互轮廓 ---
+
+.greatselect_wrap:not(.greatselect_plain) {
+    border-color: transparent;
+    &:not([data-cg-disabled]) {
+        background: var(--g-plain-background);
+        &:hover { border-color: var(--g-plain-border-color-hover); }
+        &:focus-within, &[data-cg-pop-open] { border-color: var(--cg); }
+    }
+}
+
+// --- 中性轨道避免长距离彩色线条贯穿工作台，键盘焦点仍跟随用户主色 ---
+
+.slider_wrap {
+    --cg:#b8b8b8;
+    --cg-hover:#dedede;
+    --cg-active:#ffffff;
+    --cg-focus:#dedede;
+    --g-plain-border-color:#565656;
+    --g-plain-border-color-disabled:#484848;
+    --slider-thumb-background:#b8b8b8;
+    --slider-thumb-background-disabled:#626262;
+    --g-outline-shadow:0 0 0 2px var(--software-accent);
+    .slider_input {
+        &::-webkit-slider-thumb { border-width: 1px; }
+        &::-moz-range-thumb { border-width: 1px; }
+    }
+}
+.switch_wrap {
+    --g-plain-border-color:#626262;
+    --g-plain-border-color-disabled:#484848;
+    .switch_block { background: #dedede; }
+    &:not([data-cg-disabled]).switch_checked .switch_block { background: var(--software-on-accent); }
+}
+.check_wrap:not([data-cg-disabled]).check_checked:not(.check_indeterminate) .check_check .check_tag-svg { color: var(--software-on-accent); }
+.check_wrap.check_indeterminate .check_check::after { background: var(--software-on-accent); }
+.radio_wrap.radio_selected .radio_radio::after { background: var(--software-on-accent); }
+
+// --- 提示采用低饱和底色和局部语义标记 ---
+
+.alert_wrap {
+    padding: 8px 10px;
+    @each $type, $color in (primary: success, info: info, warning: warning, danger: danger, cg: cg) {
+        &.alert_#{$type} {
+            color: var(--g-color);
+            border-color: transparent;
+            border-inline-start: solid 3px var(--#{$color});
+        }
+    }
+}
