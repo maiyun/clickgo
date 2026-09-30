@@ -21,6 +21,11 @@ export default class extends clickgo.control.AbstractControl {
         'disabled': boolean | string;
         'plain': boolean | string;
         'keepActive': boolean | string;
+        'background': string;
+        'backgroundSize': string;
+        'backgroundRepeat': string;
+        'backgroundPosition': string;
+        'textShadow': boolean | string;
         'multi': boolean | string;
         'ctrl': boolean | string;
         'selection': boolean | string;
@@ -36,9 +41,21 @@ export default class extends clickgo.control.AbstractControl {
     } = {
             'data': [], 'modelValue': [], 'positions': {},
             'disabled': false, 'plain': false, 'keepActive': false, 'multi': true, 'ctrl': true, 'selection': true,
+            'background': '', 'backgroundSize': '', 'backgroundRepeat': '', 'backgroundPosition': '',
+            'textShadow': false,
             'draggable': true, 'autoArrange': false, 'snap': true, 'direction': 'column',
             'size': 48, 'cellWidth': 96, 'cellHeight': 96, 'gap': 8, 'padding': 8
         };
+
+    /** --- 独立背景参数覆盖简写；未设置的参数不重置已有 CSS 背景规则 --- */
+    public get backgroundStyle(): Record<string, string> {
+        return {
+            ...(this.props.background ? { 'background': this.props.background } : {}),
+            ...(this.props.backgroundSize ? { 'background-size': this.props.backgroundSize } : {}),
+            ...(this.props.backgroundRepeat ? { 'background-repeat': this.props.backgroundRepeat } : {}),
+            ...(this.props.backgroundPosition ? { 'background-position': this.props.backgroundPosition } : {})
+        };
+    }
 
     /** --- 测量后的可用尺寸 --- */
     public width = 0;

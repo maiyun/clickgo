@@ -24,11 +24,31 @@
 
 #### plain
 
-`boolean | string`，默认 `false`。设为 `true` 隐去控件背景和外边框，适合放在桌面 Form 中。
+`boolean | string`，默认 `false`。设为 `true` 隐去控件背景和外边框，适合放在桌面 Form 中。此模式或设置了 `background` 时，图标悬停、选中和目录拖入反馈使用浅色半透明底色，选中和键盘活动项带边框，保留壁纸细节。普通主题背景模式仍沿用主题反馈。主题可通过 `--g-desktop-background-hover`、`--g-desktop-background-selected`、`--g-desktop-background-active` 及对应的 `--g-desktop-border-color-hover/selected/active` 覆盖这些状态。
 
 #### keepActive
 
 `boolean | string`，默认 `false`，模板属性为 `keep-active`。保持正常文字颜色，不继承 Form 失焦时的灰色外观，适合置底桌面。只影响视觉，不改变 Form 焦点、键盘输入归属或控件的焦点提示；`disabled` 仍显示禁用颜色，自定义插槽内子控件自身的状态也不被覆盖。
+
+#### background
+
+`string`，默认 `''`。CSS `background` 简写，可设置颜色、渐变或 `url(...)` 图片，不叠加遮罩或滤镜。图片应由应用加载为可访问的 URL 或数据 URL；不会自动读取 `/package/` 路径。设置后覆盖控件的主题背景，`plain` 仍控制边框和默认背景。
+
+#### backgroundSize
+
+`string`，默认 `''`，模板属性为 `background-size`。遵循 CSS `background-size`：`cover` 保持比例填满并裁切，`contain` 保持比例完整显示，`100% 100%` 拉伸填满，`auto` 使用原始尺寸，也支持 `160px auto` 等自定义尺寸。空值保留 `background` 简写或样式中的尺寸设置；未设置时按 CSS 默认 `auto`。
+
+#### backgroundRepeat
+
+`string`，默认 `''`，模板属性为 `background-repeat`。支持 CSS 的 `no-repeat`、`repeat`、`repeat-x`、`repeat-y`、`space` 和 `round`。空值保留原有设置；未设置时按 CSS 默认 `repeat`。平铺通常搭配 `auto` 或自定义尺寸。
+
+#### backgroundPosition
+
+`string`，默认 `''`，模板属性为 `background-position`。支持 `center`、`left top`、`right bottom`、百分比和长度等 CSS 位置。空值保留原有设置；未设置时按 CSS 默认 `0% 0%`。尺寸、平铺、位置互相独立，非空参数覆盖 `background` 简写中的对应设置。
+
+#### textShadow
+
+`boolean | string`，默认 `false`，模板属性为 `text-shadow`。为默认图标名称启用浅色文字和深色多重阴影，提高复杂壁纸上的可读性，不改变壁纸或图标色值。失焦、悬停和选中仍保留名称阴影，禁用时使用主题禁用文字色。主题可通过 `--g-desktop-label-color` 和 `--g-desktop-label-shadow` 覆盖颜色与阴影；自定义默认插槽自行处理文字样式。壁纸由父 Form 提供时也可独立开启。
 
 #### multi
 
@@ -141,7 +161,7 @@ Desktop 和 Iconview 共用 `clickgo.modules.pointer.drag()`，它返回取消�
 </desktop>
 ```
 
-参数演示位于 `demo/form/control/desktop`。实战演示位于 `demo/form/solution/desktop`，Form 仅包含 Desktop 控件，使用 `bottomMost = true`，Form 声明 `viewport state-max padding="safe"`，由框架管理全视口最大化和内容安全区；图标随任务栏换边留空，壁纸连续延伸到任务栏下，业务无需维护尺寸或屏幕监听。启用 `keep-active` 保持桌面失焦时的正常颜色。位置持久化和壁纸均由 demo 应用处理，仅在 `layout.reason` 为 `drag` 或 `arrange` 时保存 `preferredPositions`，避免窗口调整和属性回写重复写入。右键可设置或移除内置示例壁纸，Form 的 `background` 承载图片，唯一内容控件仍为 Desktop。Cross-form drag 按钮可打开 Iconview；拖入桌面空白时创建示例图标，拖入目录时展示请求，不修改真实文件。控件没有文件系统或窗口管理职责。
+参数演示位于 `demo/form/control/desktop`，可开关示例壁纸和文字阴影，调整裁切、适应、拉伸、原始尺寸、平铺及九宫格位置。实战演示位于 `demo/form/solution/desktop`，Form 仅包含 Desktop 控件，使用 `bottomMost = true`，Form 声明 `viewport state-max padding="safe"`，由框架管理全视口最大化和内容安全区；图标随任务栏换边留空，壁纸连续延伸到任务栏下，业务无需维护尺寸或屏幕监听。启用 `keep-active` 保持桌面失焦时的正常颜色。位置持久化和壁纸均由 demo 应用处理，仅在 `layout.reason` 为 `drag` 或 `arrange` 时保存 `preferredPositions`，避免窗口调整和属性回写重复写入。右键可设置或移除内置示例壁纸，Form 的 `background` 承载图片，唯一内容控件仍为 Desktop。Form 同样提供 `background-size`、`background-repeat`、`background-position`，右键菜单可独立调整；Desktop 启用 `text-shadow`，壁纸不再叠加主题色遮罩。Cross-form drag 按钮可打开 Iconview；拖入桌面空白时创建示例图标，拖入目录时展示请求，不修改真实文件。控件没有文件系统或窗口管理职责。
 
 “Reverse data (stable IDs)”只颠倒 data 的顺序，用来验证手动位置按 ID 保存；开启自动排列时，顺序变化才会驱动整体重排。
 

@@ -14,6 +14,14 @@
         &:not(.plain) { background: var(--g-plain-background-disabled); }
         > * { pointer-events: none; }
     }
+    // --- 阴影仅作用于图标名称，保持壁纸和图标原始颜色。主题可覆盖这两个语义变量。 ---
+    &.text-shadow .item .name {
+        color: var(--g-desktop-label-color, #fff);
+        text-shadow: var(--g-desktop-label-shadow, 0 1px 2px #000, 0 0 3px #000);
+    }
+    &.text-shadow[data-cg-disabled] .item .name {
+        color: var(--g-color-disabled);
+    }
     .item {
         position: absolute; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; padding: 8px 4px; gap: 6px;
         overflow: hidden; border: solid .5px transparent; border-radius: var(--g-radius);
@@ -28,6 +36,27 @@
         .name {
             width: 100%; text-align: center; overflow: hidden; overflow-wrap: anywhere;
             display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;
+        }
+    }
+    // --- 自身背景和父 Form 壁纸都使用局部半透明反馈，不给整张壁纸叠层。 ---
+    &.custom-background, &.plain {
+        .item {
+            &:hover {
+                background: var(--g-desktop-background-hover, rgb(255 255 255 / .14));
+                border-color: var(--g-desktop-border-color-hover, rgb(255 255 255 / .3));
+            }
+            &.selected, &[data-hover] {
+                background: var(--g-desktop-background-selected, rgb(255 255 255 / .24));
+                border-color: var(--g-desktop-border-color-selected, rgb(255 255 255 / .55));
+                box-shadow: 0 0 0 .5px rgb(0 0 0 / .2);
+            }
+            &.selected:hover, &[data-hover] {
+                background: var(--g-desktop-background-active, rgb(255 255 255 / .3));
+            }
+            &.active {
+                border-color: var(--g-desktop-border-color-active, rgb(255 255 255 / .8));
+                box-shadow: 0 0 0 .5px rgb(0 0 0 / .3);
+            }
         }
     }
     .more {

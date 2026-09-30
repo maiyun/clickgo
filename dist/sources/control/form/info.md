@@ -80,7 +80,19 @@
 
 `string`
 
-背景颜色。
+CSS `background` 简写，默认 `''`，使用主题背景。可设置颜色、渐变或 `url(...)` 图片；图片应由应用加载为可访问的 URL 或数据 URL。不会自动读取 `/package/` 路径，也不叠加遮罩。
+
+#### backgroundSize
+
+`string`，默认 `''`，模板属性为 `background-size`。CSS 背景尺寸：`cover` 保持比例填满并裁切，`contain` 保持比例完整显示，`100% 100%` 拉伸，`auto` 原始尺寸，也支持长度和百分比。空值保留 `background` 简写或主题中的设置。
+
+#### backgroundRepeat
+
+`string`，默认 `''`，模板属性为 `background-repeat`。CSS 平铺方式：`no-repeat`、`repeat`、`repeat-x`、`repeat-y`、`space`、`round`。空值保留原有设置；未设置时按 CSS 默认 `repeat`。
+
+#### backgroundPosition
+
+`string`，默认 `''`，模板属性为 `background-position`。CSS 背景位置，如 `center`、`left top`、`right bottom`、百分比或长度。空值保留原有设置；未设置时按 CSS 默认 `0% 0%`。三个独立背景参数的非空值覆盖 `background` 简写中的对应设置，清空后恢复简写或主题设置。
 
 #### padding
 

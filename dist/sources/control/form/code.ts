@@ -35,6 +35,9 @@ export default class extends clickgo.control.AbstractControl {
 
         'border': 'normal' | 'thin' | 'plain' | 'none';
         'background': string;
+        'backgroundSize': string;
+        'backgroundRepeat': string;
+        'backgroundPosition': string;
         'padding': string;
         'direction': 'h' | 'v';
 
@@ -61,6 +64,9 @@ export default class extends clickgo.control.AbstractControl {
             'minHeight': 100,
             'border': 'normal',
             'background': '',
+            'backgroundSize': '',
+            'backgroundRepeat': '',
+            'backgroundPosition': '',
             'padding': '',
             'direction': 'h',
 
@@ -71,6 +77,16 @@ export default class extends clickgo.control.AbstractControl {
             'left': -1,
             'top': -1,
         };
+
+    /** --- 独立背景参数覆盖简写；未设置的参数不重置已有 CSS 背景规则 --- */
+    public get backgroundStyle(): Record<string, string> {
+        return {
+            ...(this.props.background ? { 'background': this.props.background } : {}),
+            ...(this.props.backgroundSize ? { 'background-size': this.props.backgroundSize } : {}),
+            ...(this.props.backgroundRepeat ? { 'background-repeat': this.props.backgroundRepeat } : {}),
+            ...(this.props.backgroundPosition ? { 'background-position': this.props.backgroundPosition } : {})
+        };
+    }
 
     /** --- 最大化后根据任务栏占用计算的内容安全留白 --- */
     public safePadding = '0';

@@ -2,7 +2,7 @@
     <layout direction="v" gutter="10" style="flex: 1; width: 0; min-height: 0; overflow: clip;">
         <label>Selected IDs: {{selected.join(', ') || 'None'}} | Overflow: {{overflow.length}} | Layout: {{lastLayout}}</label>
         <!-- 无滚动的桌面区域；拖动窗体边缘可查看越界重排。 -->
-        <desktop ref="desktop" :data="list" v-model="selected" v-model:positions="positions" :disabled="disabled" :multi="multi" :ctrl="ctrl" :selection="selection" :draggable="draggable" :auto-arrange="autoArrange" :snap="snap" :plain="plain" :keep-active="keepActive" :size="size[0]" :direction="direction[0]" :cell-width="cellWidth" :cell-height="cellHeight" :gap="gap" :padding="padding" @open="onOpen" @layout="onLayout" @drop="onDrop" @overflow="onOverflow" style="flex: 1; height: 0; min-height: 100px;">
+        <desktop ref="desktop" :data="list" v-model="selected" v-model:positions="positions" :disabled="disabled" :multi="multi" :ctrl="ctrl" :selection="selection" :draggable="draggable" :auto-arrange="autoArrange" :snap="snap" :plain="plain" :keep-active="keepActive" :background="background" :background-size="backgroundSize[0]" :background-repeat="backgroundRepeat[0]" :background-position="backgroundPosition[0]" :text-shadow="!!background &amp;&amp; textShadow" :size="size[0]" :direction="direction[0]" :cell-width="cellWidth" :cell-height="cellHeight" :gap="gap" :padding="padding" @open="onOpen" @layout="onLayout" @drop="onDrop" @overflow="onOverflow" style="flex: 1; height: 0; min-height: 100px;">
             <template v-if="custom" v-slot="d">
                 <label size="l">{{d.item.type === 0 ? '📁' : '📄'}}</label>
                 <label>{{d.item.name}}</label>
@@ -38,6 +38,14 @@
                     <check v-model="plain">plain</check>
                     <tip label="Keep normal colors when the Form loses focus. Keyboard focus stays unchanged."><check v-model="keepActive">keep-active</check></tip>
                     <check v-model="custom">Custom icon slot</check>
+                </layout>
+                <!-- 壁纸尺寸、平铺和位置独立设置，文字阴影不改变图片。 -->
+                <layout gutter="8" align-v="center" style="flex-wrap: wrap;">
+                    <check v-model="wallpaper">Sample wallpaper</check>
+                    <tip label="White text with a dark shadow for default icon names. Custom slots handle their own text."><check v-model="textShadow">text-shadow</check></tip>
+                    <layout gutter="6" align-v="center"><label>background-size</label><select v-model="backgroundSize" :data="[{value: 'cover', label: 'Fill / crop'}, {value: 'contain', label: 'Fit (keep ratio)'}, {value: '100% 100%', label: 'Stretch'}, {value: 'auto', label: 'Original size'}, {value: '160px auto', label: 'Small tiles (160px)'}]" style="width: 160px;"></select></layout>
+                    <layout gutter="6" align-v="center"><label>background-repeat</label><select v-model="backgroundRepeat" :data="['no-repeat', 'repeat', 'repeat-x', 'repeat-y', 'space', 'round']" style="width: 120px;"></select></layout>
+                    <layout gutter="6" align-v="center"><label>background-position</label><select v-model="backgroundPosition" :data="['center', 'left top', 'center top', 'right top', 'left center', 'right center', 'left bottom', 'center bottom', 'right bottom']" style="width: 140px;"></select></layout>
                 </layout>
                 <layout gutter="8" align-v="center" style="flex-wrap: wrap;">
                     <layout gutter="6" align-v="center"><label>size</label><select v-model="size" :data="[32, 48, 64]" style="width: 70px;"></select></layout>

@@ -1,6 +1,6 @@
 <!-- 无边框、不可拖动的置底 Form，唯一内容控件为 Desktop。 -->
-<form :background="background" title="Desktop workspace" border="none" viewport state-max padding="safe" :resize="false" :min="false" :max="false" :close="false">
-    <desktop ref="desktop" :data="list" v-model="selected" v-model:positions="positions" plain keep-active @open="onOpen" @layout="onLayout" @drop="onDrop" style="flex: 1;">
+<form :background="background" :background-size="backgroundSize" :background-repeat="backgroundRepeat" :background-position="backgroundPosition" title="Desktop workspace" border="none" viewport state-max padding="safe" :resize="false" :min="false" :max="false" :close="false">
+    <desktop ref="desktop" :data="list" v-model="selected" v-model:positions="positions" plain keep-active :text-shadow="wallpaper &amp;&amp; !!wallpaperImage" @open="onOpen" @layout="onLayout" @drop="onDrop" style="flex: 1;">
         <template v-slot:pop>
             <menulist>
                 <menulist-item @click="back">Back to demo</menulist-item>
@@ -8,6 +8,32 @@
                 <menulist-item @click="add">Add shortcut</menulist-item>
                 <menulist-item @click="arrange">Arrange icons</menulist-item>
                 <menulist-item @click="toggleWallpaper">{{wallpaper ? 'Remove wallpaper' : 'Set sample wallpaper'}}</menulist-item>
+                <!-- 全视口壁纸由 Form 绘制，安全留白只约束图标。 -->
+                <menulist-item :disabled="!wallpaper">Wallpaper size
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item type="radio" v-model="backgroundSize" label="cover">Fill / crop</menulist-item>
+                            <menulist-item type="radio" v-model="backgroundSize" label="contain">Fit (keep ratio)</menulist-item>
+                            <menulist-item type="radio" v-model="backgroundSize" label="100% 100%">Stretch</menulist-item>
+                            <menulist-item type="radio" v-model="backgroundSize" label="auto">Original size</menulist-item>
+                            <menulist-item type="radio" v-model="backgroundSize" label="160px auto">Small tiles (160px)</menulist-item>
+                        </menulist>
+                    </template>
+                </menulist-item>
+                <menulist-item :disabled="!wallpaper">Wallpaper repeat
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item v-for="value of ['no-repeat', 'repeat', 'repeat-x', 'repeat-y', 'space', 'round']" :key="value" type="radio" v-model="backgroundRepeat" :label="value">{{value}}</menulist-item>
+                        </menulist>
+                    </template>
+                </menulist-item>
+                <menulist-item :disabled="!wallpaper">Wallpaper position
+                    <template v-slot:pop>
+                        <menulist>
+                            <menulist-item v-for="value of ['center', 'left top', 'center top', 'right top', 'left center', 'right center', 'left bottom', 'center bottom', 'right bottom']" :key="value" type="radio" v-model="backgroundPosition" :label="value">{{value}}</menulist-item>
+                        </menulist>
+                    </template>
+                </menulist-item>
                 <menulist-split></menulist-split>
                 <menulist-item :disabled="true">{{saved ? 'Positions saved' : 'Could not save positions'}}</menulist-item>
                 <menulist-item @click="finish">Close desktop workspace</menulist-item>

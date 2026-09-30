@@ -15,11 +15,12 @@ export default class extends clickgo.form.AbstractForm {
     saved = true;
     wallpaper = true;
     wallpaperImage = '';
+    backgroundSize = 'cover';
+    backgroundRepeat = 'no-repeat';
+    backgroundPosition = 'center';
     /** --- 使用 Form 的背景能力，桌面仍只有一个 Desktop 内容控件 --- */
     get background() {
-        const overlay = 'color-mix(in oklch, var(--g-background) 65%, transparent)';
-        return this.wallpaper && this.wallpaperImage ?
-            `linear-gradient(${overlay}, ${overlay}), url("${this.wallpaperImage}") center / cover` : '';
+        return this.wallpaper && this.wallpaperImage ? `url("${this.wallpaperImage}")` : '';
     }
     /**
      * --- 演示设置和移除桌面背景图片 ---

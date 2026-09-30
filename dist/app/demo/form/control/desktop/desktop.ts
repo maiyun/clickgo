@@ -39,6 +39,23 @@ export default class DesktopFrm extends clickgo.form.AbstractForm {
 
     public custom = false;
 
+    public wallpaper = false;
+
+    public wallpaperImage = '';
+
+    public backgroundSize = ['cover'];
+
+    public backgroundRepeat = ['no-repeat'];
+
+    public backgroundPosition = ['center'];
+
+    public textShadow = true;
+
+    /** --- 示例图片转换为数据 URL 后作为 CSS 背景，不叠加遮罩 --- */
+    public get background(): string {
+        return this.wallpaper && this.wallpaperImage ? `url("${this.wallpaperImage}")` : '';
+    }
+
     public size = [48];
 
     public direction = ['column'];
@@ -189,15 +206,19 @@ export default class DesktopFrm extends clickgo.form.AbstractForm {
     }
 
     /**
-     * --- 切换目标时填写已有坐标 ---
-     * @returns 无返回值
+     * --- 切换目标时填写已有坐标，并加载示例壁纸 ---
+     * @returns 图片加载后结束
      */
-    public onMounted(): void {
+    public async onMounted(): Promise<void> {
         this.watch('target', () => {
             const point = this.positions[this.target[0]];
             this.x = (point?.x ?? 8).toString();
             this.y = (point?.y ?? 8).toString();
         }, { 'deep': true });
+        const image = await clickgo.fs.getContent(this, '/package/res/img.jpg');
+        if (image && (typeof image !== 'string')) {
+            this.wallpaperImage = await clickgo.tool.blob2DataUrl(image);
+        }
     }
 
     /**
