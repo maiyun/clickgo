@@ -96,6 +96,7 @@
     > .tabs-wrap > .tabs > .tab {
         background: var(--face); transition: var(--g-transition); display: inline-flex; align-items: center; border: solid .5px var(--g-plain-border-color); position: relative;
         &::after {
+            // --- 遮住面板接缝时只伸出 1px，与 tabs 的预留空间一致，避免产生交叉轴滚动 ---
             content: ' '; pointer-events: none; position: absolute; background: var(--g-plain-background); transition: var(--g-transition); opacity: 0;
         }
         &:not(.selected):not([data-hover]):hover {
@@ -164,7 +165,7 @@
                 &.selected {
                     padding-bottom: 3px;
                     &::after {
-                        opacity: 1; left: 0; top: calc(100% - 2px); width: 100%; height: 4px;
+                        opacity: 1; left: 0; top: calc(100% - 1px); width: 100%; height: 2px;
                     }
                 }
             }
@@ -180,7 +181,7 @@
                 &.selected {
                     padding-top: 3px;
                     &::after {
-                        opacity: 1; left: 0; top: -2px; width: 100%; height: 4px;
+                        opacity: 1; left: 0; top: -1px; width: 100%; height: 2px;
                     }
                 }
             }
@@ -213,7 +214,7 @@
                 border-width: .5px 0 0 .5px; border-radius: var(--g-radius) 0 0 var(--g-radius);
                 &.selected {
                     &::after {
-                        opacity: 1; left: calc(100% - 2px); top: 0; width: 4px; height: 100%;
+                        opacity: 1; left: calc(100% - 1px); top: 0; width: 2px; height: 100%;
                     }
                 }
             }
@@ -228,7 +229,7 @@
                 border-width: .5px .5px 0 0; border-radius: 0 var(--g-radius) var(--g-radius) 0;
                 &.selected {
                     &::after {
-                        opacity: 1; left: -2px; top: 0; width: 4px; height: 100%;
+                        opacity: 1; left: -1px; top: 0; width: 2px; height: 100%;
                     }
                 }
             }
