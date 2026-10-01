@@ -66,6 +66,10 @@ export default class extends clickgo.form.AbstractForm {
     scroll = 'auto';
     size = [100];
     plain = false;
+    /** --- 用父 Form 的背景演示透明 Iconview，不给控件增加壁纸参数。 --- */
+    picture = false;
+    /** --- Form 的 background 接收 CSS 值，包内图片须先转换为可访问的数据 URL。 --- */
+    pictureBackground = '';
     showIndex() {
         clickgo.form.dialog(this, 'Index is ' + this.select.toString() + '.').catch((e) => { throw e; });
     }
@@ -140,7 +144,11 @@ export default class extends clickgo.form.AbstractForm {
      * --- 提供示例文件路径，便于跨控件或任务观察拖拽载荷 ---
      * @returns 无返回值
      */
-    onMounted() {
+    async onMounted() {
         this.list = this.list.map((item, index) => ({ ...item, 'path': `/demo/iconview/${index}` }));
+        const image = await clickgo.fs.getContent(this, '/package/res/img.jpg');
+        if (image && (typeof image !== 'string')) {
+            this.pictureBackground = `url("${await clickgo.tool.blob2DataUrl(image)}")`;
+        }
     }
 }

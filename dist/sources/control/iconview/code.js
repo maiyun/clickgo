@@ -51,8 +51,14 @@ export default class extends clickgo.control.AbstractControl {
     isSelectStart = false;
     /** --- 右侧的 scroll 是否在显示状态 --- */
     scrollShow = true;
-    /** --- 一行的图标个数 --- */
-    rowCount = 1;
+    /** --- 固定格宽只在容器不足一格时收窄，余下空间保留在行尾。 --- */
+    get cellWidth() {
+        return Math.max(1, Math.min(this.cw, this.propInt('size') + 80));
+    }
+    /** --- 一行的图标个数，与显示和框选共用同一格宽。 --- */
+    get rowCount() {
+        return Math.max(1, Math.floor(this.cw / this.cellWidth));
+    }
     /** --- 所有图标读取后的结果 --- */
     iconsData = [];
     /** --- data 变更次数 --- */
@@ -76,10 +82,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 宽度改变时触发的事件 --- */
     clientwidth(cw) {
         this.cw = cw;
-        this.rowCount = Math.floor(this.cw / (this.propInt('size') + 80));
-        if (this.rowCount < 1) {
-            this.rowCount = 1;
-        }
     }
     /** --- 处理后的 data --- */
     get dataComp() {
@@ -536,18 +538,16 @@ export default class extends clickgo.control.AbstractControl {
     onSelect(area) {
         // --- 判断同行有哪些可能要被选中的 index ---
         /** --- 列宽度 --- */
-        const cellw = this.cw / this.rowCount;
-        let cellStart = Math.min(this.rowCount - 1, Math.max(0, Math.floor(area.x / cellw)));
-        let cellEnd = Math.min(this.rowCount - 1, Math.max(0, Math.floor((area.x + area.width) / cellw)));
-        if (clickgo.dom.isRtl(this.element)) {
-            const start = this.rowCount - 1 - cellEnd;
-            cellEnd = this.rowCount - 1 - cellStart;
-            cellStart = start;
-        }
+        const cellw = this.cellWidth;
+        // --- RTL 从右侧起排，空余宽度在左侧，不能继续按整行均分换算。 ---
+        const x = clickgo.dom.isRtl(this.element) ? this.cw - area.x - area.width : area.x;
+        const empty = Boolean(area.empty) || (x >= this.rowCount * cellw) || (x + area.width < 0);
+        const cellStart = Math.min(this.rowCount - 1, Math.max(0, Math.floor(x / cellw)));
+        const cellEnd = Math.min(this.rowCount - 1, Math.max(0, Math.floor((x + area.width) / cellw)));
         if (this.propBoolean('multi')) {
             // --- 多行 ---
             if (area.shift || area.ctrl) {
-                if (area.empty) {
+                if (empty) {
                     // --- 本次选中的先取消掉 ---
                     for (const item of this.selectValues) {
                         this.select(item, false, true);
@@ -642,7 +642,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             else {
                 // --- 没有 ctrl 和 shift ---
-                if (!area.empty) {
+                if (!empty) {
                     let change = false;
                     for (let i = area.start; i <= area.end; ++i) {
                         const before = i * this.rowCount;
@@ -701,7 +701,7 @@ export default class extends clickgo.control.AbstractControl {
         }
         else {
             // --- 单行 ---
-            if (!area.empty) {
+            if (!empty) {
                 this.select(area.start * this.rowCount + cellStart, area.shift, area.ctrl);
             }
         }
@@ -716,7 +716,7 @@ export default class extends clickgo.control.AbstractControl {
                     'ctrl': area.ctrl,
                     'start': area.start,
                     'end': area.end,
-                    'empty': area.empty
+                    'empty': empty
                 }
             }
         };
@@ -805,12 +805,6 @@ export default class extends clickgo.control.AbstractControl {
                 this.valueData.splice(1);
                 this.shiftStart = this.valueData[0];
                 this.emit('update:modelValue', this.valueData);
-            }
-        });
-        this.watch('size', () => {
-            this.rowCount = Math.floor(this.cw / (this.propInt('size') + 80));
-            if (this.rowCount < 1) {
-                this.rowCount = 1;
             }
         });
         // --- shift 原点变了，要监听并移动 scroll ---
