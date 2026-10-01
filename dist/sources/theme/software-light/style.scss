@@ -109,9 +109,9 @@ global {
     --software-selection-color:var(--g-color-focus);
     --software-selection-color-hover:var(--g-color-hover);
     --software-selection-color-active:var(--g-color-active);
-    --software-selection-background:color-mix(in srgb, var(--cg), white 92%);
-    --software-selection-hover:color-mix(in srgb, var(--cg), white 88%);
-    --software-selection-active:color-mix(in srgb, var(--cg), white 84%);
+    --software-selection-background:#ffffff;
+    --software-selection-hover:#f5f5f5;
+    --software-selection-active:#eaeaea;
     
     // --- 输入区由底色区分，聚焦时才显示强调色轮廓 ---
 
@@ -178,7 +178,7 @@ global {
         }
     }
     &.button_tool {
-        // --- 工具选中态用主色填充，普通参数按钮保留轻染色底块 ---
+        // --- 工具选中态用主色填充，普通参数按钮由主色边框标记选中。 ---
         --software-selection-color:var(--software-on-accent);
         --software-selection-color-hover:var(--software-on-accent-hover);
         --software-selection-color-active:var(--software-on-accent-active);
@@ -223,24 +223,35 @@ global {
     &:not([data-cg-disabled]) {
         &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] { box-shadow: none; }
         &.button_checked {
+            // --- 分割按钮的两个区域也使用选中态颜色，避免白字落在未选中的浅色底上。 ---
+            --color:var(--software-selection-color);
+            --color-hover:var(--software-selection-color-hover);
+            --color-active:var(--software-selection-color-active);
+            --color-focus:var(--software-selection-color);
+            --background:var(--software-selection-background);
+            --background-hover:var(--software-selection-hover);
+            --background-active:var(--software-selection-active);
+            --background-focus:var(--software-selection-background);
             color: var(--software-selection-color);
-            &::before { border: solid 1px #7a7a7a; }
-            // --- 覆盖基础按钮各状态对 checked 的强调色文字和双像素描边 ---
+            // --- 区域选择器须覆盖基础 checked 背景，三个模式都保留主题选中底色。 ---
+            &.button_area-all, &.button_area-mark, &.button_area-split {
+                background: var(--software-selection-background);
+            }
+            &::before { border: solid 2px var(--cg); }
+            // --- 选中态保留正常文字，用主色双像素描边强调状态。 ---
             &:hover, &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] {
                 color: var(--software-selection-color);
-                &::before { border: solid 1px #7a7a7a; }
-            }
-            &.button_area-all, &.button_area-mark { background: var(--software-selection-background); }
-            &.button_area-split {
-                .button_inner, .button_arrow { color: inherit; }
+                &::before { border: solid 2px var(--cg); }
             }
             &:hover {
                 color: var(--software-selection-color-hover);
-                &.button_area-all, &.button_area-mark { background: var(--software-selection-hover); }
+                background: var(--software-selection-hover);
+                &::before { border-color: var(--cg-hover); }
             }
             &:active, &.button_active, &[data-cg-pop-open] {
                 color: var(--software-selection-color-active);
-                &.button_area-all, &.button_area-mark { background: var(--software-selection-active); }
+                background: var(--software-selection-active);
+                &::before { border-color: var(--cg-active); }
             }
         }
     }
@@ -271,9 +282,8 @@ global {
 
 // --- 深色命令浮层独立于白色面板，避免全局输入弹层一起变暗 ---
 
-.button_pop:has(> [data-cg-control="menulist"]),
-.desktop_pop:has(> [data-cg-control="menulist"]), .iconview_pop:has(> [data-cg-control="menulist"]),
-.menu-item_pop, .menulist-item_pop, .menulist_wrap {
+// --- Menulist 的主题类带任务前缀，可识别任意菜单外框且不会跨任务匹配。 ---
+[data-cg-pop]:has(.menulist_wrap), .menulist_wrap {
     --face:#242424;
     --face-hover:#383838;
     --face-selected:#444444;
