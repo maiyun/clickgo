@@ -80,7 +80,8 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- 横向虚拟列表是否使用 RTL inline 顺序 --- */
     get isRtl() {
-        return this.props.direction === 'h' && clickgo.dom.isRtl(this.element);
+        // --- 首次渲染尚未生成根元素，读取 element 会让 Vue 缓存空的 $el ---
+        return this.props.direction === 'h' && this.localeDirection === 'rtl';
     }
     /**
      * --- 获取单虚拟项的 element 的 style 值 ---
