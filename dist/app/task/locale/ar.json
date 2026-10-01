@@ -7,5 +7,7 @@
     "close all windows": "إغلاق جميع النوافذ",
     "close window": "إغلاق النافذة",
     "pin to taskbar": "تثبيت في شريط المهام",
-    "unpin from taskbar": "إلغاء التثبيت من شريط المهام"
+    "unpin from taskbar": "إلغاء التثبيت من شريط المهام",
+    "task bar": "شريط المهام",
+    "task dock": "شريط مركزي"
 }

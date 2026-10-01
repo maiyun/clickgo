@@ -7,5 +7,7 @@
     "close all windows": "關閉所有視窗",
     "close window": "關閉視窗",
     "pin to taskbar": "釘在任務列",
-    "unpin from taskbar": "取消釘在任務列"
+    "unpin from taskbar": "取消釘在任務列",
+    "task bar": "任務列",
+    "task dock": "置中 Dock"
 }

@@ -1,11 +1,15 @@
-<div ref="wrap" class="wrap" :class="[position]" @pointerdown="down">
+<div ref="wrap" class="wrap" :class="[position, mode === 'dock' && 'dock']" :style="mode === 'dock' ? {'max-width': 'calc(100vw - 2 * min(' + dockMargin + 'px, 25vw, 25vh))', 'max-height': 'calc(100vh - 2 * min(' + dockMargin + 'px, 25vw, 25vh))'} : undefined" @pointerdown="down">
     <div ref="task" class="task">
         <slot></slot>
     </div>
     <div ref="tray" class="tray">
         <slot name="tray"></slot>
     </div>
-    <div class="date">{{date}}</div>
+    <div v-if="propBoolean('showDate')" class="date" :dir="localeDirection">
+        <span v-if="timeFirst" class="time" dir="ltr">{{date}}</span>
+        <span class="calendar" :dir="localeDirection">{{calendarDate}}</span>
+        <span v-if="!timeFirst" class="time" dir="ltr">{{date}}</span>
+    </div>
     <teleport v-if="slots['pop']" to="system">
         <div ref="pop" class="pop">
             <slot name="pop"></slot>

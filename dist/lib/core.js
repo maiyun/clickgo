@@ -20,6 +20,8 @@ export function initSysId(id) {
 const configOrigin = {
     'locale': 'en',
     'task.position': 'bottom',
+    'task.mode': 'bar',
+    'task.margin': 8,
     'task.pin': {},
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
@@ -85,6 +87,21 @@ export class AbstractApp {
         return;
     }
     onFormHashChange() {
+        return;
+    }
+    onTrayCreated() {
+        return;
+    }
+    onTrayChanged() {
+        return;
+    }
+    onTrayRemoved() {
+        return;
+    }
+    onTrayClick() {
+        return;
+    }
+    onTrayMenuClick() {
         return;
     }
     onTaskStarted() {
@@ -302,6 +319,30 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
                     for (const fid in t.forms) {
                         t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
                     }
+                }
+            }
+            break;
+        }
+        case 'trayCreated':
+        case 'trayChanged':
+        case 'trayRemoved': {
+            const observer = boot;
+            observer?.[eventName]?.(taskId, formId);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId !== tid) && (lTask.systemTaskInfo.taskId !== tid) && !rt?.permissions.includes('root')) {
+                    continue;
+                }
+                try {
+                    const app = t.class;
+                    await app?.[eventName]?.(taskId, formId);
+                    for (const fid in t.forms) {
+                        await t.forms[fid].vroot[eventName]?.(taskId, formId);
+                    }
+                }
+                catch (error) {
+                    trigger('error', tid, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => { });
                 }
             }
             break;
@@ -1241,6 +1282,8 @@ export function init() {
     config = clickgo.modules.vue.reactive({
         'locale': lTool.lang.getCodeByAccept(),
         'task.position': 'bottom',
+        'task.mode': 'bar',
+        'task.margin': 8,
         'task.pin': {},
         'desktop.icon.storage': true,
         'desktop.icon.recycler': true,
@@ -1291,7 +1334,7 @@ export function init() {
                     continue;
                 }
                 configOrigin[key] = config[key];
-                if (key === 'task.position') {
+                if ((key === 'task.position') || (key === 'task.mode') || (key === 'task.margin')) {
                     lTask.refreshSystemPosition();
                 }
                 else if (key === 'locale') {

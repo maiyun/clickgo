@@ -288,6 +288,39 @@ export abstract class AbstractBoot {
         return;
     }
 
+    /**
+     * --- 托盘注册通知；通过 task.getTrayList(this) 读取快照 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayCreated(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayCreated(): void {
+        return;
+    }
+
+    /**
+     * --- 托盘数据变更通知 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayChanged(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayChanged(): void {
+        return;
+    }
+
+    /**
+     * --- 托盘删除通知 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayRemoved(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayRemoved(): void {
+        return;
+    }
+
     /** --- 任务开始事件 --- */
     public onTaskStarted(taskId: string): void | Promise<void>;
     public onTaskStarted(): void | Promise<void> {

@@ -14,7 +14,8 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task",
+    "test:task": "node test/task-tray.mjs",
     "test:form": "node test/form-viewport.mjs && node --experimental-vm-modules test/form-native.mjs && node test/form-launcher.mjs",
     "test:native-regions": "node test/form-native-regions.mjs",
     "test:desktop": "node --experimental-vm-modules test/desktop.mjs && node --experimental-vm-modules test/iconview.mjs",

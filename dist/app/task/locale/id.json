@@ -7,5 +7,7 @@
     "close all windows": "Tutup semua jendela",
     "close window": "Tutup jendela",
     "pin to taskbar": "Sematkan ke bilah tugas",
-    "unpin from taskbar": "Lepas sematan dari bilah tugas"
+    "unpin from taskbar": "Lepas sematan dari bilah tugas",
+    "task bar": "Bilah tugas",
+    "task dock": "Dock di tengah"
 }

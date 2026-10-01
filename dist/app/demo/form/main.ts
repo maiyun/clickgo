@@ -20,6 +20,7 @@ import chtmlFrm from './control/html/html';
 import cprogressFrm from './control/progress/progress';
 import calertFrm from './control/alert/alert';
 import cdesktopFrm from './control/desktop/desktop';
+import ctaskFrm from './control/task/task';
 import ciconviewFrm from './control/iconview/iconview';
 import clinkFrm from './control/link/link';
 import clabelFrm from './control/label/label';
@@ -158,6 +159,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cdesc': {
                 frm = await clickgo.form.create(this, cdescFrm);
+                break;
+            }
+            case 'ctask': {
+                frm = await clickgo.form.create(this, ctaskFrm);
                 break;
             }
             case 'cdesktop': {

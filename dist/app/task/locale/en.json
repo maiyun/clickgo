@@ -7,5 +7,7 @@
     "close all windows": "Close all windows",
     "close window": "Close window",
     "pin to taskbar": "Pin to taskbar",
-    "unpin from taskbar": "Unpin from taskbar"
+    "unpin from taskbar": "Unpin from taskbar",
+    "task bar": "Taskbar",
+    "task dock": "Centered Dock"
 }

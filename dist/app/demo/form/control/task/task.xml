@@ -1,0 +1,35 @@
+<form title="Task / Tray" width="540" height="380">
+    <layout direction="v" gutter="10" style="flex: 1; padding: 10px;">
+        <!-- 控件参数独立于系统任务栏；可用于用户自定义 task app -->
+        <layout gutter="10">
+            <select v-model="mode" :data="['bar', 'dock']"></select>
+            <select v-model="position" :data="['bottom', 'top', 'left', 'right']"></select>
+            <check v-model="showDate">Clock</check>
+            <button @click="apply">Apply to system task</button>
+        </layout>
+        <layout gutter="10">
+            <check v-model="opened">Opened</check>
+            <check v-model="selected">Selected</check>
+            <check v-model="multi">Multiple windows</check>
+        </layout>
+        <layout align-h="center" align-v="center" style="flex: 1; min-height: 0;">
+            <!-- bar 只填满所在边的长度，预览区的剩余空间不应撑大任务栏厚度 -->
+            <task :position="position[0]" :mode="mode[0]" :show-date="showDate" style="max-width: 100%; max-height: 100%;"
+                :style="mode[0] === 'bar' ? ((position[0] === 'left' || position[0] === 'right') ? {'width': 'auto'} : {'height': 'auto'}) : undefined">
+                <task-item :opened="opened" :selected="selected" :multi="multi" @click="message = 'Task item click'">
+                    <img src="/clickgo/icon.png" :style="{'width': mode[0] === 'dock' ? '24px' : '16px', 'height': mode[0] === 'dock' ? '24px' : '16px'}"></img>
+                </task-item>
+                <task-item opened @click="message = 'Second task item click'">
+                    <img src="/clickgo/icon.png" :style="{'width': mode[0] === 'dock' ? '24px' : '16px', 'height': mode[0] === 'dock' ? '24px' : '16px'}"></img>
+                </task-item>
+                <!-- 托盘只发控件事件，任务栏自行选择命令投递接口 -->
+                <template v-slot:tray>
+                    <task-tray icon="/clickgo/icon.png" tip="Tray example" :menu="menu"
+                        @activate="message = 'Tray activate'" @menu="message = 'Menu: ' + $event.detail.id"></task-tray>
+                </template>
+            </task>
+        </layout>
+        <label>{{message || 'Left click / Right click / Touch long press'}}</label>
+        <label>Library task demo registers a real system tray and handles app events.</label>
+    </layout>
+</form>

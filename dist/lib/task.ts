@@ -54,6 +54,211 @@ const list: Record<string, ITask> = {};
 /** --- 任务的 runtime 数据，关闭任务后也需要清除 --- */
 const runtime: Record<string, IRuntime> = {};
 
+/** --- 当前注册的系统任务栏 --- */
+export let systemTaskInfo: ISystemTaskInfo;
+
+/** --- 系统任务栏尺寸订阅，替换/结束时单独释放 --- */
+let systemSizeElement: HTMLElement | undefined;
+let systemSizeTaskId = '';
+let systemPositionVersion = 0;
+
+/** --- 托盘只保存可复制的数据，不保存跨应用的回调或 Vue 对象 --- */
+const trays: Record<string, ITrayInfo> = {};
+/** --- 仅图标更新参与图标读取的竞争，提示/菜单更新不会取消图标读取 --- */
+const trayIconVersions = new WeakMap<ITrayInfo, number>();
+let trayIndex = 0;
+
+/** --- 托盘菜单命令；separator 项只显示分隔线 --- */
+export interface ITrayMenuItem {
+    'id': string;
+    'label': string;
+    'disabled'?: boolean;
+    'separator'?: boolean;
+}
+
+/** --- 托盘注册数据；包内图标请用 /package/ 开头的路径 --- */
+export interface ITrayOptions {
+    'icon': string;
+    'tip'?: string;
+    'menu'?: ITrayMenuItem[];
+}
+
+/** --- 提供给任务栏的托盘快照，icon 已解析为跨任务可用的 URL --- */
+export interface ITrayInfo {
+    'id': string;
+    'taskId': string;
+    'icon': string;
+    'tip': string;
+    'menu': ITrayMenuItem[];
+}
+
+/**
+ * --- 只复制菜单公开字段，剔除重复命令和跨应用回调 ---
+ * @param menu 菜单数据
+ * @returns 独立的菜单数据
+ */
+function copyTrayMenu(menu: ITrayMenuItem[]): ITrayMenuItem[] {
+    const ids = new Set<string>();
+    return menu.filter(item => {
+        if (ids.has(item.id)) {
+            return false;
+        }
+        ids.add(item.id);
+        return true;
+    }).map(item => ({
+        'id': item.id, 'label': item.label, 'disabled': !!item.disabled, 'separator': !!item.separator
+    }));
+}
+
+/**
+ * --- 解析所属应用的图标，任务栏无需访问应用包 ---
+ * @param current 所属任务
+ * @param icon 图标路径或 URL
+ * @returns 可共享的 URL
+ */
+async function resolveTrayIcon(current: string, icon: string): Promise<string> {
+    if (/^(data:|https?:\/\/)/i.test(icon) || !icon) {
+        return icon;
+    }
+    const content = await lFs.getContent(current, icon);
+    return content instanceof Blob ? lTool.blob2DataUrl(content) : '';
+}
+
+/**
+ * --- 注册托盘；不依赖当前是否存在任务栏 ---
+ * @param current 所属任务
+ * @param options 图标、提示和菜单
+ * @returns 托盘 ID，任务已结束时返回 false
+ */
+export async function createTray(current: lCore.TCurrent, options: ITrayOptions): Promise<string | false> {
+    const taskId = typeof current === 'string' ? current : current.taskId;
+    const task = list[taskId];
+    if (!task) {
+        return false;
+    }
+    const data = { 'icon': options.icon, 'tip': options.tip, 'menu': copyTrayMenu(options.menu ?? []) };
+    const icon = await resolveTrayIcon(taskId, data.icon);
+    if (list[taskId] !== task) {
+        return false;
+    }
+    const id = `tray${++trayIndex}`;
+    trays[id] = {
+        'id': id, 'taskId': taskId, 'icon': icon, 'tip': data.tip ?? '', 'menu': data.menu
+    };
+    await lCore.trigger('trayCreated', taskId, id);
+    return id;
+}
+
+/**
+ * --- 更新自己的托盘；并发图标更新以最后发起的一次为准 ---
+ * @param current 所属任务
+ * @param id 托盘 ID
+ * @param options 要修改的字段
+ * @returns 是否仍拥有该托盘
+ */
+export async function updateTray(
+    current: lCore.TCurrent, id: string, options: Partial<ITrayOptions>
+): Promise<boolean> {
+    const taskId = typeof current === 'string' ? current : current.taskId;
+    const tray = trays[id];
+    if (!list[taskId] || tray?.taskId !== taskId) {
+        return false;
+    }
+    const data = {
+        'icon': options.icon, 'tip': options.tip,
+        'menu': options.menu === undefined ? undefined : copyTrayMenu(options.menu)
+    };
+    if (data.tip !== undefined) {
+        tray.tip = data.tip;
+    }
+    if (data.menu !== undefined) {
+        tray.menu = data.menu;
+    }
+    if (data.icon !== undefined) {
+        const version = (trayIconVersions.get(tray) ?? 0) + 1;
+        trayIconVersions.set(tray, version);
+        const icon = await resolveTrayIcon(taskId, data.icon);
+        if ((trays[id] !== tray) || (trayIconVersions.get(tray) !== version)) {
+            return false;
+        }
+        tray.icon = icon;
+    }
+    await lCore.trigger('trayChanged', taskId, id);
+    return true;
+}
+
+/**
+ * --- 删除自己的托盘 ---
+ * @param current 所属任务
+ * @param id 托盘 ID
+ * @returns 是否删除
+ */
+export function removeTray(current: lCore.TCurrent, id: string): boolean {
+    const taskId = typeof current === 'string' ? current : current.taskId;
+    if (trays[id]?.taskId !== taskId) {
+        return false;
+    }
+    delete trays[id];
+    lCore.trigger('trayRemoved', taskId, id).catch(() => {});
+    return true;
+}
+
+/**
+ * --- 获取托盘快照；系统任务栏/root 可读全部，普通任务只能读自己的 ---
+ * @param current 调用任务
+ * @returns 托盘快照
+ */
+export function getTrayList(current: lCore.TCurrent): Record<string, ITrayInfo> {
+    const taskId = typeof current === 'string' ? current : current.taskId;
+    const all = isSys(taskId) || (systemTaskInfo?.taskId === taskId) || runtime[taskId]?.permissions.includes('root');
+    return Object.fromEntries(Object.entries(trays).filter(([, tray]) => all || (tray.taskId === taskId))
+        .map(([id, tray]) => [id, lTool.clone(tray)]));
+}
+
+/**
+ * --- 当前系统任务栏投递点击/菜单命令到托盘所属 App 和 Form ---
+ * @param current 当前系统任务栏
+ * @param id 托盘 ID
+ * @param menuId 菜单 ID；省略表示左键点击
+ * @returns 是否投递；过期、禁用或非系统任务栏的命令返回 false
+ */
+export async function activateTray(current: lCore.TCurrent, id: string, menuId?: string): Promise<boolean> {
+    const taskId = typeof current === 'string' ? current : current.taskId;
+    const tray = trays[id];
+    if ((systemTaskInfo?.taskId !== taskId) || !tray) {
+        return false;
+    }
+    const task = list[tray.taskId];
+    if (!task) {
+        return false;
+    }
+    if (menuId !== undefined && !tray.menu.some(item => (item.id === menuId) && !item.disabled && !item.separator)) {
+        return false;
+    }
+    const receivers = [task.class, ...Object.values(task.forms).map(form => form.vroot)];
+    for (const receiver of receivers) {
+        if ((list[tray.taskId] !== task) || (trays[id] !== tray)) {
+            break;
+        }
+        if ((receiver !== task.class) && !Object.values(task.forms).some(form =>
+            (form.vroot === receiver) && !form.closed)) {
+            continue;
+        }
+        try {
+            if (menuId === undefined) {
+                await receiver?.onTrayClick(id);
+            }
+            else {
+                await receiver?.onTrayMenuClick(id, menuId);
+            }
+        }
+        catch (error) {
+            lCore.trigger('error', tray.taskId, '', error instanceof Error ? error : new Error(String(error)), 'task.activateTray').catch(() => {});
+        }
+    }
+    return true;
+}
+
 /**
  * --- 获取任务的 runtime 数据，仅系统可以获取 ---
  * @param current 当前任务 ID
@@ -1190,6 +1395,11 @@ export async function end(taskId: lCore.TCurrent): Promise<boolean> {
     lDom.clearWatch(taskId);
     lNative.clear(taskId);
     task.app.package.clear();
+    for (const id in trays) {
+        if (trays[id].taskId === taskId) {
+            removeTray(taskId, id);
+        }
+    }
     // --- 移除 task ---
     delete list[taskId];
     delete runtime[taskId];
@@ -1428,9 +1638,6 @@ const systemTaskInfoOrigin: ISystemTaskInfo = {
     'length': 0,
 };
 
-/** --- task 的信息 --- */
-export let systemTaskInfo: ISystemTaskInfo;
-
 /**
  * --- 将任务注册为系统 task ---
  * @param taskId task id
@@ -1465,6 +1672,10 @@ export function setSystem(taskId: lCore.TCurrent, formId: string): boolean {
     }
     systemTaskInfo.taskId = taskId;
     systemTaskInfo.formId = formId;
+    releaseSystemSize();
+    systemSizeElement = f.vroot.$el;
+    systemSizeTaskId = taskId;
+    lDom.watchSizeMulti(taskId, f.vroot.$el, refreshSystemPosition);
     lForm.simpleSystemTaskRoot.forms = {};
     refreshSystemPosition();
     return true;
@@ -1481,6 +1692,7 @@ export async function clearSystem(taskId: lCore.TCurrent): Promise<boolean> {
     if (systemTaskInfo.taskId !== taskId) {
         return false;
     }
+    releaseSystemSize();
     systemTaskInfo.taskId = '';
     systemTaskInfo.formId = '';
     systemTaskInfo.length = 0;
@@ -1507,56 +1719,86 @@ export async function clearSystem(taskId: lCore.TCurrent): Promise<boolean> {
  * --- 刷新系统任务的 form 的位置以及 length ---
  */
 export function refreshSystemPosition(): void {
+    const version = ++systemPositionVersion;
     if (systemTaskInfo.taskId) {
-        const form = list[systemTaskInfo.taskId].forms[systemTaskInfo.formId];
+        const taskId = systemTaskInfo.taskId;
+        const formId = systemTaskInfo.formId;
+        const form = list[taskId]?.forms[formId];
+        if (!form) {
+            return;
+        }
+        const dock = lCore.config['task.mode'] === 'dock';
+        const configuredMargin = Number(lCore.config['task.margin']);
+        const margin = dock && Number.isFinite(configuredMargin) ?
+            Math.max(0, Math.min(configuredMargin, Math.min(window.innerWidth, window.innerHeight) / 4)) : 0;
         // --- 更新 task bar 的位置 ---
         switch (lCore.config['task.position']) {
             case 'left':
             case 'right': {
                 form.vroot.$refs.form.setPropData('width', 0);
-                form.vroot.$refs.form.setPropData('height', window.innerHeight);
+                form.vroot.$refs.form.setPropData('height', dock ? 0 : window.innerHeight);
                 break;
             }
             case 'top':
             case 'bottom': {
-                form.vroot.$refs.form.setPropData('width', window.innerWidth);
+                form.vroot.$refs.form.setPropData('width', dock ? 0 : window.innerWidth);
                 form.vroot.$refs.form.setPropData('height', 0);
                 break;
             }
         }
-        setTimeout(function() {
+        // --- 等待 Vue 应用尺寸参数；版本和实例校验阻止旧任务栏的延迟定位 ---
+        clickgo.modules.vue.nextTick(() => {
+            if ((version !== systemPositionVersion) || (systemTaskInfo.taskId !== taskId) ||
+                (systemTaskInfo.formId !== formId) || (list[taskId]?.forms[formId] !== form)) {
+                return;
+            }
+            const width = form.vroot.$el.offsetWidth;
+            const height = form.vroot.$el.offsetHeight;
+            let left = dock ? Math.max(0, (window.innerWidth - width) / 2) : 0;
+            let top = dock ? Math.max(0, (window.innerHeight - height) / 2) : 0;
             switch (lCore.config['task.position']) {
                 case 'left': {
-                    systemTaskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', 0);
+                    systemTaskInfo.length = Math.min(window.innerWidth, width + margin);
+                    left = margin;
                     break;
                 }
                 case 'right': {
-                    systemTaskInfo.length = form.vroot.$el.offsetWidth;
-                    form.vroot.$refs.form.setPropData('left', window.innerWidth - systemTaskInfo.length);
-                    form.vroot.$refs.form.setPropData('top', 0);
+                    systemTaskInfo.length = Math.min(window.innerWidth, width + margin);
+                    left = Math.max(0, window.innerWidth - width - margin);
                     break;
                 }
                 case 'top': {
-                    systemTaskInfo.length = form.vroot.$el.offsetHeight;
-                    form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', 0);
+                    systemTaskInfo.length = Math.min(window.innerHeight, height + margin);
+                    top = margin;
                     break;
                 }
                 case 'bottom': {
-                    systemTaskInfo.length = form.vroot.$el.offsetHeight;
-                    form.vroot.$refs.form.setPropData('left', 0);
-                    form.vroot.$refs.form.setPropData('top', window.innerHeight - systemTaskInfo.length);
+                    systemTaskInfo.length = Math.min(window.innerHeight, height + margin);
+                    top = Math.max(0, window.innerHeight - height - margin);
                     break;
                 }
             }
+            form.vroot.$refs.form.setPropData('left', left);
+            form.vroot.$refs.form.setPropData('top', top);
             lCore.trigger('screenResize').catch(() => {});
-        }, 50);
+        }).catch(() => {});
     }
     else {
         lCore.trigger('screenResize').catch(() => {});
     }
+}
+
+/**
+ * --- 释放旧任务栏的订阅及未完成定位 ---
+ * @returns 无返回值
+ */
+function releaseSystemSize(): void {
+    ++systemPositionVersion;
+    if (systemSizeElement) {
+        lDom.unwatchSizeMulti(systemSizeTaskId, systemSizeElement, refreshSystemPosition);
+    }
+    systemSizeElement = undefined;
+    systemSizeTaskId = '';
 }
 
 // --- 需要初始化 ---

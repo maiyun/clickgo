@@ -7,5 +7,7 @@
     "close all windows": "Đóng tất cả cửa sổ",
     "close window": "Đóng cửa sổ",
     "pin to taskbar": "Ghim vào thanh tác vụ",
-    "unpin from taskbar": "Bỏ ghim khỏi thanh tác vụ"
+    "unpin from taskbar": "Bỏ ghim khỏi thanh tác vụ",
+    "task bar": "Thanh tác vụ",
+    "task dock": "Dock ở giữa"
 }

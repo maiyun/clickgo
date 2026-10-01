@@ -7,5 +7,7 @@
     "close all windows": "Alle Fenster schließen",
     "close window": "Fenster schließen",
     "pin to taskbar": "An Taskleiste anheften",
-    "unpin from taskbar": "Von Taskleiste lösen"
+    "unpin from taskbar": "Von Taskleiste lösen",
+    "task bar": "Taskleiste",
+    "task dock": "Zentriertes Dock"
 }

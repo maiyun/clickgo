@@ -5,15 +5,32 @@
     }
 
     .task {
-        flex: 1;
+        flex: 1; min-width: 0; min-height: 0; display: flex; overflow: auto;
+    }
+    .tray {
+        display: flex; align-items: center; flex: 0 1 auto; min-width: 0; min-height: 0; overflow: auto;
+        &:not(:empty) { border-inline-start: 1px solid rgba(255, 255, 255, .25); padding-inline: 4px; }
+    }
+    &.left, &.right {
+        .task, .tray { flex-direction: column; }
+        .tray:not(:empty) { border-inline-start: none; border-top: 1px solid rgba(255, 255, 255, .25); padding: 4px 0; }
+    }
+    &.dock {
+        width: max-content; height: auto; box-sizing: border-box; padding: 4px; border-radius: 16px;
+        // --- 系统 Form 会裁切内容，外阴影会在圆角外留下矩形残影 ---
+        border: 1px solid rgba(255, 255, 255, .2);
+        .task { flex: 0 1 auto; }
+        .date { padding-inline: 10px; flex-shrink: 0; }
+        &.left, &.right { height: max-content; width: auto; }
     }
 
     .date {
-        padding: 0 15px; display: flex; align-items: center; color: #FFF;
+        padding: 0 15px; display: flex; align-items: center; gap: 8px; color: #FFF; white-space: nowrap;
+        .time, .calendar { unicode-bidi: isolate; }
     }
     &.left, &.right {
         .date {
-            flex-direction: column; padding: 10px 0;
+            flex-direction: column; gap: 4px; padding: 10px 0;
         }
     }
 }

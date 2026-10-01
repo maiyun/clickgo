@@ -553,6 +553,15 @@ global {
     background: var(--g-pop-background);
     .task_date { color: var(--g-color); }
 }
+.task-item_wrap, .task-tray_wrap {
+    &:hover { background: var(--face-hover); }
+    &:active { background: var(--g-background-active); }
+}
+.task-item_wrap.task-item_selected {
+    background: var(--software-highlight);
+    &:hover { background: var(--g-background-active); }
+    &:active { background: var(--g-plain-background-active); }
+}
 .select_tag-cg-greatselect .select_op .select_tags .select_tag {
     .select_label { padding: 0 6px; }
     .select_close { width: 18px; height: 18px; }

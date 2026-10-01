@@ -17,6 +17,10 @@ export default class extends clickgo.control.AbstractControl {
     get position() {
         return this.parentByName('task')?.position ?? 'bottom';
     }
+    /** --- 显示模式跟随所在 task，普通应用无需感知系统配置 --- */
+    get mode() {
+        return this.parentByName('task')?.mode ?? 'bar';
+    }
     down(e) {
         if (this.element.dataset.cgPopOpen !== undefined) {
             // --- 是否要隐藏 ---

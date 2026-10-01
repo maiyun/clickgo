@@ -7,5 +7,7 @@
     "close all windows": "ปิดหน้าต่างทั้งหมด",
     "close window": "ปิดหน้าต่าง",
     "pin to taskbar": "ปักหมุดที่แถบงาน",
-    "unpin from taskbar": "เลิกปักหมุดจากแถบงาน"
+    "unpin from taskbar": "เลิกปักหมุดจากแถบงาน",
+    "task bar": "แถบงาน",
+    "task dock": "Dock ตรงกลาง"
 }

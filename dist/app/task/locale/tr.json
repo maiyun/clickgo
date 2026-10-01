@@ -7,5 +7,7 @@
     "close all windows": "Tüm pencereleri kapat",
     "close window": "Pencereyi kapat",
     "pin to taskbar": "Görev çubuğuna sabitle",
-    "unpin from taskbar": "Görev çubuğundan kaldır"
+    "unpin from taskbar": "Görev çubuğundan kaldır",
+    "task bar": "Görev çubuğu",
+    "task dock": "Ortalanmış Dock"
 }

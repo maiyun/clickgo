@@ -1,5 +1,6 @@
 .wrap {
-    display: flex; position: relative; flex: 1; padding: 10px 12px; margin-inline-end: 1px; transition: var(--g-transition);
+    --task-indicator-offset: 0px;
+    display: flex; position: relative; flex: 0 0 auto; padding: 10px 12px; margin-inline-end: 1px; transition: var(--g-transition);
     &.top, &.bottom {
         display: inline-block;
     }
@@ -33,7 +34,7 @@
     }
     &.left {
         .line {
-            left: 0; top: 0; height: 100%; flex-direction: column;
+            left: var(--task-indicator-offset); top: 0; height: 100%; flex-direction: column;
             &::after {
                 width: 2px; height: 70%;
             }
@@ -44,7 +45,7 @@
     }
     &.right {
         .line {
-            right: 0; top: 0; height: 100%; flex-direction: column;
+            right: var(--task-indicator-offset); top: 0; height: 100%; flex-direction: column;
             &::after {
                 width: 2px; height: 70%;
             }
@@ -55,7 +56,7 @@
     }
     &.top {
         .line {
-            left: 0; top: 0; width: 100%;
+            left: 0; top: var(--task-indicator-offset); width: 100%;
             &::after {
                 height: 2px; width: 70%;
             }
@@ -66,7 +67,7 @@
     }
     &.bottom {
         .line {
-            left: 0; bottom: 0; width: 100%;
+            left: 0; bottom: var(--task-indicator-offset); width: 100%;
             &::after {
                 height: 2px; width: 70%;
             }
@@ -97,6 +98,27 @@
             &.multi::after {
                 height: 15%; width: 100%;
             }
+        }
+    }
+    &.dock {
+        --task-indicator-offset: 2px;
+        border-radius: 10px; margin: 0 2px; padding: 10px 12px;
+        .line { gap: 3px; }
+        // --- 多窗体标记与运行短线共同居中，避免贴近任务项边缘 ---
+        &.multi {
+            &::after { content: none; }
+            .line::before {
+                content: ''; order: 1; flex-shrink: 0; width: 3px; height: 3px; border-radius: 50%; background: var(--cg);
+            }
+        }
+        &.top, &.bottom {
+            .line::after { width: 6px; height: 3px; border-radius: 3px; }
+            &.selected .line::after { width: 16px; }
+        }
+        &.left, &.right {
+            margin: 2px 0;
+            .line::after { height: 6px; width: 3px; border-radius: 3px; }
+            &.selected .line::after { height: 16px; }
         }
     }
 }

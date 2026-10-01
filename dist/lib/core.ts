@@ -42,6 +42,8 @@ export function initSysId(id: string): void {
 const configOrigin: IConfig = {
     'locale': 'en',
     'task.position': 'bottom',
+    'task.mode': 'bar',
+    'task.margin': 8,
     'task.pin': {},
     'desktop.icon.storage': true,
     'desktop.icon.recycler': true,
@@ -164,6 +166,60 @@ export abstract class AbstractApp {
         taskId: string, formId: string, value: string, data: Record<string, any>
     ): void | Promise<void>;
     public onFormHashChange(): void {
+        return;
+    }
+
+    /**
+     * --- 托盘注册通知；通过 task.getTrayList(this) 读取快照 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayCreated(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayCreated(): void {
+        return;
+    }
+
+    /**
+     * --- 托盘数据变更通知 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayChanged(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayChanged(): void {
+        return;
+    }
+
+    /**
+     * --- 托盘删除通知 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayRemoved(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayRemoved(): void {
+        return;
+    }
+
+    /**
+     * --- 自己的托盘左键点击，只投递到所属任务 ---
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayClick(trayId: string): void | Promise<void>;
+    public onTrayClick(): void {
+        return;
+    }
+
+    /**
+     * --- 自己的托盘菜单命令，只投递到所属任务 ---
+     * @param trayId 托盘 ID
+     * @param menuId 菜单命令
+     * @returns 无返回值
+     */
+    public onTrayMenuClick(trayId: string, menuId: string): void | Promise<void>;
+    public onTrayMenuClick(): void {
         return;
     }
 
@@ -403,6 +459,31 @@ export async function trigger(name: TGlobalEvent, taskId: string | boolean | Key
                     for (const fid in t.forms) {
                         t.forms[fid].vroot[eventName]?.(taskId, formId, param1, param2);
                     }
+                }
+            }
+            break;
+        }
+        case 'trayCreated':
+        case 'trayChanged':
+        case 'trayRemoved': {
+            const observer = boot as unknown as Record<string, ((taskId: unknown, trayId: unknown) => void)>;
+            observer?.[eventName]?.(taskId, formId);
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                const rt = lTask.getRuntime(sysId, tid);
+                if ((taskId !== tid) && (lTask.systemTaskInfo.taskId !== tid) && !rt?.permissions.includes('root')) {
+                    continue;
+                }
+                try {
+                    const app = t.class as unknown as
+                        Record<string, ((taskId: unknown, trayId: unknown) => void | Promise<void>)>;
+                    await app?.[eventName]?.(taskId, formId);
+                    for (const fid in t.forms) {
+                        await t.forms[fid].vroot[eventName]?.(taskId, formId);
+                    }
+                }
+                catch (error) {
+                    trigger('error', tid, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => {});
                 }
             }
             break;
@@ -1429,6 +1510,8 @@ export function init(): void {
     config = clickgo.modules.vue.reactive({
         'locale': lTool.lang.getCodeByAccept(),
         'task.position': 'bottom',
+        'task.mode': 'bar',
+        'task.margin': 8,
         'task.pin': {},
         'desktop.icon.storage': true,
         'desktop.icon.recycler': true,
@@ -1479,7 +1562,7 @@ export function init(): void {
                     continue;
                 }
                 (configOrigin as any)[key] = (config as any)[key];
-                if (key === 'task.position') {
+                if ((key === 'task.position') || (key === 'task.mode') || (key === 'task.margin')) {
                     lTask.refreshSystemPosition();
                 }
                 else if (key === 'locale') {
@@ -1504,6 +1587,8 @@ export function init(): void {
 export interface IConfig {
     'locale': string;
     ['task.position']: 'left' | 'right' | 'top' | 'bottom';
+    ['task.mode']: 'bar' | 'dock';
+    ['task.margin']: number;
     ['task.pin']: Record<string, { 'name': string; 'icon': string; }>;
     ['desktop.icon.storage']: boolean;
     ['desktop.icon.recycler']: boolean;
@@ -1532,7 +1617,7 @@ export interface IAvailArea {
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
+export type TGlobalEvent = 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {

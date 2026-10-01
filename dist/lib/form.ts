@@ -1350,6 +1350,60 @@ export abstract class AbstractForm extends AbstractCommon {
         return;
     }
 
+    /**
+     * --- 托盘注册通知；通过 task.getTrayList(this) 读取快照 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayCreated(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayCreated(): void {
+        return;
+    }
+
+    /**
+     * --- 托盘数据变更通知 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayChanged(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayChanged(): void {
+        return;
+    }
+
+    /**
+     * --- 托盘删除通知 ---
+     * @param taskId 所属任务
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayRemoved(taskId: string, trayId: string): void | Promise<void>;
+    public onTrayRemoved(): void {
+        return;
+    }
+
+    /**
+     * --- 自己的托盘左键点击，只投递到所属任务 ---
+     * @param trayId 托盘 ID
+     * @returns 无返回值
+     */
+    public onTrayClick(trayId: string): void | Promise<void>;
+    public onTrayClick(): void {
+        return;
+    }
+
+    /**
+     * --- 自己的托盘菜单命令，只投递到所属任务 ---
+     * @param trayId 托盘 ID
+     * @param menuId 菜单命令
+     * @returns 无返回值
+     */
+    public onTrayMenuClick(trayId: string, menuId: string): void | Promise<void>;
+    public onTrayMenuClick(): void {
+        return;
+    }
+
     /** --- 任务开始事件 --- */
     public onTaskStarted(taskId: string): void | Promise<void>;
     public onTaskStarted(): void {
@@ -3428,6 +3482,22 @@ window.addEventListener('pointerdown', (e) => {
 });
 
 /**
+ * --- 统一关闭公共浮层，控件不需要各自注册竞争的 Escape 监听 ---
+ * @param e 键盘事件
+ * @returns 无返回值
+ */
+function keydownPop(e: KeyboardEvent): void {
+    if ((e.key !== 'Escape') || e.isComposing || !popInfo.list.length) {
+        return;
+    }
+    const anchor = popInfo.elList[0];
+    hidePop();
+    anchor.focus({ 'preventScroll': true });
+    e.preventDefault();
+}
+window.addEventListener('keydown', keydownPop);
+
+/**
  * --- 移除一个 form（关闭窗口） ---
  * @param formId 要移除的 form id
  */
@@ -3479,6 +3549,9 @@ export function remove(formId: string): boolean {
                 task.forms[formId].vroot.cgDialogCallback();
             }
             delete task.forms[formId];
+            if ((lTask.systemTaskInfo.taskId === taskId) && (lTask.systemTaskInfo.formId === formId)) {
+                await lTask.clearSystem(taskId);
+            }
             lControl.clearComponents(taskId, formId);
             // --- 移除 form 的 style ---
             lDom.removeStyle(taskId, 'form', formId);

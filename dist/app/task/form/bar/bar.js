@@ -2,6 +2,44 @@ import * as clickgo from 'clickgo';
 export default class extends clickgo.form.AbstractForm {
     /** --- 当前正在运行的 app 列表 --- */
     apps = [];
+    /** --- 托盘快照不保存其他应用的实例 --- */
+    trays = [];
+    get mode() {
+        return clickgo.core.config['task.mode'];
+    }
+    get margin() {
+        return clickgo.core.config['task.margin'];
+    }
+    /**
+     * --- 公共托盘事件触发后重读快照，也用于任务栏首次挂载 ---
+     * @returns 无返回值
+     */
+    syncTrays() {
+        this.trays = Object.values(clickgo.task.getTrayList(this));
+    }
+    /**
+     * --- 将操作转给所属应用 ---
+     * @param id 托盘 ID
+     * @param menuId 菜单命令
+     * @returns 无返回值
+     */
+    async activateTray(id, menuId) {
+        await clickgo.task.activateTray(this, id, menuId);
+    }
+    onTrayCreated() { this.syncTrays(); }
+    onTrayChanged() { this.syncTrays(); }
+    onTrayRemoved() { this.syncTrays(); }
+    /**
+     * --- 切换任务栏模式 ---
+     * @param mode 显示模式
+     * @returns 无返回值
+     */
+    updateMode(mode) {
+        clickgo.core.config['task.mode'] = mode;
+        if (mode === 'dock') {
+            clickgo.core.config['task.position'] = 'bottom';
+        }
+    }
     label2 = {
         'l': this.l('position'),
     };
@@ -83,6 +121,7 @@ export default class extends clickgo.form.AbstractForm {
     async onMounted() {
         this.topMost = true;
         clickgo.task.setSystem(this, this.formId);
+        this.syncTrays();
         // --- 先读取 pin 列表 ---
         for (const path in clickgo.core.config['task.pin']) {
             this.apps.push({

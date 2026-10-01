@@ -7,5 +7,7 @@
     "close all windows": "Закрыть все окна",
     "close window": "Закрыть окно",
     "pin to taskbar": "Закрепить на панели задач",
-    "unpin from taskbar": "Открепить от панели задач"
+    "unpin from taskbar": "Открепить от панели задач",
+    "task bar": "Панель задач",
+    "task dock": "Dock по центру"
 }

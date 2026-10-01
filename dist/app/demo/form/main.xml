@@ -84,6 +84,7 @@
                     <button @click="openForm('ctab')">Tab</button>
                     <button @click="openForm('ctable')">Table</button>
                     <button @click="openForm('ctag')">Tag</button>
+                    <button @click="openForm('ctask')">Task / Tray</button>
                     <button @click="openForm('ctext')">Text + Number</button>
                     <button @click="openForm('ctimeline')">Timeline</button>
                     <button @click="openForm('ctip')">Tip</button>

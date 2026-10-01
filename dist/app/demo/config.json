@@ -19,6 +19,7 @@
         "/clickgo/control/pdf",
         "/clickgo/control/desc",
         "/clickgo/control/desktop",
+        "/clickgo/control/task",
         "/clickgo/control/iconview",
         "/clickgo/control/xterm",
         "/clickgo/control/echarts",

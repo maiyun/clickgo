@@ -7,5 +7,7 @@
     "close all windows": "Cerrar todas las ventanas",
     "close window": "Cerrar ventana",
     "pin to taskbar": "Anclar a la barra de tareas",
-    "unpin from taskbar": "Desanclar de la barra de tareas"
+    "unpin from taskbar": "Desanclar de la barra de tareas",
+    "task bar": "Barra de tareas",
+    "task dock": "Dock centrado"
 }

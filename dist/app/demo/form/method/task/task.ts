@@ -3,6 +3,117 @@ import tThread from './thread';
 
 export default class extends clickgo.form.AbstractForm {
 
+    /** --- 示例托盘 ID，回调按 ID 过滤，避免多个 Form 混淆 --- */
+    public trayId = '';
+
+    public trayLog = '';
+
+    public trayPending = false;
+
+    public access = { 'trayClosed': false };
+
+    /**
+     * --- 注册托盘，图标在 Demo 包外但由注册任务解析 ---
+     * @returns 无返回值
+     */
+    public async createTray(): Promise<void> {
+        if (this.trayPending || this.trayId) {
+            return;
+        }
+        this.trayPending = true;
+        try {
+            const id = await clickgo.task.createTray(this, {
+                'icon': '/clickgo/icon.png',
+                'tip': 'ClickGo tray demo',
+                'menu': [
+                    { 'id': 'show', 'label': 'Show demo' },
+                    { 'id': 'disabled', 'label': 'Disabled command', 'disabled': true },
+                    { 'id': 'split', 'label': '', 'separator': true },
+                    { 'id': 'remove', 'label': 'Remove tray' }
+                ]
+            });
+            if (!id) {
+                return;
+            }
+            if (this.access.trayClosed) {
+                clickgo.task.removeTray(this, id);
+                return;
+            }
+            this.trayId = id;
+            this.trayLog = 'Created ' + id;
+        }
+        finally {
+            this.trayPending = false;
+        }
+    }
+
+    /**
+     * --- 最小化示例窗口，点击托盘可恢复 ---
+     * @returns 无返回值
+     */
+    public minimizeTrayDemo(): void {
+        clickgo.form.min(this.formId);
+    }
+
+    /**
+     * --- 更新提示和菜单，任务栏通过公共事件同步 ---
+     * @returns 无返回值
+     */
+    public async updateTray(): Promise<void> {
+        await clickgo.task.updateTray(this, this.trayId, { 'tip': 'Updated tray demo' });
+        this.trayLog = 'Updated ' + this.trayId;
+    }
+
+    /**
+     * --- 移除示例托盘 ---
+     * @returns 无返回值
+     */
+    public removeTray(): void {
+        clickgo.task.removeTray(this, this.trayId);
+        this.trayId = '';
+        this.trayLog = 'Removed';
+    }
+
+    /**
+     * --- 点击任务栏图标后恢复这个 Form ---
+     * @param id 托盘 ID
+     * @returns 无返回值
+     */
+    public async onTrayClick(id: string): Promise<void> {
+        if (id !== this.trayId) {
+            return;
+        }
+        this.trayLog = 'Click ' + id;
+        await clickgo.form.changeFocus(this.formId);
+    }
+
+    /**
+     * --- 菜单命令来自框架，应用不依赖具体 task app ---
+     * @param id 托盘 ID
+     * @param menuId 菜单命令
+     * @returns 无返回值
+     */
+    public async onTrayMenuClick(id: string, menuId: string): Promise<void> {
+        if (id !== this.trayId) {
+            return;
+        }
+        if (menuId === 'remove') {
+            this.removeTray();
+            return;
+        }
+        this.trayLog = 'Menu ' + menuId;
+        await clickgo.form.changeFocus(this.formId);
+    }
+
+    /**
+     * --- Form 关闭时释放本示例的托盘，包括尚未完成的注册 ---
+     * @returns 无返回值
+     */
+    public onBeforeUnmount(): void {
+        this.access.trayClosed = true;
+        this.removeTray();
+    }
+
     public tid = '0';
 
     public frameTimer = 0;

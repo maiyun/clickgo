@@ -1,4 +1,4 @@
-<div class="wrap" :class="[position, isSelected && 'selected', isOpened && 'opened', isMulti && 'multi']" @pointerdown="down">
+<div class="wrap" :class="[position, mode === 'dock' && 'dock', isSelected && 'selected', isOpened && 'opened', isMulti && 'multi']" @pointerdown="down">
     <slot></slot>
     <div class="line"></div>
     <teleport to="system">

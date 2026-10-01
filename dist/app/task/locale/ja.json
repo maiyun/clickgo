@@ -7,5 +7,7 @@
     "close all windows": "すべてのウィンドウを閉じる",
     "close window": "ウィンドウを閉じる",
     "pin to taskbar": "タスク バーにピン留めする",
-    "unpin from taskbar": "タスク バーからピン留めを外す"
+    "unpin from taskbar": "タスク バーからピン留めを外す",
+    "task bar": "タスクバー",
+    "task dock": "中央 Dock"
 }

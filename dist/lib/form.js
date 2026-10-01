@@ -1105,6 +1105,21 @@ export class AbstractForm extends AbstractCommon {
     onFormHashChange() {
         return;
     }
+    onTrayCreated() {
+        return;
+    }
+    onTrayChanged() {
+        return;
+    }
+    onTrayRemoved() {
+        return;
+    }
+    onTrayClick() {
+        return;
+    }
+    onTrayMenuClick() {
+        return;
+    }
     onTaskStarted() {
         return;
     }
@@ -3039,6 +3054,21 @@ window.addEventListener('pointerdown', (e) => {
     doFocusAndPopEvent(e).catch(() => { });
 });
 /**
+ * --- 统一关闭公共浮层，控件不需要各自注册竞争的 Escape 监听 ---
+ * @param e 键盘事件
+ * @returns 无返回值
+ */
+function keydownPop(e) {
+    if ((e.key !== 'Escape') || e.isComposing || !popInfo.list.length) {
+        return;
+    }
+    const anchor = popInfo.elList[0];
+    hidePop();
+    anchor.focus({ 'preventScroll': true });
+    e.preventDefault();
+}
+window.addEventListener('keydown', keydownPop);
+/**
  * --- 移除一个 form（关闭窗口） ---
  * @param formId 要移除的 form id
  */
@@ -3090,6 +3120,9 @@ export function remove(formId) {
                 task.forms[formId].vroot.cgDialogCallback();
             }
             delete task.forms[formId];
+            if ((lTask.systemTaskInfo.taskId === taskId) && (lTask.systemTaskInfo.formId === formId)) {
+                await lTask.clearSystem(taskId);
+            }
             lControl.clearComponents(taskId, formId);
             // --- 移除 form 的 style ---
             lDom.removeStyle(taskId, 'form', formId);

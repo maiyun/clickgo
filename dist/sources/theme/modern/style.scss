@@ -150,8 +150,10 @@ global {
 
 .form_wrap {
     padding: 0;
-    -webkit-backdrop-filter: var(--modern-form-backdrop);
-    backdrop-filter: var(--modern-form-backdrop);
+    &:not(.form_border-none) {
+        -webkit-backdrop-filter: var(--modern-form-backdrop);
+        backdrop-filter: var(--modern-form-backdrop);
+    }
     &:not(.form_border-none):not([data-cg-max]) {
         padding: 1px;
         background:
@@ -492,7 +494,9 @@ global {
         linear-gradient(135deg, oklch(1 0 0 / .075), transparent 36%),
         linear-gradient(315deg, color-mix(in oklch, var(--modern-accent-shift), transparent 91%), transparent 52%),
         var(--g-pop-background);
-    box-shadow: var(--g-shadow-d);
+    &:not(.task_dock) {
+        box-shadow: var(--g-shadow-d);
+    }
     .task_date {
         color: var(--g-color);
     }

@@ -1,0 +1,17 @@
+<div class="wrap" role="button" tabindex="0" :aria-label="tip" @pointerdown="down" @keydown="keydown">
+    <cg-tip :label="tip">
+        <slot><cg-img :src="icon" class="icon" mode="contain"></cg-img></slot>
+    </cg-tip>
+    <teleport v-if="slots['contextmenu'] || menu.length" to="system">
+        <div ref="pop" class="pop">
+            <slot name="contextmenu">
+                <cg-menulist>
+                    <template v-for="item of menu" :key="item.id">
+                        <cg-menulist-split v-if="item.separator"></cg-menulist-split>
+                        <cg-menulist-item v-else :disabled="item.disabled" @click="select(item)">{{item.label}}</cg-menulist-item>
+                    </template>
+                </cg-menulist>
+            </slot>
+        </div>
+    </teleport>
+</div>

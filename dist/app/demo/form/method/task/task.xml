@@ -1,6 +1,15 @@
 <form width="350" height="500" title="Library task">
     <flow direction="v" style="flex: 1; padding: 10px;">
         <layout direction="v" gutter="10">
+            <!-- 实际系统托盘：注册、更新、删除及最小化后恢复 -->
+            <label>System tray: {{trayId || 'none'}}</label>
+            <layout gutter="10">
+                <button :disabled="trayPending || !!trayId" @click="createTray">Create tray</button>
+                <button :disabled="!trayId" @click="updateTray">Update</button>
+                <button :disabled="!trayId" @click="removeTray">Remove</button>
+                <button :disabled="!trayId" @click="minimizeTrayDemo">Minimize</button>
+            </layout>
+            <label>{{trayLog}}</label>
             <label>onFrame(): timer: {{frameTimer}}, count: {{frameCount}}</label>
             <layout gutter="10">
                 <template v-if="frameTimer === 0">

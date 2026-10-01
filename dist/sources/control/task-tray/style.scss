@@ -1,0 +1,10 @@
+.wrap {
+    display: flex; align-items: center; justify-content: center; flex: 0 0 auto; padding: 8px; border-radius: var(--g-radius); transition: var(--g-transition);
+    &:hover { background: rgba(255, 255, 255, .1); }
+    &:active { background: rgba(255, 255, 255, .2); }
+    &:focus-visible { outline: 2px solid var(--cg); outline-offset: -2px; }
+    .icon { width: 16px; height: 16px; }
+}
+.pop {
+    color: var(--g-color); border-radius: var(--g-radius); background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
+}

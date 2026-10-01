@@ -186,6 +186,15 @@ export class AbstractBoot {
     onFormHashChange() {
         return;
     }
+    onTrayCreated() {
+        return;
+    }
+    onTrayChanged() {
+        return;
+    }
+    onTrayRemoved() {
+        return;
+    }
     onTaskStarted() {
         return;
     }
