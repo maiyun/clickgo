@@ -11,6 +11,10 @@
         }
     }
     &.h {
+        .bar {
+            // --- offsetPx 已将 RTL 位置换算为从左边起算的物理坐标 ---
+            direction: ltr;
+        }
         .start::before {
             border-width: 0 0 1px 1px; margin-inline-end: -12%;
         }

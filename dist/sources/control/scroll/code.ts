@@ -60,9 +60,6 @@ export default class extends clickgo.control.AbstractControl {
     /** --- bar 的 px --- */
     public barPx = 0;
 
-    /** --- 方向变化版本，用于让依赖计算样式方向的模板重新计算 --- */
-    public directionVersion = 0;
-
     /** --- block 的 px --- */
     public get blockPx(): number {
         const px = this.clientData / this.lengthData * this.barPx;
@@ -95,8 +92,8 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 水平滚动条是否使用 RTL inline 顺序 --- */
     public get isRtl(): boolean {
-        void this.directionVersion;
-        return this.props.direction === 'h' && clickgo.dom.isRtl(this.element);
+        // --- 首次渲染尚未生成根元素，读取 element 会让 Vue 缓存空的 $el ---
+        return this.props.direction === 'h' && this.localeDirection === 'rtl';
     }
 
     /**
@@ -283,10 +280,6 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('direction', () => {
             this._initLength();
             this._initClient();
-        });
-        this.watch('locale', () => {
-            // --- dir 位于祖先时不会成为计算属性依赖，显式触发滑块位置重算 ---
-            ++this.directionVersion;
         });
         // --- 监听 prop 用户的 offset 设定 ---
         this.watch('offset', (): void => {
