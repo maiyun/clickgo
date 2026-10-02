@@ -2004,6 +2004,7 @@ function setLocaleAttributes(el: HTMLElement, locale: string): void {
 export function refreshLocaleDirection(taskId?: string): void {
     const systemLocale = lCore.config?.locale ?? lTool.lang.getCodeByAccept();
     setLocaleAttributes(elements.wrap, systemLocale);
+    refreshNotifyPosition();
     const selector = taskId ? `[data-task-id="${taskId}"]` : '[data-task-id]';
     const wraps = [
         ...elements.list.querySelectorAll<HTMLElement>(`.cg-form-wrap${selector}`),
@@ -2819,8 +2820,28 @@ export function alert(content: string, type?: 'default' | 'primary' | 'info' | '
 
 // --- Notify ---
 
-let notifyBottom: number = -10;
 let notifyId: number = 0;
+/** --- 共用尺寸监听，内容换行或主题尺寸变化时重新排列通知 --- */
+let notifyResizeObserver: ResizeObserver | undefined;
+/**
+ * --- 按当前可用区域和实际高度重新排列通知 ---
+ * @returns 无返回值
+ */
+export function refreshNotifyPosition(): void {
+    if (!elements.notify.children.length) {
+        return;
+    }
+    const rtl = lTool.lang.getDirection(lCore.config.locale) === 'rtl';
+    const area = lCore.getAvailArea();
+    let y = area.top + area.height - window.innerHeight - 10;
+    const x = rtl ? area.left + 10 : area.left + area.width - window.innerWidth - 10;
+    for (const el of elements.notify.children) {
+        const notify = el as HTMLElement;
+        const entering = notify.dataset.state === 'entering';
+        notify.style.transform = `translateY(${y}px) translateX(${entering ? (rtl ? -280 : 280) : x}px)`;
+        y -= notify.offsetHeight + 10;
+    }
+}
 /**
  * --- 弹出右下角信息框 ---
  * @param opt timeout 默认 5 秒，最大 10 分钟
@@ -2853,20 +2874,9 @@ export function notify(opt: INotifyOptions): number {
     }
     // --- 创建 notify element ---
     const el = document.createElement('div');
-    const rtl = lTool.lang.getDirection(lCore.config.locale) === 'rtl';
-    let y = notifyBottom;
-    let x = rtl ? 10 : -10;
-    if (lTask.systemTaskInfo.taskId) {
-        if (lCore.config['task.position'] === 'bottom') {
-            y -= lTask.systemTaskInfo.length;
-        }
-        else if (lCore.config['task.position'] === (rtl ? 'left' : 'right')) {
-            x += (rtl ? 1 : -1) * lTask.systemTaskInfo.length;
-        }
-    }
     el.classList.add('cg-notify-wrap');
     el.setAttribute('data-notifyid', nid.toString());
-    el.style.transform = `translateY(${y}px) translateX(${rtl ? -280 : 280}px)`;
+    el.dataset.state = 'entering';
     el.style.opacity = '0';
     el.classList.add((opt.title && opt.content) ? 'cg-notify-full' : 'cg-notify-only');
     el.innerHTML = `<div class="cg-notify-icon cg-${lTool.escapeHTML(opt.type ?? 'primary')}"></div>` +
@@ -2893,9 +2903,15 @@ export function notify(opt: INotifyOptions): number {
         (el.childNodes.item(0) as HTMLElement).style.backgroundSize = '14px';
     }
     elements.notify.appendChild(el);
-    notifyBottom -= el.offsetHeight + 10;
+    notifyResizeObserver ??= new ResizeObserver(refreshNotifyPosition);
+    notifyResizeObserver.observe(el);
+    refreshNotifyPosition();
     requestAnimationFrame(function() {
-        el.style.transform = `translateY(${y}px) translateX(${x}px)`;
+        if (!el.isConnected || (el.dataset.state === 'leaving')) {
+            return;
+        }
+        el.dataset.state = 'visible';
+        refreshNotifyPosition();
         el.style.opacity = '1';
         const timer = window.setTimeout(function() {
             hideNotify(nid);
@@ -2975,6 +2991,7 @@ export function notifyContent(notifyId: number, opt: INotifyContentOptions): voi
             hideNotify(notifyId);
         }, opt.timeout);
     }
+    refreshNotifyPosition();
 }
 
 /**
@@ -2983,31 +3000,16 @@ export function notifyContent(notifyId: number, opt: INotifyContentOptions): voi
  */
 export function hideNotify(notifyId: number): void {
     const el: HTMLElement = elements.notify.querySelector(`[data-notifyid="${notifyId}"]`)!;
-    if (!el) {
+    if (!el || (el.dataset.state === 'leaving')) {
         return;
     }
+    el.dataset.state = 'leaving';
     clearTimeout(parseInt(el.getAttribute('data-timer')!));
-    const notifyHeight = el.offsetHeight;
     el.style.opacity = '0';
     setTimeout(function() {
-        notifyBottom += notifyHeight + 10;
-        const notifyElementList = document.getElementsByClassName('cg-notify-wrap') as HTMLCollectionOf<HTMLDivElement>;
-        let needSub = false;
-        for (const notifyElement of notifyElementList) {
-            if (notifyElement === el) {
-                // --- el 之后的 notify 都要往下移动 ---
-                needSub = true;
-                continue;
-            }
-            if (needSub) {
-                notifyElement.style.transform = notifyElement.style.transform.replace(/translateY\(([-0-9]+)px\)/,
-                    function(t: string, t1: string): string {
-                        return `translateY(${parseInt(t1) + notifyHeight + 10}px)`;
-                    }
-                );
-            }
-        }
+        notifyResizeObserver?.unobserve(el);
         el.remove();
+        refreshNotifyPosition();
     }, 100);
 }
 

@@ -2467,8 +2467,10 @@ function getHeadElement(): HTMLHeadElement {
 /**
  * --- 加载脚本 ---
  * @param url 脚本网址
+ * @param ordered 是否按插入顺序执行，下载仍并行，默认 false
+ * @returns 加载是否成功
  */
-export async function loadScript(url: string): Promise<boolean> {
+export async function loadScript(url: string, ordered: boolean = false): Promise<boolean> {
     return new Promise((resolve) => {
         const script = document.createElement('script');
         script.addEventListener('load', function() {
@@ -2477,6 +2479,7 @@ export async function loadScript(url: string): Promise<boolean> {
         script.addEventListener('error', function() {
             resolve(false);
         });
+        script.async = !ordered;
         script.src = url;
         getHeadElement().appendChild(script);
     });
@@ -2489,9 +2492,11 @@ export async function loadScript(url: string): Promise<boolean> {
  */
 export async function loadScripts(urls: string[], opt: {
     loaded?: (url: string, state: number) => void;
+    /** --- 并行下载并按列表顺序执行，默认 false --- */
+    'ordered'?: boolean;
 } = {}): Promise<void> {
     await Promise.all(urls.map(async url => {
-        const res = await loadScript(url);
+        const res = await loadScript(url, opt.ordered);
         opt.loaded?.(url, res ? 1 : 0);
     }));
 }
@@ -2534,6 +2539,45 @@ export async function loadLinks(urls: string[], opt: {
         const res = await loadLink(url);
         opt.loaded?.(url, res ? 1 : 0);
     }));
+}
+
+/**
+ * --- 批量并行加载 JS 和 CSS；JS 按列表顺序执行，CSS 按列表顺序插入 ---
+ * @param urls 资源网址，忽略查询参数和哈希后以 .css 结尾的按 CSS 加载，其余按 JS 加载
+ * @param opt loaded 为单个资源加载完成回调，state 为 1-成功、0-失败
+ * @returns 全部资源成功返回 true，任一资源失败返回 false；空列表返回 true
+ */
+export async function loadAssets(urls: string[], opt: {
+    loaded?: (url: string, state: number) => void;
+} = {}): Promise<boolean> {
+    const scripts: string[] = [];
+    const links: string[] = [];
+    for (const url of urls) {
+        if (url.split(/[?#]/, 1)[0].toLowerCase().endsWith('.css')) {
+            links.push(url);
+        }
+        else {
+            scripts.push(url);
+        }
+    }
+    let loaded = true;
+    /**
+     * --- 汇总各资源的结果并转发加载回调 ---
+     * @param url 资源网址
+     * @param state 加载状态
+     * @returns 无返回值
+     */
+    const onLoaded = (url: string, state: number): void => {
+        if (state === 0) {
+            loaded = false;
+        }
+        opt.loaded?.(url, state);
+    };
+    await Promise.all([
+        loadScripts(scripts, { 'ordered': true, 'loaded': onLoaded }),
+        loadLinks(links, { 'loaded': onLoaded }),
+    ]);
+    return loaded;
 }
 
 /**

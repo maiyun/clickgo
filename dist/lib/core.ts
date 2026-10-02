@@ -275,6 +275,7 @@ export function setBoot(b: clickgo.AbstractBoot): void {
 const globalEvents = {
     screenResize: function(): void {
         lForm.refreshMaxPosition();
+        lForm.refreshNotifyPosition();
     },
     formRemoved: function(taskId: string, formId: string): void {
         if (!lForm.simpleSystemTaskRoot.forms[formId]) {
@@ -1108,7 +1109,7 @@ const modules: Record<string, {
     /** --- 已经在加载中了 --- */
     'loading': boolean;
     /** --- 等待回调 --- */
-    'resolve': Array<() => void>;
+    'resolve': Array<(loaded: boolean) => void>;
 }> = {
     'monaco-editor': {
         func: async function(): Promise<IMonacoLoader | null> {
@@ -1133,17 +1134,15 @@ const modules: Record<string, {
     },
     'xterm': {
         func: async function() {
-            await lTool.loadScripts([
+            const loaded = await lTool.loadAssets([
                 `${clickgo.getCdn()}/npm/xterm@5.3.0/lib/xterm.js`,
                 `${clickgo.getCdn()}/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js`,
-                `${clickgo.getCdn()}/npm/xterm-addon-webgl@0.16.0/lib/xterm-addon-webgl.js`
+                `${clickgo.getCdn()}/npm/xterm-addon-webgl@0.16.0/lib/xterm-addon-webgl.js`,
+                `${clickgo.getCdn()}/npm/xterm@5.3.0/css/xterm.min.css`,
             ]);
-            if (!(window as any).Terminal) {
-                throw Error('Xterm load failed.');
+            if ((!loaded) || (!(window as any).Terminal)) {
+                return null;
             }
-            await lTool.loadLinks([
-                `${clickgo.getCdn()}/npm/xterm@5.3.0/css/xterm.min.css`
-            ]);
             lTool.loadStyle('.xterm-viewport::-webkit-scrollbar{display:none;}');
             return {
                 'Terminal': (window as any).Terminal,
@@ -1167,13 +1166,9 @@ const modules: Record<string, {
     },
     '@toast-ui/editor': {
         func: async function() {
-            await lTool.loadScripts([
+            // --- 统一加载器保证脚本执行顺序，主库须放在语言包之前 ---
+            const loaded = await lTool.loadAssets([
                 lTool.urlResolve(clickgo.getDirname() + '/', './ext/toastui-editor-all.min.js'),
-            ]);
-            if (!(window as any).toastui.Editor) {
-                throw Error('Tuieditor load failed.');
-            }
-            await lTool.loadScripts([
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-cn.min.js`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-tw.min.js`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ja-jp.min.js`,
@@ -1183,11 +1178,12 @@ const modules: Record<string, {
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/fr-fr.min.js`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/pt-br.min.js`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ru-ru.min.js`,
-            ]);
-            await lTool.loadLinks([
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css`,
             ]);
+            if ((!loaded) || (!(window as any).toastui?.Editor)) {
+                return null;
+            }
             lTool.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}.jodit ::-webkit-scrollbar{width:6px;cursor:default;}.jodit ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px;}.jodit ::-webkit-scrollbar-thumb:hover{background: rgba(0,0,0,.2);}');
             return (window as any).toastui;
         },
@@ -1209,12 +1205,13 @@ const modules: Record<string, {
     },
     'jodit': {
         func: async function() {
-            await lTool.loadScripts([
+            const loaded = await lTool.loadAssets([
                 `${clickgo.getCdn()}/npm/jodit@4.17.1/es2015/jodit.fat.min.js`,
-            ]);
-            await lTool.loadLinks([
                 `${clickgo.getCdn()}/npm/jodit@4.17.1/es2015/jodit.fat.min.css`,
             ]);
+            if ((!loaded) || (!(window as any).Jodit)) {
+                return null;
+            }
             lTool.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}.jodit-wysiwyg a{color:unset;}');
             return (window as any).Jodit;
         },
@@ -1462,40 +1459,45 @@ export async function loadModule(name: string): Promise<boolean> {
         // --- 未注册的，加载啥 ---
         return false;
     }
+    if (modules[name].loading) {
+        // --- 并发调用共用一次加载，并接收相同的成功或失败结果 ---
+        return new Promise<boolean>(resolve => {
+            modules[name].resolve.push(resolve);
+        });
+    }
     if (clickgo.modules[name]) {
         // --- 已经加载过了 ---
         return true;
     }
+    let loaded = false;
+    modules[name].loading = true;
     try {
-        if (modules[name].loading) {
-            // --- 加载中，等待 ---
-            await new Promise<void>(resolve => {
-                modules[name].resolve.push(() => {
-                    resolve();
-                });
-            });
-            return true;
-        }
         // --- 未加载，走加载流程 ---
-        modules[name].loading = true;
+        let result: unknown;
         if (modules[name].version) {
             // --- ESM 模块 ---
-            const r = await import(`${clickgo.getCdn()}/npm/${name}@${modules[name].version}/+esm`);
-            clickgo.modules[name] = r;
+            result = await import(`${clickgo.getCdn()}/npm/${name}@${modules[name].version}/+esm`);
         }
         if (modules[name].func) {
-            const r = await modules[name].func();
-            clickgo.modules[name] = r;
+            result = await modules[name].func();
         }
-        modules[name].loading = false;
-        for (const r of modules[name].resolve) {
-            r();
+        if ((result === null) || (result === undefined) || (result === false)) {
+            return false;
         }
-        modules[name].resolve.length = 0;
+        // --- 全部依赖成功后再发布模块，避免其他控件读到未完成的结果 ---
+        clickgo.modules[name] = result;
+        loaded = true;
         return true;
     }
     catch {
         return false;
+    }
+    finally {
+        modules[name].loading = false;
+        for (const resolve of modules[name].resolve) {
+            resolve(loaded);
+        }
+        modules[name].resolve.length = 0;
     }
 }
 

@@ -805,6 +805,11 @@ export async function run(current, url, opt = {}) {
     }
     // --- 创建 Task 总 style ---
     lDom.createToStyleList(taskId);
+    // --- 主题包与控件包同时读取，主题应用仍在控件注册完成后按配置顺序执行 ---
+    const themePackages = (app.config.themes ?? []).map((path) => {
+        path = lTool.urlResolve('/', path + '.cgt');
+        return { 'path': path, 'file': lFs.getContent(taskId, path).catch(() => null) };
+    });
     // --- 加载 control ---
     initMsg = 'Control initialization ...';
     await opt.initProgress?.(2, initTotal, EIPTYPE.CONTROL, initMsg);
@@ -843,9 +848,8 @@ export async function run(current, url, opt = {}) {
     }
     // --- 加载 theme ---
     if (app.config.themes?.length) {
-        for (let path of app.config.themes) {
-            path += '.cgt';
-            path = lTool.urlResolve('/', path);
+        for (const pkg of themePackages) {
+            const path = pkg.path;
             initMsg = `Load theme '${path}' ...`;
             await opt.initProgress?.(3, initTotal, EIPTYPE.THEME, initMsg);
             const per = 3 / initTotal;
@@ -856,7 +860,7 @@ export async function run(current, url, opt = {}) {
                     'progress': per,
                 });
             }
-            const file = await lFs.getContent(taskId, path);
+            const file = await pkg.file;
             if (file && typeof file !== 'string') {
                 const th = await lTheme.read(file);
                 if (th) {

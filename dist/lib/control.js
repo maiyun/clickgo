@@ -483,12 +483,17 @@ export async function init(taskId, opt = {}) {
     };
     clearComponents(taskId);
     let loaded = 0;
-    for (let path of task.app.config.controls) {
+    // --- 包读取可并行，注册仍按配置顺序，保留同名控件和样式的覆盖顺序 ---
+    const packages = task.app.config.controls.map((path) => {
         if (!path.endsWith('.cgc')) {
             path += '.cgc';
         }
         path = lTool.urlResolve('/', path);
-        const file = await lFs.getContent(taskId, path);
+        return { 'path': path, 'file': lFs.getContent(taskId, path).catch(() => null) };
+    });
+    for (const pkg of packages) {
+        const path = pkg.path;
+        const file = await pkg.file;
         if (file && typeof file !== 'string') {
             const c = await read(file);
             if (c) {
