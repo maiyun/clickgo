@@ -8,7 +8,7 @@
 
 > **getList**(): [`ITaskInfo`](../interfaces/ITaskInfo.md)[]
 
-Defined in: [lib/task.ts:405](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L405)
+Defined in: [lib/task.ts:610](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L610)
 
 获取 task list 的简略情况
 

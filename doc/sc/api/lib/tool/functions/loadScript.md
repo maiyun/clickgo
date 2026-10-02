@@ -6,9 +6,9 @@
 
 # Function: loadScript()
 
-> **loadScript**(`url`): `Promise`\<`boolean`\>
+> **loadScript**(`url`, `ordered?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/tool.ts:2471](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2471)
+Defined in: [lib/tool.ts:2473](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2473)
 
 加载脚本
 
@@ -20,6 +20,14 @@ Defined in: [lib/tool.ts:2471](https://github.com/maiyun/clickgo/blob/master/dis
 
 脚本网址
 
+### ordered?
+
+`boolean` = `false`
+
+是否按插入顺序执行，下载仍并行，默认 false
+
 ## Returns
 
 `Promise`\<`boolean`\>
+
+加载是否成功

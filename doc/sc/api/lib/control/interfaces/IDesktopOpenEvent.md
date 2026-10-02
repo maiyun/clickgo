@@ -6,7 +6,7 @@
 
 # Interface: IDesktopOpenEvent
 
-Defined in: [lib/control.ts:1329](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1329)
+Defined in: [lib/control.ts:1334](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1334)
 
 双击、Enter 或溢出菜单请求打开图标
 
@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:1329](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1330](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1330)
+Defined in: [lib/control.ts:1335](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1335)
 
 #### value
 

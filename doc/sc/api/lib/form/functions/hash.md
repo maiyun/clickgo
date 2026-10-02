@@ -8,7 +8,7 @@
 
 > **hash**(`formId`, `hash`): `boolean`
 
-Defined in: [lib/form.ts:2306](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2306)
+Defined in: [lib/form.ts:2361](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2361)
 
 修改窗体 hash
 

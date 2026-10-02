@@ -6,7 +6,7 @@
 
 # Interface: ITabCloseEvent
 
-Defined in: [lib/control.ts:1632](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1632)
+Defined in: [lib/control.ts:1637](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1637)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1633](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1633)
+Defined in: [lib/control.ts:1638](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1638)
 
 #### index
 
@@ -36,7 +36,7 @@ Defined in: [lib/control.ts:1633](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L965)
+Defined in: [lib/control.ts:970](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L970)
 
 #### Inherited from
 
@@ -48,7 +48,7 @@ Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:966](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L966)
+Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L971)
 
 #### Returns
 

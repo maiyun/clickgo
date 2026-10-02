@@ -6,7 +6,7 @@
 
 # Interface: INavItemSelectEvent
 
-Defined in: [lib/control.ts:1455](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1455)
+Defined in: [lib/control.ts:1460](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1460)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1456](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1456)
+Defined in: [lib/control.ts:1461](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1461)
 
 #### name
 
@@ -36,7 +36,7 @@ Defined in: [lib/control.ts:1456](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L965)
+Defined in: [lib/control.ts:970](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L970)
 
 #### Inherited from
 
@@ -48,7 +48,7 @@ Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:966](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L966)
+Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L971)
 
 #### Returns
 

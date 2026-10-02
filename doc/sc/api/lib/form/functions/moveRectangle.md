@@ -8,7 +8,7 @@
 
 > **moveRectangle**(`border`): `void`
 
-Defined in: [lib/form.ts:2647](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2647)
+Defined in: [lib/form.ts:2702](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2702)
 
 移动矩形到新位置
 

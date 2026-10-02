@@ -6,7 +6,7 @@
 
 # Interface: IFabricLayerlistchangeEvent
 
-Defined in: [lib/control.ts:1693](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1693)
+Defined in: [lib/control.ts:1698](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1698)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1693](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1694](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1694)
+Defined in: [lib/control.ts:1699](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1699)
 
 #### names
 

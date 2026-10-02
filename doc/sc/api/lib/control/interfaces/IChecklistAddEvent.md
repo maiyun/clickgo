@@ -6,7 +6,7 @@
 
 # Interface: IChecklistAddEvent
 
-Defined in: [lib/control.ts:1394](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1394)
+Defined in: [lib/control.ts:1399](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1399)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1395](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1395)
+Defined in: [lib/control.ts:1400](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1400)
 
 #### index
 
@@ -36,7 +36,7 @@ Defined in: [lib/control.ts:1395](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L965)
+Defined in: [lib/control.ts:970](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L970)
 
 #### Inherited from
 
@@ -48,7 +48,7 @@ Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:966](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L966)
+Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L971)
 
 #### Returns
 

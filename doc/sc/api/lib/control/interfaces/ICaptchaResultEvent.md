@@ -6,7 +6,7 @@
 
 # Interface: ICaptchaResultEvent
 
-Defined in: [lib/control.ts:1190](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1190)
+Defined in: [lib/control.ts:1195](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1195)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1190](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1191](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1191)
+Defined in: [lib/control.ts:1196](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1196)
 
 #### result
 

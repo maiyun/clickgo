@@ -8,7 +8,7 @@
 
 > **bindDrag**(`e`): `void`
 
-Defined in: [lib/form.ts:2091](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2091)
+Defined in: [lib/form.ts:2146](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2146)
 
 绑定窗体拖动事件，在 pointerdown 中绑定
 

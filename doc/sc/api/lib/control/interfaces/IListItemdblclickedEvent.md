@@ -6,7 +6,7 @@
 
 # Interface: IListItemdblclickedEvent
 
-Defined in: [lib/control.ts:1445](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1445)
+Defined in: [lib/control.ts:1450](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1450)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1445](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1446](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1446)
+Defined in: [lib/control.ts:1451](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1451)
 
 #### arrow
 

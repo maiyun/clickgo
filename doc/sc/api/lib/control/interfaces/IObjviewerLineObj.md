@@ -6,7 +6,7 @@
 
 # Interface: IObjviewerLineObj
 
-Defined in: [lib/control.ts:1732](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1732)
+Defined in: [lib/control.ts:1737](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1737)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/control.ts:1732](https://github.com/maiyun/clickgo/blob/master/
 
 > **obj**: `HTMLElement` \| [`AbstractControl`](../classes/AbstractControl.md)
 
-Defined in: [lib/control.ts:1733](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1733)
+Defined in: [lib/control.ts:1738](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1738)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [lib/control.ts:1733](https://github.com/maiyun/clickgo/blob/master/
 
 > **pos**: `"b"` \| `"tr"` \| `"l"` \| `"rb"` \| `"lt"` \| `"t"` \| `"r"` \| `"bl"`
 
-Defined in: [lib/control.ts:1734](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1734)
+Defined in: [lib/control.ts:1739](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1739)

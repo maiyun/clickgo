@@ -6,7 +6,7 @@
 
 # Interface: IDesktopPosition
 
-Defined in: [lib/control.ts:1310](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1310)
+Defined in: [lib/control.ts:1315](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1315)
 
 相对控件内边缘的物理像素坐标，RTL 下也不镜像
 
@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:1310](https://github.com/maiyun/clickgo/blob/master/
 
 > **x**: `number`
 
-Defined in: [lib/control.ts:1311](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1311)
+Defined in: [lib/control.ts:1316](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1316)
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: [lib/control.ts:1311](https://github.com/maiyun/clickgo/blob/master/
 
 > **y**: `number`
 
-Defined in: [lib/control.ts:1312](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1312)
+Defined in: [lib/control.ts:1317](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1317)

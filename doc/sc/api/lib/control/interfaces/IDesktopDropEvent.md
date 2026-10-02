@@ -6,7 +6,7 @@
 
 # Interface: IDesktopDropEvent
 
-Defined in: [lib/control.ts:1354](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1354)
+Defined in: [lib/control.ts:1359](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1359)
 
 文件拖入桌面或目录，文件操作由应用决定
 
@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:1354](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1355](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1355)
+Defined in: [lib/control.ts:1360](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1360)
 
 #### event?
 

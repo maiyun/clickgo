@@ -6,7 +6,7 @@
 
 # Interface: IDesktopLayoutEvent
 
-Defined in: [lib/control.ts:1336](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1336)
+Defined in: [lib/control.ts:1341](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1341)
 
 自动重排或用户拖动完成后的布局快照
 
@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:1336](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1337](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1337)
+Defined in: [lib/control.ts:1342](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1342)
 
 #### overflow
 

@@ -480,7 +480,7 @@ Defined in: [clickgo.ts:230](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onHashChanged**(`hash`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:310](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L310)
+Defined in: [clickgo.ts:343](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L343)
 
 location hash 改变事件
 
@@ -500,7 +500,7 @@ location hash 改变事件
 
 > **onKeydown**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:316](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L316)
+Defined in: [clickgo.ts:349](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L349)
 
 键盘按下事件
 
@@ -520,7 +520,7 @@ Defined in: [clickgo.ts:316](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onKeyup**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:322](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L322)
+Defined in: [clickgo.ts:355](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L355)
 
 键盘弹起事件
 
@@ -540,7 +540,7 @@ Defined in: [clickgo.ts:322](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onLauncherFolderNameChanged**(`id`, `name`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:304](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L304)
+Defined in: [clickgo.ts:337](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L337)
 
 launcher 文件夹名称修改事件
 
@@ -564,7 +564,7 @@ launcher 文件夹名称修改事件
 
 > **onRuntimeFileLoad**(`url`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:328](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L328)
+Defined in: [clickgo.ts:361](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L361)
 
 环境文件准备加载时的事件
 
@@ -584,7 +584,7 @@ Defined in: [clickgo.ts:328](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onRuntimeFileLoaded**(`url`, `state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:334](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L334)
+Defined in: [clickgo.ts:367](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L367)
 
 环境文件加载完成的事件
 
@@ -622,7 +622,7 @@ Defined in: [clickgo.ts:204](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onTaskEnded**(`taskId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:298](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L298)
+Defined in: [clickgo.ts:331](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L331)
 
 任务结束事件
 
@@ -642,7 +642,7 @@ Defined in: [clickgo.ts:298](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onTaskStarted**(`taskId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:292](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L292)
+Defined in: [clickgo.ts:325](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L325)
 
 任务开始事件
 
@@ -655,6 +655,96 @@ Defined in: [clickgo.ts:292](https://github.com/maiyun/clickgo/blob/master/dist/
 #### Returns
 
 `void` \| `Promise`\<`void`\>
+
+***
+
+### onTrayChanged()
+
+> **onTrayChanged**(`taskId`, `trayId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [clickgo.ts:308](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L308)
+
+托盘数据变更通知
+
+#### Parameters
+
+##### taskId
+
+`string`
+
+所属任务
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
+### onTrayCreated()
+
+> **onTrayCreated**(`taskId`, `trayId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [clickgo.ts:297](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L297)
+
+托盘注册通知；通过 task.getTrayList(this) 读取快照
+
+#### Parameters
+
+##### taskId
+
+`string`
+
+所属任务
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
+### onTrayRemoved()
+
+> **onTrayRemoved**(`taskId`, `trayId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [clickgo.ts:319](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L319)
+
+托盘删除通知
+
+#### Parameters
+
+##### taskId
+
+`string`
+
+所属任务
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
 
 ***
 

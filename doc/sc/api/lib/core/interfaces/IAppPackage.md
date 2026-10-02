@@ -6,7 +6,7 @@
 
 # Interface: IAppPackage
 
-Defined in: [lib/core.ts:1584](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1584)
+Defined in: [lib/core.ts:1700](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1700)
 
 CGA 按需解密包读取器
 
@@ -16,7 +16,7 @@ CGA 按需解密包读取器
 
 > **clear**(): `void`
 
-Defined in: [lib/core.ts:1588](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1588)
+Defined in: [lib/core.ts:1704](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1704)
 
 #### Returns
 
@@ -28,7 +28,7 @@ Defined in: [lib/core.ts:1588](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getContent**(`path`): `Promise`\<`string` \| `Blob` \| `null`\>
 
-Defined in: [lib/core.ts:1585](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1585)
+Defined in: [lib/core.ts:1701](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1701)
 
 #### Parameters
 
@@ -46,7 +46,7 @@ Defined in: [lib/core.ts:1585](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **readDir**(`path`): [`IAppPackageEntry`](IAppPackageEntry.md)[]
 
-Defined in: [lib/core.ts:1587](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1587)
+Defined in: [lib/core.ts:1703](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1703)
 
 #### Parameters
 
@@ -64,7 +64,7 @@ Defined in: [lib/core.ts:1587](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **stats**(`path`): [`IAppPackageStats`](IAppPackageStats.md) \| `null`
 
-Defined in: [lib/core.ts:1586](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1586)
+Defined in: [lib/core.ts:1702](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1702)
 
 #### Parameters
 

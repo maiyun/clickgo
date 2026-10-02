@@ -78,6 +78,7 @@
 - [prompt](functions/prompt.md)
 - [refreshLocaleDirection](functions/refreshLocaleDirection.md)
 - [refreshMaxPosition](functions/refreshMaxPosition.md)
+- [refreshNotifyPosition](functions/refreshNotifyPosition.md)
 - [remove](functions/remove.md)
 - [removeActivePanel](functions/removeActivePanel.md)
 - [removeFromPop](functions/removeFromPop.md)

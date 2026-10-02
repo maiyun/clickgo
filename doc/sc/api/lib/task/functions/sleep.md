@@ -8,7 +8,7 @@
 
 > **sleep**(`current`, `fun`, `delay`): `number`
 
-Defined in: [lib/task.ts:1418](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1418)
+Defined in: [lib/task.ts:1632](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1632)
 
 暂停一小段时间
 

@@ -6,7 +6,7 @@
 
 # Interface: IDesktopItem
 
-Defined in: [lib/control.ts:1297](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1297)
+Defined in: [lib/control.ts:1302](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1302)
 
 桌面图标；位置和选择使用稳定 ID，不依赖数据顺序
 
@@ -16,7 +16,7 @@ Defined in: [lib/control.ts:1297](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **icon?**: `string`
 
-Defined in: [lib/control.ts:1300](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1300)
+Defined in: [lib/control.ts:1305](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1305)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:1300](https://github.com/maiyun/clickgo/blob/master/
 
 > **id**: `string`
 
-Defined in: [lib/control.ts:1298](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1298)
+Defined in: [lib/control.ts:1303](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1303)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/control.ts:1298](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **locked?**: `boolean`
 
-Defined in: [lib/control.ts:1306](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1306)
+Defined in: [lib/control.ts:1311](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1311)
 
 禁止用户拖动；区域变化时仍可自动调整位置
 
@@ -42,7 +42,7 @@ Defined in: [lib/control.ts:1306](https://github.com/maiyun/clickgo/blob/master/
 
 > **name**: `string`
 
-Defined in: [lib/control.ts:1299](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1299)
+Defined in: [lib/control.ts:1304](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1304)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [lib/control.ts:1299](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **path?**: `string`
 
-Defined in: [lib/control.ts:1302](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1302)
+Defined in: [lib/control.ts:1307](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1307)
 
 通用文件拖拽路径，由应用解释和执行操作
 
@@ -60,6 +60,6 @@ Defined in: [lib/control.ts:1302](https://github.com/maiyun/clickgo/blob/master/
 
 > `optional` **type?**: `0` \| `1`
 
-Defined in: [lib/control.ts:1304](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1304)
+Defined in: [lib/control.ts:1309](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1309)
 
 0: 文件夹，1: 文件

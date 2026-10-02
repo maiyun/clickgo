@@ -6,7 +6,7 @@
 
 # Interface: IFormInfo
 
-Defined in: [lib/form.ts:4782](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4782)
+Defined in: [lib/form.ts:4857](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4857)
 
 Form 的简略情况，通常在 list 当中
 
@@ -16,7 +16,7 @@ Form 的简略情况，通常在 list 当中
 
 > **focus**: `boolean`
 
-Defined in: [lib/form.ts:4789](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4789)
+Defined in: [lib/form.ts:4864](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4864)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/form.ts:4789](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **icon**: `string`
 
-Defined in: [lib/form.ts:4785](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4785)
+Defined in: [lib/form.ts:4860](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4860)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/form.ts:4785](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **show**: `boolean`
 
-Defined in: [lib/form.ts:4788](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4788)
+Defined in: [lib/form.ts:4863](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4863)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/form.ts:4788](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **showInSystemTask**: `boolean`
 
-Defined in: [lib/form.ts:4790](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4790)
+Defined in: [lib/form.ts:4865](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4865)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/form.ts:4790](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **stateMax**: `boolean`
 
-Defined in: [lib/form.ts:4786](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4786)
+Defined in: [lib/form.ts:4861](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4861)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [lib/form.ts:4786](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **stateMin**: `boolean`
 
-Defined in: [lib/form.ts:4787](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4787)
+Defined in: [lib/form.ts:4862](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4862)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [lib/form.ts:4787](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **taskId**: `string`
 
-Defined in: [lib/form.ts:4783](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4783)
+Defined in: [lib/form.ts:4858](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4858)
 
 ***
 
@@ -72,4 +72,4 @@ Defined in: [lib/form.ts:4783](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **title**: `string`
 
-Defined in: [lib/form.ts:4784](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4784)
+Defined in: [lib/form.ts:4859](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4859)

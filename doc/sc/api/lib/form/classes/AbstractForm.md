@@ -1196,7 +1196,7 @@ Defined in: [lib/form.ts:1292](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onHashChanged**(`hash`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1372](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1372)
+Defined in: [lib/form.ts:1426](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1426)
 
 location hash 改变事件
 
@@ -1216,7 +1216,7 @@ location hash 改变事件
 
 > **onKeydown**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1378](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1378)
+Defined in: [lib/form.ts:1432](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1432)
 
 键盘按下事件
 
@@ -1236,7 +1236,7 @@ Defined in: [lib/form.ts:1378](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onKeyup**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1384](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1384)
+Defined in: [lib/form.ts:1438](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1438)
 
 键盘弹起事件
 
@@ -1256,7 +1256,7 @@ Defined in: [lib/form.ts:1384](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onLauncherFolderNameChanged**(`id`, `name`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1366](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1366)
+Defined in: [lib/form.ts:1420](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1420)
 
 launcher 文件夹名称修改事件
 
@@ -1332,7 +1332,7 @@ Defined in: [lib/form.ts:1266](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onTaskEnded**(`taskId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1360](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1360)
+Defined in: [lib/form.ts:1414](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1414)
 
 任务结束事件
 
@@ -1352,7 +1352,7 @@ Defined in: [lib/form.ts:1360](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onTaskStarted**(`taskId`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1354](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1354)
+Defined in: [lib/form.ts:1408](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1408)
 
 任务开始事件
 
@@ -1365,6 +1365,150 @@ Defined in: [lib/form.ts:1354](https://github.com/maiyun/clickgo/blob/master/dis
 #### Returns
 
 `void` \| `Promise`\<`void`\>
+
+***
+
+### onTrayChanged()
+
+> **onTrayChanged**(`taskId`, `trayId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/form.ts:1370](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1370)
+
+托盘数据变更通知
+
+#### Parameters
+
+##### taskId
+
+`string`
+
+所属任务
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
+### onTrayClick()
+
+> **onTrayClick**(`trayId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/form.ts:1391](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1391)
+
+自己的托盘左键点击，只投递到所属任务
+
+#### Parameters
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
+### onTrayCreated()
+
+> **onTrayCreated**(`taskId`, `trayId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/form.ts:1359](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1359)
+
+托盘注册通知；通过 task.getTrayList(this) 读取快照
+
+#### Parameters
+
+##### taskId
+
+`string`
+
+所属任务
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
+### onTrayMenuClick()
+
+> **onTrayMenuClick**(`trayId`, `menuId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/form.ts:1402](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1402)
+
+自己的托盘菜单命令，只投递到所属任务
+
+#### Parameters
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+##### menuId
+
+`string`
+
+菜单命令
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
+### onTrayRemoved()
+
+> **onTrayRemoved**(`taskId`, `trayId`): `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/form.ts:1381](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1381)
+
+托盘删除通知
+
+#### Parameters
+
+##### taskId
+
+`string`
+
+所属任务
+
+##### trayId
+
+`string`
+
+托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
 
 ***
 

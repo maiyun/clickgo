@@ -8,7 +8,7 @@
 
 > **back**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/core.ts:998](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L998)
+Defined in: [lib/core.ts:1080](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1080)
 
 对浏览器做返回操作
 

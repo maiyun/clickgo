@@ -6,7 +6,7 @@
 
 # Interface: IPanzoomEditEvent
 
-Defined in: [lib/control.ts:1214](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1214)
+Defined in: [lib/control.ts:1219](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1219)
 
 编辑事件；editcancel 时 event 可能因主动销毁而不存在
 
@@ -20,7 +20,7 @@ Defined in: [lib/control.ts:1214](https://github.com/maiyun/clickgo/blob/master/
 
 > **event**: `Event` \| `undefined`
 
-Defined in: [lib/control.ts:1215](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1215)
+Defined in: [lib/control.ts:1220](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1220)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [lib/control.ts:1215](https://github.com/maiyun/clickgo/blob/master/
 
 > **inside**: `boolean`
 
-Defined in: [lib/control.ts:1210](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1210)
+Defined in: [lib/control.ts:1215](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1215)
 
 #### Inherited from
 
@@ -40,7 +40,7 @@ Defined in: [lib/control.ts:1210](https://github.com/maiyun/clickgo/blob/master/
 
 > **x**: `number`
 
-Defined in: [lib/control.ts:1208](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1208)
+Defined in: [lib/control.ts:1213](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1213)
 
 #### Inherited from
 
@@ -52,7 +52,7 @@ Defined in: [lib/control.ts:1208](https://github.com/maiyun/clickgo/blob/master/
 
 > **y**: `number`
 
-Defined in: [lib/control.ts:1209](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1209)
+Defined in: [lib/control.ts:1214](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1214)
 
 #### Inherited from
 

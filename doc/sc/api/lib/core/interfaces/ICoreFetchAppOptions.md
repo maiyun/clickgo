@@ -6,7 +6,7 @@
 
 # Interface: ICoreFetchAppOptions
 
-Defined in: [lib/core.ts:1538](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1538)
+Defined in: [lib/core.ts:1654](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1654)
 
 现场下载 app 的参数
 
@@ -16,7 +16,7 @@ Defined in: [lib/core.ts:1538](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **after?**: `string`
 
-Defined in: [lib/core.ts:1548](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1548)
+Defined in: [lib/core.ts:1664](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1664)
 
 网址后面附带的前缀，如 ?123
 
@@ -26,7 +26,7 @@ Defined in: [lib/core.ts:1548](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **notify?**: `number` \| \{ `id?`: `number`; `loaded?`: `number`; `total?`: `number`; \}
 
-Defined in: [lib/core.ts:1539](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1539)
+Defined in: [lib/core.ts:1655](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1655)
 
 #### Union Members
 
@@ -62,7 +62,7 @@ notify id
 
 > `optional` **progress?**: (`loaded`, `total`, `per`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/core.ts:1555](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1555)
+Defined in: [lib/core.ts:1671](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1671)
 
 下载进度
 

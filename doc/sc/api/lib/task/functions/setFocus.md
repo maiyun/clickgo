@@ -8,7 +8,7 @@
 
 > **setFocus**(`id?`): `boolean`
 
-Defined in: [lib/task.ts:161](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L161)
+Defined in: [lib/task.ts:366](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L366)
 
 设置 task focus id
 

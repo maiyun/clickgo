@@ -8,7 +8,7 @@
 
 > **loadScripts**(`urls`, `opt?`): `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:2490](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2490)
+Defined in: [lib/tool.ts:2493](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2493)
 
 批量加载 js 文件
 
@@ -27,6 +27,12 @@ js 文件列表
 #### loaded?
 
 (`url`, `state`) => `void`
+
+#### ordered?
+
+`boolean`
+
+并行下载并按列表顺序执行，默认 false
 
 ## Returns
 

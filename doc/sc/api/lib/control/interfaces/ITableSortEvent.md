@@ -6,7 +6,7 @@
 
 # Interface: ITableSortEvent
 
-Defined in: [lib/control.ts:1641](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1641)
+Defined in: [lib/control.ts:1646](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1646)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1642](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1642)
+Defined in: [lib/control.ts:1647](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1647)
 
 #### index
 
@@ -40,7 +40,7 @@ Defined in: [lib/control.ts:1642](https://github.com/maiyun/clickgo/blob/master/
 
 > **go**: `boolean`
 
-Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L965)
+Defined in: [lib/control.ts:970](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L970)
 
 #### Inherited from
 
@@ -52,7 +52,7 @@ Defined in: [lib/control.ts:965](https://github.com/maiyun/clickgo/blob/master/d
 
 > **preventDefault**: () => `void`
 
-Defined in: [lib/control.ts:966](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L966)
+Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L971)
 
 #### Returns
 

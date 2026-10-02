@@ -23,6 +23,9 @@
 - [ITaskInfo](interfaces/ITaskInfo.md)
 - [ITaskRunOptions](interfaces/ITaskRunOptions.md)
 - [IThread](interfaces/IThread.md)
+- [ITrayInfo](interfaces/ITrayInfo.md)
+- [ITrayMenuItem](interfaces/ITrayMenuItem.md)
+- [ITrayOptions](interfaces/ITrayOptions.md)
 
 ## Variables
 
@@ -30,11 +33,13 @@
 
 ## Functions
 
+- [activateTray](functions/activateTray.md)
 - [checkPermission](functions/checkPermission.md)
 - [clearLocale](functions/clearLocale.md)
 - [clearLocaleLang](functions/clearLocaleLang.md)
 - [clearSystem](functions/clearSystem.md)
 - [createTimer](functions/createTimer.md)
+- [createTray](functions/createTray.md)
 - [end](functions/end.md)
 - [get](functions/get.md)
 - [getFocus](functions/getFocus.md)
@@ -43,6 +48,7 @@
 - [getOriginList](functions/getOriginList.md)
 - [getPermissions](functions/getPermissions.md)
 - [getRuntime](functions/getRuntime.md)
+- [getTrayList](functions/getTrayList.md)
 - [init](functions/init.md)
 - [initSysId](functions/initSysId.md)
 - [loadLocale](functions/loadLocale.md)
@@ -51,6 +57,7 @@
 - [onFrame](functions/onFrame.md)
 - [refreshSystemPosition](functions/refreshSystemPosition.md)
 - [removeTimer](functions/removeTimer.md)
+- [removeTray](functions/removeTray.md)
 - [run](functions/run.md)
 - [runThread](functions/runThread.md)
 - [setFocus](functions/setFocus.md)
@@ -58,3 +65,4 @@
 - [setLocaleLang](functions/setLocaleLang.md)
 - [setSystem](functions/setSystem.md)
 - [sleep](functions/sleep.md)
+- [updateTray](functions/updateTray.md)

@@ -65,6 +65,7 @@
 - [layoutAddTagClassAndReTagName](functions/layoutAddTagClassAndReTagName.md)
 - [layoutClassPrepend](functions/layoutClassPrepend.md)
 - [layoutInsertAttr](functions/layoutInsertAttr.md)
+- [loadAssets](functions/loadAssets.md)
 - [loadLink](functions/loadLink.md)
 - [loadLinks](functions/loadLinks.md)
 - [loadScript](functions/loadScript.md)
