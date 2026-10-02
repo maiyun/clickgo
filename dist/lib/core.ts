@@ -1167,12 +1167,16 @@ const modules: Record<string, {
     '@toast-ui/editor': {
         func: async function() {
             // --- 语言包由编辑器控件按初始化语言加载，纯查看器无需加载 ---
+            // --- 本地完整包包含 ProseMirror，避免首次加载时请求多层 ESM 依赖 ---
             const loaded = await lTool.loadAssets([
                 lTool.urlResolve(clickgo.getDirname() + '/', './ext/toastui-editor-all.min.js'),
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css`,
             ]);
-            if ((!loaded) || (!(window as any).toastui?.Editor)) {
+            const host = window as Window & {
+                'toastui'?: Record<string, unknown>;
+            };
+            if ((!loaded) || (typeof host.toastui?.Editor !== 'function')) {
                 return null;
             }
             lTool.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}.jodit ::-webkit-scrollbar{width:6px;cursor:default;}.jodit ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px;}.jodit ::-webkit-scrollbar-thumb:hover{background: rgba(0,0,0,.2);}');
@@ -1181,7 +1185,7 @@ const modules: Record<string, {
             /** --- 允许加载的 Toast UI 语言包 --- */
             const languages = ['zh-cn', 'zh-tw', 'ja-jp', 'ko-kr', 'es-es', 'de-de', 'fr-fr', 'pt-br', 'ru-ru'];
             return {
-                ...(window as any).toastui,
+                'Editor': host.toastui.Editor,
                 /**
                  * --- 按需加载语言包，所有 task 共用请求及成功结果；失败可重试 ---
                  * @param language Toast UI 语言名，如 zh-CN；英文内置，无需请求

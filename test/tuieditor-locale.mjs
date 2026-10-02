@@ -7,7 +7,7 @@ import { JSDOM } from 'jsdom';
 
 const source = await readFile(new URL('../dist/sources/control/tuieditor/code.ts', import.meta.url), 'utf8');
 const compiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: false },
 }).outputText;
 const dom = new JSDOM('<!doctype html><html><body></body></html>');
 const { document } = dom.window;
@@ -41,7 +41,7 @@ let main;
 const clickgo = {
     modules: {},
     getCdn: () => 'https://cdn.example',
-    getDirname: () => '/clickgo',
+    getDirname: () => 'https://app.example/clickgo',
     core: { getModule: () => main },
     control: { AbstractControl },
     tool: {
@@ -62,10 +62,10 @@ const selected = tree.statements.filter(node =>
     (ts.isFunctionDeclaration(node) && node.body && names.has(node.name?.text)));
 const core = {};
 vm.runInNewContext(ts.transpileModule(selected.map(node => node.getText(tree)).join('\n'), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: false },
 }).outputText, {
     exports: core, window: { toastui: { Editor } }, clickgo,
-    lTool: { ...clickgo.tool, loadAssets: async () => true, loadStyle() {}, urlResolve: (base, path) => base + path },
+    lTool: { ...clickgo.tool, loadAssets: async () => true, loadStyle() {}, urlResolve: (base, path) => new URL(path, base).href },
 });
 const shared = await core.getModule('@toast-ui/editor');
 main = Promise.resolve(shared);
