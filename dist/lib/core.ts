@@ -1210,10 +1210,10 @@ const modules: Record<string, {
     'jodit': {
         func: async function() {
             await lTool.loadScripts([
-                `${clickgo.getCdn()}/npm/jodit@4.2.27/es2015/jodit.fat.min.js`,
+                `${clickgo.getCdn()}/npm/jodit@4.17.1/es2015/jodit.fat.min.js`,
             ]);
             await lTool.loadLinks([
-                `${clickgo.getCdn()}/npm/jodit@4.2.27/es2015/jodit.fat.min.css`,
+                `${clickgo.getCdn()}/npm/jodit@4.17.1/es2015/jodit.fat.min.css`,
             ]);
             lTool.loadStyle('.jodit-container:not(.jodit_inline){border:none;display:flex;flex-direction:column;}.jodit-container:not(.jodit_inline) .jodit-workplace{cursor:text;flex:1;}.jodit-wysiwyg a{color:unset;}');
             return (window as any).Jodit;

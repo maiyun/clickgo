@@ -115,13 +115,21 @@ export default class extends clickgo.control.AbstractControl {
     };
 
     public access: {
-        /** --- 终端控件对象 --- */
+        /** --- 编辑器对象 --- */
         'editor': any;
+        /** --- 卸载后取消尚未完成的模块加载 --- */
+        'disposed': boolean;
+        'pointerdown': ((e: PointerEvent) => void) | null;
     } = {
-            'editor': undefined
+            'editor': undefined,
+            'disposed': false,
+            'pointerdown': null
         };
 
     public execCmd(ac: string): void {
+        if (!this.access.editor) {
+            return;
+        }
         switch (ac) {
             case 'copy': {
                 this.access.editor.execCommand('copy');
@@ -157,16 +165,28 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public async onMounted(): Promise<void> {
+        if (this.access.disposed) {
+            return;
+        }
         const jodit = await clickgo.core.getModule('jodit');
+        // --- Vue 的 mounted 和模块加载都会异步让出，回显可能已移除本实例 ---
+        if (this.access.disposed) {
+            return;
+        }
         if (!jodit) {
             // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
+        const element = this.refs.editor;
+        const content = this.refs.content;
+        if (!(element instanceof HTMLElement) || !(content instanceof HTMLElement)) {
+            return;
+        }
 
         /** --- 创建编辑器 --- */
-        this.access.editor = jodit.make(this.refs.editor, {
+        this.access.editor = jodit.make(element, {
             'height': '100%',
             // --- 去除一些不需要的按钮，包括最大化/全屏
             'removeButtons': ['ai-assistant', 'about', 'speechRecognize', 'ai-commands', 'fullsize'],
@@ -175,6 +195,9 @@ export default class extends clickgo.control.AbstractControl {
                 'icon': 'upload',
                 'exec': () => {
                     this.emit('imgselect', (url: string, alt?: string) => {
+                        if (this.access.disposed) {
+                            return;
+                        }
                         this.access.editor.selection.insertImage(url, alt);
                     });
                 }
@@ -192,6 +215,9 @@ export default class extends clickgo.control.AbstractControl {
         this._refreshDirection();
         this.access.editor.value = this.props.modelValue;
         this.access.editor.events.on('change', () => {
+            if (this.access.disposed) {
+                return;
+            }
             this.emit('update:modelValue', this.access.editor.value);
             this.emit('text', this.access.editor.text);
         });
@@ -202,18 +228,22 @@ export default class extends clickgo.control.AbstractControl {
             this.isFocus = false;
         });
         // --- 绑定 contextmenu ---
-        this.refs.content.addEventListener('pointerdown', (e: PointerEvent): void => {
+        this.access.pointerdown = (e: PointerEvent): void => {
             const target = (e.target as HTMLElement);
             if (!target.classList.contains('jodit-workplace') && !clickgo.dom.findParentByClass(target, 'jodit-workplace')) {
                 return;
             }
-            if (this.refs.content.cgPopOpen !== undefined) {
-                clickgo.form.hidePop(this.refs.content);
+            if (content.cgPopOpen !== undefined) {
+                clickgo.form.hidePop(content);
             }
             clickgo.modules.pointer.menu(e, () => {
-                clickgo.form.showPop(this.refs.content, this.refs.pop, e);
+                if (this.access.disposed) {
+                    return;
+                }
+                clickgo.form.showPop(content, this.refs.pop, e);
             });
-        });
+        };
+        content.addEventListener('pointerdown', this.access.pointerdown);
         // --- 监听语言变动 ---
         this.watch('locale', () => {
             if (!this.access.editor) {
@@ -247,6 +277,18 @@ export default class extends clickgo.control.AbstractControl {
         if (this.props.modelValue) {
             this.emit('text', this.access.editor.text);
         }
+    }
+
+    /** --- 取消迟到的初始化，并在 DOM 移除前释放编辑器及菜单监听 --- */
+    public onBeforeUnmount(): void {
+        this.access.disposed = true;
+        if (this.access.pointerdown) {
+            this.refs.content?.removeEventListener('pointerdown', this.access.pointerdown);
+            this.access.pointerdown = null;
+        }
+        const editor = this.access.editor;
+        this.access.editor = undefined;
+        editor?.destruct();
     }
 
     /** --- 编辑正文跟随阿语方向，代码/弹出菜单仍由 ClickGo 外层管理 --- */
