@@ -24,7 +24,7 @@ vm.runInNewContext(ts.transpileModule(selected.map(node => node.getText(tree)).j
 }).outputText, {
     exports: api, window: globals, clickgo,
     lTask: { checkPermission: async () => [true] },
-    lTool: { loadAssets: pending, loadStyle() {}, urlResolve: (base, path) => base + path },
+    lTool: { loadAssets: pending, loadScript: url => pending([url]), loadStyle() {}, urlResolve: (base, path) => base + path },
 });
 
 const xterm = api.getModule('xterm');
@@ -46,13 +46,39 @@ assert.equal(requests.length, 1, 'ready modules do not reload resources');
 requests.length = 0;
 const toast = api.getModule('@toast-ui/editor');
 assert.equal(requests.length, 1, 'Toast UI uses one unified batch without business-side parallel code');
-assert.equal(requests[0].urls.length, 12);
+assert.equal(requests[0].urls.length, 3);
 assert.ok(requests[0].urls[0].endsWith('/toastui-editor-all.min.js'));
-assert.equal(requests[0].urls.filter(url => url.includes('/i18n/')).length, 9);
+assert.equal(requests[0].urls.filter(url => url.includes('/i18n/')).length, 0, 'the shared module and pure viewer need no locale scripts');
 assert.equal(requests[0].urls.filter(url => url.endsWith('.css')).length, 2);
 globals.toastui = { Editor: class {} };
 requests[0].resolve(true);
-assert.equal(await toast, globals.toastui);
+const toastModule = await toast;
+assert.equal(toastModule.Editor, globals.toastui.Editor, 'the wrapper preserves the library constructor');
+assert.equal(globals.toastui.loadLanguage, undefined, 'the native library namespace is not mutated');
+assert.equal(await api.getModule('@toast-ui/editor'), toastModule, 'all callers receive the same wrapper');
+requests.length = 0;
+assert.equal(await toastModule.loadLanguage('en'), true);
+assert.equal(await toastModule.loadLanguage('en-US'), true);
+assert.equal(await toastModule.loadLanguage('../unknown'), false);
+assert.equal(requests.length, 0, 'built-in English and unsupported names issue no requests');
+const locale = toastModule.loadLanguage('zh-CN');
+const localeWaiter = toastModule.loadLanguage('ZH-cn');
+assert.equal(requests.length, 1, 'normalized language names share a pending script globally');
+assert.ok(requests[0].urls[0].endsWith('/i18n/zh-cn.min.js'));
+requests[0].resolve(true);
+assert.equal(await locale, true);
+assert.equal(await localeWaiter, true);
+assert.equal(await toastModule.loadLanguage('zh-cn'), true);
+assert.equal(requests.length, 1, 'ready languages are reused');
+const badLocale = toastModule.loadLanguage('fr-FR');
+const badLocaleWaiter = toastModule.loadLanguage('fr-fr');
+requests.at(-1).resolve(false);
+assert.equal(await badLocale, false);
+assert.equal(await badLocaleWaiter, false);
+const localeRetry = toastModule.loadLanguage('fr-FR');
+assert.equal(requests.length, 3, 'failed languages can be retried');
+requests.at(-1).resolve(true);
+assert.equal(await localeRetry, true);
 
 requests.length = 0;
 const failed = api.getModule('jodit');
@@ -108,4 +134,4 @@ assert.equal(await rejectedWaiter, false, 'external rejections release every wai
 const secondTry = api.loadModule('reject-test');
 reject(new Error('external loader failed again'));
 assert.equal(await secondTry, false);
-console.log('Unified module loading, main/locale URL order, shared loading, failures and retries passed.');
+console.log('Unified module loading, locale-free Toast UI, shared loading, failures and retries passed.');

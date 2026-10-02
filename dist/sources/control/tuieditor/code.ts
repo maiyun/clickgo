@@ -184,9 +184,12 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    /** --- 获得语言 --- */
+    /**
+     * --- 获得初始化时使用的 Toast UI 语言 ---
+     * @returns 支持的语言名，其它语言回退英文
+     */
     public getLanguage(): string {
-        // --- Toast UI 仅加载了下列 i18n 脚本，阿语及其它未加载语言安全回退英文 ---
+        // --- 仅请求下列支持的语言，阿语及其它语言安全回退英文 ---
         const supported: Record<string, string> = {
             'de': 'de-DE',
             'en': 'en',
@@ -199,14 +202,6 @@ export default class extends clickgo.control.AbstractControl {
             'sc': 'zh-CN',
             'tc': 'zh-TW'
         };
-        switch (this.locale) {
-            case 'sc': {
-                return 'zh-CN';
-            }
-            case 'tc': {
-                return 'zh-TW';
-            }
-        }
         return supported[this.locale.toLowerCase()] ?? 'en';
     }
 
@@ -228,6 +223,14 @@ export default class extends clickgo.control.AbstractControl {
             this.notInit = true;
             return;
         }
+        let language = this.getLanguage();
+        if ((await tuieditor.loadLanguage(language)) === false) {
+            // --- 失败不影响正文编辑，也不阻止下次初始化重试 ---
+            language = 'en';
+        }
+        if (!this.element.isConnected) {
+            return;
+        }
         this.access.tuieditor = new tuieditor.Editor({
             'el': this.refs.content,
             'height': 'initial',
@@ -236,7 +239,7 @@ export default class extends clickgo.control.AbstractControl {
             'hideModeSwitch': true,
             'theme': this.props.theme,
             'initialValue': this.props.modelValue,
-            'language': this.getLanguage(),
+            'language': language,
             'autofocus': false,
             'usageStatistics': false,
             'hooks': {
@@ -357,8 +360,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             this._refreshDirection();
-            // --- Toast UI 当前实例不支持可靠地动态替换工具栏语言 ---
-            // this.access.tuieditor.i18n.setCode(this.getLanguage());
+            // --- Toast UI 3.2.2 无公开的实例级语言切换接口，工具栏保持初始化语言 ---
         });
         // --- 监听 prop 变动 ---
         this.watch('visual', (): void => {

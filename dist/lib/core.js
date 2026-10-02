@@ -954,18 +954,9 @@ const modules = {
     },
     '@toast-ui/editor': {
         func: async function () {
-            // --- 统一加载器保证脚本执行顺序，主库须放在语言包之前 ---
+            // --- 语言包由编辑器控件按初始化语言加载，纯查看器无需加载 ---
             const loaded = await lTool.loadAssets([
                 lTool.urlResolve(clickgo.getDirname() + '/', './ext/toastui-editor-all.min.js'),
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-cn.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/zh-tw.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ja-jp.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ko-kr.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/es-es.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/de-de.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/fr-fr.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/pt-br.min.js`,
-                `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/ru-ru.min.js`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css`,
                 `${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/theme/toastui-editor-dark.css`,
             ]);
@@ -973,7 +964,41 @@ const modules = {
                 return null;
             }
             lTool.loadStyle('.toastui-editor-defaultUI-toolbar,.ProseMirror{box-sizing:initial !important}.toastui-editor-main{background:var(--g-plain-background);border-radius:0 0 3px 3px}.ProseMirror{cursor:text}.jodit ::-webkit-scrollbar{width:6px;cursor:default;}.jodit ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px;}.jodit ::-webkit-scrollbar-thumb:hover{background: rgba(0,0,0,.2);}');
-            return window.toastui;
+            /** --- 模块在当前页面全局共享；缓存最多九种语言，不保存 task 或编辑器实例 --- */
+            const languageLoads = new Map();
+            /** --- 允许加载的 Toast UI 语言包 --- */
+            const languages = ['zh-cn', 'zh-tw', 'ja-jp', 'ko-kr', 'es-es', 'de-de', 'fr-fr', 'pt-br', 'ru-ru'];
+            return {
+                ...window.toastui,
+                /**
+                 * --- 按需加载语言包，所有 task 共用请求及成功结果；失败可重试 ---
+                 * @param language Toast UI 语言名，如 zh-CN；英文内置，无需请求
+                 * @returns 加载是否成功，不支持的语言返回 false
+                 */
+                async loadLanguage(language) {
+                    const code = language.toLowerCase();
+                    if ((code === 'en') || (code === 'en-us')) {
+                        return true;
+                    }
+                    if (!languages.includes(code)) {
+                        return false;
+                    }
+                    let loading = languageLoads.get(code);
+                    if (!loading) {
+                        // --- 主库已完成初始化，语言脚本可以安全调用其注册方法 ---
+                        loading = lTool.loadScript(`${clickgo.getCdn()}/npm/@toast-ui/editor@3.2.2/dist/i18n/${code}.min.js`).catch(() => false);
+                        languageLoads.set(code, loading);
+                    }
+                    const loaded = await loading;
+                    if (loaded) {
+                        return true;
+                    }
+                    if (languageLoads.get(code) === loading) {
+                        languageLoads.delete(code);
+                    }
+                    return false;
+                },
+            };
         },
         'loading': false,
         'resolve': []
