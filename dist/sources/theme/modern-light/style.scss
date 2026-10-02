@@ -1,9 +1,9 @@
 @use '../modern/style';
 
 global {
-    // --- 主色：跟随用户设置，并为亮色背景保留足够对比度 ---
+    // --- 基础主色保留用户原值，交互状态和弱化背景独立派生 ---
 
-    --cg:color-mix(in oklch, var(--main), black 8%);
+    --cg:var(--main);
     --cg-hover:color-mix(in oklch, var(--cg), white 12%);
     --cg-active:color-mix(in oklch, var(--cg), black 12%);
     --cg-focus:color-mix(in oklch, var(--cg), black 5%);

@@ -26,7 +26,7 @@ global {
 
     // --- 基础颜色 ---
 
-    --cg:color-mix(in oklch, var(--main), black 12%);
+    --cg:var(--main);
     --cg-hover:color-mix(in oklch, var(--cg), white 10%);
     --cg-active:color-mix(in oklch, var(--cg), black 10%);
     --cg-focus:color-mix(in oklch, var(--cg), black 5%);

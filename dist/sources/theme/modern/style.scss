@@ -26,7 +26,7 @@ global {
 
     // --- 主色：完全跟随用户设置，邻近色仅作为玻璃偏光 ---
 
-    --cg:color-mix(in oklch, var(--main), white 6%);
+    --cg:var(--main);
     --cg-hover:color-mix(in oklch, var(--cg), white 12%);
     --cg-active:color-mix(in oklch, var(--cg), black 12%);
     --cg-focus:color-mix(in oklch, var(--cg), black 5%);

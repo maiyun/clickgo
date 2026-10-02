@@ -25,7 +25,7 @@ global {
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
     // --- 基础颜色 ---
-    --cg:color-mix(in oklch, var(--main), white 4%);
+    --cg:var(--main);
     --cg-hover:color-mix(in oklch, var(--cg), white 10%);
     --cg-active:color-mix(in oklch, var(--cg), black 10%);
     --cg-focus:color-mix(in oklch, var(--cg), black 5%);

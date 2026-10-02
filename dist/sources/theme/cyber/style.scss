@@ -24,7 +24,7 @@ global {
     --g-line:1.5;
     --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
 
-    // --- 基础颜色 ---
+    // --- 固定青色与紫黑背景、青色霓虹组成完整配色，不跟随用户主色；层次由主题统一调整 ---
     --main: oklch(.7 .15 220);
     --cg:color-mix(in oklch, var(--main), black 15%);
     --cg-hover:color-mix(in oklch, var(--cg), white 10%);
