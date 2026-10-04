@@ -142,6 +142,7 @@ async function mount(props = {}, handlers = {}, name = 'select') {
                 onAdd: event => { events.push(['add', clone(event.detail)]); handlers.add?.(event); },
                 onAdded: event => { events.push(['added', clone(event.detail)]); },
                 onRemove: event => { events.push(['remove', clone(event.detail)]); handlers.remove?.(event); },
+                onRemoved: event => { events.push(['removed', clone(event.detail)]); },
                 'onUpdate:count': count => { state.count = count; },
                 'onUpdate:yearmonth': yearmonth => { state.yearmonth = yearmonth; },
                 onCountchanged: count => { events.push(['countchanged', count]); },
@@ -287,6 +288,39 @@ test('keyboard navigation in search mode does not commit a value or replace the 
     assert.equal(m.select.searchValue, 'Ap');
     assert.deepEqual([...m.state.modelValue], ['a']);
     m.dispose();
+});
+
+test('local matching preserves mapped labels, primitive values and character matching across value and label', async () => {
+    const m = await mount({ search: true, map: { value: 'id', label: 'name' }, data: [{ id: '42', name: 'Alpha' }, { id: '97', name: 'Beta' }, '24'] });
+    await m.select.updateSearchValue('A4a');
+    await flush();
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['42']);
+    await m.select.updateSearchValue('42');
+    await flush();
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['42', '24']);
+    m.dispose();
+});
+
+test('mapped dictionary options retain their keys and labels during search and blur', async () => {
+    const data = { '42': { name: 'Alpha' }, '97': { name: 'Beta' } };
+    const m = await mount({ editable: true, search: true, map: { label: 'name' }, data });
+    await m.select.updateInputValue('aLpHa');
+    await flush();
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['42']);
+    await m.select.blur();
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['42']);
+    assert.deepEqual([...m.select.label], ['Alpha']);
+    assert.deepEqual(m.state.data, data);
+    m.dispose();
+});
+
+test('single local validation skips missing candidates before choosing a later valid model value', async () => {
+    for (const search of [false, true]) {
+        const m = await mount({ search, data: [option('a'), option('b')], modelValue: ['missing', 'b'] });
+        assert.deepEqual([...m.state.modelValue], ['b']);
+        m.dispose();
+    }
 });
 
 test('multi search Enter adds the highlighted value instead of the query text', async () => {
@@ -465,6 +499,38 @@ test('disabled controls ignore keyboard, input and tag removal', async () => {
     m.dispose();
 });
 
+for (const mode of ['tag', 'backspace', 'list']) {
+    test(`${mode} removal preserves cancellation, event order and value/label alignment`, async () => {
+        let reject = true;
+        const m = await mount({ multi: true, editable: mode === 'backspace', data: [option('a', 'A'), option('b', 'B')], modelValue: ['a', 'b'] }, {
+            remove: event => { if (reject) event.preventDefault(); },
+        });
+        const remove = async () => {
+            if (mode === 'tag') m.select.removeTag(1);
+            else if (mode === 'backspace') await m.select.keydown({ key: 'Backspace', target: { value: '' } });
+            else await m.click(1);
+            await flush();
+        };
+        m.events.length = 0;
+        await remove();
+        assert.deepEqual([...m.state.modelValue], ['a', 'b']);
+        assert.deepEqual([...m.select.label], ['A', 'B']);
+        assert.deepEqual(m.events, [['remove', { index: 1, value: 'b', mode }]]);
+        reject = false;
+        m.events.length = 0;
+        await remove();
+        assert.deepEqual([...m.state.modelValue], ['a']);
+        assert.deepEqual([...m.select.label], ['A']);
+        assert.deepEqual(m.events, [
+            ['remove', { index: 1, value: 'b', mode }],
+            ['value', ['a']],
+            ['label', ['A']],
+            ['removed', { index: 1, value: 'b', mode }],
+        ]);
+        m.dispose();
+    });
+}
+
 test('map changes refresh selected labels and disabledList changes retain local validation', async () => {
     const m = await mount({ data: [{ id: 'a', display: 'A', name: 'Renamed' }, { id: 'b', display: 'B', name: 'Other' }], map: { value: 'id', label: 'display' }, modelValue: ['a'] });
     m.state.map = { value: 'id', label: 'name' };
@@ -566,6 +632,174 @@ test('editable remote debounce commits only the latest typed value and emits cha
     assert.deepEqual(m.events.filter(event => event[0] === 'changed').map(event => event[1]), [{ before: [], value: ['new'] }]);
     assert.deepEqual(m.requests.map(request => request.value), ['new']);
     m.dispose();
+});
+
+test('returning to the first remote query still commits only the latest editable input', async () => {
+    const m = await mount({ ...remote, editable: true, remoteDelay: 10, modelValue: ['start'] });
+    m.events.length = 0;
+    await Promise.all(['old', 'new', 'old'].map(value => m.select.updateInputValue(value)));
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['old']);
+    assert.deepEqual(m.events.filter(event => event[0] === 'value').map(event => event[1]), [['old']]);
+    assert.deepEqual(
+        m.events.filter(event => event[0] === 'changed').map(event => event[1]),
+        [{ before: ['start'], value: ['old'] }]
+    );
+    assert.deepEqual(m.requests.map(request => request.value), ['old']);
+    await m.requests[0].callback([option('old', 'Old')]);
+    await flush();
+    assert.deepEqual([...m.select.label], ['Old']);
+    assert.equal(m.events.filter(event => event[0] === 'changed').length, 1);
+    m.dispose();
+});
+
+for (const search of [false, true]) {
+    for (const values of [['old', 'new'], ['old', 'new', 'old']]) {
+        test(`editable input commits only the latest value and label (search=${search}, inputs=${values.join(',')})`, async () => {
+            const m = await mount({
+                editable: true,
+                search,
+                modelValue: ['start'],
+                data: [option('start', 'Start'), option('old', 'Old'), option('new', 'New')],
+            });
+            m.events.length = 0;
+            await Promise.all(values.map(value => m.select.updateInputValue(value)));
+            await flush();
+            const value = values.at(-1);
+            assert.deepEqual([...m.state.modelValue], [value]);
+            assert.deepEqual([...m.select.label], [value === 'old' ? 'Old' : 'New']);
+            assert.deepEqual(m.events.filter(event => event[0] === 'value').map(event => event[1]), [[value]]);
+            assert.deepEqual(
+                m.events.filter(event => event[0] === 'changed').map(event => event[1]),
+                [{ before: ['start'], value: [value] }]
+            );
+            m.dispose();
+        });
+    }
+
+    test(`clearing editable input supersedes a pending value without committing it (search=${search})`, async () => {
+        const m = await mount({
+            editable: true,
+            search,
+            modelValue: ['start'],
+            data: [option('start', 'Start'), option('old', 'Old')],
+        });
+        m.events.length = 0;
+        await Promise.all([m.select.updateInputValue('old'), m.select.updateInputValue('')]);
+        await flush();
+        assert.deepEqual([...m.state.modelValue], []);
+        assert.deepEqual([...m.select.label], []);
+        assert.deepEqual(m.events.filter(event => event[0] === 'value').map(event => event[1]), [[]]);
+        assert.deepEqual(
+            m.events.filter(event => event[0] === 'changed').map(event => event[1]),
+            [{ before: ['start'], value: [] }]
+        );
+        m.dispose();
+    });
+}
+
+test('rejecting a newer input keeps the previous accepted input pending', async () => {
+    const m = await mount({
+        editable: true,
+        modelValue: ['start'],
+        data: [option('start', 'Start'), option('old', 'Old')],
+    }, {
+        change: event => {
+            if (event.detail.value[0] === 'new') {
+                event.preventDefault();
+            }
+        },
+    });
+    m.events.length = 0;
+    await Promise.all([m.select.updateInputValue('old'), m.select.updateInputValue('new')]);
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['old']);
+    assert.deepEqual([...m.select.label], ['Old']);
+    assert.equal(m.select.inputValue, 'old');
+    assert.deepEqual(m.events.filter(event => event[0] === 'value').map(event => event[1]), [['old']]);
+    assert.deepEqual(
+        m.events.filter(event => event[0] === 'changed').map(event => event[1]),
+        [{ before: ['start'], value: ['old'] }]
+    );
+    m.dispose();
+});
+
+test('editable inputs preserve zero, numeric and empty labels as strings', async () => {
+    for (const label of [0, 123, '']) {
+        const m = await mount({ editable: true, data: [option('42', label)] });
+        m.events.length = 0;
+        await m.select.updateInputValue('42');
+        await flush();
+        assert.deepEqual([...m.state.modelValue], ['42']);
+        assert.deepEqual([...m.select.label], [String(label)]);
+        assert.deepEqual(m.events.filter(event => event[0] === 'label').at(-1)[1], [String(label)]);
+        m.dispose();
+    }
+});
+
+test('an external model replacement supersedes editable input awaiting its label', async () => {
+    const m = await mount({
+        editable: true,
+        modelValue: ['start'],
+        data: [option('start', 'Start'), option('draft', 'Draft'), option('external', 'External')],
+    });
+    m.events.length = 0;
+    const input = m.select.updateInputValue('draft');
+    m.state.modelValue = ['external'];
+    await input;
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['external']);
+    assert.deepEqual([...m.select.value], ['external']);
+    assert.deepEqual([...m.select.label], ['External']);
+    assert.equal(m.select.inputValue, 'external');
+    assert.equal(m.events.filter(event => event[0] === 'value' || event[0] === 'changed').length, 0);
+    m.dispose();
+});
+
+test('switching to multi mode supersedes a pending single editable input', async () => {
+    const m = await mount({ editable: true, modelValue: ['start'], data: [option('start'), option('draft')] });
+    m.events.length = 0;
+    const input = m.select.updateInputValue('draft');
+    m.state.multi = true;
+    await input;
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['start']);
+    assert.deepEqual([...m.select.value], ['start']);
+    assert.equal(m.select.inputValue, '');
+    assert.equal(m.events.filter(event => event[0] === 'value' || event[0] === 'changed').length, 0);
+    m.dispose();
+});
+
+test('selecting a pending editable value commits it once with the previous selection', async () => {
+    const m = await mount({
+        editable: true,
+        modelValue: ['start'],
+        data: [option('start', 'Start'), option('new', 'New')],
+    });
+    m.events.length = 0;
+    const input = m.select.updateInputValue('new');
+    await m.click(1);
+    await input;
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['new']);
+    assert.deepEqual([...m.select.label], ['New']);
+    assert.deepEqual(m.events.filter(event => event[0] === 'value').map(event => event[1]), [['new']]);
+    assert.deepEqual(
+        m.events.filter(event => event[0] === 'changed').map(event => event[1]),
+        [{ before: ['start'], value: ['new'] }]
+    );
+    m.dispose();
+});
+
+test('unmounting supersedes editable input awaiting its label', async () => {
+    const m = await mount({ editable: true, modelValue: ['start'], data: [option('start'), option('draft')] });
+    m.events.length = 0;
+    const input = m.select.updateInputValue('draft');
+    m.dispose();
+    await input;
+    assert.deepEqual([...m.select.value], ['start']);
+    assert.deepEqual([...m.state.modelValue], ['start']);
+    assert.equal(m.events.filter(event => event[0] === 'value' || event[0] === 'changed').length, 0);
 });
 
 test('blur canonicalization honors the change veto instead of silently replacing an entered label', async () => {
