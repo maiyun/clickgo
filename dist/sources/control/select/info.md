@@ -44,6 +44,8 @@
 
 是否远程搜索，默认 false。
 
+远程列表不包含某个已选值时保留该值及已有标签；标签尚未加载时先显示值，后续 `data` 或远程搜索结果包含对应选项时自动补齐标签。
+
 #### remoteDelay
 
 `number` | `string`
@@ -165,6 +167,8 @@
 `(event: ISelectChangeEvent) => void`
 
 值改变时触发，包含 `value` 数组。
+
+用户点击选项、回车确认或输入单选值前触发，可通过 `event.preventDefault()` 阻止本次变更。搜索框的方向键只移动候选项，回车才确认选择。
 
 #### changed
 

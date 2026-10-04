@@ -1,5 +1,14 @@
 import * as clickgo from 'clickgo';
 
+/** --- List 格式化后的选项，用于同步选择和校验用户操作 --- */
+interface ISelectRow {
+    'value': string;
+    'label': string;
+    'disabled'?: boolean;
+    'unavailable'?: boolean;
+    'control'?: string;
+}
+
 export default class extends clickgo.control.AbstractControl {
 
     public emits = {
@@ -158,8 +167,8 @@ export default class extends clickgo.control.AbstractControl {
     /** --- list 的选中的 item 属性包列表 --- */
     public listItem: any[] = [];
 
-    /** --- data 为空时，是否有尚待 List 解析的外部值 --- */
-    private _modelValuePending = false;
+    /** --- 卸载后不再接收延迟搜索或远程回调 --- */
+    private _unmounted = false;
 
     /** --- pop 的 loading --- */
     public loading = 0;
@@ -224,8 +233,149 @@ export default class extends clickgo.control.AbstractControl {
         }
     }
 
-    /** --- text 的失去焦点事件 --- */
-    public blur(): void {
+    /**
+     * --- 获取校验外部值所需的选项，搜索结果不能代替完整的本地数据 ---
+     * @returns 格式化选项，远程模式优先使用当前结果中的标签
+     */
+    private _getValueData(): ISelectRow[] {
+        const listData: ISelectRow[] = this.refs.list.dataGl;
+        const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
+        if (!this.propBoolean('search') || !searchValue) {
+            return listData;
+        }
+        const dataFormat = this.refs.list.formatData(clickgo.tool.clone(this.props.data), []);
+        // --- 完整数据中的已选子项也要展开；筛选结果中可能根本没有它的父节点 ---
+        this.refs.list.findFormat([...this.props.modelValue, ...this.value], true, dataFormat);
+        const data: ISelectRow[] = this.refs.list.unpack(dataFormat);
+        return this.propBoolean('remote') ? [...listData, ...data] : data;
+    }
+
+    /**
+     * --- 为已选值补齐标签，不用搜索列表的临时选择覆盖已选值 ---
+     * @returns void
+     */
+    private _refreshLabels(): void {
+        const data = this._getValueData();
+        if (!data.length && !this.propBoolean('editable') && !this.propBoolean('remote')) {
+            return;
+        }
+        const label = this.value.map((value, index) => {
+            const row = data.find(item => item.value === value);
+            return row ? row.label.toString() : this.label[index] ?? value;
+        });
+        if (JSON.stringify(label) === JSON.stringify(this.label)) {
+            return;
+        }
+        this.label = label;
+        this.emit('label', clickgo.tool.clone(this.label));
+    }
+
+    /**
+     * --- 提交鼠标或回车选中的值，统一执行操作前校验和操作后通知 ---
+     * @param value 实际选项值，输入模式也可传入自定义值
+     * @param fromList 是否由 List 的点击事件进入
+     * @returns void
+     */
+    private async _selectValue(value: string, fromList: boolean = false): Promise<void> {
+        if (this._unmounted || this.propBoolean('disabled')) {
+            return;
+        }
+        const editable = this.propBoolean('editable');
+        const multi = this.propBoolean('multi');
+        const search = this.propBoolean('search');
+        const data: ISelectRow[] = this.refs.list.dataGl;
+        const row = data.find(item => item.value === value);
+        if (row?.disabled || row?.unavailable || row?.control === 'split' || !row && (!editable || fromList)) {
+            return;
+        }
+        if (!editable && !search) {
+            // --- 普通 List 多选由 add/remove 处理；单选被 List 拒绝时不能从点击事件再次提交 ---
+            if (multi || fromList && !this.listValue.includes(value)) {
+                return;
+            }
+        }
+        const before = clickgo.tool.clone(this.value);
+        if (multi) {
+            if (!this.value.includes(value)) {
+                const event: clickgo.control.ISelectAddEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'index': this.value.length,
+                        'value': value
+                    }
+                };
+                this.emit('add', event);
+                if (!event.go) {
+                    return;
+                }
+                this.value.push(value);
+                this.label.push(row?.label.toString() ?? value);
+                this.updateValue({
+                    'clearInput': true,
+                    'clearList': true
+                });
+                this.emit('added', {
+                    'detail': event.detail
+                });
+            }
+            else {
+                this.inputValue = '';
+                this.searchValue = '';
+            }
+        }
+        else if (this.value.length !== 1 || this.value[0] !== value) {
+            // --- 普通 List 单选已在 onChange 校验，搜索与输入模式在提交时校验 ---
+            if (editable || search || !fromList) {
+                const event: clickgo.control.ISelectChangeEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
+                    'detail': {
+                        'value': [value]
+                    }
+                };
+                this.emit('change', event);
+                if (!event.go) {
+                    return;
+                }
+            }
+            this.value = [value];
+            this.label = [row?.label.toString() ?? value];
+            this.listValue = [value];
+            if (editable) {
+                this.inputValue = value;
+            }
+            this.updateValue({
+                'clearInput': search && !editable
+            });
+            this.emit('changed', {
+                'detail': {
+                    'before': before,
+                    'value': clickgo.tool.clone(this.value)
+                }
+            });
+        }
+        else if (search && !editable) {
+            this.searchValue = '';
+        }
+        this.refs.gs.hidePop();
+        if (search && (multi || !editable)) {
+            await this._search();
+        }
+    }
+
+    /**
+     * --- 输入失焦时按选项值或标签规范化，仍须通过选择校验 ---
+     * @returns void
+     */
+    public async blur(): Promise<void> {
+        if (this.propBoolean('disabled')) {
+            return;
+        }
         if (!this.propBoolean('multi')) {
             // --- 单选状态 ---
             // --- 如果 value 大小写无视相等、或 label 相等，也可以 ---
@@ -236,26 +386,22 @@ export default class extends clickgo.control.AbstractControl {
                 for (const item of this.dataComp) {
                     let label = '';
                     let value = '';
-                    if (typeof item === 'string') {
-                        label = item;
-                        value = item;
+                    if (typeof item !== 'object') {
+                        label = item.toString();
+                        value = label;
                     }
                     else {
                         const mapLabel = this.props.map.label ?? 'label';
                         const mapValue = this.props.map.value ?? 'value';
-                        label = item[mapLabel] ?? item[mapValue] ?? '';
-                        value = item[mapValue] ?? item[mapLabel] ?? '';
+                        label = (item[mapLabel] ?? item[mapValue] ?? '').toString();
+                        value = (item[mapValue] ?? item[mapLabel] ?? '').toString();
                     }
                     // --- 判断是否在忽略大小写的情况下 value 相等 ---
                     if (
                         (value.toLowerCase() === this.inputValue.toLowerCase()) ||
                         (label.toLowerCase() === this.inputValue.toLowerCase())
                     ) {
-                        this.inputValue = value;
-                        this.value = [value];
-                        this.label = [label];
-                        this.listValue = [this.inputValue];
-                        this.updateValue();
+                        await this._selectValue(value);
                         return;
                     }
                 }
@@ -263,18 +409,14 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 const mapLabel = this.props.map.label ?? 'label';
                 for (const key in this.dataComp) {
-                    const label = typeof this.dataComp[key] === 'string' ? this.dataComp[key] :
-                        (this.dataComp[key][mapLabel] ?? key ?? '');
+                    const label = (typeof this.dataComp[key] === 'string' ? this.dataComp[key] :
+                        (this.dataComp[key][mapLabel] ?? key)).toString();
                     const value = key;
                     if (
                         (value.toLowerCase() === this.inputValue.toLowerCase()) ||
                         (label.toLowerCase() === this.inputValue.toLowerCase())
                     ) {
-                        this.inputValue = value;
-                        this.value = [value];
-                        this.label = [label];
-                        this.listValue = [this.inputValue];
-                        this.updateValue();
+                        await this._selectValue(value);
                         return;
                     }
                 }
@@ -285,246 +427,86 @@ export default class extends clickgo.control.AbstractControl {
         this.inputValue = '';
     }
 
-    /** --- text 的 keydown 事件 --- */
+    /**
+     * --- text 的 keydown 事件 ---
+     * @param e 键盘事件
+     * @returns void
+     */
     public async keydown(e: KeyboardEvent): Promise<void> {
+        if (this.propBoolean('disabled')) {
+            return;
+        }
         if (e.key === 'Backspace') {
-            if (this.propBoolean('multi')) {
-                // --- 判断是否删除其他 tag ---
-                if ((e.target as HTMLInputElement).value === '' && this.propBoolean('multi') && this.value.length > 0) {
-                    const index = this.value.length - 1;
-                    const value = this.value[index];
-                    // --- 判断是否可移除 ---
-                    const event: clickgo.control.ISelectRemoveEvent = {
-                        'go': true,
-                        preventDefault: function() {
-                            this.go = false;
-                        },
-                        'detail': {
-                            'index': index,
-                            'value': value,
-                            'mode': 'backspace'
-                        }
-                    };
-                    this.emit('remove', event);
-                    if (event.go) {
-                        this.value.splice(-1);
-                        this.label.splice(-1);
-                        this.updateValue();
-                        this.emit('removed', {
-                            'detail': {
-                                'index': index,
-                                'value': value,
-                                'mode': 'backspace'
-                            }
-                        });
-                    }
-                }
-            }
-            return;
-        }
-        if ((e.key === 'Enter') && (this.element.dataset.cgPopOpen === undefined) && (this.propBoolean('multi'))) {
-            e.stopPropagation();
-            if (!this.inputValue) {
-                this.refs.gs.showPop();
-                return;
-            }
-            if (this.value.includes(this.inputValue)) {
-                this.inputValue = '';
-                this.refs.gs.hidePop();
-                return;
-            }
-            // --- 判断是否允许新增项 ---
-            const addIndex = this.value.length;
-            const event: clickgo.control.ISelectAddEvent = {
-                'go': true,
-                preventDefault: function() {
-                    this.go = false;
-                },
-                'detail': {
-                    'index': addIndex,
-                    'value': this.inputValue
-                }
-            };
-            this.emit('add', event);
-            if (event.go) {
-                const value = this.inputValue;
-                this.value.push(value);
-                this.label.push(this.listLabel[0] ?? value);
-                this.updateValue({
-                    'clearInput': true,
-                    'clearList': true
-                });
-                this.emit('added', {
+            if ((e.target as HTMLInputElement).value === '' && this.propBoolean('multi') && this.value.length > 0) {
+                const index = this.value.length - 1;
+                const value = this.value[index];
+                const event: clickgo.control.ISelectRemoveEvent = {
+                    'go': true,
+                    preventDefault: function() {
+                        this.go = false;
+                    },
                     'detail': {
-                        'index': addIndex,
-                        'value': value
+                        'index': index,
+                        'value': value,
+                        'mode': 'backspace'
                     }
-                });
-                if (this.propBoolean('search')) {
-                    await this._search();
+                };
+                this.emit('remove', event);
+                if (event.go) {
+                    this.value.splice(index, 1);
+                    this.label.splice(index, 1);
+                    this.listValue = clickgo.tool.clone(this.value);
+                    this.updateValue();
+                    this.emit('removed', {
+                        'detail': event.detail
+                    });
                 }
             }
             return;
         }
-        if ((e.key === 'ArrowDown' || e.key === 'Enter') && (this.element.dataset.cgPopOpen === undefined)) {
+        if (this.element.dataset.cgPopOpen === undefined && (e.key === 'ArrowDown' || e.key === 'Enter')) {
             e.stopPropagation();
-            // --- 展开下拉菜单 ---
+            e.preventDefault();
+            if (e.key === 'Enter' && this.propBoolean('multi') && this.inputValue) {
+                await this._selectValue(this.inputValue);
+                return;
+            }
             this.refs.gs.showPop();
             return;
         }
         await this.textKeyDown(e);
     }
 
-    /** --- search 和 input 的通用 keydown 事件 --- */
+    /**
+     * --- 搜索输入框的键盘导航只移动候选项，回车才提交选择 ---
+     * @param e 键盘事件
+     * @returns void
+     */
     public async textKeyDown(e: KeyboardEvent): Promise<void> {
-        e.stopPropagation(); // --- 放置响应到 greatselect 的 mode:text enter 导致收不起来 ---
+        e.stopPropagation();
+        if (this.propBoolean('disabled')) {
+            return;
+        }
         if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.element.dataset.cgPopOpen !== undefined) {
-            // --- 要键盘上下选择 ---
-            e.preventDefault(); // --- 用来防止光标依浏览器原生要求移动 ---
-            switch (e.key) {
-                case 'ArrowUp': {
-                    this.refs.list.arrowUp();
-                    this.inputValue = this.listValue[0] ?? '';
-                    this.searchValue = this.listValue[0] ?? '';
-                    break;
-                }
-                default: {
-                    this.refs.list.arrowDown();
-                    this.inputValue = this.listValue[0] ?? '';
-                    this.searchValue = this.listValue[0] ?? '';
-                }
+            e.preventDefault();
+            if (e.key === 'ArrowUp') {
+                this.refs.list.arrowUp();
             }
-            await this.updateInputValue(this.propBoolean('editable') ? this.inputValue : this.searchValue);
+            else {
+                this.refs.list.arrowDown();
+            }
             return;
         }
         if (e.key !== 'Enter') {
             return;
         }
-        // --- enter ---
-        // --- 选中的 list item ---
-        const value = this.searchValue || this.inputValue;
-        if (this.propBoolean('editable')) {
-            // --- 可输入 ---
-            if (this.propBoolean('multi')) {
-                // --- 多选 ---
-                if (!value) {
-                    this.refs.gs.hidePop();
-                    return;
-                }
-                if (this.value.includes(value)) {
-                    this.inputValue = '';
-                    this.refs.gs.hidePop();
-                    return;
-                }
-                // --- 判断是否允许新增项 ---
-                const addIndex = this.value.length;
-                const event: clickgo.control.ISelectAddEvent = {
-                    'go': true,
-                    preventDefault: function() {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'index': addIndex,
-                        'value': value
-                    }
-                };
-                this.emit('add', event);
-                if (event.go) {
-                    this.value.push(value);
-                    this.label.push(this.listLabel[0] ?? value);
-                    this.updateValue({
-                        'clearInput': true,
-                        'clearList': true
-                    });
-                    this.emit('added', {
-                        'detail': {
-                            'index': addIndex,
-                            'value': value
-                        }
-                    });
-                    this.refs.gs.hidePop();
-                    if (this.propBoolean('search')) {
-                        await this._search();
-                    }
-                }
-            }
-            else {
-                // --- 单选 ---
-                if (!value) {
-                    this.refs.gs.hidePop();
-                    return;
-                }
-                this.value = [value];
-                this.listValue = [value];
-                await this.nextTick();
-                this.label = [this.listLabel[0] ?? value];
-                this.updateValue();
-                this.refs.gs.hidePop();
-            }
+        e.preventDefault();
+        const value = this.listValue[0] ?? (this.propBoolean('editable') ? this.inputValue : undefined);
+        if (value === undefined || value === '') {
+            this.refs.gs.hidePop();
+            return;
         }
-        else {
-            // --- 不可输入，纯搜索 ---
-            if (this.propBoolean('multi')) {
-                // --- 多选 ---
-                if (!value) {
-                    return;
-                }
-                if (this.value.includes(value)) {
-                    this.searchValue = '';
-                    this.refs.gs.hidePop();
-                    await this._search();
-                    return;
-                }
-                if (!this.listValue[0]) {
-                    this.searchValue = '';
-                    this.refs.gs.hidePop();
-                    await this._search();
-                    return;
-                }
-                // --- 判断是否允许新增项 ---
-                const addIndex = this.value.length;
-                const event: clickgo.control.ISelectAddEvent = {
-                    'go': true,
-                    preventDefault: function() {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'index': addIndex,
-                        'value': value
-                    }
-                };
-                this.emit('add', event);
-                if (event.go) {
-                    this.value.push(value);
-                    this.label.push(this.listLabel[0] ?? '');
-                    this.searchValue = '';
-                    this.updateValue();
-                    this.emit('added', {
-                        'detail': {
-                            'index': addIndex,
-                            'value': value
-                        }
-                    });
-                    this.refs.gs.hidePop();
-                    await this._search();
-                }
-            }
-            else {
-                // --- 单选 ---
-                if (!this.listValue[0]) {
-                    this.searchValue = '';
-                    this.refs.gs.hidePop();
-                    await this._search();
-                    return;
-                }
-                this.value = [this.listValue[0] ?? ''];
-                this.label = [this.listLabel[0] ?? ''];
-                this.searchValue = '';
-                this.updateValue();
-                this.refs.gs.hidePop();
-                await this._search();
-            }
-        }
+        await this._selectValue(value);
     }
 
     /** --- 搜索版本，仅允许最后一次搜索更新结果 --- */
@@ -535,20 +517,29 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- 私有搜索方法 --- */
     private async _search(success?: () => void | Promise<void>): Promise<void> {
+        if (this._unmounted) {
+            return;
+        }
         /** --- 当前要搜索的值 --- */
         const searchValue = (this.propBoolean('editable') ? this.inputValue : this.searchValue).trim();
         /** --- 本次搜索版本 --- */
         const searchVersion = ++this._searchVersion;
+        // --- loading 只表示当前查询，旧请求未回调不能阻塞新查询或清空输入 ---
+        this.searching = 0;
         if (this.propBoolean('remote')) {
             // --- 远程搜索 ---
+            this.searchData = [];
             const delay = this.propInt('remoteDelay');
             await clickgo.tool.sleep(delay);
-            if (searchVersion !== this._searchVersion) {
+            if (this._unmounted || searchVersion !== this._searchVersion) {
                 return;
             }
             if (searchValue === '') {
                 this.searchData = [];
                 await this.nextTick();
+                if (this._unmounted || searchVersion !== this._searchVersion) {
+                    return;
+                }
                 await success?.();
                 return;
             }
@@ -562,12 +553,16 @@ export default class extends clickgo.control.AbstractControl {
                             return;
                         }
                         completed = true;
-                        --this.searching;
-                        if (searchVersion !== this._searchVersion) {
+                        if (this._unmounted || searchVersion !== this._searchVersion) {
                             return;
                         }
+                        this.searching = 0;
                         this.searchData = data ? clickgo.tool.clone(data) : [];
                         await this.nextTick();
+                        if (this._unmounted || searchVersion !== this._searchVersion) {
+                            return;
+                        }
+                        this._refreshLabels();
                         await success?.();
                     }
                 }
@@ -577,12 +572,15 @@ export default class extends clickgo.control.AbstractControl {
         else {
             // --- 本地搜索 ---
             await this.nextTick();
-            if (searchVersion !== this._searchVersion) {
+            if (this._unmounted || searchVersion !== this._searchVersion) {
                 return;
             }
             if (searchValue === '') {
                 this.searchData = [];
                 await this.nextTick();
+                if (this._unmounted || searchVersion !== this._searchVersion) {
+                    return;
+                }
                 await success?.();
                 return;
             }
@@ -594,7 +592,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.searchData = [];
                 for (const item of this.props.data) {
                     const val = (typeof item === 'object' ? (item[mapValue] ?? item[mapLabel] ?? '') : item).toString().toLowerCase();
-                    const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : '').toLowerCase();
+                    const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : '').toString().toLowerCase();
                     let include = true;
                     for (const char of searchChars) {
                         if (val.includes(char) || lab.includes(char)) {
@@ -616,7 +614,7 @@ export default class extends clickgo.control.AbstractControl {
                 for (const key in this.props.data) {
                     const item = (this.props.data as any)[key];
                     const val = key.toLowerCase();
-                    const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : '').toLowerCase();
+                    const lab = (typeof item === 'object' ? (item[mapLabel] ?? '') : item).toString().toLowerCase();
                     let include = true;
                     for (const char of searchChars) {
                         if (val.includes(char) || lab.includes(char)) {
@@ -632,12 +630,20 @@ export default class extends clickgo.control.AbstractControl {
                     (this.searchData as any)[key] = item;
                 }
             }
+            await this.nextTick();
+            if (this._unmounted || searchVersion !== this._searchVersion) {
+                return;
+            }
+            this._refreshLabels();
             await success?.();
         }
     }
 
     // --- search 输入框值变更时 ---
     public async updateSearchValue(value: string): Promise<void> {
+        if (this.propBoolean('disabled')) {
+            return;
+        }
         // --- 只有 search 并且非 editable 时会触发 ---
         this.searchValue = value.trim();
         if (this.propBoolean('multi')) {
@@ -646,13 +652,16 @@ export default class extends clickgo.control.AbstractControl {
         }
         else {
             await this._search(() => {
-                this.listValue = [this.searchValue];
+                this.listValue = this.searchValue ? [this.searchValue] : clickgo.tool.clone(this.value);
             });
         }
     }
 
     // --- text 的值变更事件（只有 editable 时会触发） ----
     public async updateInputValue(value: string): Promise<void> {
+        if (this.propBoolean('disabled')) {
+            return;
+        }
         value = value.trim();
         if (this.propBoolean('editable') && !this.propBoolean('multi')) {
             const event: clickgo.control.ISelectChangeEvent = {
@@ -677,8 +686,12 @@ export default class extends clickgo.control.AbstractControl {
                 this.refs.gs.showPop();
             }
             await this._search(() => {
-                this.listValue = [this.inputValue];
+                this.listValue = this.inputValue ? [this.inputValue] : clickgo.tool.clone(this.value);
             });
+        }
+        if (this._unmounted || this.inputValue !== value) {
+            // --- 等待搜索节流时可能已有更新的输入，旧处理不能再提交当前值或重复通知 ---
+            return;
         }
 
         // --- 判断是不是多选 ---
@@ -710,193 +723,24 @@ export default class extends clickgo.control.AbstractControl {
             const event: clickgo.control.ISelectChangedEvent = {
                 'detail': {
                     'before': before,
-                    'value': [value]
+                    'value': clickgo.tool.clone(this.value)
                 }
             };
             this.emit('changed', event);
         }
     }
 
-    /** --- list 上的点击事件 --- */
+    /**
+     * --- List 的点击事件，使用实际点击值，不能使用之前的高亮项 ---
+     * @param e List 点击事件
+     * @returns void
+     */
     public async listItemClicked(e: clickgo.control.IListItemclickedEvent): Promise<void> {
-        const event: clickgo.control.IListItemclickedEvent = {
-            'detail': {
-                'event': e.detail.event,
-                'value': e.detail.value,
-                'arrow': e.detail.arrow
-            }
-        };
-        this.emit('itemclicked', event);
-        if (this.propBoolean('editable')) {
-            const v = this.listValue[0] ?? '';
-            // -- 可编辑 ---
-            if (this.propBoolean('multi')) {
-                // --- 多选 ---
-                if (this.value.includes(v)) {
-                    this.refs.gs.hidePop();
-                    return;
-                }
-                // --- 判断是否允许新增项 ---
-                const addIndex = this.value.length;
-                const event: clickgo.control.ISelectAddEvent = {
-                    'go': true,
-                    preventDefault: function() {
-                        this.go = false;
-                    },
-                    'detail': {
-                        'index': addIndex,
-                        'value': v
-                    }
-                };
-                this.emit('add', event);
-                if (event.go) {
-                    this.value.push(v);
-                    this.label.push(this.listLabel[0] ?? '');
-                    this.updateValue({
-                        'clearInput': true,
-                        'clearList': true
-                    });
-                    this.emit('added', {
-                        'detail': {
-                            'index': addIndex,
-                            'value': v
-                        }
-                    });
-                    if (this.propBoolean('search')) {
-                        this.refs.gs.hidePop();
-                        await this._search();
-                    }
-                    else {
-                        this.refs.gs.hidePop();
-                    }
-                }
-            }
-            else {
-                // --- 单选，可能已经实时添加了 ---
-                if (this.inputValue !== v) {
-                    const event: clickgo.control.ISelectChangeEvent = {
-                        'go': true,
-                        preventDefault: function() {
-                            this.go = false;
-                        },
-                        'detail': {
-                            'value': [v]
-                        }
-                    };
-                    this.emit('change', event);
-                    if (event.go) {
-                        this.inputValue = v;
-                        const before = clickgo.tool.clone(this.value);
-                        this.value = [v];
-                        this.label = [this.listLabel[0] ?? ''];
-                        this.updateValue();
-                        if (this.propBoolean('search')) {
-                            await this._search();
-                        }
-                        const event: clickgo.control.ISelectChangedEvent = {
-                            'detail': {
-                                'before': before,
-                                'value': [v]
-                            }
-                        };
-                        this.emit('changed', event);
-                    }
-                }
-                this.refs.gs.hidePop();
-            }
+        this.emit('itemclicked', e);
+        if (e.detail.arrow) {
+            return;
         }
-        else {
-            // --- 不可编辑 ---
-            if (this.propBoolean('multi')) {
-                // --- 多选 ---
-                if (this.propBoolean('search')) {
-                    // --- 使用 e.detail.value 获取实际点击的项（listValue[0] 在多选模式下不一定是被点击的项） ---
-                    const clickedValue = e.detail.value;
-                    if (this.value.includes(clickedValue)) {
-                        this.refs.gs.hidePop();
-                        this.searchValue = '';
-                        await this._search();
-                        return;
-                    }
-                    // --- 判断是否允许新增项 ---
-                    const addIndex = this.value.length;
-                    const event: clickgo.control.ISelectAddEvent = {
-                        'go': true,
-                        preventDefault: function() {
-                            this.go = false;
-                        },
-                        'detail': {
-                            'index': addIndex,
-                            'value': clickedValue
-                        }
-                    };
-                    this.emit('add', event);
-                    if (event.go) {
-                        this.value.push(clickedValue);
-                        const result = this.refs.list.findFormat(clickedValue, false);
-                        this.label.push(result?.[clickedValue]?.label ?? clickedValue);
-                        this.updateValue({
-                            'clearInput': true,
-                            'clearList': true
-                        });
-                        this.emit('added', {
-                            'detail': {
-                                'index': addIndex,
-                                'value': clickedValue
-                            }
-                        });
-                        this.refs.gs.hidePop();
-                        await this._search();
-                    }
-                }
-                else {
-                    // --- 多选情况，可能有新增，可能有减少，现在交给 @add, @remove 处理了 ---
-                    /*
-                    const rtn = clickgo.tool.compar(this.value, this.listValue);
-                    if (rtn.length.add || rtn.length.remove) {
-                        // --- 有变化 ---
-                        this.value = clickgo.tool.clone(this.listValue);
-                        this.label = clickgo.tool.clone(this.listLabel);
-                        if (rtn.length.add) {
-                            for (const name in rtn.add) {
-                                this.emit('add', rtn.add[name], name);
-                            }
-                        }
-                        if (rtn.length.remove) {
-                            for (const name in rtn.remove) {
-                                this.emit('remove', rtn.remove[name], name);
-                            }
-                        }
-                        this.updateValue();
-                    }
-                    */
-                }
-            }
-            else {
-                // --- 单选 ---
-                const before = clickgo.tool.clone(this.value);
-                this.value = [this.listValue[0] ?? ''];
-                this.label = [this.listLabel[0] ?? ''];
-                if (this.propBoolean('search')) {
-                    this.updateValue({
-                        'clearInput': true
-                    });
-                    this.refs.gs.hidePop();
-                    await this._search();
-                }
-                else {
-                    this.updateValue();
-                    this.refs.gs.hidePop();
-                }
-                const event: clickgo.control.ISelectChangedEvent = {
-                    'detail': {
-                        'before': before,
-                        'value': this.value
-                    }
-                };
-                this.emit('changed', event);
-            }
-        }
+        await this._selectValue(e.detail.value, true);
     }
 
     // --- list 的相关事件 ---
@@ -929,12 +773,12 @@ export default class extends clickgo.control.AbstractControl {
         // --- 可添加 ---
         this.value.push(e.detail.value);
         const result = this.refs.list.findFormat(e.detail.value, false);
-        this.label.push(result?.[e.detail.value].label ?? 'error');
+        this.label.push(result?.[e.detail.value]?.label?.toString() ?? e.detail.value);
         this.updateValue();
         this.emit('added', event);
     }
 
-    public onRemove(e: clickgo.control.IListAddEvent): void {
+    public onRemove(e: clickgo.control.IListRemoveEvent): void {
         if (!this.propBoolean('multi')) {
             return;
         }
@@ -1012,6 +856,9 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- tag 的点击事件 ---
     public removeTag(index: number): void {
+        if (this.propBoolean('disabled')) {
+            return;
+        }
         if (this.isMust) {
             if (this.value.length === 1) {
                 return;
@@ -1081,38 +928,27 @@ export default class extends clickgo.control.AbstractControl {
      */
     private _syncModelValue(): void {
         if (this.propBoolean('editable')) {
-            this._modelValuePending = false;
-            // --- 可输入模式 ---
-            if (this.props.modelValue.length) {
-                if (this.propBoolean('multi')) {
-                    this.inputValue = '';
-                    this.searchValue = '';
-                    this.value.length = 0;
-                    this.label.length = 0;
-                    for (const item of this.props.modelValue) {
-                        const value = item.toString();
-                        const result = this.refs.list.findFormat(value, false);
-                        this.value.push(result?.[value]?.value ?? value);
-                        this.label.push(result?.[value]?.label ?? value);
-                    }
-                    this.listValue = clickgo.tool.clone(this.value);
-                    this.updateValue();
-                    return;
-                }
-                this.inputValue = this.props.modelValue[0].toString();
-                this.value = [this.inputValue];
-                const result = this.refs.list.findFormat(this.inputValue, false);
-                this.label = [result?.[this.inputValue]?.label ?? this.inputValue];
-                this.listValue = [this.inputValue];
-                this.updateValue();
-                return;
+            const data = this._getValueData();
+            const value = this.props.modelValue.map(item => item.toString());
+            if (!this.propBoolean('multi')) {
+                value.splice(1);
             }
-            this.value.length = 0;
-            this.label.length = 0;
-            this.updateValue({
-                'clearInput': true,
-                'clearList': true
+            const label = value.map(item => {
+                const row = data.find(d => d.value === item);
+                return row?.label.toString() ?? this.label[this.value.indexOf(item)] ?? item;
             });
+            const labelChanged = JSON.stringify(label) !== JSON.stringify(this.label);
+            this.value = value;
+            this.label = label;
+            this.inputValue = this.propBoolean('multi') ? '' : this.value[0] ?? '';
+            this.searchValue = '';
+            this.listValue = clickgo.tool.clone(this.value);
+            if (JSON.stringify(this.value) !== JSON.stringify(this.props.modelValue)) {
+                this.emit('update:modelValue', clickgo.tool.clone(this.value));
+            }
+            if (labelChanged) {
+                this.emit('label', clickgo.tool.clone(this.label));
+            }
             return;
         }
 
@@ -1120,162 +956,185 @@ export default class extends clickgo.control.AbstractControl {
         for (const item of this.props.modelValue) {
             this.refs.list.findFormat(item.toString());
         }
-        const data: Array<Record<string, any>> = this.refs.list.dataGl;
-        if (!data.length) {
-            // --- data 为空时无法判定外部值是否有效，先保留并等待 data 变动后重新同步 ---
-            this._modelValuePending = true;
+        const data = this._getValueData();
+        if (!data.length && !this.propBoolean('remote')) {
+            // --- 本地空列表尚不能判定外部值有效性；首批数据到达后再执行本地校验 ---
             this.value = this.props.modelValue.map(item => item.toString());
             if (!this.propBoolean('multi')) {
                 this.value.splice(1);
             }
-            this.label = [];
+            if (this.label.length) {
+                this.label = [];
+                this.emit('label', []);
+            }
             this.listValue = clickgo.tool.clone(this.value);
             this.listLabel = [];
             this.listItem = [];
             return;
         }
-        this._modelValuePending = false;
-        const selected: Array<Record<string, any>> = [];
+        const selected: ISelectRow[] = [];
         for (const item of this.props.modelValue) {
             const value = item.toString();
             const row = data.find(d => d.value === value);
-            if (!row || row.disabled || (row.control === 'split')) {
-                continue;
+            if (!row) {
+                if (!this.propBoolean('remote')) {
+                    continue;
+                }
+                // --- 远程列表只有当前批次，缺少选项不代表外部值失效，保留已有标签等待补齐 ---
+                selected.push({
+                    'value': value,
+                    'label': this.label[this.value.indexOf(value)] ?? value
+                });
             }
-            selected.push(row);
+            else {
+                if (row.disabled || row.control === 'split') {
+                    continue;
+                }
+                selected.push(row);
+            }
             if (!this.propBoolean('multi')) {
                 break;
             }
         }
         if (!selected.length && this.isMust) {
-            const row = data.find(d => !d.disabled && (d.control !== 'split'));
+            const row = data.find(d => !d.disabled && d.control !== 'split');
             if (row) {
                 selected.push(row);
             }
         }
+        const label = selected.map(item => item.label.toString());
+        const labelChanged = JSON.stringify(label) !== JSON.stringify(this.label);
         this.value = selected.map(item => item.value);
-        this.label = selected.map(item => item.label);
+        this.label = label;
         this.listValue = clickgo.tool.clone(this.value);
         this.listLabel = clickgo.tool.clone(this.label);
         this.listItem = selected;
-        this.updateValue();
+        // --- 普通数据刷新只补标签或修正无效值，不重复回写相同的绑定值 ---
+        if (JSON.stringify(this.value) !== JSON.stringify(this.props.modelValue)) {
+            this.emit('update:modelValue', clickgo.tool.clone(this.value));
+        }
+        if (labelChanged) {
+            this.emit('label', clickgo.tool.clone(this.label));
+        }
     }
 
+    /**
+     * --- 监听外部值、完整数据和临时搜索结果，分别同步选择与标签 ---
+     * @returns void
+     */
     public onMounted(): void {
-        this.watch('modelValue', (): void => {
+        this.watch('modelValue', async (): Promise<void> => {
             if (JSON.stringify(this.value) === JSON.stringify(this.props.modelValue)) {
                 return;
             }
-            this._syncModelValue();
+            if (this.propBoolean('editable')) {
+                // --- 外部值替换输入时，之前按旧输入发出的远程查询已不适用 ---
+                ++this._searchVersion;
+                this.searching = 0;
+                this.searchData = [];
+            }
+            await this.nextTick();
+            if (!this._unmounted && JSON.stringify(this.value) !== JSON.stringify(this.props.modelValue)) {
+                this._syncModelValue();
+            }
         }, {
             'deep': true
         });
         this._syncModelValue();
-        this.watch('search', async () => {
-            await this.nextTick();
-            this.listValue = clickgo.tool.clone(this.value);
-            if (!this.propBoolean('search')) {
-                // --- 变成不可输入 ---
-                return;
-            }
+        this.watch('search', async (): Promise<void> => {
+            ++this._searchVersion;
+            this.searching = 0;
+            this.searchData = [];
             this.searchValue = '';
-            await this._search();
-        });
-        this.watch('remote', async () => {
-            if (!this.propBoolean('search')) {
-                return;
-            }
-            await this._search();
-        });
-        this.watch('editable', async (): Promise<void> => {
-            if (!this.propBoolean('editable')) {
-                // --- 变成不可输入 ---
-                if (this.propBoolean('multi')) {
-                    await this.nextTick(); // --- 让 list 反应一下变成支持多选 ---
-                    this.listValue = clickgo.tool.clone(this.value);
-                    await this.nextTick();
-                    if (JSON.stringify(this.value) === JSON.stringify(this.listValue)) {
-                        return;
-                    }
-                    this.value = clickgo.tool.clone(this.listValue);
-                    this.label = clickgo.tool.clone(this.listLabel);
-                    this.updateValue();
-                }
-                return;
-            }
-            // --- 变成可输入 ---
-            if (!this.propBoolean('multi')) {
-                // --- 当前是单选 ---
-                this.inputValue = (this.value[0] ?? '').toString();
-            }
-        });
-        // --- 监听 mulit ---
-        this.watch('multi', (): void => {
-            if (!this.propBoolean('multi')) {
-                // --- 多变单 ---
-                if (this.value.length > 1) {
-                    this.value.splice(1);
-                    this.label.splice(1);
-                    this.updateValue();
-                    this.listValue = clickgo.tool.clone(this.value);
-                }
-                if (this.propBoolean('editable')) {
-                    this.inputValue = (this.value[0] ?? '').toString();
-                }
-                return;
-            }
-            // --- 单变多 ---
-            if (this.propBoolean('editable')) {
-                this.inputValue = '';
-            }
-        });
-        // --- 监听 data 变动 ---
-        this.watch(() => JSON.stringify(this.props.data), async (n, o): Promise<void> => {
-            if (n === o) {
+            await this.nextTick();
+            if (this._unmounted) {
                 return;
             }
             if (this.propBoolean('editable')) {
-                // --- 当前是输入模式 ---
+                this._refreshLabels();
+            }
+            else {
+                this._syncModelValue();
+            }
+            if (this.propBoolean('search')) {
                 await this._search();
-                if (this.propBoolean('multi')) {
-                    // --- 多选模式，不管 ---
-                    return;
-                }
-                this.listValue = this.value;
-                await this.nextTick();
-                // --- 单选模式 ---
-                // if (this.value[0] !== this.listValue[0]) {
-                //     return;
-                // }
-                if (this.label[0] === this.listLabel[0]) {
-                    return;
-                }
-                if (this.listValue.length) {
-                    this.label = clickgo.tool.clone(this.listLabel);
+            }
+        });
+        this.watch('remote', async (): Promise<void> => {
+            if (this.propBoolean('search')) {
+                await this._search();
+            }
+            await this.nextTick();
+            if (!this._unmounted) {
+                if (this.propBoolean('editable')) {
+                    this._refreshLabels();
                 }
                 else {
-                    this.label[0] = this.value[0];
+                    this._syncModelValue();
                 }
-                this.emit('label', clickgo.tool.clone(this.label));
-                return;
+            }
+        });
+        for (const prop of ['editable', 'multi'] as const) {
+            this.watch(prop, async (): Promise<void> => {
+                ++this._searchVersion;
+                this.searching = 0;
+                this.searchData = [];
+                await this.nextTick();
+                if (this._unmounted) {
+                    return;
+                }
+                this._syncModelValue();
+                if (this.propBoolean('search')) {
+                    await this._search();
+                }
+            });
+        }
+        this.watch(() => JSON.stringify(this.props.data), async (): Promise<void> => {
+            if (this.propBoolean('search') && !this.propBoolean('remote')) {
+                await this._search();
             }
             await this.nextTick();
             await clickgo.tool.sleep(0);
-            // --- data 为空或此前有待解析外部值时，才重新应用 modelValue ---
-            if (!this.refs.list.dataGl.length || this._modelValuePending) {
-                this._syncModelValue();
+            if (this._unmounted) {
                 return;
             }
-            // --- 普通 data 刷新沿用 List 的选择结果，避免重复向外发出相同的 modelValue ---
-            if (JSON.stringify(this.value) !== JSON.stringify(this.listValue)) {
-                this.value = clickgo.tool.clone(this.listValue);
-                this.emit('update:modelValue', clickgo.tool.clone(this.value));
+            if (this.propBoolean('editable')) {
+                this._refreshLabels();
             }
-            if (JSON.stringify(this.label) !== JSON.stringify(this.listLabel)) {
-                this.label = clickgo.tool.clone(this.listLabel);
-                this.emit('label', clickgo.tool.clone(this.label));
+            else {
+                this._syncModelValue();
             }
         });
+        this.watch(() => this.refs.list.dataGl, (): void => {
+            if (!this._unmounted) {
+                this._refreshLabels();
+            }
+        }, {
+            'deep': true
+        });
+        this.watch(() => [this.props.map, this.props.disabledList], async (): Promise<void> => {
+            await this.nextTick();
+            if (!this._unmounted) {
+                if (this.propBoolean('editable')) {
+                    this._refreshLabels();
+                }
+                else {
+                    this._syncModelValue();
+                }
+            }
+        }, {
+            'deep': true
+        });
+    }
+
+    /**
+     * --- 卸载时使所有未完成的搜索失效 ---
+     * @returns void
+     */
+    public onBeforeUnmount(): void {
+        this._unmounted = true;
+        ++this._searchVersion;
+        this.searching = 0;
     }
 
 }

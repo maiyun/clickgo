@@ -10,5 +10,6 @@
 - 桌面控件的参数 demo 在 `dist/app/demo/form/control/desktop/`；置底实战 Form 在 `dist/app/demo/form/solution/desktop/`。添加 demo 时同步主 Form 的入口和应用控件配置。
 - Form 的 `viewport` 和 `padding="safe"` 由控件管理布局边界与内容安全区；首次最大化与 `form.refreshMaxPosition()` 统一委托控件刷新，桌面 demo 不手工维护全屏尺寸。
 - 验证使用 `npm run check`；位置、指针取消和双向绑定回归使用 `npm run test:desktop`。先用 `npx tsc` 更新生成的运行时代码，再运行依赖该代码的测试。
+- Select 的值同步、搜索、交互和消费控件回归使用 `npm run test:select`；打包后用 `CLICKGO_SELECT_TEST_ARCHIVE=1 npm run test:select` 验证实际控件包。本地列表按完整数据校验，远程结果缺项时保留已选值并补齐标签。
 - 控件 SCSS 使用已有全局 Sass 命令编译，随后运行 `node dist/pack.js`。打包器部分错误会被捕获，必须确认对应控件数量和应用结果，并检查归档内容；需要时执行 `npm run test:archive`。
 - 浏览器入口为 `dist/test/desktop/`；安全上下文和可加载的运行时依赖是有效验收的前提。区分类型、单元回归、浏览器与 Native 桌面验证。
