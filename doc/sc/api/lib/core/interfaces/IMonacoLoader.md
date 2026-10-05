@@ -6,7 +6,7 @@
 
 # Interface: IMonacoLoader
 
-Defined in: [lib/core.ts:1835](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1835)
+Defined in: [lib/core.ts:1869](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1869)
 
 Monaco 模块的加载资源，编辑器实例由控件在独立 iframe 内创建
 
@@ -16,7 +16,7 @@ Monaco 模块的加载资源，编辑器实例由控件在独立 iframe 内创�
 
 > **baseUrl**: `string`
 
-Defined in: [lib/core.ts:1839](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1839)
+Defined in: [lib/core.ts:1873](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1873)
 
 编辑器和 Worker 的资源根路径，以 / 结尾
 
@@ -26,6 +26,6 @@ Defined in: [lib/core.ts:1839](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **loader**: `string`
 
-Defined in: [lib/core.ts:1837](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1837)
+Defined in: [lib/core.ts:1871](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1871)
 
 AMD loader 的 data URL

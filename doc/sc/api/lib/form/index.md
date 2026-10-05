@@ -55,6 +55,7 @@
 - [getActivePanel](functions/getActivePanel.md)
 - [getFocus](functions/getFocus.md)
 - [getHash](functions/getHash.md)
+- [getLauncherShow](functions/getLauncherShow.md)
 - [getList](functions/getList.md)
 - [getMaxZIndexID](functions/getMaxZIndexID.md)
 - [getRectByBorder](functions/getRectByBorder.md)

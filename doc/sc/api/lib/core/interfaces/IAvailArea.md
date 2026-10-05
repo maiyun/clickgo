@@ -6,7 +6,7 @@
 
 # Interface: IAvailArea
 
-Defined in: [lib/core.ts:1641](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1641)
+Defined in: [lib/core.ts:1675](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1675)
 
 屏幕可用区域
 
@@ -16,7 +16,7 @@ Defined in: [lib/core.ts:1641](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **height**: `number`
 
-Defined in: [lib/core.ts:1645](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1645)
+Defined in: [lib/core.ts:1679](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1679)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/core.ts:1645](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **left**: `number`
 
-Defined in: [lib/core.ts:1642](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1642)
+Defined in: [lib/core.ts:1676](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1676)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1642](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **oheight**: `number`
 
-Defined in: [lib/core.ts:1647](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1647)
+Defined in: [lib/core.ts:1681](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1681)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/core.ts:1647](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **owidth**: `number`
 
-Defined in: [lib/core.ts:1646](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1646)
+Defined in: [lib/core.ts:1680](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1680)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/core.ts:1646](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **top**: `number`
 
-Defined in: [lib/core.ts:1643](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1643)
+Defined in: [lib/core.ts:1677](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1677)
 
 ***
 
@@ -56,4 +56,4 @@ Defined in: [lib/core.ts:1643](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **width**: `number`
 
-Defined in: [lib/core.ts:1644](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1644)
+Defined in: [lib/core.ts:1678](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1678)

@@ -480,7 +480,7 @@ Defined in: [clickgo.ts:230](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onHashChanged**(`hash`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:343](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L343)
+Defined in: [clickgo.ts:353](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L353)
 
 location hash 改变事件
 
@@ -500,7 +500,7 @@ location hash 改变事件
 
 > **onKeydown**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:349](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L349)
+Defined in: [clickgo.ts:359](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L359)
 
 键盘按下事件
 
@@ -520,7 +520,7 @@ Defined in: [clickgo.ts:349](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onKeyup**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:355](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L355)
+Defined in: [clickgo.ts:365](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L365)
 
 键盘弹起事件
 
@@ -540,7 +540,7 @@ Defined in: [clickgo.ts:355](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onLauncherFolderNameChanged**(`id`, `name`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:337](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L337)
+Defined in: [clickgo.ts:347](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L347)
 
 launcher 文件夹名称修改事件
 
@@ -560,11 +560,35 @@ launcher 文件夹名称修改事件
 
 ***
 
+### onLauncherShowChanged()
+
+> **onLauncherShowChanged**(`state`): `void` \| `Promise`\<`void`\>
+
+Defined in: [clickgo.ts:341](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L341)
+
+Launcher 显示状态改变事件
+
+#### Parameters
+
+##### state
+
+`boolean`
+
+是否显示
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
 ### onRuntimeFileLoad()
 
 > **onRuntimeFileLoad**(`url`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:361](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L361)
+Defined in: [clickgo.ts:371](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L371)
 
 环境文件准备加载时的事件
 
@@ -584,7 +608,7 @@ Defined in: [clickgo.ts:361](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onRuntimeFileLoaded**(`url`, `state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:367](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L367)
+Defined in: [clickgo.ts:377](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L377)
 
 环境文件加载完成的事件
 

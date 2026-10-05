@@ -6,7 +6,7 @@
 
 # Interface: IAppPackageEntry
 
-Defined in: [lib/core.ts:1686](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1686)
+Defined in: [lib/core.ts:1720](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1720)
 
 CGA 包内项目
 
@@ -16,7 +16,7 @@ CGA 包内项目
 
 > **isDirectory**: `boolean`
 
-Defined in: [lib/core.ts:1687](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1687)
+Defined in: [lib/core.ts:1721](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1721)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/core.ts:1687](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **isFile**: `boolean`
 
-Defined in: [lib/core.ts:1688](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1688)
+Defined in: [lib/core.ts:1722](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1722)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/core.ts:1688](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **name**: `string`
 
-Defined in: [lib/core.ts:1689](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1689)
+Defined in: [lib/core.ts:1723](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1723)

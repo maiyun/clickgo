@@ -8,7 +8,7 @@
 
 > **getHash**(`formId`): `string`
 
-Defined in: [lib/form.ts:2381](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2381)
+Defined in: [lib/form.ts:2391](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2391)
 
 获取窗体的 hash
 

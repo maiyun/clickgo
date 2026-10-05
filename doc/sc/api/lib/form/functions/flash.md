@@ -8,7 +8,7 @@
 
 > **flash**(`current`, `formId`): `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:4756](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4756)
+Defined in: [lib/form.ts:4766](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4766)
 
 让窗体闪烁
 

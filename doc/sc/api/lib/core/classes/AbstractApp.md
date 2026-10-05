@@ -472,7 +472,7 @@ Defined in: [lib/core.ts:111](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **onHashChanged**(`hash`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/core.ts:245](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L245)
+Defined in: [lib/core.ts:255](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L255)
 
 location hash 改变事件
 
@@ -492,7 +492,7 @@ location hash 改变事件
 
 > **onKeydown**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/core.ts:251](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L251)
+Defined in: [lib/core.ts:261](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L261)
 
 键盘按下事件
 
@@ -512,7 +512,7 @@ Defined in: [lib/core.ts:251](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **onKeyup**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/core.ts:257](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L257)
+Defined in: [lib/core.ts:267](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L267)
 
 键盘弹起事件
 
@@ -532,7 +532,7 @@ Defined in: [lib/core.ts:257](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **onLauncherFolderNameChanged**(`id`, `name`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/core.ts:239](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L239)
+Defined in: [lib/core.ts:249](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L249)
 
 launcher 文件夹名称修改事件
 
@@ -549,6 +549,30 @@ launcher 文件夹名称修改事件
 #### Returns
 
 `void` \| `Promise`\<`void`\>
+
+***
+
+### onLauncherShowChanged()
+
+> **onLauncherShowChanged**(`state`): `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/core.ts:243](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L243)
+
+Launcher 显示状态改变事件
+
+#### Parameters
+
+##### state
+
+`boolean`
+
+是否显示
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
 
 ***
 

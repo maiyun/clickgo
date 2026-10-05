@@ -6,7 +6,7 @@
 
 # Interface: IVNode
 
-Defined in: [lib/core.ts:1763](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1763)
+Defined in: [lib/core.ts:1797](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1797)
 
 Vue 节点
 
@@ -20,7 +20,7 @@ Vue 节点
 
 > **children**: `object` & `IVNode`[]
 
-Defined in: [lib/core.ts:1764](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1764)
+Defined in: [lib/core.ts:1798](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1798)
 
 #### Type Declaration
 
@@ -34,7 +34,7 @@ Defined in: [lib/core.ts:1764](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **props**: `Record`\<`string`, `any`\>
 
-Defined in: [lib/core.ts:1768](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1768)
+Defined in: [lib/core.ts:1802](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1802)
 
 ***
 
@@ -42,4 +42,4 @@ Defined in: [lib/core.ts:1768](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **type**: `symbol` \| `Record`\<`string`, `any`\>
 
-Defined in: [lib/core.ts:1769](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1769)
+Defined in: [lib/core.ts:1803](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1803)

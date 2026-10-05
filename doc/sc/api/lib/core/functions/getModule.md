@@ -16,7 +16,7 @@
 
 > **getModule**(`name`): `Promise`\<[`IMonacoLoader`](../interfaces/IMonacoLoader.md) \| `null`\>
 
-Defined in: [lib/core.ts:1465](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1465)
+Defined in: [lib/core.ts:1499](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1499)
 
 ### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1465](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getModule**(`name`): `Promise`\<[`ITumsPlayer`](../interfaces/ITumsPlayer.md) \| `null`\>
 
-Defined in: [lib/core.ts:1466](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1466)
+Defined in: [lib/core.ts:1500](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1500)
 
 ### Parameters
 
@@ -48,7 +48,7 @@ Defined in: [lib/core.ts:1466](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getModule**(`name`): `Promise`\<\{ \} \| `null`\>
 
-Defined in: [lib/core.ts:1467](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1467)
+Defined in: [lib/core.ts:1501](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1501)
 
 ### Parameters
 
@@ -64,7 +64,7 @@ Defined in: [lib/core.ts:1467](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getModule**(`name`): `Promise`\<`__module` \| `null`\>
 
-Defined in: [lib/core.ts:1468](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1468)
+Defined in: [lib/core.ts:1502](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1502)
 
 ### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [lib/core.ts:1468](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **getModule**(`name`): `Promise`\<`any`\>
 
-Defined in: [lib/core.ts:1469](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1469)
+Defined in: [lib/core.ts:1503](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1503)
 
 ### Parameters
 
