@@ -22,6 +22,9 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 托盘快照不保存其他应用的实例 --- */
     public trays: clickgo.task.ITrayInfo[] = [];
 
+    /** --- 启动入口的持续打开状态，由公共 Launcher 事件同步 --- */
+    public launcherShown = false;
+
     public get mode(): string {
         return clickgo.core.config['task.mode'];
     }
@@ -74,8 +77,26 @@ export default class extends clickgo.form.AbstractForm {
         return clickgo.core.config['task.position'];
     }
 
-    public showLauncher(): void {
-        clickgo.form.showLauncher();
+    /**
+     * --- 切换系统 Launcher，不在控件内部绑定系统行为 ---
+     * @returns 无返回值
+     */
+    public toggleLauncher(): void {
+        if (clickgo.form.getLauncherShow()) {
+            clickgo.form.hideLauncher();
+        }
+        else {
+            clickgo.form.showLauncher();
+        }
+    }
+
+    /**
+     * --- 其他入口打开或关闭 Launcher 时也同步启动按钮 ---
+     * @param state 是否显示
+     * @returns 无返回值
+     */
+    public onLauncherShowChanged(state: boolean): void {
+        this.launcherShown = state;
     }
 
     public async itemClick(appIndex: number): Promise<void> {
@@ -158,6 +179,7 @@ export default class extends clickgo.form.AbstractForm {
         this.topMost = true;
         clickgo.task.setSystem(this, this.formId);
         this.syncTrays();
+        this.launcherShown = clickgo.form.getLauncherShow();
         // --- 先读取 pin 列表 ---
         for (const path in clickgo.core.config['task.pin']) {
             this.apps.push({

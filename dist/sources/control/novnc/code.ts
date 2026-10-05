@@ -46,13 +46,14 @@ export default class extends clickgo.control.AbstractControl {
 
     public async onMounted(): Promise<void> {
         const novnc = await clickgo.core.getModule('@novnc/novnc');
-        if (!novnc) {
+        if (!novnc || typeof novnc.default !== 'function') {
             // --- 没有成功 ---
             this.isLoading = false;
             this.notInit = true;
             return;
         }
-        this.access.novnc = novnc.default.default;
+        // --- 1.7 使用原生 ESM，default 即为 RFB 构造函数 ---
+        this.access.novnc = novnc.default;
         // --- 监听上面的值的变动 ---
         this.watch(() => JSON.stringify(this.props.modelValue), (v: string, o: string) => {
             if (v === o) {
@@ -74,10 +75,11 @@ export default class extends clickgo.control.AbstractControl {
                 'credentials': {
                     'password': clickgo.tool.isTruthy(this.props.modelValue.pwd) ? this.props.modelValue.pwd : undefined,
                 },
-                'viewOnly': this.props.modelValue.view ?? false,
-                'clipViewport': false,
-                'scaleViewport': true,
             });
+            // --- 显示与输入选项通过实例属性设置，不属于构造参数 ---
+            this.access.rfb.viewOnly = this.props.modelValue.view ?? false;
+            this.access.rfb.clipViewport = false;
+            this.access.rfb.scaleViewport = true;
             this.access.rfb.addEventListener('connect', () => {
                 this.lastActive = Date.now();
                 this.emit('connect', {

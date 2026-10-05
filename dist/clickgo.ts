@@ -333,6 +333,16 @@ export abstract class AbstractBoot {
         return;
     }
 
+    /**
+     * --- Launcher 显示状态改变事件 ---
+     * @param state 是否显示
+     * @returns 无返回值
+     */
+    public onLauncherShowChanged(state: boolean): void | Promise<void>;
+    public onLauncherShowChanged(): void {
+        return;
+    }
+
     /** --- launcher 文件夹名称修改事件 --- */
     public onLauncherFolderNameChanged(id: string, name: string): void | Promise<void>;
     public onLauncherFolderNameChanged(): void {

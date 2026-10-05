@@ -8,7 +8,7 @@
 
 #### mode
 
-`string`，默认 `bar`。`bar` 填满任务栏所在边；`dock` 使用自然尺寸、圆角和内边距。task-item 自动跟随该模式。
+`string`，默认 `bar`。`bar` 填满任务栏所在边；`dock` 使用自然尺寸、圆角和内边距。task-start 和 task-item 自动跟随该模式。
 
 #### margin
 
@@ -20,7 +20,7 @@
 
 ### 插槽
 
-默认插槽放 task-item；tray 插槽放 task-tray；pop 插槽提供任务栏背景右键菜单。
+默认插槽放 task-start、task-item；tray 插槽放 task-tray；pop 插槽提供任务栏背景右键菜单。启动入口的显示与状态由调用方控制。
 
 ### 样式
 

@@ -100,3 +100,78 @@ assert.deepEqual(errors, [], 'event handlers do not throw');
 app.unmount();
 dom.window.close();
 console.log('Launcher blank areas, pointer tolerance, drag/cancel, input, folders and single app launch passed.');
+
+// --- 验证实际显示接口及动画时序，重复调用只通知真实状态变更。 ---
+const stateNames = new Set(['launcherShown', 'launcherHideTimer', 'getLauncherShow', 'showLauncher', 'hideLauncher']);
+const stateSource = tree.statements.filter(node => {
+    if (ts.isFunctionDeclaration(node)) return stateNames.has(node.name?.text);
+    return ts.isVariableStatement(node) && node.declarationList.declarations.some(d => stateNames.has(d.name.getText(tree)));
+}).map(node => node.getText(tree)).join('\n');
+const notifications = [];
+const frames = [];
+const timers = new Map();
+let timerId = 0;
+const surface = { style: {}, classList: new Set() };
+surface.classList.remove = surface.classList.delete;
+const launcher = { folderName: 'Folder', name: 'search', closeFolder() { this.folderName = ''; } };
+const stateScope = {
+    exports: {}, elements: { launcher: surface }, launcherRoot: launcher,
+    lCore: { trigger: async (...args) => notifications.push(args) },
+    requestAnimationFrame: callback => frames.push(callback),
+    setTimeout: callback => { timers.set(++timerId, callback); return timerId; },
+    clearTimeout: id => timers.delete(id),
+};
+vm.runInNewContext(ts.transpileModule(stateSource, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+}).outputText, stateScope);
+const display = stateScope.exports;
+assert.equal(display.getLauncherShow(), false);
+display.hideLauncher();
+display.showLauncher();
+display.showLauncher();
+assert.equal(display.getLauncherShow(), true);
+assert.equal(surface.style.display, 'flex');
+display.hideLauncher();
+frames.splice(0).forEach(callback => callback());
+assert.equal(surface.classList.has('cg-show'), false, 'hide before first paint cannot add a stale visible class');
+display.hideLauncher();
+assert.equal(timers.size, 1, 'duplicate hide does not schedule extra cleanup');
+display.showLauncher();
+assert.equal(timers.size, 0, 'reopening cancels the old closing animation');
+frames.splice(0).forEach(callback => callback());
+assert.equal(surface.classList.has('cg-show'), true);
+assert.equal(launcher.name, 'search', 'cancelled cleanup does not reset the reopened search');
+display.hideLauncher();
+timers.forEach(callback => callback());
+timers.clear();
+assert.equal(surface.style.display, 'none');
+assert.equal(launcher.folderName, '');
+assert.equal(launcher.name, '');
+assert.deepEqual(notifications, [
+    ['launcherShowChanged', true], ['launcherShowChanged', false],
+    ['launcherShowChanged', true], ['launcherShowChanged', false],
+]);
+
+// --- 非 root 应用、自定义任务栏与宿主均接收通知，异步应用不阻塞窗体。 ---
+const coreSource = await readFile(new URL('../dist/lib/core.ts', import.meta.url), 'utf8');
+const coreTree = ts.createSourceFile('core.ts', coreSource, ts.ScriptTarget.ES2022, true);
+const triggerSource = coreTree.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'trigger').getText(coreTree);
+const delivered = [];
+const routeScope = {
+    exports: {}, sysId: 'system',
+    boot: { onLauncherShowChanged: state => delivered.push(['boot', state]) },
+    lTask: { getOriginList: async () => ({
+        ordinary: { class: { onLauncherShowChanged: state => { delivered.push(['app', state]); return new Promise(() => {}); } },
+            forms: { bar: { vroot: { onLauncherShowChanged: state => delivered.push(['form', state]) } } } },
+    }) },
+};
+vm.runInNewContext(ts.transpileModule(triggerSource, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+}).outputText, routeScope);
+await routeScope.exports.trigger('launcherShowChanged', true);
+await routeScope.exports.trigger('launcherShowChanged', false);
+assert.deepEqual(delivered, [
+    ['boot', true], ['app', true], ['form', true],
+    ['boot', false], ['app', false], ['form', false],
+]);
+console.log('Launcher state query, broadcast, duplicate calls and close/reopen animation ordering passed.');

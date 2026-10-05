@@ -235,6 +235,16 @@ export abstract class AbstractApp {
         return;
     }
 
+    /**
+     * --- Launcher 显示状态改变事件 ---
+     * @param state 是否显示
+     * @returns 无返回值
+     */
+    public onLauncherShowChanged(state: boolean): void | Promise<void>;
+    public onLauncherShowChanged(): void {
+        return;
+    }
+
     /** --- launcher 文件夹名称修改事件 --- */
     public onLauncherFolderNameChanged(id: string, name: string): void | Promise<void>;
     public onLauncherFolderNameChanged(): void {
@@ -500,6 +510,30 @@ export async function trigger(name: TGlobalEvent, taskId: string | boolean | Key
                     (t.class as any)?.[eventName](taskId);
                     for (const fid in t.forms) {
                         t.forms[fid].vroot[eventName]?.(taskId);
+                    }
+                }
+            }
+            break;
+        }
+        case 'launcherShowChanged': {
+            if (typeof taskId !== 'boolean') {
+                return;
+            }
+            Promise.resolve(boot?.onLauncherShowChanged(taskId)).catch((error: unknown) => {
+                trigger('error', '', '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => {});
+            });
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                // --- 逐个投递但不等待异步处理，避免阻塞后来打开/关闭的状态同步。 ---
+                const receivers = [t.class, ...Object.values(t.forms).map(form => form.vroot)];
+                for (const receiver of receivers) {
+                    try {
+                        Promise.resolve(receiver?.onLauncherShowChanged?.(taskId)).catch((error: unknown) => {
+                            trigger('error', tid, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => {});
+                        });
+                    }
+                    catch (error) {
+                        trigger('error', tid, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => {});
                     }
                 }
             }
@@ -1389,7 +1423,7 @@ const modules: Record<string, {
     },
     // --- noVNC ---
     '@novnc/novnc': {
-        'version': '1.6.0',
+        'version': '1.7.0',
         'loading': false,
         'resolve': [],
     },
@@ -1648,7 +1682,7 @@ export interface IAvailArea {
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
+export type TGlobalEvent = 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'launcherShowChanged' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {

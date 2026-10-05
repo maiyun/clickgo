@@ -3,6 +3,10 @@ export default class extends clickgo.form.AbstractForm {
     mode = ['dock'];
     position = ['bottom'];
     showDate = false;
+    startShown = true;
+    startOpened = false;
+    startDisabled = false;
+    startLabel = ['auto'];
     opened = true;
     selected = true;
     multi = false;

@@ -1126,6 +1126,9 @@ export class AbstractForm extends AbstractCommon {
     onTaskEnded() {
         return;
     }
+    onLauncherShowChanged() {
+        return;
+    }
     onLauncherFolderNameChanged() {
         return;
     }
@@ -4286,27 +4289,55 @@ export async function flash(current, formId) {
     // --- 触发 formFlash 事件 ---
     await lCore.trigger('formFlash', current, formId);
 }
+/** --- Launcher 的逻辑显示状态，不包含关闭动画 --- */
+let launcherShown = false;
+/** --- 尚未完成的关闭动画 --- */
+let launcherHideTimer;
 /**
- * --- 显示 launcher 界面 ---
+ * --- 查询 Launcher 当前显示状态，供首次挂载时同步 ---
+ * @returns 是否显示
  */
-export function showLauncher() {
-    elements.launcher.style.display = 'flex';
-    requestAnimationFrame(function () {
-        elements.launcher.classList.add('cg-show');
-    });
+export function getLauncherShow() {
+    return launcherShown;
 }
 /**
- * --- 隐藏 launcher 界面 ---
+ * --- 显示 launcher 界面；状态变化时通知所有应用与窗体 ---
+ * @returns 无返回值
+ */
+export function showLauncher() {
+    if (launcherShown) {
+        return;
+    }
+    launcherShown = true;
+    clearTimeout(launcherHideTimer);
+    launcherHideTimer = undefined;
+    elements.launcher.style.display = 'flex';
+    requestAnimationFrame(function () {
+        if (launcherShown) {
+            elements.launcher.classList.add('cg-show');
+        }
+    });
+    lCore.trigger('launcherShowChanged', true).catch(() => { });
+}
+/**
+ * --- 隐藏 launcher 界面；重复关闭不重复通知或安排清理 ---
+ * @returns 无返回值
  */
 export function hideLauncher() {
+    if (!launcherShown) {
+        return;
+    }
+    launcherShown = false;
     elements.launcher.classList.remove('cg-show');
-    setTimeout(function () {
+    launcherHideTimer = setTimeout(function () {
+        launcherHideTimer = undefined;
         if (launcherRoot.folderName !== '') {
             launcherRoot.closeFolder();
         }
         launcherRoot.name = '';
         elements.launcher.style.display = 'none';
     }, 300);
+    lCore.trigger('launcherShowChanged', false).catch(() => { });
 }
 // --- 需要初始化 ---
 let inited = false;

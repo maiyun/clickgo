@@ -13,7 +13,7 @@
     }
 
     > .input {
-        -webkit-appearance: none; appearance: none; flex: 1; box-sizing: border-box; min-width: 0; height: var(--slider-size); margin: 0; padding: 0; border: none; outline: none; opacity: 1; cursor: pointer; background: linear-gradient(to right, var(--cg) 0 var(--slider-progress), var(--g-plain-border-color) var(--slider-progress) 100%); background-position: center; background-repeat: no-repeat; background-size: 100% 4px;
+        -webkit-appearance: none; appearance: none; flex: 1; box-sizing: border-box; min-width: 0; height: var(--slider-size); margin: 0; padding: 0; border: none; outline: none; opacity: 1; cursor: default; background: linear-gradient(to right, var(--cg) 0 var(--slider-progress), var(--g-plain-border-color) var(--slider-progress) 100%); background-position: center; background-repeat: no-repeat; background-size: 100% 4px;
 
         &::-webkit-slider-runnable-track {
             height: 4px; border-radius: var(--g-radius); background: transparent;

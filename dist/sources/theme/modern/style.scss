@@ -560,3 +560,12 @@ global {
         }
     }
 }
+
+// --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
+.task-start_wrap {
+    --task-start-label-display:none;
+    --task-start-color:var(--g-color);
+    --task-start-background-hover:color-mix(in oklch, var(--modern-accent-shift), transparent 88%);
+    --task-start-background-active:color-mix(in oklch, var(--modern-accent-shift), transparent 80%);
+    --task-start-background-opened:color-mix(in oklch, var(--modern-accent-shift), transparent 72%);
+}

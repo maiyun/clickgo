@@ -110,6 +110,9 @@ export class AbstractApp {
     onTaskEnded() {
         return;
     }
+    onLauncherShowChanged() {
+        return;
+    }
     onLauncherFolderNameChanged() {
         return;
     }
@@ -359,6 +362,30 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
                     t.class?.[eventName](taskId);
                     for (const fid in t.forms) {
                         t.forms[fid].vroot[eventName]?.(taskId);
+                    }
+                }
+            }
+            break;
+        }
+        case 'launcherShowChanged': {
+            if (typeof taskId !== 'boolean') {
+                return;
+            }
+            Promise.resolve(boot?.onLauncherShowChanged(taskId)).catch((error) => {
+                trigger('error', '', '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => { });
+            });
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                // --- 逐个投递但不等待异步处理，避免阻塞后来打开/关闭的状态同步。 ---
+                const receivers = [t.class, ...Object.values(t.forms).map(form => form.vroot)];
+                for (const receiver of receivers) {
+                    try {
+                        Promise.resolve(receiver?.onLauncherShowChanged?.(taskId)).catch((error) => {
+                            trigger('error', tid, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => { });
+                        });
+                    }
+                    catch (error) {
+                        trigger('error', tid, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => { });
                     }
                 }
             }
@@ -1175,7 +1202,7 @@ const modules = {
     },
     // --- noVNC ---
     '@novnc/novnc': {
-        'version': '1.6.0',
+        'version': '1.7.0',
         'loading': false,
         'resolve': [],
     },

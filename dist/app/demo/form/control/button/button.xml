@@ -69,6 +69,7 @@
             <layout gutter="10" class="buttons">
                 <button checked>Always</button>
                 <button :checked="btnChecked" @click="btnChecked = !btnChecked">Toggle</button>
+                <button type="tool" :checked="btnChecked" @click="btnChecked = !btnChecked">Tool toggle</button>
                 <button :checked="btnRadio === '0'" @click="btnRadio = '0'">Radio 1</button>
                 <button :checked="btnRadio === '1'" @click="btnRadio = '1'">Radio 2</button>
             </layout>

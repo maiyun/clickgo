@@ -8,6 +8,14 @@ export default class extends clickgo.form.AbstractForm {
 
     public showDate = false;
 
+    public startShown = true;
+
+    public startOpened = false;
+
+    public startDisabled = false;
+
+    public startLabel = ['auto'];
+
     public opened = true;
 
     public selected = true;

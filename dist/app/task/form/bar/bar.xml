@@ -1,8 +1,7 @@
 <form title="Bar" border="none" :resize="false" background="transparent">
     <task :position="position" :mode="mode" :margin="margin">
-        <task-item @click="showLauncher">
-            <img src="/clickgo/icon.png" :style="{'width': mode === 'dock' ? '24px' : '16px', 'height': mode === 'dock' ? '24px' : '16px'}" />
-        </task-item>
+        <!-- 启动入口独立于应用项；文字显隐和打开状态外观由主题决定。 -->
+        <task-start icon="/clickgo/icon.png" :label="l('start')" :opened="launcherShown" @click="toggleLauncher"></task-start>
         <task-item v-for="(app, appIndex) of apps" :selected="app.selected" :opened="app.opened" :multi="app.formCount > 1" @click="itemClick(appIndex)" @pointerdown="$event.stopPropagation()">
             <img :src="app.icon || '/clickgo/icon.png'" :style="{'width': mode === 'dock' ? '24px' : '16px', 'height': mode === 'dock' ? '24px' : '16px'}" />
             <template v-if="app.formCount > 1" v-slot:pop>

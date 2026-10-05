@@ -201,6 +201,9 @@ export class AbstractBoot {
     onTaskEnded() {
         return;
     }
+    onLauncherShowChanged() {
+        return;
+    }
     onLauncherFolderNameChanged() {
         return;
     }

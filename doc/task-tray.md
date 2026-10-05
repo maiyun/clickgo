@@ -1,6 +1,21 @@
 # Task、Dock 与系统托盘
 
-task 是布局控件；task-item 和 task-tray 是显示及交互控件。它们不持有应用实例、不自动注册为系统任务栏，也不执行应用操作。官方 task app 与用户开发的替代 task app 都使用同一组公共 API。
+task 是布局控件；task-start、task-item 和 task-tray 是显示及交互控件。它们不持有应用实例、不自动注册为系统任务栏，也不执行应用操作。官方 task app 与用户开发的替代 task app 都使用同一组公共 API。
+
+## 启动入口与 Launcher 状态
+
+`task-start` 是独立启动入口，与其他任务栏子控件一起打包在 `/clickgo/control/task`；应用同时加载 `/clickgo/control/common` 提供基础图标等控件。通过 icon、label 传入图标与本地化文字；showLabel 默认 auto，由主题决定是否显示文字，也可显式设为 true/false。整个入口是否显示由应用的 v-if 决定。opened 表示菜单持续打开状态，disabled 禁用激活；click 响应鼠标、触摸、Enter 和 Space。控件不自动打开 Launcher，也不修改 opened。
+
+```xml
+<task>
+    <task-start icon="/clickgo/icon.png" :label="l('start')" :opened="launcherShown" @click="toggleLauncher"></task-start>
+    <!-- 应用项与托盘内容 -->
+</task>
+```
+
+使用系统 Launcher 时，首次挂载读取 `clickgo.form.getLauncherShow()`，在 App 或 Form 的 `onLauncherShowChanged(state: boolean)` 中更新自己的 launcherShown。事件也投递到宿主 Boot；同一逻辑状态的重复 show/hide 不重复通知。关闭开始时状态为 false，关闭动画结束后隐藏内容；动画期间重新打开会取消旧清理。通过 `showLauncher()` / `hideLauncher()` 切换；不根据按钮点击次数猜测状态。
+
+使用自定义菜单时，直接把菜单的显示状态绑定到 opened，无需系统 Launcher。各主题可独立定义 task-start 的普通、悬停、焦点、临时按下、opened 和禁用外观；Classic 在 opened 期间保持凹边，其他内置主题使用各自的背景状态色。
 
 ## 应用注册托盘
 
@@ -42,7 +57,7 @@ public async onTrayMenuClick(trayId: string, menuId: string): Promise<void> {
 
 1. 如既有 task app，在 Form 中提供 `position`（绑定公共配置），调用 `task.setSystem(this, this.formId)` 注册系统任务栏。读取其他应用的任务/窗体事件仍沿用已有 root 权限机制。
 2. 首次挂载用 `task.getTrayList(this)` 获取快照；在公共 `onTrayCreated(taskId, trayId)`、`onTrayChanged`、`onTrayRemoved` 事件中重新读取。事件向所属任务、当前系统任务栏及 root 任务投递。普通任务只能读取自己的托盘。先注册系统任务栏再同步快照，不使用异步原始任务列表初始化托盘。
-3. `config.json` 加载 `/clickgo/control/common` 和 `/clickgo/control/task`。task 包包含 task-item 和 task-tray。
+3. `config.json` 加载 `/clickgo/control/common` 和 `/clickgo/control/task`。task 包包含 task-start、task-item 和 task-tray。
 4. 显示 `<task-tray :icon="item.icon" :tip="item.tip" :menu="item.menu">`。将 `activate` 与 `menu` 控件事件交给 `task.activateTray(this, item.id, menuId?)`。只有当前注册的系统任务栏可投递，框架校验托盘与菜单是否还存在，以及 disabled/separator。旧任务栏被替换后不能继续投递。
 
 task-tray 的默认插槽可替换图标，contextmenu 插槽可替换菜单。默认菜单支持命令、禁用项和分隔线；业务参数留在所属应用内，由 trayId/menuId 查找。菜单复用 menulist、system Teleport 和 Pointer.js 的右键/触摸长按机制。

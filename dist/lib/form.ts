@@ -1416,6 +1416,16 @@ export abstract class AbstractForm extends AbstractCommon {
         return;
     }
 
+    /**
+     * --- Launcher 显示状态改变事件 ---
+     * @param state 是否显示
+     * @returns 无返回值
+     */
+    public onLauncherShowChanged(state: boolean): void | Promise<void>;
+    public onLauncherShowChanged(): void {
+        return;
+    }
+
     /** --- launcher 文件夹名称修改事件 --- */
     public onLauncherFolderNameChanged(id: string, name: string): void | Promise<void>;
     public onLauncherFolderNameChanged(): void {
@@ -4777,28 +4787,59 @@ export async function flash(current: lCore.TCurrent, formId: string): Promise<vo
     await lCore.trigger('formFlash', current, formId);
 }
 
+/** --- Launcher 的逻辑显示状态，不包含关闭动画 --- */
+let launcherShown = false;
+
+/** --- 尚未完成的关闭动画 --- */
+let launcherHideTimer: ReturnType<typeof setTimeout> | undefined;
+
 /**
- * --- 显示 launcher 界面 ---
+ * --- 查询 Launcher 当前显示状态，供首次挂载时同步 ---
+ * @returns 是否显示
  */
-export function showLauncher(): void {
-    elements.launcher.style.display = 'flex';
-    requestAnimationFrame(function() {
-        elements.launcher.classList.add('cg-show');
-    });
+export function getLauncherShow(): boolean {
+    return launcherShown;
 }
 
 /**
- * --- 隐藏 launcher 界面 ---
+ * --- 显示 launcher 界面；状态变化时通知所有应用与窗体 ---
+ * @returns 无返回值
+ */
+export function showLauncher(): void {
+    if (launcherShown) {
+        return;
+    }
+    launcherShown = true;
+    clearTimeout(launcherHideTimer);
+    launcherHideTimer = undefined;
+    elements.launcher.style.display = 'flex';
+    requestAnimationFrame(function() {
+        if (launcherShown) {
+            elements.launcher.classList.add('cg-show');
+        }
+    });
+    lCore.trigger('launcherShowChanged', true).catch(() => {});
+}
+
+/**
+ * --- 隐藏 launcher 界面；重复关闭不重复通知或安排清理 ---
+ * @returns 无返回值
  */
 export function hideLauncher(): void {
+    if (!launcherShown) {
+        return;
+    }
+    launcherShown = false;
     elements.launcher.classList.remove('cg-show');
-    setTimeout(function() {
+    launcherHideTimer = setTimeout(function() {
+        launcherHideTimer = undefined;
         if (launcherRoot.folderName !== '') {
             launcherRoot.closeFolder();
         }
         launcherRoot.name = '';
         elements.launcher.style.display = 'none';
     }, 300);
+    lCore.trigger('launcherShowChanged', false).catch(() => {});
 }
 
 // --- 需要初始化 ---

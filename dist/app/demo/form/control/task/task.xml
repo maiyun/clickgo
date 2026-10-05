@@ -12,10 +12,18 @@
             <check v-model="selected">Selected</check>
             <check v-model="multi">Multiple windows</check>
         </layout>
+        <!-- 启动入口状态与应用项独立；auto 文字显隐由当前主题决定 -->
+        <layout gutter="10">
+            <check v-model="startShown">Start</check>
+            <check v-model="startOpened">Start opened</check>
+            <check v-model="startDisabled">Start disabled</check>
+            <select v-model="startLabel" :data="['auto', 'show', 'hide']"></select>
+        </layout>
         <layout align-h="center" align-v="center" style="flex: 1; min-height: 0;">
             <!-- bar 只填满所在边的长度，预览区的剩余空间不应撑大任务栏厚度 -->
             <task :position="position[0]" :mode="mode[0]" :show-date="showDate" style="max-width: 100%; max-height: 100%;"
                 :style="mode[0] === 'bar' ? ((position[0] === 'left' || position[0] === 'right') ? {'width': 'auto'} : {'height': 'auto'}) : undefined">
+                <task-start v-if="startShown" icon="/clickgo/icon.png" label="Start" :show-label="startLabel[0] === 'auto' ? 'auto' : startLabel[0] === 'show'" :opened="startOpened" :disabled="startDisabled" @click="startOpened = !startOpened; message = 'Start click'"></task-start>
                 <task-item :opened="opened" :selected="selected" :multi="multi" @click="message = 'Task item click'">
                     <img src="/clickgo/icon.png" :style="{'width': mode[0] === 'dock' ? '24px' : '16px', 'height': mode[0] === 'dock' ? '24px' : '16px'}"></img>
                 </task-item>

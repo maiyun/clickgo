@@ -529,3 +529,12 @@ global {
         color: oklch(.96 .005 255);
     }
 }
+
+// --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
+.task-start_wrap {
+    --task-start-label-display:none;
+    --task-start-color:oklch(.96 .005 255);
+    --task-start-background-hover:rgba(255, 255, 255, .1);
+    --task-start-background-active:rgba(255, 255, 255, .16);
+    --task-start-background-opened:rgba(255, 255, 255, .2);
+}

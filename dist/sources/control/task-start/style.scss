@@ -1,0 +1,28 @@
+.wrap {
+    --task-start-label-display: none;
+    --task-start-color: var(--g-color);
+    --task-start-background-hover: rgba(255, 255, 255, .1);
+    --task-start-background-active: rgba(255, 255, 255, .05);
+    --task-start-background-opened: rgba(255, 255, 255, .2);
+    display: flex; align-items: center; justify-content: center; position: relative; flex: 0 0 auto;
+    color: var(--task-start-color); background: transparent; padding: 10px 12px;
+    border: 1px solid transparent; outline: none; cursor: default;
+    transition: var(--g-transition); transition-property: background-color, box-shadow, color;
+    .content { display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .icon { width: 16px; height: 16px; flex-shrink: 0; }
+    .label { display: var(--task-start-label-display); white-space: nowrap; }
+    &.label-show .label { display: inline-flex; }
+    &.label-hide .label { display: none; }
+    &.dock {
+        border-radius: 10px; margin: 0 2px;
+        .icon { width: 24px; height: 24px; }
+        &.left, &.right { margin: 2px 0; }
+    }
+    &:not([data-cg-disabled]) {
+        &:hover { background: var(--task-start-background-hover); }
+        &:active, &.active { background: var(--task-start-background-active); }
+        &.opened { background: var(--task-start-background-opened); }
+        &:focus-visible { box-shadow: inset 0 0 0 1px var(--task-start-color); }
+    }
+    &[data-cg-disabled] { opacity: .5; }
+}

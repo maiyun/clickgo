@@ -22,7 +22,7 @@ const commonControls = new Set([
     'select', 'sidebar-toggle', 'text', 'toolbox',
 ]);
 /** --- 全部内置主题 --- */
-const themes = ['admin', 'cyber', 'dark', 'light', 'modern', 'modern-light', 'software-dark', 'software-light'];
+const themes = ['admin', 'classic', 'cyber', 'dark', 'light', 'modern', 'modern-light', 'software-dark', 'software-light'];
 /** --- CGA 格式常量，与编译器的公开包格式保持一致 --- */
 const cgaHeaderLength = 106;
 const cgaKeyContext = Buffer.from('ClickGo/Application/Package');
@@ -423,6 +423,18 @@ for (const theme of themes) {
         /(?:border|inset|margin|padding)-inline/,
         archiveError(archive, 'style.css has no logical inline-direction properties'),
     );
+    // --- 主题自带图标必须随归档发布，不能只在源码目录中存在。 ---
+    const zip = await loadZipArchive(archive);
+    for (const match of archivedCss.matchAll(/url\(['"]?([^'"\)]+)['"]?\)/g)) {
+        const resource = match[1].replace(/^\.\//, '');
+        if (/^(?:data:|https?:|\/\/|#)/.test(resource)) {
+            continue;
+        }
+        const entry = zip.file(resource);
+        assert.ok(entry, archiveError(archive, `referenced resource ${resource} is absent`));
+        const source = await readProjectFile(`dist/sources/theme/${theme}/${resource}`);
+        assert.deepEqual(await entry.async('nodebuffer'), source, archiveError(archive, `${resource} differs from its source`));
+    }
 }
 
 console.log(`Archive check passed: task.cga has 16 locales, ${localeControls.length} control locale tables are current, and RTL output is present in all ${themes.length} themes.`);

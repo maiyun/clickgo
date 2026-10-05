@@ -1,0 +1,6 @@
+<div class="wrap" :class="[position, mode === 'dock' && 'dock', 'label-' + labelMode, propBoolean('opened') && 'opened', isSpaceDown && 'active']" role="button" :tabindex="propBoolean('disabled') ? undefined : '0'" :aria-label="label" :aria-expanded="propBoolean('opened')" :aria-disabled="propBoolean('disabled')" :data-cg-disabled="propBoolean('disabled') ? '' : undefined" @pointerdown="down" @click="click" @keydown="keydown" @keyup="keyup" @blur="isSpaceDown = false">
+    <div class="content">
+        <slot name="icon"><cg-img v-if="icon" :src="icon" class="icon" mode="contain"></cg-img></slot>
+        <span v-if="label" class="label">{{label}}</span>
+    </div>
+</div>
