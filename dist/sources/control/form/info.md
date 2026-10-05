@@ -40,6 +40,14 @@
 
 是否允许调整大小，默认 true。
 
+#### sizeGrip
+
+`'auto'` | `'show'` | `'hide'`，默认 `auto`，模板属性为 `size-grip`。
+
+底角缩放握柄的显示策略。`auto` 由主题决定，Classic 默认显示，其他内置主题默认隐藏；`show` 显式显示，`hide` 隐藏。不可缩放、最大化、最小化或由 Native 管理缩放的首个沉浸式窗体始终不显示。
+
+有 `footer` 插槽时，在其末端为握柄留位；没有 footer 时只在内容区底角叠加，不修改内容尺寸或 padding。RTL 时位于左下角，并从左下角缩放。握柄沿用窗体的最小尺寸约束、吸附和尺寸双向绑定。
+
 #### move
 
 `boolean` | `string`
@@ -176,10 +184,34 @@ CSS `background` 简写，默认 `''`，使用主题背景。可设置颜色、�
 
 加载状态时内容区域显示遮罩和加载动画。最大化时填满可用空间，最小化时收缩到任务栏。
 
+主题可通过 `--g-form-size-grip-size` 设置 `auto` 时的握柄尺寸（默认 `0px`），通过 `.form_size-grip::before` 定义图案。显式 `show` 使用 16px；握柄没有独立背景填充。
+
+### 插槽
+
+#### default
+
+窗体主内容，使用 `padding` 和 `direction` 参数。
+
+#### footer
+
+固定在主内容下方的页脚，可放 Statusbar 或自定义布局。高度随插槽内容变化，不继承主内容的 padding；握柄显示时只在页脚末端留位。未提供此插槽时不创建页脚、不预留底部高度。
+
 ### 示例
 
 ```xml
 <form title="My Form" :width="500" :height="400" :move="move" :resize="resize" :max="max" @size="onSize">Content</form>
+```
+
+```xml
+<form title="Editor" direction="v">
+    <text type="multi" style="flex: 1;"></text>
+    <template v-slot:footer>
+        <statusbar>
+            <statusbar-item>Ready</statusbar-item>
+            <template v-slot:right><statusbar-item>UTF-8</statusbar-item></template>
+        </statusbar>
+    </template>
+</form>
 ```
 
 

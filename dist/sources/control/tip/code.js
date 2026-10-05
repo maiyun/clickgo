@@ -106,8 +106,9 @@ export default class extends clickgo.control.AbstractControl {
         const rect = el.getBoundingClientRect();
         const x = Math.max(10, Math.min(pop.offsetWidth - 10, rect.left + rect.width / 2 - position.left));
         const y = Math.max(10, Math.min(pop.offsetHeight - 10, rect.top + rect.height / 2 - position.top));
-        pop.style.setProperty('--tip-arrow-x', `${x}px`);
-        pop.style.setProperty('--tip-arrow-y', `${y}px`);
+        // --- 箭头的绝对定位原点在边框内侧，先扣除边框，避免中心向右下偏移。 ---
+        pop.style.setProperty('--tip-arrow-x', `${x - pop.clientLeft}px`);
+        pop.style.setProperty('--tip-arrow-y', `${y - pop.clientTop}px`);
     }
     /** --- 隐藏 tip --- */
     async hideTip() {

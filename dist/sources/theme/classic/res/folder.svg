@@ -1,1 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#000" d="M2 6h10v2h17v3h2v15H1V9h1z"/><path fill="#808000" d="M3 7h8v2h17v16H2V10h1z"/><path fill="#ffff80" d="M3 10h25v2H3zM3 11h1v12H3z"/><path fill="#ffff00" d="M5 13h25l-3 12H2z"/><path fill="#ffff80" d="M5 13h25v1H5z"/><path fill="#c0c000" d="M28 15h1l-2 10H3v-1h23z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges">
+    <defs>
+        <pattern id="paper" width="2" height="2" patternUnits="userSpaceOnUse">
+            <rect width="2" height="2" fill="#f5d77a"/>
+            <path fill="#ffeaa1" d="M0 0h1v1H0z"/>
+            <path fill="#e8c66d" d="M1 1h1v1H1z"/>
+        </pattern>
+    </defs>
+    <!-- 原创闭合文件夹：单像素轮廓、纸黄色阶和交错点阵。 -->
+    <path fill="#514b32" d="M3 9h27v18H3z"/>
+    <path fill="#827039" d="M2 8h2V5h9v1h2v2h13v1h1v17H2z"/>
+    <path fill="#f8e39a" d="M3 9h2V6h7v1h2v2h13v1h1v15H3z"/>
+    <path fill="url(#paper)" d="M4 11h23v13H4z"/>
+    <path fill="#fff4bf" d="M5 6h7v1H5zM3 10h24v1H3zM3 11h1v13H3z"/>
+    <path fill="#c29e50" d="M27 11h1v14H3v-1h24z"/>
+</svg>

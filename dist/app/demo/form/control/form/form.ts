@@ -30,6 +30,10 @@ export default class extends clickgo.form.AbstractForm {
 
     public resize = true;
 
+    public sizeGrip: Array<'auto' | 'show' | 'hide'> = ['auto'];
+
+    public footer = true;
+
     public border = 'normal';
 
     public size = {

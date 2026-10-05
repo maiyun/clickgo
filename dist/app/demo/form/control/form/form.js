@@ -14,6 +14,8 @@ export default class extends clickgo.form.AbstractForm {
     minWidth = 200;
     minHeight = 100;
     resize = true;
+    sizeGrip = ['auto'];
+    footer = true;
     border = 'normal';
     size = {
         'width': 0,

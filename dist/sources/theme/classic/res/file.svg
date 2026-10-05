@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#000" d="M6 2h14l7 7v21H6z"/><path fill="#fff" d="M7 3h12v7h7v19H7z"/><path fill="#c0c0c0" d="M20 4l5 5h-5zM8 28h17v1H8z"/><path fill="#808080" d="M10 14h12v1H10zm0 3h12v1H10zm0 3h12v1H10zm0 3h9v1h-9z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges">
+    <!-- 原创折角文档：细边纸页、阶梯折角和短行文字。 -->
+    <path fill="#454545" d="M8 3h13v1h1v1h1v1h1v1h1v1h1v22H8z"/>
+    <path fill="#737373" d="M6 2h14v1h1v1h1v1h1v1h1v1h1v22H6z"/>
+    <path fill="#fff" d="M7 3h12v6h5v19H7z"/>
+    <path fill="#e5e5e5" d="M20 4h1v1h1v1h1v1h1v1h-4zM8 27h15v1H8z"/>
+    <path fill="#a0a0a0" d="M19 3h1v5h4v1h-5zM23 10h1v17h-1z"/>
+    <path fill="#585858" d="M10 12h3v1h-3zm4 0h6v1h-6zm-4 3h10v1H10zm0 3h6v1h-6zm7 0h4v1h-4zm-7 3h10v1H10zm0 3h7v1h-7z"/>
+</svg>

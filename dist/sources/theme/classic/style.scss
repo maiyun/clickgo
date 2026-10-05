@@ -173,6 +173,9 @@ global {
 }
 
 .form_wrap {
+    --g-form-size-grip-size:16px;
+    --size-grip-inset:2px;
+    &.form_border-none { --size-grip-inset:0px; }
     color: var(--g-color);
     transition: none;
     &:not(.form_border-none):not([data-cg-max]), &:not(.form_border-none)[data-cg-max] {
@@ -260,6 +263,9 @@ global {
     > .form_inner > .form_content {
         color: var(--g-color);
         .form_step { @include raised; }
+    }
+    > .form_size-grip::before {
+        background: url(res/size-grip.svg) bottom right / 16px 16px no-repeat;
     }
 }
 
@@ -483,6 +489,8 @@ global {
     }
 }
 .text_wrap {
+    // --- 多行内容与滚动条都留在凹边内侧，避免盖住内层暗线和亮线。 ---
+    &:not(.text_plain):has(> .text_multi-t) { padding: 1px; }
     // --- 步进按钮留在输入框凹边之内，不覆盖内侧暗线和亮线。 ---
     &:not(.text_plain) .text_number { margin: 1px; }
     .text_number {
@@ -870,6 +878,12 @@ global {
     @include thin-sunken;
     margin-inline-end: 2px;
 }
+.statusbar_wrap.statusbar_separator {
+    // --- 组内保留 item 间距，末项不与状态栏两端的 padding 叠加。 ---
+    > .statusbar_body, > .statusbar_right {
+        > .statusbar-item_wrap:last-child { margin-inline-end: 0; }
+    }
+}
 .table_wrap {
     // --- table 统一负责外框，内部 greatlist 不重复绘制凹面边框和边框留白。 ---
     &:not(.table_mode-view):not(.table_mode-iview) { padding: 1px; }
@@ -897,7 +911,11 @@ global {
 .dialog_wrap .dialog_content { background: var(--face); }
 .dialog_wrap .dialog_controls { border: none; padding: 8px 10px; }
 .dialog_wrap .dialog_controls .dialog_tag-cg-button { min-width: 75px; }
-.tip_pop { color: #000000; background: #ffffe1; border: solid 1px #000000; box-shadow: none; }
+.tip_pop {
+    color: #000000; background: #ffffe1; border: solid 1px #000000; box-shadow: none;
+    // --- 箭头与提示框共用配色，避免继承通用浮层的灰色背景和边框。 ---
+    &::after { background: inherit; border-color: inherit; }
+}
 
 // --- 页签及停靠面板使用中性凸面，不出现强调色下划线。 ---
 .tab_wrap {
@@ -921,7 +939,12 @@ global {
             }
         }
     }
-    > .tab_panel { @include raised; background: var(--face); }
+    > .tab_panel {
+        @include raised;
+        // --- 滚动内容在内层边框以内裁剪，避免盖住凸边的灰色内阴影。 ---
+        padding: 1px;
+        background: var(--face);
+    }
     &.tab_top, &.tab_bottom {
         > .tab_tabs-wrap > .tab_tabs > .tab_tab.tab_selected {
             // --- 选中页签覆盖相邻暗边；增加内边距以保持其他页签的位置。 ---

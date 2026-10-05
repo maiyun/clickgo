@@ -9,8 +9,8 @@ span {
     }
 
     &::after {
-        // --- 指向 ---
-        content: ''; position: absolute; width: 10px; height: 10px; border: var(--g-pop-border); border-width: 0 .5px .5px 0; transform: rotate(45deg); left: calc(var(--tip-arrow-x, 50%) - 5px); bottom: -6px; background: var(--g-pop-background);
+        // --- 只绘制旋转方块朝外的一半，衔接边框而不遮挡框内文字。 ---
+        content: ''; position: absolute; width: 10px; height: 10px; border: var(--g-pop-border); border-width: 0 .5px .5px 0; transform: rotate(45deg); clip-path: polygon(100% 0, 100% 100%, 0 100%); left: calc(var(--tip-arrow-x, 50%) - 5px); bottom: -5px; background: var(--g-pop-background);
     }
 
     &:not(.plain) {
@@ -53,19 +53,19 @@ span {
 
     &[data-tip-direction="bottom"] {
         &::after {
-            bottom: initial; top: -6px; border-width: .5px 0 0 .5px;
+            bottom: initial; top: -5px; border-width: .5px 0 0 .5px; clip-path: polygon(0 0, 100% 0, 0 100%);
         }
     }
 
     &[data-tip-direction="left"] {
         &::after {
-            left: initial; right: -6px; top: calc(var(--tip-arrow-y, 50%) - 5px); bottom: initial; border-width: .5px .5px 0 0;
+            left: initial; right: -5px; top: calc(var(--tip-arrow-y, 50%) - 5px); bottom: initial; border-width: .5px .5px 0 0; clip-path: polygon(0 0, 100% 0, 100% 100%);
         }
     }
 
     &[data-tip-direction="right"] {
         &::after {
-            left: -6px; top: calc(var(--tip-arrow-y, 50%) - 5px); bottom: initial; border-width: 0 0 .5px .5px;
+            left: -5px; top: calc(var(--tip-arrow-y, 50%) - 5px); bottom: initial; border-width: 0 0 .5px .5px; clip-path: polygon(0 0, 100% 100%, 0 100%);
         }
     }
 }

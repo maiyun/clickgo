@@ -27,6 +27,7 @@ export default class extends clickgo.control.AbstractControl {
         'max': boolean | string;
         'close': boolean | string;
         'resize': boolean | string;
+        'sizeGrip': 'auto' | 'show' | 'hide';
         'move': boolean | string;
         'viewport': boolean | string;
         'loading': boolean | string;
@@ -57,6 +58,7 @@ export default class extends clickgo.control.AbstractControl {
             'max': true,
             'close': true,
             'resize': true,
+            'sizeGrip': 'auto',
             'move': true,
             'viewport': false,
             'loading': false,
@@ -146,6 +148,20 @@ export default class extends clickgo.control.AbstractControl {
 
     public get isResize(): boolean {
         return this.isNativeNoFrameFirst ? false : clickgo.tool.getBoolean(this.props.resize);
+    }
+
+    /** --- 可缩放的普通窗体允许显示握柄，auto 的实际显示尺寸由主题决定 --- */
+    public get isSizeGrip(): boolean {
+        return this.isResize && !this.stateMaxData && !this.stateMinData && this.props.sizeGrip !== 'hide';
+    }
+
+    /**
+     * --- 握柄沿文字方向放在底角，复用窗体的缩放和双向绑定 ---
+     * @param e 指针事件
+     * @returns 无返回值
+     */
+    public sizeGripDown(e: PointerEvent): void {
+        this.resizeMethod(e, clickgo.dom.isRtl(this.element) ? 'bl' : 'rb');
     }
 
     public get isMove(): boolean {

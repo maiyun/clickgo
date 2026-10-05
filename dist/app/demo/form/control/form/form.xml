@@ -1,8 +1,13 @@
-<form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :viewport="viewport" :padding="safeArea ? 'safe' : ''" :min="min" :max="max" :close="cclose" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :border="border" direction="v" @close="onClose" @size="onSize">
+<form v-model:width="width" v-model:height="height" :icon="icon" :title="title" :viewport="viewport" :padding="safeArea ? 'safe' : ''" :min="min" :max="max" :close="cclose" v-model:state-max="stateMax" v-model:state-min="stateMin" :min-width="minWidth" :min-height="minHeight" :resize="resize" :size-grip="sizeGrip[0]" :border="border" direction="v" @close="onClose" @size="onSize">
     <flow direction="v">
         <layout direction="v" gutter="10" style="padding: 10px;">
             <label>focus: {{formFocus}}, width: {{width}}, height: {{height}}, state-max: {{stateMax}}, state-min: {{stateMin}}.</label>
             <label>Actual size event: {{size.width}} × {{size.height}}</label>
+            <!-- footer 与握柄可分别切换，主内容区保持原有的布局规则。 -->
+            <layout gutter="10">
+                <check v-model="footer">footer</check>
+                <select v-model="sizeGrip" :data="['auto', 'show', 'hide']"></select>
+            </layout>
             <button @click="icon = icon ? '' : '/package/res/icon.svg'">Set icon</button>
             <button @click="title = (title === 'Form') ? 'Changed' : 'Form'">Set title</button>
             <button @click="min = min ? false : true">{{min ? 'Hide' : 'Show'}} min button</button>
@@ -29,4 +34,10 @@
             </layout>
         </layout>
     </flow>
+    <template v-if="footer" v-slot:footer>
+        <statusbar>
+            <statusbar-item grow>Ready</statusbar-item>
+            <template v-slot:right><statusbar-item>Online</statusbar-item></template>
+        </statusbar>
+    </template>
 </form>
