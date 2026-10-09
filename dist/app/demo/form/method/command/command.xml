@@ -1,0 +1,40 @@
+<form title="Library command" width="640" height="680" min-width="300" min-height="420" padding="10" direction="v">
+    <!-- 普通菜单及快捷键复用注册命令 -->
+    <menu>
+        <menu-item>
+            <template v-slot>Counter</template>
+            <template v-slot:pop>
+                <menulist>
+                    <menulist-item @click="add" alt="Ctrl+Enter">Increase counter</menulist-item>
+                    <menulist-item @click="palette" alt="Ctrl+Shift+P">Command palette</menulist-item>
+                </menulist>
+            </template>
+        </menu-item>
+    </menu>
+    <flow direction="v" style="flex: 1;">
+        <layout direction="v" gutter="10">
+            <label size="l">Counter: {{value}}</label>
+            <label>Last execution source: {{source || 'Not executed yet'}}</label>
+            <label>Buttons, menus, shortcuts, the palette and the agent bridge share the same command.</label>
+            <!-- 可见入口兼容只通过浏览器界面操作的代理 -->
+            <layout gutter="10" wrap>
+                <button @click="add">Add 1</button>
+                <button @click="bridgeAdd">Add 2 via agent bridge</button>
+                <button @click="palette">Command palette</button>
+            </layout>
+            <!-- 页面代理可见的发现提示；示例代码指向框架统一发布的接口 -->
+            <label size="l">AI agent interface</label>
+            <label>ClickGo provides window['clickgo']['command'] for every app. WebMCP is optional.</label>
+            <label>First call api.listTasks() to find apps, then api.list(taskId) for command names, descriptions, input schemas and availability. Use api.execute(taskId, name, args) to run a command.</label>
+            <text :model-value="agentGuide" readonly type="multi" dir="ltr" style="height: 120px;"></text>
+            <label>Use this API when your browser tools allow page JavaScript. Otherwise use the buttons or command palette.</label>
+            <layout gutter="10" wrap align-v="center">
+                <button @click="listCommands">List exposed commands</button>
+                <button @click="connect">Connect WebMCP</button>
+                <label>{{webMcp ? 'Connected' : 'Disconnected or unsupported'}}</label>
+            </layout>
+            <label>Increase command: {{addName}}</label>
+            <text :model-value="result" readonly type="multi" dir="ltr" style="height: 100px;"></text>
+        </layout>
+    </flow>
+</form>

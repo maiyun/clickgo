@@ -86,6 +86,6 @@ Defined in: [lib/core.ts:1657](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### task.position
 
-> **task.position**: `"left"` \| `"top"` \| `"right"` \| `"bottom"`
+> **task.position**: `"left"` \| `"right"` \| `"top"` \| `"bottom"`
 
 Defined in: [lib/core.ts:1654](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1654)

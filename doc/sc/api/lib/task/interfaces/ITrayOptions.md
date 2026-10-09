@@ -6,7 +6,7 @@
 
 # Interface: ITrayOptions
 
-Defined in: [lib/task.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L80)
+Defined in: [lib/task.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L81)
 
 托盘注册数据；包内图标请用 /package/ 开头的路径
 
@@ -16,7 +16,7 @@ Defined in: [lib/task.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **icon**: `string`
 
-Defined in: [lib/task.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L81)
+Defined in: [lib/task.ts:82](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L82)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/task.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **menu?**: [`ITrayMenuItem`](ITrayMenuItem.md)[]
 
-Defined in: [lib/task.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L83)
+Defined in: [lib/task.ts:84](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L84)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/task.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **tip?**: `string`
 
-Defined in: [lib/task.ts:82](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L82)
+Defined in: [lib/task.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L83)

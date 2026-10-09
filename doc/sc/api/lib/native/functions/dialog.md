@@ -16,7 +16,7 @@ Defined in: [lib/native.ts:380](https://github.com/maiyun/clickgo/blob/master/di
 
 ### options?
 
-`string` \| \{ `buttons?`: `string`[]; `detail?`: `string`; `message?`: `string`; `title?`: `string`; `type?`: `"error"` \| `"info"` \| `"question"` \| `"warning"`; \}
+`string` \| \{ `buttons?`: `string`[]; `detail?`: `string`; `message?`: `string`; `title?`: `string`; `type?`: `"error"` \| `"info"` \| `"warning"` \| `"question"`; \}
 
 选项
 

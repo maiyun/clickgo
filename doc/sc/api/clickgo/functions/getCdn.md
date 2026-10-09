@@ -8,7 +8,7 @@
 
 > **getCdn**(): `string`
 
-Defined in: [clickgo.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L104)
+Defined in: [clickgo.ts:108](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L108)
 
 获取当前 cdn 前缀
 

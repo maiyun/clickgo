@@ -90,6 +90,7 @@ import etaskFrm from './event/task/task';
 import aformFrm from './method/aform/aform';
 import acontrolFrm from './method/acontrol/acontrol';
 import mcoreFrm from './method/core/core';
+import mcommandFrm from './method/command/command';
 import mdomFrm from './method/dom/dom';
 import mformFrm from './method/form/form';
 import mfsFrm from './method/fs/fs';
@@ -505,6 +506,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'mcore': {
                 frm = await clickgo.form.create(this, mcoreFrm);
+                break;
+            }
+            case 'mcommand': {
+                frm = await clickgo.form.create(this, mcommandFrm);
                 break;
             }
             case 'mdom': {

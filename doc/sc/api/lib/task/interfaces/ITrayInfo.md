@@ -6,7 +6,7 @@
 
 # Interface: ITrayInfo
 
-Defined in: [lib/task.ts:87](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L87)
+Defined in: [lib/task.ts:88](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L88)
 
 提供给任务栏的托盘快照，icon 已解析为跨任务可用的 URL
 
@@ -16,7 +16,7 @@ Defined in: [lib/task.ts:87](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **icon**: `string`
 
-Defined in: [lib/task.ts:90](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L90)
+Defined in: [lib/task.ts:91](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L91)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/task.ts:90](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **id**: `string`
 
-Defined in: [lib/task.ts:88](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L88)
+Defined in: [lib/task.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L89)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/task.ts:88](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **menu**: [`ITrayMenuItem`](ITrayMenuItem.md)[]
 
-Defined in: [lib/task.ts:92](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L92)
+Defined in: [lib/task.ts:93](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L93)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/task.ts:92](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **taskId**: `string`
 
-Defined in: [lib/task.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L89)
+Defined in: [lib/task.ts:90](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L90)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [lib/task.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **tip**: `string`
 
-Defined in: [lib/task.ts:91](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L91)
+Defined in: [lib/task.ts:92](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L92)

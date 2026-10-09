@@ -8,7 +8,7 @@
 
 > **getTrayList**(`current`): `Record`\<`string`, [`ITrayInfo`](../interfaces/ITrayInfo.md)\>
 
-Defined in: [lib/task.ts:211](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L211)
+Defined in: [lib/task.ts:212](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L212)
 
 获取托盘快照；系统任务栏/root 可读全部，普通任务只能读自己的
 

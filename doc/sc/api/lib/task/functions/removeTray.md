@@ -8,7 +8,7 @@
 
 > **removeTray**(`current`, `id`): `boolean`
 
-Defined in: [lib/task.ts:196](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L196)
+Defined in: [lib/task.ts:197](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L197)
 
 删除自己的托盘
 

@@ -62,6 +62,8 @@ clickgo = {
 
 大型软件的 Form 拆分请参考[局部应用组件与 Dock](./sc/local-component.md)。
 
+应用可通过[通用命令](./sc/commands.md) 将按钮、菜单、快捷键、命令面板与 AI 接口接入同一业务执行逻辑。
+
 **index.html**
 
 ```html

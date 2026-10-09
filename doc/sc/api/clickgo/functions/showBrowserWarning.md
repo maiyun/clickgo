@@ -8,7 +8,7 @@
 
 > **showBrowserWarning**(`text`): `void`
 
-Defined in: [clickgo.ts:385](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L385)
+Defined in: [clickgo.ts:389](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L389)
 
 显示浏览器运行环境提示
 

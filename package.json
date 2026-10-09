@@ -1,6 +1,6 @@
 {
   "name": "clickgo",
-  "version": "6.9.0",
+  "version": "6.10.0",
   "description": "Background interface, software interface, mobile phone APP interface operation library.",
   "type": "module",
   "keywords": [
@@ -14,7 +14,8 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:command && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select",
+    "test:command": "node test/command.mjs",
     "test:select": "node test/select.mjs",
     "test:module": "node test/tool-assets.mjs && node test/core-module-loading.mjs && node test/tuieditor-locale.mjs",
     "test:jodit": "node test/jodit-lifecycle.mjs",

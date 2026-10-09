@@ -15,6 +15,7 @@
  */
 import * as clickgo from '../clickgo';
 import * as lCore from './core';
+import * as lCommand from './command';
 import * as lTask from './task';
 import * as lTool from './tool';
 import * as lDom from './dom';
@@ -3527,6 +3528,8 @@ export function remove(formId: string): boolean {
         return false;
     }
     task.forms[formId].closed = true;
+    // --- 关闭动画开始即撤销命令，不等 DOM 延迟卸载 ---
+    lCommand.clearOwner(taskId, formId);
     const title = task.forms[formId].vroot.$refs.form.title;
     const icon = task.forms[formId].vroot.$refs.form.iconDataUrl;
     const io = rt.dialogFormIds.indexOf(formId);
@@ -3938,10 +3941,12 @@ export async function createPanel<T extends AbstractPanel>(
                 this.onUpdated();
             },
             'beforeUnmount': function(this: lCore.IVue) {
+                lCommand.clearOwner(t.id, formId, panelId);
                 this.onBeforeUnmount();
             },
             'unmounted': async function(this: lCore.IVue) {
                 await this.$nextTick();
+                lCommand.clearOwner(t.id, formId, panelId);
                 this.onUnmounted();
             }
         }) as unknown as lCore.IVApp;
@@ -4401,10 +4406,12 @@ export async function create<T extends AbstractForm>(
                 this.onUpdated();
             },
             'beforeUnmount': function(this: lCore.IVue) {
+                lCommand.clearOwner(t.id, formId);
                 this.onBeforeUnmount();
             },
             'unmounted': async function(this: lCore.IVue) {
                 await this.$nextTick();
+                lCommand.clearOwner(t.id, formId);
                 this.onUnmounted();
             }
         }) as unknown as lCore.IVApp;

@@ -7,6 +7,7 @@
 ## Modules
 
 - [clickgo](clickgo/index.md)
+- [lib/command](lib/command/index.md)
 - [lib/control](lib/control/index.md)
 - [lib/core](lib/core/index.md)
 - [lib/dom](lib/dom/index.md)

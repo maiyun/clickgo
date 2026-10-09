@@ -22,7 +22,7 @@ Defined in: [lib/dom.ts:437](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### type
 
-`"form"` \| `"theme"` \| `"control"`
+`"form"` \| `"control"` \| `"theme"`
 
 类型
 

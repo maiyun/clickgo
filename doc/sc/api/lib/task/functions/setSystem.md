@@ -8,7 +8,7 @@
 
 > **setSystem**(`taskId`, `formId`): `boolean`
 
-Defined in: [lib/task.ts:1650](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1650)
+Defined in: [lib/task.ts:1654](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1654)
 
 将任务注册为系统 task
 

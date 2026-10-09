@@ -29,6 +29,7 @@ const modules = {
         return new Blob(['icon']);
     } },
     './control': { clearComponents() {} },
+    './command': { clear() {} },
     './native': { clear() {} },
     './dom': {
         removeFromStyleList() {}, clearWatchSize() {}, clearWatch() {},

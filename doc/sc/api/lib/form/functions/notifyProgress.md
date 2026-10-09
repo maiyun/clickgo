@@ -8,7 +8,7 @@
 
 > **notifyProgress**(`notifyId`, `per`): `void`
 
-Defined in: [lib/form.ts:2939](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2939)
+Defined in: [lib/form.ts:2940](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2940)
 
 修改 notify 的进度条进度
 

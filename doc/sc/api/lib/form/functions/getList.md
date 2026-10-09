@@ -8,7 +8,7 @@
 
 > **getList**(`taskId`): `Record`\<`string`, [`IFormInfo`](../interfaces/IFormInfo.md)\>
 
-Defined in: [lib/form.ts:2262](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2262)
+Defined in: [lib/form.ts:2263](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2263)
 
 获取 form list 的简略情况
 

@@ -29,6 +29,12 @@
 
 ## References
 
+### command
+
+Renames and re-exports [lib/command](../lib/command/index.md)
+
+***
+
 ### control
 
 Renames and re-exports [lib/control](../lib/control/index.md)

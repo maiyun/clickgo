@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as lTool from './lib/tool';
+import * as lCommand from './lib/command';
 import * as lControl from './lib/control';
 import * as lCore from './lib/core';
 import * as lDom from './lib/dom';
@@ -41,7 +42,7 @@ lNative.initSysId(sysId);
 export const modules = {
     'clickgo': clickgo,
 };
-const version = '6.9.0';
+const version = '6.10.0';
 /** --- 获取当前版本 --- */
 export function getVersion() {
     return version;
@@ -66,6 +67,8 @@ if (!window.clickgo) {
 window.clickgo.modules = modules;
 /** --- 用户定义的 ClickGo 信息 --- */
 const userClickGo = window.clickgo;
+/** --- 所有网页宿主共用的命令发现及调用入口，无需 WebMCP 或应用自行注入 --- */
+Object.defineProperty(userClickGo, 'command', { 'value': lCommand.createPageBridge(), 'enumerable': true });
 /** --- 用户定义的全局对象 --- */
 export const global = userClickGo.global ?? {};
 /** --- 读取用户的 cdn 设置 --- */
@@ -341,4 +344,4 @@ export async function launcher(boot) {
     // --- 执行回调 ---
     await boot.main();
 }
-export { lControl as control, lCore as core, lDom as dom, lForm as form, lFs as fs, lNative as native, lStorage as storage, lTask as task, lTheme as theme, lTool as tool, lZip as zip };
+export { lCommand as command, lControl as control, lCore as core, lDom as dom, lForm as form, lFs as fs, lNative as native, lStorage as storage, lTask as task, lTheme as theme, lTool as tool, lZip as zip };

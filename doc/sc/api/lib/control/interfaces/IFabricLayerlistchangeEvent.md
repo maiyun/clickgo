@@ -24,7 +24,7 @@ Defined in: [lib/control.ts:1699](https://github.com/maiyun/clickgo/blob/master/
 
 #### type
 
-> **type**: `"visible"` \| `"add"` \| `"move"` \| `"remove"` \| `"rename"` \| `"locked"`
+> **type**: `"move"` \| `"add"` \| `"remove"` \| `"rename"` \| `"visible"` \| `"locked"`
 
 变更类型：add 新增、remove 移除、rename 重命名、visible 可见性、locked 锁定状态、move 移动位置
 

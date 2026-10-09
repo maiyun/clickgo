@@ -23,9 +23,10 @@ package-lock.json
 /dist/compiler/
 /dist/lib/*.ts
 !/dist/lib/*.d.ts
-/dist/lib/*.js
+/dist/lib/**/*.js
 /dist/sources/
 /dist/test/
+/test/
 /dist/build*
 /dist/clickgo.js
 /dist/clickgo.ts

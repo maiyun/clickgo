@@ -28,7 +28,7 @@ Defined in: [lib/control.ts:1549](https://github.com/maiyun/clickgo/blob/master/
 
 #### mode
 
-> **mode**: `"list"` \| `"backspace"` \| `"tag"`
+> **mode**: `"backspace"` \| `"tag"` \| `"list"`
 
 #### value
 

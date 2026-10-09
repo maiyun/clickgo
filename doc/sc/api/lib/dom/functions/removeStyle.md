@@ -22,7 +22,7 @@ Defined in: [lib/dom.ts:393](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### type?
 
-`"form"` \| `"global"` \| `"theme"` \| `"control"`
+`"form"` \| `"global"` \| `"control"` \| `"theme"`
 
 移除的类型
 

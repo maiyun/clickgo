@@ -8,7 +8,7 @@
 
 > **createTray**(`current`, `options`): `Promise`\<`string` \| `false`\>
 
-Defined in: [lib/task.ts:133](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L133)
+Defined in: [lib/task.ts:134](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L134)
 
 注册托盘；不依赖当前是否存在任务栏
 

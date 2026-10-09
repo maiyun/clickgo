@@ -63,9 +63,10 @@ async function collectLocaleTables(path) {
     const source = ts.createSourceFile(path, await readFile(path, 'utf8'), ts.ScriptTarget.Latest, true);
     const tables = [];
     const visit = (node) => {
-        if (ts.isObjectLiteralExpression(node) && getProperty(node, 'en')) {
-            const keys = node.properties.map(getPropertyName);
-            if (codes.every((code) => keys.includes(code))) {
+        if (ts.isObjectLiteralExpression(node)) {
+            const english = getProperty(node, 'en');
+            if (english && ts.isObjectLiteralExpression(english)
+                && codes.some(code => code !== 'en' && getProperty(node, code))) {
                 tables.push({
                     'node': node,
                     'line': source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1,
@@ -126,13 +127,21 @@ for (const name of controlNames) {
     }
     catch {}
 }
-const localeSources = [
-    'dist/lib/form.ts',
-    'dist/lib/fs.ts',
-    'dist/lib/storage.ts',
-    'dist/lib/task.ts',
-    ...controlSources,
-];
+/** --- 自动扫描共享库及其子模块，新增语言表不能遗漏检查 --- */
+async function collectLibrarySources(directory) {
+    const paths = [];
+    for (const item of await readdir(directory, { 'withFileTypes': true })) {
+        const path = `${directory}/${item.name}`;
+        if (item.isDirectory()) {
+            paths.push(...await collectLibrarySources(path));
+        }
+        else if (item.name.endsWith('.ts') && !item.name.endsWith('.d.ts')) {
+            paths.push(path);
+        }
+    }
+    return paths.sort();
+}
+const localeSources = [...await collectLibrarySources('dist/lib'), ...controlSources];
 
 const tables = [];
 for (const path of localeSources) {
@@ -140,7 +149,7 @@ for (const path of localeSources) {
         tables.push({ ...table, path });
     }
 }
-assert.equal(tables.length, 26, 'all 26 built-in TypeScript locale tables must be present');
+assert.equal(tables.length, 27, 'all 27 built-in TypeScript locale tables must be present');
 for (const { node, path, line } of tables) {
     const tableCodes = node.properties.map(getPropertyName);
     assert.deepEqual([...tableCodes].sort(), [...codes].sort(), `${path}:${line} must contain exactly 16 locale entries`);

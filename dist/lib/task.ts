@@ -15,6 +15,7 @@
  */
 import * as clickgo from '../clickgo';
 import * as lCore from './core';
+import * as lCommand from './command';
 import * as lDom from './dom';
 import * as lTool from './tool';
 import * as lForm from './form';
@@ -1339,6 +1340,9 @@ export async function end(taskId: lCore.TCurrent): Promise<boolean> {
     if (!task) {
         return true;
     }
+    // --- 先撤销命令，禁止退出等待期间继续执行或重新注册 ---
+    task.ending = true;
+    lCommand.clear(taskId);
     // --- 如果是 native 模式 ---
     if (clickgo.isNative() && (Object.keys(list).length === 1)) {
         await lNative.close(sysId);
@@ -2036,6 +2040,8 @@ export interface IThread {
 
 /** --- 运行中的任务对象 --- */
 export interface ITask {
+    /** --- 已开始退出；框架释放异步资源期间拒绝新命令 --- */
+    'ending'?: boolean;
     'id': string;
     'app': lCore.IApp;
     'class': lCore.AbstractApp;

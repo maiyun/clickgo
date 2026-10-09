@@ -8,7 +8,7 @@
 
 > **showRectangle**(`x`, `y`, `border`): `void`
 
-Defined in: [lib/form.ts:2742](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2742)
+Defined in: [lib/form.ts:2743](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2743)
 
 显示从小到大的矩形动画特效对象
 

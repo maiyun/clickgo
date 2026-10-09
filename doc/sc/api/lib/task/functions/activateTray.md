@@ -8,7 +8,7 @@
 
 > **activateTray**(`current`, `id`, `menuId?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/task.ts:225](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L225)
+Defined in: [lib/task.ts:226](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L226)
 
 当前系统任务栏投递点击/菜单命令到托盘所属 App 和 Form
 
