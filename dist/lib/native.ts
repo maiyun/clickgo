@@ -1,5 +1,5 @@
 /**
- * Copyright 2007-2025 MAIYUN.NET
+ * Copyright 2007-2026 MAIYUN.NET
 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ import * as clickgo from '../clickgo';
 import * as lCore from './core';
 import * as lTool from './tool';
 import * as lTask from './task';
+import * as lNativeCommand from './command/native';
 
 /** --- 系统级 ID --- */
 let sysId = '';
@@ -49,6 +50,7 @@ const methods: Record<string,
 
 // --- 供 native 调用的 web 上的对象 ---
 (window as any).clickgoNativeWeb = {
+    'command': lNativeCommand.invoke,
     invoke: function(name: string, ...param: any[]) {
         let handled = false;
         for (const taskId in methods) {
@@ -69,6 +71,29 @@ const methods: Record<string,
         return handled;
     }
 };
+
+/** --- 本地 MCP 客户端连接设置；仅向已授权 root 的 App 提供 --- */
+export interface IMcpInfo {
+    'transport': 'streamable-http';
+    'url': string;
+    'token': string;
+}
+
+/**
+ * --- 读取 Native 主进程启用的 MCP 连接设置 ---
+ * @param current 当前 App
+ * @returns 连接设置；未启用为 null，无权限为 false
+ */
+export async function getMcpInfo(current: lCore.TCurrent): Promise<IMcpInfo | null | false> {
+    if (!clickgo.isNative()) {
+        return null;
+    }
+    if (!(await lTask.checkPermission(current, 'root'))[0]) {
+        return false;
+    }
+    // --- 旧 Native 宿主没有此方法时返回 undefined，按未启用处理 ---
+    return await invoke('cg-mcp-info', token) ?? null;
+}
 
 /**
  * --- 监听 native 传输过来的事件 ---

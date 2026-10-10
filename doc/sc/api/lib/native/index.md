@@ -6,6 +6,10 @@
 
 # lib/native
 
+## Interfaces
+
+- [IMcpInfo](interfaces/IMcpInfo.md)
+
 ## Functions
 
 - [activate](functions/activate.md)
@@ -13,6 +17,7 @@
 - [close](functions/close.md)
 - [dialog](functions/dialog.md)
 - [getListenerList](functions/getListenerList.md)
+- [getMcpInfo](functions/getMcpInfo.md)
 - [init](functions/init.md)
 - [initSysId](functions/initSysId.md)
 - [invoke](functions/invoke.md)

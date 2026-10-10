@@ -8,12 +8,14 @@ import * as native from './native.js';
 
 class Boot extends native.AbstractBoot {
 
-    public main(): void {
+    public async main(): Promise<void> {
         this.run('../desktop/index.html?single', {
             'frame': false,
             'quit': false,
             'background': '#222',
         });
+        // --- 本地命令服务与网页共用 App 执行入口 ---
+        await native.startMcp({ 'id': 'clickgo-demo' });
     }
 
 }

@@ -8,7 +8,7 @@
 
 > **invoke**(`name`, ...`param`): `Promise`\<`any`\>
 
-Defined in: [lib/native.ts:208](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L208)
+Defined in: [lib/native.ts:233](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L233)
 
 向 native 发送指令
 

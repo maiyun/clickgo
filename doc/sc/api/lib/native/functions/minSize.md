@@ -8,7 +8,7 @@
 
 > **minSize**(`current`, `width`, `height`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:256](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L256)
+Defined in: [lib/native.ts:281](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L281)
 
 设置实体窗体的最小尺寸，0 表示不限制对应方向
 

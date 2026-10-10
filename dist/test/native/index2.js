@@ -6,11 +6,13 @@ import * as native from './native.js';
  * 其他系统: 以主窗体为准调整大小
  */
 class Boot extends native.AbstractBoot {
-    main() {
+    async main() {
         this.run('../desktop/index.html?single', {
             'frame': false,
             'background': '#222',
         });
+        // --- 本地命令服务与网页共用 App 执行入口 ---
+        await native.startMcp({ 'id': 'clickgo-demo' });
     }
 }
 native.launcher(new Boot());

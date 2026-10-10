@@ -32,11 +32,16 @@
     "native": "electron ./dist/test/native",
     "native2": "electron ./dist/test/native/index2",
     "native3": "electron ./dist/test/native/index3",
-    "build-doc": "bash ./utils/build-doc.sh"
+    "build-doc": "bash ./utils/build-doc.sh",
+    "test:native": "node test/native-version.mjs && node --experimental-vm-modules test/native-window.mjs && node test/native-mcp.mjs && node test/native-cli.mjs",
+    "native:cli": "node ./dist/test/native/cli.js"
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.3.1",
     "@litert/pointer": "^1.8.0",
+    "@modelcontextprotocol/client": "^2.3.1",
+    "@modelcontextprotocol/node": "^2.1.1",
+    "@modelcontextprotocol/server": "^2.3.1",
     "@types/clean-css": "^4.2.11",
     "@types/google.maps": "^3.58.1",
     "@types/node": "^25.5.2",

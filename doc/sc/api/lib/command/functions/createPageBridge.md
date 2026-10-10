@@ -8,7 +8,7 @@
 
 > **createPageBridge**(): [`IPageBridge`](../interfaces/IPageBridge.md)
 
-Defined in: lib/command.ts:480
+Defined in: [lib/command.ts:504](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L504)
 
 网页入口直接读取框架的任务及命令状态，无需应用或宿主重复发布与清理
 

@@ -8,7 +8,7 @@
 
 > **failure**(`code`, `message`): [`TResult`](../type-aliases/TResult.md)\<`never`\>
 
-Defined in: lib/command.ts:147
+Defined in: [lib/command.ts:147](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L147)
 
 构造业务失败结果，不抛异常
 

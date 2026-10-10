@@ -6,7 +6,7 @@
 
 # Interface: IPageBridge
 
-Defined in: lib/command.ts:106
+Defined in: [lib/command.ts:106](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L106)
 
 框架向网页发布的统一入口；按任务选择应用，只访问明确公开的命令
 
@@ -16,7 +16,7 @@ Defined in: lib/command.ts:106
 
 > **execute**: (`taskId`, `name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: lib/command.ts:109
+Defined in: [lib/command.ts:109](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L109)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: lib/command.ts:109
 
 > **list**: (`taskId`) => [`IInfo`](IInfo.md)[]
 
-Defined in: lib/command.ts:108
+Defined in: [lib/command.ts:108](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L108)
 
 #### Parameters
 
@@ -66,7 +66,7 @@ Defined in: lib/command.ts:108
 
 > **listTasks**: () => `object`[]
 
-Defined in: lib/command.ts:107
+Defined in: [lib/command.ts:107](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L107)
 
 #### Returns
 

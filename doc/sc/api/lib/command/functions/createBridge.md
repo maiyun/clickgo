@@ -8,9 +8,9 @@
 
 > **createBridge**(`current`): [`IBridge`](../interfaces/IBridge.md)
 
-Defined in: lib/command.ts:466
+Defined in: [lib/command.ts:490](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L490)
 
-建立只公开允许命令的实例接口，供浏览器 JS 和后续 Native/MCP 转发
+创建绑定单个 App 的可复用代理接口，调用方无需反复传入 taskId
 
 ## Parameters
 

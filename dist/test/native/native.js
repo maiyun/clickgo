@@ -1,9 +1,11 @@
-import * as electron from 'electron';
 import * as nodeFs from 'node:fs';
 import * as nodePath from 'path';
 import { pathToFileURL } from 'node:url';
+import { createHash, randomUUID } from 'node:crypto';
+import * as electron from 'electron';
 import * as lFs from './lib/fs.js';
 import * as lTool from './lib/tool.js';
+import * as lMcp from './lib/mcp.js';
 // npm publish --tag dev --access public
 // --- sass --watch dist/:dist/ --style compressed --no-source-map ---
 /** --- 窗体是否含有 border 边框，有的话将不是沉浸式，也不会绑定任何窗体的大小的相关事件 --- */
@@ -20,6 +22,12 @@ let token = '';
 let mainPage = '';
 /** --- 主框架正在更换文档时暂停 Native 通讯 --- */
 let mainNavigating = false;
+/** --- 一个 Native 进程共用一个 MCP 服务，关闭主窗体时释放 --- */
+let mcpServer;
+/** --- 尚在准备的监听，用于防重复与停止时等待释放 --- */
+let mcpPending;
+/** --- 停止操作使此前尚未完成的启动失效 --- */
+let mcpGeneration = 0;
 /** --- 应用已确认关闭，避免再次进入网页关闭事件 --- */
 let closeAllowed = false;
 /** --- 当前启用系统文件打开处理的启动类 --- */
@@ -29,6 +37,12 @@ const platform = process.platform;
 // const platform: NodeJS.Platform = 'darwin';
 /** --- 监听前台的执行的方法，内置的方法，用户可调用方法自行添加 --- */
 const methods = {
+    'cg-mcp-info': {
+        'once': false,
+        handler: function (t) {
+            return verifyToken(t) ? getMcpInfo() : null;
+        },
+    },
     // --- 完全退出软件进程 ---
     'cg-quit': {
         'once': false,
@@ -624,6 +638,107 @@ function resetMainSession() {
     };
 }
 /**
+ * --- MCP 调用固定的页面命令适配器，禁止转发任意 JavaScript ---
+ * @param request 已经由 SDK 校验的操作与参数
+ * @param signal MCP 客户端取消信号
+ * @returns 共享命令结果，页面失效或调用异常时为结构化错误
+ */
+async function invokeMcp(request, signal) {
+    const target = form;
+    const sessionToken = token;
+    if (!target || target.isDestroyed() || !sessionToken || mainNavigating ||
+        getPageUrl(target.webContents.getURL()) !== mainPage) {
+        return { 'ok': false, 'error': { 'code': 'unavailable', 'message': 'The app window is not ready' } };
+    }
+    if (signal.aborted) {
+        return { 'ok': false, 'error': { 'code': 'cancelled', 'message': 'Command was cancelled' } };
+    }
+    const id = randomUUID();
+    /** --- 跨进程取消只针对本次调用，并限定在原文档会话 --- */
+    let abort;
+    const cancelled = new Promise(resolve => {
+        abort = () => {
+            if (!target.isDestroyed() && form === target && token === sessionToken && !mainNavigating) {
+                void target.webContents.executeJavaScript(`window.clickgoNativeWeb?.command(JSON.parse(${JSON.stringify(JSON.stringify({ 'method': 'cancel', 'id': id }))}))`).catch(() => { });
+            }
+            resolve({ 'ok': false, 'error': { 'code': 'cancelled', 'message': 'Command was cancelled' } });
+        };
+        signal.addEventListener('abort', abort, { 'once': true });
+    });
+    // --- Electron 查询可能因网页关闭/崩溃而拒绝，只在这个跨进程边界转换错误 ---
+    // --- 按 JSON 解析保留键的语义，不把参数当作 JavaScript 对象字面量 ---
+    const payload = JSON.stringify(JSON.stringify({ ...request, 'id': id }));
+    const execution = target.webContents.executeJavaScript(`window.clickgoNativeWeb?.command(JSON.parse(${payload}))`).then((result) => {
+        if (form !== target || target.isDestroyed() || token !== sessionToken || mainNavigating) {
+            return { 'ok': false, 'error': { 'code': 'unavailable', 'message': 'The app window has changed' } };
+        }
+        if (!result || typeof result !== 'object' || !('ok' in result) || typeof result.ok !== 'boolean') {
+            return { 'ok': false, 'error': { 'code': 'unavailable', 'message': 'This page needs the updated ClickGo runtime' } };
+        }
+        return result;
+    }).catch(() => ({
+        'ok': false, 'error': { 'code': 'unavailable', 'message': 'The app window is no longer available' },
+    }));
+    // --- 取消可先结束协议响应；业务是否停止仍由共享执行器与 signal 决定 ---
+    try {
+        return await Promise.race([execution, cancelled]);
+    }
+    finally {
+        signal.removeEventListener('abort', abort);
+    }
+}
+/**
+ * --- 为当前 Native 窗体启动本地 Streamable HTTP MCP 服务 ---
+ * @param options 监听端口、访问令牌及实例发现；默认临时连接设置并允许本机同用户发现
+ * @returns 连接设置，无窗体、重复启动或监听失败时为 false
+ */
+export async function startMcp(options = {}) {
+    const target = form;
+    if (!target || target.isDestroyed() || mcpServer || mcpPending) {
+        return false;
+    }
+    const generation = mcpGeneration;
+    const pending = lMcp.start(invokeMcp, options, {
+        'id': createHash('sha256').update(electron.app.getPath('userData')).digest('hex').slice(0, 24),
+        'name': electron.app.getName(),
+    });
+    mcpPending = pending;
+    const service = await pending;
+    mcpPending = undefined;
+    if (service === false) {
+        return false;
+    }
+    if (generation !== mcpGeneration || form !== target || target.isDestroyed()) {
+        await service.close();
+        return false;
+    }
+    mcpServer = service;
+    return { ...service.info };
+}
+/**
+ * --- 读取当前 Native MCP 服务的连接设置 ---
+ * @returns 独立的连接设置，未启用时为 null
+ */
+export function getMcpInfo() {
+    return mcpServer ? { ...mcpServer.info } : null;
+}
+/**
+ * --- 停止接收 MCP 请求并释放在途调用与监听资源 ---
+ * @returns 无
+ */
+export async function stopMcp() {
+    ++mcpGeneration;
+    const pending = mcpPending;
+    const service = mcpServer;
+    mcpServer = undefined;
+    await service?.close();
+    // --- 停止请求不能被稍后完成的监听覆盖 ---
+    const starting = await pending;
+    if (starting) {
+        await starting.close();
+    }
+}
+/**
  * --- 获取当前桌面应用的版本，来自应用 package.json ---
  * @returns 应用版本
  */
@@ -866,6 +981,7 @@ function createForm(p, opt = {}) {
         });
     }
     form.on('closed', function () {
+        stopMcp().catch(() => { });
         form = undefined;
         token = '';
         mainPage = '';

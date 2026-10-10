@@ -8,6 +8,6 @@
 
 > **TJson** = `null` \| `boolean` \| `number` \| `string` \| `TJson`[] \| \{\[`key`: `string`\]: `TJson`; \}
 
-Defined in: lib/command.ts:8
+Defined in: [lib/command.ts:8](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L8)
 
 命令输入与输出可跨浏览器、Native 和协议传输的 JSON 值

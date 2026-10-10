@@ -62,7 +62,7 @@ clickgo = {
 
 大型软件的 Form 拆分请参考[局部应用组件与 Dock](./sc/local-component.md)。
 
-应用可通过[通用命令](./sc/commands.md) 将按钮、菜单、快捷键、命令面板与 AI 接口接入同一业务执行逻辑。
+应用可通过[通用命令](./sc/commands.md) 将按钮、菜单、快捷键、命令面板与 AI 接口接入同一业务执行逻辑。 桌面软件的完整命令注册、HTTP MCP、stdio 和 CLI 接入流程见 [ClickGo Native 简体中文文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。
 
 **index.html**
 

@@ -8,7 +8,7 @@ import * as native from './native.js';
 
 class Boot extends native.AbstractBoot {
 
-    public main(): void {
+    public async main(): Promise<void> {
         /*
         this.run('https://maiyun.github.io/clickgo/dist/test/desktop/', {
             'frame': false,
@@ -21,6 +21,8 @@ class Boot extends native.AbstractBoot {
             'background': '#222',
         });
         //*/
+        // --- 本地命令服务与网页共用 App 执行入口 ---
+        await native.startMcp({ 'id': 'clickgo-demo' });
     }
 
 }

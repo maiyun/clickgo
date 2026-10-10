@@ -8,7 +8,7 @@
 
 > **disconnectWebMcp**(`current`): `void`
 
-Defined in: lib/command.ts:611
+Defined in: [lib/command.ts:631](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L631)
 
 解除 WebMCP 适配器；内部命令继续可用
 

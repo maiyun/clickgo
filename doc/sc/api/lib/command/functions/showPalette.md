@@ -8,7 +8,7 @@
 
 > **showPalette**(`current`, `options?`): `Promise`\<`void`\>
 
-Defined in: lib/command/palette.ts:95
+Defined in: [lib/command/palette.ts:95](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/palette.ts#L95)
 
 打开原生命令调试面板，也可作为界面操作型代理的可选入口
 

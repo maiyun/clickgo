@@ -6,7 +6,7 @@
 
 # Interface: IMetadata
 
-Defined in: lib/command.ts:56
+Defined in: [lib/command.ts:56](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L56)
 
 与 MCP 工具描述对齐的公开命令元数据
 
@@ -21,7 +21,7 @@ Defined in: lib/command.ts:56
 
 > `optional` **annotations?**: `object`
 
-Defined in: lib/command.ts:63
+Defined in: [lib/command.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L63)
 
 行为说明，不代替校验或授权
 
@@ -57,7 +57,7 @@ WebMCP 的重要或不可逆现实效果说明
 
 > **description**: `string`
 
-Defined in: lib/command.ts:59
+Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L59)
 
 ***
 
@@ -65,7 +65,7 @@ Defined in: lib/command.ts:59
 
 > **inputSchema**: [`ISchema`](ISchema.md) & `object`
 
-Defined in: lib/command.ts:60
+Defined in: [lib/command.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L60)
 
 #### Type Declaration
 
@@ -79,7 +79,7 @@ Defined in: lib/command.ts:60
 
 > **name**: `string`
 
-Defined in: lib/command.ts:57
+Defined in: [lib/command.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L57)
 
 ***
 
@@ -87,7 +87,7 @@ Defined in: lib/command.ts:57
 
 > `optional` **outputSchema?**: [`ISchema`](ISchema.md)
 
-Defined in: lib/command.ts:61
+Defined in: [lib/command.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L61)
 
 ***
 
@@ -95,4 +95,4 @@ Defined in: lib/command.ts:61
 
 > `optional` **title?**: `string`
 
-Defined in: lib/command.ts:58
+Defined in: [lib/command.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L58)

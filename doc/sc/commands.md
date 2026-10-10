@@ -1,6 +1,6 @@
 # 通用命令
 
-从 ClickGo 6.10.0 开始，应用可以通过 `clickgo.command` 声明业务命令。按钮、菜单、快捷键、命令面板、浏览器代理和后续 Native MCP 适配器共用注册的执行函数及其校验。
+从 ClickGo 6.10.0 开始，应用可以通过 `clickgo.command` 声明业务命令。按钮、菜单、快捷键、命令面板、浏览器代理和 Native MCP 适配器共用注册的执行函数及其校验。
 
 ## 声明与执行
 
@@ -110,7 +110,9 @@ if (task) {
 
 网页入口直接读取框架的实时任务与命令状态，无需维护另一份发布表。新增、移除命令立即反映在列表中；Form 关闭后移除其命令，任务开始退出时从任务发现列表移除并停止执行。持有旧网页接口引用也不能继续执行已解除的命令。
 
-`createBridge(current)` 仍可创建绑定单个 task 的不可修改接口，提供 list() 和 execute(name, args)，用于实例级集成及后续 Native/MCP 转发。普通网页接入使用上述统一入口即可。
+框架内的代理适配器可以直接调用 `clickgo.command.listTasks()` 发现 App，再用 `clickgo.command.executeAgent(taskId, name, args, { signal })` 执行公开命令。该方法标记 agent 来源，并与普通 `execute()` 共用业务执行器；普通 execute 是应用界面入口，不限制为公开命令。
+
+`createBridge(current)` 提供绑定单个 App 的可复用 list() 和 execute(name, args) 接口，适合向其他模块传递固定目标 App 的命令接口。每次请求已携带 taskId 的 Native/MCP 适配器直接调用 executeAgent，无需临时创建桥接。普通网页接入使用上述统一入口即可。
 
 ### 没有 WebMCP 时的发现
 
@@ -134,9 +136,68 @@ Demo 的 desktop、webpage、cache 及 Native 网页宿主直接使用框架入�
 
 ## Native MCP 接入边界
 
-本版本完成共享命令层、实例桥接与 WebMCP；不启动本地 MCP 服务。ClickGo Native 后续在主进程处理 MCP 连接及请求，将调用转发给目标应用的 bridge。业务函数仍在对应应用中执行，协议适配器不再实现一份业务逻辑。
+ClickGo Native 主进程可以在创建窗口后调用 `await native.startMcp()`，启用本地 Streamable HTTP 服务；普通 ClickGo 网页不会启动本地服务。Native 端提供三个 MCP 工具：
 
-对已打开的 GUI 应用，建议以 Streamable HTTP 连接当前进程；stdio 适合 MCP 客户端启动并管理的独立服务或连接器。两种传输使用同一份 tools/list 元数据与 tools/call 路由。协议和数据不依赖 Electron，其他 Native 宿主也可接入。
+| 工具 | 用途 |
+|---|---|
+| `clickgo_list_apps` | 获取当前软件内部运行的 App 名称与 `id`；后续将 `id` 作为 `taskId` |
+| `clickgo_list_commands` | 传入 taskId，读取该 App 的公开命令及其输入规则、说明与可用状态 |
+| `clickgo_execute_command` | 传入 taskId、命令 name 和 args，调用目标 App 的公开命令 |
+
+一个 Native 软件可以运行一个或多个 ClickGo App 实例；`taskId` 是框架对运行中 App 实例 ID 的称呼，与稳定软件 ID 不同，也不是 AI 的工作任务 ID。先调用 `clickgo_list_apps`，把目标结果项的 `id` 原样传给 `taskId`，再调用 `clickgo_list_commands`，按命令的 `inputSchema` 构造参数并执行 `enabled: true` 的命令。多个 App 时按用户目标选择，有歧义则询问；重启后重新发现 App ID。服务介绍、各工具描述和参数规则均向客户端提供这些说明。
+
+业务接入顺序是：先按本文的“声明与执行”在 App 中注册 `exposed: true` 命令，让按钮、菜单等调用同一命令；再在 Native 主进程启用服务；最后让客户端连接并发现命令。业务应用无需自己实现 MCP 路由、HTTP 服务或框架内部客户端。Native 主进程的完整入口示例：
+
+```typescript
+import * as native from 'clickgo-native';
+
+class Boot extends native.AbstractBoot {
+    public async main(): Promise<void> {
+        this.run(native.path(import.meta.url, './index.html'), { 'frame': false });
+        const info = await native.startMcp({ 'id': 'com.example.app' });
+        if (info === false) {
+            // --- 在应用中显示合适的连接状态 ---
+            return;
+        }
+        // --- 通过应用的连接设置提供 info.url 和 info.token ---
+    }
+}
+
+native.launcher(new Boot());
+```
+
+请求经过 Native 主文档会话检查后，进入页面端 `dist/lib/command/native.ts`。适配器按 taskId 读取公开命令或直接调用 `executeAgent(taskId, name, args, options)`，无需为单次请求创建桥接；业务函数仍在对应 App 中执行。不同 App 可以有相同命令名，taskId 决定调用哪个实例，App 不需要另写协议文件或重复注册 MCP 工具。
+
+`native.startMcp()` 默认使用系统分配的端口和随机访问令牌，`native.getMcpInfo()` 与 `native.stopMcp()` 分别读取设置和停止服务。ClickGo App 可通过 `await clickgo.native.getMcpInfo(this)` 读取 URL 和令牌，这一操作要求 root 权限；未启用返回 null，权限拒绝返回 false。只在用户主动查看连接设置时展示令牌，不写日志。
+
+外部客户端使用 URL 与 `Authorization: Bearer <token>` 连接服务。Native Demo 展示连接设置与实际 taskId 的请求示例，外部客户端示例见 [ClickGo Native](https://github.com/maiyun/clickgo-native) 的 `dist/test/mcp-client.ts`。关闭 Native 窗口时停止服务；取消信号沿协议、主进程和代理执行入口传入原命令，命令仍需配合 signal 停止自己的业务操作。
+
+当前 Native 同时支持 HTTP MCP、stdio MCP 和 CLI。三个入口共用相同的 MCP 工具定义和 App 命令执行层：
+
+- HTTP：AI 客户端直接通过 URL 与认证头连接正在运行的软件。
+- stdio：AI 客户端启动 `clickgo-native mcp --host com.example.app` 接入进程。该进程面对 AI 是 stdio MCP 服务端，内部作为 HTTP MCP 客户端转发到已打开的软件。
+- CLI：`clickgo-native instances` 发现软件，`clickgo-native apps --host com.example.app` 获取 App，`clickgo-native commands --host com.example.app --app '<taskId>'` 获取命令，`clickgo-native execute --host com.example.app --app '<taskId>' --name '<commandName>' --args '{"amount":2}'` 执行命令。CLI 通过同一个内部 HTTP MCP 客户端转发。
+
+`com.example.app` 对应上述 `startMcp({ id })` 中的稳定软件 ID。多个软件运行实例具有同一软件 ID 时，从 `instances` 结果中选择唯一运行实例 ID。stdio/CLI 每次调用通过当前操作系统用户的私有临时运行记录获取最新服务地址和凭据，不依赖固定端口；软件仍须提前启动并启用 MCP 及实例发现。`discovery: false` 会关闭这两种入口的自动发现。
+
+stdio 应直接运行已安装的 `clickgo-native` 可执行文件，或 `node <绝对路径>/clickgo-native/dist/cli.js mcp --host com.example.app`；不能用 `npm run` 启动 stdio，以免 npm 输出混入协议 stdout。设置界面与长期配置持久化由消费应用负责，框架只维护当前运行记录。
+
+例如，使用 `mcpServers` 配置格式的 AI 客户端，在安装 `clickgo-native` 并启动上述软件后，可配置：
+
+```json
+{
+    "mcpServers": {
+        "com.example.app": {
+            "command": "clickgo-native",
+            "args": ["mcp", "--host", "com.example.app"]
+        }
+    }
+}
+```
+
+客户端找不到该命令时，改用已安装可执行文件的绝对路径。连接后先发现 App，再获取命令规则并执行；stdio 和 HTTP 使用相同的工具名称与参数。
+
+完整的安装、HTTP 连接、stdio 客户端配置和 CLI 示例见 [ClickGo Native 简体中文文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。
 
 Streamable HTTP 实现需遵循 [MCP transport 规范](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports) 的 loopback 绑定、Origin 校验和连接授权要求。云端运行的 MCP 客户端不能直接访问用户电脑的 loopback，需要其支持的本地连接组件；这与当前页面内的 WebMCP 是不同接入方式。
 

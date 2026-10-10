@@ -8,7 +8,7 @@
 
 > **connectWebMcp**(`current`): `Promise`\<`boolean`\>
 
-Defined in: lib/command.ts:587
+Defined in: [lib/command.ts:607](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L607)
 
 按能力检测接入当前 WebMCP API；没有 API 或注册失败时返回 false
 

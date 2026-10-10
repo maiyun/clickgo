@@ -145,7 +145,7 @@ commands.md
 
 # 通用命令
 
-从 ClickGo 6.10.0 开始，应用可以通过 `clickgo.command` 声明业务命令。按钮、菜单、快捷键、命令面板、浏览器代理和后续 Native MCP 适配器共用注册的执行函数及其校验。
+从 ClickGo 6.10.0 开始，应用可以通过 `clickgo.command` 声明业务命令。按钮、菜单、快捷键、命令面板、浏览器代理和 Native MCP 适配器共用注册的执行函数及其校验。
 
 ## 声明与执行
 
@@ -255,7 +255,9 @@ if (task) {
 
 网页入口直接读取框架的实时任务与命令状态，无需维护另一份发布表。新增、移除命令立即反映在列表中；Form 关闭后移除其命令，任务开始退出时从任务发现列表移除并停止执行。持有旧网页接口引用也不能继续执行已解除的命令。
 
-`createBridge(current)` 仍可创建绑定单个 task 的不可修改接口，提供 list() 和 execute(name, args)，用于实例级集成及后续 Native/MCP 转发。普通网页接入使用上述统一入口即可。
+框架内的代理适配器可以直接调用 `clickgo.command.listTasks()` 发现 App，再用 `clickgo.command.executeAgent(taskId, name, args, { signal })` 执行公开命令。该方法标记 agent 来源，并与普通 `execute()` 共用业务执行器；普通 execute 是应用界面入口，不限制为公开命令。
+
+`createBridge(current)` 提供绑定单个 App 的可复用 list() 和 execute(name, args) 接口，适合向其他模块传递固定目标 App 的命令接口。每次请求已携带 taskId 的 Native/MCP 适配器直接调用 executeAgent，无需临时创建桥接。普通网页接入使用上述统一入口即可。
 
 ### 没有 WebMCP 时的发现
 
@@ -279,9 +281,68 @@ Demo 的 desktop、webpage、cache 及 Native 网页宿主直接使用框架入�
 
 ## Native MCP 接入边界
 
-本版本完成共享命令层、实例桥接与 WebMCP；不启动本地 MCP 服务。ClickGo Native 后续在主进程处理 MCP 连接及请求，将调用转发给目标应用的 bridge。业务函数仍在对应应用中执行，协议适配器不再实现一份业务逻辑。
+ClickGo Native 主进程可以在创建窗口后调用 `await native.startMcp()`，启用本地 Streamable HTTP 服务；普通 ClickGo 网页不会启动本地服务。Native 端提供三个 MCP 工具：
 
-对已打开的 GUI 应用，建议以 Streamable HTTP 连接当前进程；stdio 适合 MCP 客户端启动并管理的独立服务或连接器。两种传输使用同一份 tools/list 元数据与 tools/call 路由。协议和数据不依赖 Electron，其他 Native 宿主也可接入。
+| 工具 | 用途 |
+|---|---|
+| `clickgo_list_apps` | 获取当前软件内部运行的 App 名称与 `id`；后续将 `id` 作为 `taskId` |
+| `clickgo_list_commands` | 传入 taskId，读取该 App 的公开命令及其输入规则、说明与可用状态 |
+| `clickgo_execute_command` | 传入 taskId、命令 name 和 args，调用目标 App 的公开命令 |
+
+一个 Native 软件可以运行一个或多个 ClickGo App 实例；`taskId` 是框架对运行中 App 实例 ID 的称呼，与稳定软件 ID 不同，也不是 AI 的工作任务 ID。先调用 `clickgo_list_apps`，把目标结果项的 `id` 原样传给 `taskId`，再调用 `clickgo_list_commands`，按命令的 `inputSchema` 构造参数并执行 `enabled: true` 的命令。多个 App 时按用户目标选择，有歧义则询问；重启后重新发现 App ID。服务介绍、各工具描述和参数规则均向客户端提供这些说明。
+
+业务接入顺序是：先按本文的“声明与执行”在 App 中注册 `exposed: true` 命令，让按钮、菜单等调用同一命令；再在 Native 主进程启用服务；最后让客户端连接并发现命令。业务应用无需自己实现 MCP 路由、HTTP 服务或框架内部客户端。Native 主进程的完整入口示例：
+
+```typescript
+import * as native from 'clickgo-native';
+
+class Boot extends native.AbstractBoot {
+    public async main(): Promise<void> {
+        this.run(native.path(import.meta.url, './index.html'), { 'frame': false });
+        const info = await native.startMcp({ 'id': 'com.example.app' });
+        if (info === false) {
+            // --- 在应用中显示合适的连接状态 ---
+            return;
+        }
+        // --- 通过应用的连接设置提供 info.url 和 info.token ---
+    }
+}
+
+native.launcher(new Boot());
+```
+
+请求经过 Native 主文档会话检查后，进入页面端 `dist/lib/command/native.ts`。适配器按 taskId 读取公开命令或直接调用 `executeAgent(taskId, name, args, options)`，无需为单次请求创建桥接；业务函数仍在对应 App 中执行。不同 App 可以有相同命令名，taskId 决定调用哪个实例，App 不需要另写协议文件或重复注册 MCP 工具。
+
+`native.startMcp()` 默认使用系统分配的端口和随机访问令牌，`native.getMcpInfo()` 与 `native.stopMcp()` 分别读取设置和停止服务。ClickGo App 可通过 `await clickgo.native.getMcpInfo(this)` 读取 URL 和令牌，这一操作要求 root 权限；未启用返回 null，权限拒绝返回 false。只在用户主动查看连接设置时展示令牌，不写日志。
+
+外部客户端使用 URL 与 `Authorization: Bearer <token>` 连接服务。Native Demo 展示连接设置与实际 taskId 的请求示例，外部客户端示例见 [ClickGo Native](https://github.com/maiyun/clickgo-native) 的 `dist/test/mcp-client.ts`。关闭 Native 窗口时停止服务；取消信号沿协议、主进程和代理执行入口传入原命令，命令仍需配合 signal 停止自己的业务操作。
+
+当前 Native 同时支持 HTTP MCP、stdio MCP 和 CLI。三个入口共用相同的 MCP 工具定义和 App 命令执行层：
+
+- HTTP：AI 客户端直接通过 URL 与认证头连接正在运行的软件。
+- stdio：AI 客户端启动 `clickgo-native mcp --host com.example.app` 接入进程。该进程面对 AI 是 stdio MCP 服务端，内部作为 HTTP MCP 客户端转发到已打开的软件。
+- CLI：`clickgo-native instances` 发现软件，`clickgo-native apps --host com.example.app` 获取 App，`clickgo-native commands --host com.example.app --app '<taskId>'` 获取命令，`clickgo-native execute --host com.example.app --app '<taskId>' --name '<commandName>' --args '{"amount":2}'` 执行命令。CLI 通过同一个内部 HTTP MCP 客户端转发。
+
+`com.example.app` 对应上述 `startMcp({ id })` 中的稳定软件 ID。多个软件运行实例具有同一软件 ID 时，从 `instances` 结果中选择唯一运行实例 ID。stdio/CLI 每次调用通过当前操作系统用户的私有临时运行记录获取最新服务地址和凭据，不依赖固定端口；软件仍须提前启动并启用 MCP 及实例发现。`discovery: false` 会关闭这两种入口的自动发现。
+
+stdio 应直接运行已安装的 `clickgo-native` 可执行文件，或 `node <绝对路径>/clickgo-native/dist/cli.js mcp --host com.example.app`；不能用 `npm run` 启动 stdio，以免 npm 输出混入协议 stdout。设置界面与长期配置持久化由消费应用负责，框架只维护当前运行记录。
+
+例如，使用 `mcpServers` 配置格式的 AI 客户端，在安装 `clickgo-native` 并启动上述软件后，可配置：
+
+```json
+{
+    "mcpServers": {
+        "com.example.app": {
+            "command": "clickgo-native",
+            "args": ["mcp", "--host", "com.example.app"]
+        }
+    }
+}
+```
+
+客户端找不到该命令时，改用已安装可执行文件的绝对路径。连接后先发现 App，再获取命令规则并执行；stdio 和 HTTP 使用相同的工具名称与参数。
+
+完整的安装、HTTP 连接、stdio 客户端配置和 CLI 示例见 [ClickGo Native 简体中文文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。
 
 Streamable HTTP 实现需遵循 [MCP transport 规范](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports) 的 loopback 绑定、Origin 校验和连接授权要求。云端运行的 MCP 客户端不能直接访问用户电脑的 loopback，需要其支持的本地连接组件；这与当前页面内的 WebMCP 是不同接入方式。
 
@@ -10753,7 +10814,7 @@ lib/command/functions/clear.md
 
 > **clear**(`current`): `void`
 
-Defined in: lib/command.ts:305
+Defined in: [lib/command.ts:305](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L305)
 
 清理所属 Panel、Form 或整个任务的命令
 
@@ -10784,7 +10845,7 @@ lib/command/functions/clearOwner.md
 
 > **clearOwner**(`taskId`, `formId?`, `panelId?`): `void`
 
-Defined in: lib/command.ts:318
+Defined in: [lib/command.ts:318](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L318)
 
 **`Internal`**
 
@@ -10829,7 +10890,7 @@ lib/command/functions/connectWebMcp.md
 
 > **connectWebMcp**(`current`): `Promise`\<`boolean`\>
 
-Defined in: lib/command.ts:587
+Defined in: [lib/command.ts:607](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L607)
 
 按能力检测接入当前 WebMCP API；没有 API 或注册失败时返回 false
 
@@ -10860,9 +10921,9 @@ lib/command/functions/createBridge.md
 
 > **createBridge**(`current`): [`IBridge`](../interfaces/IBridge.md)
 
-Defined in: lib/command.ts:466
+Defined in: [lib/command.ts:490](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L490)
 
-建立只公开允许命令的实例接口，供浏览器 JS 和后续 Native/MCP 转发
+创建绑定单个 App 的可复用代理接口，调用方无需反复传入 taskId
 
 ## Parameters
 
@@ -10891,7 +10952,7 @@ lib/command/functions/createPageBridge.md
 
 > **createPageBridge**(): [`IPageBridge`](../interfaces/IPageBridge.md)
 
-Defined in: lib/command.ts:480
+Defined in: [lib/command.ts:504](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L504)
 
 网页入口直接读取框架的任务及命令状态，无需应用或宿主重复发布与清理
 
@@ -10914,7 +10975,7 @@ lib/command/functions/disconnectWebMcp.md
 
 > **disconnectWebMcp**(`current`): `void`
 
-Defined in: lib/command.ts:611
+Defined in: [lib/command.ts:631](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L631)
 
 解除 WebMCP 适配器；内部命令继续可用
 
@@ -10932,6 +10993,57 @@ Defined in: lib/command.ts:611
 
 无返回值
 
+lib/command/functions/executeAgent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/command](../index.md) / executeAgent
+
+# Function: executeAgent()
+
+> **executeAgent**(`taskId`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+
+Defined in: [lib/command.ts:480](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L480)
+
+代理直接按 taskId 执行公开命令，与界面共用校验和业务执行器
+
+## Parameters
+
+### taskId
+
+`string`
+
+目标 App
+
+### name
+
+`string`
+
+命令名称
+
+### args?
+
+`Record`\<`string`, [`TJson`](../type-aliases/TJson.md)\> = `{}`
+
+参数，默认空对象
+
+### options?
+
+取消信号
+
+#### signal?
+
+`AbortSignal`
+
+## Returns
+
+`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+
+结构化结果；未公开或不存在的命令返回 not-found
+
 lib/command/functions/execute.md
 ---
 
@@ -10945,7 +11057,7 @@ lib/command/functions/execute.md
 
 > **execute**(`current`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: lib/command.ts:456
+Defined in: [lib/command.ts:467](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L467)
 
 应用界面直接执行已注册的业务命令
 
@@ -10996,7 +11108,7 @@ lib/command/functions/failure.md
 
 > **failure**(`code`, `message`): [`TResult`](../type-aliases/TResult.md)\<`never`\>
 
-Defined in: lib/command.ts:147
+Defined in: [lib/command.ts:147](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L147)
 
 构造业务失败结果，不抛异常
 
@@ -11033,7 +11145,7 @@ lib/command/functions/list.md
 
 > **list**(`current`): [`IInfo`](../interfaces/IInfo.md)[]
 
-Defined in: lib/command.ts:335
+Defined in: [lib/command.ts:335](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L335)
 
 获取独立元数据和当前状态，不导出业务函数
 
@@ -11051,6 +11163,29 @@ Defined in: lib/command.ts:335
 
 命令列表
 
+lib/command/functions/listTasks.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/command](../index.md) / listTasks
+
+# Function: listTasks()
+
+> **listTasks**(): `object`[]
+
+Defined in: [lib/command.ts:359](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L359)
+
+获取仍可调用的 App 标识与名称，供网页及 Native 代理发现目标
+
+## Returns
+
+`object`[]
+
+未开始退出的 App 列表
+
 lib/command/functions/register.md
 ---
 
@@ -11064,7 +11199,7 @@ lib/command/functions/register.md
 
 > **register**\<`T`\>(`current`, `definition`): `boolean`
 
-Defined in: lib/command.ts:207
+Defined in: [lib/command.ts:207](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L207)
 
 注册命令；重复名称、不支持的 schema 或已销毁的实例返回 false
 
@@ -11107,7 +11242,7 @@ lib/command/functions/showPalette.md
 
 > **showPalette**(`current`, `options?`): `Promise`\<`void`\>
 
-Defined in: lib/command/palette.ts:95
+Defined in: [lib/command/palette.ts:95](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/palette.ts#L95)
 
 打开原生命令调试面板，也可作为界面操作型代理的可选入口
 
@@ -11146,7 +11281,7 @@ lib/command/functions/success.md
 
 > **success**\<`T`\>(`data`): [`TResult`](../type-aliases/TResult.md)\<`T`\>
 
-Defined in: lib/command.ts:137
+Defined in: [lib/command.ts:137](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L137)
 
 构造成功结果
 
@@ -11183,7 +11318,7 @@ lib/command/functions/unregister.md
 
 > **unregister**(`current`, `name`): `boolean`
 
-Defined in: lib/command.ts:282
+Defined in: [lib/command.ts:282](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L282)
 
 取消尚在执行的命令并解除注册；取消是协作式，不回滚已产生的业务效果
 
@@ -11242,8 +11377,10 @@ lib/command/index.md
 - [createPageBridge](functions/createPageBridge.md)
 - [disconnectWebMcp](functions/disconnectWebMcp.md)
 - [execute](functions/execute.md)
+- [executeAgent](functions/executeAgent.md)
 - [failure](functions/failure.md)
 - [list](functions/list.md)
+- [listTasks](functions/listTasks.md)
 - [register](functions/register.md)
 - [showPalette](functions/showPalette.md)
 - [success](functions/success.md)
@@ -11260,7 +11397,7 @@ lib/command/interfaces/IBridge.md
 
 # Interface: IBridge
 
-Defined in: lib/command.ts:99
+Defined in: [lib/command.ts:99](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L99)
 
 绑定一个应用实例，只能调用该实例明确公开的命令
 
@@ -11270,7 +11407,7 @@ Defined in: lib/command.ts:99
 
 > **execute**: (`name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: lib/command.ts:102
+Defined in: [lib/command.ts:102](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L102)
 
 #### Parameters
 
@@ -11298,7 +11435,7 @@ Defined in: lib/command.ts:102
 
 > **list**: () => [`IInfo`](IInfo.md)[]
 
-Defined in: lib/command.ts:101
+Defined in: [lib/command.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L101)
 
 #### Returns
 
@@ -11310,7 +11447,7 @@ Defined in: lib/command.ts:101
 
 > **taskId**: `string`
 
-Defined in: lib/command.ts:100
+Defined in: [lib/command.ts:100](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L100)
 
 lib/command/interfaces/IContext.md
 ---
@@ -11323,7 +11460,7 @@ lib/command/interfaces/IContext.md
 
 # Interface: IContext
 
-Defined in: lib/command.ts:47
+Defined in: [lib/command.ts:47](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L47)
 
 执行来源仅用于展示与记录，不是授权凭证
 
@@ -11333,7 +11470,7 @@ Defined in: lib/command.ts:47
 
 > **formId**: `string`
 
-Defined in: lib/command.ts:49
+Defined in: [lib/command.ts:49](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L49)
 
 ***
 
@@ -11341,7 +11478,7 @@ Defined in: lib/command.ts:49
 
 > **panelId**: `string`
 
-Defined in: lib/command.ts:50
+Defined in: [lib/command.ts:50](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L50)
 
 ***
 
@@ -11349,7 +11486,7 @@ Defined in: lib/command.ts:50
 
 > **signal**: `AbortSignal`
 
-Defined in: lib/command.ts:52
+Defined in: [lib/command.ts:52](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L52)
 
 ***
 
@@ -11357,7 +11494,7 @@ Defined in: lib/command.ts:52
 
 > **source**: `"user"` \| `"agent"`
 
-Defined in: lib/command.ts:51
+Defined in: [lib/command.ts:51](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L51)
 
 ***
 
@@ -11365,7 +11502,7 @@ Defined in: lib/command.ts:51
 
 > **taskId**: `string`
 
-Defined in: lib/command.ts:48
+Defined in: [lib/command.ts:48](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L48)
 
 lib/command/interfaces/IDefinition.md
 ---
@@ -11378,7 +11515,7 @@ lib/command/interfaces/IDefinition.md
 
 # Interface: IDefinition\<T\>
 
-Defined in: lib/command.ts:75
+Defined in: [lib/command.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L75)
 
 应用声明一次，界面、浏览器代理和 Native 适配器共享执行函数
 
@@ -11398,7 +11535,7 @@ Defined in: lib/command.ts:75
 
 > `optional` **annotations?**: `object`
 
-Defined in: lib/command.ts:63
+Defined in: [lib/command.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L63)
 
 行为说明，不代替校验或授权
 
@@ -11438,7 +11575,7 @@ WebMCP 的重要或不可逆现实效果说明
 
 > `optional` **concurrent?**: `boolean`
 
-Defined in: lib/command.ts:79
+Defined in: [lib/command.ts:79](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L79)
 
 默认拒绝同一命令并发；业务确认可并行时才开启
 
@@ -11448,7 +11585,7 @@ Defined in: lib/command.ts:79
 
 > **description**: `string`
 
-Defined in: lib/command.ts:59
+Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L59)
 
 #### Inherited from
 
@@ -11460,7 +11597,7 @@ Defined in: lib/command.ts:59
 
 > `optional` **enabled?**: () => `string` \| `boolean`
 
-Defined in: lib/command.ts:83
+Defined in: [lib/command.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L83)
 
 true 为可用，false 或原因文本为不可用；每次执行重新检查
 
@@ -11474,7 +11611,7 @@ true 为可用，false 或原因文本为不可用；每次执行重新检查
 
 > **execute**: (`args`, `context`) => [`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\> \| `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: lib/command.ts:84
+Defined in: [lib/command.ts:84](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L84)
 
 #### Parameters
 
@@ -11496,7 +11633,7 @@ Defined in: lib/command.ts:84
 
 > `optional` **exposed?**: `boolean`
 
-Defined in: lib/command.ts:77
+Defined in: [lib/command.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L77)
 
 明确允许代理发现并调用；默认只允许应用内部调用
 
@@ -11506,7 +11643,7 @@ Defined in: lib/command.ts:77
 
 > **inputSchema**: [`ISchema`](ISchema.md) & `object`
 
-Defined in: lib/command.ts:60
+Defined in: [lib/command.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L60)
 
 #### Type Declaration
 
@@ -11524,7 +11661,7 @@ Defined in: lib/command.ts:60
 
 > **name**: `string`
 
-Defined in: lib/command.ts:57
+Defined in: [lib/command.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L57)
 
 #### Inherited from
 
@@ -11536,7 +11673,7 @@ Defined in: lib/command.ts:57
 
 > `optional` **outputSchema?**: [`ISchema`](ISchema.md)
 
-Defined in: lib/command.ts:61
+Defined in: [lib/command.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L61)
 
 #### Inherited from
 
@@ -11548,7 +11685,7 @@ Defined in: lib/command.ts:61
 
 > `optional` **permissions?**: `string`[]
 
-Defined in: lib/command.ts:81
+Defined in: [lib/command.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L81)
 
 必须已经取得的框架权限；执行入口不弹授权窗
 
@@ -11558,7 +11695,7 @@ Defined in: lib/command.ts:81
 
 > `optional` **title?**: `string`
 
-Defined in: lib/command.ts:58
+Defined in: [lib/command.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L58)
 
 #### Inherited from
 
@@ -11575,7 +11712,7 @@ lib/command/interfaces/IInfo.md
 
 # Interface: IInfo
 
-Defined in: lib/command.ts:88
+Defined in: [lib/command.ts:88](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L88)
 
 不包含函数或内部对象的独立快照
 
@@ -11589,7 +11726,7 @@ Defined in: lib/command.ts:88
 
 > `optional` **annotations?**: `object`
 
-Defined in: lib/command.ts:63
+Defined in: [lib/command.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L63)
 
 行为说明，不代替校验或授权
 
@@ -11629,7 +11766,7 @@ WebMCP 的重要或不可逆现实效果说明
 
 > **description**: `string`
 
-Defined in: lib/command.ts:59
+Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L59)
 
 #### Inherited from
 
@@ -11641,7 +11778,7 @@ Defined in: lib/command.ts:59
 
 > **disabledReason**: `string`
 
-Defined in: lib/command.ts:94
+Defined in: [lib/command.ts:94](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L94)
 
 ***
 
@@ -11649,7 +11786,7 @@ Defined in: lib/command.ts:94
 
 > **enabled**: `boolean`
 
-Defined in: lib/command.ts:93
+Defined in: [lib/command.ts:93](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L93)
 
 ***
 
@@ -11657,7 +11794,7 @@ Defined in: lib/command.ts:93
 
 > **exposed**: `boolean`
 
-Defined in: lib/command.ts:92
+Defined in: [lib/command.ts:92](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L92)
 
 ***
 
@@ -11665,7 +11802,7 @@ Defined in: lib/command.ts:92
 
 > **formId**: `string`
 
-Defined in: lib/command.ts:90
+Defined in: [lib/command.ts:90](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L90)
 
 ***
 
@@ -11673,7 +11810,7 @@ Defined in: lib/command.ts:90
 
 > **inputSchema**: [`ISchema`](ISchema.md) & `object`
 
-Defined in: lib/command.ts:60
+Defined in: [lib/command.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L60)
 
 #### Type Declaration
 
@@ -11691,7 +11828,7 @@ Defined in: lib/command.ts:60
 
 > **name**: `string`
 
-Defined in: lib/command.ts:57
+Defined in: [lib/command.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L57)
 
 #### Inherited from
 
@@ -11703,7 +11840,7 @@ Defined in: lib/command.ts:57
 
 > `optional` **outputSchema?**: [`ISchema`](ISchema.md)
 
-Defined in: lib/command.ts:61
+Defined in: [lib/command.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L61)
 
 #### Inherited from
 
@@ -11715,7 +11852,7 @@ Defined in: lib/command.ts:61
 
 > **panelId**: `string`
 
-Defined in: lib/command.ts:91
+Defined in: [lib/command.ts:91](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L91)
 
 ***
 
@@ -11723,7 +11860,7 @@ Defined in: lib/command.ts:91
 
 > **running**: `number`
 
-Defined in: lib/command.ts:95
+Defined in: [lib/command.ts:95](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L95)
 
 ***
 
@@ -11731,7 +11868,7 @@ Defined in: lib/command.ts:95
 
 > **taskId**: `string`
 
-Defined in: lib/command.ts:89
+Defined in: [lib/command.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L89)
 
 ***
 
@@ -11739,7 +11876,7 @@ Defined in: lib/command.ts:89
 
 > `optional` **title?**: `string`
 
-Defined in: lib/command.ts:58
+Defined in: [lib/command.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L58)
 
 #### Inherited from
 
@@ -11756,7 +11893,7 @@ lib/command/interfaces/IMetadata.md
 
 # Interface: IMetadata
 
-Defined in: lib/command.ts:56
+Defined in: [lib/command.ts:56](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L56)
 
 与 MCP 工具描述对齐的公开命令元数据
 
@@ -11771,7 +11908,7 @@ Defined in: lib/command.ts:56
 
 > `optional` **annotations?**: `object`
 
-Defined in: lib/command.ts:63
+Defined in: [lib/command.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L63)
 
 行为说明，不代替校验或授权
 
@@ -11807,7 +11944,7 @@ WebMCP 的重要或不可逆现实效果说明
 
 > **description**: `string`
 
-Defined in: lib/command.ts:59
+Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L59)
 
 ***
 
@@ -11815,7 +11952,7 @@ Defined in: lib/command.ts:59
 
 > **inputSchema**: [`ISchema`](ISchema.md) & `object`
 
-Defined in: lib/command.ts:60
+Defined in: [lib/command.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L60)
 
 #### Type Declaration
 
@@ -11829,7 +11966,7 @@ Defined in: lib/command.ts:60
 
 > **name**: `string`
 
-Defined in: lib/command.ts:57
+Defined in: [lib/command.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L57)
 
 ***
 
@@ -11837,7 +11974,7 @@ Defined in: lib/command.ts:57
 
 > `optional` **outputSchema?**: [`ISchema`](ISchema.md)
 
-Defined in: lib/command.ts:61
+Defined in: [lib/command.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L61)
 
 ***
 
@@ -11845,7 +11982,7 @@ Defined in: lib/command.ts:61
 
 > `optional` **title?**: `string`
 
-Defined in: lib/command.ts:58
+Defined in: [lib/command.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L58)
 
 lib/command/interfaces/IPageBridge.md
 ---
@@ -11858,7 +11995,7 @@ lib/command/interfaces/IPageBridge.md
 
 # Interface: IPageBridge
 
-Defined in: lib/command.ts:106
+Defined in: [lib/command.ts:106](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L106)
 
 框架向网页发布的统一入口；按任务选择应用，只访问明确公开的命令
 
@@ -11868,7 +12005,7 @@ Defined in: lib/command.ts:106
 
 > **execute**: (`taskId`, `name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: lib/command.ts:109
+Defined in: [lib/command.ts:109](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L109)
 
 #### Parameters
 
@@ -11900,7 +12037,7 @@ Defined in: lib/command.ts:109
 
 > **list**: (`taskId`) => [`IInfo`](IInfo.md)[]
 
-Defined in: lib/command.ts:108
+Defined in: [lib/command.ts:108](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L108)
 
 #### Parameters
 
@@ -11918,7 +12055,7 @@ Defined in: lib/command.ts:108
 
 > **listTasks**: () => `object`[]
 
-Defined in: lib/command.ts:107
+Defined in: [lib/command.ts:107](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L107)
 
 #### Returns
 
@@ -11935,7 +12072,7 @@ lib/command/interfaces/ISchema.md
 
 # Interface: ISchema
 
-Defined in: lib/command.ts:11
+Defined in: [lib/command.ts:11](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L11)
 
 JSON Schema 2020-12 的命令校验子集；不支持的关键字在注册时拒绝
 
@@ -11945,7 +12082,7 @@ JSON Schema 2020-12 的命令校验子集；不支持的关键字在注册时拒
 
 > `optional` **$defs?**: `Record`\<`string`, `boolean` \| `ISchema`\>
 
-Defined in: lib/command.ts:14
+Defined in: [lib/command.ts:14](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L14)
 
 ***
 
@@ -11953,7 +12090,7 @@ Defined in: lib/command.ts:14
 
 > `optional` **$ref?**: `string`
 
-Defined in: lib/command.ts:13
+Defined in: [lib/command.ts:13](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L13)
 
 ***
 
@@ -11961,7 +12098,7 @@ Defined in: lib/command.ts:13
 
 > `optional` **$schema?**: `string`
 
-Defined in: lib/command.ts:12
+Defined in: [lib/command.ts:12](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L12)
 
 ***
 
@@ -11969,7 +12106,7 @@ Defined in: lib/command.ts:12
 
 > `optional` **additionalProperties?**: `boolean` \| `ISchema`
 
-Defined in: lib/command.ts:22
+Defined in: [lib/command.ts:22](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L22)
 
 ***
 
@@ -11977,7 +12114,7 @@ Defined in: lib/command.ts:22
 
 > `optional` **allOf?**: (`boolean` \| `ISchema`)[]
 
-Defined in: lib/command.ts:36
+Defined in: [lib/command.ts:36](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L36)
 
 ***
 
@@ -11985,7 +12122,7 @@ Defined in: lib/command.ts:36
 
 > `optional` **anyOf?**: (`boolean` \| `ISchema`)[]
 
-Defined in: lib/command.ts:37
+Defined in: [lib/command.ts:37](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L37)
 
 ***
 
@@ -11993,7 +12130,7 @@ Defined in: lib/command.ts:37
 
 > `optional` **const?**: [`TJson`](../type-aliases/TJson.md)
 
-Defined in: lib/command.ts:35
+Defined in: [lib/command.ts:35](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L35)
 
 ***
 
@@ -12001,7 +12138,7 @@ Defined in: lib/command.ts:35
 
 > `optional` **default?**: [`TJson`](../type-aliases/TJson.md)
 
-Defined in: lib/command.ts:17
+Defined in: [lib/command.ts:17](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L17)
 
 ***
 
@@ -12009,7 +12146,7 @@ Defined in: lib/command.ts:17
 
 > `optional` **description?**: `string`
 
-Defined in: lib/command.ts:16
+Defined in: [lib/command.ts:16](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L16)
 
 ***
 
@@ -12017,7 +12154,7 @@ Defined in: lib/command.ts:16
 
 > `optional` **enum?**: [`TJson`](../type-aliases/TJson.md)[]
 
-Defined in: lib/command.ts:34
+Defined in: [lib/command.ts:34](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L34)
 
 ***
 
@@ -12025,7 +12162,7 @@ Defined in: lib/command.ts:34
 
 > `optional` **examples?**: [`TJson`](../type-aliases/TJson.md)[]
 
-Defined in: lib/command.ts:18
+Defined in: [lib/command.ts:18](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L18)
 
 ***
 
@@ -12033,7 +12170,7 @@ Defined in: lib/command.ts:18
 
 > `optional` **exclusiveMaximum?**: `number`
 
-Defined in: lib/command.ts:33
+Defined in: [lib/command.ts:33](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L33)
 
 ***
 
@@ -12041,7 +12178,7 @@ Defined in: lib/command.ts:33
 
 > `optional` **exclusiveMinimum?**: `number`
 
-Defined in: lib/command.ts:32
+Defined in: [lib/command.ts:32](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L32)
 
 ***
 
@@ -12049,7 +12186,7 @@ Defined in: lib/command.ts:32
 
 > `optional` **items?**: `boolean` \| `ISchema`
 
-Defined in: lib/command.ts:23
+Defined in: [lib/command.ts:23](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L23)
 
 ***
 
@@ -12057,7 +12194,7 @@ Defined in: lib/command.ts:23
 
 > `optional` **maximum?**: `number`
 
-Defined in: lib/command.ts:31
+Defined in: [lib/command.ts:31](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L31)
 
 ***
 
@@ -12065,7 +12202,7 @@ Defined in: lib/command.ts:31
 
 > `optional` **maxItems?**: `number`
 
-Defined in: lib/command.ts:25
+Defined in: [lib/command.ts:25](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L25)
 
 ***
 
@@ -12073,7 +12210,7 @@ Defined in: lib/command.ts:25
 
 > `optional` **maxLength?**: `number`
 
-Defined in: lib/command.ts:28
+Defined in: [lib/command.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L28)
 
 ***
 
@@ -12081,7 +12218,7 @@ Defined in: lib/command.ts:28
 
 > `optional` **minimum?**: `number`
 
-Defined in: lib/command.ts:30
+Defined in: [lib/command.ts:30](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L30)
 
 ***
 
@@ -12089,7 +12226,7 @@ Defined in: lib/command.ts:30
 
 > `optional` **minItems?**: `number`
 
-Defined in: lib/command.ts:24
+Defined in: [lib/command.ts:24](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L24)
 
 ***
 
@@ -12097,7 +12234,7 @@ Defined in: lib/command.ts:24
 
 > `optional` **minLength?**: `number`
 
-Defined in: lib/command.ts:27
+Defined in: [lib/command.ts:27](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L27)
 
 ***
 
@@ -12105,7 +12242,7 @@ Defined in: lib/command.ts:27
 
 > `optional` **not?**: `boolean` \| `ISchema`
 
-Defined in: lib/command.ts:39
+Defined in: [lib/command.ts:39](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L39)
 
 ***
 
@@ -12113,7 +12250,7 @@ Defined in: lib/command.ts:39
 
 > `optional` **oneOf?**: (`boolean` \| `ISchema`)[]
 
-Defined in: lib/command.ts:38
+Defined in: [lib/command.ts:38](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L38)
 
 ***
 
@@ -12121,7 +12258,7 @@ Defined in: lib/command.ts:38
 
 > `optional` **pattern?**: `string`
 
-Defined in: lib/command.ts:29
+Defined in: [lib/command.ts:29](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L29)
 
 ***
 
@@ -12129,7 +12266,7 @@ Defined in: lib/command.ts:29
 
 > `optional` **properties?**: `Record`\<`string`, `boolean` \| `ISchema`\>
 
-Defined in: lib/command.ts:20
+Defined in: [lib/command.ts:20](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L20)
 
 ***
 
@@ -12137,7 +12274,7 @@ Defined in: lib/command.ts:20
 
 > `optional` **required?**: `string`[]
 
-Defined in: lib/command.ts:21
+Defined in: [lib/command.ts:21](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L21)
 
 ***
 
@@ -12145,7 +12282,7 @@ Defined in: lib/command.ts:21
 
 > `optional` **title?**: `string`
 
-Defined in: lib/command.ts:15
+Defined in: [lib/command.ts:15](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L15)
 
 ***
 
@@ -12153,7 +12290,7 @@ Defined in: lib/command.ts:15
 
 > `optional` **type?**: `"string"` \| `"number"` \| `"boolean"` \| `"object"` \| `"array"` \| `"integer"` \| `"null"`
 
-Defined in: lib/command.ts:19
+Defined in: [lib/command.ts:19](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L19)
 
 ***
 
@@ -12161,7 +12298,7 @@ Defined in: lib/command.ts:19
 
 > `optional` **uniqueItems?**: `boolean`
 
-Defined in: lib/command.ts:26
+Defined in: [lib/command.ts:26](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L26)
 
 lib/command/type-aliases/TJson.md
 ---
@@ -12176,7 +12313,7 @@ lib/command/type-aliases/TJson.md
 
 > **TJson** = `null` \| `boolean` \| `number` \| `string` \| `TJson`[] \| \{\[`key`: `string`\]: `TJson`; \}
 
-Defined in: lib/command.ts:8
+Defined in: [lib/command.ts:8](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L8)
 
 命令输入与输出可跨浏览器、Native 和协议传输的 JSON 值
 
@@ -12193,7 +12330,7 @@ lib/command/type-aliases/TResult.md
 
 > **TResult**\<`T`\> = \{ `data`: `T`; `ok`: `true`; \} \| \{ `error`: \{ `code`: `string`; `message`: `string`; \}; `ok`: `false`; \}
 
-Defined in: lib/command.ts:43
+Defined in: [lib/command.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L43)
 
 所有入口共用的结果；错误码用于程序判断，message 用于说明
 
@@ -30583,7 +30720,7 @@ lib/native/functions/activate.md
 
 > **activate**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:301](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L301)
+Defined in: [lib/native.ts:326](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L326)
 
 ## Parameters
 
@@ -30608,7 +30745,7 @@ lib/native/functions/clear.md
 
 > **clear**(`taskId`, `formId?`): `void`
 
-Defined in: [lib/native.ts:144](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L144)
+Defined in: [lib/native.ts:169](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L169)
 
 清除某个窗体或某个任务的所有事件监听
 
@@ -30643,7 +30780,7 @@ lib/native/functions/close.md
 
 > **close**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:313](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L313)
+Defined in: [lib/native.ts:338](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L338)
 
 关闭当前 native 真实窗体，根据配置整个 native 任务可能结束也可能保留 node 不结束
 
@@ -30672,7 +30809,7 @@ lib/native/functions/dialog.md
 
 > **dialog**(`options?`): `Promise`\<`number`\>
 
-Defined in: [lib/native.ts:380](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L380)
+Defined in: [lib/native.ts:405](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L405)
 
 弹出消息框
 
@@ -30703,7 +30840,7 @@ lib/native/functions/getListenerList.md
 
 > **getListenerList**(`taskId?`): `Record`\<`string`, `Record`\<`string`, `Record`\<`string`, `number`\>\>\>
 
-Defined in: [lib/native.ts:167](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L167)
+Defined in: [lib/native.ts:192](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L192)
 
 获取监听 native 事件的监听统计信息列表
 
@@ -30719,6 +30856,37 @@ Defined in: [lib/native.ts:167](https://github.com/maiyun/clickgo/blob/master/di
 
 `Record`\<`string`, `Record`\<`string`, `Record`\<`string`, `number`\>\>\>
 
+lib/native/functions/getMcpInfo.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/native](../index.md) / getMcpInfo
+
+# Function: getMcpInfo()
+
+> **getMcpInfo**(`current`): `Promise`\<`false` \| [`IMcpInfo`](../interfaces/IMcpInfo.md) \| `null`\>
+
+Defined in: [lib/native.ts:87](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L87)
+
+读取 Native 主进程启用的 MCP 连接设置
+
+## Parameters
+
+### current
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+当前 App
+
+## Returns
+
+`Promise`\<`false` \| [`IMcpInfo`](../interfaces/IMcpInfo.md) \| `null`\>
+
+连接设置；未启用为 null，无权限为 false
+
 lib/native/functions/init.md
 ---
 
@@ -30732,7 +30900,7 @@ lib/native/functions/init.md
 
 > **init**(): `void`
 
-Defined in: [lib/native.ts:411](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L411)
+Defined in: [lib/native.ts:436](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L436)
 
 ## Returns
 
@@ -30751,7 +30919,7 @@ lib/native/functions/initSysId.md
 
 > **initSysId**(`id`): `void`
 
-Defined in: [lib/native.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L28)
+Defined in: [lib/native.ts:29](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L29)
 
 初始化系统级 ID，仅能设置一次
 
@@ -30780,7 +30948,7 @@ lib/native/functions/invoke.md
 
 > **invoke**(`name`, ...`param`): `Promise`\<`any`\>
 
-Defined in: [lib/native.ts:208](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L208)
+Defined in: [lib/native.ts:233](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L233)
 
 向 native 发送指令
 
@@ -30815,7 +30983,7 @@ lib/native/functions/invokeSys.md
 
 > **invokeSys**(`current`, `name`, ...`param`): `Promise`\<`any`\>
 
-Defined in: [lib/native.ts:221](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L221)
+Defined in: [lib/native.ts:246](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L246)
 
 向 native 发送指令（系统级）
 
@@ -30856,7 +31024,7 @@ lib/native/functions/isMax.md
 
 > **isMax**(): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:404](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L404)
+Defined in: [lib/native.ts:429](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L429)
 
 判断窗体是否是最大化状态
 
@@ -30877,7 +31045,7 @@ lib/native/functions/maximizable.md
 
 > **maximizable**(`current`, `val`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:321](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L321)
+Defined in: [lib/native.ts:346](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L346)
 
 ## Parameters
 
@@ -30906,7 +31074,7 @@ lib/native/functions/max.md
 
 > **max**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:267](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L267)
+Defined in: [lib/native.ts:292](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L292)
 
 ## Parameters
 
@@ -30931,7 +31099,7 @@ lib/native/functions/min.md
 
 > **min**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:275](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L275)
+Defined in: [lib/native.ts:300](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L300)
 
 ## Parameters
 
@@ -30956,7 +31124,7 @@ lib/native/functions/minSize.md
 
 > **minSize**(`current`, `width`, `height`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:256](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L256)
+Defined in: [lib/native.ts:281](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L281)
 
 设置实体窗体的最小尺寸，0 表示不限制对应方向
 
@@ -30997,7 +31165,7 @@ lib/native/functions/off.md
 
 > **off**(`current`, `name`, `formId?`): `void`
 
-Defined in: [lib/native.ts:125](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L125)
+Defined in: [lib/native.ts:150](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L150)
 
 解绑监听的方法
 
@@ -31038,7 +31206,7 @@ lib/native/functions/once.md
 
 > **once**(`current`, `name`, `handler`, `formId?`): `void`
 
-Defined in: [lib/native.ts:110](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L110)
+Defined in: [lib/native.ts:135](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L135)
 
 监听 native 传输过来的事件（仅一次）
 
@@ -31085,7 +31253,7 @@ lib/native/functions/on.md
 
 > **on**(`current`, `name`, `handler`, `once?`, `formId?`): `void`
 
-Defined in: [lib/native.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L81)
+Defined in: [lib/native.ts:106](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L106)
 
 监听 native 传输过来的事件
 
@@ -31138,7 +31306,7 @@ lib/native/functions/open.md
 
 > **open**(`options?`): `Promise`\<`string`[] \| `null`\>
 
-Defined in: [lib/native.ts:336](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L336)
+Defined in: [lib/native.ts:361](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L361)
 
 弹出文件选择框
 
@@ -31201,7 +31369,7 @@ lib/native/functions/ping.md
 
 > **ping**(`val`): `Promise`\<`string`\>
 
-Defined in: [lib/native.ts:397](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L397)
+Defined in: [lib/native.ts:422](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L422)
 
 测试与 native 的连通性
 
@@ -31232,7 +31400,7 @@ lib/native/functions/quit.md
 
 > **quit**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:234](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L234)
+Defined in: [lib/native.ts:259](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L259)
 
 直接让整个 native 进程退出
 
@@ -31261,7 +31429,7 @@ lib/native/functions/restore.md
 
 > **restore**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:293](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L293)
+Defined in: [lib/native.ts:318](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L318)
 
 从最小化还原
 
@@ -31288,7 +31456,7 @@ lib/native/functions/save.md
 
 > **save**(`options?`): `Promise`\<`string` \| `null`\>
 
-Defined in: [lib/native.ts:362](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L362)
+Defined in: [lib/native.ts:387](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L387)
 
 弹出文件保存框
 
@@ -31329,7 +31497,7 @@ lib/native/functions/size.md
 
 > **size**(`current`, `width`, `height`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:242](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L242)
+Defined in: [lib/native.ts:267](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L267)
 
 ## Parameters
 
@@ -31362,7 +31530,7 @@ lib/native/functions/unmaximize.md
 
 > **unmaximize**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:284](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L284)
+Defined in: [lib/native.ts:309](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L309)
 
 从最大化还原
 
@@ -31387,6 +31555,10 @@ lib/native/index.md
 
 # lib/native
 
+## Interfaces
+
+- [IMcpInfo](interfaces/IMcpInfo.md)
+
 ## Functions
 
 - [activate](functions/activate.md)
@@ -31394,6 +31566,7 @@ lib/native/index.md
 - [close](functions/close.md)
 - [dialog](functions/dialog.md)
 - [getListenerList](functions/getListenerList.md)
+- [getMcpInfo](functions/getMcpInfo.md)
 - [init](functions/init.md)
 - [initSysId](functions/initSysId.md)
 - [invoke](functions/invoke.md)
@@ -31413,6 +31586,45 @@ lib/native/index.md
 - [save](functions/save.md)
 - [size](functions/size.md)
 - [unmaximize](functions/unmaximize.md)
+
+lib/native/interfaces/IMcpInfo.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/native](../index.md) / IMcpInfo
+
+# Interface: IMcpInfo
+
+Defined in: [lib/native.ts:76](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L76)
+
+本地 MCP 客户端连接设置；仅向已授权 root 的 App 提供
+
+## Properties
+
+### token
+
+> **token**: `string`
+
+Defined in: [lib/native.ts:79](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L79)
+
+***
+
+### transport
+
+> **transport**: `"streamable-http"`
+
+Defined in: [lib/native.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L77)
+
+***
+
+### url
+
+> **url**: `string`
+
+Defined in: [lib/native.ts:78](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L78)
 
 lib/storage/functions/all.md
 ---

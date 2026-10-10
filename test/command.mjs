@@ -57,6 +57,38 @@ function task(id) {
 
 const first = task('first');
 const second = task('second');
+const nativeCommand = await load('../dist/lib/command/native.ts', {
+    '../command': command, '../task': { getOrigin: id => tasks[id] },
+});
+// --- 连接设置只通过 Native 与 root 检查，并兼容尚未提供 MCP 的旧宿主。 ---
+let nativeEnvironment = false;
+let nativePermission = false;
+let connection;
+let nativeQueries = 0;
+const native = await load('../dist/lib/native.ts', {
+    '../clickgo': { isNative: () => nativeEnvironment },
+    './core': {}, './tool': { random: () => 'test-session', 'RANDOM_LUNS': '' },
+    './task': { checkPermission: async (_current, name) => {
+        assert.equal(name, 'root');
+        return [nativePermission];
+    } },
+    './command/native': nativeCommand,
+}, { 'window': { 'clickgoNative': { invoke: async (name, token) => {
+    ++nativeQueries;
+    assert.equal(name, 'cg-mcp-info');
+    assert.equal(token, 'test-session');
+    return connection;
+} } } });
+assert.equal(await native.getMcpInfo(first), null);
+nativeEnvironment = true;
+assert.equal(await native.getMcpInfo(first), false);
+assert.equal(nativeQueries, 0);
+nativePermission = true;
+assert.equal(await native.getMcpInfo(first), null);
+connection = null;
+assert.equal(await native.getMcpInfo(first), null);
+connection = { 'transport': 'streamable-http', 'url': 'http://localhost/mcp', 'token': 'test' };
+assert.deepEqual(await native.getMcpInfo(first), connection);
 const panel = { ...first, panelId: 'panel' };
 assert.equal(command.register(first, definition('shared', { execute: () => command.success('first') })), true);
 assert.equal(command.register(second, definition('shared', { execute: () => command.success('second') })), true);
@@ -167,10 +199,30 @@ assert.equal((await command.execute(first, 'source')).data, 'user');
 assert.equal((await bridge.execute('source')).data, 'agent');
 assert.equal(context.taskId, 'first');
 
+// --- 直接代理入口保留来源、公开范围及输入校验，与可复用桥接共享执行器。 ---
+assert.equal((await command.executeAgent('first', 'source')).data, 'agent');
+assert.equal((await command.executeAgent('first', 'shared')).error.code, 'not-found');
+assert.equal((await command.executeAgent('first', 'validated', {})).error.code, 'invalid-input');
+const cancelledAgent = new AbortController();
+cancelledAgent.abort();
+assert.equal((await command.executeAgent('first', 'source', {}, { 'signal': cancelledAgent.signal })).error.code,
+    'cancelled');
+
+// --- Native 按 taskId 直接读取与执行公开命令，不为单次请求创建桥接。 ---
+const nativeApps = await nativeCommand.invoke({ method: 'listTasks', id: 'apps' });
+assert.equal(nativeApps.data.length, 2);
+assert.equal((await nativeCommand.invoke({ method: 'list', id: 'list', taskId: 'first' })).data.length, 2);
+assert.equal((await nativeCommand.invoke({ method: 'execute', id: 'source', taskId: 'first', name: 'source' })).data, 'agent');
+assert.equal((await nativeCommand.invoke({ method: 'execute', id: 'private', taskId: 'first', name: 'shared' })).error.code,
+    'not-found');
+assert.equal((await nativeCommand.invoke({ method: 'execute', id: 'missing', taskId: 'gone', name: 'source' })).error.code,
+    'unavailable');
+
 // --- 网页入口覆盖所有 App；私有命令、跨任务同名命令与原有鉴权保持边界。 ---
 const pageBridge = command.createPageBridge();
 assert.equal(Object.isFrozen(pageBridge), true);
 assert.deepEqual(plain(pageBridge.listTasks()), [{ id: 'first', name: 'App first' }, { id: 'second', name: 'App second' }]);
+assert.deepEqual(plain(command.listTasks()), plain(pageBridge.listTasks()));
 assert.deepEqual(plain(pageBridge.list('first').map(info => info.name)), ['validated', 'source']);
 assert.deepEqual(plain(pageBridge.list('missing')), []);
 assert.equal((await pageBridge.execute('first', 'shared')).error.code, 'not-found');
@@ -183,12 +235,16 @@ for (const current of [first, second]) {
 }
 assert.equal((await pageBridge.execute('first', 'page-shared')).data, 'first');
 assert.equal((await pageBridge.execute('second', 'page-shared')).data, 'second');
+assert.equal((await command.executeAgent('first', 'page-shared')).data, 'first');
+assert.equal((await command.executeAgent('second', 'page-shared')).data, 'second');
 command.register(first, definition('page-protected', { exposed: true, permissions: ['native.form'] }));
 permission = async () => [false];
 assert.equal((await pageBridge.execute('first', 'page-protected')).error.code, 'permission-denied');
+assert.equal((await command.executeAgent('first', 'page-protected')).error.code, 'permission-denied');
 permission = async () => [true];
 tasks.second.ending = true;
 assert.equal(pageBridge.listTasks().some(info => info.id === 'second'), false);
+assert.equal(command.listTasks().some(info => info.id === 'second'), false);
 assert.deepEqual(plain(pageBridge.list('second')), []);
 assert.equal((await pageBridge.execute('second', 'page-shared')).error.code, 'unavailable');
 tasks.second.ending = false;
@@ -248,6 +304,24 @@ assert.equal(runningSignal.aborted, true);
 finish(command.success(null));
 assert.equal((await slow).error.code, 'cancelled');
 assert.equal(command.list(first).find(info => info.name === 'slow').running, 0);
+
+// --- Native 跨进程取消只影响指定请求，执行结束后释放请求与命令占用。 ---
+command.register(first, definition('native-slow', { exposed: true, execute: (input, ctx) => {
+    runningSignal = ctx.signal;
+    return new Promise(resolve => { finish = resolve; });
+} }));
+const nativeSlow = nativeCommand.invoke({ method: 'execute', id: 'slow-id', taskId: 'first', name: 'native-slow' });
+await Promise.resolve();
+assert.equal((await nativeCommand.invoke({ method: 'execute', id: 'slow-id', taskId: 'first', name: 'native-slow' })).error.code,
+    'invalid-input');
+await nativeCommand.invoke({ method: 'cancel', id: 'other-id' });
+assert.equal(runningSignal.aborted, false);
+await nativeCommand.invoke({ method: 'cancel', id: 'slow-id' });
+assert.equal(runningSignal.aborted, true);
+finish(command.success(null));
+assert.equal((await nativeSlow).error.code, 'cancelled');
+assert.equal(command.list(first).find(info => info.name === 'native-slow').running, 0);
+command.unregister(first, 'native-slow');
 const concurrent = [];
 command.register(first, definition('parallel', { concurrent: true, execute: () =>
     new Promise(resolve => concurrent.push(resolve)) }));

@@ -8,7 +8,7 @@
 
 > **unmaximize**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:284](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L284)
+Defined in: [lib/native.ts:309](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L309)
 
 从最大化还原
 

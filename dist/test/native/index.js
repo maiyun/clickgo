@@ -5,7 +5,7 @@ import * as native from './native.js';
  * 网页运行多个 app
  */
 class Boot extends native.AbstractBoot {
-    main() {
+    async main() {
         /*
         this.run('https://maiyun.github.io/clickgo/dist/test/desktop/', {
             'frame': false,
@@ -18,6 +18,8 @@ class Boot extends native.AbstractBoot {
             'background': '#222',
         });
         //*/
+        // --- 本地命令服务与网页共用 App 执行入口 ---
+        await native.startMcp({ 'id': 'clickgo-demo' });
     }
 }
 native.launcher(new Boot());

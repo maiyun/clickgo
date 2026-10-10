@@ -5,12 +5,14 @@ import * as native from './native.js';
  * 网页运行单个 app
  */
 class Boot extends native.AbstractBoot {
-    main() {
+    async main() {
         this.run('../desktop/index.html?single', {
             'frame': false,
             'quit': false,
             'background': '#222',
         });
+        // --- 本地命令服务与网页共用 App 执行入口 ---
+        await native.startMcp({ 'id': 'clickgo-demo' });
     }
 }
 native.launcher(new Boot());

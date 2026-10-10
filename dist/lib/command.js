@@ -217,6 +217,16 @@ export function list(current) {
     return infos;
 }
 /**
+ * --- 获取仍可调用的 App 标识与名称，供网页及 Native 代理发现目标 ---
+ * @returns 未开始退出的 App 列表
+ */
+export function listTasks() {
+    return lTask.getList().filter(info => {
+        const task = lTask.getOrigin(info.id);
+        return task && !task.ending;
+    }).map(info => ({ 'id': info.id, 'name': info.name }));
+}
+/**
  * --- 唯一执行入口；异常边界保护插件回调和运行状态，所有入口使用相同校验 ---
  * @param taskId 目标任务
  * @param name 命令名称
@@ -319,7 +329,18 @@ export function execute(current, name, args = {}, options = {}) {
     return run(owner(current).taskId, name, args, options.signal, 'user', false);
 }
 /**
- * --- 建立只公开允许命令的实例接口，供浏览器 JS 和后续 Native/MCP 转发 ---
+ * --- 代理直接按 taskId 执行公开命令，与界面共用校验和业务执行器 ---
+ * @param taskId 目标 App
+ * @param name 命令名称
+ * @param args 参数，默认空对象
+ * @param options 取消信号
+ * @returns 结构化结果；未公开或不存在的命令返回 not-found
+ */
+export function executeAgent(taskId, name, args = {}, options = {}) {
+    return run(taskId, name, args, options.signal, 'agent', true);
+}
+/**
+ * --- 创建绑定单个 App 的可复用代理接口，调用方无需反复传入 taskId ---
  * @param current 所属应用
  * @returns 不可修改的桥接接口
  */
@@ -328,7 +349,7 @@ export function createBridge(current) {
     return Object.freeze({
         'taskId': taskId,
         'list': () => list(taskId).filter(info => info.exposed),
-        'execute': (name, args = {}, options = {}) => run(taskId, name, args, options.signal, 'agent', true),
+        'execute': (name, args = {}, options = {}) => executeAgent(taskId, name, args, options),
     });
 }
 /**
@@ -337,15 +358,12 @@ export function createBridge(current) {
  */
 export function createPageBridge() {
     return Object.freeze({
-        'listTasks': () => lTask.getList().filter(info => {
-            const task = lTask.getOrigin(info.id);
-            return task && !task.ending;
-        }).map(info => ({ 'id': info.id, 'name': info.name })),
+        'listTasks': listTasks,
         'list': (taskId) => {
             const task = lTask.getOrigin(taskId);
             return task && !task.ending ? list(taskId).filter(info => info.exposed) : [];
         },
-        'execute': (taskId, name, args = {}, options = {}) => run(taskId, name, args, options.signal, 'agent', true),
+        'execute': executeAgent,
     });
 }
 /** --- WebMCP 只是适配器；不支持时不影响普通执行或实例桥接 --- */
@@ -400,7 +418,7 @@ function refreshWebMcp(taskId) {
                             registries.get(taskId)?.get(entry.metadata.name) !== entry) {
                             return JSON.stringify(failure('not-found', 'Command was not found'));
                         }
-                        return JSON.stringify(await createBridge(taskId).execute(entry.metadata.name, args, options));
+                        return JSON.stringify(await executeAgent(taskId, entry.metadata.name, args, options));
                     },
                 }, { 'signal': controller.signal });
                 if (webConnections.get(taskId) !== connection ||

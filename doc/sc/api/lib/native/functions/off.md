@@ -8,7 +8,7 @@
 
 > **off**(`current`, `name`, `formId?`): `void`
 
-Defined in: [lib/native.ts:125](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L125)
+Defined in: [lib/native.ts:150](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L150)
 
 解绑监听的方法
 

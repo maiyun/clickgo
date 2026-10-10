@@ -90,6 +90,10 @@ $ npm i jszip --save-dev
 $ npm i vue --save-dev
 ```
 
+## Shared commands and AI integration
+
+Register business commands once with `clickgo.command.register()` and let buttons, menus, shortcuts and agents use the shared executor. ClickGo publishes the browser JavaScript command interface automatically and can connect available WebMCP. See the [command guide](./doc/sc/commands.md) (Simplified Chinese) for registration and lifecycle details, and the [ClickGo Native integration guide](https://github.com/maiyun/clickgo-native#local-mcp) for the complete App registration, HTTP MCP, stdio and CLI setup.
+
 ## Notes
 
 ClickGo auto-loads Vue, jszip. **Don't** include them manually.
