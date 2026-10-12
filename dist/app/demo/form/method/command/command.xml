@@ -24,14 +24,18 @@
             </layout>
             <!-- 页面代理可见的发现提示；示例代码指向框架统一发布的接口 -->
             <label size="l">AI agent interface</label>
-            <label>ClickGo provides window['clickgo']['command'] for every app. WebMCP is optional.</label>
+            <label>ClickGo provides window['clickgo']['command'] for every app and automatically registers WebMCP tools when supported.</label>
             <label>First call api.listTasks() to find apps, then api.list(taskId) for command names, descriptions, input schemas and availability. Use api.execute(taskId, name, args) to run a command.</label>
-            <text :model-value="agentGuide" readonly type="multi" dir="ltr" style="height: 120px;"></text>
+            <layout gutter="10" wrap>
+                <button @click="generateGuide">Generate AI access guide</button>
+                <button @click="agentInfo">Show access information</button>
+            </layout>
+            <text :model-value="agentGuide" readonly type="multi" dir="ltr" style="height: 180px;"></text>
+            <label>Copy this generated guide to your AI. Native mode also includes the executable path and CLI/stdio startup arguments.</label>
             <label>Use this API when your browser tools allow page JavaScript. Otherwise use the buttons or command palette.</label>
             <layout gutter="10" wrap align-v="center">
                 <button @click="listCommands">List exposed commands</button>
-                <button @click="connect">Connect WebMCP</button>
-                <label>{{webMcp ? 'Connected' : 'Disconnected or unsupported'}}</label>
+                <label>{{webMcpStatus}}</label>
             </layout>
             <label>Increase command: {{addName}}</label>
             <text :model-value="result" readonly type="multi" dir="ltr" style="height: 100px;"></text>

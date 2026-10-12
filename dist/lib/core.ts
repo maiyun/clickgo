@@ -22,6 +22,7 @@ import * as lTask from './task';
 import * as lTool from './tool';
 import * as lZip from './zip';
 import * as lControl from './control';
+import type * as lCommand from './command';
 import * as lCore from './core';
 
 /** --- 系统级 ID --- */
@@ -232,6 +233,16 @@ export abstract class AbstractApp {
     /** --- 任务结束事件 --- */
     public onTaskEnded(taskId: string): void | Promise<void>;
     public onTaskEnded(): void | Promise<void> {
+        return;
+    }
+
+    /**
+     * --- 页面级 WebMCP 接入状态变化，所有 App 共用同一状态 ---
+     * @param status 浏览器接入状态，与 command.getAgentInfo 的 webMcp.status 一致
+     * @returns 无返回值
+     */
+    public onWebMcpStatusChanged(status: lCommand.TWebMcpStatus): void | Promise<void>;
+    public onWebMcpStatusChanged(): void {
         return;
     }
 
@@ -510,6 +521,50 @@ export async function trigger(name: TGlobalEvent, taskId: string | boolean | Key
                     (t.class as any)?.[eventName](taskId);
                     for (const fid in t.forms) {
                         t.forms[fid].vroot[eventName]?.(taskId);
+                    }
+                }
+            }
+            break;
+        }
+        case 'webMcpStatusChanged': {
+            if (taskId !== 'unsupported' && taskId !== 'ready') {
+                return;
+            }
+            const status = taskId;
+            /**
+             * --- 事件回调独立运行，失败不能中断注册或其他接收者 ---
+             * @param receiver Boot、App 或 Form
+             * @param receiverTaskId 接收者所属任务，Boot 为空
+             * @returns 无返回值
+             */
+            const notify = (receiver: {
+                'onWebMcpStatusChanged'?: (status: lCommand.TWebMcpStatus) => void | Promise<void>;
+            } | null | undefined, receiverTaskId: string): void => {
+                const report = (error: unknown): void => {
+                    trigger('error', receiverTaskId, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => {});
+                };
+                try {
+                    Promise.resolve(receiver?.onWebMcpStatusChanged?.(status)).catch(report);
+                }
+                catch (error) {
+                    report(error);
+                }
+            };
+            notify(boot, '');
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                if (t.ending) {
+                    continue;
+                }
+                notify(t.class, tid);
+                for (const fid in t.forms) {
+                    if (t.ending) {
+                        break;
+                    }
+                    const form = t.forms[fid];
+                    if (!form.closed) {
+                        // --- vroot 为挂载后的 Form 实例，IVue 的通用类型不声明此回调 ---
+                        notify(form.vroot as unknown as lForm.AbstractForm, tid);
                     }
                 }
             }
@@ -1682,7 +1737,7 @@ export interface IAvailArea {
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'launcherShowChanged' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
+export type TGlobalEvent = 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'webMcpStatusChanged' | 'launcherShowChanged' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {

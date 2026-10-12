@@ -7,6 +7,7 @@ import type { JSONObject } from '@modelcontextprotocol/server';
 import * as lFs from './lib/fs.js';
 import * as lTool from './lib/tool.js';
 import * as lMcp from './lib/mcp.js';
+import * as lCli from './lib/cli.js';
 
 export type { IMcpInfo, IMcpOptions } from './lib/mcp.js';
 
@@ -37,6 +38,12 @@ let mainNavigating: boolean = false;
 /** --- 一个 Native 进程共用一个 MCP 服务，关闭主窗体时释放 --- */
 let mcpServer: lMcp.IMcpServer | undefined;
 
+/** --- 当前服务是否允许软件自身的 CLI/stdio 发现连接 --- */
+let mcpDiscovery = false;
+
+/** --- 命令请求是否允许在没有运行实例时拉起 GUI，默认关闭 --- */
+let commandAutoStart = false;
+
 /** --- 尚在准备的监听，用于防重复与停止时等待释放 --- */
 let mcpPending: Promise<lMcp.IMcpServer | false> | undefined;
 
@@ -58,6 +65,12 @@ const methods: Record<string, {
     'once': boolean;
     'handler': (...param: any[]) => any | Promise<any>;
 }> = {
+    'cg-command-entry': {
+        'once': false,
+        handler: function(t: string): ICommandEntry | null {
+            return verifyToken(t) ? getCommandEntry() : null;
+        },
+    },
     'cg-mcp-info': {
         'once': false,
         handler: function(t: string): lMcp.IMcpInfo | null {
@@ -713,6 +726,8 @@ export interface ILauncherOptions {
     'openFiles'?: boolean;
     /** --- 是否限制为单一应用实例，默认 false --- */
     'singleInstance'?: boolean;
+    /** --- CLI/stdio 首次请求时自动拉起 GUI，Boot.main 须启用 MCP 和本机发现；默认 false --- */
+    'commandAutoStart'?: boolean;
 }
 
 /**
@@ -847,9 +862,11 @@ export async function startMcp(options: lMcp.IMcpOptions = {}): Promise<lMcp.IMc
         return false;
     }
     const generation = mcpGeneration;
+    const discovery = options.discovery !== false;
     const pending = lMcp.start(invokeMcp, options, {
         'id': createHash('sha256').update(electron.app.getPath('userData')).digest('hex').slice(0, 24),
         'name': electron.app.getName(),
+        'applicationId': getApplicationId(),
     });
     mcpPending = pending;
     const service = await pending;
@@ -862,6 +879,7 @@ export async function startMcp(options: lMcp.IMcpOptions = {}): Promise<lMcp.IMc
         return false;
     }
     mcpServer = service;
+    mcpDiscovery = discovery;
     return { ...service.info };
 }
 
@@ -882,6 +900,7 @@ export async function stopMcp(): Promise<void> {
     const pending = mcpPending;
     const service = mcpServer;
     mcpServer = undefined;
+    mcpDiscovery = false;
     await service?.close();
     // --- 停止请求不能被稍后完成的监听覆盖 ---
     const starting = await pending;
@@ -907,12 +926,116 @@ export function isPackaged(): boolean {
 }
 
 /**
+ * --- 取得软件自身的可执行文件，AppImage 使用原镜像路径 ---
+ * @returns 可执行文件的绝对路径
+ */
+function getExecutablePath(): string {
+    const appImage = process.env['APPIMAGE'];
+    const appDir = process.env['APPDIR'];
+    // --- 只识别自己的 AppImage 挂载，不能误用 AI 客户端继承过来的镜像环境 ---
+    if (electron.app.isPackaged && process.platform === 'linux' && appImage && appDir &&
+        process.execPath.startsWith(`${nodePath.resolve(appDir)}${nodePath.sep}`)) {
+        return appImage;
+    }
+    return process.execPath;
+}
+
+/**
+ * --- 同一安装的 GUI 与命令进程共用归属，不依赖启动目录或自定义的 MCP ID ---
+ * @returns 软件归属标识；AppImage 使用原镜像路径，避免每次挂载位置不同
+ */
+function getApplicationId(): string {
+    const source = electron.app.isPackaged ? getExecutablePath() : electron.app.getAppPath();
+    return createHash('sha256').update(source).digest('hex').slice(0, 24);
+}
+
+/** --- 可公开的进程入口和能力状态，不包含 HTTP 地址或连接凭据 --- */
+export interface ICommandEntry {
+    'name': string;
+    'platform': string;
+    'command': string;
+    'args': string[];
+    'startup': 'existing' | 'auto';
+    'mcp': { 'enabled': boolean; 'discovery': boolean; };
+}
+
+/**
+ * --- 取得软件自身的 CLI/stdio 启动入口，开发模式保留实际入口文件 ---
+ * @returns 独立的入口信息；调用方在 args 后追加 --cli 或 --mcp
+ */
+export function getCommandEntry(): ICommandEntry {
+    const args: string[] = [];
+    // --- 保留宿主已经显式采用的沙箱启动选项，子进程须在 Chromium 初始化前收到它 ---
+    if (electron.app.commandLine.hasSwitch('no-sandbox')) {
+        args.push('--no-sandbox');
+    }
+    if (!electron.app.isPackaged) {
+        let entry = electron.app.getAppPath();
+        // --- 遵循 Electron 默认启动器的入口选择，调试开关及 require 模块不属于 App 入口 ---
+        for (let i = 1; i < process.argv.length; ++i) {
+            const arg = process.argv[i];
+            if (arg === '--require' || arg === '-r') {
+                ++i;
+                continue;
+            }
+            if (arg.startsWith('--app=')) {
+                entry = arg.slice(6);
+                break;
+            }
+            if (arg.startsWith('-')) {
+                continue;
+            }
+            entry = arg;
+            break;
+        }
+        args.push(nodePath.resolve(entry));
+    }
+    return {
+        'name': electron.app.getName(), 'platform': platform, 'command': getExecutablePath(),
+        'args': args,
+        'startup': commandAutoStart ? 'auto' : 'existing',
+        'mcp': { 'enabled': mcpServer !== undefined, 'discovery': mcpDiscovery },
+    };
+}
+
+/**
  * --- 用户调用运行 boot 类 ---
  * @param boot 启动类实例
  * @param options 进程启动选项
  * @returns 无
  */
 export function launcher(boot: AbstractBoot, options: ILauncherOptions = {}): void {
+    commandAutoStart = options.commandAutoStart ?? false;
+    const offset = process.defaultApp ? 2 : 1;
+    const args = process.argv.slice(offset);
+    const modeIndex = args.findIndex(arg => arg === '--cli' || arg === '--mcp');
+    if (modeIndex >= 0) {
+        // --- 命令进程先分流，不能占用 GUI 的单实例锁、打开文件或执行业务启动方法 ---
+        electron.app.disableHardwareAcceleration();
+        electron.app.commandLine.appendSwitch('headless');
+        const controller = new AbortController();
+        // --- Electron 会自行处理进程中断，先取消请求再允许退出，避免结果和取消通知丢失 ---
+        const beforeQuit = (event: electron.Event): void => {
+            event.preventDefault();
+            controller.abort();
+        };
+        electron.app.on('before-quit', beforeQuit);
+        const commandArgs = args[modeIndex] === '--mcp' ? ['mcp', ...args.slice(modeIndex + 1)] :
+            args.slice(modeIndex + 1);
+        void lCli.run(commandArgs, {
+            'applicationId': getApplicationId(), 'command': nodePath.basename(process.execPath),
+            'signal': controller.signal,
+            'startup': commandAutoStart ? getCommandEntry() : undefined,
+        }).then((): void => {
+            // --- 排空 JSON / 协议输出后结束当前接入进程，不能退出原来的 GUI ---
+            process.stdout.write('', (): void => { electron.app.exit(Number(process.exitCode ?? 0)); });
+        }).catch((): void => {
+            process.stderr.write('The command interface failed.\n', (): void => { electron.app.exit(1); });
+        }).finally((): void => {
+            electron.app.removeListener('before-quit', beforeQuit);
+        });
+        return;
+    }
     (async function() {
         if (options.singleInstance && !electron.app.requestSingleInstanceLock()) {
             electron.app.quit();

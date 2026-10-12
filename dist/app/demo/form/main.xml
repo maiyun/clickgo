@@ -3,7 +3,7 @@
         <!-- 首屏提供可见发现入口，不要求代理先猜测在哪个示例页 -->
         <layout gutter="10" wrap align-v="center">
             <button @click="openForm('mcommand')">AI interface guide</button>
-            <label>JavaScript command API available. WebMCP is optional.</label>
+            <label>JavaScript API available. WebMCP tools register automatically when supported.</label>
         </layout>
         <tab v-model="ntab" :tabs="['control', 'method', 'event', 'solution']" style="flex: 1; min-height: 0;">
             <flow v-if="ntab === 'control'" class="inner" direction="v">

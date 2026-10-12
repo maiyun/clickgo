@@ -46,7 +46,7 @@ export interface IMcpServer {
 export async function start(
     invoke: (request: IMcpRequest, signal: AbortSignal) => Promise<JSONObject>,
     options: IMcpOptions = {},
-    host: { 'id': string; 'name': string; } = { 'id': 'clickgo-native', 'name': 'ClickGo Native' }
+    host: { 'id': string; 'name': string; 'applicationId'?: string; } = { 'id': 'clickgo-native', 'name': 'ClickGo Native' }
 ): Promise<IMcpServer | false> {
     const port = options.port ?? 0;
     const token = options.token ?? randomBytes(32).toString('base64url');
@@ -92,7 +92,8 @@ export async function start(
         return false;
     }
     const info: IMcpInfo = { 'transport': 'streamable-http', 'url': `http://127.0.0.1:${address.port}/mcp`, 'token': token };
-    const record = options.discovery === false ? null : await lInstance.publish(info, options.id ?? host.id, host.name);
+    const record = options.discovery === false ? null :
+        await lInstance.publish(info, options.id ?? host.id, host.name, host.applicationId);
     if (record === false) {
         const stopped = new Promise<void>(resolve => { http.close(() => { resolve(); }); });
         await handler.close();

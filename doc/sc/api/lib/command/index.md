@@ -8,6 +8,8 @@
 
 ## Interfaces
 
+- [IAgentInfo](interfaces/IAgentInfo.md)
+- [IAgentOptions](interfaces/IAgentOptions.md)
 - [IBridge](interfaces/IBridge.md)
 - [IContext](interfaces/IContext.md)
 - [IDefinition](interfaces/IDefinition.md)
@@ -20,6 +22,8 @@
 
 - [TJson](type-aliases/TJson.md)
 - [TResult](type-aliases/TResult.md)
+- [TWebMcpRegistrationStatus](type-aliases/TWebMcpRegistrationStatus.md)
+- [TWebMcpStatus](type-aliases/TWebMcpStatus.md)
 
 ## Functions
 
@@ -32,6 +36,9 @@
 - [execute](functions/execute.md)
 - [executeAgent](functions/executeAgent.md)
 - [failure](functions/failure.md)
+- [getAgentGuide](functions/getAgentGuide.md)
+- [getAgentInfo](functions/getAgentInfo.md)
+- [init](functions/init.md)
 - [list](functions/list.md)
 - [listTasks](functions/listTasks.md)
 - [register](functions/register.md)

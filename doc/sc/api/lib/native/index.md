@@ -8,6 +8,7 @@
 
 ## Interfaces
 
+- [ICommandEntry](interfaces/ICommandEntry.md)
 - [IMcpInfo](interfaces/IMcpInfo.md)
 
 ## Functions
@@ -16,6 +17,7 @@
 - [clear](functions/clear.md)
 - [close](functions/close.md)
 - [dialog](functions/dialog.md)
+- [getCommandEntry](functions/getCommandEntry.md)
 - [getListenerList](functions/getListenerList.md)
 - [getMcpInfo](functions/getMcpInfo.md)
 - [init](functions/init.md)

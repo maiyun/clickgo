@@ -8,7 +8,7 @@
 
 > **listTasks**(): `object`[]
 
-Defined in: [lib/command.ts:359](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L359)
+Defined in: [lib/command.ts:414](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L414)
 
 获取仍可调用的 App 标识与名称，供网页及 Native 代理发现目标
 

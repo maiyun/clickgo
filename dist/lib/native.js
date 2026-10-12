@@ -60,6 +60,13 @@ window.clickgoNativeWeb = {
     }
 };
 /**
+ * --- 取得软件自身的 CLI/stdio 入口和启动要求，无需读取连接凭据 ---
+ * @returns 公开入口信息；普通网页或尚未支持此接口的宿主为 null
+ */
+export async function getCommandEntry() {
+    return await invoke('cg-command-entry', token) ?? null;
+}
+/**
  * --- 读取 Native 主进程启用的 MCP 连接设置 ---
  * @param current 当前 App
  * @returns 连接设置；未启用为 null，无权限为 false

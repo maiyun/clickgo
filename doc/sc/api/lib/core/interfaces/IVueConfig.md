@@ -6,7 +6,7 @@
 
 # Interface: IVueConfig
 
-Defined in: [lib/core.ts:1824](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1824)
+Defined in: [lib/core.ts:1879](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1879)
 
 Vue 配置
 
@@ -16,7 +16,7 @@ Vue 配置
 
 > **globalProperties**: `Record`\<`string`, `any`\>
 
-Defined in: [lib/core.ts:1826](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1826)
+Defined in: [lib/core.ts:1881](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1881)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/core.ts:1826](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **optionMergeStrategies**: `Record`\<`string`, [`IVueOptionMergeFunction`](../type-aliases/IVueOptionMergeFunction.md)\>
 
-Defined in: [lib/core.ts:1828](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1828)
+Defined in: [lib/core.ts:1883](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1883)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1828](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **performance**: `boolean`
 
-Defined in: [lib/core.ts:1829](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1829)
+Defined in: [lib/core.ts:1884](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1884)
 
 ## Methods
 
@@ -40,7 +40,7 @@ Defined in: [lib/core.ts:1829](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **errorHandler**(`err`, `instance`, `info`): `void`
 
-Defined in: [lib/core.ts:1825](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1825)
+Defined in: [lib/core.ts:1880](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1880)
 
 #### Parameters
 
@@ -66,7 +66,7 @@ Defined in: [lib/core.ts:1825](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **isCustomElement**(`tag`): `boolean`
 
-Defined in: [lib/core.ts:1827](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1827)
+Defined in: [lib/core.ts:1882](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1882)
 
 #### Parameters
 
@@ -84,7 +84,7 @@ Defined in: [lib/core.ts:1827](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **warnHandler**(`msg`, `instance`, `trace`): `void`
 
-Defined in: [lib/core.ts:1830](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1830)
+Defined in: [lib/core.ts:1885](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1885)
 
 #### Parameters
 

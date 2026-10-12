@@ -6,7 +6,7 @@
 
 # Interface: IDefinition\<T\>
 
-Defined in: [lib/command.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L75)
+Defined in: [lib/command.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L77)
 
 应用声明一次，界面、浏览器代理和 Native 适配器共享执行函数
 
@@ -26,7 +26,7 @@ Defined in: [lib/command.ts:75](https://github.com/maiyun/clickgo/blob/master/di
 
 > `optional` **annotations?**: `object`
 
-Defined in: [lib/command.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L63)
+Defined in: [lib/command.ts:65](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L65)
 
 行为说明，不代替校验或授权
 
@@ -66,7 +66,7 @@ WebMCP 的重要或不可逆现实效果说明
 
 > `optional` **concurrent?**: `boolean`
 
-Defined in: [lib/command.ts:79](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L79)
+Defined in: [lib/command.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L81)
 
 默认拒绝同一命令并发；业务确认可并行时才开启
 
@@ -76,7 +76,7 @@ Defined in: [lib/command.ts:79](https://github.com/maiyun/clickgo/blob/master/di
 
 > **description**: `string`
 
-Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L59)
+Defined in: [lib/command.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L61)
 
 #### Inherited from
 
@@ -88,7 +88,7 @@ Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/di
 
 > `optional` **enabled?**: () => `string` \| `boolean`
 
-Defined in: [lib/command.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L83)
+Defined in: [lib/command.ts:85](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L85)
 
 true 为可用，false 或原因文本为不可用；每次执行重新检查
 
@@ -102,7 +102,7 @@ true 为可用，false 或原因文本为不可用；每次执行重新检查
 
 > **execute**: (`args`, `context`) => [`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\> \| `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:84](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L84)
+Defined in: [lib/command.ts:86](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L86)
 
 #### Parameters
 
@@ -124,7 +124,7 @@ Defined in: [lib/command.ts:84](https://github.com/maiyun/clickgo/blob/master/di
 
 > `optional` **exposed?**: `boolean`
 
-Defined in: [lib/command.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L77)
+Defined in: [lib/command.ts:79](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L79)
 
 明确允许代理发现并调用；默认只允许应用内部调用
 
@@ -134,7 +134,7 @@ Defined in: [lib/command.ts:77](https://github.com/maiyun/clickgo/blob/master/di
 
 > **inputSchema**: [`ISchema`](ISchema.md) & `object`
 
-Defined in: [lib/command.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L60)
+Defined in: [lib/command.ts:62](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L62)
 
 #### Type Declaration
 
@@ -152,7 +152,7 @@ Defined in: [lib/command.ts:60](https://github.com/maiyun/clickgo/blob/master/di
 
 > **name**: `string`
 
-Defined in: [lib/command.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L57)
+Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L59)
 
 #### Inherited from
 
@@ -164,7 +164,7 @@ Defined in: [lib/command.ts:57](https://github.com/maiyun/clickgo/blob/master/di
 
 > `optional` **outputSchema?**: [`ISchema`](ISchema.md)
 
-Defined in: [lib/command.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L61)
+Defined in: [lib/command.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L63)
 
 #### Inherited from
 
@@ -176,7 +176,7 @@ Defined in: [lib/command.ts:61](https://github.com/maiyun/clickgo/blob/master/di
 
 > `optional` **permissions?**: `string`[]
 
-Defined in: [lib/command.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L81)
+Defined in: [lib/command.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L83)
 
 必须已经取得的框架权限；执行入口不弹授权窗
 
@@ -186,7 +186,7 @@ Defined in: [lib/command.ts:81](https://github.com/maiyun/clickgo/blob/master/di
 
 > `optional` **title?**: `string`
 
-Defined in: [lib/command.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L58)
+Defined in: [lib/command.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L60)
 
 #### Inherited from
 

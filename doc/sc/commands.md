@@ -116,17 +116,64 @@ if (task) {
 
 ### 没有 WebMCP 时的发现
 
-框架统一发布接口，应用只需注册公开命令。宿主或应用应在可见的“AI 接口”说明中告诉代理：入口是 `window['clickgo']['command']`，先调用 listTasks 选择 App，再用 list(taskId) 获取命令名称、说明、输入规则和可用状态，根据返回的规则调用 execute(taskId, name, args)。命令列表来自框架，不另外维护静态清单。
+框架统一发布接口，应用只需注册公开命令。宿主或应用可以在可见的“AI 接口”入口展示下面由框架生成的说明，告诉代理如何发现和调用。命令列表来自框架，不另外维护静态清单。
 
 页面提示是应用与代理之间的发现约定，不是浏览器自动识别的标准协议。只有工具允许执行页面 JavaScript 的代理才能直接调用；只允许读取、点击和输入的代理继续使用正常界面。不能因网页显示了 JS 示例，就假设所有 AI 客户端能够执行它。
 
-Demo 的 desktop、webpage、cache 及 Native 网页宿主直接使用框架入口，不再单独发布 Demo 桥接。Demo 首屏提供 AI interface guide 按钮，也可通过 method → Library command 进入。界面展示统一入口、当前 taskId 和本窗体的调用代码；未打开命令示例 Form 时该 App 的命令列表为空。多个 Form 的命令包含各自的实例标识，调用时选择目标 Form。生产应用可把同样的发现说明放在帮助中的 AI 接口入口，普通用户继续使用按钮、菜单和快捷键。
+Demo 的 desktop、webpage、cache 及 Native 网页宿主直接使用框架入口，不再单独发布 Demo 桥接。Demo 首屏提供 AI interface guide 按钮，也可通过 method → Library command 进入。Generate AI access guide 展示当前环境生成的简短接入说明，Show access information 展示结构化快照；未打开命令示例 Form 时该 App 的命令列表为空。多个 Form 的命令包含各自的实例标识，调用时选择目标 Form。生产应用可把相同的生成入口放在帮助中的 AI 接口入口，普通用户继续使用按钮、菜单和快捷键。
 
-在浏览器中调用 `await clickgo.command.connectWebMcp(this)`，根据当前 [WebMCP Imperative API](https://developer.chrome.com/docs/ai/webmcp/imperative-api) 能力接入 document.modelContext。没有 API 或注册失败返回 false，不影响其他入口。接入后新增、移除命令会自动同步；工具名称包含 task 和注册实例标识，避免多个应用或迟到引用冲突。
+### 自动生成 AI 接入说明
+
+在 App、Form 或 Panel 中调用统一 API，取得可以直接展示、复制或保存的英文 Markdown；不需要业务代码另写一份接入文案：
+
+```ts
+const guide = await clickgo.command.getAgentGuide(this);
+if (guide === null || guide === false) {
+    return;
+}
+this.agentGuide = guide;
+```
+
+`this` 用于确认当前 App 的生命周期与凭据导出权限；说明不嵌入 App 名称或临时 ID，代理通过接口发现并选择目标。`getAgentInfo(this)` 返回同一份结构化信息，包括 schemaVersion、App 快照、浏览器入口、WebMCP 状态及 Native 进程入口，方便应用自定义展示。目标 App 开始退出时返回 null。每次调用重新读取状态，不启用 MCP、不启动 GUI，也不执行业务命令。
+
+默认只生成几句话：网页 JavaScript 入口与发现流程；Native 再增加一份 stdio 的 `command`/`args` 配置、CLI 的 `--help` 入口、启动要求和 HTTP 设置的获取位置。说明不嵌入 taskId、运行实例 ID、端口或命令清单；代理连接后实时查询 App 和命令说明、inputSchema。进程路径是当前安装的入口，软件重启后继续适用；迁移或重新安装后重新生成。CLI 参数由 `--help` 获取，MCP 工具由 `tools/list` 获取，不需要在介绍中重复完整手册。
+
+网页代理也可直接取得说明或结构化信息：
+
+```js
+const api = window['clickgo']['command'];
+const guide = await api.getAgentGuide();
+const info = await api.getAgentInfo();
+```
+
+默认说明不包含 HTTP 凭据，网页地址也省略用户名、查询参数及 hash。若应用的连接设置界面需要主动导出带临时凭据的 HTTP 配置，可调用 `getAgentGuide(this, { 'includeMcpCredentials': true })` 或 getAgentInfo 的相同选项；仍要求当前 App 已获得 root 权限，无权限时返回 false。网页公开入口不接受这个导出选项，不能借目标 App 的 root 权限读取 token。带凭据的文本只用于用户授权的当前连接，不应发布到公开网页；重启后重新生成。
+
+Native 主进程 `getCommandEntry()` 与 App 中的 `await clickgo.native.getCommandEntry()` 只返回进程入口和能力状态，不返回 URL/token。普通网页及不提供此方法的旧 Native 宿主返回 null，不猜测可执行文件路径。宿主显式使用的沙箱启动参数会保留在 args 中，使新进程采用相同启动方式。生成说明不能给 AI 客户端增加工具权限：客户端仍需支持页面 JavaScript、相应 MCP 传输或本地进程操作，业务负责说明的展示和复制入口。
+
+框架启动时自动接入页面的 [WebMCP Imperative API](https://developer.chrome.com/docs/ai/webmcp/imperative-api)。document.modelContext 是浏览器提供给整个页面的接口，没有每个 App 分别建立连接的握手过程。业务应用只需声明 `exposed: true` 命令，不调用接入方法，也不要求用户点击连接按钮。框架在内部按 App 管理工具的发布、同步和撤销；Form/Panel 卸载及 App 退出自动撤销所属工具，工具名称包含 task 和注册实例标识，避免多个应用或迟到引用冲突。
+
+`getAgentInfo(this)` 返回的 webMcp.status 是页面级接入状态：unsupported 表示浏览器接口不支持，ready 表示浏览器接口已就绪。未启动 App、没有公开命令、某个工具还在注册或注册失败，都不会改变页面的接入状态；限定不同 App 得到的 status 也相同。此快照读取状态，不触发重新注册。
+
+需要诊断工具发布时，可查看同一快照的 registrationStatus 和 publishedTaskIds。registrationStatus 针对所选 App：idle（没有发布工具）、registering（自动注册中）、ready（工具注册完成）、failed（工具注册失败，例如浏览器权限策略限制）；浏览器不支持时为 null，多个 App 的快照优先显示 failed，再显示 registering。publishedTaskIds 是已完成工具发布的 App ID 列表，不表示这些 App 分别连接了浏览器。浏览器不支持或注册失败不影响普通界面与网页 JavaScript 命令入口，生成说明时也会注明相应情况。
+
+Boot、全部 App 和 Form 通过全局回调 `onWebMcpStatusChanged(status)` 接收同一页面级接入状态，无需 root 权限，也没有 taskId 参数。status 的类型为 `clickgo.command.TWebMcpStatus`：
+
+```ts
+/**
+ * --- 通过全局事件更新页面的 WebMCP 接入状态 ---
+ * @param status 浏览器接入状态
+ * @returns 无返回值
+ */
+public onWebMcpStatusChanged(status: clickgo.command.TWebMcpStatus): void {
+    this.webMcpStatus = status;
+}
+```
+
+框架在 Boot.main 前初始化并通知接入状态，此时可以还没有 App 或命令。新建界面先用 `getAgentInfo(this)` 读取一次快照，之后由事件更新，无需定时轮询。初始化之后只在检测到页面级状态实际变化时通知，不回放历史；App 的命令新增、移除、重试、注册失败和退出均不会触发此事件。关闭的 Form 和正在退出的 App 不再接收通知，各接收者独立处理，异步回调及异常不阻塞框架或其他接收者。
 
 `annotations` 支持 MCP 的 readOnlyHint、destructiveHint、idempotentHint、openWorldHint，以及 WebMCP 的 consequentialHint、untrustedContentHint。WebMCP 映射 readOnlyHint、consequentialHint、untrustedContentHint；未指定 consequentialHint 时使用 destructiveHint。此类说明是给客户端的提示，框架不据此跳过鉴权或自动弹出确认。需要业务确认的命令仍在唯一执行函数中确认。
 
-`disconnectWebMcp(current)` 撤销该 task 的浏览器工具，不影响普通命令及已有桥接。当前 WebMCP 适配器基于 document.modelContext 和注册 AbortSignal 撤销机制，后续 API 变化只需调整适配器。
+`connectWebMcp(current)` 保留为显式重同步或重试当前 App 的工具发布入口，返回 false 表示浏览器不支持、App 已退出或注册失败；正常接入流程无需调用。`disconnectWebMcp(current)` 撤销该 task 当前的浏览器工具，不改变页面级接入状态，也不影响普通命令及已有桥接，下次注册公开命令时仍会自动发布。两个名称不表示为 App 建立或关闭浏览器连接。当前 WebMCP 适配器基于 document.modelContext 和注册 AbortSignal 撤销机制，后续 API 变化只需调整适配器。
 
 ## 通过界面操作
 
@@ -175,27 +222,37 @@ native.launcher(new Boot());
 当前 Native 同时支持 HTTP MCP、stdio MCP 和 CLI。三个入口共用相同的 MCP 工具定义和 App 命令执行层：
 
 - HTTP：AI 客户端直接通过 URL 与认证头连接正在运行的软件。
-- stdio：AI 客户端启动 `clickgo-native mcp --host com.example.app` 接入进程。该进程面对 AI 是 stdio MCP 服务端，内部作为 HTTP MCP 客户端转发到已打开的软件。
-- CLI：`clickgo-native instances` 发现软件，`clickgo-native apps --host com.example.app` 获取 App，`clickgo-native commands --host com.example.app --app '<taskId>'` 获取命令，`clickgo-native execute --host com.example.app --app '<taskId>' --name '<commandName>' --args '{"amount":2}'` 执行命令。CLI 通过同一个内部 HTTP MCP 客户端转发。
+- stdio：AI 客户端直接启动软件可执行文件，如 `./MySoftware --mcp`。接入进程面对 AI 是 stdio MCP 服务端，内部作为 HTTP MCP 客户端转发到已打开的软件。
+- CLI：`./MySoftware --cli instances` 发现本软件实例，`./MySoftware --cli apps` 获取 App，`./MySoftware --cli commands --app '<taskId>'` 获取命令，`./MySoftware --cli execute --app '<taskId>' --name '<commandName>' --args '{"amount":2}'` 执行命令。CLI 通过同一个内部 HTTP MCP 客户端转发。
 
-`com.example.app` 对应上述 `startMcp({ id })` 中的稳定软件 ID。多个软件运行实例具有同一软件 ID 时，从 `instances` 结果中选择唯一运行实例 ID。stdio/CLI 每次调用通过当前操作系统用户的私有临时运行记录获取最新服务地址和凭据，不依赖固定端口；软件仍须提前启动并启用 MCP 及实例发现。`discovery: false` 会关闭这两种入口的自动发现。
+软件自身的入口默认连接同一安装的软件，不要求额外指定软件 ID，也不受业务自定义 `startMcp({ id })` 影响。如果同一软件同时开了多个实例，从 `instances` 返回结果中选择唯一运行实例 ID，通过 `--host '<instanceId>'` 指定。stdio/CLI 每次调用通过当前操作系统用户的私有临时运行记录获取最新服务地址和凭据，不依赖固定端口；默认需要提前打开 GUI；开启下面的按需启动选项后，首次命令请求可以自动拉起。GUI 的 Boot.main 仍须启用 MCP 及实例发现。`discovery: false` 会关闭这两种入口的自动发现。
 
-stdio 应直接运行已安装的 `clickgo-native` 可执行文件，或 `node <绝对路径>/clickgo-native/dist/cli.js mcp --host com.example.app`；不能用 `npm run` 启动 stdio，以免 npm 输出混入协议 stdout。设置界面与长期配置持久化由消费应用负责，框架只维护当前运行记录。
+Native `launcher()` 在 GUI 单实例锁和业务 `Boot.main()` 之前分流 `--cli` / `--mcp`，命令进程不执行业务初始化，始终连接 GUI 中的共享状态。用户无需安装 Node.js、全局安装 clickgo-native，或使用 `ELECTRON_RUN_AS_NODE`。初始化业务应放在 `Boot.main()` 中；stdio 的 stdout 专用于 MCP 协议，不能在模块顶层输出业务日志。设置界面与长期配置持久化由消费应用负责，框架只维护当前运行记录。
 
-例如，使用 `mcpServers` 配置格式的 AI 客户端，在安装 `clickgo-native` 并启动上述软件后，可配置：
+消费应用可开启按需启动：
+
+```ts
+native.launcher(new Boot(), { 'commandAutoStart': true });
+```
+
+默认 false。开启后，CLI 的 apps/commands/execute 或 stdio 的第一次命令工具调用在没有运行实例时启动同一软件，并最多等待 20 秒让 App 就绪。`--help`、instances、MCP 握手和 tools/list 不启动 GUI；并发请求共用启动过程。GUI 仍走原 Boot.main，须创建窗口并调用 startMcp()，不能关闭 discovery。取消或超时只结束本次等待，不关闭已拉起的 GUI；即使服务记录尚未发布，后续请求也等待同一 GUI，只有它退出后才允许重新启动。不重试业务修改。`getCommandEntry().startup` 对应为 auto 或 existing，生成说明也随之变化。
+
+例如，使用 `mcpServers` 配置格式的 AI 客户端，在安装上述软件后，可配置：
 
 ```json
 {
     "mcpServers": {
         "com.example.app": {
-            "command": "clickgo-native",
-            "args": ["mcp", "--host", "com.example.app"]
+            "command": "<已安装软件可执行文件的绝对路径>",
+            "args": ["--mcp"]
         }
     }
 }
 ```
 
-客户端找不到该命令时，改用已安装可执行文件的绝对路径。连接后先发现 App，再获取命令规则并执行；stdio 和 HTTP 使用相同的工具名称与参数。
+Windows 使用软件的 `.exe`，macOS 使用 `.app/Contents/MacOS/` 内的可执行文件，Linux 使用软件二进制文件或 AppImage。连接后先发现 App，再获取命令规则并执行；stdio 和 HTTP 使用相同的工具名称与参数。
+
+开发调试同样使用软件自身的入口：在 ClickGo 仓库中运行 `npx tsc` 后，用 `npm run native` 启动 GUI，另一个进程通过 `./node_modules/.bin/electron dist/test/native --cli apps` 或同一入口的 `--mcp` 接入。使用 `native2`、`native3` 时，命令进程也使用对应的入口文件。不能用 `npm run` 启动 stdio，以免 npm 输出混入协议 stdout。自动回归入口为 `npm run test:native`，更详细的联动开发与测试说明见 `dist/test/native/README.md`。
 
 完整的安装、HTTP 连接、stdio 客户端配置和 CLI 示例见 [ClickGo Native 简体中文文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。
 

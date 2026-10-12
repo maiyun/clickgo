@@ -6,7 +6,7 @@
 
 # Interface: IBridge
 
-Defined in: [lib/command.ts:99](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L99)
+Defined in: [lib/command.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L101)
 
 绑定一个应用实例，只能调用该实例明确公开的命令
 
@@ -16,7 +16,7 @@ Defined in: [lib/command.ts:99](https://github.com/maiyun/clickgo/blob/master/di
 
 > **execute**: (`name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:102](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L102)
+Defined in: [lib/command.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L104)
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: [lib/command.ts:102](https://github.com/maiyun/clickgo/blob/master/d
 
 > **list**: () => [`IInfo`](IInfo.md)[]
 
-Defined in: [lib/command.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L101)
+Defined in: [lib/command.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L103)
 
 #### Returns
 
@@ -56,4 +56,4 @@ Defined in: [lib/command.ts:101](https://github.com/maiyun/clickgo/blob/master/d
 
 > **taskId**: `string`
 
-Defined in: [lib/command.ts:100](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L100)
+Defined in: [lib/command.ts:102](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L102)

@@ -1127,6 +1127,9 @@ export class AbstractForm extends AbstractCommon {
     onTaskEnded() {
         return;
     }
+    onWebMcpStatusChanged() {
+        return;
+    }
     onLauncherShowChanged() {
         return;
     }

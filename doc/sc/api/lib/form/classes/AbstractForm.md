@@ -1196,7 +1196,7 @@ Defined in: [lib/form.ts:1293](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onHashChanged**(`hash`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1437](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1437)
+Defined in: [lib/form.ts:1447](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1447)
 
 location hash 改变事件
 
@@ -1216,7 +1216,7 @@ location hash 改变事件
 
 > **onKeydown**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1443](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1443)
+Defined in: [lib/form.ts:1453](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1453)
 
 键盘按下事件
 
@@ -1236,7 +1236,7 @@ Defined in: [lib/form.ts:1443](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onKeyup**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1449](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1449)
+Defined in: [lib/form.ts:1459](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1459)
 
 键盘弹起事件
 
@@ -1256,7 +1256,7 @@ Defined in: [lib/form.ts:1449](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onLauncherFolderNameChanged**(`id`, `name`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1431](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1431)
+Defined in: [lib/form.ts:1441](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1441)
 
 launcher 文件夹名称修改事件
 
@@ -1280,7 +1280,7 @@ launcher 文件夹名称修改事件
 
 > **onLauncherShowChanged**(`state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:1425](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1425)
+Defined in: [lib/form.ts:1435](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1435)
 
 Launcher 显示状态改变事件
 
@@ -1565,6 +1565,30 @@ Defined in: [lib/form.ts:460](https://github.com/maiyun/clickgo/blob/master/dist
 #### Inherited from
 
 `AbstractCommon.onUpdated`
+
+***
+
+### onWebMcpStatusChanged()
+
+> **onWebMcpStatusChanged**(`status`): `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/form.ts:1425](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L1425)
+
+页面级 WebMCP 接入状态变化，所有 Form 共用同一状态
+
+#### Parameters
+
+##### status
+
+[`TWebMcpStatus`](../../command/type-aliases/TWebMcpStatus.md)
+
+浏览器接入状态，与 command.getAgentInfo 的 webMcp.status 一致
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
 
 ***
 

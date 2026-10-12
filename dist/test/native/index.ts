@@ -26,4 +26,4 @@ class Boot extends native.AbstractBoot {
     }
 
 }
-native.launcher(new Boot());
+native.launcher(new Boot(), { 'commandAutoStart': true });

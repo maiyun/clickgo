@@ -110,6 +110,9 @@ export class AbstractApp {
     onTaskEnded() {
         return;
     }
+    onWebMcpStatusChanged() {
+        return;
+    }
     onLauncherShowChanged() {
         return;
     }
@@ -362,6 +365,48 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
                     t.class?.[eventName](taskId);
                     for (const fid in t.forms) {
                         t.forms[fid].vroot[eventName]?.(taskId);
+                    }
+                }
+            }
+            break;
+        }
+        case 'webMcpStatusChanged': {
+            if (taskId !== 'unsupported' && taskId !== 'ready') {
+                return;
+            }
+            const status = taskId;
+            /**
+             * --- 事件回调独立运行，失败不能中断注册或其他接收者 ---
+             * @param receiver Boot、App 或 Form
+             * @param receiverTaskId 接收者所属任务，Boot 为空
+             * @returns 无返回值
+             */
+            const notify = (receiver, receiverTaskId) => {
+                const report = (error) => {
+                    trigger('error', receiverTaskId, '', error instanceof Error ? error : new Error(String(error)), eventName).catch(() => { });
+                };
+                try {
+                    Promise.resolve(receiver?.onWebMcpStatusChanged?.(status)).catch(report);
+                }
+                catch (error) {
+                    report(error);
+                }
+            };
+            notify(boot, '');
+            for (const tid in taskList) {
+                const t = taskList[tid];
+                if (t.ending) {
+                    continue;
+                }
+                notify(t.class, tid);
+                for (const fid in t.forms) {
+                    if (t.ending) {
+                        break;
+                    }
+                    const form = t.forms[fid];
+                    if (!form.closed) {
+                        // --- vroot 为挂载后的 Form 实例，IVue 的通用类型不声明此回调 ---
+                        notify(form.vroot, tid);
                     }
                 }
             }

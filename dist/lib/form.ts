@@ -1418,6 +1418,16 @@ export abstract class AbstractForm extends AbstractCommon {
     }
 
     /**
+     * --- 页面级 WebMCP 接入状态变化，所有 Form 共用同一状态 ---
+     * @param status 浏览器接入状态，与 command.getAgentInfo 的 webMcp.status 一致
+     * @returns 无返回值
+     */
+    public onWebMcpStatusChanged(status: lCommand.TWebMcpStatus): void | Promise<void>;
+    public onWebMcpStatusChanged(): void {
+        return;
+    }
+
+    /**
      * --- Launcher 显示状态改变事件 ---
      * @param state 是否显示
      * @returns 无返回值

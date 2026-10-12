@@ -79,6 +79,24 @@ export interface IMcpInfo {
     'token': string;
 }
 
+/** --- 当前 Native 的公开进程入口，不包含 HTTP 连接凭据 --- */
+export interface ICommandEntry {
+    'name': string;
+    'platform': string;
+    'command': string;
+    'args': string[];
+    'startup': 'existing' | 'auto';
+    'mcp': { 'enabled': boolean; 'discovery': boolean; };
+}
+
+/**
+ * --- 取得软件自身的 CLI/stdio 入口和启动要求，无需读取连接凭据 ---
+ * @returns 公开入口信息；普通网页或尚未支持此接口的宿主为 null
+ */
+export async function getCommandEntry(): Promise<ICommandEntry | null> {
+    return await invoke('cg-command-entry', token) ?? null;
+}
+
 /**
  * --- 读取 Native 主进程启用的 MCP 连接设置 ---
  * @param current 当前 App

@@ -15,4 +15,4 @@ class Boot extends native.AbstractBoot {
         await native.startMcp({ 'id': 'clickgo-demo' });
     }
 }
-native.launcher(new Boot());
+native.launcher(new Boot(), { 'commandAutoStart': true });

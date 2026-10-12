@@ -204,6 +204,9 @@ export class AbstractBoot {
     onTaskEnded() {
         return;
     }
+    onWebMcpStatusChanged() {
+        return;
+    }
     onLauncherShowChanged() {
         return;
     }
@@ -337,6 +340,7 @@ export async function launcher(boot) {
     lTask.init();
     lNative.init();
     lCore.setBoot(boot);
+    lCommand.init();
     // --- 判断 TouchEvent 是否存在（例如某些浏览器可能不存在这个对象） ---
     if (!(window.TouchEvent)) {
         window.TouchEvent = CustomEvent;

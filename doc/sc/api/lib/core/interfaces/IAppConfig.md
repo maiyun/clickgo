@@ -6,7 +6,7 @@
 
 # Interface: IAppConfig
 
-Defined in: [lib/core.ts:1742](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1742)
+Defined in: [lib/core.ts:1797](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1797)
 
 应用文件包 config
 
@@ -16,7 +16,7 @@ Defined in: [lib/core.ts:1742](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **author**: `string`
 
-Defined in: [lib/core.ts:1750](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1750)
+Defined in: [lib/core.ts:1805](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1805)
 
 作者
 
@@ -26,7 +26,7 @@ Defined in: [lib/core.ts:1750](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **controls**: `string`[]
 
-Defined in: [lib/core.ts:1753](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1753)
+Defined in: [lib/core.ts:1808](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1808)
 
 将要加载的控件
 
@@ -36,7 +36,7 @@ Defined in: [lib/core.ts:1753](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **files?**: `string`[]
 
-Defined in: [lib/core.ts:1766](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1766)
+Defined in: [lib/core.ts:1821](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1821)
 
 将要加载的非 js 文件列表，打包为 cga 模式下此配置可省略
 
@@ -46,7 +46,7 @@ Defined in: [lib/core.ts:1766](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **icon?**: `string`
 
-Defined in: [lib/core.ts:1763](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1763)
+Defined in: [lib/core.ts:1818](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1818)
 
 图标路径，需包含扩展名
 
@@ -56,7 +56,7 @@ Defined in: [lib/core.ts:1763](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **locales?**: `Record`\<`string`, `string`\>
 
-Defined in: [lib/core.ts:1759](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1759)
+Defined in: [lib/core.ts:1814](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1814)
 
 将自动加载的语言包，path: lang
 
@@ -66,7 +66,7 @@ Defined in: [lib/core.ts:1759](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **modules?**: `string`[]
 
-Defined in: [lib/core.ts:1768](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1768)
+Defined in: [lib/core.ts:1823](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1823)
 
 要提前加载的库名
 
@@ -76,7 +76,7 @@ Defined in: [lib/core.ts:1768](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **name**: `string`
 
-Defined in: [lib/core.ts:1744](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1744)
+Defined in: [lib/core.ts:1799](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1799)
 
 应用名
 
@@ -86,7 +86,7 @@ Defined in: [lib/core.ts:1744](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **permissions?**: `string`[]
 
-Defined in: [lib/core.ts:1757](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1757)
+Defined in: [lib/core.ts:1812](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1812)
 
 将自动申请的权限
 
@@ -96,7 +96,7 @@ Defined in: [lib/core.ts:1757](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **style?**: `string`
 
-Defined in: [lib/core.ts:1761](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1761)
+Defined in: [lib/core.ts:1816](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1816)
 
 全局样式，不带扩展名，系统会在末尾添加 .css
 
@@ -106,7 +106,7 @@ Defined in: [lib/core.ts:1761](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **themes?**: `string`[]
 
-Defined in: [lib/core.ts:1755](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1755)
+Defined in: [lib/core.ts:1810](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1810)
 
 将自动加载的主题
 
@@ -116,7 +116,7 @@ Defined in: [lib/core.ts:1755](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **ver**: `number`
 
-Defined in: [lib/core.ts:1746](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1746)
+Defined in: [lib/core.ts:1801](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1801)
 
 发行版本
 
@@ -126,6 +126,6 @@ Defined in: [lib/core.ts:1746](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **version**: `string`
 
-Defined in: [lib/core.ts:1748](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1748)
+Defined in: [lib/core.ts:1803](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1803)
 
 发行版本字符串

@@ -8,7 +8,7 @@
 
 > **getAvailArea**(): [`IAvailArea`](../interfaces/IAvailArea.md)
 
-Defined in: [lib/core.ts:995](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L995)
+Defined in: [lib/core.ts:1050](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1050)
 
 获取屏幕可用区域
 

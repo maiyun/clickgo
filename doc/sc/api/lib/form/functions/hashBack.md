@@ -8,7 +8,7 @@
 
 > **hashBack**(`formId`): `Promise`\<`boolean`\>
 
-Defined in: [lib/form.ts:2411](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2411)
+Defined in: [lib/form.ts:2421](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2421)
 
 将窗体的 hash 退回上一个
 

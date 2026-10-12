@@ -4,21 +4,6 @@ import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import * as lClient from './client.js';
 import * as lInstance from './instance.js';
 import * as lMcp from './mcp.js';
-/** --- CLI 结果固定为 JSON；stdio 模式 stdout 专用于 MCP，帮助文本不得混入 --- */
-const help = `ClickGo Native command interface
-
-  clickgo-native instances [--json]
-  clickgo-native apps [--host <software-id|instance-id>] [--json]
-  clickgo-native commands --app <taskId> [--host <id>] [--json]
-  clickgo-native execute --app <taskId> --name <command> [--args <json> | --args-file <path|->] [--host <id>] [--json]
-  clickgo-native mcp [--host <software-id|instance-id>]
-
-instances discovers Native software; apps discovers ClickGo Apps inside the selected software.
-commands returns descriptions, argument schemas and availability. Only exposed commands can be executed.
-All command results are JSON. Errors use a nonzero exit code. mcp serves standard MCP over stdio.
-Configure mcp with a stable software ID to reconnect after a software restart. Rediscover App taskIds after restarting.
-Software must enable startMcp() and local discovery. Multiple matching instances require an explicit instance ID.
-`;
 /**
  * --- 读取 JSON 参数，不把参数内容插入 shell 或执行为脚本 ---
  * @param text 命令行直接传入的 JSON
@@ -75,14 +60,34 @@ function output(result) {
     }
 }
 /**
- * --- 运行通用 CLI 或 stdio 适配器，业务逻辑仍在目标 App 的共享执行器中 ---
+ * --- 运行当前软件的 CLI 或 stdio 适配器，业务逻辑仍在目标 App 的共享执行器中 ---
  * @param args 进程参数
+ * @param options 软件归属、帮助中的可执行文件名称及宿主退出信号
  * @returns 无；stdio 模式持续服务直到客户端关闭 stdin 或进程收到退出信号
  */
-export async function run(args) {
-    let options;
+export async function run(args, options) {
+    /** --- CLI 结果固定为 JSON；stdio 模式 stdout 专用于 MCP，帮助文本不得混入 --- */
+    const commandPrefix = `${options.command} --cli`;
+    const mcpPrefix = `${options.command} --mcp`;
+    const help = `ClickGo Native command interface
+
+  ${commandPrefix} instances [--json]
+  ${commandPrefix} apps [--host <software-id|instance-id>] [--json]
+  ${commandPrefix} commands --app <taskId> [--host <id>] [--json]
+  ${commandPrefix} execute --app <taskId> --name <command> [--args <json> | --args-file <path|->] [--host <id>] [--json]
+  ${mcpPrefix} [--host <software-id|instance-id>]
+
+instances lists this software's running instances; apps discovers ClickGo Apps inside the selected instance.
+commands returns descriptions, argument schemas and availability. Only exposed commands can be executed.
+All command results are JSON. Errors use a nonzero exit code. MCP uses standard stdio.
+This executable only connects to its own software installation.
+${options.startup ? 'The software opens automatically when a command needs it.' : 'Open the software before using commands.'}
+MCP and local discovery must be enabled. Rediscover App taskIds after restart.
+Multiple matching instances require an explicit instance ID from instances.
+`;
+    let parsed;
     try {
-        options = parseArgs({
+        parsed = parseArgs({
             'args': args, 'allowPositionals': true, 'strict': true,
             'options': {
                 'host': { 'type': 'string' }, 'app': { 'type': 'string' }, 'name': { 'type': 'string' },
@@ -93,12 +98,12 @@ export async function run(args) {
     }
     catch {
         // --- 错误的 stdio 启动参数只写 stderr，不污染协议输出 ---
-        process.stderr.write('Invalid CLI options. Run clickgo-native --help.\n');
+        process.stderr.write(`Invalid CLI options. Run ${commandPrefix} --help.\n`);
         process.exitCode = 1;
         return;
     }
-    const values = options.values;
-    const command = options.positionals[0];
+    const values = parsed.values;
+    const command = parsed.positionals[0];
     if (values.help || !command) {
         process.stdout.write(help);
         return;
@@ -107,26 +112,46 @@ export async function run(args) {
         'instances': ['json'], 'apps': ['host', 'json'], 'commands': ['host', 'app', 'json'],
         'execute': ['host', 'app', 'name', 'args', 'args-file', 'json'], 'mcp': ['host'],
     };
-    if (!Object.hasOwn(allowed, command) || options.positionals.length !== 1 ||
+    if (!Object.hasOwn(allowed, command) || parsed.positionals.length !== 1 ||
         Object.keys(values).some(key => !allowed[command].includes(key))) {
-        process.stderr.write('Invalid command or options. Run clickgo-native --help.\n');
+        process.stderr.write(`Invalid command or options. Run ${commandPrefix} --help.\n`);
         process.exitCode = 1;
         return;
     }
     if (command === 'instances') {
-        const instances = await lInstance.list();
+        const instances = (await lInstance.list()).filter(instance => instance.applicationId === options.applicationId);
         output({ 'ok': true, 'data': instances.map(instance => ({
                 'id': instance.id, 'instance': instance.instance, 'name': instance.name, 'pid': instance.pid,
             })) });
         return;
     }
     if (command === 'mcp') {
-        const server = serveStdio(() => lMcp.createCommandServer((request, signal) => lClient.invoke(values.host, request, signal)), {
+        const server = serveStdio(() => lMcp.createCommandServer((request, signal) => lClient.invoke(values.host, request, signal, options.applicationId, options.startup)), {
             onerror: () => { process.stderr.write('The stdio MCP connection reported a protocol error.\n'); },
         });
-        const stop = () => { void server.close().catch(() => { }); };
-        process.once('SIGINT', stop);
-        process.once('SIGTERM', stop);
+        /** --- Electron 仍有运行循环，必须等协议关闭后明确结束命令进程 --- */
+        let stop;
+        const closed = new Promise(resolve => {
+            stop = () => { void server.close().then(resolve, resolve); };
+            process.once('SIGINT', stop);
+            process.once('SIGTERM', stop);
+            process.stdin.once('end', stop);
+            process.stdin.once('close', stop);
+            process.stdin.once('error', stop);
+            process.stdout.once('error', stop);
+            options.signal?.addEventListener('abort', stop, { 'once': true });
+            if (options.signal?.aborted) {
+                stop();
+            }
+        });
+        await closed;
+        process.removeListener('SIGINT', stop);
+        process.removeListener('SIGTERM', stop);
+        process.stdin.removeListener('end', stop);
+        process.stdin.removeListener('close', stop);
+        process.stdin.removeListener('error', stop);
+        process.stdout.removeListener('error', stop);
+        options.signal?.removeEventListener('abort', stop);
         return;
     }
     if (command !== 'apps' && !values.app || command === 'execute' &&
@@ -143,6 +168,10 @@ export async function run(args) {
     };
     process.once('SIGINT', cancel);
     process.once('SIGTERM', cancel);
+    options.signal?.addEventListener('abort', cancel, { 'once': true });
+    if (options.signal?.aborted) {
+        cancel();
+    }
     try {
         const request = { 'method': 'listTasks' };
         if (command === 'commands') {
@@ -167,10 +196,11 @@ export async function run(args) {
             request.name = values.name;
             request.args = input;
         }
-        output(await lClient.invoke(values.host, request, controller.signal));
+        output(await lClient.invoke(values.host, request, controller.signal, options.applicationId, options.startup));
     }
     finally {
         process.removeListener('SIGINT', cancel);
         process.removeListener('SIGTERM', cancel);
+        options.signal?.removeEventListener('abort', cancel);
     }
 }

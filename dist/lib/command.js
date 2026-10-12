@@ -1,10 +1,24 @@
+import * as lCore from './core';
 import * as lTask from './task';
 import * as lSchema from './command/schema';
+import * as lGuide from './command/guide';
+import * as lNative from './native';
 export { showPalette } from './command/palette';
 /** --- 框架级注册表，按任务隔离，并在 Form/任务销毁时释放 --- */
 const registries = new Map();
 /** --- 新注册的命令使用不同标识，旧 WebMCP 引用不能调用替换后的命令 --- */
 let entryId = 0;
+/** --- 最近检测到的页面级状态；首次初始化及实际变化时通知所有接收者 --- */
+let webMcpStatus;
+/** --- 各 App 的工具发布及撤销由框架内部维护，与页面级接入状态分开 --- */
+const webPublications = new Map();
+/**
+ * --- 初始化页面级 WebMCP 接入状态，由框架在执行 Boot.main 前自动调用 ---
+ * @returns 无返回值
+ */
+export function init() {
+    getWebMcpContext();
+}
 /**
  * --- 构造成功结果 ---
  * @param data 可跨入口传输的 JSON 数据
@@ -129,16 +143,34 @@ export function register(current, definition) {
         return false;
     }
     const entry = {
-        'id': ++entryId, 'metadata': copy(metadata), 'formId': formId, 'panelId': panelId,
+        /** --- 注册标识,区分同名命令的不同注册实例，避免旧 WebMCP 引用调用新命令 --- */
+        'id': ++entryId,
+        /** --- 元数据快照,调用方后续修改说明或 schema 不影响已注册命令 --- */
+        'metadata': copy(metadata),
+        /** --- 所属 Form,卸载时清理其命令；空字符串表示 App 级命令 --- */
+        'formId': formId,
+        /** --- 所属 Panel,卸载时清理其命令；空字符串表示未绑定 Panel --- */
+        'panelId': panelId,
+        /** --- 代理公开标记,明确开启后才允许网页代理、WebMCP 和 Native MCP 发现并调用 --- */
         'exposed': definition.exposed === true,
-        'concurrent': definition.concurrent === true, 'permissions': [...definition.permissions ?? []],
-        'enabled': definition.enabled, 'execute': definition.execute,
+        /** --- 并发开关,默认拒绝同一命令在上一次执行结束前再次执行 --- */
+        'concurrent': definition.concurrent === true,
+        /** --- 权限要求,复制保存执行前必须已有的权限列表，不主动弹窗授权 --- */
+        'permissions': [...definition.permissions ?? []],
+        /** --- 可用性检查,列出或执行命令时重新判断当前业务条件 --- */
+        'enabled': definition.enabled,
+        /** --- 业务执行函数,界面与代理入口共用同一逻辑 --- */
+        'execute': definition.execute,
+        /** --- 执行控制器,记录正在运行的调用，用于并发判断及卸载时协作取消 --- */
         'controllers': new Set(),
     };
     const target = registry ?? new Map();
     target.set(definition.name, entry);
     registries.set(taskId, target);
-    refreshWebMcp(taskId);
+    // --- 公开命令自动接入浏览器；业务只声明命令，不负责启用协议适配器 ---
+    if (entry.exposed) {
+        publishWebMcp(taskId);
+    }
     return true;
 }
 /**
@@ -161,7 +193,9 @@ export function unregister(current, name) {
     if (!registry.size) {
         registries.delete(taskId);
     }
-    refreshWebMcp(taskId);
+    if (entry.exposed) {
+        refreshWebMcp(taskId);
+    }
     return true;
 }
 /**
@@ -225,6 +259,85 @@ export function listTasks() {
         const task = lTask.getOrigin(info.id);
         return task && !task.ending;
     }).map(info => ({ 'id': info.id, 'name': info.name }));
+}
+/**
+ * --- 获取当前环境的统一接入信息，不另行维护命令清单或启用服务 ---
+ * @param current 限定目标 App；省略时由代理发现并选择 App
+ * @param options 是否主动导出 HTTP 连接凭据，默认不包含
+ * @returns 独立信息；目标已退出为 null，无权限导出凭据为 false
+ */
+export async function getAgentInfo(current, options = {}) {
+    const taskId = current === undefined ? null : owner(current).taskId;
+    if (taskId !== null && !listTasks().some(app => app.id === taskId)) {
+        return null;
+    }
+    let http = null;
+    if (options.includeMcpCredentials) {
+        if (current === undefined) {
+            return false;
+        }
+        const info = await lNative.getMcpInfo(current);
+        if (info === false) {
+            return false;
+        }
+        http = info;
+    }
+    const native = await lNative.getCommandEntry();
+    // --- Native 查询期间 App 可能退出；接入快照以查询完成时的实例为准 ---
+    const apps = listTasks().filter(app => taskId === null || app.id === taskId);
+    if (taskId !== null && !apps.length) {
+        return null;
+    }
+    // --- 可复制的网页地址不带用户名、查询参数或 hash，避免默认分享登录信息 ---
+    const location = document.location;
+    const url = location?.protocol === 'http:' || location?.protocol === 'https:' ?
+        `${location.origin}${location.pathname}` : null;
+    const supported = getWebMcpContext() !== null;
+    let registrationStatus = supported ? 'idle' : null;
+    if (supported) {
+        for (const app of apps) {
+            const publication = webPublications.get(app.id);
+            if (!publication) {
+                continue;
+            }
+            if (publication.status === 'failed') {
+                registrationStatus = 'failed';
+                break;
+            }
+            if (publication.status === 'registering') {
+                registrationStatus = 'registering';
+            }
+            else if (registrationStatus === 'idle' && publication.tools.size) {
+                registrationStatus = 'ready';
+            }
+        }
+    }
+    return {
+        'schemaVersion': 1, 'apps': apps, 'targetTaskId': taskId,
+        'browser': { 'url': url, 'api': "window['clickgo']['command']" },
+        'webMcp': {
+            'supported': supported, 'status': supported ? 'ready' : 'unsupported',
+            'registrationStatus': registrationStatus,
+            'publishedTaskIds': apps.filter(app => {
+                const publication = webPublications.get(app.id);
+                return supported && publication?.status === 'ready' && publication.tools.size;
+            }).map(app => app.id),
+        },
+        'native': native, 'http': http,
+    };
+}
+/**
+ * --- 生成简短英文接入说明，不嵌入临时 App ID；代理通过接口实时发现 ---
+ * @param current 校验当前 App 生命周期与凭据导出权限；省略时生成页面通用说明
+ * @param options 是否主动导出 HTTP 连接凭据，默认不包含
+ * @returns Markdown 说明；目标已退出为 null，无权限导出凭据为 false
+ */
+export async function getAgentGuide(current, options = {}) {
+    const info = await getAgentInfo(current, options);
+    if (info === null || info === false) {
+        return info;
+    }
+    return lGuide.format(info);
 }
 /**
  * --- 唯一执行入口；异常边界保护插件回调和运行状态，所有入口使用相同校验 ---
@@ -358,6 +471,9 @@ export function createBridge(current) {
  */
 export function createPageBridge() {
     return Object.freeze({
+        // --- 网页发现接口只生成不含凭据的说明，不转发应用的凭据导出选项 ---
+        'getAgentInfo': (taskId) => getAgentInfo(taskId),
+        'getAgentGuide': (taskId) => getAgentGuide(taskId),
         'listTasks': listTasks,
         'list': (taskId) => {
             const task = lTask.getOrigin(taskId);
@@ -366,44 +482,56 @@ export function createPageBridge() {
         'execute': executeAgent,
     });
 }
-/** --- WebMCP 只是适配器；不支持时不影响普通执行或实例桥接 --- */
-const webConnections = new Map();
+/**
+ * --- 检测页面的浏览器接口；WebMCP 没有按 App 建立连接的握手过程 ---
+ * @returns 可用的页面接口，不支持时为 null
+ */
+function getWebMcpContext() {
+    const context = document.modelContext;
+    const status = typeof context?.registerTool === 'function' ? 'ready' : 'unsupported';
+    if (webMcpStatus !== status) {
+        webMcpStatus = status;
+        lCore.trigger('webMcpStatusChanged', status).catch(() => { });
+    }
+    return status === 'ready' ? context ?? null : null;
+}
 /**
  * --- 按注册变化串行同步 WebMCP 工具，任务结束后禁止迟到发布 ---
  * @param taskId 所属任务
  * @returns 无返回值
  */
 function refreshWebMcp(taskId) {
-    const connection = webConnections.get(taskId);
-    if (!connection) {
+    const publication = webPublications.get(taskId);
+    if (!publication) {
         return;
     }
-    connection.pending = connection.pending.then(async () => {
-        if (webConnections.get(taskId) !== connection) {
+    publication.status = 'registering';
+    const pending = publication.pending.then(async () => {
+        if (webPublications.get(taskId) !== publication) {
             return false;
         }
         const entries = [...registries.get(taskId)?.values() ?? []].filter(entry => entry.exposed);
-        for (const [entry, controller] of connection.tools) {
+        for (const [entry, controller] of publication.tools) {
             if (!entries.includes(entry)) {
                 controller.abort();
-                connection.tools.delete(entry);
+                publication.tools.delete(entry);
             }
         }
         let registered = true;
         for (const entry of entries) {
-            if (webConnections.get(taskId) !== connection) {
+            if (webPublications.get(taskId) !== publication) {
                 return false;
             }
             if (registries.get(taskId)?.get(entry.metadata.name) !== entry) {
                 continue;
             }
-            if (connection.tools.has(entry)) {
+            if (publication.tools.has(entry)) {
                 continue;
             }
             const controller = new AbortController();
-            connection.tools.set(entry, controller);
+            publication.tools.set(entry, controller);
             try {
-                await connection.context.registerTool({
+                await publication.context.registerTool({
                     'name': `cg_${taskId}_${entry.id}_${entry.metadata.name}`.slice(0, 128),
                     'description': entry.metadata.description,
                     'inputSchema': copy(entry.metadata.inputSchema),
@@ -414,63 +542,81 @@ function refreshWebMcp(taskId) {
                         'untrustedContentHint': entry.metadata.annotations?.untrustedContentHint ?? false,
                     },
                     'execute': async (args, options) => {
-                        if (webConnections.get(taskId) !== connection || controller.signal.aborted ||
+                        if (webPublications.get(taskId) !== publication || controller.signal.aborted ||
                             registries.get(taskId)?.get(entry.metadata.name) !== entry) {
                             return JSON.stringify(failure('not-found', 'Command was not found'));
                         }
                         return JSON.stringify(await executeAgent(taskId, entry.metadata.name, args, options));
                     },
                 }, { 'signal': controller.signal });
-                if (webConnections.get(taskId) !== connection ||
+                if (webPublications.get(taskId) !== publication ||
                     registries.get(taskId)?.get(entry.metadata.name) !== entry) {
                     controller.abort();
-                    connection.tools.delete(entry);
+                    publication.tools.delete(entry);
                     registered = false;
                 }
             }
             catch {
                 controller.abort();
-                connection.tools.delete(entry);
+                publication.tools.delete(entry);
                 registered = false;
             }
         }
+        // --- 只让最后排队的同步更新状态，避免旧一轮掩盖后续注册或失败 ---
+        if (webPublications.get(taskId) === publication && publication.pending === pending) {
+            let status = 'failed';
+            if (registered) {
+                status = publication.tools.size ? 'ready' : 'idle';
+            }
+            publication.status = status;
+        }
         return registered;
     });
+    publication.pending = pending;
 }
 /**
- * --- 按能力检测接入当前 WebMCP API；没有 API 或注册失败时返回 false ---
- * @param current 所属应用
- * @returns 是否同步成功
+ * --- 检测浏览器能力并排队发布当前 App 的公开命令 ---
+ * @param taskId 所属应用
+ * @returns 发布状态；浏览器不支持或 App 已退出时返回 null
  */
-export async function connectWebMcp(current) {
-    const { taskId } = owner(current);
-    const context = document.modelContext;
-    if (!lTask.getOrigin(taskId) || typeof context?.registerTool !== 'function') {
-        return false;
+function publishWebMcp(taskId) {
+    const task = lTask.getOrigin(taskId);
+    const context = getWebMcpContext();
+    if (!task || task.ending || context === null) {
+        return null;
     }
-    let connection = webConnections.get(taskId);
-    if (connection && connection.context !== context) {
+    let publication = webPublications.get(taskId);
+    if (publication && publication.context !== context) {
         disconnectWebMcp(taskId);
-        connection = undefined;
+        publication = undefined;
     }
-    if (!connection) {
-        connection = { 'context': context, 'tools': new Map(), 'pending': Promise.resolve(true) };
-        webConnections.set(taskId, connection);
+    if (!publication) {
+        publication = { 'context': context, 'tools': new Map(), 'pending': Promise.resolve(true), 'status': 'idle' };
+        webPublications.set(taskId, publication);
     }
     refreshWebMcp(taskId);
-    return connection.pending;
+    return publication;
 }
 /**
- * --- 解除 WebMCP 适配器；内部命令继续可用 ---
+ * --- 显式重同步或重试当前 App 的工具发布；页面接入由框架自动管理 ---
+ * @param current 所属应用
+ * @returns 是否同步成功；浏览器不支持、App 已退出或注册失败时返回 false
+ */
+export async function connectWebMcp(current) {
+    const publication = publishWebMcp(owner(current).taskId);
+    return publication?.pending ?? false;
+}
+/**
+ * --- 撤销当前 App 的 WebMCP 工具；不改变页面级接入状态，下次公开命令注册时自动发布 ---
  * @param current 所属应用
  * @returns 无返回值
  */
 export function disconnectWebMcp(current) {
     const { taskId } = owner(current);
-    const connection = webConnections.get(taskId);
-    webConnections.delete(taskId);
-    for (const controller of connection?.tools.values() ?? []) {
+    const publication = webPublications.get(taskId);
+    webPublications.delete(taskId);
+    for (const controller of publication?.tools.values() ?? []) {
         controller.abort();
     }
-    connection?.tools.clear();
+    publication?.tools.clear();
 }

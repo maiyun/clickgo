@@ -3,14 +3,19 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, readFile, readdir, chmod, symlink, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import { version } from '../dist/test/native/lib/version.js';
 import { start } from '../dist/test/native/lib/mcp.js';
 import { directory, list } from '../dist/test/native/lib/instance.js';
 
-const entry = resolve('dist/test/native/cli.js');
 const root = await mkdtemp(join(tmpdir(), 'clickgo-native-cli-'));
+const scopedEntry = join(root, 'software-cli.mjs');
+// --- 临时测试进程调用内部适配器，不提供可分发的 Node 命令入口 ---
+await writeFile(scopedEntry, `import { run } from '${pathToFileURL(resolve('dist/test/native/lib/cli.js')).href}';
+await run(process.argv.slice(3), { applicationId: process.argv[2], command: 'TestSoftware' });`);
+const host = { id: 'default', name: 'TestSoftware', applicationId: 'software-installation' };
 process.env.CLICKGO_NATIVE_RUNTIME_DIR = join(root, 'run');
 const clients = [];
 const services = [];
@@ -42,8 +47,8 @@ async function invoke(request, signal) {
     value += request.args.amount;
     return { ok: true, data: { value, special: Object.hasOwn(request.args, '__proto__') } };
 }
-function cli(args, input) {
-    const child = spawn(process.execPath, [entry, ...args], { env: process.env });
+function cli(args, input, applicationId = host.applicationId) {
+    const child = spawn(process.execPath, [scopedEntry, applicationId, ...args], { env: process.env });
     let stdout = '';
     let stderr = '';
     child.stdout.on('data', value => { stdout += value; });
@@ -52,8 +57,8 @@ function cli(args, input) {
     const done = new Promise(resolve => child.on('close', code => resolve({ code, stdout, stderr })));
     return { child, done };
 }
-async function run(args, input) {
-    const result = await cli(args, input).done;
+async function run(args, input, applicationId) {
+    const result = await cli(args, input, applicationId).done;
     return { ...result, data: result.stdout ? JSON.parse(result.stdout) : undefined };
 }
 async function waitFor(predicate) {
@@ -63,8 +68,9 @@ async function waitFor(predicate) {
     }
     assert.fail('Expected cancellation/execution event did not arrive');
 }
-async function connect(mode) {
-    const transport = new StdioClientTransport({ command: process.execPath, args: [entry, 'mcp', '--host', 'software'],
+async function connect(mode, applicationId = host.applicationId) {
+    const transport = new StdioClientTransport({ command: process.execPath,
+        args: [scopedEntry, applicationId, 'mcp'],
         env: { ...process.env }, stderr: 'pipe' });
     let stderr = '';
     transport.stderr.on('data', value => { stderr += value; });
@@ -77,7 +83,7 @@ async function connect(mode) {
 try {
     assert.deepEqual((await run(['instances'])).data, { ok: true, data: [] });
     assert.equal((await run(['apps'])).data.error.code, 'unavailable');
-    const service = await start(invoke, { id: 'software' });
+    const service = await start(invoke, { id: 'software' }, host);
     assert.notEqual(service, false);
     services.push(service);
     const names = await readdir(directory());
@@ -134,7 +140,7 @@ try {
     await waitFor(() => cancelled > 0);
     assert.equal(cancelled, 1);
     const before = mutations;
-    const second = await start(invoke, { id: 'software' });
+    const second = await start(invoke, { id: 'software' }, host);
     services.push(second);
     assert.equal((await run(['execute', '--host', 'software', '--app', 'task', '--name', 'counter.add', '--args', '{"amount":1}'])).data.error.code, 'ambiguous-host');
     assert.equal(mutations, before);
@@ -142,7 +148,7 @@ try {
     await second.close();
     await service.close();
     assert.equal((await active.callTool({ name: 'clickgo_list_apps', arguments: {} })).structuredContent.error.code, 'unavailable');
-    const restarted = await start(invoke, { id: 'software' });
+    const restarted = await start(invoke, { id: 'software' }, host);
     services.push(restarted);
     assert.notEqual(restarted.info.token, service.info.token);
     assert.equal((await active.callTool({ name: 'clickgo_list_apps', arguments: {} })).structuredContent.ok, true);
@@ -159,12 +165,42 @@ try {
     assert.notEqual(isolated, false);
     await isolated.close();
     assert.deepEqual(await list(), []);
+    // --- 软件自身默认只发现同一安装，业务自定义 MCP ID 不影响归属 ---
+    const own = await start(invoke, { id: 'custom-software' }, { id: 'default', name: 'Own', applicationId: 'owned' });
+    let otherCalls = 0;
+    const other = await start(async () => {
+        ++otherCalls;
+        return { ok: true, data: [] };
+    }, { id: 'custom-software' }, { id: 'default', name: 'Other', applicationId: 'other' });
+    assert.notEqual(own, false);
+    assert.notEqual(other, false);
+    services.push(own, other);
+    const scoped = await run(['instances'], undefined, 'owned');
+    assert.equal(scoped.data.data.length, 1);
+    assert.equal(scoped.data.data[0].name, 'Own');
+    assert.ok(!scoped.stdout.includes(own.info.token));
+    assert.equal((await run(['apps'], undefined, 'owned')).data.data[0].id, 'task');
+    const otherRecord = (await list()).find(instance => instance.applicationId === 'other');
+    assert.equal((await run(['apps', '--host', otherRecord.instance], undefined, 'owned')).data.error.code, 'unavailable');
+    const scopedStdio = await connect('auto', 'owned');
+    assert.equal((await scopedStdio.client.callTool({ name: 'clickgo_list_apps', arguments: {} })).structuredContent.data[0].id, 'task');
+    const duplicate = await start(invoke, { id: 'custom-software' }, { id: 'default', name: 'Own second', applicationId: 'owned' });
+    assert.notEqual(duplicate, false);
+    services.push(duplicate);
+    assert.equal((await run(['apps'], undefined, 'owned')).data.error.code, 'ambiguous-host');
+    assert.equal((await run(['apps', '--host', scoped.data.data[0].instance], undefined, 'owned')).data.ok, true);
+    assert.equal(otherCalls, 0);
+    assert.match((await cli(['--help'], undefined, 'owned').done).stdout, /TestSoftware --mcp/);
+    await duplicate.close();
+    await own.close();
+    await other.close();
+    assert.deepEqual(await list(), []);
     if (process.platform !== 'win32') {
         await chmod(directory(), 0o755);
         assert.equal(await start(invoke, {id:'unsafe'}), false);
         await chmod(directory(), 0o700);
     }
-    console.log('CLI JSON, stdin, token privacy, discovery guards, ambiguity, cancellation, restart and cleanup passed.');
+    console.log('CLI JSON, stdin, token privacy, discovery guards, software scope, ambiguity, cancellation, restart and cleanup passed.');
 }
 finally {
     await Promise.all(clients.map(client => client.close()));

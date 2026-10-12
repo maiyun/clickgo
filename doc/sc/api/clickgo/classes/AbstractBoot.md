@@ -480,7 +480,7 @@ Defined in: [clickgo.ts:234](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onHashChanged**(`hash`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:357](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L357)
+Defined in: [clickgo.ts:367](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L367)
 
 location hash 改变事件
 
@@ -500,7 +500,7 @@ location hash 改变事件
 
 > **onKeydown**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:363](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L363)
+Defined in: [clickgo.ts:373](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L373)
 
 键盘按下事件
 
@@ -520,7 +520,7 @@ Defined in: [clickgo.ts:363](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onKeyup**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:369](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L369)
+Defined in: [clickgo.ts:379](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L379)
 
 键盘弹起事件
 
@@ -540,7 +540,7 @@ Defined in: [clickgo.ts:369](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onLauncherFolderNameChanged**(`id`, `name`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:351](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L351)
+Defined in: [clickgo.ts:361](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L361)
 
 launcher 文件夹名称修改事件
 
@@ -564,7 +564,7 @@ launcher 文件夹名称修改事件
 
 > **onLauncherShowChanged**(`state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:345](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L345)
+Defined in: [clickgo.ts:355](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L355)
 
 Launcher 显示状态改变事件
 
@@ -588,7 +588,7 @@ Launcher 显示状态改变事件
 
 > **onRuntimeFileLoad**(`url`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:375](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L375)
+Defined in: [clickgo.ts:385](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L385)
 
 环境文件准备加载时的事件
 
@@ -608,7 +608,7 @@ Defined in: [clickgo.ts:375](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **onRuntimeFileLoaded**(`url`, `state`): `void` \| `Promise`\<`void`\>
 
-Defined in: [clickgo.ts:381](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L381)
+Defined in: [clickgo.ts:391](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L391)
 
 环境文件加载完成的事件
 
@@ -763,6 +763,30 @@ Defined in: [clickgo.ts:323](https://github.com/maiyun/clickgo/blob/master/dist/
 `string`
 
 托盘 ID
+
+#### Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值
+
+***
+
+### onWebMcpStatusChanged()
+
+> **onWebMcpStatusChanged**(`status`): `void` \| `Promise`\<`void`\>
+
+Defined in: [clickgo.ts:345](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L345)
+
+页面级 WebMCP 接入状态变化，独立于各 App 的工具发布
+
+#### Parameters
+
+##### status
+
+[`TWebMcpStatus`](../../lib/command/type-aliases/TWebMcpStatus.md)
+
+浏览器接入状态，与 command.getAgentInfo 的 webMcp.status 一致
 
 #### Returns
 

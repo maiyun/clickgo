@@ -56,7 +56,8 @@ export async function start(invoke, options = {}, host = { 'id': 'clickgo-native
         return false;
     }
     const info = { 'transport': 'streamable-http', 'url': `http://127.0.0.1:${address.port}/mcp`, 'token': token };
-    const record = options.discovery === false ? null : await lInstance.publish(info, options.id ?? host.id, host.name);
+    const record = options.discovery === false ? null :
+        await lInstance.publish(info, options.id ?? host.id, host.name, host.applicationId);
     if (record === false) {
         const stopped = new Promise(resolve => { http.close(() => { resolve(); }); });
         await handler.close();

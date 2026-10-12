@@ -8,7 +8,7 @@
 
 > **getLauncherShow**(): `boolean`
 
-Defined in: [lib/form.ts:4807](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4807)
+Defined in: [lib/form.ts:4817](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4817)
 
 查询 Launcher 当前显示状态，供首次挂载时同步
 

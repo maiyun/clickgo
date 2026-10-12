@@ -8,7 +8,7 @@
 
 > **clear**(`taskId`, `formId?`): `void`
 
-Defined in: [lib/native.ts:169](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L169)
+Defined in: [lib/native.ts:187](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L187)
 
 清除某个窗体或某个任务的所有事件监听
 
