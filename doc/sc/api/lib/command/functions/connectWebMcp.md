@@ -8,7 +8,7 @@
 
 > **connectWebMcp**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/command.ts:794](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L794)
+Defined in: [lib/command.ts:809](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L809)
 
 显式重同步或重试当前 App 的工具发布；页面接入由框架自动管理
 

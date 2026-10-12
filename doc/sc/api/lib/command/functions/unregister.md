@@ -8,7 +8,7 @@
 
 > **unregister**(`current`, `name`): `boolean`
 
-Defined in: [lib/command.ts:335](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L335)
+Defined in: [lib/command.ts:350](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L350)
 
 取消尚在执行的命令并解除注册；取消是协作式，不回滚已产生的业务效果
 

@@ -8,7 +8,7 @@
 
 > **getAgentGuide**(`current?`, `options?`): `Promise`\<`string` \| `false` \| `null`\>
 
-Defined in: [lib/command.ts:495](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L495)
+Defined in: [lib/command.ts:510](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L510)
 
 生成简短英文接入说明，不嵌入临时 App ID；代理通过接口实时发现
 

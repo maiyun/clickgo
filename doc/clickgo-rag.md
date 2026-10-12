@@ -145,7 +145,7 @@ commands.md
 
 # 通用命令
 
-从 ClickGo 6.10.0 开始，应用可以通过 `clickgo.command` 声明业务命令。按钮、菜单、快捷键、命令面板、浏览器代理和 Native MCP 适配器共用注册的执行函数及其校验。
+应用可以通过 `clickgo.command` 声明业务命令。按钮、菜单、快捷键、命令面板、浏览器代理和 Native MCP 适配器共用注册的执行函数及其校验。
 
 ## 声明与执行
 
@@ -10895,7 +10895,7 @@ lib/command/functions/clear.md
 
 > **clear**(`current`): `void`
 
-Defined in: [lib/command.ts:360](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L360)
+Defined in: [lib/command.ts:375](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L375)
 
 清理所属 Panel、Form 或整个任务的命令
 
@@ -10926,7 +10926,7 @@ lib/command/functions/clearOwner.md
 
 > **clearOwner**(`taskId`, `formId?`, `panelId?`): `void`
 
-Defined in: [lib/command.ts:373](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L373)
+Defined in: [lib/command.ts:388](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L388)
 
 **`Internal`**
 
@@ -10971,7 +10971,7 @@ lib/command/functions/connectWebMcp.md
 
 > **connectWebMcp**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/command.ts:794](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L794)
+Defined in: [lib/command.ts:809](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L809)
 
 显式重同步或重试当前 App 的工具发布；页面接入由框架自动管理
 
@@ -11002,7 +11002,7 @@ lib/command/functions/createBridge.md
 
 > **createBridge**(`current`): [`IBridge`](../interfaces/IBridge.md)
 
-Defined in: [lib/command.ts:628](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L628)
+Defined in: [lib/command.ts:643](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L643)
 
 创建绑定单个 App 的可复用代理接口，调用方无需反复传入 taskId
 
@@ -11033,7 +11033,7 @@ lib/command/functions/createPageBridge.md
 
 > **createPageBridge**(): [`IPageBridge`](../interfaces/IPageBridge.md)
 
-Defined in: [lib/command.ts:642](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L642)
+Defined in: [lib/command.ts:657](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L657)
 
 网页入口直接读取框架的任务及命令状态，无需应用或宿主重复发布与清理
 
@@ -11056,7 +11056,7 @@ lib/command/functions/disconnectWebMcp.md
 
 > **disconnectWebMcp**(`current`): `void`
 
-Defined in: [lib/command.ts:804](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L804)
+Defined in: [lib/command.ts:819](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L819)
 
 撤销当前 App 的 WebMCP 工具；不改变页面级接入状态，下次公开命令注册时自动发布
 
@@ -11087,7 +11087,7 @@ lib/command/functions/execute.md
 
 > **execute**(`current`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:605](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L605)
+Defined in: [lib/command.ts:620](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L620)
 
 应用界面直接执行已注册的业务命令
 
@@ -11138,7 +11138,7 @@ lib/command/functions/executeAgent.md
 
 > **executeAgent**(`taskId`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:618](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L618)
+Defined in: [lib/command.ts:633](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L633)
 
 代理直接按 taskId 执行公开命令，与界面共用校验和业务执行器
 
@@ -11226,7 +11226,7 @@ lib/command/functions/getAgentGuide.md
 
 > **getAgentGuide**(`current?`, `options?`): `Promise`\<`string` \| `false` \| `null`\>
 
-Defined in: [lib/command.ts:495](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L495)
+Defined in: [lib/command.ts:510](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L510)
 
 生成简短英文接入说明，不嵌入临时 App ID；代理通过接口实时发现
 
@@ -11263,7 +11263,7 @@ lib/command/functions/getAgentInfo.md
 
 > **getAgentInfo**(`current?`, `options?`): `Promise`\<`false` \| [`IAgentInfo`](../interfaces/IAgentInfo.md) \| `null`\>
 
-Defined in: [lib/command.ts:427](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L427)
+Defined in: [lib/command.ts:442](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L442)
 
 获取当前环境的统一接入信息，不另行维护命令清单或启用服务
 
@@ -11323,7 +11323,7 @@ lib/command/functions/list.md
 
 > **list**(`current`): [`IInfo`](../interfaces/IInfo.md)[]
 
-Defined in: [lib/command.ts:390](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L390)
+Defined in: [lib/command.ts:405](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L405)
 
 获取独立元数据和当前状态，不导出业务函数
 
@@ -11354,7 +11354,7 @@ lib/command/functions/listTasks.md
 
 > **listTasks**(): `object`[]
 
-Defined in: [lib/command.ts:414](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L414)
+Defined in: [lib/command.ts:429](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L429)
 
 获取仍可调用的 App 标识与名称，供网页及 Native 代理发现目标
 
@@ -11496,7 +11496,7 @@ lib/command/functions/unregister.md
 
 > **unregister**(`current`, `name`): `boolean`
 
-Defined in: [lib/command.ts:335](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L335)
+Defined in: [lib/command.ts:350](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L350)
 
 取消尚在执行的命令并解除注册；取消是协作式，不回滚已产生的业务效果
 

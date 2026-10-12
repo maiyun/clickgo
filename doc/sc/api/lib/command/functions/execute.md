@@ -8,7 +8,7 @@
 
 > **execute**(`current`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:605](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L605)
+Defined in: [lib/command.ts:620](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L620)
 
 应用界面直接执行已注册的业务命令
 

@@ -8,7 +8,7 @@
 
 > **disconnectWebMcp**(`current`): `void`
 
-Defined in: [lib/command.ts:804](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L804)
+Defined in: [lib/command.ts:819](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L819)
 
 撤销当前 App 的 WebMCP 工具；不改变页面级接入状态，下次公开命令注册时自动发布
 

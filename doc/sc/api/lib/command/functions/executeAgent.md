@@ -8,7 +8,7 @@
 
 > **executeAgent**(`taskId`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:618](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L618)
+Defined in: [lib/command.ts:633](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L633)
 
 代理直接按 taskId 执行公开命令，与界面共用校验和业务执行器
 
