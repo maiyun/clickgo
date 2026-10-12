@@ -79,7 +79,7 @@ try {
             'requestInit': { 'headers': headers },
         }));
         assert.deepEqual(client.getServerVersion(), { name: 'clickgo-native', version });
-        assert.match(client.getInstructions(), /one or more running ClickGo App instances/);
+        assert.match(client.getInstructions(), /App instances inside the running desktop software/);
         assert.match(client.getInstructions(), /Copy that id unchanged into the taskId/);
         const tools = await client.listTools();
         assert.match(tools.tools[0].description, /data: \[\{id, name\}\]/);

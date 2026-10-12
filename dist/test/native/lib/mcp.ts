@@ -132,10 +132,10 @@ export function createCommandServer(
     invoke: (request: IMcpRequest, signal: AbortSignal) => Promise<JSONObject>
 ): McpServer {
     const server = new McpServer({ 'name': 'clickgo-native', 'version': version }, {
-        'instructions': `This server controls the currently running Native desktop software. The software can host one or more running ClickGo App instances. An App here is an application instance inside this software, not an installed program or an AI work item.
-Call clickgo_list_apps first. Each returned data item has an id and name. Copy that id unchanged into the taskId parameter of subsequent calls; taskId is the framework name for the running App instance ID. If exactly one App is listed, use its id. If several are listed, choose the App matching the user's request by name; ask the user when the target is ambiguous. An empty list means no App is available. Never invent an ID or execute a command in every App to guess the target.
-Call clickgo_list_commands with the selected taskId. Each command has a name, description, inputSchema and enabled state. Read these before calling clickgo_execute_command with that taskId, the command name and args matching its inputSchema. If enabled is false, inspect disabledReason instead of executing it. Command names are scoped to their App; the same name in another App can refer to different state.
-Only explicitly exposed commands are available. Do not automatically retry commands that change data. After the software or App restarts, or a stale taskId is rejected, list Apps and commands again; App instance IDs can change.`,
+        'instructions': `This server controls App instances inside the running desktop software; taskId is an App instance ID, not an AI task ID.
+Use clickgo_list_apps to choose the intended App; ask if ambiguous. Copy that id unchanged into the taskId parameter.
+Use clickgo_list_commands to discover enabled commands and their inputSchema, then clickgo_execute_command with matching args.
+Rediscover IDs after restart or a stale ID error. Never invent IDs or automatically retry commands that change data.`,
     });
     /**
      * --- 将共享命令结果转换为 MCP 工具结果，保留结构化错误 ---
@@ -153,7 +153,7 @@ Only explicitly exposed commands are available. Do not automatically retry comma
     };
     server.registerTool('clickgo_list_apps', {
         'title': 'List running applications inside this software',
-        'description': `Start here to discover the running applications inside this Native desktop software. One software may contain one or several App instances. Returns {ok, data: [{id, name}]}; each id is the App instance ID to copy unchanged into the taskId argument of clickgo_list_commands and clickgo_execute_command. With one result use its id; with several choose by the user's intended App, asking if ambiguous. An empty data array means no App is running. Rediscover IDs after an App or software restart.`,
+        'description': `List running App instances in this software as {ok, data: [{id, name}]}. Use the chosen id as taskId for command tools. Ask if the target is ambiguous; rediscover IDs after restart.`,
         'inputSchema': fromJsonSchema<Record<string, never>>({ 'type': 'object', 'additionalProperties': false }),
         'outputSchema': fromJsonSchema<JSONObject>({
             'type': 'object', 'required': ['ok'],
@@ -176,7 +176,7 @@ Only explicitly exposed commands are available. Do not automatically retry comma
     }, async (_args, context) => call({ 'method': 'listTasks' }, context.mcpReq.signal));
     server.registerTool('clickgo_list_commands', {
         'title': 'Discover commands in the selected application',
-        'description': `Discover the selected App's exposed commands before executing anything. Get taskId from an id returned by clickgo_list_apps. Returns {ok, data: [commands]} with each command's name, description, inputSchema, enabled and disabledReason. Pass a returned command name to clickgo_execute_command and construct args from its inputSchema. An empty list means this App currently exposes no commands; use enabled commands only.`,
+        'description': `List the selected App's exposed commands, inputSchema and availability. Inspect enabled and disabledReason before calling clickgo_execute_command.`,
         'inputSchema': fromJsonSchema<{ 'taskId': string; }>({
             'type': 'object', 'properties': { 'taskId': {
                 'type': 'string', 'minLength': 1,
@@ -188,7 +188,7 @@ Only explicitly exposed commands are available. Do not automatically retry comma
     }, async (args, context) => call({ 'method': 'list', 'taskId': args.taskId }, context.mcpReq.signal));
     server.registerTool('clickgo_execute_command', {
         'title': 'Execute a command in the selected application',
-        'description': `Execute an enabled, exposed command in one selected App. Get taskId from clickgo_list_apps, then get name and the args inputSchema from clickgo_list_commands for that same App. Identically named commands in different Apps are separate targets. Returns {ok, data} on success or {ok: false, error: {code, message}} on failure. UI and AI calls share validation, permissions, execution and App state. Do not automatically retry commands that change data.`,
+        'description': `Execute an enabled, exposed command from clickgo_list_commands in the same App. Follow its inputSchema; do not automatically retry commands that change data.`,
         'inputSchema': fromJsonSchema<{ 'taskId': string; 'name': string; 'args'?: JSONObject; }>({
             'type': 'object',
             'properties': {
