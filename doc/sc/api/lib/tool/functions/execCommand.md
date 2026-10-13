@@ -8,7 +8,7 @@
 
 > **execCommand**(`ac`): `void`
 
-Defined in: [lib/tool.ts:1559](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L1559)
+Defined in: [lib/tool.ts:496](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L496)
 
 ## Parameters
 

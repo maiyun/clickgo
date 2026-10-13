@@ -21,12 +21,11 @@ package-lock.json
 /dist/app/demo/
 /dist/app/task/
 /dist/compiler/
-/dist/lib/*.ts
-!/dist/lib/*.d.ts
 /dist/lib/**/*.js
 /dist/sources/
 /dist/test/
-/test/
+/dist/abox/
+**/AGENTS.md
 /dist/build*
 /dist/clickgo.js
 /dist/clickgo.ts

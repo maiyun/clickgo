@@ -8,7 +8,7 @@
 
 > **set**(`current`, `key`, `value`): `Promise`\<`boolean`\>
 
-Defined in: lib/native/secret.ts:34
+Defined in: [lib/native/secret.ts:34](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/secret.ts#L34)
 
 加密后保存字符串，按 config.id 隔离，不退回明文
 

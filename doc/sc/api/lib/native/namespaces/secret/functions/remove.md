@@ -8,7 +8,7 @@
 
 > **remove**(`current`, `key`): `Promise`\<`boolean`\>
 
-Defined in: lib/native/secret.ts:44
+Defined in: [lib/native/secret.ts:44](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/secret.ts#L44)
 
 删除加密记录，按 config.id 隔离
 

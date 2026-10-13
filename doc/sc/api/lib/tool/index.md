@@ -19,6 +19,7 @@
 ## Type Aliases
 
 - [TFalsy](type-aliases/TFalsy.md)
+- [TJson](type-aliases/TJson.md)
 
 ## Variables
 
@@ -60,6 +61,7 @@
 - [isEscapeChar](functions/isEscapeChar.md)
 - [isEscaped](functions/isEscaped.md)
 - [isFalsy](functions/isFalsy.md)
+- [isJson](functions/isJson.md)
 - [isMs](functions/isMs.md)
 - [isTruthy](functions/isTruthy.md)
 - [layoutAddTagClassAndReTagName](functions/layoutAddTagClassAndReTagName.md)

@@ -6,7 +6,7 @@
 
 # Interface: IStoredValue\<T\>
 
-Defined in: lib/native/storage.ts:8
+Defined in: [lib/native/storage.ts:9](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/storage.ts#L9)
 
 包装实际值，false/null 数据不会与失败/未找到混淆
 
@@ -22,4 +22,4 @@ Defined in: lib/native/storage.ts:8
 
 > **value**: `T`
 
-Defined in: lib/native/storage.ts:9
+Defined in: [lib/native/storage.ts:10](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/storage.ts#L10)

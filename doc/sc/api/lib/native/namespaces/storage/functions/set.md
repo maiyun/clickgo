@@ -8,7 +8,7 @@
 
 > **set**(`current`, `key`, `value`): `Promise`\<`boolean`\>
 
-Defined in: lib/native/storage.ts:38
+Defined in: [lib/native/storage.ts:39](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/storage.ts#L39)
 
 保存当前 App 的持久配置，按 config.id 隔离
 
@@ -28,7 +28,7 @@ Defined in: lib/native/storage.ts:38
 
 ### value
 
-[`TJson`](../type-aliases/TJson.md)
+[`TJson`](../../../../tool/type-aliases/TJson.md)
 
 JSON 配置值，完整记录最大 1 MiB
 

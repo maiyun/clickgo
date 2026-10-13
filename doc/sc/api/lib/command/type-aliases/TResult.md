@@ -8,7 +8,7 @@
 
 > **TResult**\<`T`\> = \{ `data`: `T`; `ok`: `true`; \} \| \{ `error`: \{ `code`: `string`; `message`: `string`; \}; `ok`: `false`; \}
 
-Defined in: [lib/command.ts:45](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L45)
+Defined in: [lib/command.ts:47](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L47)
 
 所有入口共用的结果；错误码用于程序判断，message 用于说明
 

@@ -6,7 +6,7 @@
 
 # Interface: IBridge
 
-Defined in: [lib/command.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L101)
+Defined in: [lib/command.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L103)
 
 绑定一个应用实例，只能调用该实例明确公开的命令
 
@@ -14,9 +14,9 @@ Defined in: [lib/command.ts:101](https://github.com/maiyun/clickgo/blob/master/d
 
 ### execute
 
-> **execute**: (`name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+> **execute**: (`name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L104)
+Defined in: [lib/command.ts:106](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L106)
 
 #### Parameters
 
@@ -26,7 +26,7 @@ Defined in: [lib/command.ts:104](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### args?
 
-`Record`\<`string`, [`TJson`](../type-aliases/TJson.md)\>
+`Record`\<`string`, [`TJson`](../../tool/type-aliases/TJson.md)\>
 
 ##### options?
 
@@ -36,7 +36,7 @@ Defined in: [lib/command.ts:104](https://github.com/maiyun/clickgo/blob/master/d
 
 #### Returns
 
-`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
 ***
 
@@ -44,7 +44,7 @@ Defined in: [lib/command.ts:104](https://github.com/maiyun/clickgo/blob/master/d
 
 > **list**: () => [`IInfo`](IInfo.md)[]
 
-Defined in: [lib/command.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L103)
+Defined in: [lib/command.ts:105](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L105)
 
 #### Returns
 
@@ -56,4 +56,4 @@ Defined in: [lib/command.ts:103](https://github.com/maiyun/clickgo/blob/master/d
 
 > **taskId**: `string`
 
-Defined in: [lib/command.ts:102](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L102)
+Defined in: [lib/command.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L104)

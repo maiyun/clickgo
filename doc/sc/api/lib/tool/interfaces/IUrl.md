@@ -6,7 +6,7 @@
 
 # Interface: IUrl
 
-Defined in: [lib/tool.ts:2719](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2719)
+Defined in: [lib/tool.ts:833](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L833)
 
 网址对象
 
@@ -16,7 +16,7 @@ Defined in: [lib/tool.ts:2719](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **auth**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2720](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2720)
+Defined in: [lib/tool.ts:834](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L834)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/tool.ts:2720](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **hash**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2721](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2721)
+Defined in: [lib/tool.ts:835](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L835)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/tool.ts:2721](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **host**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2722](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2722)
+Defined in: [lib/tool.ts:836](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L836)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/tool.ts:2722](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **hostname**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2723](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2723)
+Defined in: [lib/tool.ts:837](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L837)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/tool.ts:2723](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **pass**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2724](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2724)
+Defined in: [lib/tool.ts:838](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L838)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [lib/tool.ts:2724](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **path**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2725](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2725)
+Defined in: [lib/tool.ts:839](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L839)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [lib/tool.ts:2725](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **pathname**: `string`
 
-Defined in: [lib/tool.ts:2726](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2726)
+Defined in: [lib/tool.ts:840](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L840)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [lib/tool.ts:2726](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **port**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2728](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2728)
+Defined in: [lib/tool.ts:842](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L842)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [lib/tool.ts:2728](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **protocol**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2727](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2727)
+Defined in: [lib/tool.ts:841](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L841)
 
 ***
 
@@ -88,7 +88,7 @@ Defined in: [lib/tool.ts:2727](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **query**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2729](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2729)
+Defined in: [lib/tool.ts:843](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L843)
 
 ***
 
@@ -96,4 +96,4 @@ Defined in: [lib/tool.ts:2729](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **user**: `string` \| `null`
 
-Defined in: [lib/tool.ts:2730](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2730)
+Defined in: [lib/tool.ts:844](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L844)

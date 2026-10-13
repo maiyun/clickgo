@@ -1,3 +1,5 @@
+import * as lAboxTool from '../abox/tool.js';
+
 /**
  * Copyright 2007-2025 MAIYUN.NET
  *
@@ -14,17 +16,13 @@
  * limitations under the License.
  */
 
-/** --- compressorjs 压缩图片原生类 --- */
-let compressorjs: typeof import('compressorjs').default | null = null;
-
 /**
  * --- 运行 iife 代码 ---
  * @param code iife 代码
  * @returns 模块对象
  */
 export function runIife(code: string): any {
-    const func = new Function(code + '\nreturn emodule;');
-    return func();
+    return lAboxTool.runIife(code);
 }
 
 /**
@@ -32,7 +30,7 @@ export function runIife(code: string): any {
  * @param file 文件或 blob 类型 ---
  * @param options 参数
  */
-export async function compressor<T extends File | Blob>(file: T, options: {
+export function compressor<T extends File | Blob>(file: T, options: {
     /** --- 最大宽度，默认无限 --- */
     'maxWidth'?: number;
     /** --- 最高高度，默认无限 --- */
@@ -40,44 +38,7 @@ export async function compressor<T extends File | Blob>(file: T, options: {
     /** --- 压缩质量，默认 0.8 --- */
     'quality'?: number;
 } = {}): Promise<T | false> {
-    if (!compressorjs) {
-        try {
-            const cdn = (window as any).clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
-            await loadScript(cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js');
-            if (!(window as any).Compressor) {
-                throw Error('Compressor load failed.');
-            }
-            compressorjs = (window as any).Compressor;
-        }
-        catch {
-            return false;
-        }
-    }
-    return new Promise(resolve => {
-        if (!compressorjs) {
-            resolve(false);
-            return;
-        }
-        new compressorjs(file, {
-            'quality': options.quality,
-            'maxWidth': options.maxWidth,
-            'maxHeight': options.maxHeight,
-            success: (result: T) => {
-                if ((file instanceof File) && !(result instanceof File)) {
-                    // --- compressorjs 库的异常情况，手动包装 file ---
-                    resolve(new File([result], file.name, {
-                        'lastModified': file.lastModified,
-                        'type': file.type,
-                    }) as T);
-                    return;
-                }
-                resolve(result);
-            },
-            error: () => {
-                resolve(false);
-            },
-        });
-    });
+    return lAboxTool.compressor(file, options);
 }
 
 /** --- 类原型信息 --- */
@@ -98,47 +59,7 @@ export interface IClassPrototype {
  * @param level 不传入此参数
  */
 export function getClassPrototype(obj: object, over: string[] = [], level: number = 0): IClassPrototype {
-    if (level === 0) {
-        return getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
-    }
-    const rtn: IClassPrototype = {
-        'method': {},
-        'access': {},
-    };
-    const names = Object.getOwnPropertyNames(obj);
-    if (names.includes('toString')) {
-        return rtn;
-    }
-    for (const item of names) {
-        if (item === 'constructor') {
-            continue;
-        }
-        if (over.includes(item)) {
-            continue;
-        }
-        const des = Object.getOwnPropertyDescriptor(obj, item);
-        if (!des) {
-            continue;
-        }
-        over.push(item);
-        if (des.value) {
-            // --- method ---
-            rtn.method[item] = des.value;
-        }
-        else if (des.get ?? des.set) {
-            if (!rtn.access[item]) {
-                rtn.access[item] = {
-                    'get': des.get ?? (() => {}),
-                    'set': des.set ?? (() => {}),
-                };
-            }
-        }
-    }
-    // --- 往上级检查 ---
-    const rtn2 = getClassPrototype(Object.getPrototypeOf(obj), over, level + 1);
-    Object.assign(rtn.method, rtn2.method);
-    Object.assign(rtn.access, rtn2.access);
-    return rtn;
+    return lAboxTool.getClassPrototype(obj, over, level);
 }
 
 /**
@@ -146,13 +67,7 @@ export function getClassPrototype(obj: object, over: string[] = [], level: numbe
  * @param blob 对象
  */
 export function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
-    return new Promise(function(resove) {
-        const fr = new FileReader();
-        fr.addEventListener('load', function() {
-            resove(fr.result as ArrayBuffer);
-        });
-        fr.readAsArrayBuffer(blob);
-    });
+    return lAboxTool.blob2ArrayBuffer(blob);
 }
 
 /**
@@ -161,13 +76,7 @@ export function blob2ArrayBuffer(blob: Blob): Promise<ArrayBuffer> {
  * @param spliter 分隔符
  */
 export function sizeFormat(size: number, spliter: string = ' '): string {
-    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    let i = 0;
-    while (i < units.length - 1 && size >= 1024.0) {
-        size /= 1024.0;
-        i++;
-    }
-    return (Math.round(size * 100) / 100).toString() + spliter + units[i];
+    return lAboxTool.sizeFormat(size, spliter);
 }
 
 /**
@@ -176,71 +85,7 @@ export function sizeFormat(size: number, spliter: string = ' '): string {
  * @param spliter 分隔符
  */
 export function weightFormat(weight: number, spliter: string = ' '): string {
-    const units = ['mg', 'g', 'kg'];
-    let i = 0;
-    for (; i < 3 && weight >= 1000; ++i) {
-        weight /= 1000;
-    }
-    return (Math.round(weight * 100) / 100).toString() + spliter + units[i];
-}
-
-/**
- * --- 递归克隆数据 ---
- * @param value 要克隆的数据
- * @param cache 已克隆对象的映射，用于保留重复引用并避免循环递归
- * @returns 克隆后的数据
- */
-function cloneValue<T>(value: T, cache: WeakMap<object, unknown>): T {
-    if ((value === null) || (typeof value !== 'object')) {
-        return value;
-    }
-    const cached = cache.get(value);
-    if (cached !== undefined) {
-        return cached as T;
-    }
-    if (value instanceof Date) {
-        const date = new Date(value.getTime());
-        cache.set(value, date);
-        return date as T;
-    }
-    if (value instanceof FormData) {
-        const formData = new FormData();
-        cache.set(value, formData);
-        for (const item of value) {
-            formData.append(item[0], item[1]);
-        }
-        return formData as T;
-    }
-    if (value instanceof Map) {
-        const map = new Map<unknown, unknown>();
-        cache.set(value, map);
-        for (const item of value) {
-            map.set(cloneValue(item[0], cache), cloneValue(item[1], cache));
-        }
-        return map as T;
-    }
-    if (value instanceof Set) {
-        const set = new Set<unknown>();
-        cache.set(value, set);
-        for (const item of value) {
-            set.add(cloneValue(item, cache));
-        }
-        return set as T;
-    }
-    if (Array.isArray(value)) {
-        const array: unknown[] = [];
-        cache.set(value, array);
-        for (let i = 0; i < value.length; ++i) {
-            array[i] = cloneValue(value[i], cache);
-        }
-        return array as T;
-    }
-    const object: Record<string, unknown> = {};
-    cache.set(value, object);
-    for (const key in value) {
-        object[key] = cloneValue(value[key], cache);
-    }
-    return object as T;
+    return lAboxTool.weightFormat(weight, spliter);
 }
 
 /**
@@ -249,7 +94,7 @@ function cloneValue<T>(value: T, cache: WeakMap<object, unknown>): T {
  * @returns 克隆后的对象
  */
 export function clone<T>(obj: T): T {
-    return cloneValue(obj, new WeakMap());
+    return lAboxTool.clone(obj);
 }
 
 /**
@@ -257,39 +102,22 @@ export function clone<T>(obj: T): T {
  * @param ms 等待的毫秒，默认 0，最大 30 秒
  */
 export function sleep(ms: number = 0): Promise<boolean> {
-    return new Promise(function(resolve) {
-        if (ms > 30_000) {
-            resolve(false);
-            return;
-        }
-        window.setTimeout(function() {
-            resolve(true);
-        }, ms);
-    });
+    return lAboxTool.sleep(ms);
 }
 
 /**
  * --- 等待浏览器帧 ---
  */
 export function nextFrame(): Promise<void> {
-    return new Promise(function(resolve) {
-        requestAnimationFrame(() => {
-            resolve();
-        });
-    });
+    return lAboxTool.nextFrame();
 }
 
 /**
  * --- 等待浏览器帧 ---
  * @param count 等待帧数最高 10 帧
  */
-export async function sleepFrame(count: number): Promise<void> {
-    if (count > 10) {
-        count = 10;
-    }
-    for (let i = 0; i < count; ++i) {
-        await nextFrame();
-    }
+export function sleepFrame(count: number): Promise<void> {
+    return lAboxTool.sleepFrame(count);
 }
 
 /**
@@ -297,19 +125,7 @@ export async function sleepFrame(count: number): Promise<void> {
  * @param text 要纯净的字符串
  */
 export function purify(text: string): string {
-    text = '>' + text + '<';
-    const scripts: string[] = [];
-    let num: number = -1;
-    text = text.replace(/<!--([\s\S]*?)-->/g, '').replace(/<script[\s\S]+?<\/script>/g, function(t: string): string {
-        scripts.push(t);
-        return '[SCRIPT]';
-    }).replace(/>([\s\S]*?)</g, function(t: string, t1: string): string {
-        return '>' + t1.replace(/\t|\r\n| {2}/g, '').replace(/\n|\r/g, '') + '<';
-    }).replace(/\[SCRIPT\]/g, function(): string {
-        ++num;
-        return scripts[num];
-    });
-    return text.slice(1, -1);
+    return lAboxTool.purify(text);
 }
 
 /**
@@ -318,12 +134,7 @@ export function purify(text: string): string {
  * @param regs 正则列表
  */
 export function match(str: string, regs: RegExp[]): boolean {
-    for (const reg of regs) {
-        if (reg.test(str)) {
-            return true;
-        }
-    }
-    return false;
+    return lAboxTool.match(str, regs);
 }
 
 /**
@@ -332,28 +143,12 @@ export function match(str: string, regs: RegExp[]): boolean {
  * @param style 样式表
  * @param files 在此文件列表或读取器中查找
  */
-export async function styleUrl2DataUrl(
+export function styleUrl2DataUrl(
     path: string,
     style: string,
     files: Record<string, Blob | string> | ((path: string) => Promise<Blob | string | null>)
 ): Promise<string> {
-    const reg = /url\(["']{0,1}(.+?)["']{0,1}\)/ig;
-    let match: RegExpExecArray | null = null;
-    while ((match = reg.exec(style))) {
-        let realPath = urlResolve(path, match[1]);
-        if (realPath.startsWith('/package/')) {
-            // --- 处理 form 里面的路径 ---
-            realPath = realPath.slice(8);
-        }
-        const file = typeof files === 'function' ? await files(realPath) : files[realPath];
-        if (!file) {
-            continue;
-        }
-        if (typeof file !== 'string') {
-            style = style.replace(match[0], `url('${await blob2DataUrl(file)}')`);
-        }
-    }
-    return style;
+    return lAboxTool.styleUrl2DataUrl(path, style, files);
 }
 
 /**
@@ -362,56 +157,7 @@ export async function styleUrl2DataUrl(
  * @param retagname 是否更改 tagname 为 cg-tagname
  */
 export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean): string {
-    // --- "" '' 引号中的内容先替换为 placeholder 排除掉干扰 ---
-    const list: string[] = [];
-    layout = layout.replace(/([^\s<>]+)=(".+?"|'.+?')/g, function(t, t1): string {
-        // --- t1 不是标签名，而是 attr 名，例如 class="xxx"、style="xxx" ---
-        if (t1 === 'class') {
-            return t;
-        }
-        list.push(t);
-        return '"CG-PLACEHOLDER"';
-    });
-    // --- 开始添加 class tag ---
-    layout = layout.replace(/<(\/{0,1})([\w-]+)([\s\S]*?>)/g, function(t, t1, t2: string, t3: string): string {
-        // --- t1 是 /，t2 是 tagname，t3 是标签其他内容 ---
-        if (['template', 'slot', 'teleport', 'canvas'].includes(t2)) {
-            // --- 部分标签不加 ---
-            return t;
-        }
-        else {
-            // --- 需要给 class 添加 cg-xxx ---
-            if (t1 === '/') {
-                if (t2 === 'block') {
-                    return '</div' + t3;
-                }
-                else {
-                    return retagname ? ('</cg-' + t2 + t3) : t;
-                }
-            }
-            if (/\sclass\s*=/.test(t3.toLowerCase())) {
-                // --- 有 class，前置增加 ---
-                t3 = t3.replace(/\sclass\s*=(["']{0,1})/i, function(t, t1: string): string {
-                    return `${t.slice(0, t.indexOf('class'))}class=${t1}tag-${t2} `;
-                });
-            }
-            else {
-                // --- 无 class 的 attr，增加 attr ---
-                t3 = ` class="tag-${t2}"` + t3;
-            }
-            if (t2 === 'block') {
-                return '<div' + t3;
-            }
-            else {
-                return retagname ? ('<cg-' + t2 + t3) : ('<' + t2 + t3);
-            }
-        }
-    });
-    // --- 恢复 placeholder ---
-    let i = -1;
-    return layout.replace(/"CG-PLACEHOLDER"/g, function() {
-        return list[++i];
-    });
+    return lAboxTool.layoutAddTagClassAndReTagName(layout, retagname);
 }
 
 /**
@@ -421,57 +167,7 @@ export function layoutAddTagClassAndReTagName(layout: string, retagname: boolean
  * @param opt 选项, ignore 忽略的标签，include 包含的标签
  */
 export function layoutInsertAttr(layout: string, insert: string, opt: { 'ignore'?: RegExp[]; 'include'?: RegExp[]; } = {}): string {
-    return layout.replace(/<([\w-]+)[\s\S]*?>/g, function(t, t1): string {
-        if (opt.ignore) {
-            for (const item of opt.ignore) {
-                if (item.test(t1)) {
-                    return t;
-                }
-            }
-        }
-        if (opt.include) {
-            let found = false;
-            for (const item of opt.include) {
-                if (item.test(t1)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return t;
-            }
-        }
-        return t.replace(/<[\w-]+/, function(t) {
-            return t + ' ' + insert;
-        });
-    });
-}
-
-/**
- * --- 对 :class 的对象增加实时 css 的前缀 ---
- * @param object :class 中的 {'xxx': xxx, [yyy]: yyy} 字符串
- */
-function layoutClassPrependObject(object: string): string {
-    object = object.slice(1, -1).trim();
-    return `{${object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, (t, t1: string, t2: string) => {
-        // --- t1 是 'xxx', t2 是 xxx，t3 是结尾或者 , 分隔符 ---
-        t1 = t1.trim();
-        if (t1.startsWith('[')) {
-            t1 = `[classPrepend(${t1.slice(1, -1)})]`;
-        }
-        else {
-            let sp = '';
-            if (t1.startsWith('\'') || t1.startsWith('"') || t1.startsWith('`')) {
-                sp = t1[0];
-                t1 = t1.slice(1, -1);
-            }
-            else {
-                sp = '\'';
-            }
-            t1 = `[classPrepend(${sp}${t1}${sp})]`;
-        }
-        return `${t1}${t2}`;
-    })}}`;
+    return lAboxTool.layoutInsertAttr(layout, insert, opt);
 }
 
 /**
@@ -480,55 +176,7 @@ function layoutClassPrependObject(object: string): string {
  * @param preps 前置标识符列表，特殊字符串 scope 会被替换为随机前缀
  */
 export function layoutClassPrepend(layout: string, preps: string[]): string {
-    const rtn = layout.replace(/(\s)class=["'](.*?)["']/gi, function(t, t0: string, t1: string) {
-        // --- t1 为 xxx yyy zzz 这样的 ----
-        t1 = t1.trim();
-        const classList = t1.split(/\s+/);
-        const resultList: string[] = [];
-        for (const item of classList) {
-            if (!item) {
-                continue;
-            }
-            for (const prep of preps) {
-                if (item.startsWith('fa-')) {
-                    resultList.push(`${item}`);
-                }
-                else {
-                    resultList.push(`${prep}${item}`);
-                }
-            }
-        }
-        return `${t0}class="${resultList.join(' ')}"`;
-    }).replace(/\s:class=(["']).*?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function(t, sp) {
-        return t.replace(new RegExp(`:class=${sp}([^${sp}]+?)${sp}`, 'gi'), function(t, t1: string) {
-        // return t.replace(new RegExp(`:class=${sp}(.+?)${sp}((\\s+[a-zA-Z0-9-_:@]+(=|\\s*>))|(\\s*)>)`, 'gi'), function(t, t1: string, t2: string) {
-            // --- t1 为 [] 或 {} 或 变量 ---
-            t1 = t1.trim();
-            if (t1.startsWith('[')) {
-                // --- ['xxx', yyy && 'yyy', {'zzz': zzz}] ---
-                /** --- 'xxx', yyy && 'yyy', {'zzz': zzz} 的数组 --- */
-                const t1a = parseArrayString(t1);
-                for (let i = 0; i < t1a.length; ++i) {
-                    t1a[i] = t1a[i].trim();
-                    if (t1a[i].startsWith('{')) {
-                        t1a[i] = layoutClassPrependObject(t1a[i]);
-                    }
-                    else {
-                        t1a[i] = `classPrepend(${t1a[i]})`;
-                    }
-                }
-                t1 = `[${t1a.join(',')}]`;
-            }
-            else if (t1.startsWith('{')) {
-                t1 = layoutClassPrependObject(t1);
-            }
-            else {
-                t1 = `classPrepend(${t1})`;
-            }
-            return `:class="${t1}"`;
-        });
-    }).replace(/(\s)id=(["'])/gi, `$1id=$2${preps[0]}`);
-    return rtn;
+    return lAboxTool.layoutClassPrepend(layout, preps);
 }
 
 /**
@@ -536,14 +184,7 @@ export function layoutClassPrepend(layout: string, preps: string[]): string {
  * @param layout 要包裹的 layout
  */
 export function eventsAttrWrap(layout: string): string {
-    const events = ['click', 'dblclick', 'pointerdown', 'pointerenter', 'pointerleave', 'pointerup', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup', 'touchstart', 'touchmove', 'touchend', 'keydown', 'keypress', 'keyup', 'contextmenu'];
-    const reg = new RegExp(`@(${events.join('|')})="(.+?)"`, 'g');
-    return layout.replace(reg, function(t, t1, t2): string {
-        if (/^[\w]+$/.test(t2)) {
-            return `@${t1}="allowEvent($event) && ${t2}($event)"`;
-        }
-        return `@${t1}=";if(allowEvent($event)){${t2}}"`;
-    });
+    return lAboxTool.eventsAttrWrap(layout);
 }
 
 /**
@@ -552,13 +193,7 @@ export function eventsAttrWrap(layout: string): string {
  * @param formId 要加入的 formId
  */
 export function teleportGlue(layout: string, formId: string): string {
-    return layout.replace(/<teleport([\s\S]+?)to="(.+?)"([\s\S]+?<[\w-]+)/g, (v, v1, v2, v3): string => {
-        if (v2 !== 'system') {
-            return v;
-        }
-        // --- 给 teleport 的第一个子元素增加 cg-pop、cg-pop-none 的 data ---
-        return '<teleport' + v1 + 'to="#cg-pop-list > [data-form-id=\'' + formId + '\']"' + v3 + ' data-cg-pop data-cg-pop-none';
-    });
+    return lAboxTool.teleportGlue(layout, formId);
 }
 
 /**
@@ -567,76 +202,7 @@ export function teleportGlue(layout: string, formId: string): string {
  * @param prep 给 class、font 等增加前置
  */
 export function stylePrepend(style: string, prep: string = ''): { 'style': string; 'prep': string; } {
-    if (prep === '') {
-        prep = 'cg-scope' + Math.round(Math.random() * 1000000000000000).toString() + '_';
-    }
-    style = style.replace(/([\s\S]+?){([\s\S]+?)}/g, function(t, t1: string, t2: string) {
-        // --- xxx { xxx; } ---
-        // --- 将 element 模式的 css 变为 class 模式，如 div 变为 .tag-div ---
-        // --- 这里面遇到了一个 bug， @keyframe 也被转换了，这是不对的，因此在下面修复 ---
-        t1 = t1.replace(/(^|[ >,}\r\n])([a-zA-Z-_][a-zA-Z0-9-_]*)/g,
-            function(t: string, t1: string, t2: string) {
-                if (t2 === 'global') {
-                    return '[CGTMP-GLOBAL]';
-                }
-                return t1 + '.tag-' + t2;
-            }
-        );
-        t1 = t1.replace(/keyframes \.tag-([a-zA-Z0-9-_]+)/g, function(t: string, t1: string) {
-            return 'keyframes ' + t1;
-        });
-        // --- 给 style 的 class 前添加 scope ---
-        t1 = t1.replace(/([.#])([a-zA-Z0-9-_]+)/g, function(t: string, t1: string, t2: string) {
-            /*
-            if (t2.startsWith('cg-')) {
-                return t;
-            }
-            */
-            return t1 + prep + t2;
-        }) + '{' + t2 + '}';
-        return t1;
-    });
-    // --- 自定义 font 名添加 scope ---
-    const fontList: string[] = [];
-    style = style.replace(/(@font-face[\s\S]+?font-family\s*:\s*["']{0,1})(.+?)(["']{0,1}\s*[;\r\n }])/gi,
-        function(t, t1: string, t2: string, t3: string) {
-            fontList.push(t2);
-            return t1 + prep + t2 + t3;
-        }
-    );
-    // --- 对自定义 font 进行更名 ---
-    for (const font of fontList) {
-        const reg = new RegExp(`(font.+?[: "'])(${font})`, 'gi');
-        style = style.replace(reg, function(t, t1: string, t2: string) {
-            return t1 + prep + t2;
-        });
-    }
-    // --- keyframes ---
-    const keyframeList: string[] = [];
-    style = style.replace(/([-@]keyframes *["']{0,1})([\w-]+)(["']{0,1}\s*?\{)/gi,
-        function(t, t1: string, t2: string, t3: string) {
-            if (!keyframeList.includes(t2)) {
-                keyframeList.push(t2);
-            }
-            return t1 + prep + t2 + t3;
-        }
-    );
-    // --- 对自定义 keyframe 进行更名 ---
-    for (const keyframe of keyframeList) {
-        let reg = new RegExp(`(animation[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
-        style = style.replace(reg, function(t, t1: string, t2: string, t3: string) {
-            return t1 + prep + t2 + t3;
-        });
-        reg = new RegExp(`(animation-name[ :\\r\\n]+)(${keyframe})([ ;}\\r\\n])`, 'gi');
-        style = style.replace(reg, function(t, t1: string, t2: string, t3: string) {
-            return t1 + prep + t2 + t3;
-        });
-        // --- 为什么分两个呢？一个加 (-name)? 也行，但是后面的 tx 不好合并 ---
-    }
-    return {
-        'prep': prep,
-        'style': style
-    };
+    return lAboxTool.stylePrepend(style, prep);
 }
 
 /**
@@ -644,23 +210,7 @@ export function stylePrepend(style: string, prep: string = ''): { 'style': strin
  * @param path 后缀、文件名或路径
  */
 export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } {
-    const lio = path.lastIndexOf('.');
-    const ext: string = (lio === -1 ? path : path.slice(lio + 1)).toLowerCase();
-    const exts: Record<string, string> = {
-        'eot': 'application/vnd.ms-fontobject',
-        'woff': 'font/woff',
-        'ttf': 'font/ttf',
-        'svg': 'image/svg+xml',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'gif': 'image/gif',
-        'png': 'image/png'
-    };
-    const mime: string = exts[ext] ?? 'application/octet-stream';
-    return {
-        'mime': mime,
-        'ext': ext
-    };
+    return lAboxTool.getMimeByPath(path);
 }
 
 /**
@@ -670,14 +220,7 @@ export function getMimeByPath(path: string): { 'mime': string; 'ext': string; } 
  * @param prec 保留几位小数
  */
 export function rand(min: number, max: number, prec: number = 0): number {
-    if (prec < 0) {
-        prec = 0;
-    }
-    if (prec === 0) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    const p = Math.pow(10, prec);
-    return Math.round((Math.random() * (max - min) + min) * p) / p;
+    return lAboxTool.rand(min, max, prec);
 }
 
 export const RANDOM_N = '0123456789';
@@ -699,22 +242,7 @@ export const RANDOM_LUNS = RANDOM_LUN + '()`~!@#$%^&*-+=_|{}[]:;\'<>,.?/]"';
  * @returns 随机字符串
  */
 export function random(length: number = 8, source: string = RANDOM_LN, block: string = ''): string {
-    // --- 剔除 block 字符 ---
-    let len = block.length;
-    if (len > 0) {
-        for (let i = 0; i < len; ++i) {
-            source = source.replace(block[i], '');
-        }
-    }
-    len = source.length;
-    if (len === 0) {
-        return '';
-    }
-    let temp = '';
-    for (let i = 0; i < length; ++i) {
-        temp += source[rand(0, len - 1)];
-    }
-    return temp;
+    return lAboxTool.random(length, source, block);
 }
 
 /**
@@ -722,14 +250,7 @@ export function random(length: number = 8, source: string = RANDOM_LN, block: st
  * @param param 参数
  */
 export function getBoolean(param: boolean | string | number | undefined): boolean {
-    const t = typeof param;
-    if (t === 'boolean') {
-        return param as boolean;
-    }
-    if (t === 'string') {
-        return param === 'false' ? false : true;
-    }
-    return param ? true : false;
+    return lAboxTool.getBoolean(param);
 }
 
 /**
@@ -737,10 +258,7 @@ export function getBoolean(param: boolean | string | number | undefined): boolea
  * @param param 参数
  */
 export function getNumber(param: string | number): number {
-    if (typeof param === 'number') {
-        return param;
-    }
-    return parseFloat(param);
+    return lAboxTool.getNumber(param);
 }
 
 /**
@@ -748,24 +266,7 @@ export function getNumber(param: string | number): number {
  * @param param 参数
  */
 export function getArray(param: string | any[]): any[] {
-    if (typeof param !== 'string') {
-        return param;
-    }
-    param = param.trim();
-    let rtn: any[] = [];
-    if (param.startsWith('[')) {
-        try {
-            rtn = JSON.parse(param);
-        }
-        catch {
-            return [];
-        }
-    }
-    else {
-        param = param.replace(/ /g, '');
-        rtn = param.split(',');
-    }
-    return rtn;
+    return lAboxTool.getArray(param);
 }
 
 /**
@@ -773,11 +274,7 @@ export function getArray(param: string | any[]): any[] {
  * @param html HTML 字符
  */
 export function escapeHTML(html: string): string {
-    return html.replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&#34;')
-        .replace(/'/g, '&#39;');
+    return lAboxTool.escapeHTML(html);
 }
 
 /**
@@ -785,13 +282,7 @@ export function escapeHTML(html: string): string {
  * @param html 已转义的 HTML 字符
  */
 export function unescapeHTML(html: string): string {
-    return html.replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&#34;/g, '"')
-        .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, '\'')
-        .replace(/&apos;/g, '\'');
+    return lAboxTool.unescapeHTML(html);
 }
 
 /**
@@ -799,14 +290,7 @@ export function unescapeHTML(html: string): string {
  * @param color 颜色字符串
  */
 export function formatColor(color: string): number[] {
-    const matc = /[0-9.%, ]+/.exec(color);
-    if (!matc) {
-        return [];
-    }
-    const arr = matc[0].split(',');
-    return arr.map((v: string) => {
-        return parseFloat(v);
-    });
+    return lAboxTool.formatColor(color);
 }
 
 /**
@@ -816,31 +300,7 @@ export function formatColor(color: string): number[] {
  * @param b 可留空，b
  */
 export function rgb2hex(r: string | number, g?: string | number, b?: string | number, a: string | number = 1): string {
-    if (g === undefined || b === undefined) {
-        if (typeof r !== 'string') {
-            return '';
-        }
-        const rgb = formatColor(r);
-        r = Math.round(rgb[0]);
-        g = Math.round(rgb[1]);
-        b = Math.round(rgb[2]);
-        a = rgb[3] ?? 1;
-    }
-    else {
-        if (typeof r === 'string') {
-            r = Math.round(parseFloat(r));
-        }
-        if (typeof g === 'string') {
-            g = Math.round(parseFloat(g));
-        }
-        if (typeof b === 'string') {
-            b = Math.round(parseFloat(b));
-        }
-        if (typeof a === 'string') {
-            a = parseFloat(a);
-        }
-    }
-    return ((r << 16) + (g << 8) + b).toString(16).padStart(6, '0') + (a === 1 ? '' : Math.round(a * 255).toString(16).padStart(2, '0'));
+    return lAboxTool.rgb2hex(r, g, b, a);
 }
 
 /**
@@ -854,30 +314,7 @@ export function hex2rgb(hex: string): {
     'a': number;
     'rgb': string;
 } {
-    const rgb = {
-        'r': 0,
-        'g': 0,
-        'b': 0,
-        'a': 1,
-        'rgb': 'rgb'
-    };
-    let alpha = false,
-        h = hex.slice(hex.startsWith('#') ? 1 : 0);
-    if (h.length === 3) {
-        h = [...h].map(x => x + x).join('');
-    }
-    else if (h.length === 8) {
-        alpha = true;
-    }
-    const hn = parseInt(h, 16);
-    rgb.r = (hn >>> (alpha ? 24 : 16));
-    rgb.g = (hn & (alpha ? 0x00ff0000 : 0x00ff00)) >>> (alpha ? 16 : 8);
-    rgb.b = (hn & (alpha ? 0x0000ff00 : 0x0000ff)) >>> (alpha ? 8 : 0);
-    if (alpha) {
-        rgb.a = Math.round((hn & 0x000000ff) / 255 * 100) / 1000;
-    }
-    rgb.rgb = `${alpha ? 'a' : ''}(${rgb.r},${rgb.g},${rgb.b}${alpha ? ',' + rgb.a : ''})`;
-    return rgb;
+    return lAboxTool.hex2rgb(hex);
 }
 
 /**
@@ -897,90 +334,7 @@ export function rgb2hsl(
         'a': number;
         'hsl': string;
     } {
-    const hsl = {
-        'h': 0,
-        's': 0,
-        'l': 0,
-        'a': 1,
-        'hsl': 'hsl'
-    };
-    if (g === undefined || b === undefined) {
-        if (typeof r !== 'string') {
-            return hsl;
-        }
-        const rgb = formatColor(r);
-        r = rgb[0];
-        g = rgb[1];
-        b = rgb[2];
-        a = rgb[3] ?? 1;
-    }
-    else {
-        if (typeof r === 'string') {
-            r = parseFloat(r);
-        }
-        if (typeof g === 'string') {
-            g = parseFloat(g);
-        }
-        if (typeof b === 'string') {
-            b = parseFloat(b);
-        }
-        if (typeof a === 'string') {
-            a = parseFloat(a);
-        }
-    }
-
-    r /= 255;
-    g /= 255;
-    b /= 255;
-    const cmin = Math.min(r, g, b),
-        cmax = Math.max(r, g, b),
-        delta = cmax - cmin;
-    let h = 0,
-        s = 0,
-        l = 0;
-    if (delta == 0) {
-        h = 0;
-    }
-    // --- Red is max ---
-    else if (cmax == r) {
-        h = ((g - b) / delta) % 6;
-    }
-    // --- Green is max ---
-    else if (cmax == g) {
-        h = (b - r) / delta + 2;
-    }
-    // --- Blue is max ---
-    else {
-        h = (r - g) / delta + 4;
-    }
-
-    h = Math.round(h * 60);
-
-    // --- Make negative hues positive behind 360° ---
-    if (h < 0) {
-        h += 360;
-    }
-    // --- Calculate lightness ---
-    l = (cmax + cmin) / 2;
-
-    // --- Calculate saturation ---
-    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-
-    // --- Multiply l and s by 100 ---
-    s = s * 100;
-    l = l * 100;
-
-    hsl.h = h;
-    hsl.s = s;
-    hsl.l = l;
-    hsl.a = a;
-    if (!decimal) {
-        hsl.h = Math.round(hsl.h);
-        hsl.s = Math.round(hsl.s);
-        hsl.l = Math.round(hsl.l);
-    }
-    hsl.hsl += (hsl.a === 1 ? '' : 'a') + `(${hsl.h},${hsl.s}%,${hsl.l}%${hsl.a === 1 ? '' : ',' + hsl.a})`;
-    return hsl;
+    return lAboxTool.rgb2hsl(r, g, b, a, decimal);
 }
 
 /**
@@ -1000,55 +354,7 @@ export function hsl2rgb(
         'a': number;
         'rgb': string;
     } {
-    const rgb = {
-        'r': 0,
-        'g': 0,
-        'b': 0,
-        'a': 1,
-        'rgb': 'rgb'
-    };
-    if (s === undefined || l === undefined) {
-        if (typeof h !== 'string') {
-            return rgb;
-        }
-        const hsl = formatColor(h);
-        h = hsl[0];
-        s = hsl[1];
-        l = hsl[2];
-        a = hsl[3] ?? 1;
-    }
-    else {
-        if (typeof h === 'string') {
-            h = parseFloat(h);
-        }
-        if (typeof s === 'string') {
-            s = parseFloat(s);
-        }
-        if (typeof l === 'string') {
-            l = parseFloat(l);
-        }
-        if (typeof a === 'string') {
-            a = parseFloat(a);
-        }
-    }
-
-    s /= 100;
-    l /= 100;
-    const k = (n: number): number => (n + h / 30) % 12;
-    const aa = s * Math.min(l, 1 - l);
-    const f = (n: number): number =>
-        l - aa * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-    rgb.r = 255 * f(0);
-    rgb.g = 255 * f(8);
-    rgb.b = 255 * f(4);
-    rgb.a = a;
-    if (!decimal) {
-        rgb.r = Math.round(rgb.r);
-        rgb.g = Math.round(rgb.g);
-        rgb.b = Math.round(rgb.b);
-    }
-    rgb.rgb += (rgb.a === 1 ? '' : 'a') + `(${rgb.r},${rgb.g},${rgb.b}${rgb.a === 1 ? '' : ',' + rgb.a})`;
-    return rgb;
+    return lAboxTool.hsl2rgb(h, s, l, a, decimal);
 }
 
 /**
@@ -1057,90 +363,7 @@ export function hsl2rgb(
  * @param opt 选项
  */
 export function request(url: string, opt: IRequestOptions): Promise<null | any> {
-    return new Promise(function(resove) {
-        const xhr = new XMLHttpRequest();
-        if (opt.credentials === false) {
-            xhr.withCredentials = false;
-        }
-        if (opt.uploadStart) {
-            xhr.upload.onloadstart = function(e: ProgressEvent): void {
-                const r = opt.uploadStart?.(e.total);
-                if (r && (r instanceof Promise)) {
-                    r.catch(() => {});
-                }
-            };
-        }
-        if (opt.uploadProgress) {
-            xhr.upload.onprogress = function(e: ProgressEvent): void {
-                const r = opt.uploadProgress?.(e.loaded, e.total);
-                if (r && (r instanceof Promise)) {
-                    r.catch(() => {});
-                }
-            };
-        }
-        if (opt.uploadEnd) {
-            xhr.upload.onloadend = function(): void {
-                const r = opt.uploadEnd?.();
-                if (r && (r instanceof Promise)) {
-                    r.catch(() => {});
-                }
-            };
-        }
-        xhr.onloadstart = function(e: ProgressEvent): void {
-            const r = opt.start?.(e.total);
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-        };
-        xhr.onprogress = function(e: ProgressEvent): void {
-            const r = opt.progress?.(e.loaded, e.total);
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-        };
-        xhr.onloadend = function(): void {
-            const r = opt.end?.();
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-        };
-        xhr.onload = function(): void {
-            let res = this.response;
-            if (this.getResponseHeader('content-type')?.includes('json')) {
-                try {
-                    res = JSON.parse(res);
-                }
-                catch {
-                    res = this.response;
-                }
-            }
-            const r = opt.load?.(res);
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-            resove(res);
-        };
-        xhr.onerror = function(): void {
-            const r = opt.error?.();
-            if (r && (r instanceof Promise)) {
-                r.catch(() => {});
-            }
-            resove(null);
-        };
-        if (opt.responseType) {
-            xhr.responseType = opt.responseType;
-        }
-        if (opt.timeout) {
-            xhr.timeout = opt.timeout;
-        }
-        if (opt.headers && !Array.isArray(opt.headers)) {
-            for (const k in opt.headers) {
-                xhr.setRequestHeader(k, (opt.headers as any)[k]);
-            }
-        }
-        xhr.open(opt.method ?? 'GET', url, true);
-        xhr.send(opt.body);
-    });
+    return lAboxTool.request(url, opt);
 }
 
 /**
@@ -1149,24 +372,9 @@ export function request(url: string, opt: IRequestOptions): Promise<null | any> 
  * @param init 选项
  * @returns 文本或二进制数据，失败时返回 null
  */
-export async function fetch(url: string, init?: RequestInit): Promise<string | Blob | null> {
-    try {
-        const res = await window.fetch(url, init);
-        if (res.status === 200 || res.status === 304) {
-            /** --- 内容类型 --- */
-            const ct = res.headers.get('content-type')?.toLowerCase() ?? '';
-            const types = ['text/', 'javascript', 'json', 'css', 'xml', 'html'];
-            return types.some(item => ct.includes(item)) ? await res.text() : await res.blob();
-        }
-        return null;
-    }
-    catch {
-        return null;
-    }
+export function fetch(url: string, init?: RequestInit): Promise<string | Blob | null> {
+    return lAboxTool.fetch(url, init);
 }
-
-/** --- 重试间隔 --- */
-const retryTimes = [300, 1_000, 2_000];
 
 /**
  * --- 发起 GET 请求 ---
@@ -1175,24 +383,11 @@ const retryTimes = [300, 1_000, 2_000];
  * @param opt 选项
  * @returns 文本或二进制数据，失败时返回 null
  */
-export async function get(url: string, init?: RequestInit, opt: {
+export function get(url: string, init?: RequestInit, opt: {
     /** --- 重试次数，默认 3 次 --- */
     'retry'?: number;
 } = {}): Promise<string | Blob | null> {
-    init ??= {};
-    init.method = 'GET';
-    const retry = opt.retry ?? 3;
-    for (let i = 0; i <= retry; ++i) {
-        const res = await fetch(url, init);
-        if (res !== null) {
-            return res;
-        }
-        if (i === retry) {
-            return null;
-        }
-        await sleep(retryTimes[i]);
-    }
-    return null;
+    return lAboxTool.get(url, init, opt);
 }
 
 /**
@@ -1202,23 +397,10 @@ export async function get(url: string, init?: RequestInit, opt: {
  * @param init 选项
  * @returns 文本或二进制数据，失败时返回 null
  */
-export async function post(
+export function post(
     url: string, data: Record<string, any> | FormData, init?: RequestInit
 ): Promise<string | Blob | null> {
-    init ??= {};
-    init.method = 'POST';
-    init.headers ??= {};
-    if (!(data instanceof FormData)) {
-        if (init.headers instanceof Headers) {
-            init.headers.set('content-type', 'application/json');
-        }
-        else {
-            (init.headers as Record<string, string>)['content-type'] = 'application/json';
-        }
-    }
-    init.body = data instanceof FormData ? data : JSON.stringify(data);
-    const res = await fetch(url, init);
-    return res;
+    return lAboxTool.post(url, data, init);
 }
 
 /**
@@ -1227,20 +409,8 @@ export async function post(
  * @param init 选项
  * @returns JSON 数据，失败时返回 null
  */
-export async function getResponseJson(url: string, init?: RequestInit): Promise<any | null> {
-    const res = await get(url, init);
-    if (!res) {
-        return null;
-    }
-    if (typeof res !== 'string') {
-        return null;
-    }
-    try {
-        return JSON.parse(res);
-    }
-    catch {
-        return null;
-    }
+export function getResponseJson(url: string, init?: RequestInit): Promise<any | null> {
+    return lAboxTool.getResponseJson(url, init);
 }
 
 /**
@@ -1268,60 +438,7 @@ export function postResponseEventStream(url: string, data: Record<string, any>, 
     /** --- 连接失败（onStart 前调用） --- */
     onTimeout?: () => void | Promise<void>;
 } = {}): AbortController {
-    const controller = new AbortController();
-    setTimeout(() => {
-        (async () => {
-            try {
-                const res = await window.fetch(url, {
-                    'method': 'POST',
-                    'headers': { 'content-type': 'application/json' },
-                    'body': JSON.stringify(data),
-                    'signal': controller.signal,
-                });
-                const body = res.body;
-                if (!body) {
-                    await opts.onTimeout?.();
-                    return;
-                }
-                await opts.onStart?.();
-                const reader = body.getReader();
-                const decoder = new TextDecoder('utf8');
-                let buf = '';
-                while (true) {
-                    try {
-                        const { value, done } = await reader.read();
-                        if (done) {
-                            break;
-                        }
-                        buf += decoder.decode(value, { 'stream': true, });
-                        if (!buf.includes('\n\n')) {
-                            // --- 还没接收完 ---
-                            continue;
-                        }
-                        const events = buf.split('\n\n');
-                        buf = events.pop() ?? ''; // --- 最后一个可能不完整 ---
-                        for (const ev of events) {
-                            const line = JSON.parse(ev.slice(5).trim());
-                            if (line.init) {
-                                await opts.onInit?.(line.init);
-                                continue;
-                            }
-                            await opts.onData?.(typeof line === 'string' ? line : (line.choices?.[0]?.delta?.content ?? ''));
-                        }
-                    }
-                    catch {
-                        break;
-                    }
-                }
-                await opts.onEnd?.();
-            }
-            catch {
-                await opts.onTimeout?.();
-                return;
-            }
-        })().catch(() => {});
-    }, 0);
-    return controller;
+    return lAboxTool.postResponseEventStream(url, data, opts);
 }
 
 /**
@@ -1331,22 +448,10 @@ export function postResponseEventStream(url: string, data: Record<string, any>, 
  * @param init 选项
  * @returns JSON 数据，失败时返回 null
  */
-export async function postResponseJson(
+export function postResponseJson(
     url: string, data: Record<string, any> | FormData, init?: RequestInit
 ): Promise<any | null> {
-    const res = await post(url, data, init);
-    if (!res) {
-        return null;
-    }
-    if (typeof res !== 'string') {
-        return null;
-    }
-    try {
-        return JSON.parse(res);
-    }
-    catch {
-        return null;
-    }
+    return lAboxTool.postResponseJson(url, data, init);
 }
 
 /**
@@ -1354,81 +459,7 @@ export async function postResponseJson(
  * @param url url 字符串
  */
 export function parseUrl(url: string): IUrl {
-    // --- test: https://ab-3dc:aak9()$@github.com:80/nodejs/node/blob/master/lib/url.js?mail=abc@def.com#223 ---
-    const rtn: IUrl = {
-        'protocol': null,
-        'auth': null,
-        'user': null,
-        'pass': null,
-        'host': null,
-        'hostname': null,
-        'port': null,
-        'pathname': '/',
-        'path': null,
-        'query': null,
-        'hash': null
-    };
-    const hash = url.indexOf('#');
-    if (hash > -1) {
-        rtn['hash'] = url.slice(hash + 1);
-        url = url.slice(0, hash);
-    }
-    const query = url.indexOf('?');
-    if (query > -1) {
-        rtn['query'] = url.slice(query + 1);
-        url = url.slice(0, query);
-    }
-    const protocol = url.indexOf(':');
-    if (protocol > -1) {
-        rtn['protocol'] = url.slice(0, protocol + 1).toLowerCase();
-        url = url.slice(protocol + 1);
-        if (url.startsWith('//')) {
-            url = url.slice(2);
-        }
-        let path = url.indexOf('/');
-        if (path === -1) {
-            path = url.indexOf('\\');
-        }
-        if (path > -1) {
-            rtn['pathname'] = url.slice(path);
-            url = url.slice(0, path);
-        }
-        const auth = url.indexOf('@');
-        if (auth > -1) {
-            const authStr = url.slice(0, auth);
-            const authSplit = authStr.indexOf(':');
-            if (authSplit > -1) {
-                // --- 有密码 ---
-                rtn['user'] = authStr.slice(0, authSplit);
-                rtn['pass'] = authStr.slice(authSplit + 1);
-                rtn['auth'] = rtn['user'] + ':' + rtn['pass'];
-            }
-            else {
-                rtn['user'] = authStr;
-                rtn['auth'] = authStr;
-            }
-            url = url.slice(auth + 1);
-        }
-        if (url) {
-            const port = url.indexOf(':');
-            if (port > -1) {
-                rtn['hostname'] = url.slice(0, port).toLowerCase();
-                rtn['port'] = url.slice(port + 1);
-                rtn['host'] = rtn['hostname'] + (rtn['port'] ? ':' + rtn['port'] : '');
-            }
-            else {
-                rtn['hostname'] = url.toLowerCase();
-                rtn['host'] = rtn['hostname'];
-            }
-        }
-    }
-    else {
-        // --- 没有 protocol ---
-        rtn['pathname'] = url;
-    }
-    // --- 组合 ---
-    rtn['path'] = rtn['pathname'] + (rtn['query'] ? '?' + rtn['query'] : '');
-    return rtn;
+    return lAboxTool.parseUrl(url);
 }
 
 /**
@@ -1437,75 +468,12 @@ export function parseUrl(url: string): IUrl {
  * @param to 相对路径
  */
 export function urlResolve(from: string, to: string): string {
-    from = from.replace(/\\/g, '/');
-    to = to.replace(/\\/g, '/');
-    // --- to 为空，直接返回 form ---
-    if (to === '') {
-        return urlAtom(from);
-    }
-    // --- 获取 from 的 scheme, host, path ---
-    const f = parseUrl(from);
-    // --- 以 // 开头的，加上 from 的 protocol 返回 ---
-    if (to.startsWith('//')) {
-        return urlAtom(f.protocol ? f.protocol + to : to);
-    }
-    if (f.protocol) {
-        // --- 获取小写的 protocol ---
-        from = f.protocol + from.slice(f.protocol.length);
-    }
-    // --- 获取 to 的 scheme, host, path ---
-    const t = parseUrl(to);
-    // --- 已经是绝对路径，直接返回 ---
-    if (t.protocol) {
-        // --- 获取小写的 protocol ---
-        return urlAtom(t.protocol + to.slice(t.protocol.length));
-    }
-    // --- # 或 ? 替换后返回 ---
-    if (to.startsWith('#') || to.startsWith('?')) {
-        const sp = from.indexOf(to[0]);
-        if (sp !== -1) {
-            return urlAtom(from.slice(0, sp) + to);
-        }
-        else {
-            return urlAtom(from + to);
-        }
-    }
-    // --- 处理后面的尾随路径 ---
-    let abs = (f.auth ? f.auth + '@' : '') + (f.host ?? '');
-    if (to.startsWith('/')) {
-        // -- abs 类似是 /xx/xx ---
-        abs += to;
-    }
-    else {
-        // --- to 是 xx/xx 这样的 ---
-        // --- 移除基准 path 不是路径的部分，如 /ab/c 变成了 /ab，/ab 变成了 空 ---
-        const path = f.pathname.replace(/\/[^/]*$/g, '');
-        // --- abs 是 /xx/xx 了，因为如果 path 是空，则跟上了 /，如果 path 不为空，也是 / 开头 ---
-        abs += path + '/' + to;
-    }
-    // --- 返回最终结果 ---
-    if (f.protocol && (f.protocol !== 'file:') && !f.host) {
-        // --- 类似 c:/ ---
-        return urlAtom(f.protocol + abs);
-    }
-    else {
-        // --- 类似 http:// ---
-        return urlAtom((f.protocol ? f.protocol + '//' : '') + abs);
-    }
+    return lAboxTool.urlResolve(from, to);
 }
 
 /** --- 处理 URL 中的 .. / . 等 --- */
 export function urlAtom(url: string): string {
-    // --- 删掉 ./ ---
-    while (url.includes('/./')) {
-        url = url.replace(/\/\.\//g, '/');
-    }
-    // --- 删掉 ../ ---
-    while (/\/(?!\.\.)[^/]+\/\.\.\//.test(url)) {
-        url = url.replace(/\/(?!\.\.)[^/]+\/\.\.\//g, '/');
-    }
-    url = url.replace(/\.\.\//g, '');
-    return url;
+    return lAboxTool.urlAtom(url);
 }
 
 /**
@@ -1513,22 +481,8 @@ export function urlAtom(url: string): string {
  * @param blob 对象
  */
 export function blob2Text(blob: Blob): Promise<string> {
-    return new Promise(function(resove) {
-        const fr = new FileReader();
-        fr.addEventListener('load', function(e) {
-            if (e.target) {
-                resove(e.target.result as string);
-            }
-            else {
-                resove('');
-            }
-        });
-        fr.readAsText(blob);
-    });
+    return lAboxTool.blob2Text(blob);
 }
-
-/** --- Blob 对应的 base64 URL 转换结果 --- */
-const blobDataUrlCache = new WeakMap<Blob, Promise<string>>();
 
 /**
  * --- 将 blob 对象转换为 base64 url ---
@@ -1536,32 +490,11 @@ const blobDataUrlCache = new WeakMap<Blob, Promise<string>>();
  * @returns base64 URL
  */
 export function blob2DataUrl(blob: Blob): Promise<string> {
-    const cached = blobDataUrlCache.get(blob);
-    if (cached) {
-        return cached;
-    }
-    const converting = new Promise<string>(function(resolve) {
-        const fr = new FileReader();
-        fr.addEventListener('load', function(e) {
-            if (e.target) {
-                resolve(e.target.result as string);
-            }
-            else {
-                resolve('');
-            }
-        });
-        fr.readAsDataURL(blob);
-    });
-    blobDataUrlCache.set(blob, converting);
-    return converting;
+    return lAboxTool.blob2DataUrl(blob);
 }
 
 export function execCommand(ac: string): void {
-    if (!['copy', 'cut'].includes(ac)) {
-        return;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
-    document.execCommand(ac);
+    lAboxTool.execCommand(ac);
 }
 
 /**
@@ -1577,47 +510,12 @@ export function compar(before: Array<string | number>, after: Array<string | num
         'add': number;
     };
 } {
-    const rtn: {
-        'remove': Record<string, number>;
-        'add': Record<string, number>;
-        'length': {
-            'remove': number;
-            'add': number;
-        };
-    } = {
-        'remove': {},
-        'add': {},
-        'length': {
-            'remove': 0,
-            'add': 0
-        }
-    };
-    for (let i = 0; i < before.length; ++i) {
-        const item = before[i];
-        if (after.includes(item)) {
-            continue;
-        }
-        rtn.remove[item] = i;
-        ++rtn.length.remove;
-    }
-    for (let i = 0; i < after.length; ++i) {
-        const item = after[i];
-        if (before.includes(item)) {
-            continue;
-        }
-        rtn.add[item] = i;
-        ++rtn.length.add;
-    }
-    return rtn;
+    return lAboxTool.compar(before, after);
 }
 
 /** --- 将秒数格式化为 0:0:0 的字符串 --- */
 export function formatSecond(second: number): string {
-    const h = Math.floor(second / 3600);
-    second = second - h * 3600;
-    const m = Math.floor(second / 60);
-    const s = Math.floor(second - m * 60);
-    return (h ? h.toString().padStart(2, '0') + ':' : '') + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+    return lAboxTool.formatSecond(second);
 }
 
 /**
@@ -1630,22 +528,7 @@ export function formatTime(ts: number | Date, tz?: number): {
     'time': string;
     'zone': string;
 } {
-    const rtn = {
-        'date': '',
-        'time': '',
-        'zone': ''
-    };
-    // --- 代码开始 ---
-    if (typeof ts === 'number') {
-        ts = new Date(ts);
-    }
-    /** --- 当前设定的时区 --- */
-    const ntz = tz ?? -(ts.getTimezoneOffset() / 60);
-    ts.setTime(ts.getTime() + ntz * 60 * 60_000);
-    rtn.date = ts.getUTCFullYear().toString() + '-' + (ts.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + ts.getUTCDate().toString().padStart(2, '0');
-    rtn.time = ts.getUTCHours().toString().padStart(2, '0') + ':' + ts.getUTCMinutes().toString().padStart(2, '0') + ':' + ts.getUTCSeconds().toString().padStart(2, '0');
-    rtn.zone = 'UTC' + (ntz >= 0 ? '+' : '') + ntz.toString();
-    return rtn;
+    return lAboxTool.formatTime(ts, tz);
 }
 
 /**
@@ -1653,7 +536,7 @@ export function formatTime(ts: number | Date, tz?: number): {
  * @param time 要判断的时间戳
  */
 export function isMs(time: number): boolean {
-    return time > 1000000000000 ? true : false;
+    return lAboxTool.isMs(time);
 }
 
 /**
@@ -1662,20 +545,7 @@ export function isMs(time: number): boolean {
  * @param encode 是否转义
  */
 export function queryStringify(query: Record<string, any>, encode: boolean = true): string {
-    if (encode) {
-        return Object.entries(query).map(([k, v]) => {
-            if (Array.isArray(v)) {
-                return v.map((i) => `${encodeURIComponent(k)}=${encodeURIComponent(i)}`).join('&');
-            }
-            return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
-        }).join('&');
-    }
-    return Object.entries(query).map(([k, v]) => {
-        if (Array.isArray(v)) {
-            return v.map((i) => `${k}=${i}}`).join('&');
-        }
-        return `${k}=${v}`;
-    }).join('&');
+    return lAboxTool.queryStringify(query, encode);
 }
 
 /**
@@ -1683,30 +553,7 @@ export function queryStringify(query: Record<string, any>, encode: boolean = tru
  * @param query 要转换的字符串
  */
 export function queryParse(query: string): Record<string, string | string[]> {
-    const ret: Record<string, string | string[]> = {};
-    const arrayKeys: Record<string, boolean> = {};
-    for (const i of query.split('&')) {
-        if (!i.length) {
-            continue;
-        }
-
-        const pos = i.indexOf('=');
-
-        const key = decodeURIComponent(pos === -1 ? i : i.slice(0, pos));
-        const value = pos === -1 ? '' : decodeURIComponent(i.slice(pos + 1));
-
-        if (arrayKeys[key]) {
-            (ret[key] as string[]).push(value);
-        }
-        else if (undefined === ret[key]) {
-            ret[key] = value;
-        }
-        else {
-            ret[key] = [ret[key] as string, value];
-            arrayKeys[key] = true;
-        }
-    }
-    return ret;
+    return lAboxTool.queryParse(query);
 }
 
 /**
@@ -1717,12 +564,7 @@ export function queryParse(query: string): Record<string, string | string[]> {
  * @returns 是否被转义
  */
 export function isEscaped(str: string, pos: number): boolean {
-    let count = 0;
-    // --- 向前计算反斜杠数量 ---
-    for (let i = pos - 1; i >= 0 && str[i] === '\\'; i--) {
-        count++;
-    }
-    return count % 2 !== 0;
+    return lAboxTool.isEscaped(str, pos);
 }
 
 /**
@@ -1732,53 +574,7 @@ export function isEscaped(str: string, pos: number): boolean {
  * @returns 解析后的字符串数组
  */
 export function parseArrayString(arrayStr: string): string[] {
-    // --- 移除首尾括号，获取内容 ---
-    const content = arrayStr.trim().slice(1, -1);
-
-    const result: string[] = [];
-    let current = '';
-    let depth = 0;
-    let inString = false;
-    let quote = '';
-
-    // --- 遍历字符串 ---
-    for (let i = 0; i < content.length; i++) {
-        const char = content[i];
-
-        // --- 处理引号状态 ---
-        if ((char === '"' || char === "'") && !inString) {
-            inString = true;
-            quote = char;
-        }
-        else if (char === quote && inString && !isEscaped(content, i)) {
-            inString = false;
-            quote = '';
-        }
-
-        // --- 处理括号层级 ---
-        if (!inString) {
-            if (char === '{' || char === '[' || char === '(') {
-                depth++;
-            }
-            else if (char === '}' || char === ']' || char === ')') {
-                depth--;
-            }
-            else if (char === ',' && depth === 0) {
-                // --- 最外层逗号分割 ---
-                if (current.trim()) result.push(current.trim());
-                current = '';
-                continue;
-            }
-        }
-        current += char;
-    }
-
-    // --- 添加最后元素 ---
-    if (current.trim()) {
-        result.push(current.trim());
-    }
-
-    return result;
+    return lAboxTool.parseArrayString(arrayStr);
 }
 
 /**
@@ -1788,12 +584,7 @@ export function parseArrayString(arrayStr: string): string[] {
  * @returns 是否是转义字符
  */
 export function isEscapeChar(code: string, index: number): boolean {
-    let preChar = code[index - 1];
-    let count = 0;
-    while (preChar === '\\') {
-        preChar = code[index - (++count) - 1];
-    }
-    return count % 2 === 0 ? false : true;
+    return lAboxTool.isEscapeChar(code, index);
 }
 
 /** --- 状态机状态 --- */
@@ -1811,11 +602,11 @@ export enum ESTATE {
 }
 
 /**
- * --- 状态机 ---
- * @param code 代码
- * @param start 开始位置
- * @param process 处理函数
- * @returns 是否继续
+ * --- 源码分段状态机，单词按 ASCII 字母、数字、_ 和 $ 识别 ---
+ * @param code 待扫描源码，CRLF 和 CR 统一为 LF
+ * @param start 归一化后的起始 UTF-16 索引
+ * @param process 片段回调，true 继续、false 停止；位置含首尾，bracket 是共享计数对象
+ * @returns 无返回值
  */
 export function stateMachine(
     code: string, start: number,
@@ -1838,630 +629,7 @@ export function stateMachine(
         }
     ) => boolean
 ): void {
-    /** --- 当前状态 --- */
-    let state: ESTATE = ESTATE.NORMAL;
-    code = code.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    /** --- 括号嵌套 --- */
-    const bracket: {
-        's': number;
-        'm': number;
-        'l': number;
-    } = {
-        's': 0,
-        'm': 0,
-        'l': 0,
-    };
-    /** --- 标记 --- */
-    let marker = '';
-    /** --- 组合 --- */
-    let word = '';
-    /** --- 记录上一个--- */
-    let pre: {
-        'state': ESTATE;
-        'word': string;
-        'nonnull': string;
-    } = {
-        'state': ESTATE.NORMAL,
-        'word': '',
-        'nonnull': '',
-    };
-    for (let i = start; i < code.length; ++i) {
-        const char = code[i];
-        switch (state) {
-            case ESTATE.COMMENT: {
-                // --- 注释 ---
-                if (marker === '*') {
-                    // --- 多行注释模式 ---
-                    if ((char === '*') && (code[i + 1] === '/')) {
-                        // --- 结束 ---
-                        word += char + code[++i];
-                        if ((i >= 0) && !process({
-                            'state': state,
-                            'start': i - word.length + 1,
-                            'end': i,
-                            'word': word,
-                            'pre': {
-                                'state': pre.state,
-                                'word': pre.word,
-                                'nonnull': pre.nonnull,
-                            },
-                            'bracket': bracket,
-                        })) {
-                            return;
-                        }
-                        pre.state = state;
-                        pre.word = word;
-                        const wordTrim = word.trim();
-                        if (wordTrim) {
-                            pre.nonnull = wordTrim;
-                        }
-                        state = ESTATE.NORMAL;
-                        word = '';
-                        marker = '';
-                    }
-                    else {
-                        word += char;
-                    }
-                    break;
-                }
-                // --- 单行注释模式 ---
-                if (char === '\n') {
-                    // --- 结束 ---
-                    --i;
-                    if (!process({
-                        'state': state,
-                        'start': i - word.length + 1,
-                        'end': i,
-                        'word': word,
-                        'pre': {
-                            'state': pre.state,
-                            'word': pre.word,
-                            'nonnull': pre.nonnull,
-                        },
-                        'bracket': bracket,
-                    })) {
-                        return;
-                    }
-                    pre.state = state;
-                    pre.word = word;
-                    const wordTrim = word.trim();
-                    if (wordTrim) {
-                        pre.nonnull = wordTrim;
-                    }
-                    state = ESTATE.NORMAL;
-                    word = '';
-                    marker = '';
-                }
-                else {
-                    word += char;
-                }
-                break;
-            }
-            case ESTATE.REG: {
-                // --- 正则 ---
-                switch (char) {
-                    case '[': {
-                        if (!isEscapeChar(code, i)) {
-                            marker = '[';
-                        }
-                        word += char;
-                        break;
-                    }
-                    case ']': {
-                        if (!isEscapeChar(code, i) && (marker === '[')) {
-                            marker = '/';
-                        }
-                        word += char;
-                        break;
-                    }
-                    case '/': {
-                        if (!isEscapeChar(code, i) && (marker === '/')) {
-                            // --- 并不一定结束了，还有后面的如 ig ---
-                            marker = 'e';
-                        }
-                        word += char;
-                        break;
-                    }
-                    default: {
-                        if (marker !== 'e') {
-                            word += char;
-                            break;
-                        }
-                        if (/\w/.test(char)) {
-                            word += char;
-                            break;
-                        }
-                        --i;
-                        if (!process({
-                            'state': state,
-                            'start': i - word.length + 1,
-                            'end': i,
-                            'word': word,
-                            'pre': {
-                                'state': pre.state,
-                                'word': pre.word,
-                                'nonnull': pre.nonnull,
-                            },
-                            'bracket': bracket,
-                        })) {
-                            return;
-                        }
-                        pre.state = state;
-                        pre.word = word;
-                        const wordTrim = word.trim();
-                        if (wordTrim) {
-                            pre.nonnull = wordTrim;
-                        }
-                        state = ESTATE.NORMAL;
-                        word = '';
-                        marker = '';
-                    }
-                }
-                break;
-            }
-            case ESTATE.STRING: {
-                // --- 字符串 ---
-                word += char;
-                if ((char === marker) && !isEscapeChar(code, i)) {
-                    // --- 结束 ---
-                    if (!process({
-                        'state': state,
-                        'start': i - word.length + 1,
-                        'end': i,
-                        'word': word,
-                        'pre': {
-                            'state': pre.state,
-                            'word': pre.word,
-                            'nonnull': pre.nonnull,
-                        },
-                        'bracket': bracket,
-                    })) {
-                        return;
-                    }
-                    pre.state = state;
-                    pre.word = word;
-                    const wordTrim = word.trim();
-                    if (wordTrim) {
-                        pre.nonnull = wordTrim;
-                    }
-                    state = ESTATE.NORMAL;
-                    word = '';
-                    marker = '';
-                }
-                break;
-            }
-            case ESTATE.WORD: {
-                // --- 单词 ---
-                if (!/[$\w]/.test(char)) {
-                    --i;
-                    if (!process({
-                        'state': state,
-                        'start': i - word.length + 1,
-                        'end': i,
-                        'word': word,
-                        'pre': {
-                            'state': pre.state,
-                            'word': pre.word,
-                            'nonnull': pre.nonnull,
-                        },
-                        'bracket': bracket,
-                    })) {
-                        return;
-                    }
-                    pre.state = state;
-                    pre.word = word;
-                    const wordTrim = word.trim();
-                    if (wordTrim) {
-                        pre.nonnull = wordTrim;
-                    }
-                    state = ESTATE.NORMAL;
-                    word = '';
-                    marker = '';
-                    break;
-                }
-                word += char;
-                break;
-            }
-            default: {
-                // --- NORMAL ---
-                switch (char) {
-                    case '"':
-                    case '\'':
-                    case '`': {
-                        // --- 进入字符串模式 ---
-                        if ((i - 1 >= 0) && !process({
-                            'state': state,
-                            'start': i - 1 - word.length + 1,
-                            'end': i - 1,
-                            'word': word,
-                            'pre': {
-                                'state': pre.state,
-                                'word': pre.word,
-                                'nonnull': pre.nonnull,
-                            },
-                            'bracket': bracket,
-                        })) {
-                            return;
-                        }
-                        pre.state = state;
-                        pre.word = word;
-                        const wordTrim = word.trim();
-                        if (wordTrim) {
-                            pre.nonnull = wordTrim;
-                        }
-                        state = ESTATE.STRING;
-                        word = char;
-                        marker = char;
-                        break;
-                    }
-                    case '/': {
-                        if (code[i + 1] === '/') {
-                            // --- 单行注释 ---
-                            if ((i - 1 >= 0) && !process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.state = state;
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            state = ESTATE.COMMENT;
-                            word = char + code[++i];
-                            marker = char;
-                            break;
-                        }
-                        if (code[i + 1] === '*') {
-                            // --- 多行注释 ---
-                            if ((i - 1 >= 0) && !process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.state = state;
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            state = ESTATE.COMMENT;
-                            word = char + code[++i];
-                            marker = code[i];
-                            break;
-                        }
-                        // --- 判断是 reg 还是 / 除号 ---
-                        // --- 如果是 / 号前面必定有变量或数字，否则就是 reg ---
-                        /** --- 除了变量还可能是 return --- */
-                        let tmp = '';
-                        for (let j = i - 1; j >= 0; --j) {
-                            if (!tmp) {
-                                if (/\s/.test(code[j])) {
-                                    // --- 空就跳过 ---
-                                    continue;
-                                }
-                                if (code[j] === ')' || code[j] === ']') {
-                                    // --- 除号（ASI 里也是除号） ---
-                                    break;
-                                }
-                                if (!/[$\w]/.test(code[j])) {
-                                    // --- 不是数字、变量，直接进入正则模式 ---
-                                    if ((i - 1 >= 0) && !process({
-                                        'state': state,
-                                        'start': i - 1 - word.length + 1,
-                                        'end': i - 1,
-                                        'word': word,
-                                        'pre': {
-                                            'state': pre.state,
-                                            'word': pre.word,
-                                            'nonnull': pre.nonnull,
-                                        },
-                                        'bracket': bracket,
-                                    })) {
-                                        return;
-                                    }
-                                    pre.state = state;
-                                    pre.word = word;
-                                    const wordTrim = word.trim();
-                                    if (wordTrim) {
-                                        pre.nonnull = wordTrim;
-                                    }
-                                    state = ESTATE.REG;
-                                    word = char;
-                                    marker = char;
-                                    break;
-                                }
-                                // --- 是变动？还是关键词？ ---
-                                tmp = code[j];
-                                continue;
-                            }
-                            // --- 持续组合，看看到底是啥 ---
-                            if (/[$\w]/.test(code[j])) {
-                                tmp = code[j] + tmp;
-                                continue;
-                            }
-                            // --- 结束 ---
-                            break;
-                        }
-                        if (tmp) {
-                            if (tmp === 'return') {
-                                // --- return 关键字，是正则 ---
-                                if ((i - 1 >= 0) && !process({
-                                    'state': state,
-                                    'start': i - 1 - word.length + 1,
-                                    'end': i - 1,
-                                    'word': word,
-                                    'pre': {
-                                        'state': pre.state,
-                                        'word': pre.word,
-                                        'nonnull': pre.nonnull,
-                                    },
-                                    'bracket': bracket,
-                                })) {
-                                    return;
-                                }
-                                pre.state = state;
-                                pre.word = word;
-                                const wordTrim = word.trim();
-                                if (wordTrim) {
-                                    pre.nonnull = wordTrim;
-                                }
-                                state = ESTATE.REG;
-                                word = char;
-                                marker = char;
-                            }
-                        }
-                        if (state !== ESTATE.REG) {
-                            word += char;
-                        }
-                        break;
-                    }
-                    case '(': {
-                        if (word.includes('(') || word.includes(')')) {
-                            if (!process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            word = '';
-                            marker = '';
-                        }
-                        word += char;
-                        ++bracket.s;
-                        break;
-                    }
-                    case ')': {
-                        if (word.includes('(') || word.includes(')')) {
-                            if (!process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            word = '';
-                            marker = '';
-                        }
-                        word += char;
-                        --bracket.s;
-                        break;
-                    }
-                    case '[': {
-                        if (word.includes('[') || word.includes(']')) {
-                            if (!process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            word = '';
-                            marker = '';
-                        }
-                        word += char;
-                        ++bracket.m;
-                        break;
-                    }
-                    case ']': {
-                        if (word.includes('[') || word.includes(']')) {
-                            if (!process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            word = '';
-                            marker = '';
-                        }
-                        word += char;
-                        --bracket.m;
-                        break;
-                    }
-                    case '{': {
-                        if (word.includes('{') || word.includes('}')) {
-                            if (!process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            word = '';
-                            marker = '';
-                        }
-                        word += char;
-                        ++bracket.l;
-                        break;
-                    }
-                    case '}': {
-                        if (word.includes('{') || word.includes('}')) {
-                            if (!process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            word = '';
-                            marker = '';
-                        }
-                        word += char;
-                        --bracket.l;
-                        break;
-                    }
-                    default: {
-                        if (/[$\w]/.test(char)) {
-                            // --- 进入单词 ---
-                            if ((i - 1 >= 0) && !process({
-                                'state': state,
-                                'start': i - 1 - word.length + 1,
-                                'end': i - 1,
-                                'word': word,
-                                'pre': {
-                                    'state': pre.state,
-                                    'word': pre.word,
-                                    'nonnull': pre.nonnull,
-                                },
-                                'bracket': bracket,
-                            })) {
-                                return;
-                            }
-                            pre.state = state;
-                            pre.word = word;
-                            const wordTrim = word.trim();
-                            if (wordTrim) {
-                                pre.nonnull = wordTrim;
-                            }
-                            state = ESTATE.WORD;
-                            word = char;
-                            marker = char;
-                            break;
-                        }
-                        word += char;
-                    }
-                }
-            }
-        }
-    }
-    // --- 结束 ---
-    if (word) {
-        const i = code.length - 1;
-        process({
-            'state': state,
-            'start': i - word.length + 1,
-            'end': i,
-            'word': word,
-            'pre': {
-                'state': pre.state,
-                'word': pre.word,
-                'nonnull': pre.nonnull,
-            },
-            'bracket': bracket,
-        });
-    }
-}
-
-let headElement: HTMLHeadElement;
-function getHeadElement(): HTMLHeadElement {
-    if (!headElement) {
-        const heads = document.querySelectorAll('head');
-        headElement = heads[heads.length - 1];
-    }
-    return headElement;
+    lAboxTool.stateMachine(code, start, process, ESTATE);
 }
 
 /**
@@ -2470,19 +638,8 @@ function getHeadElement(): HTMLHeadElement {
  * @param ordered 是否按插入顺序执行，下载仍并行，默认 false
  * @returns 加载是否成功
  */
-export async function loadScript(url: string, ordered: boolean = false): Promise<boolean> {
-    return new Promise((resolve) => {
-        const script = document.createElement('script');
-        script.addEventListener('load', function() {
-            resolve(true);
-        });
-        script.addEventListener('error', function() {
-            resolve(false);
-        });
-        script.async = !ordered;
-        script.src = url;
-        getHeadElement().appendChild(script);
-    });
+export function loadScript(url: string, ordered: boolean = false): Promise<boolean> {
+    return lAboxTool.loadScript(url, ordered);
 }
 
 /**
@@ -2490,15 +647,12 @@ export async function loadScript(url: string, ordered: boolean = false): Promise
  * @param urls js 文件列表
  * @param opt 选项
  */
-export async function loadScripts(urls: string[], opt: {
+export function loadScripts(urls: string[], opt: {
     loaded?: (url: string, state: number) => void;
     /** --- 并行下载并按列表顺序执行，默认 false --- */
     'ordered'?: boolean;
 } = {}): Promise<void> {
-    await Promise.all(urls.map(async url => {
-        const res = await loadScript(url, opt.ordered);
-        opt.loaded?.(url, res ? 1 : 0);
-    }));
+    return lAboxTool.loadScripts(urls, opt);
 }
 
 /**
@@ -2506,25 +660,8 @@ export async function loadScripts(urls: string[], opt: {
  * @param url css 文件网址
  * @returns 加载是否成功
  */
-export async function loadLink(url: string, pos: 'before' | 'after' = 'after'): Promise<boolean> {
-    return new Promise((resolve) => {
-        const head = getHeadElement();
-        const link = document.createElement('link');
-        link.addEventListener('load', function() {
-            resolve(true);
-        });
-        link.addEventListener('error', function() {
-            resolve(false);
-        });
-        link.href = url;
-        link.rel = 'stylesheet';
-        if (pos === 'before') {
-            head.insertBefore(link, head.firstChild);
-        }
-        else {
-            head.appendChild(link);
-        }
-    });
+export function loadLink(url: string, pos: 'before' | 'after' = 'after'): Promise<boolean> {
+    return lAboxTool.loadLink(url, pos);
 }
 
 /**
@@ -2532,13 +669,10 @@ export async function loadLink(url: string, pos: 'before' | 'after' = 'after'): 
  * @param urls css 文件列表
  * @param opt 选项
  */
-export async function loadLinks(urls: string[], opt: {
+export function loadLinks(urls: string[], opt: {
     loaded?: (url: string, state: number) => void;
 } = {}): Promise<void> {
-    await Promise.all(urls.map(async (url) => {
-        const res = await loadLink(url);
-        opt.loaded?.(url, res ? 1 : 0);
-    }));
+    return lAboxTool.loadLinks(urls, opt);
 }
 
 /**
@@ -2547,37 +681,10 @@ export async function loadLinks(urls: string[], opt: {
  * @param opt loaded 为单个资源加载完成回调，state 为 1-成功、0-失败
  * @returns 全部资源成功返回 true，任一资源失败返回 false；空列表返回 true
  */
-export async function loadAssets(urls: string[], opt: {
+export function loadAssets(urls: string[], opt: {
     loaded?: (url: string, state: number) => void;
 } = {}): Promise<boolean> {
-    const scripts: string[] = [];
-    const links: string[] = [];
-    for (const url of urls) {
-        if (url.split(/[?#]/, 1)[0].toLowerCase().endsWith('.css')) {
-            links.push(url);
-        }
-        else {
-            scripts.push(url);
-        }
-    }
-    let loaded = true;
-    /**
-     * --- 汇总各资源的结果并转发加载回调 ---
-     * @param url 资源网址
-     * @param state 加载状态
-     * @returns 无返回值
-     */
-    const onLoaded = (url: string, state: number): void => {
-        if (state === 0) {
-            loaded = false;
-        }
-        opt.loaded?.(url, state);
-    };
-    await Promise.all([
-        loadScripts(scripts, { 'ordered': true, 'loaded': onLoaded }),
-        loadLinks(links, { 'loaded': onLoaded }),
-    ]);
-    return loaded;
+    return lAboxTool.loadAssets(urls, opt);
 }
 
 /**
@@ -2585,9 +692,16 @@ export async function loadAssets(urls: string[], opt: {
  * @param style css 字符串
  */
 export function loadStyle(style: string): void {
-    const sel = document.createElement('style');
-    sel.innerHTML = style;
-    getHeadElement().appendChild(sel);
+    lAboxTool.loadStyle(style);
+}
+
+/**
+ * --- 判断 JS 值是否符合 JSON 数据约束；字符串按数据值接受，不解析其内容 ---
+ * @param value 待检查值；仅接受 null、布尔值、有限数、字符串、连续且无额外属性的数组和普通对象
+ * @returns 符合约束返回 true；循环、访问器、Symbol/非枚举属性或深度超过 64（根为 0）返回 false
+ */
+export function isJson(value: unknown): value is TJson {
+    return lAboxTool.isJson(value);
 }
 
 /**
@@ -2595,7 +709,7 @@ export function loadStyle(style: string): void {
  * @param val 要判断的值
  */
 export function isFalsy(val: any): val is TFalsy {
-    return (val === null) || (val === undefined) || (val === '') || (val === false) || (val === 0);
+    return lAboxTool.isFalsy(val);
 }
 
 /**
@@ -2603,7 +717,7 @@ export function isFalsy(val: any): val is TFalsy {
  * @param val 要判断的值
  */
 export function isTruthy(val: any): val is Exclude<typeof val, TFalsy> {
-    return !isFalsy(val);
+    return lAboxTool.isTruthy(val);
 }
 
 /**
@@ -2612,7 +726,7 @@ export function isTruthy(val: any): val is Exclude<typeof val, TFalsy> {
  * @param v2 比对值
  */
 export function logicalOr<T, T2>(v1: T, v2: T2): [T] extends [TFalsy] ? T2 : T {
-    return (isFalsy(v1) ? v2 : v1) as any;
+    return lAboxTool.logicalOr(v1, v2);
 }
 
 /** --- 语言相关 --- */
@@ -2748,6 +862,9 @@ export interface IRequestOptions {
     'load'?: (res: any) => void | Promise<void>;
     'error'?: () => void | Promise<void>;
 }
+
+/** --- JSON 数据值，不包含 undefined、BigInt、函数和非有限数 --- */
+export type TJson = null | boolean | number | string | TJson[] | { [key: string]: TJson; };
 
 /** --- 虚假值类型 --- */
 export type TFalsy = false | '' | 0 | null | undefined | typeof NaN;

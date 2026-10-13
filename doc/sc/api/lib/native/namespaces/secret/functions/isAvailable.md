@@ -8,7 +8,7 @@
 
 > **isAvailable**(`current`): `Promise`\<`boolean`\>
 
-Defined in: lib/native/secret.ts:9
+Defined in: [lib/native/secret.ts:9](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/secret.ts#L9)
 
 查询 Native 系统密钥服务，无需 root 权限
 

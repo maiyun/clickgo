@@ -8,7 +8,7 @@
 
 > **register**\<`T`\>(`current`, `definition`): `boolean`
 
-Defined in: [lib/command.ts:257](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L257)
+Defined in: [lib/command.ts:254](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L254)
 
 注册命令；重复名称、不支持的 schema 或已销毁的实例返回 false
 
@@ -16,7 +16,7 @@ Defined in: [lib/command.ts:257](https://github.com/maiyun/clickgo/blob/master/d
 
 ### T
 
-`T` *extends* `Record`\<`string`, [`TJson`](../type-aliases/TJson.md)\>
+`T` *extends* `Record`\<`string`, [`TJson`](../../tool/type-aliases/TJson.md)\>
 
 ## Parameters
 

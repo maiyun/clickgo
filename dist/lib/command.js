@@ -1,6 +1,7 @@
 import * as lCore from './core';
 import * as lTask from './task';
-import * as lSchema from './command/schema';
+import * as lData from './command/data';
+import * as lWebMcp from './command/webmcp';
 import * as lGuide from './command/guide';
 import * as lNative from './native';
 export { showPalette } from './command/palette';
@@ -11,7 +12,11 @@ let entryId = 0;
 /** --- 最近检测到的页面级状态；首次初始化及实际变化时通知所有接收者 --- */
 let webMcpStatus;
 /** --- 各 App 的工具发布及撤销由框架内部维护，与页面级接入状态分开 --- */
-const webPublications = new Map();
+const webPublisher = lWebMcp.create({
+    'getCommands': (taskId) => [...registries.get(taskId)?.values() ?? []].filter(entry => entry.exposed),
+    'isCurrent': (taskId, entry) => registries.get(taskId)?.get(entry.metadata.name) === entry,
+    'execute': (taskId, entry, args, options) => executeAgent(taskId, entry.metadata.name, args, options),
+});
 /**
  * --- 初始化页面级 WebMCP 接入状态，由框架在执行 Boot.main 前自动调用 ---
  * @returns 无返回值
@@ -35,14 +40,6 @@ export function success(data) {
  */
 export function failure(code, message) {
     return { 'ok': false, 'error': { 'code': code, 'message': message } };
-}
-/**
- * --- 复制已确认合法的 JSON，不暴露注册表对象 ---
- * @param value JSON 数据
- * @returns 独立的数据
- */
-function copy(value) {
-    return JSON.parse(JSON.stringify(value));
 }
 /**
  * --- 取得命令所属任务和 Form ---
@@ -97,56 +94,16 @@ export function register(current, definition) {
         panelId && !form?.vapp._container.querySelector(`[data-panel-id="${panelId}"]`)) {
         return false;
     }
-    if (!definition || typeof definition.name !== 'string' || !/^[a-zA-Z0-9_.-]{1,128}$/.test(definition.name) ||
-        typeof definition.description !== 'string' || !definition.description.trim() || typeof definition.execute !== 'function') {
-        return false;
-    }
-    if (definition.title !== undefined && typeof definition.title !== 'string' ||
-        definition.enabled !== undefined && typeof definition.enabled !== 'function' ||
-        definition.exposed !== undefined && typeof definition.exposed !== 'boolean' ||
-        definition.concurrent !== undefined && typeof definition.concurrent !== 'boolean') {
-        return false;
-    }
-    if (definition.permissions !== undefined && (!Array.isArray(definition.permissions) ||
-        definition.permissions.some(permission => typeof permission !== 'string' || !permission))) {
-        return false;
-    }
-    if (definition.annotations !== undefined && (!lSchema.isJson(definition.annotations) ||
-        typeof definition.annotations !== 'object' || !definition.annotations || Array.isArray(definition.annotations) ||
-        Object.entries(definition.annotations).some(([key, value]) => typeof value !== 'boolean' ||
-            !['readOnlyHint', 'destructiveHint', 'idempotentHint', 'openWorldHint',
-                'consequentialHint', 'untrustedContentHint'].includes(key)))) {
-        return false;
-    }
+    const metadata = lData.readMetadata(definition);
     const registry = registries.get(taskId);
-    if (registry?.has(definition.name) || definition.inputSchema?.type !== 'object' ||
-        lSchema.check(definition.inputSchema) !== null ||
-        definition.outputSchema !== undefined && lSchema.check(definition.outputSchema) !== null) {
-        return false;
-    }
-    if (definition.outputSchema !== undefined && (!definition.outputSchema || typeof definition.outputSchema !== 'object')) {
-        return false;
-    }
-    const metadata = {
-        'name': definition.name, 'description': definition.description, 'inputSchema': definition.inputSchema,
-    };
-    if (definition.title !== undefined) {
-        metadata.title = definition.title;
-    }
-    if (definition.outputSchema !== undefined) {
-        metadata.outputSchema = definition.outputSchema;
-    }
-    if (definition.annotations !== undefined) {
-        metadata.annotations = definition.annotations;
-    }
-    if (!lSchema.isJson(metadata)) {
+    if (metadata === false || registry?.has(metadata.name)) {
         return false;
     }
     const entry = {
         /** --- 注册标识,区分同名命令的不同注册实例，避免旧 WebMCP 引用调用新命令 --- */
         'id': ++entryId,
         /** --- 元数据快照,调用方后续修改说明或 schema 不影响已注册命令 --- */
-        'metadata': copy(metadata),
+        'metadata': metadata,
         /** --- 所属 Form,卸载时清理其命令；空字符串表示 App 级命令 --- */
         'formId': formId,
         /** --- 所属 Panel,卸载时清理其命令；空字符串表示未绑定 Panel --- */
@@ -165,7 +122,7 @@ export function register(current, definition) {
         'controllers': new Set(),
     };
     const target = registry ?? new Map();
-    target.set(definition.name, entry);
+    target.set(metadata.name, entry);
     registries.set(taskId, target);
     // --- 公开命令自动接入浏览器；业务只声明命令，不负责启用协议适配器 ---
     if (entry.exposed) {
@@ -194,7 +151,7 @@ export function unregister(current, name) {
         registries.delete(taskId);
     }
     if (entry.exposed) {
-        refreshWebMcp(taskId);
+        webPublisher.refresh(taskId);
     }
     return true;
 }
@@ -243,7 +200,7 @@ export function list(current) {
             reason = 'Availability check failed';
         }
         infos.push({
-            ...copy(entry.metadata), 'taskId': taskId, 'formId': entry.formId, 'exposed': entry.exposed,
+            ...lData.copy(entry.metadata), 'taskId': taskId, 'formId': entry.formId, 'exposed': entry.exposed,
             'panelId': entry.panelId,
             'enabled': !reason, 'disabledReason': reason, 'running': entry.controllers.size,
         });
@@ -293,35 +250,14 @@ export async function getAgentInfo(current, options = {}) {
     const url = location?.protocol === 'http:' || location?.protocol === 'https:' ?
         `${location.origin}${location.pathname}` : null;
     const supported = getWebMcpContext() !== null;
-    let registrationStatus = supported ? 'idle' : null;
-    if (supported) {
-        for (const app of apps) {
-            const publication = webPublications.get(app.id);
-            if (!publication) {
-                continue;
-            }
-            if (publication.status === 'failed') {
-                registrationStatus = 'failed';
-                break;
-            }
-            if (publication.status === 'registering') {
-                registrationStatus = 'registering';
-            }
-            else if (registrationStatus === 'idle' && publication.tools.size) {
-                registrationStatus = 'ready';
-            }
-        }
-    }
+    const publication = supported ? webPublisher.describe(apps.map(app => app.id)) : null;
     return {
         'schemaVersion': 1, 'apps': apps, 'targetTaskId': taskId,
         'browser': { 'url': url, 'api': "window['clickgo']['command']" },
         'webMcp': {
             'supported': supported, 'status': supported ? 'ready' : 'unsupported',
-            'registrationStatus': registrationStatus,
-            'publishedTaskIds': apps.filter(app => {
-                const publication = webPublications.get(app.id);
-                return supported && publication?.status === 'ready' && publication.tools.size;
-            }).map(app => app.id),
+            'registrationStatus': publication?.registrationStatus ?? null,
+            'publishedTaskIds': publication?.publishedTaskIds ?? [],
         },
         'native': native, 'http': http,
     };
@@ -363,13 +299,9 @@ async function run(taskId, name, args, signal, source, exposedOnly) {
         controller.abort();
     };
     try {
-        if (!lSchema.isJson(args) || !args || typeof args !== 'object' || Array.isArray(args)) {
-            return failure('invalid-input', 'Arguments must be a JSON object');
-        }
-        const input = copy(args);
-        const invalid = lSchema.validate(input, entry.metadata.inputSchema);
-        if (invalid !== null) {
-            return failure('invalid-input', invalid);
+        const input = lData.readInput(args, entry.metadata.inputSchema);
+        if (!input.ok) {
+            return input;
         }
         const reason = disabledReason(taskId, entry);
         if (reason) {
@@ -394,32 +326,14 @@ async function run(taskId, name, args, signal, source, exposedOnly) {
         if (currentReason) {
             return failure('unavailable', currentReason);
         }
-        const result = await entry.execute(input, {
+        const result = await entry.execute(input.data, {
             'taskId': taskId, 'formId': entry.formId, 'panelId': entry.panelId,
             'source': source, 'signal': controller.signal,
         });
         if (controller.signal.aborted) {
             return failure('cancelled', 'Command was cancelled');
         }
-        if (!lSchema.isJson(result) || typeof result !== 'object' || !result || Array.isArray(result) ||
-            typeof result['ok'] !== 'boolean') {
-            return failure('invalid-output', 'Command returned an invalid result');
-        }
-        if (!result['ok']) {
-            const error = result['error'];
-            if (!error || typeof error !== 'object' || Array.isArray(error) ||
-                typeof error['code'] !== 'string' || !error['code'].trim() || typeof error['message'] !== 'string') {
-                return failure('invalid-output', 'Command returned an invalid error');
-            }
-            return failure(error['code'], error['message']);
-        }
-        if (!Object.hasOwn(result, 'data')) {
-            return failure('invalid-output', 'Command returned no data');
-        }
-        if (entry.metadata.outputSchema && lSchema.validate(result['data'], entry.metadata.outputSchema) !== null) {
-            return failure('invalid-output', 'Command result does not match its output schema');
-        }
-        return success(copy(result['data']));
+        return lData.readResult(result, entry.metadata.outputSchema);
     }
     catch {
         // --- 不把插件异常、路径或内部对象直接交给代理 ---
@@ -496,85 +410,6 @@ function getWebMcpContext() {
     return status === 'ready' ? context ?? null : null;
 }
 /**
- * --- 按注册变化串行同步 WebMCP 工具，任务结束后禁止迟到发布 ---
- * @param taskId 所属任务
- * @returns 无返回值
- */
-function refreshWebMcp(taskId) {
-    const publication = webPublications.get(taskId);
-    if (!publication) {
-        return;
-    }
-    publication.status = 'registering';
-    const pending = publication.pending.then(async () => {
-        if (webPublications.get(taskId) !== publication) {
-            return false;
-        }
-        const entries = [...registries.get(taskId)?.values() ?? []].filter(entry => entry.exposed);
-        for (const [entry, controller] of publication.tools) {
-            if (!entries.includes(entry)) {
-                controller.abort();
-                publication.tools.delete(entry);
-            }
-        }
-        let registered = true;
-        for (const entry of entries) {
-            if (webPublications.get(taskId) !== publication) {
-                return false;
-            }
-            if (registries.get(taskId)?.get(entry.metadata.name) !== entry) {
-                continue;
-            }
-            if (publication.tools.has(entry)) {
-                continue;
-            }
-            const controller = new AbortController();
-            publication.tools.set(entry, controller);
-            try {
-                await publication.context.registerTool({
-                    'name': `cg_${taskId}_${entry.id}_${entry.metadata.name}`.slice(0, 128),
-                    'description': entry.metadata.description,
-                    'inputSchema': copy(entry.metadata.inputSchema),
-                    'annotations': {
-                        'readOnlyHint': entry.metadata.annotations?.readOnlyHint ?? false,
-                        'consequentialHint': entry.metadata.annotations?.consequentialHint ??
-                            entry.metadata.annotations?.destructiveHint ?? false,
-                        'untrustedContentHint': entry.metadata.annotations?.untrustedContentHint ?? false,
-                    },
-                    'execute': async (args, options) => {
-                        if (webPublications.get(taskId) !== publication || controller.signal.aborted ||
-                            registries.get(taskId)?.get(entry.metadata.name) !== entry) {
-                            return JSON.stringify(failure('not-found', 'Command was not found'));
-                        }
-                        return JSON.stringify(await executeAgent(taskId, entry.metadata.name, args, options));
-                    },
-                }, { 'signal': controller.signal });
-                if (webPublications.get(taskId) !== publication ||
-                    registries.get(taskId)?.get(entry.metadata.name) !== entry) {
-                    controller.abort();
-                    publication.tools.delete(entry);
-                    registered = false;
-                }
-            }
-            catch {
-                controller.abort();
-                publication.tools.delete(entry);
-                registered = false;
-            }
-        }
-        // --- 只让最后排队的同步更新状态，避免旧一轮掩盖后续注册或失败 ---
-        if (webPublications.get(taskId) === publication && publication.pending === pending) {
-            let status = 'failed';
-            if (registered) {
-                status = publication.tools.size ? 'ready' : 'idle';
-            }
-            publication.status = status;
-        }
-        return registered;
-    });
-    publication.pending = pending;
-}
-/**
  * --- 检测浏览器能力并排队发布当前 App 的公开命令 ---
  * @param taskId 所属应用
  * @returns 发布状态；浏览器不支持或 App 已退出时返回 null
@@ -585,17 +420,7 @@ function publishWebMcp(taskId) {
     if (!task || task.ending || context === null) {
         return null;
     }
-    let publication = webPublications.get(taskId);
-    if (publication && publication.context !== context) {
-        disconnectWebMcp(taskId);
-        publication = undefined;
-    }
-    if (!publication) {
-        publication = { 'context': context, 'tools': new Map(), 'pending': Promise.resolve(true), 'status': 'idle' };
-        webPublications.set(taskId, publication);
-    }
-    refreshWebMcp(taskId);
-    return publication;
+    return webPublisher.publish(taskId, context);
 }
 /**
  * --- 显式重同步或重试当前 App 的工具发布；页面接入由框架自动管理 ---
@@ -613,10 +438,5 @@ export async function connectWebMcp(current) {
  */
 export function disconnectWebMcp(current) {
     const { taskId } = owner(current);
-    const publication = webPublications.get(taskId);
-    webPublications.delete(taskId);
-    for (const controller of publication?.tools.values() ?? []) {
-        controller.abort();
-    }
-    publication?.tools.clear();
+    webPublisher.disconnect(taskId);
 }

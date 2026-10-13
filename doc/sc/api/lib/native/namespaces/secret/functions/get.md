@@ -8,7 +8,7 @@
 
 > **get**(`current`, `key`): `Promise`\<`string` \| `false` \| `null`\>
 
-Defined in: lib/native/secret.ts:19
+Defined in: [lib/native/secret.ts:19](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/secret.ts#L19)
 
 读取当前 App 的加密字符串，按 config.id 隔离
 

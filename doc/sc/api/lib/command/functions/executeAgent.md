@@ -6,9 +6,9 @@
 
 # Function: executeAgent()
 
-> **executeAgent**(`taskId`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+> **executeAgent**(`taskId`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:633](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L633)
+Defined in: [lib/command.ts:547](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L547)
 
 代理直接按 taskId 执行公开命令，与界面共用校验和业务执行器
 
@@ -42,6 +42,6 @@ Defined in: [lib/command.ts:633](https://github.com/maiyun/clickgo/blob/master/d
 
 ## Returns
 
-`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
 结构化结果；未公开或不存在的命令返回 not-found

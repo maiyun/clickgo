@@ -49,16 +49,16 @@ npm run native
 ## 验证
 
 - `npm run test:native`：版本、持久存储、窗口、MCP、CLI/stdio 和自动启动的回归测试。
-- `node test/native-cli.mjs`：仅运行 CLI/stdio 回归。
+- `node dist/abox/test/native-cli.mjs`：仅运行 CLI/stdio 回归。
 - 真实 Electron 验收：确认 MCP 操作能更新计数器界面，且能读取界面操作后的结果。
 
 验证重启和 App 移动后的持久数据时，使用同一个初始为空的测试目录，分别启动两次：
 
 ```sh
-./node_modules/.bin/electron test/native-storage-electron.mjs write '<temporary-directory>'
-./node_modules/.bin/electron test/native-storage-electron.mjs read '<temporary-directory>'
+./node_modules/.bin/electron dist/abox/test/native-storage-electron.mjs write '<temporary-directory>'
+./node_modules/.bin/electron dist/abox/test/native-storage-electron.mjs read '<temporary-directory>'
 ```
 
-测试写入示例配置和密文，读取验证后删除。打包后执行 `node test/native-executable.mjs <absolute-path-to-packaged-binary> [electron-options]`，检查无系统 Node.js、无显示环境下的 CLI/stdio。自动测试仍需配合真实 GUI 验收。
+测试写入示例配置和密文，读取验证后删除。打包后执行 `node dist/abox/test/native-executable.mjs <absolute-path-to-packaged-binary> [electron-options]`，检查无系统 Node.js、无显示环境下的 CLI/stdio。自动测试仍需配合真实 GUI 验收。
 
-验证完成后，按 [AGENTS](../../../AGENTS.md#native-联动开发与同步) 将 Native 源码同步到 clickgo-native。业务接入和协议细节见 [命令指南](../../../doc/sc/commands.md) 与 [ClickGo Native 文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。
+验证完成后，按 [Native 联动](../../abox/doc/native.md#源码同步) 将 Native 源码同步到 clickgo-native。业务接入和协议细节见 [命令指南](../../../doc/sc/commands.md) 与 [ClickGo Native 文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。

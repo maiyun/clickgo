@@ -8,7 +8,7 @@
 
 > **get**\<`T`\>(`current`, `key`): `Promise`\<`false` \| [`IStoredValue`](../interfaces/IStoredValue.md)\<`T`\> \| `null`\>
 
-Defined in: lib/native/storage.ts:18
+Defined in: [lib/native/storage.ts:19](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/storage.ts#L19)
 
 读取当前 App 的持久配置，按 config.id 隔离
 
@@ -16,7 +16,7 @@ Defined in: lib/native/storage.ts:18
 
 ### T
 
-`T` *extends* [`TJson`](../type-aliases/TJson.md) = [`TJson`](../type-aliases/TJson.md)
+`T` *extends* [`TJson`](../../../../tool/type-aliases/TJson.md) = [`TJson`](../../../../tool/type-aliases/TJson.md)
 
 ## Parameters
 

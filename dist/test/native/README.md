@@ -49,16 +49,16 @@ Packaged software uses its own executable with `--cli` or `--mcp`; end users nee
 ## Verification
 
 - `npm run test:native`: automated version, persistence, window, MCP, CLI/stdio and startup regressions.
-- `node test/native-cli.mjs`: CLI/stdio regressions only.
+- `node dist/abox/test/native-cli.mjs`: CLI/stdio regressions only.
 - For real Electron acceptance, verify that MCP updates the counter UI and reads changes made through the UI.
 
 To verify persistence across restart and App relocation, run these two launches with the same initially empty test directory:
 
 ```sh
-./node_modules/.bin/electron test/native-storage-electron.mjs write '<temporary-directory>'
-./node_modules/.bin/electron test/native-storage-electron.mjs read '<temporary-directory>'
+./node_modules/.bin/electron dist/abox/test/native-storage-electron.mjs write '<temporary-directory>'
+./node_modules/.bin/electron dist/abox/test/native-storage-electron.mjs read '<temporary-directory>'
 ```
 
-The test writes sample settings and secrets, then removes them after reading. For a packaged executable, run `node test/native-executable.mjs <absolute-path-to-packaged-binary> [electron-options]` to check CLI/stdio without system Node or a display. Automated checks supplement real GUI acceptance.
+The test writes sample settings and secrets, then removes them after reading. For a packaged executable, run `node dist/abox/test/native-executable.mjs <absolute-path-to-packaged-binary> [electron-options]` to check CLI/stdio without system Node or a display. Automated checks supplement real GUI acceptance.
 
-After validation, synchronize the Native sources with clickgo-native as required by [AGENTS](../../../AGENTS.md#native-联动开发与同步). See the [command guide](../../../doc/sc/commands.md) (Simplified Chinese) and [ClickGo Native documentation](https://github.com/maiyun/clickgo-native#local-mcp) for application integration and protocol details.
+After validation, synchronize the Native sources with clickgo-native as required by [Native synchronization](../../abox/doc/native.md#源码同步). See the [command guide](../../../doc/sc/commands.md) (Simplified Chinese) and [ClickGo Native documentation](https://github.com/maiyun/clickgo-native#local-mcp) for application integration and protocol details.

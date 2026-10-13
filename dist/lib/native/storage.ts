@@ -1,8 +1,9 @@
 import type * as lCore from '../core';
+import type * as lTool from '../tool';
 import { callPersistence } from '../native';
 
 /** --- 小型配置允许保存的 JSON 数据 --- */
-export type TJson = null | boolean | number | string | TJson[] | { [key: string]: TJson; };
+export type TJson = lTool.TJson;
 
 /** --- 包装实际值，false/null 数据不会与失败/未找到混淆 --- */
 export interface IStoredValue<T extends TJson = TJson> {

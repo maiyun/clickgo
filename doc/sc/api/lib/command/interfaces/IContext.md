@@ -6,7 +6,7 @@
 
 # Interface: IContext
 
-Defined in: [lib/command.ts:49](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L49)
+Defined in: [lib/command.ts:51](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L51)
 
 执行来源仅用于展示与记录，不是授权凭证
 
@@ -16,7 +16,7 @@ Defined in: [lib/command.ts:49](https://github.com/maiyun/clickgo/blob/master/di
 
 > **formId**: `string`
 
-Defined in: [lib/command.ts:51](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L51)
+Defined in: [lib/command.ts:53](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L53)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/command.ts:51](https://github.com/maiyun/clickgo/blob/master/di
 
 > **panelId**: `string`
 
-Defined in: [lib/command.ts:52](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L52)
+Defined in: [lib/command.ts:54](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L54)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/command.ts:52](https://github.com/maiyun/clickgo/blob/master/di
 
 > **signal**: `AbortSignal`
 
-Defined in: [lib/command.ts:54](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L54)
+Defined in: [lib/command.ts:56](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L56)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/command.ts:54](https://github.com/maiyun/clickgo/blob/master/di
 
 > **source**: `"user"` \| `"agent"`
 
-Defined in: [lib/command.ts:53](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L53)
+Defined in: [lib/command.ts:55](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L55)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [lib/command.ts:53](https://github.com/maiyun/clickgo/blob/master/di
 
 > **taskId**: `string`
 
-Defined in: [lib/command.ts:50](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L50)
+Defined in: [lib/command.ts:52](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L52)

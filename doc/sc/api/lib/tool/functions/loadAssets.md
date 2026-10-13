@@ -8,7 +8,7 @@
 
 > **loadAssets**(`urls`, `opt?`): `Promise`\<`boolean`\>
 
-Defined in: [lib/tool.ts:2550](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L2550)
+Defined in: [lib/tool.ts:684](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L684)
 
 批量并行加载 JS 和 CSS；JS 按列表顺序执行，CSS 按列表顺序插入
 

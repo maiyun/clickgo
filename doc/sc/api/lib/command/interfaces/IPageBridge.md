@@ -6,7 +6,7 @@
 
 # Interface: IPageBridge
 
-Defined in: [lib/command.ts:108](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L108)
+Defined in: [lib/command.ts:110](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L110)
 
 框架向网页发布的统一入口；按任务选择应用，只访问明确公开的命令
 
@@ -14,9 +14,9 @@ Defined in: [lib/command.ts:108](https://github.com/maiyun/clickgo/blob/master/d
 
 ### execute
 
-> **execute**: (`taskId`, `name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+> **execute**: (`taskId`, `name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
-Defined in: [lib/command.ts:113](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L113)
+Defined in: [lib/command.ts:115](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L115)
 
 #### Parameters
 
@@ -30,7 +30,7 @@ Defined in: [lib/command.ts:113](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### args?
 
-`Record`\<`string`, [`TJson`](../type-aliases/TJson.md)\>
+`Record`\<`string`, [`TJson`](../../tool/type-aliases/TJson.md)\>
 
 ##### options?
 
@@ -40,7 +40,7 @@ Defined in: [lib/command.ts:113](https://github.com/maiyun/clickgo/blob/master/d
 
 #### Returns
 
-`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../type-aliases/TJson.md)\>\>
+`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/command.ts:113](https://github.com/maiyun/clickgo/blob/master/d
 
 > **getAgentGuide**: (`taskId?`) => `Promise`\<`string` \| `false` \| `null`\>
 
-Defined in: [lib/command.ts:110](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L110)
+Defined in: [lib/command.ts:112](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L112)
 
 #### Parameters
 
@@ -66,7 +66,7 @@ Defined in: [lib/command.ts:110](https://github.com/maiyun/clickgo/blob/master/d
 
 > **getAgentInfo**: (`taskId?`) => `Promise`\<`false` \| [`IAgentInfo`](IAgentInfo.md) \| `null`\>
 
-Defined in: [lib/command.ts:109](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L109)
+Defined in: [lib/command.ts:111](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L111)
 
 #### Parameters
 
@@ -84,7 +84,7 @@ Defined in: [lib/command.ts:109](https://github.com/maiyun/clickgo/blob/master/d
 
 > **list**: (`taskId`) => [`IInfo`](IInfo.md)[]
 
-Defined in: [lib/command.ts:112](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L112)
+Defined in: [lib/command.ts:114](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L114)
 
 #### Parameters
 
@@ -102,7 +102,7 @@ Defined in: [lib/command.ts:112](https://github.com/maiyun/clickgo/blob/master/d
 
 > **listTasks**: () => `object`[]
 
-Defined in: [lib/command.ts:111](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L111)
+Defined in: [lib/command.ts:113](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L113)
 
 #### Returns
 

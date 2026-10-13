@@ -8,4 +8,4 @@
 
 > `const` **RANDOM\_UN**: `string`
 
-Defined in: [lib/tool.ts:687](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L687)
+Defined in: [lib/tool.ts:230](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L230)

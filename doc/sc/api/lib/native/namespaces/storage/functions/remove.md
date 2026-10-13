@@ -8,7 +8,7 @@
 
 > **remove**(`current`, `key`): `Promise`\<`boolean`\>
 
-Defined in: lib/native/storage.ts:48
+Defined in: [lib/native/storage.ts:49](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/storage.ts#L49)
 
 删除当前 App 的持久配置，按 config.id 隔离
 
