@@ -1,0 +1,243 @@
+import * as fs from 'fs';
+import * as lTool from './tool.js';
+const platform = process.platform;
+const drives = [];
+export async function refreshDrives() {
+    if (platform !== 'win32') {
+        return;
+    }
+    drives.length = 0;
+    for (let i = 0; i < 26; ++i) {
+        const char = String.fromCharCode(97 + i);
+        try {
+            await fs.promises.stat(char + ':/');
+            drives.push(char);
+        }
+        catch { }
+    }
+}
+export async function getContent(path, options) {
+    path = lTool.formatPath(path);
+    const encoding = options.encoding;
+    const start = options.start;
+    const end = options.end;
+    if (start || end) {
+        return new Promise(function (resolve) {
+            const rs = fs.createReadStream(path, {
+                'encoding': encoding,
+                'start': start,
+                'end': end
+            });
+            const data = [];
+            rs.on('data', function (chunk) {
+                if (!(chunk instanceof Buffer)) {
+                    return;
+                }
+                data.push(chunk);
+            }).on('end', function () {
+                const buf = Buffer.concat(data);
+                if (encoding) {
+                    resolve(buf.toString());
+                }
+                else {
+                    resolve(buf);
+                }
+            }).on('error', function () {
+                resolve(null);
+            });
+        });
+    }
+    else {
+        try {
+            if (encoding) {
+                return await fs.promises.readFile(path, {
+                    'encoding': encoding
+                });
+            }
+            else {
+                return await fs.promises.readFile(path);
+            }
+        }
+        catch {
+            return null;
+        }
+    }
+}
+export async function putContent(path, data, options) {
+    path = lTool.formatPath(path);
+    try {
+        await fs.promises.writeFile(path, data, options);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+export async function readLink(path, encoding) {
+    path = lTool.formatPath(path);
+    try {
+        return await fs.promises.readlink(path, {
+            'encoding': encoding
+        });
+    }
+    catch {
+        return null;
+    }
+}
+export async function symlink(filePath, linkPath, type) {
+    filePath = lTool.formatPath(filePath);
+    linkPath = lTool.formatPath(linkPath);
+    try {
+        await fs.promises.symlink(filePath, linkPath, type);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+export async function unlink(path) {
+    path = lTool.formatPath(path);
+    for (let i = 0; i <= 2; ++i) {
+        try {
+            await fs.promises.unlink(path);
+            return true;
+        }
+        catch {
+            await lTool.sleep(250);
+        }
+    }
+    try {
+        await fs.promises.unlink(path);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+export async function stats(path) {
+    path = lTool.formatPath(path);
+    try {
+        const item = await fs.promises.lstat(path);
+        return {
+            isFile: item.isFile(),
+            isDirectory: item.isDirectory(),
+            isSymbolicLink: item.isSymbolicLink(),
+            'size': item.size,
+            'blksize': item.blksize,
+            'atimeMs': item.atimeMs,
+            'mtimeMs': item.mtimeMs,
+            'ctimeMs': item.ctimeMs,
+            'birthtimeMs': item.birthtimeMs,
+            'atime': item.atime,
+            'mtime': item.mtime,
+            'ctime': item.ctime,
+            'birthtime': item.birthtime
+        };
+    }
+    catch {
+        return null;
+    }
+}
+export async function mkdir(path, mode) {
+    path = lTool.formatPath(path);
+    const stats = await fs.promises.lstat(path);
+    if (stats.isDirectory()) {
+        return true;
+    }
+    try {
+        await fs.promises.mkdir(path, {
+            'recursive': true,
+            'mode': mode
+        });
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+export async function rmdir(path) {
+    path = lTool.formatPath(path);
+    const stats = await fs.promises.lstat(path);
+    if (!stats.isDirectory()) {
+        return true;
+    }
+    try {
+        await fs.promises.rmdir(path);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+export async function chmod(path, mod) {
+    path = lTool.formatPath(path);
+    try {
+        await fs.promises.chmod(path, mod);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+export async function rename(oldPath, newPath) {
+    oldPath = lTool.formatPath(oldPath);
+    newPath = lTool.formatPath(newPath);
+    try {
+        await fs.promises.rename(oldPath, newPath);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+export async function readDir(path, encoding) {
+    try {
+        const list = [];
+        if (platform === 'win32') {
+            if (path === '/') {
+                for (const item of drives) {
+                    list.push({
+                        isFile: false,
+                        isDirectory: true,
+                        isSymbolicLink: false,
+                        'name': item
+                    });
+                }
+                return list;
+            }
+            else {
+                path = path[1] + ':' + path.slice(2);
+            }
+        }
+        const dlist = await fs.promises.readdir(path, {
+            'encoding': encoding,
+            'withFileTypes': true
+        });
+        for (const item of dlist) {
+            if (item.name === '.' || item.name === '..') {
+                continue;
+            }
+            list.push({
+                isFile: item.isFile(),
+                isDirectory: item.isDirectory(),
+                isSymbolicLink: item.isSymbolicLink(),
+                'name': item.name
+            });
+        }
+        return list;
+    }
+    catch {
+        return [];
+    }
+}
+export async function copyFile(src, dest) {
+    src = lTool.formatPath(src);
+    dest = lTool.formatPath(dest);
+    try {
+        await fs.promises.copyFile(src, dest);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}

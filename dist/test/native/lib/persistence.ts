@@ -1,8 +1,7 @@
-import { constants } from 'node:fs';
-import { lstat, mkdir, open, rename, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { app } from 'electron';
+import * as lAboxPersistence from '../abox/persistence.js';
 
 /** --- 普通配置只接受可稳定跨进程传输的 JSON 值 --- */
 export type TJson = null | boolean | number | string | TJson[] | { [key: string]: TJson; };
@@ -23,50 +22,10 @@ export const maxBytes = 1024 * 1024;
  * @param value 待存储数据
  * @param seen 已访问的容器
  * @param depth 当前嵌套深度
- * @returns 是否是有限、普通的 JSON 数据
+ * @returns 是否是有限、普通的 JSON 数据；最大深度 32，不允许稀疏数组、附加属性、访问器或类实例
  */
 export function isJson(value: unknown, seen = new Set<object>(), depth = 0): value is TJson {
-    if (depth > 32) {
-        return false;
-    }
-    if (value === null || typeof value === 'string' || typeof value === 'boolean') {
-        return true;
-    }
-    if (typeof value === 'number') {
-        return Number.isFinite(value);
-    }
-    if (typeof value !== 'object' || seen.has(value) || Object.getOwnPropertySymbols(value).length) {
-        return false;
-    }
-    const array = Array.isArray(value);
-    const prototype: unknown = Object.getPrototypeOf(value);
-    if (!array && prototype !== Object.prototype && prototype !== null) {
-        return false;
-    }
-    seen.add(value);
-    const descriptors = Object.getOwnPropertyDescriptors(value);
-    if (array && Object.keys(value).length !== value.length) {
-        return false;
-    }
-    if (array) {
-        for (let index = 0; index < value.length; ++index) {
-            if (!Object.hasOwn(value, index)) {
-                return false;
-            }
-        }
-    }
-    for (const key of Object.keys(descriptors)) {
-        if (array && key === 'length') {
-            continue;
-        }
-        const descriptor = descriptors[key];
-        if (!descriptor.enumerable || !Object.hasOwn(descriptor, 'value') ||
-            !isJson(descriptor.value, seen, depth + 1)) {
-            return false;
-        }
-    }
-    seen.delete(value);
-    return true;
+    return lAboxPersistence.isJson(value, seen, depth);
 }
 
 /**
@@ -75,10 +34,7 @@ export function isJson(value: unknown, seen = new Set<object>(), depth = 0): val
  * @returns 是否可使用
  */
 async function prepare(directory: string): Promise<boolean> {
-    await mkdir(directory, { 'recursive': true, 'mode': 0o700 });
-    const stat = await lstat(directory);
-    return stat.isDirectory() && !stat.isSymbolicLink() &&
-        (process.platform === 'win32' || stat.uid === process.getuid?.() && (stat.mode & 0o077) === 0);
+    return lAboxPersistence.prepare(directory);
 }
 
 /**
@@ -87,29 +43,7 @@ async function prepare(directory: string): Promise<boolean> {
  * @returns 内容，缺少记录为 null，不安全文件为 false
  */
 export async function read(file: string): Promise<Buffer | null | false> {
-    let handle;
-    try {
-        const stat = await lstat(file);
-        if (!stat.isFile() || stat.isSymbolicLink()) {
-            return false;
-        }
-        handle = await open(file, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
-    }
-    catch (error) {
-        return (error as NodeJS.ErrnoException).code === 'ENOENT' ? null : false;
-    }
-    try {
-        const stat = await handle.stat();
-        if (!stat.isFile() || stat.size > maxBytes ||
-            process.platform !== 'win32' && (stat.uid !== process.getuid?.() || (stat.mode & 0o077) !== 0)) {
-            return false;
-        }
-        const data = await handle.readFile();
-        return data.length <= maxBytes ? data : false;
-    }
-    finally {
-        await handle.close();
-    }
+    return lAboxPersistence.read(file, maxBytes);
 }
 
 /**
@@ -119,25 +53,7 @@ export async function read(file: string): Promise<Buffer | null | false> {
  * @returns 写入完成
  */
 export async function write(file: string, data: Buffer): Promise<boolean> {
-    if (data.length > maxBytes) {
-        return false;
-    }
-    const temporary = `${file}.${randomUUID()}.tmp`;
-    try {
-        const handle = await open(temporary, 'wx', 0o600);
-        try {
-            await handle.writeFile(data);
-            await handle.sync();
-        }
-        finally {
-            await handle.close();
-        }
-        await rename(temporary, file);
-        return true;
-    }
-    finally {
-        await unlink(temporary).catch((): void => {});
-    }
+    return lAboxPersistence.write(file, data, maxBytes);
 }
 
 /**
@@ -146,13 +62,7 @@ export async function write(file: string, data: Buffer): Promise<boolean> {
  * @returns 是否删除成功
  */
 export async function remove(file: string): Promise<boolean> {
-    try {
-        await unlink(file);
-        return true;
-    }
-    catch (error) {
-        return (error as NodeJS.ErrnoException).code === 'ENOENT';
-    }
+    return lAboxPersistence.remove(file);
 }
 
 /**

@@ -1,28 +1,19 @@
-import * as fs from 'fs';
-import * as lTool from './tool.js';
+import * as lAboxFs from '../abox/fs.js';
 
-/** --- 当前系统平台 --- */
-const platform: NodeJS.Platform = process.platform;
-
-/** --- windows 下驱动器列表 --- */
-const drives: string[] = [];
-
-/** --- 更新 drives 列表 --- */
+/**
+ * --- 刷新 Windows 根目录的盘符缓存 ---
+ * @returns 无返回值
+ */
 export async function refreshDrives(): Promise<void> {
-    if (platform !== 'win32') {
-        return;
-    }
-    drives.length = 0;
-    for (let i = 0; i < 26; ++i) {
-        const char = String.fromCharCode(97 + i);
-        try {
-            await fs.promises.stat(char + ':/');
-            drives.push(char);
-        }
-        catch {}
-    }
+    return lAboxFs.refreshDrives();
 }
 
+/**
+ * --- 读取文件内容或字节范围 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @param options encoding 为输出编码；start/end 为零起始字节位置，end 含末字节；两者为 0 时沿用完整读取
+ * @returns 文件内容；读取失败为 null
+ */
 export async function getContent(
     path: string,
     options: {
@@ -31,244 +22,118 @@ export async function getContent(
         'end'?: number;
     }
 ): Promise<string | Buffer | null> {
-    path = lTool.formatPath(path);
-    const encoding = options.encoding;
-    const start = options.start;
-    const end = options.end;
-    if (start || end) {
-        return new Promise(function(resolve) {
-            const rs = fs.createReadStream(path, {
-                'encoding': encoding,
-                'start': start,
-                'end': end
-            });
-            const data: Buffer[] = [];
-            rs.on('data', function(chunk) {
-                if (!(chunk instanceof Buffer)) {
-                    return;
-                }
-                data.push(chunk);
-            }).on('end', function() {
-                const buf = Buffer.concat(data);
-                if (encoding) {
-                    resolve(buf.toString());
-                }
-                else {
-                    resolve(buf);
-                }
-            }).on('error', function() {
-                resolve(null);
-            });
-        });
-    }
-    else {
-        try {
-            if (encoding) {
-                return await fs.promises.readFile(path, {
-                    'encoding': encoding
-                });
-            }
-            else {
-                return await fs.promises.readFile(path);
-            }
-        }
-        catch {
-            return null;
-        }
-    }
+    return lAboxFs.getContent(path, options);
 }
 
+/**
+ * --- 写入文件内容 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @param data 完整文本或二进制内容
+ * @param options encoding/mode/flag 沿用 Node.js 写文件选项
+ * @returns 是否写入成功
+ */
 export async function putContent(path: string, data: string | Buffer, options: {
     'encoding'?: BufferEncoding;
     'mode'?: number;
     'flag'?: string;
 }): Promise<boolean> {
-    path = lTool.formatPath(path);
-    try {
-        await fs.promises.writeFile(path, data, options);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.putContent(path, data, options);
 }
 
+/**
+ * --- 读取符号链接目标 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @param encoding 字符编码；省略时沿用文件系统默认值
+ * @returns 链接目标；读取失败为 null
+ */
 export async function readLink(path: string, encoding?: BufferEncoding): Promise<string | null> {
-    path = lTool.formatPath(path);
-    try {
-        return await fs.promises.readlink(path, {
-            'encoding': encoding
-        });
-    }
-    catch {
-        return null;
-    }
+    return lAboxFs.readLink(path, encoding);
 }
 
+/**
+ * --- 创建符号链接 ---
+ * @param filePath 链接指向的 ClickGo 文件路径
+ * @param linkPath 新链接的 ClickGo 文件路径
+ * @param type 链接类型；省略时由系统确定
+ * @returns 是否创建成功
+ */
 export async function symlink(filePath: string, linkPath: string, type?: 'dir' | 'file' | 'junction'): Promise<boolean> {
-    filePath = lTool.formatPath(filePath);
-    linkPath = lTool.formatPath(linkPath);
-    try {
-        await fs.promises.symlink(filePath, linkPath, type);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.symlink(filePath, linkPath, type);
 }
 
+/**
+ * --- 删除文件，失败时最多重试三次，每次间隔 250 ms ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @returns 是否删除成功
+ */
 export async function unlink(path: string): Promise<boolean> {
-    path = lTool.formatPath(path);
-    for (let i = 0; i <= 2; ++i) {
-        try {
-            await fs.promises.unlink(path);
-            return true;
-        }
-        catch {
-            await lTool.sleep(250);
-        }
-    }
-    try {
-        await fs.promises.unlink(path);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.unlink(path);
 }
 
+/**
+ * --- 读取文件元数据，不跟随符号链接 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @returns 元数据；读取失败为 null
+ */
 export async function stats(path: string): Promise<Record<string, any> | null> {
-    path = lTool.formatPath(path);
-    try {
-        const item = await fs.promises.lstat(path);
-        return {
-            isFile: item.isFile(),
-            isDirectory: item.isDirectory(),
-            isSymbolicLink: item.isSymbolicLink(),
-            'size': item.size,
-            'blksize': item.blksize,
-            'atimeMs': item.atimeMs,
-            'mtimeMs': item.mtimeMs,
-            'ctimeMs': item.ctimeMs,
-            'birthtimeMs': item.birthtimeMs,
-            'atime': item.atime,
-            'mtime': item.mtime,
-            'ctime': item.ctime,
-            'birthtime': item.birthtime
-        };
-    }
-    catch {
-        return null;
-    }
+    return lAboxFs.stats(path);
 }
 
+/**
+ * --- 递归创建目录，已有目录视为成功 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @param mode 目录权限位
+ * @returns 是否创建成功；前置元数据读取异常由调用边界处理
+ */
 export async function mkdir(path: string, mode: number): Promise<boolean> {
-    path = lTool.formatPath(path);
-    const stats = await fs.promises.lstat(path);
-    if (stats.isDirectory()) {
-        return true;
-    }
-    // --- 深度创建目录 ---
-    try {
-        await fs.promises.mkdir(path, {
-            'recursive': true,
-            'mode': mode
-        });
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.mkdir(path, mode);
 }
 
+/**
+ * --- 删除空目录，非目录视为成功 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @returns 是否删除成功；前置元数据读取异常由调用边界处理
+ */
 export async function rmdir(path: string): Promise<boolean> {
-    path = lTool.formatPath(path);
-    const stats = await fs.promises.lstat(path);
-    if (!stats.isDirectory()) {
-        return true;
-    }
-    try {
-        await fs.promises.rmdir(path);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.rmdir(path);
 }
 
+/**
+ * --- 修改文件权限 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @param mod 权限字符串或权限位
+ * @returns 是否修改成功
+ */
 export async function chmod(path: string, mod: string | number): Promise<boolean> {
-    path = lTool.formatPath(path);
-    try {
-        await fs.promises.chmod(path, mod);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.chmod(path, mod);
 }
 
+/**
+ * --- 移动或重命名路径 ---
+ * @param oldPath 原 ClickGo 文件路径
+ * @param newPath 目标 ClickGo 文件路径
+ * @returns 是否修改成功
+ */
 export async function rename(oldPath: string, newPath: string): Promise<boolean> {
-    oldPath = lTool.formatPath(oldPath);
-    newPath = lTool.formatPath(newPath);
-    try {
-        await fs.promises.rename(oldPath, newPath);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.rename(oldPath, newPath);
 }
 
+/**
+ * --- 读取目录的直接子项，Windows 根目录使用盘符缓存 ---
+ * @param path ClickGo 文件路径；Windows 使用 /盘符/ 路径
+ * @param encoding 字符编码；省略时沿用文件系统默认值
+ * @returns 子项的类型标志和名称；读取失败为空数组
+ */
 export async function readDir(path: string, encoding?: BufferEncoding): Promise<any[]> {
-    try {
-        const list: any[] = [];
-        if (platform === 'win32') {
-            // --- 此处不能用 formatPath，因为还要读 drives ---
-            if (path === '/') {
-                for (const item of drives) {
-                    list.push({
-                        isFile: false,
-                        isDirectory: true,
-                        isSymbolicLink: false,
-                        'name': item
-                    });
-                }
-                return list;
-            }
-            else {
-                path = path[1] + ':' + path.slice(2);
-            }
-        }
-        const dlist = await fs.promises.readdir(path, {
-            'encoding': encoding,
-            'withFileTypes': true
-        });
-        for (const item of dlist) {
-            if (item.name === '.' || item.name === '..') {
-                continue;
-            }
-            list.push({
-                isFile: item.isFile(),
-                isDirectory: item.isDirectory(),
-                isSymbolicLink: item.isSymbolicLink(),
-                'name': item.name
-            });
-        }
-        return list;
-    }
-    catch {
-        return [];
-    }
+    return lAboxFs.readDir(path, encoding);
 }
 
+/**
+ * --- 复制文件 ---
+ * @param src 源 ClickGo 文件路径
+ * @param dest 目标 ClickGo 文件路径
+ * @returns 是否复制成功
+ */
 export async function copyFile(src: string, dest: string): Promise<boolean> {
-    src = lTool.formatPath(src);
-    dest = lTool.formatPath(dest);
-    try {
-        await fs.promises.copyFile(src, dest);
-        return true;
-    }
-    catch {
-        return false;
-    }
+    return lAboxFs.copyFile(src, dest);
 }

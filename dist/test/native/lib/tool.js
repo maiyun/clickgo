@@ -1,35 +1,25 @@
-/** --- 当前系统平台 --- */
-const platform = process.platform;
+import * as lAboxTool from '../abox/tool.js';
 /**
- * --- 间隔一段时间 ---
+ * --- 等待指定时间 ---
  * @param ms 间隔毫秒
+ * @returns 无返回值
  */
 export function sleep(ms) {
-    return new Promise(function (resolve) {
-        setTimeout(function () {
-            resolve();
-        }, ms);
-    });
+    return lAboxTool.sleep(ms);
 }
-/** --- path 要额外处理一下，因为 windows 下可能有点不一样 --- */
+/**
+ * --- 将 ClickGo 路径转换为系统路径 ---
+ * @param path Windows 为 /盘符/ 路径；其他系统沿用原值
+ * @returns 系统文件路径
+ */
 export function formatPath(path) {
-    if (platform !== 'win32') {
-        return path;
-    }
-    if (path === '/') {
-        return path;
-    }
-    path = path.replace(/\//g, '\\');
-    return path[1] + ':' + path.slice(2);
+    return lAboxTool.formatPath(path);
 }
-/** --- 将真实路径转换回去 --- */
+/**
+ * --- 将系统路径转换为 ClickGo 路径 ---
+ * @param path Windows 盘符路径；其他系统沿用原值
+ * @returns ClickGo 文件路径，Windows 盘符转为小写
+ */
 export function parsePath(path) {
-    if (platform !== 'win32') {
-        return path;
-    }
-    path = path.replace(/\\/g, '/');
-    if (path === '/') {
-        return path;
-    }
-    return '/' + path[0].toLowerCase() + path.slice(2);
+    return lAboxTool.parsePath(path);
 }

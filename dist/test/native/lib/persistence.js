@@ -1,8 +1,7 @@
-import { constants } from 'node:fs';
-import { lstat, mkdir, open, rename, unlink } from 'node:fs/promises';
 import { join } from 'node:path';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { app } from 'electron';
+import * as lAboxPersistence from '../abox/persistence.js';
 /** --- 按文件串行化当前进程的读写，同一个键不能被并发操作打断 --- */
 const pending = new Map();
 /** --- 小型配置和加密记录的磁盘大小上限 --- */
@@ -12,50 +11,10 @@ export const maxBytes = 1024 * 1024;
  * @param value 待存储数据
  * @param seen 已访问的容器
  * @param depth 当前嵌套深度
- * @returns 是否是有限、普通的 JSON 数据
+ * @returns 是否是有限、普通的 JSON 数据；最大深度 32，不允许稀疏数组、附加属性、访问器或类实例
  */
 export function isJson(value, seen = new Set(), depth = 0) {
-    if (depth > 32) {
-        return false;
-    }
-    if (value === null || typeof value === 'string' || typeof value === 'boolean') {
-        return true;
-    }
-    if (typeof value === 'number') {
-        return Number.isFinite(value);
-    }
-    if (typeof value !== 'object' || seen.has(value) || Object.getOwnPropertySymbols(value).length) {
-        return false;
-    }
-    const array = Array.isArray(value);
-    const prototype = Object.getPrototypeOf(value);
-    if (!array && prototype !== Object.prototype && prototype !== null) {
-        return false;
-    }
-    seen.add(value);
-    const descriptors = Object.getOwnPropertyDescriptors(value);
-    if (array && Object.keys(value).length !== value.length) {
-        return false;
-    }
-    if (array) {
-        for (let index = 0; index < value.length; ++index) {
-            if (!Object.hasOwn(value, index)) {
-                return false;
-            }
-        }
-    }
-    for (const key of Object.keys(descriptors)) {
-        if (array && key === 'length') {
-            continue;
-        }
-        const descriptor = descriptors[key];
-        if (!descriptor.enumerable || !Object.hasOwn(descriptor, 'value') ||
-            !isJson(descriptor.value, seen, depth + 1)) {
-            return false;
-        }
-    }
-    seen.delete(value);
-    return true;
+    return lAboxPersistence.isJson(value, seen, depth);
 }
 /**
  * --- 创建并核实私有数据目录，不接受符号链接 ---
@@ -63,10 +22,7 @@ export function isJson(value, seen = new Set(), depth = 0) {
  * @returns 是否可使用
  */
 async function prepare(directory) {
-    await mkdir(directory, { 'recursive': true, 'mode': 0o700 });
-    const stat = await lstat(directory);
-    return stat.isDirectory() && !stat.isSymbolicLink() &&
-        (process.platform === 'win32' || stat.uid === process.getuid?.() && (stat.mode & 0o077) === 0);
+    return lAboxPersistence.prepare(directory);
 }
 /**
  * --- 取得私有文件中的完整记录，错误由调用边界转换 ---
@@ -74,29 +30,7 @@ async function prepare(directory) {
  * @returns 内容，缺少记录为 null，不安全文件为 false
  */
 export async function read(file) {
-    let handle;
-    try {
-        const stat = await lstat(file);
-        if (!stat.isFile() || stat.isSymbolicLink()) {
-            return false;
-        }
-        handle = await open(file, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0));
-    }
-    catch (error) {
-        return error.code === 'ENOENT' ? null : false;
-    }
-    try {
-        const stat = await handle.stat();
-        if (!stat.isFile() || stat.size > maxBytes ||
-            process.platform !== 'win32' && (stat.uid !== process.getuid?.() || (stat.mode & 0o077) !== 0)) {
-            return false;
-        }
-        const data = await handle.readFile();
-        return data.length <= maxBytes ? data : false;
-    }
-    finally {
-        await handle.close();
-    }
+    return lAboxPersistence.read(file, maxBytes);
 }
 /**
  * --- 写临时文件并替换原记录，写入失败不破坏已有数据 ---
@@ -105,25 +39,7 @@ export async function read(file) {
  * @returns 写入完成
  */
 export async function write(file, data) {
-    if (data.length > maxBytes) {
-        return false;
-    }
-    const temporary = `${file}.${randomUUID()}.tmp`;
-    try {
-        const handle = await open(temporary, 'wx', 0o600);
-        try {
-            await handle.writeFile(data);
-            await handle.sync();
-        }
-        finally {
-            await handle.close();
-        }
-        await rename(temporary, file);
-        return true;
-    }
-    finally {
-        await unlink(temporary).catch(() => { });
-    }
+    return lAboxPersistence.write(file, data, maxBytes);
 }
 /**
  * --- 删除一个记录；不存在的键视为已经删除 ---
@@ -131,13 +47,7 @@ export async function write(file, data) {
  * @returns 是否删除成功
  */
 export async function remove(file) {
-    try {
-        await unlink(file);
-        return true;
-    }
-    catch (error) {
-        return error.code === 'ENOENT';
-    }
+    return lAboxPersistence.remove(file);
 }
 /**
  * --- 将业务键限定在软件数据目录，统一处理文件和加密异常 ---
