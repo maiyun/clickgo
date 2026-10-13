@@ -2,7 +2,7 @@
 
 本仓库是 `clickgo` 框架及其内置控件、主题和示例应用。
 
-- 开发规则先读取 kebab-site 提供的 `core`、`clickgo-app`、`code-rule` 技能及 ClickGo 源码维护参考。
+- 开发先读取 kebab-site 的 `core`；框架/内置控件维护用 `clickgo-source`，应用或 Demo 接入按需用 `clickgo-app`。三箱与 abox 用 `development-flow`，白/灰箱写法另用 `code-rule`。
 - 实际 TypeScript 源码位于 `dist/`。同目录的 `.js`、`.d.ts`、`.css`、`.pack.js` 和 `.cgc`/`.cga` 是生成物，使用编译或打包生成。
 - 新增独立控件时，`dist/pack.ts` 自动扫描控件目录；同时检查 `dist/lib/fs.ts` 的资源清单、消费应用 `config.json` 和控件 `info.md`，三者不会自动同步。
 - `dist/sources/control/desktop/lib/layout.ts` 是无 DOM 的有限区域布局逻辑；Desktop 的 `positions` 保存用户布局，`layout.positions` 是窗口约束后的临时显示布局，缩放不能覆盖持久化位置。应用负责文件操作、壁纸和持久化。
