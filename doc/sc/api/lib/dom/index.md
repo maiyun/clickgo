@@ -18,6 +18,7 @@
 
 - [TDomBorder](type-aliases/TDomBorder.md)
 - [TDomBorderCustom](type-aliases/TDomBorderCustom.md)
+- [TWatchStyleCallback](type-aliases/TWatchStyleCallback.md)
 
 ## Variables
 

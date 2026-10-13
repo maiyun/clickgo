@@ -8,7 +8,7 @@
 
 > **isWatchProperty**(`el`): `boolean`
 
-Defined in: [lib/dom.ts:1457](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1457)
+Defined in: [lib/dom.ts:1463](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1463)
 
 检测一个标签是否正在被 watchProperty
 

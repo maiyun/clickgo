@@ -8,7 +8,7 @@
 
 > **watchStyle**(`el`, `name`, `cb`, `immediate?`): `void`
 
-Defined in: [lib/dom.ts:1148](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1148)
+Defined in: [lib/dom.ts:1154](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1154)
 
 监听一个标签的计算后样式的变化
 
@@ -28,7 +28,7 @@ Defined in: [lib/dom.ts:1148](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### cb
 
-`TWatchStyleCallback`
+[`TWatchStyleCallback`](../type-aliases/TWatchStyleCallback.md)
 
 变更回调
 

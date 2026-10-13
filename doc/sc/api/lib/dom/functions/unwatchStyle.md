@@ -8,7 +8,7 @@
 
 > **unwatchStyle**(`el`, `name?`, `cb?`): `void`
 
-Defined in: [lib/dom.ts:1219](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1219)
+Defined in: [lib/dom.ts:1225](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1225)
 
 取消元素的样式监听，可只移除指定属性或指定回调
 
@@ -28,7 +28,7 @@ Defined in: [lib/dom.ts:1219](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### cb?
 
-`TWatchStyleCallback`
+[`TWatchStyleCallback`](../type-aliases/TWatchStyleCallback.md)
 
 只移除此回调，留空则移除匹配属性的全部回调
 

@@ -8,7 +8,7 @@
 
 > **is**: `object`
 
-Defined in: [lib/dom.ts:1695](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1695)
+Defined in: [lib/dom.ts:1701](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1701)
 
 相关状态
 

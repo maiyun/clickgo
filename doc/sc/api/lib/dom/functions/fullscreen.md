@@ -8,7 +8,7 @@
 
 > **fullscreen**(): `Promise`\<`boolean`\>
 
-Defined in: [lib/dom.ts:1844](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1844)
+Defined in: [lib/dom.ts:1850](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1850)
 
 全屏
 

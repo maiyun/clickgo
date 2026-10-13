@@ -1075,8 +1075,14 @@ watchCgTimerHandler();
 // --- watchStyle ---
 // ------------------
 
-/** --- 样式变化通知回调 --- */
-type TWatchStyleCallback = (name: string, value: string, old: string) => void | Promise<void>;
+/**
+ * --- 样式变化通知回调 ---
+ * @param name CSS 属性名
+ * @param value 当前计算样式值
+ * @param old 上次记录的计算样式值
+ * @returns 无返回值，可异步完成
+ */
+export type TWatchStyleCallback = (name: string, value: string, old: string) => void | Promise<void>;
 
 /** --- 单个属性的上次值与订阅者 --- */
 interface IWatchStyleName {

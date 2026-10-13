@@ -8,4 +8,4 @@
 
 > **TDomBorderCustom** = [`TDomBorder`](TDomBorder.md) \| \{ `height?`: `number`; `left`: `number`; `top?`: `number`; `width`: `number`; \}
 
-Defined in: [lib/dom.ts:2286](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2286)
+Defined in: [lib/dom.ts:2292](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2292)

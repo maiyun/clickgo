@@ -342,62 +342,6 @@ cell 之间的间距，默认 0。
 </alayout>
 ```
 
-## alayout-cell
----
-
-自适应布局单元格组件。
-
-### 参数
-
-#### span
-
-`number` | `string`
-
-占据列数，默认 1。
-
-#### alignH
-
-`string` | `undefined`
-
-水平对齐方式。
-
-#### alignV
-
-`string` | `undefined`
-
-垂直对齐方式。
-
-### 样式
-
-作为 alayout-row 的子组件，显示单元格内容。使用 flex 布局。
-
-根据 span 设置占据的列数，支持对齐方式配置。内容区域支持通过 slot 自定义。
-
-### 示例
-
-```xml
-<alayout-cell :span="2">Content</alayout-cell>
-```
-
-## alayout-row
----
-
-自适应布局行组件。
-
-### 样式
-
-作为 alayout 的子组件，包含 alayout-cell 单元格。使用 flex 布局。
-
-行间距由父组件 alayout 的 gutter 控制。子单元格水平排列。
-
-### 示例
-
-```xml
-<alayout-row>
-    <alayout-cell>Content</alayout-cell>
-</alayout-row>
-```
-
 ## alayout2
 ---
 
@@ -488,6 +432,62 @@ cell 之间的间距，默认 0。
 
 ```xml
 <alayout2-cell direction="v" :gutter="10">Content</alayout2-cell>
+```
+
+## alayout-cell
+---
+
+自适应布局单元格组件。
+
+### 参数
+
+#### span
+
+`number` | `string`
+
+占据列数，默认 1。
+
+#### alignH
+
+`string` | `undefined`
+
+水平对齐方式。
+
+#### alignV
+
+`string` | `undefined`
+
+垂直对齐方式。
+
+### 样式
+
+作为 alayout-row 的子组件，显示单元格内容。使用 flex 布局。
+
+根据 span 设置占据的列数，支持对齐方式配置。内容区域支持通过 slot 自定义。
+
+### 示例
+
+```xml
+<alayout-cell :span="2">Content</alayout-cell>
+```
+
+## alayout-row
+---
+
+自适应布局行组件。
+
+### 样式
+
+作为 alayout 的子组件，包含 alayout-cell 单元格。使用 flex 布局。
+
+行间距由父组件 alayout 的 gutter 控制。子单元格水平排列。
+
+### 示例
+
+```xml
+<alayout-row>
+    <alayout-cell>Content</alayout-cell>
+</alayout-row>
 ```
 
 ## alert
@@ -10959,57 +10959,6 @@ Defined in: [lib/command.ts:628](https://github.com/maiyun/clickgo/blob/master/d
 
 无返回值
 
-lib/command/functions/execute.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/command](../index.md) / execute
-
-# Function: execute()
-
-> **execute**(`current`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
-
-Defined in: [lib/command.ts:534](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L534)
-
-应用界面直接执行已注册的业务命令
-
-## Parameters
-
-### current
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-所属任务/Form
-
-### name
-
-`string`
-
-命令名称
-
-### args?
-
-`Record`\<`string`, [`TJson`](../type-aliases/TJson.md)\> = `{}`
-
-参数，默认空对象
-
-### options?
-
-取消信号
-
-#### signal?
-
-`AbortSignal`
-
-## Returns
-
-`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
-
-业务结果
-
 lib/command/functions/executeAgent.md
 ---
 
@@ -11060,6 +11009,57 @@ Defined in: [lib/command.ts:547](https://github.com/maiyun/clickgo/blob/master/d
 `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
 结构化结果；未公开或不存在的命令返回 not-found
+
+lib/command/functions/execute.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/command](../index.md) / execute
+
+# Function: execute()
+
+> **execute**(`current`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
+
+Defined in: [lib/command.ts:534](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L534)
+
+应用界面直接执行已注册的业务命令
+
+## Parameters
+
+### current
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+所属任务/Form
+
+### name
+
+`string`
+
+命令名称
+
+### args?
+
+`Record`\<`string`, [`TJson`](../type-aliases/TJson.md)\> = `{}`
+
+参数，默认空对象
+
+### options?
+
+取消信号
+
+#### signal?
+
+`AbortSignal`
+
+## Returns
+
+`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
+
+业务结果
 
 lib/command/functions/failure.md
 ---
@@ -13738,6 +13738,39 @@ Defined in: [lib/control.ts:1196](https://github.com/maiyun/clickgo/blob/master/
 
 > **token**: `string`
 
+lib/control/interfaces/ICheckChangedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ICheckChangedEvent
+
+# Interface: ICheckChangedEvent
+
+Defined in: [lib/control.ts:984](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L984)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:985](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L985)
+
+#### indeterminate
+
+> **indeterminate**: `boolean`
+
+#### name
+
+> **name**: `string`
+
+#### value
+
+> **value**: `boolean`
+
 lib/control/interfaces/ICheckChangeEvent.md
 ---
 
@@ -13804,39 +13837,6 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 #### Inherited from
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
-
-lib/control/interfaces/ICheckChangedEvent.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ICheckChangedEvent
-
-# Interface: ICheckChangedEvent
-
-Defined in: [lib/control.ts:984](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L984)
-
-## Properties
-
-### detail
-
-> **detail**: `object`
-
-Defined in: [lib/control.ts:985](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L985)
-
-#### indeterminate
-
-> **indeterminate**: `boolean`
-
-#### name
-
-> **name**: `string`
-
-#### value
-
-> **value**: `boolean`
 
 lib/control/interfaces/IChecklistAddEvent.md
 ---
@@ -14066,49 +14066,6 @@ Defined in: [lib/control.ts:1520](https://github.com/maiyun/clickgo/blob/master/
 
 颜色值
 
-lib/control/interfaces/IControl.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IControl
-
-# Interface: IControl
-
-Defined in: [lib/control.ts:953](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L953)
-
-控件对象
-
-## Properties
-
-### config
-
-> **config**: [`IControlConfig`](IControlConfig.md)
-
-Defined in: [lib/control.ts:956](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L956)
-
-控件对象配置文件
-
-***
-
-### files
-
-> **files**: `Record`\<`string`, `Blob` \| `string`\>
-
-Defined in: [lib/control.ts:958](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L958)
-
-所有已加载的文件内容
-
-***
-
-### type
-
-> **type**: `"control"`
-
-Defined in: [lib/control.ts:954](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L954)
-
 lib/control/interfaces/IControlConfig.md
 ---
 
@@ -14195,6 +14152,49 @@ Defined in: [lib/control.ts:937](https://github.com/maiyun/clickgo/blob/master/d
 > **version**: `string`
 
 Defined in: [lib/control.ts:938](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L938)
+
+lib/control/interfaces/IControl.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IControl
+
+# Interface: IControl
+
+Defined in: [lib/control.ts:953](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L953)
+
+控件对象
+
+## Properties
+
+### config
+
+> **config**: [`IControlConfig`](IControlConfig.md)
+
+Defined in: [lib/control.ts:956](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L956)
+
+控件对象配置文件
+
+***
+
+### files
+
+> **files**: `Record`\<`string`, `Blob` \| `string`\>
+
+Defined in: [lib/control.ts:958](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L958)
+
+所有已加载的文件内容
+
+***
+
+### type
+
+> **type**: `"control"`
+
+Defined in: [lib/control.ts:954](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L954)
 
 lib/control/interfaces/ICustomEvent.md
 ---
@@ -15031,6 +15031,31 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
 
+lib/control/interfaces/IGreatlistChangedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IGreatlistChangedEvent
+
+# Interface: IGreatlistChangedEvent
+
+Defined in: [lib/control.ts:1131](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1131)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:1132](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1132)
+
+#### value
+
+> **value**: `number`[]
+
 lib/control/interfaces/IGreatlistChangeEvent.md
 ---
 
@@ -15089,31 +15114,6 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 #### Inherited from
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
-
-lib/control/interfaces/IGreatlistChangedEvent.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IGreatlistChangedEvent
-
-# Interface: IGreatlistChangedEvent
-
-Defined in: [lib/control.ts:1131](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1131)
-
-## Properties
-
-### detail
-
-> **detail**: `object`
-
-Defined in: [lib/control.ts:1132](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1132)
-
-#### value
-
-> **value**: `number`[]
 
 lib/control/interfaces/IGreatlistItemclickedEvent.md
 ---
@@ -15303,6 +15303,31 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
 
+lib/control/interfaces/IGreatselectChangedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IGreatselectChangedEvent
+
+# Interface: IGreatselectChangedEvent
+
+Defined in: [lib/control.ts:1175](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1175)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:1176](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1176)
+
+#### value
+
+> **value**: `number`[]
+
 lib/control/interfaces/IGreatselectChangeEvent.md
 ---
 
@@ -15361,31 +15386,6 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 #### Inherited from
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
-
-lib/control/interfaces/IGreatselectChangedEvent.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IGreatselectChangedEvent
-
-# Interface: IGreatselectChangedEvent
-
-Defined in: [lib/control.ts:1175](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1175)
-
-## Properties
-
-### detail
-
-> **detail**: `object`
-
-Defined in: [lib/control.ts:1176](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1176)
-
-#### value
-
-> **value**: `number`[]
 
 lib/control/interfaces/IGreatselectRemoveEvent.md
 ---
@@ -15708,6 +15708,31 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
 
+lib/control/interfaces/IListChangedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IListChangedEvent
+
+# Interface: IListChangedEvent
+
+Defined in: [lib/control.ts:1422](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1422)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:1423](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1423)
+
+#### value
+
+> **value**: `string`[]
+
 lib/control/interfaces/IListChangeEvent.md
 ---
 
@@ -15766,31 +15791,6 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 #### Inherited from
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
-
-lib/control/interfaces/IListChangedEvent.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / IListChangedEvent
-
-# Interface: IListChangedEvent
-
-Defined in: [lib/control.ts:1422](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1422)
-
-## Properties
-
-### detail
-
-> **detail**: `object`
-
-Defined in: [lib/control.ts:1423](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1423)
-
-#### value
-
-> **value**: `string`[]
 
 lib/control/interfaces/IListItemclickedEvent.md
 ---
@@ -16707,6 +16707,35 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
 
+lib/control/interfaces/ISelectAddedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ISelectAddedEvent
+
+# Interface: ISelectAddedEvent
+
+Defined in: [lib/control.ts:1556](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1556)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:1557](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1557)
+
+#### index
+
+> **index**: `number`
+
+#### value
+
+> **value**: `string`
+
 lib/control/interfaces/ISelectAddEvent.md
 ---
 
@@ -16770,18 +16799,18 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
 
-lib/control/interfaces/ISelectAddedEvent.md
+lib/control/interfaces/ISelectChangedEvent.md
 ---
 
 [**Documents for clickgo**](../../../index.md)
 
 ***
 
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ISelectAddedEvent
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ISelectChangedEvent
 
-# Interface: ISelectAddedEvent
+# Interface: ISelectChangedEvent
 
-Defined in: [lib/control.ts:1556](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1556)
+Defined in: [lib/control.ts:1577](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1577)
 
 ## Properties
 
@@ -16789,15 +16818,15 @@ Defined in: [lib/control.ts:1556](https://github.com/maiyun/clickgo/blob/master/
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1557](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1557)
+Defined in: [lib/control.ts:1578](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1578)
 
-#### index
+#### before
 
-> **index**: `number`
+> **before**: `string`[]
 
 #### value
 
-> **value**: `string`
+> **value**: `string`[]
 
 lib/control/interfaces/ISelectChangeEvent.md
 ---
@@ -16857,35 +16886,6 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 #### Inherited from
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
-
-lib/control/interfaces/ISelectChangedEvent.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ISelectChangedEvent
-
-# Interface: ISelectChangedEvent
-
-Defined in: [lib/control.ts:1577](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1577)
-
-## Properties
-
-### detail
-
-> **detail**: `object`
-
-Defined in: [lib/control.ts:1578](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1578)
-
-#### before
-
-> **before**: `string`[]
-
-#### value
-
-> **value**: `string`[]
 
 lib/control/interfaces/ISelectItemclickedEvent.md
 ---
@@ -16961,6 +16961,39 @@ Defined in: [lib/control.ts:1592](https://github.com/maiyun/clickgo/blob/master/
 
 > **value**: `string`
 
+lib/control/interfaces/ISelectRemovedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ISelectRemovedEvent
+
+# Interface: ISelectRemovedEvent
+
+Defined in: [lib/control.ts:1563](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1563)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:1564](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1564)
+
+#### index
+
+> **index**: `number`
+
+#### mode
+
+> **mode**: `"backspace"` \| `"tag"` \| `"list"`
+
+#### value
+
+> **value**: `string`
+
 lib/control/interfaces/ISelectRemoveEvent.md
 ---
 
@@ -17027,39 +17060,6 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 #### Inherited from
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
-
-lib/control/interfaces/ISelectRemovedEvent.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ISelectRemovedEvent
-
-# Interface: ISelectRemovedEvent
-
-Defined in: [lib/control.ts:1563](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1563)
-
-## Properties
-
-### detail
-
-> **detail**: `object`
-
-Defined in: [lib/control.ts:1564](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1564)
-
-#### index
-
-> **index**: `number`
-
-#### mode
-
-> **mode**: `"backspace"` \| `"tag"` \| `"list"`
-
-#### value
-
-> **value**: `string`
 
 lib/control/interfaces/ISelectTagclickEvent.md
 ---
@@ -17241,6 +17241,31 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
 
+lib/control/interfaces/ITabChangedEvent.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ITabChangedEvent
+
+# Interface: ITabChangedEvent
+
+Defined in: [lib/control.ts:1631](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1631)
+
+## Properties
+
+### detail
+
+> **detail**: `object`
+
+Defined in: [lib/control.ts:1632](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1632)
+
+#### value
+
+> **value**: `string`
+
 lib/control/interfaces/ITabChangeEvent.md
 ---
 
@@ -17299,31 +17324,6 @@ Defined in: [lib/control.ts:971](https://github.com/maiyun/clickgo/blob/master/d
 #### Inherited from
 
 [`ICustomEvent`](ICustomEvent.md).[`preventDefault`](ICustomEvent.md#preventdefault)
-
-lib/control/interfaces/ITabChangedEvent.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/control](../index.md) / ITabChangedEvent
-
-# Interface: ITabChangedEvent
-
-Defined in: [lib/control.ts:1631](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1631)
-
-## Properties
-
-### detail
-
-> **detail**: `object`
-
-Defined in: [lib/control.ts:1632](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1632)
-
-#### value
-
-> **value**: `string`
 
 lib/control/interfaces/ITabCloseEvent.md
 ---
@@ -19275,59 +19275,6 @@ lib/core/index.md
 - [setBoot](functions/setBoot.md)
 - [trigger](functions/trigger.md)
 
-lib/core/interfaces/IApp.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IApp
-
-# Interface: IApp
-
-Defined in: [lib/core.ts:1452](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1452)
-
-应用包解包后对象
-
-## Properties
-
-### config
-
-> **config**: [`IAppConfig`](IAppConfig.md)
-
-Defined in: [lib/core.ts:1455](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1455)
-
-控件对象配置文件
-
-***
-
-### icon
-
-> **icon**: `string`
-
-Defined in: [lib/core.ts:1457](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1457)
-
-应用图标
-
-***
-
-### package
-
-> **package**: [`IAppPackage`](IAppPackage.md)
-
-Defined in: [lib/core.ts:1459](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1459)
-
-新 CGA 的按需解密包读取器
-
-***
-
-### type
-
-> **type**: `"app"`
-
-Defined in: [lib/core.ts:1453](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1453)
-
 lib/core/interfaces/IAppConfig.md
 ---
 
@@ -19474,6 +19421,98 @@ Defined in: [lib/core.ts:1496](https://github.com/maiyun/clickgo/blob/master/dis
 
 发行版本字符串
 
+lib/core/interfaces/IApp.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IApp
+
+# Interface: IApp
+
+Defined in: [lib/core.ts:1452](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1452)
+
+应用包解包后对象
+
+## Properties
+
+### config
+
+> **config**: [`IAppConfig`](IAppConfig.md)
+
+Defined in: [lib/core.ts:1455](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1455)
+
+控件对象配置文件
+
+***
+
+### icon
+
+> **icon**: `string`
+
+Defined in: [lib/core.ts:1457](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1457)
+
+应用图标
+
+***
+
+### package
+
+> **package**: [`IAppPackage`](IAppPackage.md)
+
+Defined in: [lib/core.ts:1459](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1459)
+
+新 CGA 的按需解密包读取器
+
+***
+
+### type
+
+> **type**: `"app"`
+
+Defined in: [lib/core.ts:1453](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1453)
+
+lib/core/interfaces/IAppPackageEntry.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IAppPackageEntry
+
+# Interface: IAppPackageEntry
+
+Defined in: [lib/core.ts:1463](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1463)
+
+CGA 包内项目
+
+## Properties
+
+### isDirectory
+
+> **isDirectory**: `boolean`
+
+Defined in: [lib/core.ts:1464](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1464)
+
+***
+
+### isFile
+
+> **isFile**: `boolean`
+
+Defined in: [lib/core.ts:1465](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1465)
+
+***
+
+### name
+
+> **name**: `string`
+
+Defined in: [lib/core.ts:1466](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1466)
+
 lib/core/interfaces/IAppPackage.md
 ---
 
@@ -19554,45 +19593,6 @@ Defined in: [lib/core.ts:1479](https://github.com/maiyun/clickgo/blob/master/dis
 #### Returns
 
 [`IAppPackageStats`](IAppPackageStats.md) \| `null`
-
-lib/core/interfaces/IAppPackageEntry.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IAppPackageEntry
-
-# Interface: IAppPackageEntry
-
-Defined in: [lib/core.ts:1463](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1463)
-
-CGA 包内项目
-
-## Properties
-
-### isDirectory
-
-> **isDirectory**: `boolean`
-
-Defined in: [lib/core.ts:1464](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1464)
-
-***
-
-### isFile
-
-> **isFile**: `boolean`
-
-Defined in: [lib/core.ts:1465](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1465)
-
-***
-
-### name
-
-> **name**: `string`
-
-Defined in: [lib/core.ts:1466](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1466)
 
 lib/core/interfaces/IAppPackageStats.md
 ---
@@ -19696,6 +19696,77 @@ Defined in: [lib/core.ts:1420](https://github.com/maiyun/clickgo/blob/master/dis
 
 Defined in: [lib/core.ts:1421](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1421)
 
+lib/core/interfaces/IConfigLauncherItem.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IConfigLauncherItem
+
+# Interface: IConfigLauncherItem
+
+Defined in: [lib/core.ts:1409](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1409)
+
+Launcher 的 item 对象
+
+## Properties
+
+### icon?
+
+> `optional` **icon?**: `string`
+
+Defined in: [lib/core.ts:1413](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1413)
+
+***
+
+### id?
+
+> `optional` **id?**: `string`
+
+Defined in: [lib/core.ts:1410](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1410)
+
+***
+
+### list?
+
+> `optional` **list?**: `object`[]
+
+Defined in: [lib/core.ts:1414](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1414)
+
+#### icon
+
+> **icon**: `string`
+
+#### id?
+
+> `optional` **id?**: `string`
+
+#### name
+
+> **name**: `string`
+
+#### path
+
+> **path**: `string`
+
+***
+
+### name
+
+> **name**: `string`
+
+Defined in: [lib/core.ts:1411](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1411)
+
+***
+
+### path?
+
+> `optional` **path?**: `string`
+
+Defined in: [lib/core.ts:1412](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1412)
+
 lib/core/interfaces/IConfig.md
 ---
 
@@ -19790,77 +19861,6 @@ Defined in: [lib/core.ts:1400](https://github.com/maiyun/clickgo/blob/master/dis
 > **task.position**: `"left"` \| `"right"` \| `"top"` \| `"bottom"`
 
 Defined in: [lib/core.ts:1397](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1397)
-
-lib/core/interfaces/IConfigLauncherItem.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IConfigLauncherItem
-
-# Interface: IConfigLauncherItem
-
-Defined in: [lib/core.ts:1409](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1409)
-
-Launcher 的 item 对象
-
-## Properties
-
-### icon?
-
-> `optional` **icon?**: `string`
-
-Defined in: [lib/core.ts:1413](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1413)
-
-***
-
-### id?
-
-> `optional` **id?**: `string`
-
-Defined in: [lib/core.ts:1410](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1410)
-
-***
-
-### list?
-
-> `optional` **list?**: `object`[]
-
-Defined in: [lib/core.ts:1414](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1414)
-
-#### icon
-
-> **icon**: `string`
-
-#### id?
-
-> `optional` **id?**: `string`
-
-#### name
-
-> **name**: `string`
-
-#### path
-
-> **path**: `string`
-
-***
-
-### name
-
-> **name**: `string`
-
-Defined in: [lib/core.ts:1411](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1411)
-
-***
-
-### path?
-
-> `optional` **path?**: `string`
-
-Defined in: [lib/core.ts:1412](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1412)
 
 lib/core/interfaces/ICoreFetchAppOptions.md
 ---
@@ -20309,6 +20309,115 @@ Defined in: [lib/core.ts:1550](https://github.com/maiyun/clickgo/blob/master/dis
 
 Defined in: [lib/core.ts:1551](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1551)
 
+lib/core/interfaces/IVueConfig.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IVueConfig
+
+# Interface: IVueConfig
+
+Defined in: [lib/core.ts:1572](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1572)
+
+Vue 配置
+
+## Properties
+
+### globalProperties
+
+> **globalProperties**: `Record`\<`string`, `any`\>
+
+Defined in: [lib/core.ts:1574](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1574)
+
+***
+
+### optionMergeStrategies
+
+> **optionMergeStrategies**: `Record`\<`string`, [`IVueOptionMergeFunction`](../type-aliases/IVueOptionMergeFunction.md)\>
+
+Defined in: [lib/core.ts:1576](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1576)
+
+***
+
+### performance
+
+> **performance**: `boolean`
+
+Defined in: [lib/core.ts:1577](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1577)
+
+## Methods
+
+### errorHandler()?
+
+> `optional` **errorHandler**(`err`, `instance`, `info`): `void`
+
+Defined in: [lib/core.ts:1573](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1573)
+
+#### Parameters
+
+##### err
+
+`unknown`
+
+##### instance
+
+[`IVue`](IVue.md) \| `null`
+
+##### info
+
+`string`
+
+#### Returns
+
+`void`
+
+***
+
+### isCustomElement()
+
+> **isCustomElement**(`tag`): `boolean`
+
+Defined in: [lib/core.ts:1575](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1575)
+
+#### Parameters
+
+##### tag
+
+`string`
+
+#### Returns
+
+`boolean`
+
+***
+
+### warnHandler()?
+
+> `optional` **warnHandler**(`msg`, `instance`, `trace`): `void`
+
+Defined in: [lib/core.ts:1578](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1578)
+
+#### Parameters
+
+##### msg
+
+`string`
+
+##### instance
+
+[`IVue`](IVue.md) \| `null`
+
+##### trace
+
+`string`
+
+#### Returns
+
+`void`
+
 lib/core/interfaces/IVue.md
 ---
 
@@ -20485,115 +20594,6 @@ Defined in: [lib/core.ts:1526](https://github.com/maiyun/clickgo/blob/master/dis
 #### Returns
 
 `Promise`\<`void`\>
-
-lib/core/interfaces/IVueConfig.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/core](../index.md) / IVueConfig
-
-# Interface: IVueConfig
-
-Defined in: [lib/core.ts:1572](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1572)
-
-Vue 配置
-
-## Properties
-
-### globalProperties
-
-> **globalProperties**: `Record`\<`string`, `any`\>
-
-Defined in: [lib/core.ts:1574](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1574)
-
-***
-
-### optionMergeStrategies
-
-> **optionMergeStrategies**: `Record`\<`string`, [`IVueOptionMergeFunction`](../type-aliases/IVueOptionMergeFunction.md)\>
-
-Defined in: [lib/core.ts:1576](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1576)
-
-***
-
-### performance
-
-> **performance**: `boolean`
-
-Defined in: [lib/core.ts:1577](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1577)
-
-## Methods
-
-### errorHandler()?
-
-> `optional` **errorHandler**(`err`, `instance`, `info`): `void`
-
-Defined in: [lib/core.ts:1573](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1573)
-
-#### Parameters
-
-##### err
-
-`unknown`
-
-##### instance
-
-[`IVue`](IVue.md) \| `null`
-
-##### info
-
-`string`
-
-#### Returns
-
-`void`
-
-***
-
-### isCustomElement()
-
-> **isCustomElement**(`tag`): `boolean`
-
-Defined in: [lib/core.ts:1575](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1575)
-
-#### Parameters
-
-##### tag
-
-`string`
-
-#### Returns
-
-`boolean`
-
-***
-
-### warnHandler()?
-
-> `optional` **warnHandler**(`msg`, `instance`, `trace`): `void`
-
-Defined in: [lib/core.ts:1578](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1578)
-
-#### Parameters
-
-##### msg
-
-`string`
-
-##### instance
-
-[`IVue`](IVue.md) \| `null`
-
-##### trace
-
-`string`
-
-#### Returns
-
-`void`
 
 lib/core/interfaces/IVueObject.md
 ---
@@ -20891,7 +20891,7 @@ lib/dom/functions/clearWatchProperty.md
 
 > **clearWatchProperty**(`formId`, `panelId?`): `void`
 
-Defined in: [lib/dom.ts:1466](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1466)
+Defined in: [lib/dom.ts:1472](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1472)
 
 清除某个窗体的所有 watch property 监视，虽然窗体结束后相关监视永远不会再被执行，但是会形成冗余
 
@@ -20955,7 +20955,7 @@ lib/dom/functions/clearWatchStyle.md
 
 > **clearWatchStyle**(`formId`, `panelId?`): `void`
 
-Defined in: [lib/dom.ts:1258](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1258)
+Defined in: [lib/dom.ts:1264](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1264)
 
 清除某个窗体的所有 watch style 监视
 
@@ -20992,7 +20992,7 @@ lib/dom/functions/createElement.md
 
 > **createElement**\<`T`\>(`tagName`): `HTMLElementTagNameMap`\[`T`\]
 
-Defined in: [lib/dom.ts:1881](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1881)
+Defined in: [lib/dom.ts:1887](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1887)
 
 创建 element
 
@@ -21056,7 +21056,7 @@ lib/dom/functions/exitFullscreen.md
 
 > **exitFullscreen**(): `Promise`\<`boolean`\>
 
-Defined in: [lib/dom.ts:1862](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1862)
+Defined in: [lib/dom.ts:1868](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1868)
 
 退出全屏
 
@@ -21077,7 +21077,7 @@ lib/dom/functions/findParentByClass.md
 
 > **findParentByClass**(`el`, `name`): `HTMLElement` \| `null`
 
-Defined in: [lib/dom.ts:1746](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1746)
+Defined in: [lib/dom.ts:1752](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1752)
 
 通过 class 名查找上层所有标签是否存在
 
@@ -21112,7 +21112,7 @@ lib/dom/functions/findParentByData.md
 
 > **findParentByData**(`el`, `name`, `value?`): `HTMLElement` \| `null`
 
-Defined in: [lib/dom.ts:1716](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1716)
+Defined in: [lib/dom.ts:1722](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1722)
 
 通过 data 名查找上层所有标签是否存在
 
@@ -21153,7 +21153,7 @@ lib/dom/functions/findParentByTag.md
 
 > **findParentByTag**(`el`, `name`): `HTMLElement` \| `null`
 
-Defined in: [lib/dom.ts:1768](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1768)
+Defined in: [lib/dom.ts:1774](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1774)
 
 通过 tagname 查找上层所有标签是否存在
 
@@ -21188,7 +21188,7 @@ lib/dom/functions/fullscreen.md
 
 > **fullscreen**(): `Promise`\<`boolean`\>
 
-Defined in: [lib/dom.ts:1844](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1844)
+Defined in: [lib/dom.ts:1850](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1850)
 
 全屏
 
@@ -21209,7 +21209,7 @@ lib/dom/functions/getElementRPosition.md
 
 > **getElementRPosition**(`el`, `wrap`): `object`
 
-Defined in: [lib/dom.ts:1886](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1886)
+Defined in: [lib/dom.ts:1892](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1892)
 
 获取元素的相对位置信息
 
@@ -21256,7 +21256,7 @@ lib/dom/functions/getRectPoint.md
 
 > **getRectPoint**(`el`, `wrap`, `pos`): `object`
 
-Defined in: [lib/dom.ts:1904](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1904)
+Defined in: [lib/dom.ts:1910](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1910)
 
 根据角位置获取八角坐标
 
@@ -21425,7 +21425,7 @@ lib/dom/functions/getWatchInfo.md
 
 > **getWatchInfo**(): [`IGetWatchInfoResult`](../interfaces/IGetWatchInfoResult.md)
 
-Defined in: [lib/dom.ts:1492](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1492)
+Defined in: [lib/dom.ts:1498](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1498)
 
 ## Returns
 
@@ -21460,35 +21460,6 @@ Defined in: [lib/dom.ts:597](https://github.com/maiyun/clickgo/blob/master/dist/
 
 `number`
 
-lib/dom/functions/inPage.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/dom](../index.md) / inPage
-
-# Function: inPage()
-
-> **inPage**(`el`): `boolean`
-
-Defined in: [lib/dom.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L77)
-
-判断一个元素是否还存在于页面当中
-
-## Parameters
-
-### el
-
-`HTMLElement`
-
-要判断的元素
-
-## Returns
-
-`boolean`
-
 lib/dom/functions/index.md
 ---
 
@@ -21502,7 +21473,7 @@ lib/dom/functions/index.md
 
 > **index**(`el`): `number`
 
-Defined in: [lib/dom.ts:1790](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1790)
+Defined in: [lib/dom.ts:1796](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1796)
 
 判断一个元素是当前同级的第几位
 
@@ -21531,7 +21502,7 @@ lib/dom/functions/init.md
 
 > **init**(): `void`
 
-Defined in: [lib/dom.ts:2199](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2199)
+Defined in: [lib/dom.ts:2205](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2205)
 
 ## Returns
 
@@ -21565,6 +21536,35 @@ Defined in: [lib/dom.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/l
 ## Returns
 
 `void`
+
+lib/dom/functions/inPage.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/dom](../index.md) / inPage
+
+# Function: inPage()
+
+> **inPage**(`el`): `boolean`
+
+Defined in: [lib/dom.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L77)
+
+判断一个元素是否还存在于页面当中
+
+## Parameters
+
+### el
+
+`HTMLElement`
+
+要判断的元素
+
+## Returns
+
+`boolean`
 
 lib/dom/functions/isRtl.md
 ---
@@ -21668,7 +21668,7 @@ lib/dom/functions/isWatchProperty.md
 
 > **isWatchProperty**(`el`): `boolean`
 
-Defined in: [lib/dom.ts:1457](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1457)
+Defined in: [lib/dom.ts:1463](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1463)
 
 检测一个标签是否正在被 watchProperty
 
@@ -21726,7 +21726,7 @@ lib/dom/functions/isWatchStyle.md
 
 > **isWatchStyle**(`el`): `boolean`
 
-Defined in: [lib/dom.ts:1248](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1248)
+Defined in: [lib/dom.ts:1254](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1254)
 
 检测一个标签是否正在被 watchStyle
 
@@ -22001,37 +22001,6 @@ Defined in: [lib/dom.ts:153](https://github.com/maiyun/clickgo/blob/master/dist/
 
 `void`
 
-lib/dom/functions/siblings.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/dom](../index.md) / siblings
-
-# Function: siblings()
-
-> **siblings**(`el`): `HTMLElement`[]
-
-Defined in: [lib/dom.ts:1808](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1808)
-
-查找指定 el 的同级所有元素
-
-## Parameters
-
-### el
-
-`HTMLElement`
-
-基准
-
-## Returns
-
-`HTMLElement`[]
-
-HTMLElement[]
-
 lib/dom/functions/siblingsData.md
 ---
 
@@ -22045,7 +22014,7 @@ lib/dom/functions/siblingsData.md
 
 > **siblingsData**(`el`, `name`): `HTMLElement`[]
 
-Defined in: [lib/dom.ts:1829](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1829)
+Defined in: [lib/dom.ts:1835](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1835)
 
 查找指定 el 的同级的存在 data 的元素
 
@@ -22062,6 +22031,37 @@ Defined in: [lib/dom.ts:1829](https://github.com/maiyun/clickgo/blob/master/dist
 `string`
 
 data 名，不含 data-
+
+## Returns
+
+`HTMLElement`[]
+
+HTMLElement[]
+
+lib/dom/functions/siblings.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/dom](../index.md) / siblings
+
+# Function: siblings()
+
+> **siblings**(`el`): `HTMLElement`[]
+
+Defined in: [lib/dom.ts:1814](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1814)
+
+查找指定 el 的同级所有元素
+
+## Parameters
+
+### el
+
+`HTMLElement`
+
+基准
 
 ## Returns
 
@@ -22216,7 +22216,7 @@ lib/dom/functions/unwatchStyle.md
 
 > **unwatchStyle**(`el`, `name?`, `cb?`): `void`
 
-Defined in: [lib/dom.ts:1219](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1219)
+Defined in: [lib/dom.ts:1225](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1225)
 
 取消元素的样式监听，可只移除指定属性或指定回调
 
@@ -22236,7 +22236,7 @@ Defined in: [lib/dom.ts:1219](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### cb?
 
-`TWatchStyleCallback`
+[`TWatchStyleCallback`](../type-aliases/TWatchStyleCallback.md)
 
 只移除此回调，留空则移除匹配属性的全部回调
 
@@ -22351,7 +22351,7 @@ lib/dom/functions/watchProperty.md
 
 > **watchProperty**(`el`, `name`, `cb`, `immediate?`): `void`
 
-Defined in: [lib/dom.ts:1388](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1388)
+Defined in: [lib/dom.ts:1394](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1394)
 
 监听一个对象的属性变化
 
@@ -22492,7 +22492,7 @@ lib/dom/functions/watchStyle.md
 
 > **watchStyle**(`el`, `name`, `cb`, `immediate?`): `void`
 
-Defined in: [lib/dom.ts:1148](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1148)
+Defined in: [lib/dom.ts:1154](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1154)
 
 监听一个标签的计算后样式的变化
 
@@ -22512,7 +22512,7 @@ Defined in: [lib/dom.ts:1148](https://github.com/maiyun/clickgo/blob/master/dist
 
 ### cb
 
-`TWatchStyleCallback`
+[`TWatchStyleCallback`](../type-aliases/TWatchStyleCallback.md)
 
 变更回调
 
@@ -22551,6 +22551,7 @@ lib/dom/index.md
 
 - [TDomBorder](type-aliases/TDomBorder.md)
 - [TDomBorderCustom](type-aliases/TDomBorderCustom.md)
+- [TWatchStyleCallback](type-aliases/TWatchStyleCallback.md)
 
 ## Variables
 
@@ -22623,7 +22624,7 @@ lib/dom/interfaces/IDomSize.md
 
 # Interface: IDomSize
 
-Defined in: [lib/dom.ts:2289](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2289)
+Defined in: [lib/dom.ts:2295](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2295)
 
 Element 的大小
 
@@ -22633,7 +22634,7 @@ Element 的大小
 
 > **border**: `object`
 
-Defined in: [lib/dom.ts:2302](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2302)
+Defined in: [lib/dom.ts:2308](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2308)
 
 #### bottom
 
@@ -22657,7 +22658,7 @@ Defined in: [lib/dom.ts:2302](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **bottom**: `number`
 
-Defined in: [lib/dom.ts:2292](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2292)
+Defined in: [lib/dom.ts:2298](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2298)
 
 ***
 
@@ -22665,7 +22666,7 @@ Defined in: [lib/dom.ts:2292](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **clientHeight**: `number`
 
-Defined in: [lib/dom.ts:2308](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2308)
+Defined in: [lib/dom.ts:2314](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2314)
 
 ***
 
@@ -22673,7 +22674,7 @@ Defined in: [lib/dom.ts:2308](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **clientWidth**: `number`
 
-Defined in: [lib/dom.ts:2309](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2309)
+Defined in: [lib/dom.ts:2315](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2315)
 
 ***
 
@@ -22681,7 +22682,7 @@ Defined in: [lib/dom.ts:2309](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **height**: `number`
 
-Defined in: [lib/dom.ts:2295](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2295)
+Defined in: [lib/dom.ts:2301](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2301)
 
 ***
 
@@ -22689,7 +22690,7 @@ Defined in: [lib/dom.ts:2295](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **innerHeight**: `number`
 
-Defined in: [lib/dom.ts:2311](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2311)
+Defined in: [lib/dom.ts:2317](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2317)
 
 ***
 
@@ -22697,7 +22698,7 @@ Defined in: [lib/dom.ts:2311](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **innerWidth**: `number`
 
-Defined in: [lib/dom.ts:2310](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2310)
+Defined in: [lib/dom.ts:2316](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2316)
 
 ***
 
@@ -22705,7 +22706,7 @@ Defined in: [lib/dom.ts:2310](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **left**: `number`
 
-Defined in: [lib/dom.ts:2293](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2293)
+Defined in: [lib/dom.ts:2299](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2299)
 
 ***
 
@@ -22713,7 +22714,7 @@ Defined in: [lib/dom.ts:2293](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **padding**: `object`
 
-Defined in: [lib/dom.ts:2296](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2296)
+Defined in: [lib/dom.ts:2302](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2302)
 
 #### bottom
 
@@ -22737,7 +22738,7 @@ Defined in: [lib/dom.ts:2296](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **right**: `number`
 
-Defined in: [lib/dom.ts:2291](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2291)
+Defined in: [lib/dom.ts:2297](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2297)
 
 ***
 
@@ -22745,7 +22746,7 @@ Defined in: [lib/dom.ts:2291](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **scrollHeight**: `number`
 
-Defined in: [lib/dom.ts:2313](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2313)
+Defined in: [lib/dom.ts:2319](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2319)
 
 ***
 
@@ -22753,7 +22754,7 @@ Defined in: [lib/dom.ts:2313](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **scrollWidth**: `number`
 
-Defined in: [lib/dom.ts:2312](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2312)
+Defined in: [lib/dom.ts:2318](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2318)
 
 ***
 
@@ -22761,7 +22762,7 @@ Defined in: [lib/dom.ts:2312](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **top**: `number`
 
-Defined in: [lib/dom.ts:2290](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2290)
+Defined in: [lib/dom.ts:2296](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2296)
 
 ***
 
@@ -22769,7 +22770,7 @@ Defined in: [lib/dom.ts:2290](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **width**: `number`
 
-Defined in: [lib/dom.ts:2294](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2294)
+Defined in: [lib/dom.ts:2300](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2300)
 
 lib/dom/interfaces/IGetWatchInfoResult.md
 ---
@@ -22782,7 +22783,7 @@ lib/dom/interfaces/IGetWatchInfoResult.md
 
 # Interface: IGetWatchInfoResult
 
-Defined in: [lib/dom.ts:2347](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2347)
+Defined in: [lib/dom.ts:2353](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2353)
 
 获取当前正在监视中的 property、style 和 position 的元素信息
 
@@ -22792,7 +22793,7 @@ Defined in: [lib/dom.ts:2347](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **default**: `Record`\<`string`, \{ `position`: \{ `count`: `number`; \}; `property`: \{ `count`: `number`; `list`: `string`[]; \}; `style`: \{ `count`: `number`; `list`: `string`[]; \}; \}\>
 
-Defined in: [lib/dom.ts:2349](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2349)
+Defined in: [lib/dom.ts:2355](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2355)
 
 ***
 
@@ -22800,7 +22801,7 @@ Defined in: [lib/dom.ts:2349](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **formId**: `string`
 
-Defined in: [lib/dom.ts:2348](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2348)
+Defined in: [lib/dom.ts:2354](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2354)
 
 ***
 
@@ -22808,7 +22809,7 @@ Defined in: [lib/dom.ts:2348](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **panels**: `Record`\<`string`, `Record`\<`string`, \{ `position`: \{ `count`: `number`; \}; `property`: \{ `count`: `number`; `list`: `string`[]; \}; `style`: \{ `count`: `number`; `list`: `string`[]; \}; \}\>\>
 
-Defined in: [lib/dom.ts:2362](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2362)
+Defined in: [lib/dom.ts:2368](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2368)
 
 lib/dom/interfaces/IWatchItem.md
 ---
@@ -22821,7 +22822,7 @@ lib/dom/interfaces/IWatchItem.md
 
 # Interface: IWatchItem
 
-Defined in: [lib/dom.ts:2340](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2340)
+Defined in: [lib/dom.ts:2346](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2346)
 
 监视变化中的元素
 
@@ -22831,7 +22832,7 @@ Defined in: [lib/dom.ts:2340](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **el**: `HTMLElement`
 
-Defined in: [lib/dom.ts:2341](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2341)
+Defined in: [lib/dom.ts:2347](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2347)
 
 ***
 
@@ -22839,7 +22840,7 @@ Defined in: [lib/dom.ts:2341](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **mo**: `MutationObserver`
 
-Defined in: [lib/dom.ts:2342](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2342)
+Defined in: [lib/dom.ts:2348](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2348)
 
 ***
 
@@ -22847,7 +22848,7 @@ Defined in: [lib/dom.ts:2342](https://github.com/maiyun/clickgo/blob/master/dist
 
 > `optional` **taskId?**: `string`
 
-Defined in: [lib/dom.ts:2343](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2343)
+Defined in: [lib/dom.ts:2349](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2349)
 
 lib/dom/interfaces/IWatchPositionItem.md
 ---
@@ -22860,7 +22861,7 @@ lib/dom/interfaces/IWatchPositionItem.md
 
 # Interface: IWatchPositionItem
 
-Defined in: [lib/dom.ts:2317](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2317)
+Defined in: [lib/dom.ts:2323](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2323)
 
 监视位置中的元素
 
@@ -22870,7 +22871,7 @@ Defined in: [lib/dom.ts:2317](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **el**: `HTMLElement`
 
-Defined in: [lib/dom.ts:2318](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2318)
+Defined in: [lib/dom.ts:2324](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2324)
 
 ***
 
@@ -22878,7 +22879,7 @@ Defined in: [lib/dom.ts:2318](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **handler**: (`state`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/dom.ts:2320](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2320)
+Defined in: [lib/dom.ts:2326](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2326)
 
 #### Parameters
 
@@ -22902,7 +22903,7 @@ Defined in: [lib/dom.ts:2320](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **rect**: `DOMRect`
 
-Defined in: [lib/dom.ts:2319](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2319)
+Defined in: [lib/dom.ts:2325](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2325)
 
 lib/dom/interfaces/IWatchSizeItem.md
 ---
@@ -22915,7 +22916,7 @@ lib/dom/interfaces/IWatchSizeItem.md
 
 # Interface: IWatchSizeItem
 
-Defined in: [lib/dom.ts:2327](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2327)
+Defined in: [lib/dom.ts:2333](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2333)
 
 监视大小中的元素
 
@@ -22925,7 +22926,7 @@ Defined in: [lib/dom.ts:2327](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **el**: `HTMLElement`
 
-Defined in: [lib/dom.ts:2328](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2328)
+Defined in: [lib/dom.ts:2334](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2334)
 
 ***
 
@@ -22933,7 +22934,7 @@ Defined in: [lib/dom.ts:2328](https://github.com/maiyun/clickgo/blob/master/dist
 
 > `optional` **handler?**: `object`
 
-Defined in: [lib/dom.ts:2329](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2329)
+Defined in: [lib/dom.ts:2335](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2335)
 
 #### handler
 
@@ -22953,7 +22954,7 @@ Defined in: [lib/dom.ts:2329](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **handlers**: `object`[]
 
-Defined in: [lib/dom.ts:2333](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2333)
+Defined in: [lib/dom.ts:2339](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2339)
 
 #### handler
 
@@ -22966,23 +22967,6 @@ Defined in: [lib/dom.ts:2333](https://github.com/maiyun/clickgo/blob/master/dist
 #### taskId
 
 > **taskId**: `string`
-
-lib/dom/type-aliases/TDomBorder.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/dom](../index.md) / TDomBorder
-
-# Type Alias: TDomBorder
-
-> **TDomBorder** = `"lt"` \| `"t"` \| `"tr"` \| `"r"` \| `"rb"` \| `"b"` \| `"bl"` \| `"l"` \| `""`
-
-Defined in: [lib/dom.ts:2284](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2284)
-
-方向类型，从左上开始
 
 lib/dom/type-aliases/TDomBorderCustom.md
 ---
@@ -22997,7 +22981,67 @@ lib/dom/type-aliases/TDomBorderCustom.md
 
 > **TDomBorderCustom** = [`TDomBorder`](TDomBorder.md) \| \{ `height?`: `number`; `left`: `number`; `top?`: `number`; `width`: `number`; \}
 
-Defined in: [lib/dom.ts:2286](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2286)
+Defined in: [lib/dom.ts:2292](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2292)
+
+lib/dom/type-aliases/TDomBorder.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/dom](../index.md) / TDomBorder
+
+# Type Alias: TDomBorder
+
+> **TDomBorder** = `"lt"` \| `"t"` \| `"tr"` \| `"r"` \| `"rb"` \| `"b"` \| `"bl"` \| `"l"` \| `""`
+
+Defined in: [lib/dom.ts:2290](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2290)
+
+方向类型，从左上开始
+
+lib/dom/type-aliases/TWatchStyleCallback.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/dom](../index.md) / TWatchStyleCallback
+
+# Type Alias: TWatchStyleCallback
+
+> **TWatchStyleCallback** = (`name`, `value`, `old`) => `void` \| `Promise`\<`void`\>
+
+Defined in: [lib/dom.ts:1085](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1085)
+
+样式变化通知回调
+
+## Parameters
+
+### name
+
+`string`
+
+CSS 属性名
+
+### value
+
+`string`
+
+当前计算样式值
+
+### old
+
+`string`
+
+上次记录的计算样式值
+
+## Returns
+
+`void` \| `Promise`\<`void`\>
+
+无返回值，可异步完成
 
 lib/dom/variables/dpi.md
 ---
@@ -23044,7 +23088,7 @@ lib/dom/variables/is.md
 
 > **is**: `object`
 
-Defined in: [lib/dom.ts:1695](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1695)
+Defined in: [lib/dom.ts:1701](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1701)
 
 相关状态
 
@@ -23103,7 +23147,7 @@ lib/dom/variables/mic.md
 
 > `const` **mic**: `object`
 
-Defined in: [lib/dom.ts:2065](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2065)
+Defined in: [lib/dom.ts:2071](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2071)
 
 麦克风通过 WebSocket 对讲
 
@@ -26987,6 +27031,27 @@ Defined in: [lib/form.ts:4615](https://github.com/maiyun/clickgo/blob/master/dis
 
 验证是否通过
 
+lib/form/functions/changeFocusMaxZIndex.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / changeFocusMaxZIndex
+
+# Function: changeFocusMaxZIndex()
+
+> **changeFocusMaxZIndex**(): `Promise`\<`void`\>
+
+Defined in: [lib/form.ts:2597](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2597)
+
+让最大的 z index 窗体获取焦点（不含 top 和最小化的）
+
+## Returns
+
+`Promise`\<`void`\>
+
 lib/form/functions/changeFocus.md
 ---
 
@@ -27011,27 +27076,6 @@ Defined in: [lib/form.ts:2442](https://github.com/maiyun/clickgo/blob/master/dis
 `string` = `''`
 
 变更后的 form id
-
-## Returns
-
-`Promise`\<`void`\>
-
-lib/form/functions/changeFocusMaxZIndex.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / changeFocusMaxZIndex
-
-# Function: changeFocusMaxZIndex()
-
-> **changeFocusMaxZIndex**(): `Promise`\<`void`\>
-
-Defined in: [lib/form.ts:2597](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2597)
-
-让最大的 z index 窗体获取焦点（不含 top 和最小化的）
 
 ## Returns
 
@@ -27328,35 +27372,6 @@ Defined in: [lib/form.ts:4783](https://github.com/maiyun/clickgo/blob/master/dis
 
 `Promise`\<`void`\>
 
-lib/form/functions/get.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / get
-
-# Function: get()
-
-> **get**(`formId`): [`IFormInfo`](../interfaces/IFormInfo.md) \| `null`
-
-Defined in: [lib/form.ts:2226](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2226)
-
-获取窗体信息
-
-## Parameters
-
-### formId
-
-`string`
-
-窗体 id
-
-## Returns
-
-[`IFormInfo`](../interfaces/IFormInfo.md) \| `null`
-
 lib/form/functions/getActivePanel.md
 ---
 
@@ -27527,6 +27542,35 @@ Defined in: [lib/form.ts:2545](https://github.com/maiyun/clickgo/blob/master/dis
 
 `Promise`\<`string` \| `null`\>
 
+lib/form/functions/get.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / get
+
+# Function: get()
+
+> **get**(`formId`): [`IFormInfo`](../interfaces/IFormInfo.md) \| `null`
+
+Defined in: [lib/form.ts:2226](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2226)
+
+获取窗体信息
+
+## Parameters
+
+### formId
+
+`string`
+
+窗体 id
+
+## Returns
+
+[`IFormInfo`](../interfaces/IFormInfo.md) \| `null`
+
 lib/form/functions/getRectByBorder.md
 ---
 
@@ -27609,6 +27653,33 @@ Defined in: [lib/form.ts:2209](https://github.com/maiyun/clickgo/blob/master/dis
 
 `string`
 
+lib/form/functions/hashBack.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / hashBack
+
+# Function: hashBack()
+
+> **hashBack**(`formId`): `Promise`\<`boolean`\>
+
+Defined in: [lib/form.ts:2421](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2421)
+
+将窗体的 hash 退回上一个
+
+## Parameters
+
+### formId
+
+`string`
+
+## Returns
+
+`Promise`\<`boolean`\>
+
 lib/form/functions/hash.md
 ---
 
@@ -27643,33 +27714,6 @@ Defined in: [lib/form.ts:2382](https://github.com/maiyun/clickgo/blob/master/dis
 ## Returns
 
 `boolean`
-
-lib/form/functions/hashBack.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / hashBack
-
-# Function: hashBack()
-
-> **hashBack**(`formId`): `Promise`\<`boolean`\>
-
-Defined in: [lib/form.ts:2421](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2421)
-
-将窗体的 hash 退回上一个
-
-## Parameters
-
-### formId
-
-`string`
-
-## Returns
-
-`Promise`\<`boolean`\>
 
 lib/form/functions/hideKeyboard.md
 ---
@@ -27956,37 +28000,6 @@ Defined in: [lib/form.ts:2723](https://github.com/maiyun/clickgo/blob/master/dis
 
 无返回值
 
-lib/form/functions/notify.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / notify
-
-# Function: notify()
-
-> **notify**(`opt`): `number`
-
-Defined in: [lib/form.ts:2871](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2871)
-
-弹出右下角信息框
-
-## Parameters
-
-### opt
-
-[`INotifyOptions`](../interfaces/INotifyOptions.md)
-
-timeout 默认 5 秒，最大 10 分钟
-
-## Returns
-
-`number`
-
-notify id，一定大于 0
-
 lib/form/functions/notifyContent.md
 ---
 
@@ -28021,6 +28034,37 @@ notify id
 ## Returns
 
 `void`
+
+lib/form/functions/notify.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / notify
+
+# Function: notify()
+
+> **notify**(`opt`): `number`
+
+Defined in: [lib/form.ts:2871](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2871)
+
+弹出右下角信息框
+
+## Parameters
+
+### opt
+
+[`INotifyOptions`](../interfaces/INotifyOptions.md)
+
+timeout 默认 5 秒，最大 10 分钟
+
+## Returns
+
+`number`
+
+notify id，一定大于 0
 
 lib/form/functions/notifyProgress.md
 ---
@@ -28165,35 +28209,6 @@ Defined in: [lib/form.ts:2851](https://github.com/maiyun/clickgo/blob/master/dis
 
 无返回值
 
-lib/form/functions/remove.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / remove
-
-# Function: remove()
-
-> **remove**(`formId`): `boolean`
-
-Defined in: [lib/form.ts:3527](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3527)
-
-移除一个 form（关闭窗口）
-
-## Parameters
-
-### formId
-
-`string`
-
-要移除的 form id
-
-## Returns
-
-`boolean`
-
 lib/form/functions/removeActivePanel.md
 ---
 
@@ -28263,6 +28278,35 @@ Defined in: [lib/form.ts:3049](https://github.com/maiyun/clickgo/blob/master/dis
 ## Returns
 
 `void`
+
+lib/form/functions/remove.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / remove
+
+# Function: remove()
+
+> **remove**(`formId`): `boolean`
+
+Defined in: [lib/form.ts:3527](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3527)
+
+移除一个 form（关闭窗口）
+
+## Parameters
+
+### formId
+
+`string`
+
+要移除的 form id
+
+## Returns
+
+`boolean`
 
 lib/form/functions/removePanel.md
 ---
@@ -28817,55 +28861,6 @@ Defined in: [lib/form.ts:4877](https://github.com/maiyun/clickgo/blob/master/dis
 
 仅 nav 联动时有效，代表本次 show 的时候 qs 是否发生了变化
 
-lib/form/interfaces/IForm.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / IForm
-
-# Interface: IForm
-
-Defined in: [lib/form.ts:4906](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4906)
-
-运行时 task 中的 form 对象
-
-## Properties
-
-### closed
-
-> **closed**: `boolean`
-
-Defined in: [lib/form.ts:4911](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4911)
-
-是否已经执行过了关闭窗体方法，此处加判断为了防止重复执行 close 导致的 bug
-
-***
-
-### id
-
-> **id**: `string`
-
-Defined in: [lib/form.ts:4907](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4907)
-
-***
-
-### vapp
-
-> **vapp**: [`IVApp`](../../core/interfaces/IVApp.md)
-
-Defined in: [lib/form.ts:4908](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4908)
-
-***
-
-### vroot
-
-> **vroot**: [`IVue`](../../core/interfaces/IVue.md)
-
-Defined in: [lib/form.ts:4909](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4909)
-
 lib/form/interfaces/IFormCaptchaOptions.md
 ---
 
@@ -29268,6 +29263,55 @@ Defined in: [lib/form.ts:4916](https://github.com/maiyun/clickgo/blob/master/dis
 > **title**: `string`
 
 Defined in: [lib/form.ts:4917](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4917)
+
+lib/form/interfaces/IForm.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/form](../index.md) / IForm
+
+# Interface: IForm
+
+Defined in: [lib/form.ts:4906](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4906)
+
+运行时 task 中的 form 对象
+
+## Properties
+
+### closed
+
+> **closed**: `boolean`
+
+Defined in: [lib/form.ts:4911](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4911)
+
+是否已经执行过了关闭窗体方法，此处加判断为了防止重复执行 close 导致的 bug
+
+***
+
+### id
+
+> **id**: `string`
+
+Defined in: [lib/form.ts:4907](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4907)
+
+***
+
+### vapp
+
+> **vapp**: [`IVApp`](../../core/interfaces/IVApp.md)
+
+Defined in: [lib/form.ts:4908](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4908)
+
+***
+
+### vroot
+
+> **vroot**: [`IVue`](../../core/interfaces/IVue.md)
+
+Defined in: [lib/form.ts:4909](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4909)
 
 lib/form/interfaces/IFormPromptOptions.md
 ---
@@ -30305,41 +30349,6 @@ Defined in: [lib/fs.ts:975](https://github.com/maiyun/clickgo/blob/master/dist/l
 
 `Promise`\<`boolean`\>
 
-lib/fs/functions/rmdir.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/fs](../index.md) / rmdir
-
-# Function: rmdir()
-
-> **rmdir**(`current`, `path`): `Promise`\<`boolean`\>
-
-Defined in: [lib/fs.ts:846](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L846)
-
-删除空目录
-
-## Parameters
-
-### current
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-当前任务 id
-
-### path
-
-`string`
-
-要删除的目录
-
-## Returns
-
-`Promise`\<`boolean`\>
-
 lib/fs/functions/rmdirDeep.md
 ---
 
@@ -30371,6 +30380,41 @@ Defined in: [lib/fs.ts:892](https://github.com/maiyun/clickgo/blob/master/dist/l
 `string`
 
 目录路径
+
+## Returns
+
+`Promise`\<`boolean`\>
+
+lib/fs/functions/rmdir.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/fs](../index.md) / rmdir
+
+# Function: rmdir()
+
+> **rmdir**(`current`, `path`): `Promise`\<`boolean`\>
+
+Defined in: [lib/fs.ts:846](https://github.com/maiyun/clickgo/blob/master/dist/lib/fs.ts#L846)
+
+删除空目录
+
+## Parameters
+
+### current
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+当前任务 id
+
+### path
+
+`string`
+
+要删除的目录
 
 ## Returns
 
@@ -31392,31 +31436,6 @@ Defined in: [lib/native.ts:487](https://github.com/maiyun/clickgo/blob/master/di
 
 `Promise`\<`boolean`\>
 
-lib/native/functions/max.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/native](../index.md) / max
-
-# Function: max()
-
-> **max**(`current`): `Promise`\<`boolean`\>
-
-Defined in: [lib/native.ts:350](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L350)
-
-## Parameters
-
-### current
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-## Returns
-
-`Promise`\<`boolean`\>
-
 lib/native/functions/maximizable.md
 ---
 
@@ -31441,6 +31460,31 @@ Defined in: [lib/native.ts:404](https://github.com/maiyun/clickgo/blob/master/di
 ### val
 
 `boolean`
+
+## Returns
+
+`Promise`\<`boolean`\>
+
+lib/native/functions/max.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/native](../index.md) / max
+
+# Function: max()
+
+> **max**(`current`): `Promise`\<`boolean`\>
+
+Defined in: [lib/native.ts:350](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L350)
+
+## Parameters
+
+### current
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
 
 ## Returns
 
@@ -31553,6 +31597,53 @@ Defined in: [lib/native.ts:208](https://github.com/maiyun/clickgo/blob/master/di
 
 `void`
 
+lib/native/functions/once.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/native](../index.md) / once
+
+# Function: once()
+
+> **once**(`current`, `name`, `handler`, `formId?`): `void`
+
+Defined in: [lib/native.ts:193](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L193)
+
+监听 native 传输过来的事件（仅一次）
+
+## Parameters
+
+### current
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+当前任务 ID
+
+### name
+
+`string`
+
+事件名
+
+### handler
+
+(...`param`) => `any`
+
+回调函数
+
+### formId?
+
+`string`
+
+限定某个窗体
+
+## Returns
+
+`void`
+
 lib/native/functions/on.md
 ---
 
@@ -31595,53 +31686,6 @@ Defined in: [lib/native.ts:164](https://github.com/maiyun/clickgo/blob/master/di
 `boolean` = `false`
 
 是否只监听一次
-
-### formId?
-
-`string`
-
-限定某个窗体
-
-## Returns
-
-`void`
-
-lib/native/functions/once.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/native](../index.md) / once
-
-# Function: once()
-
-> **once**(`current`, `name`, `handler`, `formId?`): `void`
-
-Defined in: [lib/native.ts:193](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L193)
-
-监听 native 传输过来的事件（仅一次）
-
-## Parameters
-
-### current
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-当前任务 ID
-
-### name
-
-`string`
-
-事件名
-
-### handler
-
-(...`param`) => `any`
-
-回调函数
 
 ### formId?
 
@@ -32992,35 +33036,6 @@ Defined in: [lib/task.ts:1223](https://github.com/maiyun/clickgo/blob/master/dis
 
 `Promise`\<`boolean`[]\>
 
-lib/task/functions/clearLocale.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / clearLocale
-
-# Function: clearLocale()
-
-> **clearLocale**(`taskId`): `void`
-
-Defined in: [lib/task.ts:1487](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1487)
-
-清除任务的所有加载的语言包
-
-## Parameters
-
-### taskId
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-要清除的任务 id
-
-## Returns
-
-`void`
-
 lib/task/functions/clearLocaleLang.md
 ---
 
@@ -33045,6 +33060,35 @@ Defined in: [lib/task.ts:1530](https://github.com/maiyun/clickgo/blob/master/dis
 [`TCurrent`](../../core/type-aliases/TCurrent.md)
 
 当前任务 id
+
+## Returns
+
+`void`
+
+lib/task/functions/clearLocale.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / clearLocale
+
+# Function: clearLocale()
+
+> **clearLocale**(`taskId`): `void`
+
+Defined in: [lib/task.ts:1487](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1487)
+
+清除任务的所有加载的语言包
+
+## Parameters
+
+### taskId
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+要清除的任务 id
 
 ## Returns
 
@@ -33192,35 +33236,6 @@ Defined in: [lib/task.ts:1338](https://github.com/maiyun/clickgo/blob/master/dis
 
 `Promise`\<`boolean`\>
 
-lib/task/functions/get.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / get
-
-# Function: get()
-
-> **get**(`taskId`): [`ITaskInfo`](../interfaces/ITaskInfo.md) \| `null`
-
-Defined in: [lib/task.ts:309](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L309)
-
-获取任务及其应用包简略信息
-
-## Parameters
-
-### taskId
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-任务 id
-
-## Returns
-
-[`ITaskInfo`](../interfaces/ITaskInfo.md) \| `null`
-
 lib/task/functions/getFocus.md
 ---
 
@@ -33269,6 +33284,62 @@ Defined in: [lib/task.ts:611](https://github.com/maiyun/clickgo/blob/master/dist
 
 [`ITaskInfo`](../interfaces/ITaskInfo.md)[]
 
+lib/task/functions/get.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / get
+
+# Function: get()
+
+> **get**(`taskId`): [`ITaskInfo`](../interfaces/ITaskInfo.md) \| `null`
+
+Defined in: [lib/task.ts:309](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L309)
+
+获取任务及其应用包简略信息
+
+## Parameters
+
+### taskId
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+任务 id
+
+## Returns
+
+[`ITaskInfo`](../interfaces/ITaskInfo.md) \| `null`
+
+lib/task/functions/getOriginList.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / getOriginList
+
+# Function: getOriginList()
+
+> **getOriginList**(`current`): `Promise`\<`Record`\<`string`, [`ITask`](../interfaces/ITask.md)\>\>
+
+Defined in: [lib/task.ts:279](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L279)
+
+获取原始 list
+
+## Parameters
+
+### current
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+## Returns
+
+`Promise`\<`Record`\<`string`, [`ITask`](../interfaces/ITask.md)\>\>
+
 lib/task/functions/getOrigin.md
 ---
 
@@ -33297,33 +33368,6 @@ Defined in: [lib/task.ts:336](https://github.com/maiyun/clickgo/blob/master/dist
 ## Returns
 
 [`ITask`](../interfaces/ITask.md) \| `null`
-
-lib/task/functions/getOriginList.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / getOriginList
-
-# Function: getOriginList()
-
-> **getOriginList**(`current`): `Promise`\<`Record`\<`string`, [`ITask`](../interfaces/ITask.md)\>\>
-
-Defined in: [lib/task.ts:279](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L279)
-
-获取原始 list
-
-## Parameters
-
-### current
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-## Returns
-
-`Promise`\<`Record`\<`string`, [`ITask`](../interfaces/ITask.md)\>\>
 
 lib/task/functions/getPermissions.md
 ---
@@ -33468,47 +33512,6 @@ Defined in: [lib/task.ts:34](https://github.com/maiyun/clickgo/blob/master/dist/
 
 `void`
 
-lib/task/functions/loadLocale.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / loadLocale
-
-# Function: loadLocale()
-
-> **loadLocale**(`taskId`, `lang`, `path`): `Promise`\<`boolean`\>
-
-Defined in: [lib/task.ts:1458](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1458)
-
-加载 locale 文件 json
-
-## Parameters
-
-### taskId
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-所属的 taskId
-
-### lang
-
-`string`
-
-语言名，如 sc
-
-### path
-
-`string`
-
-绝对或者相对 app 路径的地址
-
-## Returns
-
-`Promise`\<`boolean`\>
-
 lib/task/functions/loadLocaleData.md
 ---
 
@@ -33555,6 +33558,47 @@ Defined in: [lib/task.ts:1431](https://github.com/maiyun/clickgo/blob/master/dis
 ## Returns
 
 `void`
+
+lib/task/functions/loadLocale.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / loadLocale
+
+# Function: loadLocale()
+
+> **loadLocale**(`taskId`, `lang`, `path`): `Promise`\<`boolean`\>
+
+Defined in: [lib/task.ts:1458](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1458)
+
+加载 locale 文件 json
+
+## Parameters
+
+### taskId
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+所属的 taskId
+
+### lang
+
+`string`
+
+语言名，如 sc
+
+### path
+
+`string`
+
+绝对或者相对 app 路径的地址
+
+## Returns
+
+`Promise`\<`boolean`\>
 
 lib/task/functions/offFrame.md
 ---
@@ -33844,6 +33888,41 @@ task id 或 null
 
 `boolean`
 
+lib/task/functions/setLocaleLang.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / setLocaleLang
+
+# Function: setLocaleLang()
+
+> **setLocaleLang**(`current`, `lang`): `void`
+
+Defined in: [lib/task.ts:1514](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1514)
+
+设置本 task 的语言 name
+
+## Parameters
+
+### current
+
+[`TCurrent`](../../core/type-aliases/TCurrent.md)
+
+当前任务 id
+
+### lang
+
+`string`
+
+语言名，如 sc
+
+## Returns
+
+`void`
+
 lib/task/functions/setLocale.md
 ---
 
@@ -33884,41 +33963,6 @@ Defined in: [lib/task.ts:1504](https://github.com/maiyun/clickgo/blob/master/dis
 ## Returns
 
 `Promise`\<`boolean`\>
-
-lib/task/functions/setLocaleLang.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / setLocaleLang
-
-# Function: setLocaleLang()
-
-> **setLocaleLang**(`current`, `lang`): `void`
-
-Defined in: [lib/task.ts:1514](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1514)
-
-设置本 task 的语言 name
-
-## Parameters
-
-### current
-
-[`TCurrent`](../../core/type-aliases/TCurrent.md)
-
-当前任务 id
-
-### lang
-
-`string`
-
-语言名，如 sc
-
-## Returns
-
-`void`
 
 lib/task/functions/setSystem.md
 ---
@@ -34234,6 +34278,119 @@ Defined in: [lib/task.ts:2098](https://github.com/maiyun/clickgo/blob/master/dis
 
 Defined in: [lib/task.ts:2096](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2096)
 
+lib/task/interfaces/ITaskInfo.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / ITaskInfo
+
+# Interface: ITaskInfo
+
+Defined in: [lib/task.ts:2129](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2129)
+
+Task 及其应用包的简略信息，通常在 list 当中
+
+## Properties
+
+### author
+
+> **author**: `string`
+
+Defined in: [lib/task.ts:2139](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2139)
+
+作者
+
+***
+
+### current
+
+> **current**: `string`
+
+Defined in: [lib/task.ts:2145](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2145)
+
+***
+
+### customTheme
+
+> **customTheme**: `boolean`
+
+Defined in: [lib/task.ts:2141](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2141)
+
+***
+
+### formCount
+
+> **formCount**: `number`
+
+Defined in: [lib/task.ts:2142](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2142)
+
+***
+
+### icon
+
+> **icon**: `string`
+
+Defined in: [lib/task.ts:2143](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2143)
+
+***
+
+### id
+
+> **id**: `string`
+
+Defined in: [lib/task.ts:2131](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2131)
+
+任务 ID
+
+***
+
+### locale
+
+> **locale**: `string`
+
+Defined in: [lib/task.ts:2140](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2140)
+
+***
+
+### name
+
+> **name**: `string`
+
+Defined in: [lib/task.ts:2133](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2133)
+
+应用名
+
+***
+
+### path
+
+> **path**: `string`
+
+Defined in: [lib/task.ts:2144](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2144)
+
+***
+
+### ver
+
+> **ver**: `number`
+
+Defined in: [lib/task.ts:2135](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2135)
+
+发行版本
+
+***
+
+### version
+
+> **version**: `string`
+
+Defined in: [lib/task.ts:2137](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2137)
+
+发行版本字符串
+
 lib/task/interfaces/ITask.md
 ---
 
@@ -34376,119 +34533,6 @@ Defined in: [lib/task.ts:2083](https://github.com/maiyun/clickgo/blob/master/dis
 Defined in: [lib/task.ts:2081](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2081)
 
 任务中的 timer 列表
-
-lib/task/interfaces/ITaskInfo.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/task](../index.md) / ITaskInfo
-
-# Interface: ITaskInfo
-
-Defined in: [lib/task.ts:2129](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2129)
-
-Task 及其应用包的简略信息，通常在 list 当中
-
-## Properties
-
-### author
-
-> **author**: `string`
-
-Defined in: [lib/task.ts:2139](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2139)
-
-作者
-
-***
-
-### current
-
-> **current**: `string`
-
-Defined in: [lib/task.ts:2145](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2145)
-
-***
-
-### customTheme
-
-> **customTheme**: `boolean`
-
-Defined in: [lib/task.ts:2141](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2141)
-
-***
-
-### formCount
-
-> **formCount**: `number`
-
-Defined in: [lib/task.ts:2142](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2142)
-
-***
-
-### icon
-
-> **icon**: `string`
-
-Defined in: [lib/task.ts:2143](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2143)
-
-***
-
-### id
-
-> **id**: `string`
-
-Defined in: [lib/task.ts:2131](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2131)
-
-任务 ID
-
-***
-
-### locale
-
-> **locale**: `string`
-
-Defined in: [lib/task.ts:2140](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2140)
-
-***
-
-### name
-
-> **name**: `string`
-
-Defined in: [lib/task.ts:2133](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2133)
-
-应用名
-
-***
-
-### path
-
-> **path**: `string`
-
-Defined in: [lib/task.ts:2144](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2144)
-
-***
-
-### ver
-
-> **ver**: `number`
-
-Defined in: [lib/task.ts:2135](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2135)
-
-发行版本
-
-***
-
-### version
-
-> **version**: `string`
-
-Defined in: [lib/task.ts:2137](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2137)
-
-发行版本字符串
 
 lib/task/interfaces/ITaskRunOptions.md
 ---
@@ -34898,6 +34942,27 @@ Defined in: [lib/task.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/
 
 当前注册的系统任务栏
 
+lib/theme/functions/clearGlobal.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/theme](../index.md) / clearGlobal
+
+# Function: clearGlobal()
+
+> **clearGlobal**(): `Promise`\<`void`\>
+
+Defined in: [lib/theme.ts:246](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L246)
+
+清除全局主题
+
+## Returns
+
+`Promise`\<`void`\>
+
 lib/theme/functions/clear.md
 ---
 
@@ -34922,27 +34987,6 @@ Defined in: [lib/theme.ts:196](https://github.com/maiyun/clickgo/blob/master/dis
 [`TCurrent`](../../core/type-aliases/TCurrent.md)
 
 要清除的任务 id
-
-## Returns
-
-`Promise`\<`void`\>
-
-lib/theme/functions/clearGlobal.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/theme](../index.md) / clearGlobal
-
-# Function: clearGlobal()
-
-> **clearGlobal**(): `Promise`\<`void`\>
-
-Defined in: [lib/theme.ts:246](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L246)
-
-清除全局主题
 
 ## Returns
 
@@ -35177,49 +35221,6 @@ lib/theme/index.md
 - [setGlobal](functions/setGlobal.md)
 - [setMain](functions/setMain.md)
 
-lib/theme/interfaces/ITheme.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/theme](../index.md) / ITheme
-
-# Interface: ITheme
-
-Defined in: [lib/theme.ts:284](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L284)
-
-主题对象
-
-## Properties
-
-### config
-
-> **config**: [`IThemeConfig`](IThemeConfig.md)
-
-Defined in: [lib/theme.ts:287](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L287)
-
-主题对象配置文件
-
-***
-
-### files
-
-> **files**: `Record`\<`string`, `Blob` \| `string`\>
-
-Defined in: [lib/theme.ts:289](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L289)
-
-所有已加载的文件内容
-
-***
-
-### type
-
-> **type**: `"theme"`
-
-Defined in: [lib/theme.ts:285](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L285)
-
 lib/theme/interfaces/IThemeConfig.md
 ---
 
@@ -35286,6 +35287,49 @@ Defined in: [lib/theme.ts:295](https://github.com/maiyun/clickgo/blob/master/dis
 > **version**: `string`
 
 Defined in: [lib/theme.ts:296](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L296)
+
+lib/theme/interfaces/ITheme.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/theme](../index.md) / ITheme
+
+# Interface: ITheme
+
+Defined in: [lib/theme.ts:284](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L284)
+
+主题对象
+
+## Properties
+
+### config
+
+> **config**: [`IThemeConfig`](IThemeConfig.md)
+
+Defined in: [lib/theme.ts:287](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L287)
+
+主题对象配置文件
+
+***
+
+### files
+
+> **files**: `Record`\<`string`, `Blob` \| `string`\>
+
+Defined in: [lib/theme.ts:289](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L289)
+
+所有已加载的文件内容
+
+***
+
+### type
+
+> **type**: `"theme"`
+
+Defined in: [lib/theme.ts:285](https://github.com/maiyun/clickgo/blob/master/dist/lib/theme.ts#L285)
 
 lib/theme/variables/global.md
 ---
@@ -35830,53 +35874,6 @@ Defined in: [lib/tool.ts:526](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **zone**: `string`
 
-lib/tool/functions/get.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/tool](../index.md) / get
-
-# Function: get()
-
-> **get**(`url`, `init?`, `opt?`): `Promise`\<`string` \| `Blob` \| `null`\>
-
-Defined in: [lib/tool.ts:386](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L386)
-
-发起 GET 请求
-
-## Parameters
-
-### url
-
-`string`
-
-网址
-
-### init?
-
-`RequestInit`
-
-选项
-
-### opt?
-
-选项
-
-#### retry?
-
-`number`
-
-重试次数，默认 3 次
-
-## Returns
-
-`Promise`\<`string` \| `Blob` \| `null`\>
-
-文本或二进制数据，失败时返回 null
-
 lib/tool/functions/getArray.md
 ---
 
@@ -35975,6 +35972,53 @@ Defined in: [lib/tool.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/
 ## Returns
 
 [`IClassPrototype`](../interfaces/IClassPrototype.md)
+
+lib/tool/functions/get.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/tool](../index.md) / get
+
+# Function: get()
+
+> **get**(`url`, `init?`, `opt?`): `Promise`\<`string` \| `Blob` \| `null`\>
+
+Defined in: [lib/tool.ts:386](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L386)
+
+发起 GET 请求
+
+## Parameters
+
+### url
+
+`string`
+
+网址
+
+### init?
+
+`RequestInit`
+
+选项
+
+### opt?
+
+选项
+
+#### retry?
+
+`number`
+
+重试次数，默认 3 次
+
+## Returns
+
+`Promise`\<`string` \| `Blob` \| `null`\>
+
+文本或二进制数据，失败时返回 null
 
 lib/tool/functions/getMimeByPath.md
 ---
@@ -37450,35 +37494,6 @@ Defined in: [lib/tool.ts:78](https://github.com/maiyun/clickgo/blob/master/dist/
 
 `string`
 
-lib/tool/functions/sleep.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/tool](../index.md) / sleep
-
-# Function: sleep()
-
-> **sleep**(`ms?`): `Promise`\<`boolean`\>
-
-Defined in: [lib/tool.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L104)
-
-等待毫秒
-
-## Parameters
-
-### ms?
-
-`number` = `0`
-
-等待的毫秒，默认 0，最大 30 秒
-
-## Returns
-
-`Promise`\<`boolean`\>
-
 lib/tool/functions/sleepFrame.md
 ---
 
@@ -37507,6 +37522,35 @@ Defined in: [lib/tool.ts:119](https://github.com/maiyun/clickgo/blob/master/dist
 ## Returns
 
 `Promise`\<`void`\>
+
+lib/tool/functions/sleep.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/tool](../index.md) / sleep
+
+# Function: sleep()
+
+> **sleep**(`ms?`): `Promise`\<`boolean`\>
+
+Defined in: [lib/tool.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L104)
+
+等待毫秒
+
+## Parameters
+
+### ms?
+
+`number` = `0`
+
+等待的毫秒，默认 0，最大 30 秒
+
+## Returns
+
+`Promise`\<`boolean`\>
 
 lib/tool/functions/stateMachine.md
 ---
@@ -38272,6 +38316,103 @@ Defined in: [lib/tool.ts:867](https://github.com/maiyun/clickgo/blob/master/dist
 
 JSON 数据值，不包含 undefined、BigInt、函数和非有限数
 
+lib/tool/variables/lang.md
+---
+
+[**Documents for clickgo**](../../../index.md)
+
+***
+
+[Documents for clickgo](../../../index.md) / [lib/tool](../index.md) / lang
+
+# Variable: lang
+
+> `const` **lang**: `object`
+
+Defined in: [lib/tool.ts:733](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L733)
+
+语言相关
+
+## Type Declaration
+
+### codes
+
+> **codes**: `string`[]
+
+语言代号
+
+### getCodeByAccept
+
+> **getCodeByAccept**: (`accept?`) => `string`
+
+根据常用语言字符串获取语言 code
+
+#### Parameters
+
+##### accept?
+
+`string`
+
+常用字符串，如 zh-cn，或包含 zh-cn 的字符串，默认取浏览器的语言
+
+#### Returns
+
+`string`
+
+### getDirection
+
+> **getDirection**: (`locale`) => `"ltr"` \| `"rtl"`
+
+获取语言书写方向
+
+#### Parameters
+
+##### locale
+
+`string`
+
+ClickGo 语言代号或浏览器语言字符串
+
+#### Returns
+
+`"ltr"` \| `"rtl"`
+
+### getTag
+
+> **getTag**: (`locale`) => `string`
+
+获取标准 HTML lang 标签
+
+#### Parameters
+
+##### locale
+
+`string`
+
+ClickGo 语言代号或浏览器语言字符串
+
+#### Returns
+
+`string`
+
+### map
+
+> **map**: `Record`\<`string`, `string`\>
+
+浏览器常用映射为本语言
+
+### names
+
+> **names**: `string`[]
+
+语言名称
+
+### tags
+
+> **tags**: `Record`\<`string`, `string`\>
+
+语言代号对应的标准 HTML lang 标签
+
 lib/tool/variables/RANDOM_L.md
 ---
 
@@ -38406,103 +38547,6 @@ lib/tool/variables/RANDOM_V.md
 > `const` **RANDOM\_V**: `"ACEFGHJKLMNPRSTWXY34567"` = `'ACEFGHJKLMNPRSTWXY34567'`
 
 Defined in: [lib/tool.ts:234](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L234)
-
-lib/tool/variables/lang.md
----
-
-[**Documents for clickgo**](../../../index.md)
-
-***
-
-[Documents for clickgo](../../../index.md) / [lib/tool](../index.md) / lang
-
-# Variable: lang
-
-> `const` **lang**: `object`
-
-Defined in: [lib/tool.ts:733](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L733)
-
-语言相关
-
-## Type Declaration
-
-### codes
-
-> **codes**: `string`[]
-
-语言代号
-
-### getCodeByAccept
-
-> **getCodeByAccept**: (`accept?`) => `string`
-
-根据常用语言字符串获取语言 code
-
-#### Parameters
-
-##### accept?
-
-`string`
-
-常用字符串，如 zh-cn，或包含 zh-cn 的字符串，默认取浏览器的语言
-
-#### Returns
-
-`string`
-
-### getDirection
-
-> **getDirection**: (`locale`) => `"ltr"` \| `"rtl"`
-
-获取语言书写方向
-
-#### Parameters
-
-##### locale
-
-`string`
-
-ClickGo 语言代号或浏览器语言字符串
-
-#### Returns
-
-`"ltr"` \| `"rtl"`
-
-### getTag
-
-> **getTag**: (`locale`) => `string`
-
-获取标准 HTML lang 标签
-
-#### Parameters
-
-##### locale
-
-`string`
-
-ClickGo 语言代号或浏览器语言字符串
-
-#### Returns
-
-`string`
-
-### map
-
-> **map**: `Record`\<`string`, `string`\>
-
-浏览器常用映射为本语言
-
-### names
-
-> **names**: `string`[]
-
-语言名称
-
-### tags
-
-> **tags**: `Record`\<`string`, `string`\>
-
-语言代号对应的标准 HTML lang 标签
 
 lib/zip/classes/Zip.md
 ---
