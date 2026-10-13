@@ -8,7 +8,7 @@
 
 > **min**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:318](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L318)
+Defined in: [lib/native.ts:358](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L358)
 
 ## Parameters
 

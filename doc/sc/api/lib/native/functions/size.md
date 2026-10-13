@@ -8,7 +8,7 @@
 
 > **size**(`current`, `width`, `height`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:285](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L285)
+Defined in: [lib/native.ts:325](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L325)
 
 ## Parameters
 

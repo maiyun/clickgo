@@ -33,7 +33,7 @@
     "native2": "electron ./dist/test/native/index2",
     "native3": "electron ./dist/test/native/index3",
     "build-doc": "bash ./utils/build-doc.sh",
-    "test:native": "node test/native-version.mjs && node --experimental-vm-modules test/native-window.mjs && node test/native-mcp.mjs && node test/native-cli.mjs && node test/native-startup.mjs"
+    "test:native": "node test/native-version.mjs && node --experimental-vm-modules test/native-persistence.mjs && node --experimental-vm-modules test/native-window.mjs && node test/native-mcp.mjs && node test/native-cli.mjs && node test/native-startup.mjs"
   },
   "devDependencies": {
     "@litert/eslint-plugin-rules": "^0.3.1",

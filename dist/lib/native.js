@@ -17,6 +17,8 @@ import * as clickgo from '../clickgo';
 import * as lTool from './tool';
 import * as lTask from './task';
 import * as lNativeCommand from './command/native';
+export * as storage from './native/storage';
+export * as secret from './native/secret';
 /** --- 系统级 ID --- */
 let sysId = '';
 /**
@@ -80,6 +82,39 @@ export async function getMcpInfo(current) {
     }
     // --- 旧 Native 宿主没有此方法时返回 undefined，按未启用处理 ---
     return await invoke('cg-mcp-info', token) ?? null;
+}
+/**
+ * --- 按当前 App 的固定 ID 访问独立的持久存储，无需 root 权限 ---
+ * @internal
+ * @hidden
+ * @param current 当前 App
+ * @param area 普通配置或敏感数据
+ * @param action 存储操作
+ * @param key 稳定存储键
+ * @param value 待存储值
+ * @returns 主进程结果；缺少有效 App ID、App 已退出、宿主不支持或通讯失败为 false
+ */
+export async function callPersistence(current, area, action, key, value) {
+    if (!clickgo.isNative()) {
+        return false;
+    }
+    const taskId = typeof current === 'string' ? current : current.taskId;
+    const task = lTask.getOrigin(taskId);
+    if (!task || task.ending) {
+        return false;
+    }
+    // --- 密钥服务可用性属于系统能力；只有读写数据需要固定 App ID ---
+    if (!task.appId && (area !== 'secret' || action !== 'isAvailable')) {
+        return false;
+    }
+    try {
+        // --- 使用独立的 App 通道，旧宿主不能将此请求误写入软件级存储 ---
+        const result = await invoke('cg-app-persistence', token, task.appId, area, action, key, value);
+        return result === undefined ? false : result;
+    }
+    catch {
+        return false;
+    }
 }
 /**
  * --- 监听 native 传输过来的事件 ---

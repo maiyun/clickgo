@@ -43,6 +43,12 @@ class Boot extends clickgo.AbstractBoot {
 clickgo.launcher(new Boot());
 ```
 
+## Native 持久存储
+
+App 使用 `native.storage` 或 `native.secret` 前，在 `config.json` 中设置固定 `id`，例如 `"id": "net.example.notepad"`。ID 应唯一，移动目录、改名或升级时保持不变；同一 ID 的多个实例共用存储，不同 ID 分开。
+
+调用方式仍为 `clickgo.native.storage.set(this, 'preferences', value)`，无需 root。缺少或非法 ID 时读写返回 `false`；`secret.isAvailable(this)` 查询系统能力，不要求 ID。完整用法见 Demo 的 **Library native**。
+
 ## 代码提示
 
 安装 ClickGo 模块后，即可获得代码提示。

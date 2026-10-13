@@ -1,86 +1,64 @@
-# Native command integration
+# Native integration tests
 
-Run `npx tsc` before using the Native test entrypoints. `npm run native`, `npm run native2` and `npm run native3` enable local MCP with the stable software ID `clickgo-demo`. Open **AI interface guide** in the Demo to register its counter commands.
+English | [简体中文](README.sc.md)
 
-## Software entrypoints
+This directory tests ClickGo with its Native host. Run all commands below from the ClickGo repository root.
 
-Packaged software uses its own executable for CLI and stdio. Users do not install Node.js or a global npm package. The Native `launcher()` handles `--cli` and `--mcp` before starting the GUI; commands reuse the running GUI. The three Demo launchers enable `commandAutoStart: true`, so the first command can also open a closed GUI.
-
-## Automatic startup
-
-```ts
-native.launcher(new Boot(), { 'commandAutoStart': true });
-```
-
-Default: false. With this option, CLI command requests and stdio command tools start the same GUI when no instance is running, then wait up to 20 seconds for an App. Boot.main must create the window and enable MCP with local discovery. Help, instances, MCP initialization and tools/list do not launch the GUI. Concurrent callers share startup. Cancellation or timeout ends only that request's wait; later requests wait for the same GUI, including before its service record is published. If that GUI exits, the next request can start it again. Business mutations are never retried.
-
-## Generated AI access guide
-
-An App can display or export `await clickgo.command.getAgentGuide(this)` directly. It generates English Markdown from the current environment, with a few sentences about browser access, one Native stdio process configuration, CLI help and HTTP connection settings. It embeds no transient App IDs or command catalog; agents discover them through the interfaces. `getAgentInfo(this)` provides the same structured snapshot. Check `null` (App exited) and `false` (credential export denied) before using the result.
-
-The default guide contains no HTTP credentials. An App that already has `root` permission may explicitly request `getAgentGuide(this, { includeMcpCredentials: true })` from its connection-settings UI. The public page API's `getAgentGuide(taskId)` and `getAgentInfo(taskId)` never export credentials, even for an App with root permission. The generator does not enable MCP or launch the GUI; the launcher option controls startup: `existing` by default, `auto` with `commandAutoStart: true`.
-
-Open **AI interface guide**, then use **Generate AI access guide** or **Show access information** to inspect the actual environment. Native `getCommandEntry()` and `await clickgo.native.getCommandEntry()` return executable metadata without credentials. In development, the generated arguments preserve the running `native`, `native2` or `native3` entry instead of guessing an entry file. A sandbox switch explicitly used by the running host is preserved in the generated arguments; ordinary launches do not add it. See [the command guide](../../../doc/sc/commands.md) for application examples.
-
-## CLI
+## Start the Demo
 
 ```sh
-./MySoftware --cli --help
-./MySoftware --cli instances
-./MySoftware --cli apps
-./MySoftware --cli commands --app '<taskId>'
-./MySoftware --cli execute --app '<taskId>' --name '<commandName>' --args '{"amount":2}'
+npx tsc
+npm run native
 ```
 
-To test the same entry in this repository during development:
+Use `npm run native2` or `npm run native3` for the other window modes. All three enable local MCP (`clickgo-demo`) and automatic GUI startup for command requests.
+
+- **AI interface guide** registers the counter commands. Use **Generate AI access guide** for client setup or **Show access information** for diagnostics.
+- **Library native** demonstrates persistent JSON (`native.storage`) and encrypted strings (`native.secret`). App storage needs no `root` permission, but requires a fixed `config.json` `id`; keep it unchanged across moves and upgrades. Without a valid ID, data operations return `false`.
+
+## CLI and stdio MCP
+
+Discover the App and its commands before executing:
 
 ```sh
 ./node_modules/.bin/electron dist/test/native --cli --help
-./node_modules/.bin/electron dist/test/native --cli instances
 ./node_modules/.bin/electron dist/test/native --cli apps
 ./node_modules/.bin/electron dist/test/native --cli commands --app '<taskId>'
 ./node_modules/.bin/electron dist/test/native --cli execute --app '<taskId>' --name '<commandName>' --args '{"amount":2}'
 ```
 
-Use the returned App ID and command name. Results are JSON; errors set a nonzero exit status. `--args-file <path>` reads JSON from a file, and `--args-file -` reads stdin. SIGINT/SIGTERM cancels an in-flight call. Mutation failures are never retried automatically.
+Use returned IDs and arguments matching the command schema. Rediscover App IDs after restart; do not automatically retry mutations. If several hosts are running, use `--cli instances` and select one with `--host`.
 
-The executable defaults to its own installation, independent of `startMcp({ id })`. `instances` lists its running instances without credentials. If more than one matches, choose a unique instance ID with `--host`; App `taskId`s change after restart and must be discovered again. `native2` and `native3` use their corresponding entry files for both GUI and command launches.
-
-The MCP server instructions, tool descriptions and parameter schemas explain that this software can contain several App instances. Call `clickgo_list_apps`, pass the selected item’s `id` as `taskId` to `clickgo_list_commands`, then execute an enabled command using its declared argument schema. Rediscover IDs after restart and clarify ambiguous App targets.
-
-## stdio MCP
-
-Configure the AI client's MCP process entry with the installed software's absolute executable path. For clients using the `mcpServers` configuration shape:
+For an AI client using `mcpServers`, configure the development entry as follows:
 
 ```json
 {
     "mcpServers": {
         "clickgo-demo": {
-            "command": "<absolute-path-to-installed-software>",
-            "args": ["--mcp"]
+            "command": "<absolute-path-to-clickgo>/node_modules/.bin/electron",
+            "args": ["<absolute-path-to-clickgo>/dist/test/native", "--mcp"]
         }
     }
 }
 ```
 
-For repository development, use the absolute Electron executable as `command` and `["<absolute-path-to-clickgo>/dist/test/native", "--mcp"]` as `args`. Do not use `npm run` for stdio because npm output would enter the protocol stream. The software's command process exposes the same three tools as HTTP MCP, forwards to the running GUI, and discovers its current endpoint and token for every call. It stays alive until stdin closes or it receives a shutdown signal; the first command tool opens the GUI when `commandAutoStart` is enabled. Handshake and tools/list do not open it.
+For `native2` or `native3`, replace `dist/test/native` with `dist/test/native/index2` or `dist/test/native/index3`. Use your platform's Electron executable path. Never launch stdio through `npm run` or write business logs to stdout: it carries only MCP messages.
 
-## Discovery and ownership
+Packaged software uses its own executable with `--cli` or `--mcp`; end users need no Node.js or global npm package. Local discovery allows processes of the same OS user to obtain temporary connection credentials. Exporting HTTP credentials from an App still requires `root` and an explicit request.
 
-`startMcp()` publishes a temporary record under the current user's `.clickgo-native/run` directory. POSIX directories are private and files use mode `0600`; Windows inherits the user-profile access control. Records are removed when the service stops; crashed-process records are ignored. Symbolic links, permissive POSIX records and non-loopback endpoint URLs are rejected. `CLICKGO_NATIVE_RUNTIME_DIR` can select a separate private runtime directory for tests or host integration.
+## Verification
 
-The native host can set `startMcp({ id: 'com.example.app' })`; without an explicit ID, the Native entry derives one from Electron's user-data directory. `discovery: false` disables local CLI/stdio discovery while retaining authenticated HTTP MCP. Enabling discovery authorizes other processes of the same operating-system user to obtain the temporary connection credentials. It does not grant sandboxed ClickGo Apps permission to read credentials: `clickgo.native.getMcpInfo(current)` still requires `root`.
+- `npm run test:native`: automated version, persistence, window, MCP, CLI/stdio and startup regressions.
+- `node test/native-cli.mjs`: CLI/stdio regressions only.
+- For real Electron acceptance, verify that MCP updates the counter UI and reads changes made through the UI.
 
-Settings screens, remembered ports, long-term credentials and startup preferences belong to the consuming application. The framework stores only current runtime connection information and contains no settings UI.
+To verify persistence across restart and App relocation, run these two launches with the same initially empty test directory:
 
-## Repository tests
+```sh
+./node_modules/.bin/electron test/native-storage-electron.mjs write '<temporary-directory>'
+./node_modules/.bin/electron test/native-storage-electron.mjs read '<temporary-directory>'
+```
 
-Run these commands from the ClickGo repository root after `npx tsc`:
+The test writes sample settings and secrets, then removes them after reading. For a packaged executable, run `node test/native-executable.mjs <absolute-path-to-packaged-binary> [electron-options]` to check CLI/stdio without system Node or a display. Automated checks supplement real GUI acceptance.
 
-- `npm run test:native`: automated version, window integration, HTTP MCP, CLI, stdio and automatic-startup regressions. `test/native-cli.mjs` uses temporary test processes to call the internal adapter; it does not require or publish a standalone Node command.
-- `node test/native-cli.mjs`: run only the CLI and stdio regressions.
-- `npm run native`: open the regular Native Demo for real GUI integration. `npm run native2` and `npm run native3` open the other window modes. Open **AI interface guide** to register the counter commands, then use the matching Electron entry with `--cli` or `--mcp` as shown above.
-
-Automated protocol and window regressions do not replace real GUI acceptance. Keep the Native source and supporting modules identical to clickgo-native after ClickGo's regressions and real Electron integration pass; see the repository AGENTS.
-
-After packaging a test software that uses Native `launcher()`, run `node test/native-executable.mjs <absolute-path-to-packaged-binary> [electron-options]` to test its real CLI/stdio modes without system Node or a display. The fixture must not write business logs to stdout during module import. This protocol check supplements real GUI integration; it does not replace it.
+After validation, synchronize the Native sources with clickgo-native as required by [AGENTS](../../../AGENTS.md#native-联动开发与同步). See the [command guide](../../../doc/sc/commands.md) (Simplified Chinese) and [ClickGo Native documentation](https://github.com/maiyun/clickgo-native#local-mcp) for application integration and protocol details.

@@ -6,6 +6,11 @@
 
 # lib/native
 
+## Namespaces
+
+- [secret](namespaces/secret/index.md)
+- [storage](namespaces/storage/index.md)
+
 ## Interfaces
 
 - [ICommandEntry](interfaces/ICommandEntry.md)

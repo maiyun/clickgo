@@ -8,8 +8,12 @@ import * as lFs from './lib/fs.js';
 import * as lTool from './lib/tool.js';
 import * as lMcp from './lib/mcp.js';
 import * as lCli from './lib/cli.js';
+import * as lStorage from './lib/storage.js';
+import * as lSecret from './lib/secret.js';
 
 export type { IMcpInfo, IMcpOptions } from './lib/mcp.js';
+export * as storage from './lib/storage.js';
+export * as secret from './lib/secret.js';
 
 // npm publish --tag dev --access public
 // --- sass --watch dist/:dist/ --style compressed --no-source-map ---
@@ -65,12 +69,54 @@ const methods: Record<string, {
     'once': boolean;
     'handler': (...param: any[]) => any | Promise<any>;
 }> = {
+    // --- 按固定 App ID 隔离持久配置与加密字符串，并查询安全存储是否可用 ---
+    'cg-app-persistence': {
+        'once': false,
+        handler: async function(t: string, appId: unknown, area: string, action: string, key: unknown,
+            value: unknown): Promise<lStorage.IStoredValue | string | boolean | null> {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            if (area === 'secret' && action === 'isAvailable') {
+                return lSecret.isAvailable();
+            }
+            if (typeof appId !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(appId)) {
+                return false;
+            }
+            if (typeof key !== 'string') {
+                return false;
+            }
+            if (area === 'storage') {
+                switch (action) {
+                    case 'get':
+                        return lStorage.get(key, appId);
+                    case 'set':
+                        return lStorage.set(key, value as lStorage.TJson, appId);
+                    case 'remove':
+                        return lStorage.remove(key, appId);
+                }
+            }
+            else if (area === 'secret') {
+                switch (action) {
+                    case 'get':
+                        return lSecret.get(key, appId);
+                    case 'set':
+                        return typeof value === 'string' ? lSecret.set(key, value, appId) : false;
+                    case 'remove':
+                        return lSecret.remove(key, appId);
+                }
+            }
+            return false;
+        },
+    },
+    // --- 获取软件自身的 CLI/stdio 入口及能力状态，不含连接凭据 ---
     'cg-command-entry': {
         'once': false,
         handler: function(t: string): ICommandEntry | null {
             return verifyToken(t) ? getCommandEntry() : null;
         },
     },
+    // --- 获取当前 MCP 的连接地址与凭据，供客户端配置使用 ---
     'cg-mcp-info': {
         'once': false,
         handler: function(t: string): lMcp.IMcpInfo | null {

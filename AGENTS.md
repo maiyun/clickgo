@@ -13,6 +13,7 @@
 - Demo 应用沿用英文展示，包括 Form 标题、菜单、按钮、提示及命令标题/说明；注释可以使用中文。框架内置界面沿用当前 locale 和英文回退，语言表覆盖 `tool.lang.codes` 全部语种；`npm run test:locale` 检查内置语言表与键完整性。
 - 框架初始化时自动发布 `window['clickgo']['command']`，通过 `listTasks()`、`list(taskId)` 和 `execute(taskId, name, args)` 访问各 App 的公开命令。WebMCP 接入属于整个页面，由框架在 Boot.main 前自动初始化，业务及 Demo 不要求手动连接；onWebMcpStatusChanged(status) 向 Boot 和全部 App、Form 广播页面级 unsupported/ready 状态，无 taskId、无需 root 权限。每个 App 的工具发布、同步、失败、撤销及退出都是内部管理，不改变页面级状态或触发接入事件；getAgentInfo 的 registrationStatus/publishedTaskIds 仅用于发布诊断。界面首次读取快照，后续使用事件，不轮询，关闭/退出后停止投递。宿主不单独发布或清理。Library command Form 展示统一入口，desktop/webpage/cache 和 Native 网页宿主共用该能力。
 - Native 的固定页面命令适配器位于 `dist/lib/command/native.ts`，由 `dist/lib/native.ts` 发布给 Native 主进程；每次请求直接按 taskId 调用 `command.executeAgent()`，保留公开命令限制和 agent 来源。网页及 WebMCP 同样使用此入口；`createBridge()` 仅为需要绑定单个 App 的调用方提供可复用接口。协议服务在 Native 主进程及本仓库的 Native 测试副本中，页面端不监听网络；`native.getMcpInfo(current)` 沿用 root 权限读取连接设置。
+- Native 持久配置和加密字符串保存在软件 userData；主进程默认使用软件级空间，App 无需 root，`dist/lib/native/{storage,secret}.ts` 由框架按 config.json 的固定 id 隔离空间并经当前文档会话访问。task.run 将合法 id 保存为 ITask.appId；不随路径、名称、版本或临时 taskId 改变，无有效 id 的旧 App 仍可运行但存储读写返回 false。磁盘操作由 Native 的 `lib/persistence.ts` 负责，逐键串行、临时文件替换；secret 使用 Electron 异步 safeStorage，必要时更新轮换密钥的密文；主进程 isAvailable 同样异步，无安全密钥服务时返回 false，不写明文。Library native 展示用法；存储回归包含在 test:native，真实重启入口为 test/native-storage-electron.mjs。
 - AI 接入说明由 `command.getAgentInfo()` 收集实际环境，再由 `dist/lib/command/guide.ts` 格式化；Demo 展示生成结果，不能维护第二份接入文案。Native 的 `cg-command-entry` 只提供进程入口与能力状态，默认及网页桥接均不导出凭据；应用显式导出 HTTP 凭据仍经 `native.getMcpInfo(current)` 的 root 检查。默认说明保持简短，不嵌入临时 App/实例 ID 或命令清单；详细运行快照留在 getAgentInfo。启动模式由 commandAutoStart 对应 existing/auto。
 - 验证使用 `npm run check`；位置、指针取消和双向绑定回归使用 `npm run test:desktop`。先用 `npx tsc` 更新生成的运行时代码，再运行依赖该代码的测试。
 - Select 的值同步、搜索、交互和消费控件回归使用 `npm run test:select`；打包后用 `CLICKGO_SELECT_TEST_ARCHIVE=1 npm run test:select` 验证实际控件包。本地列表按完整数据校验，远程结果缺项时保留已选值并补齐标签。
@@ -21,7 +22,7 @@
 
 ## Native 联动开发与同步
 
-- `dist/test/native/native.ts` 与 clickgo-native 仓库的 `dist/index.ts` 必须逐字一致；它是完整的 Native 主进程实现，不能只保留旧版测试桩。`dist/test/native/lib/{fs,tool,mcp,instance,client,cli,startup,version}.ts` 和手写的 `dist/test/native/pre.js` 同样对应对方的 `dist/lib/` 与 `dist/pre.js`。
+- `dist/test/native/native.ts` 与 clickgo-native 仓库的 `dist/index.ts` 必须逐字一致；它是完整的 Native 主进程实现，不能只保留旧版测试桩。`dist/test/native/lib/{fs,tool,mcp,instance,client,cli,startup,version,persistence,storage,secret}.ts` 和手写的 `dist/test/native/pre.js` 同样对应对方的 `dist/lib/` 与 `dist/pre.js`。
 - Native 改动先落在本仓库测试副本，运行 `npx tsc`、`npm run check`、`npm run test:native`，再用 `npm run native` 做真实 Electron 联动验收；涉及无边框或进程保留模式时分别使用 `npm run native2`、`npm run native3`。通过后才将对应源文件同步到 clickgo-native，运行对方构建及相关回归，并用 `cmp` 核对源文件完全一致。生成的 JS/类型声明由各自编译更新。
 - 三个 Native 启动 Demo 均显式调用 `startMcp()`；命令演示从 ClickGo Demo 的 AI interface guide 进入。SDK 在本仓库属于测试用 devDependencies，在 clickgo-native 的服务端属于运行依赖；变更模块时同步两边依赖声明。联动测试至少验证 MCP 调用更新 UI、UI 操作可由 MCP 读取，以及受影响的 App 隔离、取消和窗口退出行为。
 

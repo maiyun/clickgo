@@ -8,7 +8,7 @@
 
 > **setLocale**(`taskId`, `lang`, `path`): `Promise`\<`boolean`\>
 
-Defined in: [lib/task.ts:1501](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1501)
+Defined in: [lib/task.ts:1504](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1504)
 
 加载全新 locale（老 locale 的所有语言的缓存会被卸载）
 

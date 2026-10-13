@@ -6,7 +6,7 @@
 
 # Abstract Class: AbstractThread
 
-Defined in: [lib/task.ts:1865](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1865)
+Defined in: [lib/task.ts:1868](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1868)
 
 线程抽象类
 
@@ -26,7 +26,7 @@ Defined in: [lib/task.ts:1865](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **taskId**: `string` = `''`
 
-Defined in: [lib/task.ts:1874](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1874)
+Defined in: [lib/task.ts:1877](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1877)
 
 系统会自动设置本项
 
@@ -38,7 +38,7 @@ Defined in: [lib/task.ts:1874](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **get** **filename**(): `string`
 
-Defined in: [lib/task.ts:1868](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1868)
+Defined in: [lib/task.ts:1871](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1871)
 
 当前文件在包内的路径
 
@@ -52,7 +52,7 @@ Defined in: [lib/task.ts:1868](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **close**(): `void`
 
-Defined in: [lib/task.ts:1903](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1903)
+Defined in: [lib/task.ts:1906](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1906)
 
 关闭线程
 
@@ -66,7 +66,7 @@ Defined in: [lib/task.ts:1903](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `abstract` **main**(`data`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/task.ts:1877](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1877)
+Defined in: [lib/task.ts:1880](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1880)
 
 线程入口
 
@@ -86,7 +86,7 @@ Defined in: [lib/task.ts:1877](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onEnded**(): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/task.ts:1886](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1886)
+Defined in: [lib/task.ts:1889](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1889)
 
 线程结束事件
 
@@ -100,7 +100,7 @@ Defined in: [lib/task.ts:1886](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onError**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/task.ts:1892](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1892)
+Defined in: [lib/task.ts:1895](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1895)
 
 报错
 
@@ -120,7 +120,7 @@ Defined in: [lib/task.ts:1892](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **onMessage**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/task.ts:1880](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1880)
+Defined in: [lib/task.ts:1883](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1883)
 
 线程接收事件
 
@@ -140,7 +140,7 @@ Defined in: [lib/task.ts:1880](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **send**(`data`): `void`
 
-Defined in: [lib/task.ts:1898](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1898)
+Defined in: [lib/task.ts:1901](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1901)
 
 发送数据
 

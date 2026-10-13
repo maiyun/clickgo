@@ -8,7 +8,7 @@
 
 > **restore**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:336](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L336)
+Defined in: [lib/native.ts:376](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L376)
 
 从最小化还原
 

@@ -8,7 +8,7 @@
 
 > **dialog**(`options?`): `Promise`\<`number`\>
 
-Defined in: [lib/native.ts:423](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L423)
+Defined in: [lib/native.ts:463](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L463)
 
 弹出消息框
 

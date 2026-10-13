@@ -1,22 +1,40 @@
-<form width="350" height="500" title="Library native" padding="10">
-    <layout gutter="10" direction="v" style="flex: 1;">
-        <button @click="getListenerList">getListenerList</button>
-        <button @click="max">max</button>
-        <button @click="min">min</button>
-        <button @click="activate">{{activating ? 'running...' : 'sleep 2 activate'}}</button>
-        <layout gutter="10" align-v="center">
-            <text style="flex: 1;" v-model="val"></text>
-            <button @click="ping">ping("{{val}}")</button>
+<form width="500" height="600" min-width="320" min-height="300" title="Library native" padding="10">
+    <flow direction="v" style="flex: 1;">
+        <layout gutter="10" direction="v">
+            <button @click="getListenerList">getListenerList</button>
+            <button @click="max">max</button>
+            <button @click="min">min</button>
+            <button @click="activate">{{activating ? 'running...' : 'sleep 2 activate'}}</button>
+            <layout gutter="10" align-v="center">
+                <text style="flex: 1;" v-model="val"></text>
+                <button @click="ping">ping("{{val}}")</button>
+            </layout>
+            <button @click="isMax">isMax</button>
+            <button @click="open">open</button>
+            <button @click="save">save</button>
+            <label>dialog:</label>
+            <layout gutter="10">
+                <button @click="dialog({'message':'test'})" style="flex: 1">default</button>
+                <button @click="dialog({'message':'info','type':'info'})" style="flex: 1">info</button>
+                <button @click="dialog({'message':'question','type':'question','detail':'detail'})" style="flex: 1">question</button>
+                <button @click="dialog({'message':'warning','type':'warning','title':'custom','buttons':['Yes','No']})" style="flex: 1">warning</button>
+            </layout>
+            <!-- 配置和敏感字符串按 App 固定 ID 保存，无需 root 权限。 -->
+            <label size="l">Persistent storage</label>
+            <label>Use a stable key. Restart the software to check that the saved value remains.</label>
+            <text v-model="persistenceKey" placeholder="Storage key"></text>
+            <layout gutter="10" wrap>
+                <button @click="setSetting">Set config</button>
+                <button @click="getSetting">Get config</button>
+                <button @click="removeSetting">Remove config</button>
+            </layout>
+            <layout gutter="10" wrap>
+                <button @click="secretAvailable">Check secret storage</button>
+                <button @click="setSecret">Set secret</button>
+                <button @click="getSecret">Get secret</button>
+                <button @click="removeSecret">Remove secret</button>
+            </layout>
+            <text :model-value="persistenceResult" readonly type="multi" dir="ltr" style="height: 100px;"></text>
         </layout>
-        <button @click="isMax">isMax</button>
-        <button @click="open">open</button>
-        <button @click="save">save</button>
-        <label>dialog:</label>
-        <layout gutter="10">
-            <button @click="dialog({'message':'test'})" style="flex: 1">default</button>
-            <button @click="dialog({'message':'info','type':'info'})" style="flex: 1">info</button>
-            <button @click="dialog({'message':'question','type':'question','detail':'detail'})" style="flex: 1">question</button>
-            <button @click="dialog({'message':'warning','type':'warning','title':'custom','buttons':['Yes','No']})" style="flex: 1">warning</button>
-        </layout>
-    </layout>
+    </flow>
 </form>

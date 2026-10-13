@@ -7,6 +7,10 @@ import * as lFs from './lib/fs.js';
 import * as lTool from './lib/tool.js';
 import * as lMcp from './lib/mcp.js';
 import * as lCli from './lib/cli.js';
+import * as lStorage from './lib/storage.js';
+import * as lSecret from './lib/secret.js';
+export * as storage from './lib/storage.js';
+export * as secret from './lib/secret.js';
 // npm publish --tag dev --access public
 // --- sass --watch dist/:dist/ --style compressed --no-source-map ---
 /** --- 窗体是否含有 border 边框，有的话将不是沉浸式，也不会绑定任何窗体的大小的相关事件 --- */
@@ -42,12 +46,53 @@ const platform = process.platform;
 // const platform: NodeJS.Platform = 'darwin';
 /** --- 监听前台的执行的方法，内置的方法，用户可调用方法自行添加 --- */
 const methods = {
+    // --- 按固定 App ID 隔离持久配置与加密字符串，并查询安全存储是否可用 ---
+    'cg-app-persistence': {
+        'once': false,
+        handler: async function (t, appId, area, action, key, value) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            if (area === 'secret' && action === 'isAvailable') {
+                return lSecret.isAvailable();
+            }
+            if (typeof appId !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(appId)) {
+                return false;
+            }
+            if (typeof key !== 'string') {
+                return false;
+            }
+            if (area === 'storage') {
+                switch (action) {
+                    case 'get':
+                        return lStorage.get(key, appId);
+                    case 'set':
+                        return lStorage.set(key, value, appId);
+                    case 'remove':
+                        return lStorage.remove(key, appId);
+                }
+            }
+            else if (area === 'secret') {
+                switch (action) {
+                    case 'get':
+                        return lSecret.get(key, appId);
+                    case 'set':
+                        return typeof value === 'string' ? lSecret.set(key, value, appId) : false;
+                    case 'remove':
+                        return lSecret.remove(key, appId);
+                }
+            }
+            return false;
+        },
+    },
+    // --- 获取软件自身的 CLI/stdio 入口及能力状态，不含连接凭据 ---
     'cg-command-entry': {
         'once': false,
         handler: function (t) {
             return verifyToken(t) ? getCommandEntry() : null;
         },
     },
+    // --- 获取当前 MCP 的连接地址与凭据，供客户端配置使用 ---
     'cg-mcp-info': {
         'once': false,
         handler: function (t) {

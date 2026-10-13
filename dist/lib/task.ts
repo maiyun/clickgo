@@ -743,6 +743,9 @@ export async function run(
     // --- 创建任务对象 ---
     list[taskId] = {
         'id': taskId,
+        // --- 保存启动时的固定标识；无 ID 的旧 App 仍可运行，但不能使用 Native 持久存储 ---
+        'appId': typeof app.config.id === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(app.config.id) ?
+            app.config.id : undefined,
         'app': app,
         'class': null as any,
         'customTheme': false,
@@ -2043,6 +2046,8 @@ export interface ITask {
     /** --- 已开始退出；框架释放异步资源期间拒绝新命令 --- */
     'ending'?: boolean;
     'id': string;
+    /** --- 启动时确定的固定 App ID，与运行实例 ID 和加载路径无关 --- */
+    readonly 'appId'?: string;
     'app': lCore.IApp;
     'class': lCore.AbstractApp;
     'customTheme': boolean;

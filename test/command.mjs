@@ -84,7 +84,7 @@ function task(id) {
     });
     const current = { taskId: id, formId: 'main', ...observer('main') };
     const main = { closed: false, vroot: current, vapp: { _container: container } };
-    tasks[id] = { id, class: observer('app'),
+    tasks[id] = { id, appId: `net.example.${id}`, path: `/apps/${id}.cga`, class: observer('app'),
         forms: { main, other: { closed: false, vroot: observer('other') } }, threads: {}, timers: {},
         app: { config: { name: `App ${id}` }, package: { clear() {} } } };
     return current;
@@ -101,17 +101,27 @@ let nativePermission = false;
 let connection;
 let entry;
 let nativeQueries = 0;
+let persistenceResult;
+let persistenceArgs;
+const persistentStorage = await load('../dist/lib/native/storage.ts', {
+    '../native': { callPersistence: (...args) => native.callPersistence(...args) },
+});
+const persistentSecret = await load('../dist/lib/native/secret.ts', {
+    '../native': { callPersistence: (...args) => native.callPersistence(...args) },
+});
 native = await load('../dist/lib/native.ts', {
     '../clickgo': { isNative: () => nativeEnvironment },
     './core': {}, './tool': { random: () => 'test-session', 'RANDOM_LUNS': '' },
-    './task': { checkPermission: async (_current, name) => {
+    './native/storage': persistentStorage, './native/secret': persistentSecret,
+    './task': { getOrigin: id => tasks[id], checkPermission: async (_current, name) => {
         assert.equal(name, 'root');
         return [nativePermission];
     } },
     './command/native': nativeCommand,
-}, { 'window': { 'clickgoNative': { invoke: async (name, token) => {
+}, { 'window': { 'clickgoNative': { invoke: async (name, token, ...args) => {
     ++nativeQueries;
     assert.equal(token, 'test-session');
+    if (name === 'cg-app-persistence') { persistenceArgs = args; return persistenceResult; }
     if (name === 'cg-command-entry') { return entry; }
     assert.equal(name, 'cg-mcp-info');
     return connection;
@@ -837,6 +847,57 @@ finishThread();
 assert.equal(await ending, true);
 assert.equal(tasks.closing, undefined);
 assert.equal(pageBridge.listTasks().some(info => info.id === 'closing'), false);
+// --- App 存储无需 root，框架选定固定 App ID；退出及旧宿主不能访问存储。 ---
+const persistenceOwner = task('persistent-owner');
+nativeEnvironment = true;
+nativePermission = false;
+let beforePersistence = nativeQueries;
+persistenceResult = { value: 'without-root' };
+assert.deepEqual(plain(await persistentStorage.get(persistenceOwner, 'preferences')), { value: 'without-root' });
+assert.deepEqual(persistenceArgs, ['net.example.persistent-owner', 'storage', 'get', 'preferences', undefined]);
+persistenceResult = true;
+assert.equal(await persistentSecret.isAvailable(persistenceOwner), true);
+assert.equal(nativeQueries, beforePersistence + 2);
+const anotherPersistenceOwner = task('another-persistent-owner');
+assert.equal(await persistentSecret.set(anotherPersistenceOwner, 'credential', 'value'), true);
+assert.equal(persistenceArgs[0], 'net.example.another-persistent-owner');
+tasks['another-persistent-owner'].appId = tasks['persistent-owner'].appId;
+assert.equal(await persistentStorage.set(anotherPersistenceOwner, 'preferences', true), true);
+assert.equal(persistenceArgs[0], 'net.example.persistent-owner', 'same App ID shares storage across task IDs and paths');
+command.clear(anotherPersistenceOwner);
+delete tasks['another-persistent-owner'];
+const unconfiguredOwner = task('unconfigured-owner');
+delete tasks['unconfigured-owner'].appId;
+beforePersistence = nativeQueries;
+assert.equal(await persistentStorage.get(unconfiguredOwner, 'preferences'), false);
+assert.equal(await persistentSecret.set(unconfiguredOwner, 'credential', 'value'), false);
+assert.equal(nativeQueries, beforePersistence, 'missing App ID cannot fall back to a loading path');
+assert.equal(await persistentSecret.isAvailable(unconfiguredOwner), true, 'capability checks need no storage identity');
+command.clear(unconfiguredOwner);
+delete tasks['unconfigured-owner'];
+tasks['persistent-owner'].path = '/relocated/app.cga';
+persistenceResult = null;
+assert.equal(await persistentStorage.get(persistenceOwner, 'missing'), null);
+assert.equal(persistenceArgs[0], 'net.example.persistent-owner');
+persistenceResult = { value: false };
+assert.deepEqual(plain(await persistentStorage.get(persistenceOwner, 'disabled')), { value: false });
+persistenceResult = true;
+assert.equal(await persistentStorage.set(persistenceOwner, 'preferences', false), true);
+assert.equal(await persistentStorage.remove(persistenceOwner, 'preferences'), true);
+assert.equal(await persistentSecret.isAvailable(persistenceOwner), true);
+persistenceResult = 'secret-value';
+assert.equal(await persistentSecret.get(persistenceOwner, 'credential'), 'secret-value');
+persistenceResult = undefined;
+assert.equal(await persistentStorage.get(persistenceOwner, 'unsupported'), false);
+assert.equal(await persistentSecret.get(persistenceOwner, 'unsupported'), false);
+beforePersistence = nativeQueries;
+tasks['persistent-owner'].ending = true;
+assert.equal(await persistentStorage.set(persistenceOwner, 'preferences', false), false);
+assert.equal(nativeQueries, beforePersistence);
+nativeEnvironment = false;
+assert.equal(await persistentStorage.get(persistenceOwner, 'preferences'), false);
+command.clear(persistenceOwner);
+delete tasks['persistent-owner'];
 command.clear(second);
 dom.window.close();
 console.log('Command isolation, JSON Schema, shared execution, permissions, cancellation, WebMCP and lifecycle passed.');

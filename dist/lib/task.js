@@ -666,6 +666,9 @@ export async function run(current, url, opt = {}) {
     // --- 创建任务对象 ---
     list[taskId] = {
         'id': taskId,
+        // --- 保存启动时的固定标识；无 ID 的旧 App 仍可运行，但不能使用 Native 持久存储 ---
+        'appId': typeof app.config.id === 'string' && /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(app.config.id) ?
+            app.config.id : undefined,
         'app': app,
         'class': null,
         'customTheme': false,

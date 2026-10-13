@@ -59,7 +59,7 @@ taskApi = await load('task', { ...common, './control': controls, './theme': {
 taskApi.initSysId('sys');
 taskApi.init();
 const app = {
-    type: 'app', config: { name: 'Concurrent packages', controls: ['/a', '/b.cgc'], themes: ['/light', '/dark'] },
+    type: 'app', config: { id: 'net.example.concurrent', name: 'Concurrent packages', controls: ['/a', '/b.cgc'], themes: ['/light', '/dark'] },
     package: { getContent: async path => path === '/app.js' ? 'app fixture' : null },
 };
 const running = taskApi.run('sys', app, { notify: false, progress: (loaded, total, type, path) => progress.push(path) });
@@ -80,6 +80,9 @@ assert.equal(typeof taskId, 'string');
 assert.ok(taskApi.getOrigin(taskId).controls.same.layout.includes('second'), 'last configured duplicate control wins');
 assert.deepEqual(themeOrder, ['light', 'dark'], 'theme application preserves configured order');
 assert.equal(events.at(-1), 'main');
+assert.equal(taskApi.getOrigin(taskId).appId, 'net.example.concurrent');
+app.config.id = 'net.example.changed';
+assert.equal(taskApi.getOrigin(taskId).appId, 'net.example.concurrent', 'running identity cannot change with configuration edits');
 
 requests.clear();
 const failed = taskApi.run('sys', { ...app, config: { ...app.config, controls: ['/missing', '/later'], themes: ['/unused'] } }, { notify: false });
@@ -92,3 +95,14 @@ assert.equal(await failed, -905, 'missing control retains the task failure code'
 await new Promise(resolve => setImmediate(resolve));
 assert.deepEqual(themeOrder, ['light', 'dark'], 'failure does not apply prefetched themes');
 console.log('Concurrent CGC/CGT downloads, ordered registration/themes, duplicate controls and failure handling passed.');
+
+const smallApp = { ...app, config: { id: 'net.example.concurrent', name: 'Renamed App', controls: [] } };
+const relocated = await taskApi.run('sys', smallApp, { notify: false, path: '/moved/app.cga' });
+assert.equal(taskApi.getOrigin(relocated).appId, taskApi.getOrigin(taskId).appId);
+assert.notEqual(taskApi.getOrigin(relocated).path, taskApi.getOrigin(taskId).path);
+for (const id of [undefined, '/invalid/path.cga', '', 'x'.repeat(129)]) {
+    const legacy = await taskApi.run('sys', { ...smallApp, config: { ...smallApp.config, id } }, { notify: false });
+    assert.equal(typeof legacy, 'string', 'legacy or invalid-ID Apps still start');
+    assert.equal(taskApi.getOrigin(legacy).appId, undefined);
+}
+console.log('Fixed App identity survives task restarts, path/name changes and config edits; legacy Apps still start.');

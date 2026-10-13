@@ -1795,6 +1795,11 @@ export interface IAppPackage {
 
 /** --- 应用文件包 config --- */
 export interface IAppConfig {
+    /**
+     * --- 固定应用 ID，如 net.example.notepad；Native 持久存储必填，跨位置和版本保持不变 ---
+     * 1-128 位字母、数字、点、下划线或连字符，以字母或数字开头。
+     */
+    'id'?: string;
     /** --- 应用名 --- */
     'name': string;
     /** --- 发行版本 --- */

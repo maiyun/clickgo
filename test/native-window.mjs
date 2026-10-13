@@ -103,6 +103,8 @@ const dependencies = {
     'node:url': synthetic(url),
     'node:crypto': synthetic(crypto),
     './lib/fs.js': synthetic({ refreshDrives: async () => {} }),
+    './lib/storage.js': synthetic({ get: async () => ({ value: false }), set: async () => true, remove: async () => true }),
+    './lib/secret.js': synthetic({ get: async () => 'test-secret', set: async () => true, remove: async () => true, isAvailable: () => true }),
     './lib/tool.js': synthetic({ parsePath: value => value }),
     './lib/cli.js': synthetic({ run: (...args) => { commands.push(args); return commandRun(); } }),
     './lib/mcp.js': synthetic({ start: (...args) => startMcp(...args) }),
@@ -123,6 +125,16 @@ const run = () => {
     return (...params) => ipc(event, ...params);
 };
 let invoke = run();
+assert.equal(await invoke('cg-app-persistence', 'secret', '/apps/old-path.cga', 'storage', 'get', 'key'), false);
+assert.equal(await invoke('cg-app-persistence', 'secret', undefined, 'secret', 'isAvailable'), true);
+assert.equal(await invoke('cg-app-persistence', 'secret', '', 'storage', 'get', 'key'), false);
+assert.equal(await invoke('cg-app-persistence', 'secret', undefined, 'storage', 'get', 'key'), false);
+assert.equal(await invoke('cg-app-persistence', 'wrong', 'net.example.one', 'storage', 'get', 'key'), false);
+assert.deepEqual(await invoke('cg-app-persistence', 'secret', 'net.example.one', 'storage', 'get', 'key'), { value: false });
+assert.equal(await invoke('cg-app-persistence', 'secret', 'net.example.one', 'secret', 'get', 'key'), 'test-secret');
+assert.equal(await invoke('cg-app-persistence', 'secret', 'net.example.one', 'secret', 'set', 'key', 3), false);
+assert.equal(await invoke('cg-app-persistence', 'secret', 'net.example.one', 'storage', 'unknown', 'key'), false);
+assert.equal(await invoke('cg-app-persistence', 'secret', 'net.example.one', 'secret', 'isAvailable'), true);
 // --- 接入入口不含凭据，仍只接受当前主文档会话；开发模式保留实际入口文件。 ---
 assert.equal(invoke('cg-command-entry', 'bad'), null);
 assert.equal(ipc({ sender: window.webContents, senderFrame: { url: window.webContents.mainFrame.url } },
