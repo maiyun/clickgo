@@ -9,8 +9,10 @@ import * as lMcp from './lib/mcp.js';
 import * as lCli from './lib/cli.js';
 import * as lStorage from './lib/storage.js';
 import * as lSecret from './lib/secret.js';
+import * as lUpdate from './lib/update.js';
 export * as storage from './lib/storage.js';
 export * as secret from './lib/secret.js';
+export { checkUpdates, downloadUpdate, getUpdateState, onUpdateState } from './lib/update.js';
 // npm publish --tag dev --access public
 // --- sass --watch dist/:dist/ --style compressed --no-source-map ---
 /** --- 窗体是否含有 border 边框，有的话将不是沉浸式，也不会绑定任何窗体的大小的相关事件 --- */
@@ -39,6 +41,8 @@ let mcpPending;
 let mcpGeneration = 0;
 /** --- 应用已确认关闭，避免再次进入网页关闭事件 --- */
 let closeAllowed = false;
+/** --- 安装失败时恢复先前的关闭确认规则 --- */
+let updateCloseAllowed;
 /** --- 当前启用系统文件打开处理的启动类 --- */
 let fileOpenBoot;
 /** --- 当前系统平台 --- */
@@ -81,6 +85,22 @@ const methods = {
                     case 'remove':
                         return lSecret.remove(key, appId);
                 }
+            }
+            return false;
+        },
+    },
+    // --- 软件更新只允许固定动作，网页不能传入源地址或文件路径 ---
+    'cg-update': {
+        'once': false,
+        handler: function (t, action) {
+            if (!verifyToken(t)) {
+                return false;
+            }
+            switch (action) {
+                case 'check': return lUpdate.checkUpdates();
+                case 'download': return lUpdate.downloadUpdate();
+                case 'install': return installUpdate();
+                case 'state': return lUpdate.getUpdateState();
             }
             return false;
         },
@@ -799,6 +819,36 @@ export async function stopMcp() {
     }
 }
 /**
+ * --- 安装已校验更新，此调用授权关闭软件；失败恢复关闭确认 ---
+ * @returns 当前更新状态，业务必须先完成确认和文档保存
+ */
+export function installUpdate() {
+    if (lUpdate.getUpdateState().status === 'restarting') {
+        return lUpdate.getUpdateState();
+    }
+    const previous = closeAllowed;
+    updateCloseAllowed = previous;
+    closeAllowed = true;
+    const result = lUpdate.installUpdate();
+    if (result.status !== 'restarting') {
+        closeAllowed = previous;
+        updateCloseAllowed = undefined;
+    }
+    return result;
+}
+// --- 公开状态沿用已验证的主文档会话，不向销毁或导航中的页面投递 ---
+lUpdate.onUpdateState((state) => {
+    if (state.status === 'error' && updateCloseAllowed !== undefined) {
+        closeAllowed = updateCloseAllowed;
+        updateCloseAllowed = undefined;
+    }
+    const target = form;
+    if (!target || target.isDestroyed() || mainNavigating || !token) {
+        return;
+    }
+    void target.webContents.executeJavaScript(`window.clickgoNativeWeb?.invoke('update-state', ${JSON.stringify(state)})`).catch(() => { });
+});
+/**
  * --- 获取当前桌面应用的版本，来自应用 package.json ---
  * @returns 应用版本
  */
@@ -880,6 +930,7 @@ export function getCommandEntry() {
  */
 export function launcher(boot, options = {}) {
     commandAutoStart = options.commandAutoStart ?? false;
+    lUpdate.setEnabled(options.updates ?? false);
     const offset = process.defaultApp ? 2 : 1;
     const args = process.argv.slice(offset);
     const modeIndex = args.findIndex(arg => arg === '--cli' || arg === '--mcp');

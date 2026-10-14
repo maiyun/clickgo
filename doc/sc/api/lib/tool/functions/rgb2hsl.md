@@ -34,7 +34,7 @@ b 值
 
 ### a?
 
-`string` \| `number`
+`string` \| `number` = `1`
 
 a 值
 

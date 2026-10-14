@@ -22,7 +22,7 @@ Defined in: [lib/theme.ts:221](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### current?
 
-[`TCurrent`](../../core/type-aliases/TCurrent.md) \| `null`
+[`TCurrent`](../../core/type-aliases/TCurrent.md) \| `null` = `null`
 
 如果要读包内对象，则要传当前任务
 

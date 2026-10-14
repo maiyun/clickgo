@@ -22,6 +22,8 @@ import type * as lNativeStorage from './native/storage';
 
 export * as storage from './native/storage';
 export * as secret from './native/secret';
+export { checkUpdates, downloadUpdate, installUpdate, getUpdateState, onUpdateState } from './native/update';
+export type { IUpdateState, IUpdateProgress } from './native/update';
 
 /** --- 系统级 ID --- */
 let sysId = '';
@@ -39,6 +41,25 @@ export function initSysId(id: string): void {
 
 /** --- native 通讯秘钥 --- */
 const token = lTool.random(32, lTool.RANDOM_LUNS);
+
+/**
+ * --- 接入固定的软件更新动作，不允许网页提供地址或安装路径 ---
+ * @param current 已确认有效的任务
+ * @param action 固定更新动作
+ * @returns 更新状态；任务失效为 false，旧宿主缺少能力时为 null
+ */
+export async function invokeUpdate(
+    current: lCore.TCurrent, action: 'check' | 'download' | 'install' | 'state'
+): Promise<import('./native/update').IUpdateState | null | false> {
+    if (!clickgo.isNative()) {
+        return null;
+    }
+    if (!lTask.getOrigin(current) || !(await lTask.checkPermission(current, 'root'))[0] || !lTask.getOrigin(current)) {
+        return false;
+    }
+    const result = await invoke('cg-update', token, action);
+    return lTask.getOrigin(current) ? result ?? null : false;
+}
 
 // ---------------------------
 // --- 供 native 调用的部分 ---

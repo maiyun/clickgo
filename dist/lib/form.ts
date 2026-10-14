@@ -3939,7 +3939,7 @@ export async function createPanel<T extends AbstractPanel>(
                 (mel.children.item(0) as HTMLElement).style.flex = '1';
                 // --- 完成 ---
                 resolve({
-                    'vapp': vapp as unknown as lCore.IVApp,
+                    'vapp': vapp,
                     'vroot': this,
                 });
             },

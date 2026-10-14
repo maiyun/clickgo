@@ -183,7 +183,7 @@ export class LayerModule implements ILayerModule {
     }
 
     public get propBoolean(): (name: keyof mHost.IFabricControl['props']) => boolean {
-        return this._host.propBoolean as (name: keyof mHost.IFabricControl['props']) => boolean;
+        return this._host.propBoolean;
     }
 
     public watch(name: keyof mHost.IFabricControl['props'], cb: () => void): void {

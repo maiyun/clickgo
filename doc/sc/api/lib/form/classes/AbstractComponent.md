@@ -800,7 +800,7 @@ Defined in: [lib/form.ts:424](https://github.com/maiyun/clickgo/blob/master/dist
 
 ##### param1?
 
-`string` \| `boolean` \| `Error`
+`string` \| `boolean` \| `Error` = `''`
 
 参数1
 

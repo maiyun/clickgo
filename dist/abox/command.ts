@@ -114,7 +114,7 @@ function reference(root: ISchema, ref: string): ISchema | boolean | null {
         node = (node as Record<string, unknown>)[key];
     }
     return typeof node === 'boolean' || node && typeof node === 'object' && !Array.isArray(node)
-        ? node as ISchema | boolean : null;
+        ? node : null;
 }
 
 function checkReferenceCycles(schema: ISchema | boolean, root: ISchema, verified: Set<ISchema>, active = new Set<ISchema>()): boolean {

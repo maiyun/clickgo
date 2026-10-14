@@ -30,11 +30,11 @@ export class SnapModule implements ISnapModule {
     }
 
     public get propBoolean(): (name: keyof mHost.IFabricControl['props']) => boolean {
-        return this._host.propBoolean as (name: keyof mHost.IFabricControl['props']) => boolean;
+        return this._host.propBoolean;
     }
 
     public get propNumber(): (name: keyof mHost.IFabricControl['props']) => number {
-        return this._host.propNumber as (name: keyof mHost.IFabricControl['props']) => number;
+        return this._host.propNumber;
     }
 
     private get _artboard(): mHost.TArtboard {

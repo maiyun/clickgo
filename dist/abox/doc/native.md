@@ -4,7 +4,7 @@
 
 ## 源码同步
 
-- 测试宿主 `dist/test/native/native.ts` 对应 clickgo-native 的 `dist/index.ts`，lib/{fs,tool,mcp,instance,client,cli,startup,version,persistence,storage,secret}.ts 对应对方 dist/lib，abox/{fs,tool,persistence,cli}.ts 对应对方 dist/abox，手写 pre.js 对应 dist/pre.js；对应源文件逐字一致，不能降级为桩。
+- 测试宿主 `dist/test/native/native.ts` 对应 clickgo-native 的 `dist/index.ts`，lib/{fs,tool,mcp,instance,client,cli,startup,version,persistence,storage,secret,update}.ts 对应对方 dist/lib，abox/{fs,tool,persistence,cli,update}.ts 对应对方 dist/abox，手写 pre.js 对应 dist/pre.js；对应源文件逐字一致，不能降级为桩。
 - 先改 ClickGo 副本，生成 TS 产物并跑 check、test:native；真实 Electron 用 native，无边框/进程保留用 native2/native3。验收后同步对应源码到 clickgo-native，构建/回归并 cmp；JS/声明各自生成。
 - 三个启动 Demo 显式 startMcp，稳定软件 ID 为 clickgo-demo，命令演示从 Demo 的 AI interface guide 进入。SDK 在此为 devDependency，在 Native 服务端为运行依赖；同步依赖变更。联动至少核实 MCP 更新 UI、UI 可由 MCP 读取及受影响的 App 隔离、取消、退出。
 
@@ -19,3 +19,5 @@
 - 内部 applicationId 按安装可执行文件归属，开发按 App 路径，AppImage 按原镜像；CLI/stdio 只连接同一安装，不受业务 MCP ID 影响。MCP 默认允许同用户发现凭据，discovery:false 可关闭；退出撤销记录，崩溃遗留按 PID 排除。长期凭据/偏好由应用维护，网页读取仍要 root。
 - 版本由 lib/version.ts 读取模块所属包 package.json，不复制常量或读取业务 app.getVersion；ClickGo 副本读 ClickGo 包，升级后重启。
 - commandAutoStart 默认 false；启用后仅需 GUI 的命令按需拉起，帮助/instances/握手/tools/list 不拉起。私有锁合并并发、按安装隔离并限时等就绪；锁交给 GUI，取消/超时仅释放本次等待，不关 GUI、不回放修改；就绪清锁，异常退出可重启。回归 test:native 覆盖。
+
+- 软件更新由 launcher 的 updates 显式启用（默认 false），lib/update.ts 管理软件级状态/并发/安装目标，abox/update.ts 延迟加载 electron-updater；更新源取自消费软件 build.publish。页面 checkUpdates/downloadUpdate/installUpdate/getUpdateState 要求 root，onUpdateState 只发布公开状态并随 Form/Task 销毁清理。业务负责下载/安装确认及保存；禁止自动下载、退出时安装、网页传地址或安装路径。开发/portable 禁用，CLI/stdio 不初始化更新器。安装异步失败恢复关闭确认；回归 test:update（ClickGo 为 test:native）。

@@ -22,6 +22,10 @@ let commandRun = async () => {};
 let activations = 0;
 let startMcp = async () => false;
 let sandboxDisabled = false;
+let updatesEnabled;
+let updateListener;
+let updateState = { status: 'disabled' };
+let updateInstalls = 0;
 const openFilePaths = ['/tmp/first.txt', '/tmp/second.txt', '/tmp/third.txt', '/tmp/fourth.txt'];
 const entryArg = process.argv[2];
 const originalArgv = process.argv;
@@ -102,6 +106,11 @@ const dependencies = {
     'path': synthetic(path),
     'node:url': synthetic(url),
     'node:crypto': synthetic(crypto),
+    './lib/update.js': synthetic({ setEnabled: value => { updatesEnabled = value; },
+        onUpdateState: handler => { updateListener = handler; return () => {}; },
+        checkUpdates: async () => updateState, downloadUpdate: async () => updateState,
+        installUpdate: () => { ++updateInstalls; updateState = { status: 'restarting' }; return updateState; },
+        getUpdateState: () => updateState }),
     './lib/fs.js': synthetic({ refreshDrives: async () => {} }),
     './lib/storage.js': synthetic({ get: async () => ({ value: false }), set: async () => true, remove: async () => true }),
     './lib/secret.js': synthetic({ get: async () => 'test-secret', set: async () => true, remove: async () => true, isAvailable: () => true }),
@@ -125,6 +134,23 @@ const run = () => {
     return (...params) => ipc(event, ...params);
 };
 let invoke = run();
+assert.equal(await invoke('cg-update', 'bad', 'install'), false);
+assert.equal(await invoke('cg-update', 'secret', 'unknown'), false);
+assert.equal((await invoke('cg-update', 'secret', 'state')).status, 'disabled');
+assert.equal(updateInstalls, 0);
+assert.equal((await invoke('cg-update', 'secret', 'install')).status, 'restarting');
+assert.equal((await invoke('cg-update', 'secret', 'install')).status, 'restarting');
+assert.equal(updateInstalls, 1, 'repeated install preserves the original close authorization');
+updateState = { status: 'error', errorCode: 'install-failed' };
+updateListener(updateState);
+const updateQueries = queries;
+window.close();
+await new Promise(resolve => setImmediate(resolve));
+assert.equal(window.destroyed, false, 'asynchronous installer failure restores unsaved-close protection');
+assert.equal(queries, updateQueries + 1);
+invoke('cg-close', 'secret');
+invoke = run(); queries = 0;
+
 assert.equal(await invoke('cg-app-persistence', 'secret', '/apps/old-path.cga', 'storage', 'get', 'key'), false);
 assert.equal(await invoke('cg-app-persistence', 'secret', undefined, 'secret', 'isAvailable'), true);
 assert.equal(await invoke('cg-app-persistence', 'secret', '', 'storage', 'get', 'key'), false);
@@ -228,6 +254,7 @@ class SingleBoot extends mod.namespace.AbstractBoot { main() {} }
 mod.namespace.launcher(new SingleBoot(), { singleInstance: true });
 await new Promise(r => setImmediate(r));
 assert.equal(locks, 1);
+assert.equal(updatesEnabled, false, 'updates are opt-in');
 app.removeAllListeners('second-instance');
 
 const opened = [];
@@ -235,7 +262,7 @@ class FileBoot extends mod.namespace.AbstractBoot {
     onOpenFiles(paths) { opened.push(paths); }
     main() { this.run('/app/index.html', { frame: false }); }
 }
-mod.namespace.launcher(new FileBoot(), { openFiles: true, singleInstance: true });
+mod.namespace.launcher(new FileBoot(), { updates: true, openFiles: true, singleInstance: true });
 await new Promise(r => setImmediate(r));
 assert.equal(locks, 2);
 assert.deepEqual(opened, [[openFilePaths[0]]]);

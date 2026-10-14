@@ -25,7 +25,7 @@ export class ArtboardModule implements IArtboardModule {
     }
 
     public get propNumber(): (name: keyof mHost.IFabricControl['props']) => number {
-        return this._host.propNumber as (name: keyof mHost.IFabricControl['props']) => number;
+        return this._host.propNumber;
     }
 
     public get artboard(): IArtboardModule['artboard'] {

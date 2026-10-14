@@ -34,7 +34,7 @@ dom 对象
 
 ### mode?
 
-`"default"` \| `"style"` \| `"text"` \| `"child"` \| `"childsub"`
+`"default"` \| `"style"` \| `"text"` \| `"child"` \| `"childsub"` = `'default'`
 
 监听模式，默认 default
 

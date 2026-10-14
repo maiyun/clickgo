@@ -94,7 +94,7 @@ export async function compressor<T extends File | Blob>(file: T, options: {
             'quality': options.quality,
             'maxWidth': options.maxWidth,
             'maxHeight': options.maxHeight,
-            success: (result: T) => {
+            success: (result: File) => {
                 if ((file instanceof File) && !(result instanceof File)) {
                     resolve(new File([result], file.name, {
                         'lastModified': file.lastModified,
@@ -102,7 +102,7 @@ export async function compressor<T extends File | Blob>(file: T, options: {
                     }) as T);
                     return;
                 }
-                resolve(result);
+                resolve(result as T);
             },
             error: () => {
                 resolve(false);
