@@ -811,6 +811,12 @@ async function buildLocalComponents(task, formId, findex, componentClasses, pane
 }
 /** --- 窗体的抽象类 --- */
 export class AbstractForm extends AbstractCommon {
+    onNativeLaunch() {
+        return;
+    }
+    onNativeOpenFiles() {
+        return;
+    }
     // --- 以下为窗体有，但 control 没有 ---
     /** --- 当前是否完全创建完毕 --- */
     isReady = false;

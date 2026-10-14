@@ -6,7 +6,7 @@
 
 # Interface: IConfig
 
-Defined in: [lib/core.ts:1395](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1395)
+Defined in: [lib/core.ts:1477](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1477)
 
 Config 对象
 
@@ -16,7 +16,7 @@ Config 对象
 
 > **desktop.icon.recycler**: `boolean`
 
-Defined in: [lib/core.ts:1402](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1402)
+Defined in: [lib/core.ts:1484](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1484)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/core.ts:1402](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **desktop.icon.storage**: `boolean`
 
-Defined in: [lib/core.ts:1401](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1401)
+Defined in: [lib/core.ts:1483](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1483)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1401](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **desktop.path**: `string` \| `null`
 
-Defined in: [lib/core.ts:1404](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1404)
+Defined in: [lib/core.ts:1486](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1486)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/core.ts:1404](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **desktop.wallpaper**: `string` \| `null`
 
-Defined in: [lib/core.ts:1403](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1403)
+Defined in: [lib/core.ts:1485](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1485)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [lib/core.ts:1403](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **launcher.list**: [`IConfigLauncherItem`](IConfigLauncherItem.md)[]
 
-Defined in: [lib/core.ts:1405](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1405)
+Defined in: [lib/core.ts:1487](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1487)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [lib/core.ts:1405](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **locale**: `string`
 
-Defined in: [lib/core.ts:1396](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1396)
+Defined in: [lib/core.ts:1478](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1478)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [lib/core.ts:1396](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **task.margin**: `number`
 
-Defined in: [lib/core.ts:1399](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1399)
+Defined in: [lib/core.ts:1481](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1481)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [lib/core.ts:1399](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **task.mode**: `"bar"` \| `"dock"`
 
-Defined in: [lib/core.ts:1398](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1398)
+Defined in: [lib/core.ts:1480](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1480)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [lib/core.ts:1398](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **task.pin**: `Record`\<`string`, \{ `icon`: `string`; `name`: `string`; \}\>
 
-Defined in: [lib/core.ts:1400](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1400)
+Defined in: [lib/core.ts:1482](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1482)
 
 ***
 
@@ -88,4 +88,4 @@ Defined in: [lib/core.ts:1400](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **task.position**: `"left"` \| `"right"` \| `"top"` \| `"bottom"`
 
-Defined in: [lib/core.ts:1397](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1397)
+Defined in: [lib/core.ts:1479](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1479)

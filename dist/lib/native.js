@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 import * as clickgo from '../clickgo';
+import * as lCore from './core';
 import * as lTool from './tool';
 import * as lTask from './task';
 import * as lNativeCommand from './command/native';
+import { createNativeEventDispatcher } from '../abox/native-events';
 export * as storage from './native/storage';
 export * as secret from './native/secret';
 export { checkUpdates, downloadUpdate, installUpdate, getUpdateState, onUpdateState } from './native/update';
@@ -34,6 +36,38 @@ export function initSysId(id) {
 }
 /** --- native 通讯秘钥 --- */
 const token = lTool.random(32, lTool.RANDOM_LUNS);
+/** --- Boot.main 完成后才投递启动时暂存的系统事件 --- */
+let nativeEventsReady = false;
+const dispatchNativeEvents = createNativeEventDispatcher({
+    ready: () => nativeEventsReady && clickgo.isNative(),
+    read: async () => {
+        const result = await invoke('cg-native-events', token);
+        return Array.isArray(result) ? result : result === false ? false : null;
+    },
+    dispatch: async (event) => {
+        if (event.type === 'launch') {
+            await lCore.trigger('nativeLaunch', sysId, event.event);
+        }
+        else if (event.type === 'openFiles') {
+            await lCore.trigger('nativeOpenFiles', sysId, { 'paths': event.paths, 'info': event.info });
+        }
+    },
+    error: (error) => {
+        void lCore.trigger('error', '', '', error instanceof Error ? error : new Error(String(error)), 'native events').catch(() => { });
+    },
+});
+/**
+ * --- 完成宿主业务初始化并读取 Native 暂存事件，仅系统入口可调用 ---
+ * @param current 系统级 ID
+ * @returns 无
+ */
+export function ready(current) {
+    if (current !== sysId) {
+        return;
+    }
+    nativeEventsReady = true;
+    dispatchNativeEvents();
+}
 /**
  * --- 接入固定的软件更新动作，不允许网页提供地址或安装路径 ---
  * @param current 已确认有效的任务
@@ -58,6 +92,7 @@ const methods = {};
 // --- 供 native 调用的 web 上的对象 ---
 window.clickgoNativeWeb = {
     'command': lNativeCommand.invoke,
+    nativeEvents: () => { dispatchNativeEvents(); },
     invoke: function (name, ...param) {
         let handled = false;
         for (const taskId in methods) {

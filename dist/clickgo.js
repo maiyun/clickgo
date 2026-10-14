@@ -125,6 +125,12 @@ export function hasFrame() {
 }
 /** --- 全局类 --- */
 export class AbstractBoot {
+    onNativeLaunch() {
+        return;
+    }
+    onNativeOpenFiles() {
+        return;
+    }
     /** --- 当前是否是 debug 模式 --- */
     _debug = false;
     /** --- 切勿传给 App --- */
@@ -347,5 +353,6 @@ export async function launcher(boot) {
     }
     // --- 执行回调 ---
     await boot.main();
+    lNative.ready(sysId);
 }
 export { lCommand as command, lControl as control, lCore as core, lDom as dom, lForm as form, lFs as fs, lNative as native, lStorage as storage, lTask as task, lTheme as theme, lTool as tool, lZip as zip };

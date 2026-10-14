@@ -8,7 +8,7 @@
 
 > **max**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/native.ts:371](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L371)
+Defined in: [lib/native.ts:409](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L409)
 
 ## Parameters
 

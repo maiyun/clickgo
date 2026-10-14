@@ -8,7 +8,7 @@
 
 > **getCommandEntry**(): `Promise`\<[`ICommandEntry`](../interfaces/ICommandEntry.md) \| `null`\>
 
-Defined in: [lib/native.ts:121](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L121)
+Defined in: [lib/native.ts:159](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L159)
 
 取得软件自身的 CLI/stdio 入口和启动要求，无需读取连接凭据
 

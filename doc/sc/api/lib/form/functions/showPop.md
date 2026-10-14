@@ -8,7 +8,7 @@
 
 > **showPop**(`el`, `pop`, `direction`, `opt?`): `void`
 
-Defined in: [lib/form.ts:3225](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3225)
+Defined in: [lib/form.ts:3247](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3247)
 
 获取 pop 显示出来的坐标并报系统全局记录
 

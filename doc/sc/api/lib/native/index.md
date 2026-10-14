@@ -15,8 +15,14 @@
 
 - [ICommandEntry](interfaces/ICommandEntry.md)
 - [IMcpInfo](interfaces/IMcpInfo.md)
+- [INativeLaunchEvent](interfaces/INativeLaunchEvent.md)
+- [INativeOpenFilesInfo](interfaces/INativeOpenFilesInfo.md)
 - [IUpdateProgress](interfaces/IUpdateProgress.md)
 - [IUpdateState](interfaces/IUpdateState.md)
+
+## Type Aliases
+
+- [TNativeOpenFilesSource](type-aliases/TNativeOpenFilesSource.md)
 
 ## Functions
 
@@ -48,6 +54,7 @@
 - [open](functions/open.md)
 - [ping](functions/ping.md)
 - [quit](functions/quit.md)
+- [ready](functions/ready.md)
 - [restore](functions/restore.md)
 - [save](functions/save.md)
 - [size](functions/size.md)

@@ -8,7 +8,7 @@
 
 > **changeFocusMaxZIndex**(): `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:2597](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2597)
+Defined in: [lib/form.ts:2619](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2619)
 
 让最大的 z index 窗体获取焦点（不含 top 和最小化的）
 

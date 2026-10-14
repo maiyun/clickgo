@@ -8,7 +8,7 @@
 
 > **initSysId**(`id`): `void`
 
-Defined in: [lib/native.ts:35](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L35)
+Defined in: [lib/native.ts:38](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L38)
 
 初始化系统级 ID，仅能设置一次
 

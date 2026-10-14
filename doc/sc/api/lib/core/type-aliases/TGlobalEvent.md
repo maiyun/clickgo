@@ -6,8 +6,8 @@
 
 # Type Alias: TGlobalEvent
 
-> **TGlobalEvent** = `"trayCreated"` \| `"trayChanged"` \| `"trayRemoved"` \| `"error"` \| `"screenResize"` \| `"configChanged"` \| `"formCreated"` \| `"formRemoved"` \| `"formTitleChanged"` \| `"formIconChanged"` \| `"formStateMinChanged"` \| `"formStateMaxChanged"` \| `"formShowChanged"` \| `"formFocused"` \| `"formBlurred"` \| `"formFlash"` \| `"formShowInSystemTaskChange"` \| `"formHashChange"` \| `"taskStarted"` \| `"taskEnded"` \| `"webMcpStatusChanged"` \| `"launcherShowChanged"` \| `"launcherFolderNameChanged"` \| `"hashChanged"` \| `"keydown"` \| `"keyup"`
+> **TGlobalEvent** = `"nativeLaunch"` \| `"nativeOpenFiles"` \| `"trayCreated"` \| `"trayChanged"` \| `"trayRemoved"` \| `"error"` \| `"screenResize"` \| `"configChanged"` \| `"formCreated"` \| `"formRemoved"` \| `"formTitleChanged"` \| `"formIconChanged"` \| `"formStateMinChanged"` \| `"formStateMaxChanged"` \| `"formShowChanged"` \| `"formFocused"` \| `"formBlurred"` \| `"formFlash"` \| `"formShowInSystemTaskChange"` \| `"formHashChange"` \| `"taskStarted"` \| `"taskEnded"` \| `"webMcpStatusChanged"` \| `"launcherShowChanged"` \| `"launcherFolderNameChanged"` \| `"hashChanged"` \| `"keydown"` \| `"keyup"`
 
-Defined in: [lib/core.ts:1428](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1428)
+Defined in: [lib/core.ts:1510](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1510)
 
 全局事件类型

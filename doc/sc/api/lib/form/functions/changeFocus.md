@@ -8,7 +8,7 @@
 
 > **changeFocus**(`formId?`): `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:2442](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2442)
+Defined in: [lib/form.ts:2464](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2464)
 
 改变 form 的焦点 class
 

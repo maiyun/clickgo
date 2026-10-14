@@ -8,7 +8,7 @@
 
 > **close**(`formId`): `boolean`
 
-Defined in: [lib/form.ts:2137](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2137)
+Defined in: [lib/form.ts:2159](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2159)
 
 关闭一个窗体
 

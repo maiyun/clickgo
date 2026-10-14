@@ -8,7 +8,7 @@
 
 > **refreshNotifyPosition**(): `void`
 
-Defined in: [lib/form.ts:2851](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2851)
+Defined in: [lib/form.ts:2873](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2873)
 
 按当前可用区域和实际高度重新排列通知
 

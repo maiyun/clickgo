@@ -6,7 +6,7 @@
 
 # Interface: IFormDialogOptions
 
-Defined in: [lib/form.ts:4960](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4960)
+Defined in: [lib/form.ts:4982](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4982)
 
 Dialog 选项
 
@@ -16,7 +16,7 @@ Dialog 选项
 
 > `optional` **autoDialogResult?**: `boolean`
 
-Defined in: [lib/form.ts:4968](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4968)
+Defined in: [lib/form.ts:4990](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4990)
 
 点击按钮后是否自动将按钮文本写入 dialogResult，默认 true
 
@@ -26,7 +26,7 @@ Defined in: [lib/form.ts:4968](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **buttons?**: `string`[]
 
-Defined in: [lib/form.ts:4966](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4966)
+Defined in: [lib/form.ts:4988](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4988)
 
 底部按钮文本列表，默认使用当前语言的确定按钮文本
 
@@ -36,7 +36,7 @@ Defined in: [lib/form.ts:4966](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **content**: `string`
 
-Defined in: [lib/form.ts:4964](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4964)
+Defined in: [lib/form.ts:4986](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4986)
 
 dialog 内容，支持直接传布局字符串
 
@@ -46,7 +46,7 @@ dialog 内容，支持直接传布局字符串
 
 > `optional` **data?**: `Record`\<`string`, `any`\>
 
-Defined in: [lib/form.ts:4982](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4982)
+Defined in: [lib/form.ts:5004](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5004)
 
 传值，需要用 data.x 读取
 
@@ -56,7 +56,7 @@ Defined in: [lib/form.ts:4982](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **direction?**: `"v"` \| `"h"`
 
-Defined in: [lib/form.ts:4971](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4971)
+Defined in: [lib/form.ts:4993](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4993)
 
 dialog 控件内容布局方向，h 为横向，v 为纵向
 
@@ -66,7 +66,7 @@ dialog 控件内容布局方向，h 为横向，v 为纵向
 
 > `optional` **gutter?**: `string` \| `number`
 
-Defined in: [lib/form.ts:4973](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4973)
+Defined in: [lib/form.ts:4995](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4995)
 
 dialog 控件内容区项目间距，会透传给 dialog 控件
 
@@ -76,7 +76,7 @@ dialog 控件内容区项目间距，会透传给 dialog 控件
 
 > `optional` **height?**: `string` \| `number`
 
-Defined in: [lib/form.ts:4977](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4977)
+Defined in: [lib/form.ts:4999](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4999)
 
 dialog 控件高度，传数字时为像素值，传 fill 时代表填充可用高度
 
@@ -86,7 +86,7 @@ dialog 控件高度，传数字时为像素值，传 fill 时代表填充可用�
 
 > `optional` **methods?**: `Record`\<`string`, (...`param`) => `any`\>
 
-Defined in: [lib/form.ts:4984](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4984)
+Defined in: [lib/form.ts:5006](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5006)
 
 传值，需要用 methods.x 读取
 
@@ -96,7 +96,7 @@ Defined in: [lib/form.ts:4984](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **onMounted?**: () => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/form.ts:5004](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5004)
+Defined in: [lib/form.ts:5026](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5026)
 
 窗体挂载完成事件
 
@@ -110,7 +110,7 @@ Defined in: [lib/form.ts:5004](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **padding?**: `string` \| `boolean`
 
-Defined in: [lib/form.ts:4979](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4979)
+Defined in: [lib/form.ts:5001](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5001)
 
 dialog 控件内容区是否显示内边距，默认表现与控件自身一致
 
@@ -120,7 +120,7 @@ dialog 控件内容区是否显示内边距，默认表现与控件自身一致
 
 > `optional` **path?**: `string`
 
-Defined in: [lib/form.ts:4988](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4988)
+Defined in: [lib/form.ts:5010](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5010)
 
 路径基，以 / 结束或文件路径则以文件的基路径为准，可留空
 
@@ -130,7 +130,7 @@ Defined in: [lib/form.ts:4988](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **select?**: (`this`, `e`, `button`) => `void`
 
-Defined in: [lib/form.ts:4995](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4995)
+Defined in: [lib/form.ts:5017](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5017)
 
 点击按钮触发事件，不能用 Promise
 
@@ -162,7 +162,7 @@ Defined in: [lib/form.ts:4995](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **style?**: `string`
 
-Defined in: [lib/form.ts:4986](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4986)
+Defined in: [lib/form.ts:5008](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5008)
 
 样式表
 
@@ -172,7 +172,7 @@ Defined in: [lib/form.ts:4986](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **title?**: `string`
 
-Defined in: [lib/form.ts:4962](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4962)
+Defined in: [lib/form.ts:4984](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4984)
 
 dialog 窗体标题，不传则使用默认标题 dialog
 
@@ -182,6 +182,6 @@ dialog 窗体标题，不传则使用默认标题 dialog
 
 > `optional` **width?**: `string` \| `number`
 
-Defined in: [lib/form.ts:4975](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4975)
+Defined in: [lib/form.ts:4997](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4997)
 
 dialog 控件宽度，传数字时为像素值，传 fill 时代表填充可用宽度

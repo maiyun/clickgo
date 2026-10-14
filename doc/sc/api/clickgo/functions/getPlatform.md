@@ -8,7 +8,7 @@
 
 > **getPlatform**(): `Platform` \| `"web"`
 
-Defined in: [clickgo.ts:121](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L121)
+Defined in: [clickgo.ts:122](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L122)
 
 获取当前平台（web 则只返回 web）
 

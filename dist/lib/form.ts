@@ -22,6 +22,7 @@ import * as lDom from './dom';
 import * as lControl from './control';
 import * as lFs from './fs';
 import * as lNative from './native';
+import type * as lNativeEvents from './native/events';
 
 /** --- 系统级 ID --- */
 let sysId = '';
@@ -960,6 +961,27 @@ async function buildLocalComponents(
 
 /** --- 窗体的抽象类 --- */
 export abstract class AbstractForm extends AbstractCommon {
+
+    /**
+     * --- Native 普通启动及再次启动事件；网页不触发，App/Form 要求 root ---
+     * @param event 业务参数、原生工作目录、来源及请求 ID
+     * @returns 无；各层级独立收到通知，同一业务动作由应用选择一处执行
+     */
+    public onNativeLaunch(event: lNativeEvents.INativeLaunchEvent): void | Promise<void>;
+    public onNativeLaunch(): void {
+        return;
+    }
+
+    /**
+     * --- Native 文件打开全局事件，要求宿主启用 openFiles；App/Form 要求 root ---
+     * @param paths 不含 /storage/ 的 ClickGo 绝对文件路径
+     * @param info startup、second-instance、association 或 drop 来源及请求 ID
+     * @returns 无；各层级独立通知，业务自行确认、保存和打开
+     */
+    public onNativeOpenFiles(paths: string[], info: lNativeEvents.INativeOpenFilesInfo): void | Promise<void>;
+    public onNativeOpenFiles(): void {
+        return;
+    }
 
     // --- 以下为窗体有，但 control 没有 ---
 

@@ -8,7 +8,7 @@
 
 > **invokeSys**(`current`, `name`, ...`param`): `Promise`\<`any`\>
 
-Defined in: [lib/native.ts:325](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L325)
+Defined in: [lib/native.ts:363](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L363)
 
 向 native 发送指令（系统级）
 

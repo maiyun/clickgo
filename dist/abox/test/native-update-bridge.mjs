@@ -18,7 +18,9 @@ try {
     const task = synthetic({ getOrigin: () => alive ? {} : null, checkPermission: (...args) => checkPermission(...args) });
     const tool = synthetic({ random: () => 'session-token', RANDOM_LUNS: '' });
     const empty = synthetic({});
+    const dispatcher = new SourceTextModule(await readFile(new URL('../native-events.js', import.meta.url), 'utf8'));
     const linker = name => {
+        if (name === '../abox/native-events') return dispatcher;
         if (name === './native/update') return update;
         if (name === '../native') return main;
         if (name.endsWith('/clickgo')) return clickgo;

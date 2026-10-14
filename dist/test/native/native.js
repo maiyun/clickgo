@@ -45,11 +45,22 @@ let closeAllowed = false;
 let updateCloseAllowed;
 /** --- 当前启用系统文件打开处理的启动类 --- */
 let fileOpenBoot;
+/** --- 普通 GUI 请求的宿主及尚未交给主文档的系统事件 --- */
+let launchBoot;
+let nativeRequestId = 0;
+const nativeEvents = [];
 /** --- 当前系统平台 --- */
 const platform = process.platform;
 // const platform: NodeJS.Platform = 'darwin';
 /** --- 监听前台的执行的方法，内置的方法，用户可调用方法自行添加 --- */
 const methods = {
+    // --- 只向已验证的主文档会话提供待处理系统事件 ---
+    'cg-native-events': {
+        'once': false,
+        handler: function (t) {
+            return verifyToken(t) ? nativeEvents.splice(0) : false;
+        },
+    },
     // --- 按固定 App ID 隔离持久配置与加密字符串，并查询安全存储是否可用 ---
     'cg-app-persistence': {
         'once': false,
@@ -501,16 +512,60 @@ function normalizeFilePaths(paths, cwd) {
  * --- 将操作系统文件打开请求转给启用该能力的应用 ---
  * @param paths 原始文件路径
  * @param cwd 相对路径使用的工作目录
+ * @param source 请求来源
+ * @param requestId 同一启动请求的 ID，独立请求默认分配
  * @returns 无
  */
-function dispatchOpenFiles(paths, cwd) {
+function dispatchOpenFiles(paths, cwd, source, requestId = ++nativeRequestId) {
     if (!fileOpenBoot) {
         return;
     }
     const parsed = normalizeFilePaths(paths, cwd);
-    if (parsed.length) {
-        fileOpenBoot.onOpenFiles(parsed);
+    if (!parsed.length) {
+        return;
     }
+    const info = { 'requestId': requestId, 'source': source };
+    nativeEvents.push({ 'type': 'openFiles', 'paths': [...parsed], 'info': { ...info } });
+    try {
+        // --- 原有单参数回调仍有效，宿主处理不阻止 App 侧收到通知 ---
+        Promise.resolve(fileOpenBoot.onOpenFiles([...parsed], { ...info })).catch(() => { });
+    }
+    catch {
+        // --- 单个业务回调异常不能阻断另一侧通知 ---
+    }
+    notifyNativeEvents();
+}
+/**
+ * --- 接收启动及后续实例的业务参数，文件请求复用同一个请求 ID ---
+ * @param args 去掉软件入口后的业务参数
+ * @param cwd 启动方原生工作目录
+ * @param source 首次或后续实例启动
+ * @returns 无
+ */
+function dispatchLaunch(args, cwd, source) {
+    const requestId = ++nativeRequestId;
+    const event = {
+        'requestId': requestId, 'source': source, 'args': [...args], 'cwd': nodePath.resolve(cwd),
+    };
+    nativeEvents.push({ 'type': 'launch', 'event': { ...event, 'args': [...args] } });
+    try {
+        Promise.resolve(launchBoot?.onLaunch(event)).catch(() => { });
+    }
+    catch {
+        // --- Native 与 ClickGo 的业务监听独立，不互相取消 ---
+    }
+    dispatchOpenFiles(args, cwd, source, requestId);
+    notifyNativeEvents();
+}
+/**
+ * --- 通知当前主文档读取队列；启动或导航期间未取走的请求继续暂存 ---
+ * @returns 无
+ */
+function notifyNativeEvents() {
+    if (!form || form.isDestroyed() || !token || mainNavigating) {
+        return;
+    }
+    void form.webContents.executeJavaScript('window.clickgoNativeWeb?.nativeEvents()').catch(() => { });
 }
 /** --- 全局类 --- */
 export class AbstractBoot {
@@ -541,10 +596,20 @@ export class AbstractBoot {
     /**
      * --- 接收操作系统交给应用的文件，仅在 launcher 的 openFiles 为 true 时触发 ---
      * @param paths 不含 /storage/ 的 ClickGo 文件路径
+     * @param info 启动、再次启动、文件关联或拖入来源及请求 ID
      * @returns 无
      */
-    onOpenFiles(paths) {
+    onOpenFiles(paths, info) {
         void paths;
+        void info;
+    }
+    /**
+     * --- 普通 GUI 启动及再次启动请求，与 ClickGo 的 onNativeLaunch 独立通知 ---
+     * @param event 业务参数、来源、工作目录及请求 ID；不含 CLI/stdio 请求
+     * @returns 无，业务可在 Native 或 App 处理
+     */
+    onLaunch(event) {
+        void event;
     }
     /**
      * --- 向 ClickGo 页面发送 Native 事件 ---
@@ -966,23 +1031,22 @@ export function launcher(boot, options = {}) {
             electron.app.quit();
             return;
         }
+        launchBoot = boot;
         fileOpenBoot = options.openFiles ? boot : undefined;
         if (options.openFiles) {
             electron.app.on('open-file', function (event, path) {
                 event.preventDefault();
                 activateMainForm();
-                dispatchOpenFiles([path], process.cwd());
+                dispatchOpenFiles([path], process.cwd(), 'association');
             });
-            const offset = process.defaultApp ? 2 : 1;
-            dispatchOpenFiles(process.argv.slice(offset), process.cwd());
         }
+        const offset = process.defaultApp ? 2 : 1;
+        dispatchLaunch(process.argv.slice(offset), process.cwd(), 'startup');
         if (options.singleInstance) {
             electron.app.on('second-instance', function (_event, argv, cwd) {
                 activateMainForm();
-                if (options.openFiles) {
-                    const offset = process.defaultApp ? 2 : 1;
-                    dispatchOpenFiles(argv.slice(offset), cwd);
-                }
+                const offset = process.defaultApp ? 2 : 1;
+                dispatchLaunch(argv.slice(offset), cwd, 'second-instance');
             });
         }
         // --- 等到 native 环境装载完毕 ---
@@ -1017,10 +1081,11 @@ electron.ipcMain.handle('pre', function (e, name, ...param) {
 });
 // --- 预加载层已用 webUtils 取得真实拖入文件，主进程仍须限制为当前实体窗体 ---
 electron.ipcMain.on('drop-files', function (event, paths) {
-    if (!form || form.isDestroyed() || (event.sender !== form.webContents) || !Array.isArray(paths)) {
+    if (!form || form.isDestroyed() || mainNavigating || (event.sender !== form.webContents) ||
+        event.senderFrame !== form.webContents.mainFrame || !Array.isArray(paths)) {
         return;
     }
-    dispatchOpenFiles(paths, process.cwd());
+    dispatchOpenFiles(paths, process.cwd(), 'drop');
 });
 // --- 只有显式启用 openFiles 的应用才由预加载层接管文件拖入 ---
 electron.ipcMain.on('file-open-enabled', function (event) {

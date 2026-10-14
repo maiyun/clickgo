@@ -258,8 +258,11 @@ assert.equal(updatesEnabled, false, 'updates are opt-in');
 app.removeAllListeners('second-instance');
 
 const opened = [];
+const sources = [];
+const launches = [];
 class FileBoot extends mod.namespace.AbstractBoot {
-    onOpenFiles(paths) { opened.push(paths); }
+    onLaunch(event) { launches.push({ ...event, args: [...event.args] }); event.args.length = 0; }
+    onOpenFiles(paths, info) { opened.push([...paths]); sources.push({ ...info }); paths.length = 0; info.source = 'changed'; }
     main() { this.run('/app/index.html', { frame: false }); }
 }
 mod.namespace.launcher(new FileBoot(), { updates: true, openFiles: true, singleInstance: true });
@@ -273,7 +276,8 @@ let prevented = false;
 app.emit('open-file', { preventDefault() { prevented = true; } }, openFilePaths[1]);
 assert.equal(prevented, true);
 app.emit('second-instance', {}, ['/electron', openFilePaths[2]], '/');
-dropFiles({ sender: window.webContents }, [openFilePaths[3]]);
+dropFiles({ sender: window.webContents, senderFrame: window.webContents.mainFrame }, [openFilePaths[3]]);
+dropFiles({ sender: window.webContents, senderFrame: {} }, [openFilePaths[3]]);
 assert.equal(activations, 2);
 assert.deepEqual(opened, [
     [openFilePaths[0]],
@@ -281,6 +285,21 @@ assert.deepEqual(opened, [
     [openFilePaths[2]],
     [openFilePaths[3]],
 ]);
+assert.deepEqual(sources.map(info => info.source), ['startup', 'association', 'second-instance', 'drop']);
+assert.deepEqual(launches.map(event => event.source), ['startup', 'second-instance']);
+assert.equal(sources[0].requestId, launches[0].requestId);
+assert.equal(sources[2].requestId, launches[1].requestId);
+const fileFrame = window.webContents.mainFrame;
+const fileEvent = { sender: window.webContents, senderFrame: fileFrame };
+ipc(fileEvent, 'cg-init', 'secret');
+invoke = (...params) => ipc(fileEvent, ...params);
+assert.equal(ipc(fileEvent, 'cg-native-events', 'bad'), false);
+const requests = ipc(fileEvent, 'cg-native-events', 'secret');
+assert.equal(requests.filter(item => item.type === 'openFiles').length, 4);
+assert.deepEqual(requests.filter(item => item.type === 'openFiles').flatMap(item => item.paths), openFilePaths, 'Native callback mutations do not alter App delivery');
+assert.deepEqual(requests.filter(item => item.type === 'openFiles').map(item => item.info.source), ['startup', 'association', 'second-instance', 'drop']);
+assert.ok(requests.some(item => item.type === 'launch' && item.event.source === 'startup'));
+assert.deepEqual(ipc(fileEvent, 'cg-native-events', 'secret'), [], 'events are delivered once to the current page');
 // --- 软件自身命令先于 GUI 单实例和文件处理分流；stdio 保持到协议关闭 ---
 const previousWindow = window;
 const previousLocks = locks;

@@ -6,7 +6,7 @@
 
 # Interface: IVueObject
 
-Defined in: [lib/core.ts:1556](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1556)
+Defined in: [lib/core.ts:1638](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1638)
 
 ## Methods
 
@@ -14,7 +14,7 @@ Defined in: [lib/core.ts:1556](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **createApp**(`opt`): [`IVApp`](IVApp.md)
 
-Defined in: [lib/core.ts:1557](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1557)
+Defined in: [lib/core.ts:1639](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1639)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [lib/core.ts:1557](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **h**(`tag`, `props?`, `list?`): `any`
 
-Defined in: [lib/core.ts:1565](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1565)
+Defined in: [lib/core.ts:1647](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1647)
 
 #### Parameters
 
@@ -58,7 +58,7 @@ Defined in: [lib/core.ts:1565](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **reactive**\<`T`\>(`obj`): `T`
 
-Defined in: [lib/core.ts:1559](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1559)
+Defined in: [lib/core.ts:1641](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1641)
 
 #### Type Parameters
 
@@ -82,7 +82,7 @@ Defined in: [lib/core.ts:1559](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **ref**\<`T`\>(`obj`): `object`
 
-Defined in: [lib/core.ts:1558](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1558)
+Defined in: [lib/core.ts:1640](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1640)
 
 #### Type Parameters
 
@@ -110,7 +110,7 @@ Defined in: [lib/core.ts:1558](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **watch**(`v`, `cb`, `opt`): `void`
 
-Defined in: [lib/core.ts:1560](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1560)
+Defined in: [lib/core.ts:1642](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L1642)
 
 #### Parameters
 

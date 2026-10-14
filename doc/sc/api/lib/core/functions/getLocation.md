@@ -8,7 +8,7 @@
 
 > **getLocation**(): `string`
 
-Defined in: [lib/core.ts:849](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L849)
+Defined in: [lib/core.ts:931](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L931)
 
 获取当前的浏览器的 url
 

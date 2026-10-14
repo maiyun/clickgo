@@ -8,6 +8,6 @@
 
 > `const` **global**: `any`
 
-Defined in: [clickgo.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L103)
+Defined in: [clickgo.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L104)
 
 用户定义的全局对象

@@ -22,6 +22,7 @@ import * as lTask from './task';
 import * as lTool from './tool';
 import * as lControl from './control';
 import type * as lCommand from './command';
+import type * as lNativeEvents from './native/events';
 import * as lCore from './core';
 import { createPackage } from './core/package.js';
 
@@ -58,6 +59,27 @@ export let config: IConfig;
 
 /** --- App 抽象类 --- */
 export abstract class AbstractApp {
+
+    /**
+     * --- Native 普通启动及再次启动事件；网页不触发，App/Form 要求 root ---
+     * @param event 业务参数、原生工作目录、来源及请求 ID
+     * @returns 无；各层级独立收到通知，同一业务动作由应用选择一处执行
+     */
+    public onNativeLaunch(event: lNativeEvents.INativeLaunchEvent): void | Promise<void>;
+    public onNativeLaunch(): void {
+        return;
+    }
+
+    /**
+     * --- Native 文件打开全局事件，要求宿主启用 openFiles；App/Form 要求 root ---
+     * @param paths 不含 /storage/ 的 ClickGo 绝对文件路径
+     * @param info startup、second-instance、association 或 drop 来源及请求 ID
+     * @returns 无；各层级独立通知，业务自行确认、保存和打开
+     */
+    public onNativeOpenFiles(paths: string[], info: lNativeEvents.INativeOpenFilesInfo): void | Promise<void>;
+    public onNativeOpenFiles(): void {
+        return;
+    }
 
     /** --- 当前 js 文件在包内的完整路径 --- */
     public filename: string = '';
@@ -346,6 +368,66 @@ export async function trigger(name: TGlobalEvent, taskId: string | boolean | Key
     const taskList = await lTask.getOriginList(sysId);
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
+        case 'nativeLaunch':
+        case 'nativeOpenFiles': {
+            // --- 系统入口才可分发，不能由普通 App 伪造宿主文件请求 ---
+            if (taskId !== sysId || !formId || typeof formId !== 'object') {
+                return;
+            }
+            const payload = formId as unknown as lNativeEvents.INativeLaunchEvent | {
+                'paths': string[]; 'info': lNativeEvents.INativeOpenFilesInfo;
+            };
+            /**
+             * --- 各接收方取得独立副本，监听异常不阻止其他层级 ---
+             * @param receiver 宿主 Boot、授权 App 或已挂载 Form
+             * @param receiverTaskId 接收方任务 ID，Boot 为空
+             * @param receiverFormId Form ID，其余为空
+             * @returns 无
+             */
+            const notify = (
+                receiver: Partial<Pick<lCore.AbstractApp, 'onNativeLaunch' | 'onNativeOpenFiles'>> | null,
+                receiverTaskId: string, receiverFormId: string): void => {
+                if (!receiver) {
+                    return;
+                }
+                const report = (error: unknown): void => {
+                    void trigger('error', receiverTaskId, receiverFormId,
+                        error instanceof Error ? error : new Error(String(error)), eventName).catch(() => {});
+                };
+                try {
+                    if (name === 'nativeLaunch') {
+                        const event = payload as lNativeEvents.INativeLaunchEvent;
+                        Promise.resolve(receiver.onNativeLaunch?.({ ...event, 'args': [...event.args] })).catch(report);
+                    }
+                    else {
+                        const event = payload as {
+                            'paths': string[]; 'info': lNativeEvents.INativeOpenFilesInfo;
+                        };
+                        Promise.resolve(
+                            receiver.onNativeOpenFiles?.([...event.paths], { ...event.info })
+                        ).catch(report);
+                    }
+                }
+                catch (error) {
+                    report(error);
+                }
+            };
+            notify(boot, '', '');
+            for (const tid in taskList) {
+                const task = taskList[tid];
+                if (task.ending || !lTask.getRuntime(sysId, tid)?.permissions.includes('root')) {
+                    continue;
+                }
+                notify(task.class, tid, '');
+                for (const fid in task.forms) {
+                    const form = task.forms[fid];
+                    if (!task.ending && !form.closed) {
+                        notify(form.vroot as unknown as lForm.AbstractForm, tid, fid);
+                    }
+                }
+            }
+            break;
+        }
         case 'error': {
             // --- boot 是抽象类，具体实现的方法是动态的 ---
             (boot as any)?.[eventName](taskId, formId, param1, param2);
@@ -1425,7 +1507,7 @@ export interface IAvailArea {
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'webMcpStatusChanged' | 'launcherShowChanged' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
+export type TGlobalEvent = 'nativeLaunch' | 'nativeOpenFiles' | 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'webMcpStatusChanged' | 'launcherShowChanged' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {

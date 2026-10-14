@@ -8,7 +8,7 @@
 
 > **setBoot**(`b`): `void`
 
-Defined in: [lib/core.ts:287](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L287)
+Defined in: [lib/core.ts:309](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L309)
 
 ## Parameters
 

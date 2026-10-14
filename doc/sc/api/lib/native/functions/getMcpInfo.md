@@ -8,7 +8,7 @@
 
 > **getMcpInfo**(`current`): `Promise`\<`false` \| [`IMcpInfo`](../interfaces/IMcpInfo.md) \| `null`\>
 
-Defined in: [lib/native.ts:130](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L130)
+Defined in: [lib/native.ts:168](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L168)
 
 读取 Native 主进程启用的 MCP 连接设置
 

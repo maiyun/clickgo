@@ -33,6 +33,12 @@ const configOrigin = {
 export let config;
 /** --- App 抽象类 --- */
 export class AbstractApp {
+    onNativeLaunch() {
+        return;
+    }
+    onNativeOpenFiles() {
+        return;
+    }
     /** --- 当前 js 文件在包内的完整路径 --- */
     filename = '';
     /** --- 系统会自动设置本项 --- */
@@ -191,6 +197,57 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
     const taskList = await lTask.getOriginList(sysId);
     const eventName = 'on' + name[0].toUpperCase() + name.slice(1);
     switch (name) {
+        case 'nativeLaunch':
+        case 'nativeOpenFiles': {
+            // --- 系统入口才可分发，不能由普通 App 伪造宿主文件请求 ---
+            if (taskId !== sysId || !formId || typeof formId !== 'object') {
+                return;
+            }
+            const payload = formId;
+            /**
+             * --- 各接收方取得独立副本，监听异常不阻止其他层级 ---
+             * @param receiver 宿主 Boot、授权 App 或已挂载 Form
+             * @param receiverTaskId 接收方任务 ID，Boot 为空
+             * @param receiverFormId Form ID，其余为空
+             * @returns 无
+             */
+            const notify = (receiver, receiverTaskId, receiverFormId) => {
+                if (!receiver) {
+                    return;
+                }
+                const report = (error) => {
+                    void trigger('error', receiverTaskId, receiverFormId, error instanceof Error ? error : new Error(String(error)), eventName).catch(() => { });
+                };
+                try {
+                    if (name === 'nativeLaunch') {
+                        const event = payload;
+                        Promise.resolve(receiver.onNativeLaunch?.({ ...event, 'args': [...event.args] })).catch(report);
+                    }
+                    else {
+                        const event = payload;
+                        Promise.resolve(receiver.onNativeOpenFiles?.([...event.paths], { ...event.info })).catch(report);
+                    }
+                }
+                catch (error) {
+                    report(error);
+                }
+            };
+            notify(boot, '', '');
+            for (const tid in taskList) {
+                const task = taskList[tid];
+                if (task.ending || !lTask.getRuntime(sysId, tid)?.permissions.includes('root')) {
+                    continue;
+                }
+                notify(task.class, tid, '');
+                for (const fid in task.forms) {
+                    const form = task.forms[fid];
+                    if (!task.ending && !form.closed) {
+                        notify(form.vroot, tid, fid);
+                    }
+                }
+            }
+            break;
+        }
         case 'error': {
             // --- boot 是抽象类，具体实现的方法是动态的 ---
             boot?.[eventName](taskId, formId, param1, param2);

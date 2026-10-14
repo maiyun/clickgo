@@ -8,7 +8,7 @@
 
 > **invokeUpdate**(`current`, `action`): `Promise`\<`false` \| [`IUpdateState`](../interfaces/IUpdateState.md) \| `null`\>
 
-Defined in: [lib/native.ts:51](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L51)
+Defined in: [lib/native.ts:88](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L88)
 
 接入固定的软件更新动作，不允许网页提供地址或安装路径
 

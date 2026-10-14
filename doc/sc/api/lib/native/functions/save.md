@@ -8,7 +8,7 @@
 
 > **save**(`options?`): `Promise`\<`string` \| `null`\>
 
-Defined in: [lib/native.ts:466](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L466)
+Defined in: [lib/native.ts:504](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L504)
 
 弹出文件保存框
 

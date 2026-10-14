@@ -6,7 +6,7 @@
 
 # Interface: IFormDialogSelectEvent
 
-Defined in: [lib/form.ts:5007](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5007)
+Defined in: [lib/form.ts:5029](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5029)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/form.ts:5008](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5008)
+Defined in: [lib/form.ts:5030](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5030)
 
 #### button
 

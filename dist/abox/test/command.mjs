@@ -180,7 +180,9 @@ const persistentStorage = await load('../../lib/native/storage.ts', {
 const persistentSecret = await load('../../lib/native/secret.ts', {
     '../native': { callPersistence: (...args) => native.callPersistence(...args) },
 });
+const nativeEventsBox = await load('../native-events.ts', {});
 native = await load('../../lib/native.ts', {
+    '../abox/native-events': nativeEventsBox,
     '../clickgo': { isNative: () => nativeEnvironment },
     './core': {}, './tool': { random: () => 'test-session', 'RANDOM_LUNS': '' },
     './native/storage': persistentStorage, './native/secret': persistentSecret,
