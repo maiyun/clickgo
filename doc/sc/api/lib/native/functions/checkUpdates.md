@@ -8,7 +8,7 @@
 
 > **checkUpdates**(`current`): `Promise`\<`false` \| [`IUpdateState`](../interfaces/IUpdateState.md) \| `null`\>
 
-Defined in: lib/native/update.ts:28
+Defined in: [lib/native/update.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/update.ts#L28)
 
 检测软件更新，主进程须 launcher({ updates: true }) 并配置 build.publish
 

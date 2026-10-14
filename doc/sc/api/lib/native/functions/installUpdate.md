@@ -8,7 +8,7 @@
 
 > **installUpdate**(`current`): `Promise`\<`false` \| [`IUpdateState`](../interfaces/IUpdateState.md) \| `null`\>
 
-Defined in: lib/native/update.ts:46
+Defined in: [lib/native/update.ts:46](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/update.ts#L46)
 
 安装本进程已下载的版本并重启，业务须先保存文档并确认
 

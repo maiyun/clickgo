@@ -34,7 +34,7 @@ r 或 rgb 用 , 分隔的字符串
 
 ### a?
 
-`string` \| `number` = `1`
+`string` \| `number`
 
 ## Returns
 

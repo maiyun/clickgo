@@ -8,7 +8,7 @@
 
 > **downloadUpdate**(`current`): `Promise`\<`false` \| [`IUpdateState`](../interfaces/IUpdateState.md) \| `null`\>
 
-Defined in: lib/native/update.ts:37
+Defined in: [lib/native/update.ts:37](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/update.ts#L37)
 
 下载检测到的版本，合并并发下载，由 Native 校验文件
 

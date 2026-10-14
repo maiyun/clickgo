@@ -10,19 +10,13 @@
 
 ## Param
 
-**current**
-
 当前任务 id（可传 null 将只读取完全公开数据，如 clickgo 文件夹）
 
 ## Param
 
-**path**
-
 文件路径
 
 ## Param
-
-**options**
 
 编码或选项
 

@@ -8,7 +8,7 @@
 
 > **onUpdateState**(`current`, `handler`): `void`
 
-Defined in: lib/native/update.ts:65
+Defined in: [lib/native/update.ts:65](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/update.ts#L65)
 
 监听软件级公开状态及下载进度；不包含 URL、凭据或文件路径
 

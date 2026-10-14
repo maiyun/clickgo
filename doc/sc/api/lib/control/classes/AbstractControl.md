@@ -692,7 +692,7 @@ Defined in: [lib/control.ts:299](https://github.com/maiyun/clickgo/blob/master/d
 
 ##### param1?
 
-`string` \| `boolean` \| `Error` = `''`
+`string` \| `boolean` \| `Error`
 
 参数1
 

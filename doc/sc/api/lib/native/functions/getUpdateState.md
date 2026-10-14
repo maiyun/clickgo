@@ -8,7 +8,7 @@
 
 > **getUpdateState**(`current`): `Promise`\<`false` \| [`IUpdateState`](../interfaces/IUpdateState.md) \| `null`\>
 
-Defined in: lib/native/update.ts:55
+Defined in: [lib/native/update.ts:55](https://github.com/maiyun/clickgo/blob/master/dist/lib/native/update.ts#L55)
 
 读取 Native 软件级更新状态快照
 

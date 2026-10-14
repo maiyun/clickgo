@@ -28,7 +28,7 @@ Defined in: [lib/dom.ts:331](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ### type?
 
-`"form"` \| `"global"` \| `"control"` \| `"theme"` = `'global'`
+`"form"` \| `"global"` \| `"control"` \| `"theme"`
 
 插入的类型
 

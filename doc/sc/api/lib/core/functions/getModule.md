@@ -10,8 +10,6 @@
 
 ## Param
 
-**name**
-
 模块名
 
 ## Call Signature
