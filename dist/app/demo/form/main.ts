@@ -5,6 +5,7 @@ import cgridFrm from './control/grid/grid';
 import cboxFrm from './control/box/box';
 import ccaptchaFrm from './control/captcha/captcha';
 import cbuttonFrm from './control/button/button';
+import cbreadcrumbFrm from './control/breadcrumb/breadcrumb';
 import ccheckFrm from './control/check/check';
 import cdatepanelFrm from './control/datepanel/datepanel';
 import ccalendarFrm from './control/calendar/calendar';
@@ -340,6 +341,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cnav': {
                 frm = await clickgo.form.create(this, cnavFrm);
+                break;
+            }
+            case 'cbreadcrumb': {
+                frm = await clickgo.form.create(this, cbreadcrumbFrm);
                 break;
             }
             case 'cpage': {

@@ -8,7 +8,7 @@
 
 > **compressor**\<`T`\>(`file`, `options?`): `Promise`\<`false` \| `T`\>
 
-Defined in: [lib/tool.ts:33](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L33)
+Defined in: [lib/tool.ts:35](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L35)
 
 压缩一个图片
 

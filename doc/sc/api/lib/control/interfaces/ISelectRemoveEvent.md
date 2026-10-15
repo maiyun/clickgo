@@ -6,7 +6,7 @@
 
 # Interface: ISelectRemoveEvent
 
-Defined in: [lib/control.ts:1548](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1548)
+Defined in: [lib/control.ts:1560](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1560)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1549](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1549)
+Defined in: [lib/control.ts:1561](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1561)
 
 #### index
 

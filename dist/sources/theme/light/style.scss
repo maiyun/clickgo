@@ -136,13 +136,15 @@ global {
     }
 }
 
-// --- CONTROL -- tag ---
+// --- CONTROL -- tag / circle ---
 
-.tag_wrap {
-    &:not(.tag_plain) {
-        background: var(--g-border-color);
-        &.tag_default {
-            color: inherit;
+@each $control in tag, circle {
+    .#{$control}_wrap {
+        &:not(.#{$control}_plain) {
+            background: var(--g-border-color);
+            &.#{$control}_default {
+                color: inherit;
+            }
         }
     }
 }

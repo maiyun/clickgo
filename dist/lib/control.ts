@@ -1455,6 +1455,18 @@ export interface IListItemdblclickedEvent {
     };
 }
 
+// --- Breadcrumb ---
+
+/** --- 面包屑历史层级的激活通知，不包含自动跳转行为 --- */
+export interface IBreadcrumbSelectEvent {
+    'detail': {
+        /** --- 层级标识，未设置 name 时为 label --- */
+        'name': string;
+        /** --- 当前显示顺序中的零起始索引 --- */
+        'index': number;
+    };
+}
+
 // --- Nav Item ---
 
 export interface INavItemSelectEvent extends ICustomEvent {

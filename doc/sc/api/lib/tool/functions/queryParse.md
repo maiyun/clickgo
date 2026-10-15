@@ -8,7 +8,7 @@
 
 > **queryParse**(`query`): `Record`\<`string`, `string` \| `string`[]\>
 
-Defined in: [lib/tool.ts:555](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L555)
+Defined in: [lib/tool.ts:557](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L557)
 
 将 query string 转换为对象
 

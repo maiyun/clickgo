@@ -1,0 +1,18 @@
+{
+    "name": "ClickGo Commerce",
+    "ver": 1,
+    "version": "1.0",
+    "author": "ClickGo",
+    "controls": [
+        "/clickgo/control/common",
+        "/clickgo/control/breadcrumb",
+        "/clickgo/control/form",
+        "/clickgo/control/nav",
+        "/clickgo/control/table",
+        "/clickgo/control/echarts"
+    ],
+    "id": "net.maiyun.clickgo-commerce-showcase",
+    "themes": [
+        "/clickgo/theme/dashboard"
+    ]
+}

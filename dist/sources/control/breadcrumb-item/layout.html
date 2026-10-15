@@ -1,0 +1,19 @@
+<li class="wrap" :data-cg-disabled="isDisabled ? '' : undefined">
+    <!-- 当前位置使用普通文本，不产生按钮或 Tab 停靠点 -->
+    <span v-if="isCurrent" class="current" aria-current="page">
+        <template v-if="icon">
+            <cg-svg v-if="icon.toLowerCase().endsWith('.svg')" :src="icon" aria-hidden="true" />
+            <cg-img v-else :src="icon" aria-hidden="true" />
+        </template>
+        <slot>{{label}}</slot>
+    </span>
+    <!-- 历史层级提供按钮语义，并按框架流程处理 Enter 与 Space -->
+    <button v-else type="button" class="action" :class="[isSpaceDown && 'active']" :disabled="isDisabled" :tabindex="formFocus && !isDisabled ? 0 : -1" @click="select" @keydown="keydown" @keyup="keyup" @blur="isSpaceDown = false">
+        <template v-if="icon">
+            <cg-svg v-if="icon.toLowerCase().endsWith('.svg')" :src="icon" aria-hidden="true" />
+            <cg-img v-else :src="icon" aria-hidden="true" />
+        </template>
+        <slot>{{label}}</slot>
+    </button>
+    <span v-if="!isCurrent && separator" class="separator" aria-hidden="true">{{separator}}</span>
+</li>

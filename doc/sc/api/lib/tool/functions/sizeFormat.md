@@ -8,7 +8,7 @@
 
 > **sizeFormat**(`size`, `spliter?`): `string`
 
-Defined in: [lib/tool.ts:78](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L78)
+Defined in: [lib/tool.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L80)
 
 将文件大小格式化为带单位的字符串
 

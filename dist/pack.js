@@ -164,7 +164,7 @@ for (const item of list) {
     if (item.name.startsWith('.')) {
         continue;
     }
-    if (['bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'dock', 'dock-column', 'dock-group', 'dock-item', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'panzoom', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'eflow', 'radio', 'scroll', 'select', 'sgroup', 'sidebar-toggle', 'slider', 'stab', 'stab-item', 'statusbar', 'statusbar-item', 'toolbar', 'toolbar-split', 'toolbox', 'toolbox-group', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'task-start', 'task-tray', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-body', 'desc-cell', 'desc-head', 'desc-header', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'calendar', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web', 'objviewer-item'].includes(item.name)) {
+    if (['breadcrumb-item', 'bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'dock', 'dock-column', 'dock-group', 'dock-item', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'panzoom', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'eflow', 'radio', 'scroll', 'select', 'sgroup', 'sidebar-toggle', 'slider', 'stab', 'stab-item', 'statusbar', 'statusbar-item', 'toolbar', 'toolbar-split', 'toolbox', 'toolbox-group', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'task-start', 'task-tray', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-body', 'desc-cell', 'desc-head', 'desc-header', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'calendar', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web', 'objviewer-item'].includes(item.name)) {
         continue;
     }
     try {
@@ -266,6 +266,9 @@ for (const item of list) {
             paths.push(base + 'task-start');
             paths.push(base + 'task-tray');
         }
+        else if (item.name === 'breadcrumb') {
+            paths.push(base + 'breadcrumb-item');
+        }
         else if (item.name === 'table') {
             paths.push(base + 'table-item');
         }
@@ -318,3 +321,5 @@ const demoApp = await lCompiler.application('dist/app/demo');
 console.log('APPLICATION', `[demo]`, demoApp);
 const cgaApp = await lCompiler.application('dist/test/cga/app', 'dist/test/cga/icon.png');
 console.log('APPLICATION', `[cga]`, cgaApp);
+const showcaseApp = await lCompiler.application('dist/test/showcase/app');
+console.log('APPLICATION', `[showcase]`, showcaseApp);

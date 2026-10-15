@@ -1,5 +1,5 @@
 .wrap {
-    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background-image: radial-gradient(circle at 35% 30%, oklch(1 0 0 / .5), oklch(0 0 0 / 0)); box-shadow: var(--g-shadow); pointer-events: none; width: var(--cg-width); height: var(--cg-height);
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; pointer-events: none; width: var(--cg-width); height: var(--cg-height);
 
     &.size-s {
         --cg-width:var(--g-padding-s); --cg-height:var(--g-padding-s);
@@ -35,10 +35,6 @@
     &.plain {
         border: solid .5px var(--g-plain-border-color); background-color: var(--g-plain-background);
 
-        &:not(.cg) {
-            // --- default ---
-            color: var(--g-plain-border-color);
-        }
         &.primary {
             border-color: var(--success); color: var(--success); background-color: var(--success-bg);
         }
@@ -50,6 +46,9 @@
         }
         &.danger {
             border-color: var(--danger); color: var(--danger); background-color: var(--danger-bg);
+        }
+        &.cg {
+            border-color: var(--cg); color: var(--cg); background-color: var(--cg-bg);
         }
     }
 

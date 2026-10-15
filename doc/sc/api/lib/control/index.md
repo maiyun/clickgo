@@ -12,6 +12,7 @@
 
 ## Interfaces
 
+- [IBreadcrumbSelectEvent](interfaces/IBreadcrumbSelectEvent.md)
 - [ICalendarSelectedEvent](interfaces/ICalendarSelectedEvent.md)
 - [ICaptchaResultEvent](interfaces/ICaptchaResultEvent.md)
 - [ICheckChangedEvent](interfaces/ICheckChangedEvent.md)

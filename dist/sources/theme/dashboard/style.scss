@@ -1,0 +1,367 @@
+@use '../light/style';
+@use '../contrast';
+
+// --- 后台工作台：主色来自 theme.setMain，状态色保留独立语义 ---
+global {
+    --cg:var(--main);
+    --cg-hover:color-mix(in srgb, var(--cg), black 10%);
+    --cg-active:color-mix(in srgb, var(--cg), black 20%);
+    --cg-focus:var(--cg);
+    --cg-bg:color-mix(in srgb, var(--cg), white 91%);
+    --cg-disabled:color-mix(in srgb, var(--cg), #dbe5e7 75%);
+    --g-size:13px;
+    --g-size-xs:11px;
+    --g-size-m:20px;
+    --g-size-l:29px;
+    --g-size-xl:30px;
+    --g-padding:8px;
+    --g-padding-h:8px 12px;
+    --g-padding-l:16px;
+    --g-padding-xl:24px;
+    --g-bpadding:20px;
+    --g-radius:8px;
+    --g-radius-l:12px;
+    --g-radius-xl:16px;
+    --g-line:1.5;
+    --g-pure:#fff;
+    --face:#f5f7f9;
+    --face-hover:color-mix(in srgb, var(--cg), white 94%);
+    --face-selected:var(--cg-bg);
+    --g-color:#172b33;
+    --g-color-hover:var(--g-color);
+    --g-color-active:var(--g-color);
+    --g-color-focus:var(--g-color);
+    --g-color-tip:#5b7079;
+    --g-color-disabled:#71868c;
+    --g-color-placeholder:#586d76;
+    --g-plain-background:#f4f7fb;
+    // --- 菜单、列表、按钮共用同组状态色，global 同时覆盖窗体和 Teleport 弹层 ---
+    --g-background-hover:var(--face-hover);
+    --g-background-active:color-mix(in srgb, var(--cg), white 87%);
+    --g-background-focus:var(--g-pure);
+    --g-background-opacity:color-mix(in srgb, var(--cg), transparent 85%);
+    --g-plain-background-hover:var(--g-background-hover);
+    --g-plain-background-active:var(--g-background-active);
+    --g-plain-background-focus:var(--g-background-focus);
+    --g-plain-background-selected:var(--face-selected);
+    --g-plain-border-color:#e1e8eb;
+    --g-border-color:#e1e8eb;
+    --g-border-color-hover:color-mix(in srgb, var(--cg), white 65%);
+    --g-border-color-active:color-mix(in srgb, var(--cg), white 35%);
+    --g-border-color-focus:var(--g-border-color-active);
+    --g-plain-border-color-hover:var(--g-border-color-hover);
+    --g-plain-border-color-active:var(--g-border-color-active);
+    --g-plain-border-color-focus:var(--g-border-color-focus);
+    --success:#147a59;
+    --success-bg:#e7f6ef;
+    --info:#4a69b7;
+    --info-bg:#edf2ff;
+    --warning:#94621a;
+    --warning-bg:#fff4e3;
+    --danger:#b33a4b;
+    --danger-bg:#fdecef;
+    --dashboard-chart-previous:#7e8e99;
+    --dashboard-chart-info:#6895ee;
+    --dashboard-chart-warning:#edb36f;
+    --dashboard-chart-grid:#eaf0f2;
+    --dashboard-sidebar:color-mix(in srgb, var(--main), #17232a 90%);
+    --dashboard-emphasis:color-mix(in srgb, var(--main), #17232a 84%);
+    --dashboard-sidebar-color:#e0e7eb;
+    --dashboard-sidebar-tip:#a5b5be;
+    --dashboard-badge-solid:#7e8e99;
+    --dashboard-badge-soft:#edf1f8;
+    --dashboard-badge-color:#596a86;
+    --dashboard-badge-cg-color:oklch(from var(--cg) min(l, .5) c h);
+}
+
+// --- 在窗体内覆盖继承主题的控件外观，不改变任务根的颜色作用域 ---
+.form_wrap {
+    .breadcrumb_wrap {
+        --breadcrumb-gap:18px;
+    }
+    // --- 深色区域成组映射按钮状态，焦点保留深色底与清晰轮廓 ---
+    .nav_menuwrap, .group_wrap.group_cg {
+        --dashboard-badge-cg-color:color-mix(in srgb, var(--main), white 65%);
+        --g-color-hover:#fff;
+        --g-color-active:#fff;
+        --g-color-focus:#fff;
+        --g-plain-color:var(--g-color);
+        --g-plain-color-hover:var(--g-color-hover);
+        --g-plain-color-active:var(--g-color-active);
+        --g-plain-color-focus:var(--g-color-focus);
+        --g-plain-color-disabled:var(--g-color-disabled);
+        --g-background:var(--g-plain-background);
+        --g-background-hover:var(--g-plain-background-hover);
+        --g-background-active:color-mix(in srgb, var(--main), var(--g-pure) 76%);
+        --g-background-focus:color-mix(in srgb, var(--main), var(--g-pure) 86%);
+        --g-background-disabled:var(--g-pure);
+        --g-plain-background-active:var(--g-background-active);
+        --g-plain-background-focus:var(--g-background-focus);
+        --g-plain-background-disabled:var(--g-background-disabled);
+        --face-hover:color-mix(in srgb, var(--main), var(--g-pure) 84%);
+        --face-selected:color-mix(in srgb, var(--main), var(--g-pure) 68%);
+        --g-plain-background-selected:var(--face-selected);
+        --g-border-color-hover:color-mix(in srgb, var(--g-plain-border-color), white 25%);
+        --g-border-color-active:color-mix(in srgb, var(--main), white 55%);
+        --g-border-color-focus:var(--g-border-color-active);
+        --g-border-color-disabled:var(--g-plain-border-color);
+        --g-plain-border-color-hover:var(--g-border-color-hover);
+        --g-plain-border-color-active:var(--g-border-color-active);
+        --g-plain-border-color-focus:var(--g-border-color-focus);
+        --g-plain-border-color-disabled:var(--g-border-color-disabled);
+        --g-outline-shadow:0 0 0 2px var(--g-border-color-focus);
+    }
+    // --- 原生导航的固定区、菜单节奏与工作区 ---
+    .nav_wrap {
+        .nav_menuwrap {
+            --face:var(--dashboard-sidebar);
+            --g-pure:var(--dashboard-sidebar);
+            --g-color:var(--dashboard-sidebar-color);
+            --g-color-tip:var(--dashboard-sidebar-tip);
+            --g-color-disabled:var(--dashboard-sidebar-tip);
+            --g-border-color:color-mix(in srgb, var(--main), #41515b 84%);
+            --g-plain-border-color:var(--g-border-color);
+            --g-plain-background:color-mix(in srgb, var(--main), var(--g-pure) 88%);
+            --dashboard-badge-primary-solid:color-mix(in srgb, var(--success), white 20%);
+            --g-plain-background-hover:var(--face-hover);
+            --face-hover:color-mix(in srgb, var(--main), var(--dashboard-sidebar) 84%);
+            --face-selected:color-mix(in srgb, var(--main), var(--dashboard-sidebar) 68%);
+            color:var(--g-color);
+            .nav_menu, .nav_menu-panel {
+                width:222px;
+                border:none;
+                background:var(--face);
+            }
+            .nav_menu-panel .nav_menu {
+                width:auto;
+                padding:0 18px;
+                > * { margin:0; }
+                > .nav-item_wrap { margin-bottom:6px; }
+            }
+            .nav_menu-header {
+                padding:28px 18px 0;
+                margin-bottom:18px;
+                > .layout_wrap:first-child {
+                    padding:0 10px 30px;
+                .img_wrap { width:38px; height:38px; }
+                    .label_size-m { font-size:24px; font-weight:650; letter-spacing:-.8px; }
+                    .label_size-xs { font-size:10px; letter-spacing:1.2px; }
+                }
+                .sgroup_wrap {
+                    padding:13px 12px;
+                    border-radius:9px;
+                    .label_size-xs { font-size:11px; }
+                }
+            }
+            .nav_menu-footer {
+            .button_wrap.button_circle { padding:5px; }
+                padding:16px 18px 20px;
+                > .layout_wrap:first-child { padding:0 10px 18px; }
+                > .layout_wrap:last-child {
+                    padding:18px 0 0;
+                    padding-inline-start:10px;
+                    border-top:1px solid var(--g-border-color);
+                }
+            }
+        }
+        .nav_header {
+            min-height:72px;
+            padding:0 30px;
+            background:var(--g-pure);
+            box-shadow:none;
+            border-bottom:1px solid #e6ecee;
+            > .layout_wrap { flex:1; }
+            .nav_mbutton {
+                width:36px;
+                height:36px;
+                min-height:36px;
+                flex-shrink:0;
+                margin-inline-end:12px;
+            }
+        }
+        .nav_body {
+            padding:26px 30px 18px;
+            background:var(--face);
+        }
+    }
+
+    .nav-title_wrap {
+        font-size:10px;
+        letter-spacing:1.8px;
+        color:#8ca7ad;
+        padding:26px 12px 12px;
+    }
+    .nav-item_wrap {
+        margin-bottom:6px;
+        color:var(--g-color);
+        > .nav-item_text {
+            gap:12px;
+            padding:12px;
+            border-radius:8px;
+            min-height:42px;
+            > span { flex:1; }
+            .nav-item_tag-cg-svg, .nav-item_tag-cg-img {
+                width:18px;
+                height:18px;
+                margin-inline-end:0;
+            }
+        }
+        &.nav-item_selected > .nav-item_text {
+            background:var(--face-selected);
+            color:color-mix(in srgb, var(--main), white 65%);
+        }
+        &:not(.nav-item_selected) > .nav-item_text:active {
+            background:color-mix(in srgb, var(--main), var(--dashboard-sidebar) 76%);
+            color:var(--g-color-active);
+        }
+        .nav-item_suffix .tag_wrap.tag_plain {
+            background:color-mix(in srgb, var(--main), var(--dashboard-sidebar) 72%);
+            color:var(--dashboard-sidebar-color);
+            padding:2px 7px;
+            border-radius:5px;
+        }
+    }
+
+    // --- 无标题统计卡片与带标题的内容卡片 ---
+    .sgroup_wrap {
+        background:var(--g-pure);
+        padding:20px;
+        border:1px solid var(--g-plain-border-color);
+        border-radius:12px;
+        .svg_tag-svg { color:var(--cg); }
+        .label_size-xl {
+            font-weight:650;
+            line-height:1.1;
+            letter-spacing:-1px;
+        }
+    }
+    .group_wrap {
+        border:1px solid var(--g-plain-border-color);
+        border-radius:12px;
+        box-shadow:none;
+        min-width:0;
+        > .group_title {
+            padding:20px 22px 12px;
+            margin:0;
+            gap:12px;
+            min-width:0;
+            .button_wrap.button_tool { padding:0 6px; min-height:22px; }
+            > .group_text, > .layout_wrap { flex:1; min-width:0; }
+            .group_text, .label_size-m {
+                font-size:16px;
+                font-weight:650;
+                letter-spacing:-.2px;
+            }
+        }
+        > .group_content {
+            min-height:0;
+            > .layout_wrap {
+                padding:0 22px 18px;
+                &:not(:last-child) { padding-bottom:0; }
+            }
+        }
+        > .group_footer {
+            margin:0;
+            padding:12px 22px;
+            border-top:1px solid var(--g-plain-border-color);
+            > .layout_wrap { flex:1; }
+        }
+        &.group_cg {
+            --g-pure:var(--dashboard-emphasis);
+            --g-color:#ecf1f8;
+            --g-color-tip:#b7c5ce;
+            --g-color-disabled:#899ba7;
+            --g-plain-border-color:color-mix(in srgb, var(--main), #3d505d 84%);
+            --g-plain-background:color-mix(in srgb, var(--main), var(--g-pure) 84%);
+            --g-plain-background-hover:color-mix(in srgb, var(--main), var(--g-pure) 72%);
+            --cg:color-mix(in srgb, var(--main), white 58%);
+            --cg-hover:color-mix(in srgb, var(--cg), white 10%);
+            --cg-active:color-mix(in srgb, var(--cg), black 10%);
+            --cg-focus:var(--cg);
+            --cg-disabled:color-mix(in srgb, var(--main), var(--g-pure) 65%);
+            --cg-bg:color-mix(in srgb, var(--main), var(--g-pure) 78%);
+            background:var(--g-pure);
+            color:var(--g-color);
+            border-color:var(--g-pure);
+            > .group_content > .layout_wrap { padding-top:8px; }
+            .group_content .button_wrap.button_circle { --background:var(--g-plain-background); }
+            > .group_footer { padding:16px 22px 20px; }
+        }
+    }
+
+    // --- Circle 与 Tag 共用同一套实心、柔和配色，不分别维护语义色分支 ---
+    @each $control in circle, tag {
+        .#{$control}_wrap {
+            background-image:none;
+            box-shadow:none;
+            &.#{$control}_default:not(.#{$control}_plain) {
+                background-color:var(--dashboard-badge-solid);
+                border-color:transparent;
+                color:#{contrast.on-accent('var(--dashboard-badge-solid)')};
+            }
+            &.#{$control}_default.#{$control}_plain {
+                background-color:var(--dashboard-badge-soft);
+                border-color:transparent;
+                color:var(--dashboard-badge-color);
+            }
+            @each $type, $semantic in (primary:success, info:info, warning:warning, danger:danger, cg:cg) {
+                $fill:'var(--#{$semantic})';
+                @if $type == primary {
+                    $fill:'var(--dashboard-badge-primary-solid, var(--success))';
+                }
+                &.#{$control}_#{$type}:not(.#{$control}_plain) {
+                    background-color:#{$fill};
+                    border-color:transparent;
+                    color:#{contrast.on-accent($fill)};
+                }
+                &.#{$control}_#{$type}.#{$control}_plain {
+                    background-color:var(--#{$semantic}-bg);
+                    border-color:transparent;
+                    color:var(--#{$semantic});
+                    @if $type == cg {
+                        color:var(--dashboard-badge-cg-color);
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Tag 的排版与圆角独立于共用配色 ---
+    .tag_wrap {
+        font-size:11px;
+        line-height:1.5;
+        border-radius:5px;
+        &.tag_rsize-m { border-radius:3px; }
+        &.tag_rsize-l { border-radius:5px; }
+        &.tag_rsize-xl { border-radius:8px; }
+        &.tag_size-s, &.tag_size-xs { padding:3px 9px; }
+    }
+
+    .label_wrap {
+        &.label_tip, &.label_mtip { color:var(--g-color-tip); }
+        &.label_size-l { font-weight:650; letter-spacing:-1px; }
+    }
+    .svg_tag-svg { width:18px; height:18px; flex-shrink:0; }
+    .img_wrap { flex-shrink:0; }
+    .nav_menu-header .img_wrap, .nav_menu-footer .img_wrap, .nav_header .img_wrap {
+        width:34px;
+        height:34px;
+    }
+    .table-item_wrap .img_wrap { width:29px; height:29px; }
+    .table_wrap {
+        border:none;
+        border-radius:0;
+        .table_header {
+            background:#f1f4f8;
+            border:none;
+            .table_item { border:none; }
+        }
+    }
+    .table-item_wrap { padding:10px 12px; }
+    .button_wrap.button_cg:not(.button_plain) {
+        --color:#{contrast.on-accent('var(--cg)')};
+        --color-hover:#{contrast.on-accent('var(--cg-hover)')};
+        --color-active:#{contrast.on-accent('var(--cg-active)')};
+        --color-focus:#{contrast.on-accent('var(--cg-focus)')};
+    }
+}

@@ -23,6 +23,7 @@
                         <button @click="openForm('cblock')">Block</button>
                         <button @click="openForm('cbox')">Box</button>
                         <button @click="openForm('cbutton')">Button + Bgroup</button>
+                        <button @click="openForm('cbreadcrumb')">Breadcrumb</button>
                         <button @click="openForm('ccalendar')">Calendar</button>
                         <button @click="openForm('ccaptcha')">Captcha</button>
                         <button @click="openForm('ccheck')">Check</button>

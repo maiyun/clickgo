@@ -8,7 +8,7 @@
 
 > **rand**(`min`, `max`, `prec?`): `number`
 
-Defined in: [lib/tool.ts:222](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L222)
+Defined in: [lib/tool.ts:224](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L224)
 
 生成范围内的随机数
 

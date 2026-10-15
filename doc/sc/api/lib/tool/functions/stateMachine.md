@@ -8,7 +8,7 @@
 
 > **stateMachine**(`code`, `start`, `process`): `void`
 
-Defined in: [lib/tool.ts:611](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L611)
+Defined in: [lib/tool.ts:613](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L613)
 
 源码分段状态机，单词按 ASCII 字母、数字、_ 和 $ 识别
 

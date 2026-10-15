@@ -8,7 +8,7 @@
 
 > **match**(`str`, `regs`): `boolean`
 
-Defined in: [lib/tool.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L136)
+Defined in: [lib/tool.ts:138](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L138)
 
 传入正则进行匹配 str 是否有一项满足
 

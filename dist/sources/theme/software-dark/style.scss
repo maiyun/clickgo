@@ -470,6 +470,7 @@ global {
 // --- 导航与滚动条去除装饰性阴影 ---
 
 .nav_wrap {
+    --nav-layer-shadow:none;
     .nav_menuwrap .nav_menu, .nav_content .nav_header { box-shadow: none; }
     .nav_bg { display: none; }
 }

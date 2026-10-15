@@ -28,3 +28,6 @@
 - `npm run check` 覆盖类型/lint 和主要回归；Native 改动另跑 test:native。
 - 包变更跑 test:archive；Select 包验收用 `CLICKGO_SELECT_TEST_ARCHIVE=1 npm run test:select`。npm pack --dry-run 检查黑箱运行代码、声明依赖与发布排除项。
 - 浏览器入口 `dist/test/desktop/` 要求安全上下文及可加载依赖。类型、回归、浏览器与真实 Native 验收分别报告；Native 同步流程见联动约定。
+- `dist/test/showcase/` 是文档 pic2 的英文后台独立演示；应用源码在其 `app/`，`dist/pack.ts` 输出同目录 `app.cga`。使用原生控件和 `dashboard` 主题；实例 SCSS 只定义内容区尺寸。使用固定演示数据，没有业务后台；搜索、周期选择、菜单选中和强调色切换可操作。
+- `dashboard` 主题在 `dist/sources/theme/dashboard/`，主色跟随 `theme.setMain`。Nav 的 `menu-header`/`menu-footer` 在菜单滚动区外；Nav-item 的 `suffix` 不计入子菜单。无新插槽的 Nav 保留原有 DOM 结构。
+- Breadcrumb 独立包包含 Breadcrumb-item；最后一项按直属 DOM 顺序自动成为当前位置，选择事件不执行导航。打包关系在 `dist/pack.ts`，动态重排、禁用和销毁回归用 `test:breadcrumb`。

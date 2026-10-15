@@ -1,36 +1,31 @@
-<form width="550" height="500" title="Circle" padding="10">
-    <layout direction="v" gutter="10" style="flex: 1;">
-        <label>Default:</label>
-        <layout gutter="10">
-            <circle />
-            <circle type="primary" />
-            <circle type="info" />
-            <circle type="warning" />
-            <circle type="danger" />
-            <circle type="cg" />
+<form width="650" height="580" title="Circle" padding="16">
+    <flow direction="v" style="flex: 1;">
+        <layout direction="v" gutter="16">
+            <label mode="tip">Circle / Tag / Status dot: matching semantic colors</label>
+            <!-- 相同类型和模式成对展示，外形不同但配色规则一致 -->
+            <layout gutter="16">
+                <group v-for="plain of [false, true]" :key="String(plain)" :title="plain ? 'Plain / soft' : 'Solid'" direction="v" gutter="12" style="flex: 1; min-width: 0;">
+                    <layout v-for="type of ['default', 'primary', 'info', 'warning', 'danger', 'cg']" :key="type" align-v="center" gutter="12">
+                        <circle :type="type" :plain="plain" size="xl">A</circle>
+                        <tag :type="type" :plain="plain" size="xs">{{type}}</tag>
+                        <circle :type="type" :plain="plain"></circle>
+                    </layout>
+                </group>
+            </layout>
+            <!-- 固定直径与角标定位沿用原有 Circle 能力 -->
+            <group title="Diameter" direction="v" gutter="12">
+                <layout gutter="12" align-v="center">
+                    <circle type="cg" size="xl"></circle>
+                    <circle type="cg" size="l"></circle>
+                    <circle type="cg" size="m"></circle>
+                    <circle type="cg" size="s"></circle>
+                </layout>
+                <label mode="tip">xl / l / m / s</label>
+            </group>
+            <layout gutter="16" align-v="center">
+                <tag type="cg" plain size="xs">Corner badge<circle type="cg" sub size="m"></circle></tag>
+                <label mode="tip">sub positions a badge at its parent's corner.</label>
+            </layout>
         </layout>
-        <label>Plain:</label>
-        <layout gutter="10">
-            <circle plain />
-            <circle type="primary" plain />
-            <circle type="info" />
-            <circle type="warning" plain />
-            <circle type="danger" plain />
-            <circle type="cg" plain />
-        </layout>
-        <label>Size:</label>
-        <layout gutter="10" align-v="center">
-            <circle type="primary" size="xl" />
-            <circle type="primary" size="l" />
-            <circle type="primary" size="m" />
-            <circle type="primary" size="s" />
-        </layout>
-        <label>Slot:</label>
-        <layout gutter="10" align-v="center">
-            <circle type="cg" size="xl">1</circle>
-            <circle type="cg" plain size="xl">2</circle>
-            <circle size="xl">3</circle>
-            <circle size="xl" plain>4</circle>
-        </layout>
-    </layout>
+    </flow>
 </form>

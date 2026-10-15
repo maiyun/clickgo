@@ -48,6 +48,17 @@
         <nav-item label="Event" @select="onSelect"></nav-item>
         <nav-item label="Root6" name="root6" icon="/package/res/icon.svg"></nav-item>
         <nav-item label="Root7" icon="/package/res/marker.svg"></nav-item>
+        <!-- 固定底部内容不随菜单列表滚动，收起时随侧栏一起隐藏 -->
+        <template v-if="menuFooter" v-slot:menu-footer>
+            <layout direction="v" gutter="8">
+                <label size="xs" mode="tip">Menu footer</label>
+                <layout gutter="8" align-v="center">
+                    <circle type="primary"></circle>
+                    <label>Demo workspace</label>
+                </layout>
+                <button @click="isShow = false">Collapse menu</button>
+            </layout>
+        </template>
         <template v-slot:header>
             <label style="flex: 1; padding-left: 10px;">Test</label>
             <menu>
@@ -86,6 +97,7 @@
                 <label>Layer: {{layer ? 'true' : 'false'}}</label>
                 <label>Qs: {{qs}}</label>
                 <label>formHash: {{formHash}}</label>
+                <check v-model="menuFooter">Show menu footer</check>
                 <button v-if="layer" @click="isShow = true">Open</button>
                 <button @click="name = 'Action11'">Select "Action11"</button>
                 <button @click="name = 'hasname'">Select "hasname"</button>

@@ -16,6 +16,9 @@ export default class extends clickgo.form.AbstractForm {
 
     public hash = false;
 
+    /** --- 展示独立于菜单滚动区域的底部插槽 --- */
+    public menuFooter = true;
+
     public async onSelect(e: clickgo.control.INavItemSelectEvent): Promise<void> {
         e.preventDefault();
         await clickgo.form.dialog(this, 'Not nav, selected: ' + e.detail.selected + ', name: ' + e.detail.name);

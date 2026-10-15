@@ -8,7 +8,7 @@
 
 > **isTruthy**(`val`): `val is any`
 
-Defined in: [lib/tool.ts:719](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L719)
+Defined in: [lib/tool.ts:721](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L721)
 
 判断一个值是否是真实的（不为 null/undefined/空字符串/false/0）
 

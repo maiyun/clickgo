@@ -7,7 +7,7 @@ export default class extends clickgo.control.AbstractControl {
         'plain': boolean | string;
         'checked': boolean | string;
 
-        'type': 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger';
+        'type': 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
         'pointer': boolean | string;
 
         'area': 'all' | 'mark' | 'split';
@@ -53,7 +53,7 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     /** --- type --- */
-    public get typeComp(): 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger' {
+    public get typeComp(): 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger' | 'cg' {
         if (!this.inBgroup) {
             return this.props.type;
         }

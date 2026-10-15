@@ -22,9 +22,11 @@
 
 #### type
 
-`'default'` | `'tool'` | `'primary'` | `'info'` | `'warning'` | `'danger'`
+`'default'` | `'tool'` | `'primary'` | `'info'` | `'warning'` | `'danger'` | `'cg'`
 
 按钮类型，默认 `default`。
+
+`cg` 使用当前主色；`primary` 使用成功色。
 
 #### pointer
 

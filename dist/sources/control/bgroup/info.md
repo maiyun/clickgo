@@ -16,7 +16,7 @@
 
 #### type
 
-`'default'` | `'tool'` | `'primary'` | `'info'` | `'warning'` | `'danger'`
+`'default'` | `'tool'` | `'primary'` | `'info'` | `'warning'` | `'danger'` | `'cg'`
 
 按钮类型，默认 `default`。
 

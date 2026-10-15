@@ -6,7 +6,7 @@
 
 # Interface: IStabChangeEvent
 
-Defined in: [lib/control.ts:1609](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1609)
+Defined in: [lib/control.ts:1621](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1621)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1610](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1610)
+Defined in: [lib/control.ts:1622](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1622)
 
 #### value
 

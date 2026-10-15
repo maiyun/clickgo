@@ -1,4 +1,5 @@
 import * as lAboxTool from '../abox/tool.js';
+export { decodeText, encodeText } from './tool/encoding.js';
 /**
  * Copyright 2007-2025 MAIYUN.NET
  *

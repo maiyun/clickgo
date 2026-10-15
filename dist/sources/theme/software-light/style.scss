@@ -532,6 +532,7 @@ global {
 // --- 导航与滚动条去除装饰性阴影 ---
 
 .nav_wrap {
+    --nav-layer-shadow:none;
     .nav_menuwrap .nav_menu, .nav_content .nav_header { box-shadow: none; }
     .nav_bg { display: none; }
 }
@@ -582,7 +583,7 @@ global {
 
 // --- 浅色标签使用深色文字，辅助标签与禁用状态分离 ---
 
-.tag_wrap.tag_default:not(.tag_plain) {
+.tag_wrap.tag_default:not(.tag_plain), .circle_wrap.circle_default:not(.circle_plain) {
     color: var(--g-color);
     background: var(--face-selected);
 }

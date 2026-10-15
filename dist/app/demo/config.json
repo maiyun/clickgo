@@ -10,6 +10,7 @@
         "/clickgo/control/box",
         "/clickgo/control/captcha",
         "/clickgo/control/common",
+        "/clickgo/control/breadcrumb",
         "/clickgo/control/drawer",
         "/clickgo/control/form",
         "/clickgo/control/monaco",

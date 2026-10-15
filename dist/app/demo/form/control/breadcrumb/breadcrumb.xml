@@ -1,0 +1,35 @@
+<form title="Breadcrumb" width="560" height="540" padding="16">
+    <flow direction="v" style="flex: 1;">
+        <layout direction="v" gutter="16">
+            <!-- 自动识别当前位置，支持自定义分隔符及动态重排 -->
+            <group title="Navigation path">
+                <breadcrumb label="Navigation path" :separator="separator[0] || '/'" :disabled="disabled" @select="select">
+                    <breadcrumb-item v-for="item of trail" :key="item.name" :name="item.name" :label="item.label" :disabled="disabledItem && item.name === 'orders'"></breadcrumb-item>
+                </breadcrumb>
+            </group>
+            <layout gutter="12" align-v="center" flexwrap>
+                <check v-model="disabled">Disable all</check>
+                <check v-model="disabledItem">Disable Orders</check>
+                <button @click="reverse">Reverse path</button>
+            </layout>
+            <layout gutter="12" align-v="center" flexwrap>
+                <label>Separator</label>
+                <select v-model="separator" :data="['/', '›', '→']"></select>
+            </layout>
+            <!-- 条件渲染、图标与默认内容插槽 -->
+            <group title="Icons and conditional items">
+                <breadcrumb label="Conditional path" @select="select">
+                    <breadcrumb-item name="workspace" icon="/package/res/icon.svg"><label>Workspace</label></breadcrumb-item>
+                    <breadcrumb-item name="orders" label="Orders"></breadcrumb-item>
+                    <breadcrumb-item v-if="showDetails" name="details" :label="longLabel ? 'Order details for international fulfillment and shipment tracking, reference CG-1048' : 'Details'"></breadcrumb-item>
+                </breadcrumb>
+            </group>
+            <layout gutter="12" align-v="center" flexwrap>
+                <check v-model="showDetails">Show details</check>
+                <check v-model="longLabel">Long label</check>
+            </layout>
+            <label mode="tip">{{lastSelection}}</label>
+            <label mode="tip">Tab to a previous level, then press Enter or Space. The current level is not interactive.</label>
+        </layout>
+    </flow>
+</form>

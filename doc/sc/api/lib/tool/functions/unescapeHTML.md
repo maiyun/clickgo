@@ -8,7 +8,7 @@
 
 > **unescapeHTML**(`html`): `string`
 
-Defined in: [lib/tool.ts:284](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L284)
+Defined in: [lib/tool.ts:286](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L286)
 
 还原转义后的 HTML
 

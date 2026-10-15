@@ -354,11 +354,43 @@ global {
         --face:oklch(.2 .035 258);
         --face-hover:oklch(.25 .04 258);
         --face-selected:oklch(.29 .055 258);
-        --g-color:oklch(.82 .015 255);
+        --g-color:oklch(.86 .015 255);
         --g-color-hover:oklch(.97 .005 255);
-        --g-color-disabled:oklch(.55 .015 255);
+        --g-color-active:var(--g-color-hover);
+        --g-color-focus:var(--g-color-hover);
+        --g-color-disabled:oklch(.72 .015 255);
+        --g-color-tip:var(--g-color-disabled);
         --g-border-color:oklch(.29 .035 258);
 
+        // --- 固定区和内部控件共用深色状态色，局部重新绑定文字与 plain 别名 ---
+        --g-background:oklch(.26 .035 258);
+        --g-background-hover:oklch(.32 .04 258);
+        --g-background-active:oklch(.35 .045 258);
+        --g-background-focus:oklch(.29 .04 258);
+        --g-background-disabled:oklch(.235 .03 258);
+        --g-border-color-hover:oklch(.65 .045 258);
+        --g-border-color-active:oklch(.72 .07 258);
+        --g-border-color-focus:var(--g-border-color-active);
+        --g-border-color-disabled:var(--g-border-color);
+        --g-plain-color:var(--g-color);
+        --g-plain-color-hover:var(--g-color-hover);
+        --g-plain-color-active:var(--g-color-active);
+        --g-plain-color-focus:var(--g-color-focus);
+        --g-plain-color-disabled:var(--g-color-disabled);
+        --g-plain-background:var(--g-background);
+        --g-plain-background-hover:var(--g-background-hover);
+        --g-plain-background-active:var(--g-background-active);
+        --g-plain-background-focus:var(--g-background-focus);
+        --g-plain-background-disabled:var(--g-background-disabled);
+        --g-plain-background-selected:var(--face-selected);
+        --g-plain-border-color:var(--g-border-color);
+        --g-plain-border-color-hover:var(--g-border-color-hover);
+        --g-plain-border-color-active:var(--g-border-color-active);
+        --g-plain-border-color-focus:var(--g-border-color-focus);
+        --g-plain-border-color-disabled:var(--g-border-color-disabled);
+        --g-outline-shadow:0 0 0 2px oklch(.72 .07 258 / .55);
+
+        color:var(--g-color);
         z-index: 10;
         border-inline-end: solid .5px var(--g-border-color);
         box-shadow: none;

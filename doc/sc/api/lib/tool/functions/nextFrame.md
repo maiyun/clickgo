@@ -8,7 +8,7 @@
 
 > **nextFrame**(): `Promise`\<`void`\>
 
-Defined in: [lib/tool.ts:111](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L111)
+Defined in: [lib/tool.ts:113](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L113)
 
 等待浏览器帧
 

@@ -5,6 +5,9 @@
             <cg-img v-else :src="icon" />
         </template>
         <span>{{label}}</span>
+        <div v-if="slots['suffix']" class="suffix">
+            <slot name="suffix"></slot>
+        </div>
     </div>
     <div v-if="hasChild" ref="menu" class="menu">
         <div>

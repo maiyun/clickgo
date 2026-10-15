@@ -8,7 +8,7 @@
 
 > **clone**\<`T`\>(`obj`): `T`
 
-Defined in: [lib/tool.ts:96](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L96)
+Defined in: [lib/tool.ts:98](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L98)
 
 完整的克隆一份数组/对象
 

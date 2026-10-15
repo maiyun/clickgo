@@ -13,13 +13,16 @@
 ## Interfaces
 
 - [IClassPrototype](interfaces/IClassPrototype.md)
+- [IDecodedText](interfaces/IDecodedText.md)
 - [IRequestOptions](interfaces/IRequestOptions.md)
+- [ITextEncoding](interfaces/ITextEncoding.md)
 - [IUrl](interfaces/IUrl.md)
 
 ## Type Aliases
 
 - [TFalsy](type-aliases/TFalsy.md)
 - [TJson](type-aliases/TJson.md)
+- [TTextEncoding](type-aliases/TTextEncoding.md)
 
 ## Variables
 
@@ -42,6 +45,8 @@
 - [clone](functions/clone.md)
 - [compar](functions/compar.md)
 - [compressor](functions/compressor.md)
+- [decodeText](functions/decodeText.md)
+- [encodeText](functions/encodeText.md)
 - [escapeHTML](functions/escapeHTML.md)
 - [eventsAttrWrap](functions/eventsAttrWrap.md)
 - [execCommand](functions/execCommand.md)

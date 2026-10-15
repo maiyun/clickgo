@@ -6,7 +6,7 @@
 
 # Interface: IPanelGoEvent
 
-Defined in: [lib/control.ts:1469](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1469)
+Defined in: [lib/control.ts:1481](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1481)
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/control.ts:1470](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1470)
+Defined in: [lib/control.ts:1482](https://github.com/maiyun/clickgo/blob/master/dist/lib/control.ts#L1482)
 
 #### from
 

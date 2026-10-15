@@ -1,4 +1,4 @@
-<div class="wrap" :class="[layer && 'layer', showData && 'show']">
+<div class="wrap" :class="[layer && 'layer', showData && 'show', (slots['menu-header'] || slots['menu-footer']) && 'chrome']">
     <div class="bg">
         <div class="bg-item bg-item-1"></div>
         <div class="bg-item bg-item-2"></div>
@@ -7,7 +7,22 @@
     </div>
     <!-- 左侧 -->
     <div class="menuwrap" @click="menuwrapClick">
-        <cg-flow ref="flow" class="menu" direction="v">
+        <!-- 新插槽独立于菜单滚动区，旧用法保留原有结构 -->
+        <div v-if="slots['menu-header'] || slots['menu-footer']" class="menu-panel">
+            <div v-if="slots['menu-header']" class="menu-header">
+                <slot name="menu-header"></slot>
+            </div>
+            <cg-flow ref="flow" class="menu" direction="v">
+                <div v-if="logoData" class="logo" :style="{'background-image': logoData}">
+                    <slot name="slogo"></slot>
+                </div>
+                <slot></slot>
+            </cg-flow>
+            <div v-if="slots['menu-footer']" class="menu-footer">
+                <slot name="menu-footer"></slot>
+            </div>
+        </div>
+        <cg-flow v-else ref="flow" class="menu" direction="v">
             <div v-if="logoData" class="logo" :style="{'background-image': logoData}">
                 <slot name="slogo"></slot>
             </div>

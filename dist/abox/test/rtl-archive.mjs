@@ -22,7 +22,7 @@ const commonControls = new Set([
     'select', 'sidebar-toggle', 'text', 'toolbox',
 ]);
 /** --- 全部内置主题 --- */
-const themes = ['admin', 'classic', 'cyber', 'dark', 'light', 'modern', 'modern-light', 'software-dark', 'software-light'];
+const themes = ['admin', 'classic', 'cyber', 'dark', 'dashboard', 'light', 'modern', 'modern-light', 'software-dark', 'software-light'];
 /** --- CGA 格式常量，与编译器的公开包格式保持一致 --- */
 const cgaHeaderLength = 106;
 const cgaKeyContext = Buffer.from('ClickGo/Application/Package');
@@ -437,4 +437,21 @@ for (const theme of themes) {
     }
 }
 
-console.log(`Archive check passed: task.cga has 16 locales, ${localeControls.length} control locale tables are current, and RTL output is present in all ${themes.length} themes.`);
+// --- 面包屑是独立包，父项与子项须一同发布并保持源模板与样式一致 ---
+for (const control of ['breadcrumb', 'breadcrumb-item']) {
+    const archive = 'dist/control/breadcrumb.cgc';
+    await assertControlCodeCurrent(archive, control);
+    await assertCssCurrent(archive, `${control}/style.css`, `dist/sources/control/${control}/style.css`);
+    const layout = await readZipText(archive, `${control}/layout.html`);
+    const sourceLayout = (await readProjectFile(`dist/sources/control/${control}/layout.html`)).toString();
+    assert.equal(layout, sourceLayout.replace(/<!--[\s\S]*?-->/g, '').replace(/>\s+</g, '><').trim());
+    const config = JSON.parse(await readZipText(archive, `${control}/config.json`));
+    assert.equal(config.name, control);
+}
+
+// --- Circle 与 Tag 属于 common 包，共用外观调整须进入实际发布包 ---
+for (const control of ['circle', 'tag']) {
+    await assertCssCurrent('dist/control/common.cgc', `${control}/style.css`, `dist/sources/control/${control}/style.css`);
+}
+
+console.log(`Archive check passed: task.cga has 16 locales, ${localeControls.length} control locale tables are current, RTL output is present in all ${themes.length} themes, breadcrumb.cgc includes both current controls, and Circle/Tag styles are current.`);

@@ -34,15 +34,15 @@
 
 ### 样式
 
-使用 flex 布局，按钮按指定方向排列。按钮互斥选中，类似单选框功能。
+使用 flex 布局的简单分组容器，具有内边距、圆角和边框。`type` 改变边框的语义颜色。
 
-选中的按钮显示主题色背景。相邻按钮共享边框。
+仅有默认内容插槽，不管理选中状态。带标题、右侧操作和页脚的容器使用 group。
 
 ### 示例
 
 ```xml
-<sgroup v-model="selected">
-    <button value="1">Option 1</button>
-    <button value="2">Option 2</button>
+<sgroup direction="v" gutter="8">
+    <label mode="tip">Total revenue</label>
+    <label size="xl">$128,430</label>
 </sgroup>
 ```

@@ -8,7 +8,7 @@
 
 > **isJson**(`value`): `value is TJson`
 
-Defined in: [lib/tool.ts:703](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L703)
+Defined in: [lib/tool.ts:705](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L705)
 
 判断 JS 值是否符合 JSON 数据约束；字符串按数据值接受，不解析其内容
 

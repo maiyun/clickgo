@@ -8,4 +8,4 @@
 
 > `const` **RANDOM\_V**: `"ACEFGHJKLMNPRSTWXY34567"` = `'ACEFGHJKLMNPRSTWXY34567'`
 
-Defined in: [lib/tool.ts:234](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L234)
+Defined in: [lib/tool.ts:236](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L236)

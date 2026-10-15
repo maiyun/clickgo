@@ -5,7 +5,7 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'disabled'?: boolean | string;
         'plain'?: boolean | string;
-        'type'?: 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger';
+        'type'?: 'default' | 'tool' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
         'size'?: 'm' | 'l' | 'xl';
     } = {
             'disabled': false,

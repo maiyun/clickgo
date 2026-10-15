@@ -9,6 +9,15 @@
         cg-img, cg-svg {
             width: 16px; height: 16px; margin-inline-end: 6px;
         }
+        .suffix {
+            display: flex;
+            align-items: center;
+            margin-inline-start: auto;
+            padding-inline-start: var(--g-padding-s);
+        }
+        &.hasChild .suffix {
+            margin-inline-end: 16px;
+        }
     }
 
     &.show {
