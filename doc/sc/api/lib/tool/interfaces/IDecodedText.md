@@ -6,7 +6,7 @@
 
 # Interface: IDecodedText
 
-Defined in: lib/tool/encoding.ts:13
+Defined in: [lib/tool/encoding.ts:13](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool/encoding.ts#L13)
 
 严格解码结果，BOM 不计入正文
 
@@ -20,7 +20,7 @@ Defined in: lib/tool/encoding.ts:13
 
 > **bom**: `boolean`
 
-Defined in: lib/tool/encoding.ts:9
+Defined in: [lib/tool/encoding.ts:9](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool/encoding.ts#L9)
 
 #### Inherited from
 
@@ -32,7 +32,7 @@ Defined in: lib/tool/encoding.ts:9
 
 > **encoding**: [`TTextEncoding`](../type-aliases/TTextEncoding.md)
 
-Defined in: lib/tool/encoding.ts:8
+Defined in: [lib/tool/encoding.ts:8](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool/encoding.ts#L8)
 
 #### Inherited from
 
@@ -44,4 +44,4 @@ Defined in: lib/tool/encoding.ts:8
 
 > **text**: `string`
 
-Defined in: lib/tool/encoding.ts:14
+Defined in: [lib/tool/encoding.ts:14](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool/encoding.ts#L14)

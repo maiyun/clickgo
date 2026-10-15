@@ -8,7 +8,7 @@
 
 > **decodeText**(`data`, `encoding?`): `false` \| [`IDecodedText`](../interfaces/IDecodedText.md)
 
-Defined in: lib/tool/encoding.ts:23
+Defined in: [lib/tool/encoding.ts:23](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool/encoding.ts#L23)
 
 严格解码文本；自动模式按 BOM 识别，否则采用 UTF-8，不猜测传统编码
 

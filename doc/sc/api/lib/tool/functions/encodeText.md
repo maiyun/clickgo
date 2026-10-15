@@ -8,7 +8,7 @@
 
 > **encodeText**(`text`, `options?`): `false` \| `Uint8Array`\<`ArrayBuffer`\>
 
-Defined in: lib/tool/encoding.ts:33
+Defined in: [lib/tool/encoding.ts:33](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool/encoding.ts#L33)
 
 将正文无损编码为字节，不自动规范化换行
 
