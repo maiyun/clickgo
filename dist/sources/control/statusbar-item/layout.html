@@ -1,3 +1,3 @@
-<div class="wrap" :class="[propBoolean('grow') && 'grow', type]">
+<div class="wrap" :class="[propBoolean('grow') && 'grow', type, propBoolean('clickable') && 'clickable', isSpaceDown && 'active']" :role="propBoolean('clickable') ? 'button' : undefined" :tabindex="propBoolean('clickable') && !propBoolean('disabled') && formFocus ? '0' : undefined" :aria-disabled="propBoolean('clickable') ? propBoolean('disabled') : undefined" :data-cg-disabled="propBoolean('clickable') && propBoolean('disabled') ? '' : undefined" @click="activate" @keydown="keydown" @keyup="keyup" @blur="isSpaceDown = false">
     <slot></slot>
 </div>

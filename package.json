@@ -1,6 +1,6 @@
 {
   "name": "clickgo",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "description": "Background interface, software interface, mobile phone APP interface operation library.",
   "type": "module",
   "keywords": [
@@ -22,7 +22,7 @@
     "test:scroll": "node dist/abox/test/scroll.mjs",
     "test:vflow": "node dist/abox/test/vflow.mjs",
     "test:task": "node dist/abox/test/task-tray.mjs && node dist/abox/test/task-start.mjs && node dist/abox/test/task-package-loading.mjs",
-    "test:form": "node dist/abox/test/form-viewport.mjs && node --experimental-vm-modules dist/abox/test/form-native.mjs && node dist/abox/test/form-launcher.mjs && node dist/abox/test/form-notify.mjs && node dist/abox/test/form-native-style.mjs && node dist/abox/test/form-modal-layer.mjs",
+    "test:form": "node dist/abox/test/form-viewport.mjs && node --experimental-vm-modules dist/abox/test/form-native.mjs && node dist/abox/test/form-launcher.mjs && node dist/abox/test/form-notify.mjs && node dist/abox/test/form-native-style.mjs && node dist/abox/test/form-modal-layer.mjs && node dist/abox/test/statusbar-item.mjs",
     "test:notify-animation": "node dist/abox/test/form-notify-animation.mjs",
     "test:native-regions": "node dist/abox/test/form-native-regions.mjs",
     "test:desktop": "node --experimental-vm-modules dist/abox/test/desktop.mjs && node --experimental-vm-modules dist/abox/test/iconview.mjs",
