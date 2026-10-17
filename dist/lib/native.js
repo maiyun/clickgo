@@ -92,6 +92,8 @@ const methods = {};
 // --- 供 native 调用的 web 上的对象 ---
 window.clickgoNativeWeb = {
     'command': lNativeCommand.invoke,
+    /** --- Native 原子检查此能力，旧运行时的同名业务命令不能被当作文件读取入口 --- */
+    'commandFileVersion': 1,
     nativeEvents: () => { dispatchNativeEvents(); },
     invoke: function (name, ...param) {
         let handled = false;

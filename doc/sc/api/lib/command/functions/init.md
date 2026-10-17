@@ -8,7 +8,7 @@
 
 > **init**(): `void`
 
-Defined in: [lib/command.ts:184](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L184)
+Defined in: [lib/command.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L28)
 
 初始化页面级 WebMCP 接入状态，由框架在执行 Boot.main 前自动调用
 

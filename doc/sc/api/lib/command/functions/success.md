@@ -6,9 +6,9 @@
 
 # Function: success()
 
-> **success**\<`T`\>(`data`): [`TResult`](../type-aliases/TResult.md)\<`T`\>
+> **success**\<`T`\>(`data`, `files?`): [`TResult`](../type-aliases/TResult.md)\<`T`\>
 
-Defined in: [lib/command.ts:193](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L193)
+Defined in: [lib/command.ts:38](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L38)
 
 构造成功结果
 
@@ -25,6 +25,12 @@ Defined in: [lib/command.ts:193](https://github.com/maiyun/clickgo/blob/master/d
 `T`
 
 可跨入口传输的 JSON 数据
+
+### files?
+
+[`IFileInfo`](../interfaces/IFileInfo.md)[]
+
+本次命令明确交付的框架文件，可省略；不能传入其他 App 的文件
 
 ## Returns
 

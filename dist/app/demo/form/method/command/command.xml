@@ -21,6 +21,7 @@
                 <button @click="add">Add 1</button>
                 <button @click="bridgeAdd">Add 2 via agent bridge</button>
                 <button @click="palette">Command palette</button>
+                <button @click="exportFile">Export text file</button>
             </layout>
             <!-- 页面代理可见的发现提示；示例代码指向框架统一发布的接口 -->
             <label size="l">AI agent interface</label>

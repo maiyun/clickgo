@@ -13,6 +13,7 @@ export default class extends clickgo.form.AbstractForm {
     /** --- 异步说明的请求顺序，旧结果不能覆盖更新后的状态 --- */
     access = {
         'guideRequest': 0,
+        'fileId': '',
     };
     /** --- 同一应用可打开多个示例 Form，命令名称包含目标实例 --- */
     get addName() {
@@ -20,6 +21,10 @@ export default class extends clickgo.form.AbstractForm {
     }
     get readName() {
         return `counter.read.${this.formId}`;
+    }
+    /** --- 导出当前实例内容，演示通用文件交付，不自行实现传输协议 --- */
+    get exportName() {
+        return `counter.export.${this.formId}`;
     }
     /** --- 框架生成的说明可直接复制给 AI，网页和 Native 使用同一个 API --- */
     agentGuide = '';
@@ -81,6 +86,14 @@ export default class extends clickgo.form.AbstractForm {
         this.result = JSON.stringify(result, null, 2);
     }
     /**
+     * --- 界面与代理都接收同一个内置导出的文件句柄 ---
+     * @returns 显示文件名、资源 URI 和读取入口
+     */
+    async exportFile() {
+        const result = await clickgo.command.execute(this, this.exportName);
+        this.result = JSON.stringify(result, null, 2);
+    }
+    /**
      * --- 打开通用命令面板 ---
      * @returns 面板关闭后完成
      */
@@ -121,6 +134,26 @@ export default class extends clickgo.form.AbstractForm {
             'exposed': true,
             'annotations': { 'readOnlyHint': true, 'destructiveHint': false, 'openWorldHint': false },
             'execute': () => clickgo.command.success({ 'value': this.value }),
+        });
+        clickgo.command.register(this, {
+            'name': this.exportName, 'title': 'Export counter as text',
+            'description': 'Export this form\'s current counter as a text file. Use the returned file resource or its readCommand to retrieve the same bytes.',
+            'inputSchema': { 'type': 'object', 'additionalProperties': false },
+            'exposed': true,
+            'annotations': { 'readOnlyHint': false, 'destructiveHint': false, 'openWorldHint': false },
+            'execute': (_args, context) => {
+                const blob = new Blob([`Counter: ${this.value}\n`], { 'type': 'text/plain' });
+                const file = context.createFile(blob, { 'fileName': `counter-${this.formId}.txt` });
+                if (file === false) {
+                    return clickgo.command.failure('export-failed', 'Could not retain the exported file');
+                }
+                // --- 示例只保留本 Form 的最近一次导出，新文件准备好后释放旧句柄。 ---
+                if (this.access.fileId) {
+                    clickgo.command.releaseFile(this, this.access.fileId);
+                }
+                this.access.fileId = file.fileId;
+                return clickgo.command.success({ 'value': this.value }, [file]);
+            },
         });
         // --- 新建 Form 先读一次快照，后续变化由全局事件更新 ---
         const info = await clickgo.command.getAgentInfo(this);

@@ -8,6 +8,6 @@
 
 > **TWebMcpRegistrationStatus** = `"idle"` \| `"registering"` \| `"ready"` \| `"failed"`
 
-Defined in: [lib/command.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L129)
+Defined in: lib/command/types.ts:131
 
 工具发布诊断状态，不参与页面级接入事件

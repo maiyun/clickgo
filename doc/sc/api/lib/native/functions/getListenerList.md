@@ -8,7 +8,7 @@
 
 > **getListenerList**(`taskId?`): `Record`\<`string`, `Record`\<`string`, `Record`\<`string`, `number`\>\>\>
 
-Defined in: [lib/native.ts:309](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L309)
+Defined in: [lib/native.ts:311](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L311)
 
 获取监听 native 事件的监听统计信息列表
 

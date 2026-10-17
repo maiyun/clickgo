@@ -68,6 +68,34 @@ export default class extends clickgo.form.AbstractForm {
 
 `execute(this, name, args, { 'signal': signal })` 支持取消；执行回调通过第二个参数 `context.signal` 配合停止。取消不回滚已发生的修改，忽略 signal 的业务仍可继续，执行占用在回调实际结束后释放。context 包含 taskId、formId、panelId 和 source；source 的 user/agent 仅用于记录，不能作为授权凭据。
 
+## 原生导出文件
+
+应用将内置导出器生成的 Blob 交给 `context.createFile(blob, { fileName, mimeType? })`，再用 `success(data, [file])` 明确交付。框架不重新绘制文件，也不读取本机路径。示例使用文本，实际应用传入自己的 JPG、PDF 等成品 Blob：
+
+```ts
+clickgo.command.register(this, {
+    'name': 'document.export', 'description': 'Export the current document as text.',
+    'inputSchema': { 'type': 'object', 'additionalProperties': false },
+    'exposed': true,
+    'execute': (_args, context) => {
+        const blob = new Blob(['Example text\n'], { 'type': 'text/plain' });
+        const file = context.createFile(blob, { 'fileName': 'example.txt' });
+        return file === false ? clickgo.command.failure('export-failed', 'Could not retain the file')
+            : clickgo.command.success({ 'format': 'txt' }, [file]);
+    },
+});
+```
+
+- 成功结果的 `files` 位于 `data` 外，不参与 `outputSchema` 校验。元数据包含文件名、MIME、原始字节数、有效期、URI、`readCommand` 和 `readChunkSize`；框架使用自己的快照，拒绝伪造、重复或跨 App 句柄。
+- 文件保留 10 分钟，随所属 Panel、Form 或 App 销毁/`clear()` 释放。只允许执行中的 context 创建文件；失败、取消、无效输出或未放入结果的文件自动释放。私有命令的文件不会向代理公开。
+- 每个 App 最多保留 8 份、合计 128 MiB，单文件最多 64 MiB；参数、容量或计时器不可用时 `createFile()` 返回 false，不自动淘汰尚未取走的文件。
+- 应用可用 `releaseFile(this, fileId)` 主动释放旧缓存；Form/Panel 只能管理自身范围，App 可管理整个 App。释放不删除磁盘文件，客户端之后无法再读取该句柄。Demo 在新文件准备好后释放同 Form 的上一次导出，避免连续导出占满缓存。
+- App 首次通过公开命令交付文件后，框架为该 App 自动注册保留命令名 `clickgo.file.read`；它不是 `clickgo.file` 库，也不会为每个 App 启动 MCP 服务。应用不能注册同名命令。JS 和 WebMCP 按元数据调用它，传 `fileId`、`offset`（默认 0）、`length`（默认 49152，最多 393216）读取；每段返回 `file`、`offset`、`nextOffset`、`encoding: base64`、`data`。逐段解码再拼接字节，直到 nextOffset 为 null，避免将二进制输出到对话。
+- 文件按 `taskId + fileId` 隔离；`fileId` 使用 UUID，但不承担跨 App 授权。应用内 `command.execute(this, 'clickgo.file.read', args)` 从 this 取得 taskId；网页公开入口和外部 MCP 调用须提供目标 taskId。
+- Native 的 HTTP/stdio MCP 将同一结果转换为标准 `resource_link`；客户端使用 `resources/read` 获取原文件。URI 为 `clickgo-file:///task/{taskId}/{fileId}`，不是可公网访问的下载地址；不支持资源读取的客户端仍可调用公开的分段命令。缺少浏览器下载事件不代表生成失败。
+
+Demo 的 Library command → Export text file 演示完整流程。
+
 ## 浏览器代理与 WebMCP
 
 框架自动发布 `window['clickgo']['command']`，不需要业务另建桥接文件，也不依赖 WebMCP。代理按以下顺序调用：
@@ -101,7 +129,11 @@ WebMCP 可用时框架自动发布公开命令，无需连接按钮。通过 `aw
 | `publishedTaskIds` | 已完成工具发布的 App ID |
 | `onWebMcpStatusChanged(status)` | Boot、App、Form 接收同一页面级状态，无 taskId、无需 root |
 
-界面先读一次快照，再通过事件更新，无需轮询。事件不回放历史，App 命令变化或发布失败不触发该事件。`connectWebMcp(this)` 仅用于显式重试工具发布，失败返回 false；`disconnectWebMcp(this)` 撤销当前 App 工具，不改变页面状态，之后注册公开命令仍会自动发布。WebMCP 不支持或发布失败时，网页 JS 入口仍可使用。
+界面先读一次快照，再通过事件更新，无需轮询。事件不回放历史，App 命令变化或发布失败不触发该事件。
+
+公开命令注册或移除时框架自动同步，通常无需调用 `connectWebMcp(this)`。仅在发布失败需重试、主动撤销后需恢复，或浏览器稍后才提供 WebMCP 接口时调用；同一浏览器接口下保留已发布工具，只补齐缺失项，不重置 App 的命令或业务状态。发布失败返回 false。
+
+`disconnectWebMcp(this)` 撤销当前 App 工具，不改变页面状态，之后注册公开命令仍会自动发布。WebMCP 不支持或发布失败时，网页 JS 入口仍可使用。
 
 ## 自动生成 AI 接入说明
 

@@ -8,7 +8,7 @@
 
 > **register**\<`T`\>(`current`, `definition`): `boolean`
 
-Defined in: [lib/command.ts:254](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L254)
+Defined in: [lib/command.ts:68](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L68)
 
 注册命令；重复名称、不支持的 schema 或已销毁的实例返回 false
 

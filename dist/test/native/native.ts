@@ -969,8 +969,11 @@ async function invokeMcp(request: lMcp.IMcpRequest, signal: AbortSignal): Promis
     // --- Electron 查询可能因网页关闭/崩溃而拒绝，只在这个跨进程边界转换错误 ---
     // --- 按 JSON 解析保留键的语义，不把参数当作 JavaScript 对象字面量 ---
     const payload = JSON.stringify(JSON.stringify({ ...request, 'id': id }));
+    // --- 能力检查和调用必须在同一文档脚本中完成，避免旧运行时或导航后误调同名业务命令。 ---
+    const fileGuard = request.method === 'execute' && request.name === 'clickgo.file.read'
+        ? 'window.clickgoNativeWeb?.commandFileVersion === 1 && ' : '';
     const execution = target.webContents.executeJavaScript(
-        `window.clickgoNativeWeb?.command(JSON.parse(${payload}))`
+        `${fileGuard}window.clickgoNativeWeb?.command(JSON.parse(${payload}))`
     ).then((result: unknown): JSONObject => {
         if (form !== target || target.isDestroyed() || token !== sessionToken || mainNavigating) {
             return { 'ok': false, 'error': { 'code': 'unavailable', 'message': 'The app window has changed' } };

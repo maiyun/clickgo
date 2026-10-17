@@ -23,6 +23,11 @@ let value = 0;
 let cancelled = 0;
 let begun = 0;
 let mutations = 0;
+const fileBytes = Buffer.from(Uint8Array.from({ length: 4 * 1024 * 1024 + 3 }, (_, index) => index * 31 % 256));
+const exportedFile = { fileId: '12345678-1234-4234-8234-123456789abc', fileName: 'native-export.bin',
+    mimeType: 'application/octet-stream', byteLength: fileBytes.length,
+    uri: 'clickgo-file:///task/task/12345678-1234-4234-8234-123456789abc',
+    createdAt: Date.now(), expiresAt: Date.now() + 600000, readCommand: 'clickgo.file.read', readChunkSize: 393216 };
 async function invoke(request, signal) {
     if (request.method === 'listTasks') {
         return { ok: true, data: [{ id: 'task', name: 'Counter' }] };
@@ -32,6 +37,16 @@ async function invoke(request, signal) {
     }
     if (request.method === 'list') {
         return { ok: true, data: [{ name: 'counter.add', description: 'Increase counter', inputSchema: { type: 'object' } }] };
+    }
+    if (request.name === 'document.export') {
+        return { ok: true, data: { generated: true }, files: [exportedFile] };
+    }
+    if (request.name === 'clickgo.file.read') {
+        if (request.args.fileId !== exportedFile.fileId) return { ok: false, error: { code: 'file-unavailable', message: 'Unknown file' } };
+        const offset = request.args.offset ?? 0;
+        const end = Math.min(fileBytes.length, offset + request.args.length);
+        return { ok: true, data: { file: exportedFile, offset, nextOffset: end < fileBytes.length ? end : null,
+            encoding: 'base64', data: fileBytes.subarray(offset, end).toString('base64') } };
     }
     if (request.name === 'slow') {
         ++begun;
@@ -127,6 +142,14 @@ try {
             taskId: 'task', name: 'counter.add', args: { amount: 1 },
         } });
         assert.equal(result.structuredContent.data.value, ++input.data.data.value);
+        const exported = await session.client.callTool({ name: 'clickgo_execute_command', arguments: {
+            taskId: 'task', name: 'document.export',
+        } });
+        const fileLink = exported.content.find(item => item.type === 'resource_link');
+        assert.equal(fileLink.uri, exportedFile.uri);
+        const resource = await session.client.readResource({ uri: fileLink.uri });
+        assert.deepEqual(Buffer.from(resource.contents[0].blob, 'base64'), fileBytes,
+            'stdio resource reads reach the original HTTP App export');
         assert.equal(session.stderr(), '');
         console.log(`${mode}: official client negotiates stdio and reaches the original HTTP command service.`);
     }

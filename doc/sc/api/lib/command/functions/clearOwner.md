@@ -8,7 +8,7 @@
 
 > **clearOwner**(`taskId`, `formId?`, `panelId?`): `void`
 
-Defined in: [lib/command.ts:345](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L345)
+Defined in: [lib/command.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L101)
 
 **`Internal`**
 

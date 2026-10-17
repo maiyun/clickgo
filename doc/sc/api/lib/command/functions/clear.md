@@ -8,7 +8,7 @@
 
 > **clear**(`current`): `void`
 
-Defined in: [lib/command.ts:332](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L332)
+Defined in: [lib/command.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L89)
 
 清理所属 Panel、Form 或整个任务的命令
 

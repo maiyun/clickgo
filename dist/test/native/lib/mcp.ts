@@ -4,6 +4,7 @@ import { createMcpHandler, fromJsonSchema, McpServer, type CallToolResult, type 
 import * as lInstance from './instance.js';
 import { version } from './version.js';
 import { localhostHostValidation, localhostOriginValidation, toNodeHandler } from '@modelcontextprotocol/node';
+import * as aMcp from '../abox/mcp.js';
 
 /** --- 本地 MCP 连接信息；token 只用于连接设置，不写日志 --- */
 export interface IMcpInfo {
@@ -35,6 +36,23 @@ export interface IMcpServer {
     'info': IMcpInfo;
     'close': () => Promise<void>;
 }
+
+/**
+ * --- 将已校验的框架文件描述转成标准资源链接，同时保留原有结构化结果 ---
+ * @param result 页面统一执行器的 JSON 结果
+ * @param taskId 本次调用所属 App，链接不得指向其他 App
+ * @returns MCP 文本、结构化数据及文件资源链接
+ */
+const fileResult: (result: JSONObject, taskId?: string) => CallToolResult = aMcp.resultContent;
+
+/**
+ * --- 注册文件资源读取；每段仍通过同一 App 的公开命令和取消流程校验 ---
+ * @param server HTTP 或 stdio 的 MCP 服务
+ * @param invoke 当前软件实例的共享命令入口
+ * @returns 无返回值；读取失败由协议适配器返回标准资源错误
+ */
+const registerFileResources: (server: McpServer,
+    invoke: (request: IMcpRequest, signal: AbortSignal) => Promise<JSONObject>) => void = aMcp.registerFiles;
 
 /**
  * --- 创建标准 MCP 服务，将三种操作转发到原有命令接口 ---
@@ -135,8 +153,10 @@ export function createCommandServer(
         'instructions': `This server controls App instances inside the running desktop software; taskId is an App instance ID, not an AI task ID.
 Use clickgo_list_apps to choose the intended App; ask if ambiguous. Copy that id unchanged into the taskId parameter.
 Use clickgo_list_commands to discover enabled commands and their inputSchema, then clickgo_execute_command with matching args.
+Export commands may return files and resource_link content. Read the provided resource URI to retrieve the exact application-generated file; do not regenerate it because a browser download event was missed.
 Rediscover IDs after restart or a stale ID error. Never invent IDs or automatically retry commands that change data.`,
     });
+    registerFileResources(server, invoke);
     /**
      * --- 将共享命令结果转换为 MCP 工具结果，保留结构化错误 ---
      * @param request 目标操作
@@ -145,11 +165,7 @@ Rediscover IDs after restart or a stale ID error. Never invent IDs or automatica
      */
     const call = async (request: IMcpRequest, signal: AbortSignal): Promise<CallToolResult> => {
         const result = await invoke(request, signal);
-        return {
-            'content': [{ 'type': 'text', 'text': JSON.stringify(result) }],
-            'structuredContent': result,
-            'isError': result['ok'] !== true,
-        };
+        return fileResult(result, request.taskId);
     };
     server.registerTool('clickgo_list_apps', {
         'title': 'List running applications inside this software',

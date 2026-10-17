@@ -6,7 +6,7 @@
 
 # Interface: IMcpInfo
 
-Defined in: [lib/native.ts:139](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L139)
+Defined in: [lib/native.ts:141](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L141)
 
 本地 MCP 客户端连接设置；仅向已授权 root 的 App 提供
 
@@ -16,7 +16,7 @@ Defined in: [lib/native.ts:139](https://github.com/maiyun/clickgo/blob/master/di
 
 > **token**: `string`
 
-Defined in: [lib/native.ts:142](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L142)
+Defined in: [lib/native.ts:144](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L144)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/native.ts:142](https://github.com/maiyun/clickgo/blob/master/di
 
 > **transport**: `"streamable-http"`
 
-Defined in: [lib/native.ts:140](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L140)
+Defined in: [lib/native.ts:142](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L142)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/native.ts:140](https://github.com/maiyun/clickgo/blob/master/di
 
 > **url**: `string`
 
-Defined in: [lib/native.ts:141](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L141)
+Defined in: [lib/native.ts:143](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L143)

@@ -9,6 +9,15 @@ let calls = 0;
 let signal;
 let started;
 let begin;
+const fileBytes = Buffer.from(Uint8Array.from({ length: 4 * 1024 * 1024 + 3 }, (_, index) => index * 13 % 256));
+const exportedFile = {
+    fileId: '12345678-1234-4234-8234-123456789abc', fileName: 'native-export.bin',
+    mimeType: 'application/octet-stream', byteLength: fileBytes.length,
+    uri: 'clickgo-file:///task/app/12345678-1234-4234-8234-123456789abc',
+    createdAt: Date.now(), expiresAt: Date.now() + 600000,
+    readCommand: 'clickgo.file.read', readChunkSize: 393216,
+};
+let fileMode = 'ready';
 
 /**
  * --- 协议层使用可观察的目标调用，业务执行器另由 ClickGo 回归与桌面验证覆盖 ---
@@ -29,6 +38,27 @@ async function invoke(request, cancellation) {
             'type': 'object', 'properties': { 'amount': { 'type': 'integer', 'minimum': 1 } },
             'required': ['amount'],
         } }] };
+    }
+    if (request.name === 'document.export') {
+        return { ok: true, data: { generated: true }, files: [exportedFile] };
+    }
+    if (request.name === 'clickgo.file.read') {
+        if (fileMode === 'slow') {
+            signal = cancellation;
+            begin();
+            return new Promise(resolve => cancellation.addEventListener('abort', () => resolve({
+                ok: false, error: { code: 'cancelled', message: 'Transfer cancelled' },
+            }), { once: true }));
+        }
+        if (fileMode === 'gone' || request.args.fileId !== exportedFile.fileId) {
+            return { ok: false, error: { code: 'file-unavailable', message: 'File expired' } };
+        }
+        const offset = request.args.offset ?? 0;
+        const end = Math.min(fileBytes.length, offset + request.args.length);
+        const data = fileBytes.subarray(offset, end).toString('base64');
+        return { ok: true, data: { file: exportedFile, offset, encoding: 'base64',
+            data: fileMode === 'invalid-bytes' ? '*' : data,
+            nextOffset: fileMode === 'invalid-offset' ? end + 1 : end < fileBytes.length ? end : null } };
     }
     if (request.name === 'slow') {
         signal = cancellation;
@@ -102,6 +132,28 @@ try {
         } });
         assert.equal(result.isError, false);
         assert.equal(result.structuredContent['data']['value'], mode === 'legacy' ? 2 : 4);
+        const fileResult = await client.callTool({ name: 'clickgo_execute_command', arguments: {
+            taskId: 'app', name: 'document.export',
+        } });
+        const fileLink = fileResult.content.find(item => item.type === 'resource_link');
+        assert.equal(fileLink.uri, exportedFile.uri);
+        assert.equal(fileLink.name, exportedFile.fileName);
+        assert.equal(fileLink.mimeType, exportedFile.mimeType);
+        assert.equal(fileLink.size, fileBytes.length);
+        const resource = await client.readResource({ uri: fileLink.uri });
+        assert.equal(resource.contents[0].mimeType, exportedFile.mimeType);
+        assert.deepEqual(Buffer.from(resource.contents[0].blob, 'base64'), fileBytes);
+        assert.ok((await client.listResourceTemplates()).resourceTemplates.some(item =>
+            item.uriTemplate === 'clickgo-file:///task/{taskId}/{fileId}'));
+        for (const invalidMode of ['gone', 'invalid-bytes', 'invalid-offset']) {
+            fileMode = invalidMode;
+            assert.ok(await client.readResource({ uri: exportedFile.uri }).catch(error => error) instanceof Error);
+        }
+        fileMode = 'ready';
+        assert.ok(await client.readResource({ uri: exportedFile.uri.replace('/task/app/', '/task/other/') })
+            .catch(error => error) instanceof Error);
+        assert.ok(await client.readResource({ uri: exportedFile.uri.replace(/abc$/, 'def') })
+            .catch(error => error) instanceof Error);
         const privateCall = await client.callTool({ 'name': 'clickgo_execute_command', 'arguments': {
             'taskId': 'app', 'name': 'private', 'args': {},
         } });
@@ -125,6 +177,21 @@ try {
 
         if (mode === 'auto') {
             assert.ok(client.getDiscoverResult(), 'The client negotiated the current MCP protocol');
+            fileMode = 'slow';
+            started = new Promise(resolve => { begin = resolve; });
+            const fileController = new AbortController();
+            const reading = client.readResource({ uri: exportedFile.uri }, { signal: fileController.signal })
+                .catch(error => error);
+            await started;
+            fileController.abort();
+            assert.ok(await reading instanceof Error);
+            await new Promise(resolve => {
+                if (signal.aborted) { resolve(); return; }
+                const timer = setTimeout(resolve, 5000);
+                signal.addEventListener('abort', () => { clearTimeout(timer); resolve(); }, { once: true });
+            });
+            assert.equal(signal.aborted, true, 'resources/read cancellation reaches the same file command');
+            fileMode = 'ready';
             started = new Promise(resolve => { begin = resolve; });
             const controller = new AbortController();
             const slow = client.callTool({

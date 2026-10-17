@@ -6,7 +6,7 @@
 
 # Interface: IAgentInfo
 
-Defined in: [lib/command.ts:132](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L132)
+Defined in: lib/command/types.ts:134
 
 可展示或导出的接入信息；命令列表始终从对应入口实时查询
 
@@ -16,7 +16,7 @@ Defined in: [lib/command.ts:132](https://github.com/maiyun/clickgo/blob/master/d
 
 > **apps**: `object`[]
 
-Defined in: [lib/command.ts:134](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L134)
+Defined in: lib/command/types.ts:136
 
 #### id
 
@@ -32,7 +32,7 @@ Defined in: [lib/command.ts:134](https://github.com/maiyun/clickgo/blob/master/d
 
 > **browser**: `object`
 
-Defined in: [lib/command.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L136)
+Defined in: lib/command/types.ts:138
 
 #### api
 
@@ -48,7 +48,7 @@ Defined in: [lib/command.ts:136](https://github.com/maiyun/clickgo/blob/master/d
 
 > **http**: [`IMcpInfo`](../../native/interfaces/IMcpInfo.md) \| `null`
 
-Defined in: [lib/command.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L148)
+Defined in: lib/command/types.ts:150
 
 只有显式导出且通过 root 检查时才包含 HTTP 凭据
 
@@ -58,7 +58,7 @@ Defined in: [lib/command.ts:148](https://github.com/maiyun/clickgo/blob/master/d
 
 > **native**: [`ICommandEntry`](../../native/interfaces/ICommandEntry.md) \| `null`
 
-Defined in: [lib/command.ts:146](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L146)
+Defined in: lib/command/types.ts:148
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: [lib/command.ts:146](https://github.com/maiyun/clickgo/blob/master/d
 
 > **schemaVersion**: `1`
 
-Defined in: [lib/command.ts:133](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L133)
+Defined in: lib/command/types.ts:135
 
 ***
 
@@ -74,7 +74,7 @@ Defined in: [lib/command.ts:133](https://github.com/maiyun/clickgo/blob/master/d
 
 > **targetTaskId**: `string` \| `null`
 
-Defined in: [lib/command.ts:135](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L135)
+Defined in: lib/command/types.ts:137
 
 ***
 
@@ -82,7 +82,7 @@ Defined in: [lib/command.ts:135](https://github.com/maiyun/clickgo/blob/master/d
 
 > **webMcp**: `object`
 
-Defined in: [lib/command.ts:137](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L137)
+Defined in: lib/command/types.ts:139
 
 #### publishedTaskIds
 

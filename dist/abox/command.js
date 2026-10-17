@@ -2,6 +2,8 @@ import { isJson } from './tool.js';
 import { copyJson } from './command/json.js';
 export { copyJson } from './command/json.js';
 export { createWebPublisher } from './command/webmcp.js';
+export { createRuntime } from './command/runtime.js';
+export { createFileStore } from './command/file.js';
 const annotations = new Set(['readOnlyHint', 'destructiveHint', 'idempotentHint', 'openWorldHint',
     'consequentialHint', 'untrustedContentHint']);
 export function readMetadata(definition) {
@@ -64,7 +66,12 @@ export function readResult(result, schema) {
     if (schema && validate(result['data'], schema) !== null) {
         return failure('invalid-output', 'Command result does not match its output schema');
     }
-    return { 'ok': true, 'data': copyJson(result['data']) };
+    const files = result['files'];
+    if (files !== undefined && (!Array.isArray(files) || files.length > 8 || files.some(file => !file || typeof file !== 'object' || Array.isArray(file) || typeof file['fileId'] !== 'string' ||
+        !file['fileId'])))
+        return failure('invalid-output', 'Command returned invalid files');
+    return files === undefined ? { 'ok': true, 'data': copyJson(result['data']) } :
+        { 'ok': true, 'data': copyJson(result['data']), 'files': copyJson(files) };
 }
 const KEYWORDS = new Set([
     '$schema', '$ref', '$defs', 'title', 'description', 'default', 'examples', 'type',
@@ -367,7 +374,8 @@ export function format(info) {
     }
     const lines = [
         `Browser: use \`${info.browser.api}\` on this page. ${webMcp}`,
-        'Call `listTasks()`, choose an App id, inspect `list(taskId)`, then `await execute(taskId, name, args)` using its command descriptions and inputSchema. Discover App IDs again after restart.',
+        'Call `listTasks()`, choose an App id, inspect `list(taskId)`, then `await execute(taskId, name, args)` per inputSchema. Rediscover IDs after restart.',
+        'Export `files`: use the Native resource URI or `readCommand`/`readChunkSize` for the same bytes. Missed downloads are not export failures.',
     ];
     if (info.browser.url !== null && info.native === null) {
         lines.unshift(`Page: ${JSON.stringify(info.browser.url)}`);

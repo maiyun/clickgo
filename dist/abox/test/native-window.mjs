@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 import * as path from 'node:path';
 import * as url from 'node:url';
 import * as crypto from 'node:crypto';
-import { SourceTextModule, SyntheticModule } from 'node:vm';
+import { SourceTextModule, SyntheticModule, runInNewContext } from 'node:vm';
 
 let window;
 let ipc;
@@ -366,6 +366,18 @@ window.webContents.executeJavaScript = async code => {
 assert.deepEqual(await callMcp({ method: 'execute', taskId: 'app', name: 'quote";unexpected()',
     args: JSON.parse('{"__proto__":{"value":1}}') }, new AbortController().signal), { ok: true, data: 'preserved JSON' });
 assert.equal(scripts.length, 1);
+let fileCalls = 0;
+const bridge = { command: request => { ++fileCalls; return { ok: true, data: request.name }; } };
+window.webContents.executeJavaScript = async code => runInNewContext(code, { window: { clickgoNativeWeb: bridge } });
+const legacyFile = await callMcp({ method: 'execute', taskId: 'app', name: 'clickgo.file.read',
+    args: { fileId: '12345678-1234-4234-8234-123456789abc' } }, new AbortController().signal);
+assert.equal(legacyFile.error.code, 'unavailable');
+assert.equal(fileCalls, 0, 'resource reads cannot invoke a legacy App command that happens to use the same name');
+bridge.commandFileVersion = 1;
+const frameworkFile = await callMcp({ method: 'execute', taskId: 'app', name: 'clickgo.file.read',
+    args: { fileId: '12345678-1234-4234-8234-123456789abc' } }, new AbortController().signal);
+assert.equal(frameworkFile.data, 'clickgo.file.read');
+assert.equal(fileCalls, 1);
 await mod.namespace.stopMcp();
 assert.equal(closed, true);
 assert.deepEqual(mod.namespace.getCommandEntry().mcp, { enabled: false, discovery: false });

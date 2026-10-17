@@ -34,7 +34,7 @@ vm.runInNewContext(ts.transpileModule(extract(coreTree, 'trigger'), {
  */
 async function load(path, modules, extra = {}) {
     const source = await readFile(new URL(path, import.meta.url), 'utf8');
-    const scope = { exports: {}, require: name => modules[name], AbortController,
+    const scope = { exports: {}, require: name => modules[name], AbortController, Blob, crypto: globalThis.crypto,
         document: dom.window.document, ...extra };
     vm.runInNewContext(ts.transpileModule(source, {
         compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
@@ -46,8 +46,15 @@ const toolBox = await load('../tool.ts', {});
 const tool = await load('../../lib/tool.ts', { '../abox/tool.js': toolBox });
 const jsonBox = await load('../command/json.ts', {});
 const webBox = await load('../command/webmcp.ts', { './json.js': jsonBox });
+const runtimeBox = await load('../command/runtime.ts', {});
+let fileNow = Date.now();
+const fileBox = await load('../command/file.ts', {}, {
+    Date: class extends Date { static now() { return fileNow; } },
+});
 const commandBox = await load('../command.ts', {
     './tool.js': toolBox, './command/json.js': jsonBox, './command/webmcp.js': webBox,
+    './command/runtime.js': runtimeBox,
+    './command/file.js': fileBox,
 });
 const schema = await load('../../lib/command/schema.ts', {
     '../../abox/command.js': commandBox, '../../abox/tool.js': toolBox,
@@ -59,16 +66,39 @@ assert.equal(schema.isJson(known, new Set([known])), false);
 const guide = await load('../../lib/command/guide.ts', { '../../abox/command.js': commandBox });
 const data = await load('../../lib/command/data.ts', { '../../abox/command.js': commandBox });
 const webMcp = await load('../../lib/command/webmcp.ts', { '../../abox/command.js': commandBox });
+const fileTimers = new Map();
+let fileTimerId = 0;
+let beforeFileRead;
+const taskRuntime = {
+    getOrigin: id => tasks[id], checkPermission: (...args) => permission(...args),
+    getList: () => Object.values(tasks).map(item => ({ id: item.id, name: item.app.config.name })),
+    createTimer: (id, callback, _delay, options) => {
+        const timer = ++fileTimerId;
+        tasks[id].timers[timer] = options.formId ?? '';
+        fileTimers.set(timer, callback);
+        return timer;
+    },
+    removeTimer: (id, timer) => { delete tasks[id].timers[timer]; fileTimers.delete(timer); },
+};
+const fileStore = await load('../../lib/command/file.ts', {
+    '../../abox/command.js': commandBox,
+    '../task': taskRuntime,
+    '../tool': { blob2DataUrl: async blob => {
+        await beforeFileRead?.();
+        return `data:application/octet-stream;base64,${Buffer.from(await blob.arrayBuffer()).toString('base64')}`;
+    } },
+});
 let native;
 const command = await load('../../lib/command.ts', {
+    '../abox/command.js': commandBox,
     './core': coreScope.exports,
     './tool': tool,
-    './task': { getOrigin: id => tasks[id], checkPermission: (...args) => permission(...args),
-        getList: () => Object.values(tasks).map(item => ({ id: item.id, name: item.app.config.name })) },
+    './task': taskRuntime,
     './command/schema': schema,
     './command/guide': guide,
     './command/data': data,
     './command/webmcp': webMcp,
+    './command/file': fileStore,
     './native': { getCommandEntry: () => native.getCommandEntry(), getMcpInfo: current => native.getMcpInfo(current) },
 });
 const objectSchema = { type: 'object', additionalProperties: false };
@@ -971,6 +1001,150 @@ nativeEnvironment = false;
 assert.equal(await persistentStorage.get(persistenceOwner, 'preferences'), false);
 command.clear(persistenceOwner);
 delete tasks['persistent-owner'];
+
+// --- 文件来自已执行的原生导出；JS、WebMCP、Native 都读取相同的不可变字节。 ---
+const fileForm = task('files');
+const otherFiles = task('other-files');
+const bytes = Uint8Array.from({ length: 200003 }, (_, index) => index * 29 % 256);
+const publishedFiles = new Map();
+dom.window.document.modelContext = { registerTool: (tool, options) => {
+    publishedFiles.set(tool.name, tool);
+    options.signal.addEventListener('abort', () => publishedFiles.delete(tool.name), { once: true });
+} };
+let fileContext;
+let exportsMade = 0;
+command.register(fileForm, definition('document.export', { exposed: true, execute: (_args, ctx) => {
+    ++exportsMade;
+    fileContext = ctx;
+    const file = ctx.createFile(new Blob([bytes], { type: 'application/octet-stream' }), { fileName: '图纸.bin' });
+    assert.notEqual(file, false);
+    return command.success({ exported: true }, [file]);
+} }));
+assert.equal(command.register(fileForm, definition('clickgo.file.read')), false, 'framework command names are reserved');
+const delivery = await command.executeAgent('files', 'document.export');
+assert.equal(delivery.ok, true);
+const info = delivery.files[0];
+assert.equal(info.byteLength, bytes.length);
+assert.equal(info.expiresAt - info.createdAt, 600000);
+assert.match(info.uri, /^clickgo-file:\/\/\/task\/files\//);
+assert.equal(info.readCommand, 'clickgo.file.read');
+assert.equal(fileContext.createFile(new Blob(), { fileName: 'late.txt' }), false, 'finished callbacks cannot create files later');
+const assembled = [];
+let nextOffset = 0;
+do {
+    const part = await command.createPageBridge().execute('files', info.readCommand, {
+        fileId: info.fileId, offset: nextOffset, length: 32768,
+    });
+    assert.equal(part.ok, true);
+    assert.equal(part.data.file.fileId, info.fileId);
+    assembled.push(Buffer.from(part.data.data, 'base64'));
+    nextOffset = part.data.nextOffset;
+} while (nextOffset !== null);
+assert.deepEqual(Buffer.concat(assembled), Buffer.from(bytes));
+assert.equal(exportsMade, 1, 'reading does not regenerate the document');
+await command.connectWebMcp(fileForm);
+const fileReadTool = [...publishedFiles.values()].find(tool => tool.name.endsWith('_clickgo.file.read'));
+assert.ok(fileReadTool, 'the framework publishes file reading without App registration');
+const webChunk = JSON.parse(await fileReadTool.execute({ fileId: info.fileId, offset: 0, length: info.readChunkSize }));
+assert.deepEqual(Buffer.from(webChunk.data.data, 'base64'), Buffer.from(bytes));
+const nativeChunk = await nativeCommand.invoke({ method: 'execute', id: 'file-read', taskId: 'files',
+    name: info.readCommand, args: { fileId: info.fileId, length: 1 } });
+assert.equal(Buffer.from(nativeChunk.data.data, 'base64')[0], bytes[0]);
+info.fileName = 'changed.bin';
+assert.equal((await command.executeAgent('files', info.readCommand, { fileId: info.fileId })).data.file.fileName,
+    '图纸.bin', 'returned metadata is detached from the stored snapshot');
+
+// --- 私有导出不公开文件，其他 App 不能借用已知句柄；伪造结果也不能授权读取。 ---
+command.register(fileForm, definition('private.export', { execute: (_args, ctx) => {
+    const file = ctx.createFile(new Blob(['private']), { fileName: 'private.txt' });
+    return command.success(null, [file]);
+} }));
+const privateFile = (await command.execute(fileForm, 'private.export')).files[0];
+assert.equal((await command.executeAgent('files', info.readCommand, { fileId: privateFile.fileId })).ok, false);
+command.register(otherFiles, definition('forged.export', { exposed: true,
+    execute: () => command.success(null, [info]) }));
+assert.equal((await command.executeAgent('other-files', 'forged.export')).error.code, 'invalid-output');
+assert.equal(await fileStore.read('other-files', info.fileId), false);
+for (const args of [{ offset: -1 }, { length: 0 }, { length: 393217 }, { offset: bytes.length + 1 }]) {
+    assert.equal((await command.executeAgent('files', info.readCommand, { fileId: info.fileId, ...args })).ok, false);
+}
+const eof = await command.executeAgent('files', info.readCommand, { fileId: info.fileId, offset: bytes.length });
+assert.equal(eof.data.data, '');
+assert.equal(eof.data.nextOffset, null);
+
+// --- 失败、无效输出、异常和取消均释放未交付文件；没有隐式发布副作用。 ---
+const timerCount = fileTimers.size;
+command.register(fileForm, definition('file.disposable', { exposed: true, execute: (_args, ctx) => {
+    const file = ctx.createFile(new Blob(['temporary'], { type: 'text/plain;charset=utf-8' }),
+        { fileName: 'temporary.txt' });
+    return command.success(null, [file]);
+} }));
+const disposable = (await command.executeAgent('files', 'file.disposable')).files[0];
+assert.equal(disposable.mimeType, 'text/plain;charset=utf-8', 'standard MIME parameters survive file delivery');
+assert.equal(command.releaseFile(otherFiles, disposable.fileId), false);
+assert.equal(command.releaseFile({ ...fileForm, formId: 'other' }, disposable.fileId), false);
+assert.equal(command.releaseFile(fileForm, disposable.fileId), true);
+assert.equal(command.releaseFile(fileForm, disposable.fileId), false);
+assert.equal((await command.executeAgent('files', info.readCommand, { fileId: disposable.fileId })).ok, false);
+assert.equal(fileTimers.size, timerCount);
+for (const outcome of ['failure', 'invalid', 'throw', 'omitted']) {
+    command.register(fileForm, definition(`file.${outcome}`, { exposed: true, execute: (_args, ctx) => {
+        assert.notEqual(ctx.createFile(new Blob(['unused']), { fileName: 'unused.txt' }), false);
+        if (outcome === 'throw') throw new Error('test failure');
+        if (outcome === 'invalid') return command.success(undefined);
+        if (outcome === 'omitted') return command.success(null);
+        return command.failure('failed', 'Could not export');
+    } }));
+    await command.executeAgent('files', `file.${outcome}`);
+    assert.equal(fileTimers.size, timerCount, outcome);
+}
+const cancelledFile = new AbortController();
+command.register(fileForm, definition('file.cancel', { exposed: true, execute: (_args, ctx) => {
+    const file = ctx.createFile(new Blob(['cancelled']), { fileName: 'cancelled.txt' });
+    cancelledFile.abort();
+    assert.equal(ctx.createFile(new Blob(), { fileName: 'after-cancel.txt' }), false);
+    return command.success(null, [file]);
+} }));
+assert.equal((await command.executeAgent('files', 'file.cancel', {}, { signal: cancelledFile.signal })).error.code,
+    'cancelled');
+assert.equal(fileTimers.size, timerCount);
+
+// --- 每个 App 的缓存有界，到期后即时拒绝读取，清理回调释放实际缓存。 ---
+command.register(fileForm, definition('file.capacity', { exposed: true, execute: (_args, ctx) => {
+    const available = [];
+    for (let index = 0; index < 6; ++index) {
+        const file = ctx.createFile(new Blob(), { fileName: `empty-${index}.txt` });
+        assert.notEqual(file, false); available.push(file);
+    }
+    assert.equal(ctx.createFile(new Blob(), { fileName: 'ninth.txt' }), false);
+    assert.equal(ctx.createFile(new Blob(), { fileName: '../invalid.txt' }), false);
+    return command.success(null, available);
+} }));
+assert.equal((await command.executeAgent('files', 'file.capacity')).files.length, 6);
+fileNow += 600000;
+assert.equal((await command.executeAgent('files', info.readCommand, { fileId: info.fileId })).ok, false);
+for (const callback of [...fileTimers.values()]) callback();
+assert.equal(fileTimers.size, 0);
+
+// --- Panel/Form 销毁及在途读取结束后的二次检查，不影响同 App 的其他范围。 ---
+const panelFileForm = { ...fileForm, panelId: 'panel' };
+command.register(panelFileForm, definition('panel.export', { exposed: true, execute: (_args, ctx) => {
+    const file = ctx.createFile(new Blob(['panel']), { fileName: 'panel.txt' });
+    return command.success(null, [file]);
+} }));
+const panelFile = (await command.executeAgent('files', 'panel.export')).files[0];
+const freshFile = (await command.executeAgent('files', 'document.export')).files[0];
+command.clear(panelFileForm);
+assert.equal((await command.executeAgent('files', info.readCommand, { fileId: panelFile.fileId })).ok, false);
+assert.equal((await command.executeAgent('files', info.readCommand, { fileId: freshFile.fileId })).ok, true);
+beforeFileRead = () => command.clear(fileForm);
+assert.equal((await command.executeAgent('files', info.readCommand, { fileId: freshFile.fileId })).ok, false);
+beforeFileRead = undefined;
+assert.equal(fileTimers.size, 0);
+command.clear('files'); command.clear('other-files');
+assert.equal(JSON.parse(await fileReadTool.execute({ fileId: freshFile.fileId })).ok, false);
+console.log('Command files: exact bytes, public delivery, WebMCP/Native, bounds, cancellation, expiry and owner cleanup passed.');
+
 command.clear(second);
 dom.window.close();
 console.log('Command isolation, JSON Schema, shared execution, permissions, cancellation, WebMCP and lifecycle passed.');

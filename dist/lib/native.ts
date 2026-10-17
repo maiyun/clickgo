@@ -113,6 +113,8 @@ const methods: Record<string,
 // --- 供 native 调用的 web 上的对象 ---
 (window as any).clickgoNativeWeb = {
     'command': lNativeCommand.invoke,
+    /** --- Native 原子检查此能力，旧运行时的同名业务命令不能被当作文件读取入口 --- */
+    'commandFileVersion': 1,
     nativeEvents: (): void => { dispatchNativeEvents(); },
     invoke: function(name: string, ...param: any[]) {
         let handled = false;

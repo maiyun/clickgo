@@ -8,7 +8,7 @@
 
 > **open**(`options?`): `Promise`\<`string`[] \| `null`\>
 
-Defined in: [lib/native.ts:478](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L478)
+Defined in: [lib/native.ts:480](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L480)
 
 弹出文件选择框
 

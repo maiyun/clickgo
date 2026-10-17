@@ -6,7 +6,7 @@
 
 # Interface: ICommandEntry
 
-Defined in: [lib/native.ts:146](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L146)
+Defined in: [lib/native.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L148)
 
 当前 Native 的公开进程入口，不包含 HTTP 连接凭据
 
@@ -16,7 +16,7 @@ Defined in: [lib/native.ts:146](https://github.com/maiyun/clickgo/blob/master/di
 
 > **args**: `string`[]
 
-Defined in: [lib/native.ts:150](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L150)
+Defined in: [lib/native.ts:152](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L152)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/native.ts:150](https://github.com/maiyun/clickgo/blob/master/di
 
 > **command**: `string`
 
-Defined in: [lib/native.ts:149](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L149)
+Defined in: [lib/native.ts:151](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L151)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/native.ts:149](https://github.com/maiyun/clickgo/blob/master/di
 
 > **mcp**: `object`
 
-Defined in: [lib/native.ts:152](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L152)
+Defined in: [lib/native.ts:154](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L154)
 
 #### discovery
 
@@ -48,7 +48,7 @@ Defined in: [lib/native.ts:152](https://github.com/maiyun/clickgo/blob/master/di
 
 > **name**: `string`
 
-Defined in: [lib/native.ts:147](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L147)
+Defined in: [lib/native.ts:149](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L149)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [lib/native.ts:147](https://github.com/maiyun/clickgo/blob/master/di
 
 > **platform**: `string`
 
-Defined in: [lib/native.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L148)
+Defined in: [lib/native.ts:150](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L150)
 
 ***
 
@@ -64,4 +64,4 @@ Defined in: [lib/native.ts:148](https://github.com/maiyun/clickgo/blob/master/di
 
 > **startup**: `"auto"` \| `"existing"`
 
-Defined in: [lib/native.ts:151](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L151)
+Defined in: [lib/native.ts:153](https://github.com/maiyun/clickgo/blob/master/dist/lib/native.ts#L153)

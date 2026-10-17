@@ -8,6 +8,6 @@
 
 > **TWebMcpStatus** = `"unsupported"` \| `"ready"`
 
-Defined in: [lib/command.ts:126](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L126)
+Defined in: lib/command/types.ts:128
 
 页面级 WebMCP 接入状态；ready 表示浏览器接口可用，不表示某个 App 的工具已发布

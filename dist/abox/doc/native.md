@@ -4,13 +4,14 @@
 
 ## 源码同步
 
-- 测试宿主 `dist/test/native/native.ts` 对应 clickgo-native 的 `dist/index.ts`，lib/{fs,tool,mcp,instance,client,cli,startup,version,persistence,storage,secret,update,events}.ts 对应对方 dist/lib，abox/{fs,tool,persistence,cli,update}.ts 对应对方 dist/abox，手写 pre.js 对应 dist/pre.js；对应源文件逐字一致，不能降级为桩。
+- 测试宿主 `dist/test/native/native.ts` 对应 clickgo-native 的 `dist/index.ts`，lib/{fs,tool,mcp,instance,client,cli,startup,version,persistence,storage,secret,update,events}.ts 对应对方 dist/lib，abox/{fs,tool,mcp,persistence,cli,update}.ts 对应对方 dist/abox，手写 pre.js 对应 dist/pre.js；对应源文件逐字一致，不能降级为桩。
 - 先改 ClickGo 副本，生成 TS 产物并跑 check、test:native；真实 Electron 用 native，无边框/进程保留用 native2/native3。验收后同步对应源码到 clickgo-native，构建/回归并 cmp；JS/声明各自生成。
 - 三个启动 Demo 显式 startMcp，稳定软件 ID 为 clickgo-demo，命令演示从 Demo 的 AI interface guide 进入。SDK 在此为 devDependency，在 Native 服务端为运行依赖；同步依赖变更。联动至少核实 MCP 更新 UI、UI 可由 MCP 读取及受影响的 App 隔离、取消、退出。
 
 ## 运行契约
 
 - `dist/lib/command/native.ts` 是固定页面适配器，经 native.ts 发布；每次按 taskId 调用 executeAgent，保留公开命令及 agent 来源。createBridge 仅供绑定单 App 的调用方；协议服务在主进程，getMcpInfo(current) 要求 root。
+- 文件资源使用框架保留的 `clickgo.file.read`；Native 在同次页面脚本中检查 `commandFileVersion` 再执行，旧运行时的同名业务命令不能充当文件读取器，导航后的文档仍须重新满足检查。
 - 持久配置/secret 在 userData。主进程默认软件空间；框架按 config.json.id 经当前文档会话隔离 App 空间，App 不需要 root。task.run 固定 ITask.appId；无合法 id 的旧 App 可运行，存储读写返回 false。
 - persistence 逐键串行并临时文件替换；secret 使用异步 safeStorage，轮换密钥时更新密文，isAvailable 也异步；无安全服务返回 false，不落明文。自动回归 test:native；真实重启入口 dist/abox/test/native-storage-electron.mjs。
 - launcher 同一可执行文件提供 --cli/--mcp，在 GUI 单实例锁、文件处理及 Boot.main 前分流；不要求系统 Node、npm bin 或 RunAsNode。业务初始化放 Boot.main，导入/Boot 构造不向 stdio stdout 写日志。before-quit 取消接入、排空输出，只退出当前命令进程。

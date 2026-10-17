@@ -6,9 +6,9 @@
 
 # Function: execute()
 
-> **execute**(`current`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
+> **execute**(`current`, `name`, `args?`, `options?`): `Promise`\<[`TResult`](../type-aliases/TResult.md)\>
 
-Defined in: [lib/command.ts:534](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L534)
+Defined in: [lib/command.ts:152](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L152)
 
 应用界面直接执行已注册的业务命令
 
@@ -42,6 +42,6 @@ Defined in: [lib/command.ts:534](https://github.com/maiyun/clickgo/blob/master/d
 
 ## Returns
 
-`Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
+`Promise`\<[`TResult`](../type-aliases/TResult.md)\>
 
 业务结果

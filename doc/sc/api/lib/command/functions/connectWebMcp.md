@@ -8,9 +8,12 @@
 
 > **connectWebMcp**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/command.ts:618](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L618)
+Defined in: [lib/command.ts:195](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L195)
 
-显式重同步或重试当前 App 的工具发布；页面接入由框架自动管理
+手动将当前 App 已公开的命令发布到浏览器 WebMCP
+公开命令注册或移除时框架自动同步，通常无需调用。
+仅在发布失败需重试、主动撤销后需恢复，或浏览器稍后才提供 WebMCP 接口时调用。
+同一浏览器接口下保留已发布工具，只补齐缺失项；不重置 App 的命令或业务状态。
 
 ## Parameters
 
@@ -24,4 +27,4 @@ Defined in: [lib/command.ts:618](https://github.com/maiyun/clickgo/blob/master/d
 
 `Promise`\<`boolean`\>
 
-是否同步成功；浏览器不支持、App 已退出或注册失败时返回 false
+是否发布成功；浏览器不支持、App 已退出、发布中途撤销或注册失败时返回 false
