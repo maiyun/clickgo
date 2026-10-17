@@ -13,10 +13,13 @@ import * as aMcp from '../abox/mcp.js';
  */
 const fileResult = aMcp.resultContent;
 /**
- * --- 注册文件资源读取；每段仍通过同一 App 的公开命令和取消流程校验 ---
- * @param server HTTP 或 stdio 的 MCP 服务
- * @param invoke 当前软件实例的共享命令入口
- * @returns 无返回值；读取失败由协议适配器返回标准资源错误
+ * --- 让 MCP 客户端读取 App 已交付的文件 ---
+ * @param server 要添加文件读取功能的 HTTP 或 stdio MCP 服务
+ * @param invoke App 命令调用函数；按 taskId 执行 clickgo.file.read，并传递取消信号
+ * @returns 无返回值；读取失败时客户端收到 MCP 资源错误
+ * @example
+ * 客户端请求 resources/read({ uri: 'clickgo-file:///task/<taskId>/<fileId>' })，
+ * 框架通过 invoke 分段读取该 App 的文件，再合并返回。
  */
 const registerFileResources = aMcp.registerFiles;
 /**
