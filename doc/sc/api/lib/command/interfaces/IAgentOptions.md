@@ -6,7 +6,7 @@
 
 # Interface: IAgentOptions
 
-Defined in: lib/command/types.ts:122
+Defined in: [lib/command/types.ts:122](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L122)
 
 统一接入说明的生成选项；默认不读取或包含 HTTP 凭据
 
@@ -16,6 +16,6 @@ Defined in: lib/command/types.ts:122
 
 > `optional` **includeMcpCredentials?**: `boolean`
 
-Defined in: lib/command/types.ts:124
+Defined in: [lib/command/types.ts:124](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L124)
 
 仅供应用主动导出 HTTP 连接设置，仍要求当前 App 已有 root 权限

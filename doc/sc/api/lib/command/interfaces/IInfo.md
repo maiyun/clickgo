@@ -6,7 +6,7 @@
 
 # Interface: IInfo
 
-Defined in: lib/command/types.ts:94
+Defined in: [lib/command/types.ts:94](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L94)
 
 不包含函数或内部对象的独立快照
 
@@ -20,7 +20,7 @@ Defined in: lib/command/types.ts:94
 
 > `optional` **annotations?**: `object`
 
-Defined in: lib/command/types.ts:69
+Defined in: [lib/command/types.ts:69](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L69)
 
 行为说明，不代替校验或授权
 
@@ -60,7 +60,7 @@ WebMCP 的重要或不可逆现实效果说明
 
 > **description**: `string`
 
-Defined in: lib/command/types.ts:65
+Defined in: [lib/command/types.ts:65](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L65)
 
 #### Inherited from
 
@@ -72,7 +72,7 @@ Defined in: lib/command/types.ts:65
 
 > **disabledReason**: `string`
 
-Defined in: lib/command/types.ts:100
+Defined in: [lib/command/types.ts:100](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L100)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: lib/command/types.ts:100
 
 > **enabled**: `boolean`
 
-Defined in: lib/command/types.ts:99
+Defined in: [lib/command/types.ts:99](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L99)
 
 ***
 
@@ -88,7 +88,7 @@ Defined in: lib/command/types.ts:99
 
 > **exposed**: `boolean`
 
-Defined in: lib/command/types.ts:98
+Defined in: [lib/command/types.ts:98](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L98)
 
 ***
 
@@ -96,7 +96,7 @@ Defined in: lib/command/types.ts:98
 
 > **formId**: `string`
 
-Defined in: lib/command/types.ts:96
+Defined in: [lib/command/types.ts:96](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L96)
 
 ***
 
@@ -104,7 +104,7 @@ Defined in: lib/command/types.ts:96
 
 > **inputSchema**: [`ISchema`](ISchema.md) & `object`
 
-Defined in: lib/command/types.ts:66
+Defined in: [lib/command/types.ts:66](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L66)
 
 #### Type Declaration
 
@@ -122,7 +122,7 @@ Defined in: lib/command/types.ts:66
 
 > **name**: `string`
 
-Defined in: lib/command/types.ts:63
+Defined in: [lib/command/types.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L63)
 
 #### Inherited from
 
@@ -134,7 +134,7 @@ Defined in: lib/command/types.ts:63
 
 > `optional` **outputSchema?**: [`ISchema`](ISchema.md)
 
-Defined in: lib/command/types.ts:67
+Defined in: [lib/command/types.ts:67](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L67)
 
 #### Inherited from
 
@@ -146,7 +146,7 @@ Defined in: lib/command/types.ts:67
 
 > **panelId**: `string`
 
-Defined in: lib/command/types.ts:97
+Defined in: [lib/command/types.ts:97](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L97)
 
 ***
 
@@ -154,7 +154,7 @@ Defined in: lib/command/types.ts:97
 
 > **running**: `number`
 
-Defined in: lib/command/types.ts:101
+Defined in: [lib/command/types.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L101)
 
 ***
 
@@ -162,7 +162,7 @@ Defined in: lib/command/types.ts:101
 
 > **taskId**: `string`
 
-Defined in: lib/command/types.ts:95
+Defined in: [lib/command/types.ts:95](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L95)
 
 ***
 
@@ -170,7 +170,7 @@ Defined in: lib/command/types.ts:95
 
 > `optional` **title?**: `string`
 
-Defined in: lib/command/types.ts:64
+Defined in: [lib/command/types.ts:64](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L64)
 
 #### Inherited from
 

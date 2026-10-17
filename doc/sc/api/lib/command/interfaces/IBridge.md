@@ -6,7 +6,7 @@
 
 # Interface: IBridge
 
-Defined in: lib/command/types.ts:105
+Defined in: [lib/command/types.ts:105](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L105)
 
 绑定一个应用实例，只能调用该实例明确公开的命令
 
@@ -16,7 +16,7 @@ Defined in: lib/command/types.ts:105
 
 > **execute**: (`name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
-Defined in: lib/command/types.ts:108
+Defined in: [lib/command/types.ts:108](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L108)
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: lib/command/types.ts:108
 
 > **list**: () => [`IInfo`](IInfo.md)[]
 
-Defined in: lib/command/types.ts:107
+Defined in: [lib/command/types.ts:107](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L107)
 
 #### Returns
 
@@ -56,4 +56,4 @@ Defined in: lib/command/types.ts:107
 
 > **taskId**: `string`
 
-Defined in: lib/command/types.ts:106
+Defined in: [lib/command/types.ts:106](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L106)

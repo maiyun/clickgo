@@ -26,6 +26,14 @@
 
 禁用可点击项，默认 `false`；禁用时不参与 Tab 导航、不触发 `click`。
 
+### 事件
+
+#### tap
+
+`(event: MouseEvent | KeyboardEvent): void`
+
+可点击项通过鼠标点击、Enter 按下或 Space 释放时触发，参数为原始事件。应用模板使用 `@click` 绑定，框架内部对应 `tap`；普通项或禁用项不触发。
+
 ### 示例
 
 ```xml

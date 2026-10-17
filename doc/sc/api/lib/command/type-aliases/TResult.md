@@ -8,7 +8,7 @@
 
 > **TResult**\<`T`\> = \{ `data`: `T`; `files?`: [`IFileInfo`](../interfaces/IFileInfo.md)[]; `ok`: `true`; \} \| \{ `error`: \{ `code`: `string`; `message`: `string`; \}; `ok`: `false`; \}
 
-Defined in: lib/command/types.ts:41
+Defined in: [lib/command/types.ts:41](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L41)
 
 所有入口共用的结果；错误码用于程序判断，message 用于说明
 

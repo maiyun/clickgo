@@ -6,7 +6,7 @@
 
 # Interface: IFileChunk
 
-Defined in: lib/command/file.ts:48
+Defined in: [lib/command/file.ts:48](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/file.ts#L48)
 
 每段携带同一份快照信息，便于客户端校验文件及交付状态
 
@@ -16,7 +16,7 @@ Defined in: lib/command/file.ts:48
 
 > **data**: `string`
 
-Defined in: lib/command/file.ts:53
+Defined in: [lib/command/file.ts:53](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/file.ts#L53)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: lib/command/file.ts:53
 
 > **encoding**: `"base64"`
 
-Defined in: lib/command/file.ts:52
+Defined in: [lib/command/file.ts:52](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/file.ts#L52)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: lib/command/file.ts:52
 
 > **file**: [`IFileInfo`](IFileInfo.md)
 
-Defined in: lib/command/file.ts:49
+Defined in: [lib/command/file.ts:49](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/file.ts#L49)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: lib/command/file.ts:49
 
 > **nextOffset**: `number` \| `null`
 
-Defined in: lib/command/file.ts:51
+Defined in: [lib/command/file.ts:51](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/file.ts#L51)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: lib/command/file.ts:51
 
 > **offset**: `number`
 
-Defined in: lib/command/file.ts:50
+Defined in: [lib/command/file.ts:50](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/file.ts#L50)

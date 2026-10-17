@@ -6,7 +6,7 @@
 
 # Interface: IContext
 
-Defined in: lib/command/types.ts:45
+Defined in: [lib/command/types.ts:45](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L45)
 
 执行来源仅用于展示与记录，不是授权凭证
 
@@ -16,7 +16,7 @@ Defined in: lib/command/types.ts:45
 
 > **createFile**: (`blob`, `options`) => `false` \| [`IFileInfo`](IFileInfo.md)
 
-Defined in: lib/command/types.ts:58
+Defined in: [lib/command/types.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L58)
 
 保留已生成文件；用 success(data, [file]) 明确交付，不读取路径或重新生成
 
@@ -47,7 +47,7 @@ Defined in: lib/command/types.ts:58
 
 > **formId**: `string`
 
-Defined in: lib/command/types.ts:47
+Defined in: [lib/command/types.ts:47](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L47)
 
 ***
 
@@ -55,7 +55,7 @@ Defined in: lib/command/types.ts:47
 
 > **panelId**: `string`
 
-Defined in: lib/command/types.ts:48
+Defined in: [lib/command/types.ts:48](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L48)
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: lib/command/types.ts:48
 
 > **signal**: `AbortSignal`
 
-Defined in: lib/command/types.ts:50
+Defined in: [lib/command/types.ts:50](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L50)
 
 ***
 
@@ -71,7 +71,7 @@ Defined in: lib/command/types.ts:50
 
 > **source**: `"user"` \| `"agent"`
 
-Defined in: lib/command/types.ts:49
+Defined in: [lib/command/types.ts:49](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L49)
 
 ***
 
@@ -79,4 +79,4 @@ Defined in: lib/command/types.ts:49
 
 > **taskId**: `string`
 
-Defined in: lib/command/types.ts:46
+Defined in: [lib/command/types.ts:46](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L46)

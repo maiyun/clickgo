@@ -6,7 +6,7 @@
 
 # Interface: IPageBridge
 
-Defined in: lib/command/types.ts:112
+Defined in: [lib/command/types.ts:112](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L112)
 
 框架向网页发布的统一入口；按任务选择应用，只访问明确公开的命令
 
@@ -16,7 +16,7 @@ Defined in: lib/command/types.ts:112
 
 > **execute**: (`taskId`, `name`, `args?`, `options?`) => `Promise`\<[`TResult`](../type-aliases/TResult.md)\<[`TJson`](../../tool/type-aliases/TJson.md)\>\>
 
-Defined in: lib/command/types.ts:117
+Defined in: [lib/command/types.ts:117](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L117)
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Defined in: lib/command/types.ts:117
 
 > **getAgentGuide**: (`taskId?`) => `Promise`\<`string` \| `false` \| `null`\>
 
-Defined in: lib/command/types.ts:114
+Defined in: [lib/command/types.ts:114](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L114)
 
 #### Parameters
 
@@ -66,7 +66,7 @@ Defined in: lib/command/types.ts:114
 
 > **getAgentInfo**: (`taskId?`) => `Promise`\<`false` \| [`IAgentInfo`](IAgentInfo.md) \| `null`\>
 
-Defined in: lib/command/types.ts:113
+Defined in: [lib/command/types.ts:113](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L113)
 
 #### Parameters
 
@@ -84,7 +84,7 @@ Defined in: lib/command/types.ts:113
 
 > **list**: (`taskId`) => [`IInfo`](IInfo.md)[]
 
-Defined in: lib/command/types.ts:116
+Defined in: [lib/command/types.ts:116](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L116)
 
 #### Parameters
 
@@ -102,7 +102,7 @@ Defined in: lib/command/types.ts:116
 
 > **listTasks**: () => `object`[]
 
-Defined in: lib/command/types.ts:115
+Defined in: [lib/command/types.ts:115](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L115)
 
 #### Returns
 

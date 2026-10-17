@@ -6,7 +6,7 @@
 
 # Interface: IAgentInfo
 
-Defined in: lib/command/types.ts:134
+Defined in: [lib/command/types.ts:134](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L134)
 
 可展示或导出的接入信息；命令列表始终从对应入口实时查询
 
@@ -16,7 +16,7 @@ Defined in: lib/command/types.ts:134
 
 > **apps**: `object`[]
 
-Defined in: lib/command/types.ts:136
+Defined in: [lib/command/types.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L136)
 
 #### id
 
@@ -32,7 +32,7 @@ Defined in: lib/command/types.ts:136
 
 > **browser**: `object`
 
-Defined in: lib/command/types.ts:138
+Defined in: [lib/command/types.ts:138](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L138)
 
 #### api
 
@@ -48,7 +48,7 @@ Defined in: lib/command/types.ts:138
 
 > **http**: [`IMcpInfo`](../../native/interfaces/IMcpInfo.md) \| `null`
 
-Defined in: lib/command/types.ts:150
+Defined in: [lib/command/types.ts:150](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L150)
 
 只有显式导出且通过 root 检查时才包含 HTTP 凭据
 
@@ -58,7 +58,7 @@ Defined in: lib/command/types.ts:150
 
 > **native**: [`ICommandEntry`](../../native/interfaces/ICommandEntry.md) \| `null`
 
-Defined in: lib/command/types.ts:148
+Defined in: [lib/command/types.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L148)
 
 ***
 
@@ -66,7 +66,7 @@ Defined in: lib/command/types.ts:148
 
 > **schemaVersion**: `1`
 
-Defined in: lib/command/types.ts:135
+Defined in: [lib/command/types.ts:135](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L135)
 
 ***
 
@@ -74,7 +74,7 @@ Defined in: lib/command/types.ts:135
 
 > **targetTaskId**: `string` \| `null`
 
-Defined in: lib/command/types.ts:137
+Defined in: [lib/command/types.ts:137](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L137)
 
 ***
 
@@ -82,7 +82,7 @@ Defined in: lib/command/types.ts:137
 
 > **webMcp**: `object`
 
-Defined in: lib/command/types.ts:139
+Defined in: [lib/command/types.ts:139](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/types.ts#L139)
 
 #### publishedTaskIds
 

@@ -11,7 +11,6 @@ const store = lAboxCommand.createFileStore({
     'task': lTask, 'tool': lTool, 'readCommand': READ_COMMAND,
     'defaultChunkBytes': DEFAULT_CHUNK_BYTES, 'maxChunkBytes': MAX_CHUNK_BYTES,
 });
-// --- hbox start ---
 /**
  * --- 建立尚未对代理公开的文件快照，由命令成功结果决定是否交付 ---
  * @param owner 已通过命令生命周期检查的所属范围
@@ -68,4 +67,3 @@ export function release(owner, fileId) {
 export function clear(owner) {
     store.clear(owner);
 }
-// --- hbox end ---
