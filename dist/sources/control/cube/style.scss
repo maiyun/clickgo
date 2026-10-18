@@ -1,30 +1,37 @@
 .wrap {
-    --cube-color: var(--cg); position: relative; display: inline-flex; width: 48px; height: 48px; flex-shrink: 0; color: var(--cube-color); vertical-align: middle; perspective: 400px;
+    --cube-color: var(--cg); --cube-size: 48px; --cube-edge: calc(var(--cube-size) * .56);
+    position: relative; display: inline-flex; width: var(--cube-size); height: var(--cube-size); flex-shrink: 0; color: var(--cube-color); vertical-align: middle;
+    perspective: calc(var(--cube-size) * 5); perspective-origin: 50% 50%;
     &.default { --cube-color: var(--g-color-tip); }
     @each $type, $color in (primary:success, info:info, warning:warning, danger:danger) { &.#{$type} { --cube-color: var(--#{$color}); } }
-    &.size-s { width: 32px; height: 32px; }
-    &.size-l { width: 64px; height: 64px; }
-    &.size-xl { width: 88px; height: 88px; }
-    .shadow { position: absolute; left: 18%; right: 18%; bottom: 0; height: 12%; border-radius: 50%; background: var(--cube-color); filter: blur(5px); opacity: .12; transform: scale(.8); transition: transform .4s ease, opacity .4s ease; pointer-events: none; }
-    .object { position: absolute; inset: 0; transform-origin: 50% 60%; transform-style: preserve-3d; transition: transform .42s cubic-bezier(.2, .8, .2, 1); }
-    .object::after { content: ''; position: absolute; inset: 0; clip-path: polygon(50% 4.7%, 92.2% 28.9%, 50% 53.1%, 7.8% 28.9%); background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .8) 50%, transparent 65%); background-size: 300% 100%; background-position: 150% 0; opacity: 0; pointer-events: none; }
-    svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-    path { stroke: color-mix(in srgb, var(--cube-color), var(--g-pure) 48%); stroke-width: 1; stroke-linejoin: round; transition: fill .35s ease, stroke .35s ease; }
-    .top { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 88%); }
-    .left { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 74%); }
-    .right { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 61%); }
-    .content { position: absolute; top: 5%; left: 20%; width: 60%; height: 42%; display: flex; align-items: center; justify-content: center; }
+    &.size-s { --cube-size: 32px; }
+    &.size-l { --cube-size: 64px; }
+    &.size-xl { --cube-size: 88px; }
+    .shadow { position: absolute; left: 18%; right: 18%; bottom: 0; height: 12%; border-radius: 50%; background: var(--cube-color); filter: blur(5px); opacity: .16; transform: scale(.8); transition: transform .4s ease, opacity .4s ease; pointer-events: none; }
+    // --- 三个面共用真实立方体的边长；不对已经投影好的等距图做二次倾斜 ---
+    .object { position: absolute; left: 50%; top: 50%; width: var(--cube-edge); height: var(--cube-edge); margin: calc(var(--cube-edge) * -.5); transform-style: preserve-3d; transform: rotateX(-30deg) rotateY(-45deg); transition: transform .42s cubic-bezier(.2, .8, .2, 1); }
+    .face { position: absolute; inset: 0; backface-visibility: hidden; }
+    .left { transform: translateZ(calc(var(--cube-edge) * .5)); }
+    .right { transform: rotateY(90deg) translateZ(calc(var(--cube-edge) * .5)); }
+    .top { transform: rotateX(90deg) translateZ(calc(var(--cube-edge) * .5)); }
+    .top::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .8) 50%, transparent 65%); background-size: 300% 100%; background-position: 150% 0; opacity: 0; pointer-events: none; }
+    .face > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+    .face > svg > path { stroke: color-mix(in srgb, var(--cube-color), var(--g-pure) 48%); stroke-width: .65; stroke-linejoin: round; transition: fill .35s ease, stroke .35s ease; }
+    .top > svg > path { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 88%); }
+    .left > svg > path { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 74%); }
+    .right > svg > path { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 61%); }
+    .content { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 }
 
 // --- 固定占位承载动效，悬停不会改变尺寸或连线端点 ---
 @media (hover: hover) {
     .wrap:hover {
-        .object { transform: translateY(-6px) rotateX(12deg) rotateY(-16deg) rotateZ(-4deg) scale(1.06); }
-        .object::after { animation: sheen .75s ease-out; }
-        .shadow { opacity: .3; transform: translateY(2px) scale(1.12); }
-        .top { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 73%); }
-        .left { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 58%); }
-        .right { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 43%); }
+        .object { transform: translate3d(0, calc(var(--cube-size) * -.12), calc(var(--cube-size) * .18)) rotateX(-40deg) rotateY(-35deg) rotateZ(-2deg); }
+        .top::after { animation: sheen .75s ease-out; }
+        .shadow { opacity: .11; transform: translateY(2px) scale(1.15); }
+        .top > svg > path { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 73%); }
+        .left > svg > path { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 58%); }
+        .right > svg > path { fill: color-mix(in srgb, var(--cube-color), var(--g-pure) 43%); }
     }
 }
 @keyframes sheen {
@@ -33,8 +40,8 @@
     100% { background-position: -80% 0; opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .wrap .object, .wrap:hover .object { transform: none; transition: none; }
-    .wrap .object::after, .wrap:hover .object::after { animation: none; }
-    .wrap .shadow, .wrap:hover .shadow { transform: none; opacity: .12; transition: none; }
-    .wrap path { transition: none; }
+    .wrap .object, .wrap:hover .object { transform: rotateX(-30deg) rotateY(-45deg); transition: none; }
+    .wrap .top::after, .wrap:hover .top::after { animation: none; }
+    .wrap .shadow, .wrap:hover .shadow { transform: scale(.8); opacity: .16; transition: none; }
+    .wrap .face > svg > path { transition: none; }
 }

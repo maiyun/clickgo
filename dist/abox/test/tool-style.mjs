@@ -27,10 +27,10 @@ const hover = rules.find(rule => rule.conditionText === '(hover: hover)' || rule
 const reduced = rules.find(rule => rule.conditionText?.includes('prefers-reduced-motion'));
 assert.ok(hover && reduced, 'Cube must retain both media conditions');
 assert.equal(hover.cssRules[0].selectorText, '.test_wrap:hover .test_object');
-assert.match(hover.cssRules[0].style.transform, /translateY\(-6px\).*rotateX/);
+assert.match(hover.cssRules[0].style.transform, /translate3d\(.*rotateX\(-40deg\).*rotateY\(-35deg\)/);
 assert.equal(reduced.cssRules[0].selectorText, '.test_wrap .test_object,.test_wrap:hover .test_object');
-assert.equal(reduced.cssRules[0].style.transform, 'none');
-assert.equal(reduced.cssRules[1].selectorText, '.test_wrap .test_object::after,.test_wrap:hover .test_object::after');
+assert.equal(reduced.cssRules[0].style.transform, 'rotateX(-30deg) rotateY(-45deg)', 'reduced motion must preserve the static three-dimensional cube');
+assert.equal(reduced.cssRules[1].selectorText, '.test_wrap .test_top::after,.test_wrap:hover .test_top::after');
 assert.equal(reduced.cssRules[1].style.animation, 'none');
 assert.ok(rules.some(rule => rule.name === 'test_sheen'), 'animation names must retain the same scope');
 console.log('Style scoping: first and nested conditional rules, reduced motion, keyframe selectors/names, fonts and actual Cube CSS passed.');
