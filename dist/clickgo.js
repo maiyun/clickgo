@@ -42,7 +42,7 @@ lNative.initSysId(sysId);
 export const modules = {
     'clickgo': clickgo,
 };
-const version = '7.3.2';
+const version = '7.4.0';
 /** --- 获取当前版本 --- */
 export function getVersion() {
     return version;
