@@ -5,11 +5,13 @@ export default class extends clickgo.control.AbstractControl {
     public props: {
         'type': 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
         'plain': boolean | string;
+        'pulse': boolean | string;
         'sub': boolean | string;
         'size': 's' | 'm' | 'l' | 'xl';
     } = {
             'type': 'default',
             'plain': false,
+            'pulse': false,
             'sub': false,
             'size': 's',
         };

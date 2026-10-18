@@ -14,6 +14,16 @@
 
 是否使用与 Tag 相同的朴素模式，默认 false。语义色和主题色使用柔和底色、对应文字色及边框；最终外观由主题决定。
 
+#### pulse
+
+`boolean` | `string`
+
+是否启用同色扩散光圈，默认 false。光圈随 `type` 的语义色或主题色变化，实心与朴素模式均支持；圆点、内容及布局尺寸不参与缩放。启用系统“减少动态效果”时显示静态光圈。
+
+这是布尔开关；`string` 仅兼容 XML 属性传值，并非动画名称或多种效果的枚举。可用 `pulse` 开启，或用 `:pulse="online"` 绑定布尔状态。
+
+光圈向组件外侧绘制，放在 Flow 等滚动容器内时需在滚动区域内部留出空间，避免被 overflow 裁切。
+
 #### sub
 
 `boolean` | `string`
@@ -39,4 +49,6 @@
 ```xml
 <circle type="primary" size="xl">A</circle>
 <circle type="cg" size="xl" plain>A</circle>
+<circle type="primary" pulse></circle>
+<circle type="cg" :pulse="online"></circle>
 ```

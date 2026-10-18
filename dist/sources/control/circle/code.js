@@ -3,6 +3,7 @@ export default class extends clickgo.control.AbstractControl {
     props = {
         'type': 'default',
         'plain': false,
+        'pulse': false,
         'sub': false,
         'size': 's',
     };

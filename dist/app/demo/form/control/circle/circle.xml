@@ -1,29 +1,31 @@
-<form width="650" height="580" title="Circle" padding="16">
-    <flow direction="v" style="flex: 1;">
+<form width="650" height="620" title="Circle" padding="0">
+    <flow direction="v" style="flex: 1; padding: 16px;">
         <layout direction="v" gutter="16">
             <label mode="tip">Circle / Tag / Status dot: matching semantic colors</label>
+            <!-- 同一开关覆盖语义色、朴素模式、全部尺寸及角标 -->
+            <check v-model="pulse">Pulse / outward ripple</check>
             <!-- 相同类型和模式成对展示，外形不同但配色规则一致 -->
             <layout gutter="16">
                 <group v-for="plain of [false, true]" :key="String(plain)" :title="plain ? 'Plain / soft' : 'Solid'" direction="v" gutter="12" style="flex: 1; min-width: 0;">
                     <layout v-for="type of ['default', 'primary', 'info', 'warning', 'danger', 'cg']" :key="type" align-v="center" gutter="12">
-                        <circle :type="type" :plain="plain" size="xl">A</circle>
+                        <circle :type="type" :plain="plain" :pulse="pulse" size="xl">A</circle>
                         <tag :type="type" :plain="plain" size="xs">{{type}}</tag>
-                        <circle :type="type" :plain="plain"></circle>
+                        <circle :type="type" :plain="plain" :pulse="pulse"></circle>
                     </layout>
                 </group>
             </layout>
             <!-- 固定直径与角标定位沿用原有 Circle 能力 -->
             <group title="Diameter" direction="v" gutter="12">
                 <layout gutter="12" align-v="center">
-                    <circle type="cg" size="xl"></circle>
-                    <circle type="cg" size="l"></circle>
-                    <circle type="cg" size="m"></circle>
-                    <circle type="cg" size="s"></circle>
+                    <circle type="cg" :pulse="pulse" size="xl"></circle>
+                    <circle type="cg" :pulse="pulse" size="l"></circle>
+                    <circle type="cg" :pulse="pulse" size="m"></circle>
+                    <circle type="cg" :pulse="pulse" size="s"></circle>
                 </layout>
                 <label mode="tip">xl / l / m / s</label>
             </group>
             <layout gutter="16" align-v="center">
-                <tag type="cg" plain size="xs">Corner badge<circle type="cg" sub size="m"></circle></tag>
+                <tag type="cg" plain size="xs">Corner badge<circle type="cg" sub :pulse="pulse" size="m"></circle></tag>
                 <label mode="tip">sub positions a badge at its parent's corner.</label>
             </layout>
         </layout>

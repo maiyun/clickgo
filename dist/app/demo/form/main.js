@@ -6,6 +6,7 @@ import ccaptchaFrm from './control/captcha/captcha';
 import cbuttonFrm from './control/button/button';
 import cbreadcrumbFrm from './control/breadcrumb/breadcrumb';
 import ccheckFrm from './control/check/check';
+import ccircleFrm from './control/circle/circle';
 import cdatepanelFrm from './control/datepanel/datepanel';
 import ccalendarFrm from './control/calendar/calendar';
 import cdateFrm from './control/date/date';
@@ -266,9 +267,7 @@ export default class extends clickgo.form.AbstractForm {
                 break;
             }
             case 'ccircle': {
-                frm = await clickgo.form.create(this, 'control/circle/circle', undefined, {
-                    'path': this.filename
-                });
+                frm = await clickgo.form.create(this, ccircleFrm);
                 break;
             }
             case 'ccontent': {

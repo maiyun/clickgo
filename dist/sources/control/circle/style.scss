@@ -1,5 +1,18 @@
 .wrap {
     border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; pointer-events: none; width: var(--cg-width); height: var(--cg-height);
+    --circle-pulse-color:var(--g-plain-border-color);
+
+    @each $type, $color in (primary:success, info:info, warning:warning, danger:danger, cg:cg) {
+        &.#{$type} { --circle-pulse-color:var(--#{$color}); }
+    }
+
+    &.pulse {
+        position: relative;
+        &::before {
+            content: ''; position: absolute; inset: -1px; border: 1px solid var(--circle-pulse-color); border-radius: inherit; pointer-events: none;
+            opacity: 0; animation: pulse 3s ease-out infinite;
+        }
+    }
 
     &.size-s {
         --cg-width:var(--g-padding-s); --cg-height:var(--g-padding-s);
@@ -55,4 +68,14 @@
     &.sub {
         position: absolute; z-index: 1; right: calc(-1 * var(--cg-width) / 2); top: calc(-1 * var(--cg-height) / 2);
     }
+}
+
+// --- 只动画外围光圈，不缩放圆点、插槽或角标的定位 ---
+@keyframes pulse {
+    0% { transform: scale(1); opacity: .45; }
+    75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrap.pulse::before { animation: none; transform: scale(1.6); opacity: .2; }
 }
