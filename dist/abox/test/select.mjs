@@ -97,7 +97,7 @@ async function loadControl(name) {
     };
 }
 const components = {};
-for (const name of ['select', 'list', 'greatlist', 'greatselect', 'calendar', 'datepanel', 'page', 'property']) {
+for (const name of ['select', 'list', 'greatlist', 'greatselect', 'calendar', 'date', 'datepanel', 'page', 'property']) {
     components[`cg-${name}`] = await loadControl(name);
 }
 components['cg-text'] = {
@@ -145,6 +145,8 @@ async function mount(props = {}, handlers = {}, name = 'select') {
                 onRemoved: event => { events.push(['removed', clone(event.detail)]); },
                 'onUpdate:count': count => { state.count = count; },
                 'onUpdate:yearmonth': yearmonth => { state.yearmonth = yearmonth; },
+                'onUpdate:tz': tz => { state.tz = tz; },
+                onSelected: event => { events.push(['selected', clone(event.detail)]); },
                 onCountchanged: count => { events.push(['countchanged', count]); },
             });
         },
@@ -887,6 +889,90 @@ for (const name of ['calendar', 'datepanel']) {
         m.dispose();
     });
 }
+
+test('month Date normalizes external values to the configured zone and omits day/time selection', async () => {
+    const m = await mount({ mode: 'month', tz: 0, modelValue: Date.UTC(2026, 0, 19, 18, 23) }, {}, 'date');
+    assert.equal(m.state.modelValue, Date.UTC(2026, 0, 1));
+    assert.equal(m.select.dateStr, '2026-01');
+    assert.equal(m.select.showTime, false);
+    assert.equal(m.events.filter(([type]) => type === 'changed').length, 0);
+    await m.select.click('first');
+    await flush();
+    assert.equal(document.querySelectorAll('.month-grid').length, 1);
+    assert.equal(document.querySelectorAll('.month-grid button').length, 12);
+    assert.equal(document.querySelectorAll('.week, .row, .footer').length, 0);
+    m.state.tz = 8;
+    await flush();
+    assert.equal(m.state.modelValue, Date.UTC(2025, 11, 31, 16));
+    assert.equal(m.select.dateStr, '2026-01');
+    m.dispose();
+});
+
+test('month Date selects once, clears once and remains lazy and disabled when requested', async () => {
+    const m = await mount({ mode: 'month', tz: 0, yearmonth: '202601' }, {}, 'date');
+    assert.equal(m.select.datePanelMounted, false);
+    await m.select.click('first');
+    await flush();
+    const panel = instances.filter(([name]) => name === 'datepanel').at(-1)[1];
+    panel.selectMonth(5);
+    await flush();
+    assert.equal(m.state.modelValue, Date.UTC(2026, 4, 1));
+    assert.equal(m.select.dateStr, '2026-05');
+    assert.equal(m.events.filter(([type]) => type === 'changed').length, 1);
+    m.select.clear();
+    await flush();
+    assert.equal(m.state.modelValue, undefined);
+    assert.equal(m.events.filter(([type]) => type === 'changed').length, 2);
+    m.state.disabled = true;
+    await flush();
+    panel.selectMonth(6);
+    await m.select.click('first');
+    await flush();
+    assert.equal(m.state.modelValue, undefined);
+    m.dispose();
+});
+
+test('month Datepanel applies month boundaries and disabled months, ignoring hidden time and range values', async () => {
+    const m = await mount({ mode: 'month', tz: 0, yearmonth: '202601', start: Date.UTC(2026, 1, 17), end: Date.UTC(2026, 5, 15), disabledList: ['202604'], hourminute: '235959', range: true }, {}, 'datepanel');
+    for (const month of [1, 4, 7]) m.select.selectMonth(month);
+    await flush();
+    assert.equal(m.state.modelValue, undefined);
+    m.select.selectMonth(2);
+    await flush();
+    assert.equal(m.state.modelValue, Date.UTC(2026, 1, 1));
+    assert.equal(m.events.filter(([type]) => type === 'changed').length, 1);
+    assert.equal(m.events.filter(([type]) => type === 'selected').at(-1)[1].date, 1);
+    m.select.selectMonth(6);
+    await flush();
+    assert.equal(m.state.modelValue, Date.UTC(2026, 5, 1));
+    m.state.hourminute = '123456';
+    await flush();
+    assert.equal(m.state.modelValue, Date.UTC(2026, 5, 1));
+    m.select.next();
+    m.select.prev();
+    assert.equal(m.select.vyear[0], '2026');
+    m.dispose();
+});
+
+test('switching Date between day and month mode normalizes once and restores date display', async () => {
+    const m = await mount({ tz: -5, modelValue: Date.UTC(2026, 2, 19, 21) }, {}, 'date');
+    assert.equal(m.select.dateStr, '2026-03-19');
+    await m.select.click('first');
+    await flush();
+    m.state.mode = 'month';
+    await flush();
+    assert.equal(m.state.modelValue, Date.UTC(2026, 2, 1, 5));
+    assert.equal(m.select.dateStr, '2026-03');
+    m.state.modelValue = Date.UTC(2027, 1, 28, 23);
+    await flush();
+    assert.equal(m.state.modelValue, Date.UTC(2027, 1, 1, 5));
+    m.state.mode = 'date';
+    await flush();
+    assert.equal(m.select.dateStr, '2027-02-01');
+    assert.equal(m.select.showTime, true);
+    assert.equal(m.events.filter(([type]) => type === 'changed').length, 0);
+    m.dispose();
+});
 
 test('Property uses inline modelValue arrays without recursive writes and accepts a choice', async () => {
     const m = await mount({ modelValue: [{ title: 'Choice', control: 'select', value: 'b', data: ['a', 'b', 'c'] }] }, {}, 'property');

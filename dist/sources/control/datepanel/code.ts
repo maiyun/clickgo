@@ -37,6 +37,8 @@ export default class extends clickgo.control.AbstractControl {
         /** --- 设置 value 时自动跳转到选中的月份，默认开启 --- */
         'jump': boolean | string;
 
+        /** --- date 选择日期；month 显示月份网格，返回所选时区的月初零点 --- */
+        'mode': 'date' | 'month';
         'time': boolean | string;
         'zone': boolean | string;
 
@@ -60,6 +62,7 @@ export default class extends clickgo.control.AbstractControl {
             'cursor': '',
             'jump': true,
 
+            'mode': 'date',
             'time': true,
             'zone': false,
 
@@ -558,6 +561,29 @@ export default class extends clickgo.control.AbstractControl {
         return new Set(this.propArray('disabledList').map(item => item.toString()));
     }
 
+    /** --- 是否只选择年月 --- */
+    public get isMonth(): boolean {
+        return this.props.mode === 'month';
+    }
+
+    /**
+     * --- 归一化外部传入的年月值，不触发用户选择事件 ---
+     * @returns 月初值和选中状态已同步
+     */
+    private _normalizeMonth(): void {
+        if (!this.isMonth || this.timestamp === undefined) {
+            return;
+        }
+        this.dateObj.setUTCDate(1);
+        this.dateObj.setUTCHours(0, 0, 0, 0);
+        this.refreshDateValue();
+        const value = this.dateObj.getTime() - this.tzData * 60 * 60_000;
+        if (this.timestamp !== value) {
+            this.timestamp = value;
+            this.emit('update:modelValue', value);
+        }
+    }
+
     // --- 上面的选项 ---
 
     public vyear: string[] = [''];
@@ -597,7 +623,7 @@ export default class extends clickgo.control.AbstractControl {
             arr.push({
                 'label': this.l('m' + i.toString()),
                 'value': i.toString(),
-                'disabled': ym > this.endYm || ym < this.startYm ? true : false,
+                'disabled': ym > this.endYm || ym < this.startYm || this.isMonth && this.disabledSet.has(ym),
             });
         }
         return arr;
@@ -667,16 +693,13 @@ export default class extends clickgo.control.AbstractControl {
     public updateTimestamp(): void {
         const modelValue = this.props.modelValue === undefined ? undefined : this.propNumber('modelValue');
         if (this.timestamp === undefined) {
-            if (modelValue !== undefined) {
-                const event: clickgo.control.IDatepanelChangedEvent = {
-                    'detail': {
-                        'before': modelValue,
-                        'value': undefined
-                    }
-                };
-                this.emit('changed', event);
-            }
+            // --- 初始化时先同步时区，再读取外部值；此时尚未选中不代表用户清空 ---
             return;
+        }
+        if (this.isMonth) {
+            this.dateObj.setUTCDate(1);
+            this.dateObj.setUTCHours(0, 0, 0, 0);
+            this.refreshDateValue();
         }
         this.timestamp = this.dateObj.getTime() - this.tzData * 60 * 60_000;
         if (modelValue !== this.timestamp) {
@@ -711,6 +734,38 @@ export default class extends clickgo.control.AbstractControl {
                 this.emit('yearmonthchanged');
             }
         }
+    }
+
+    /**
+     * --- 选择当前年份中的月份，不经过日和时间选择 ---
+     * @param month 月份，1 至 12
+     * @returns 禁用月份不更新；有效月份同步值并触发 selected
+     */
+    public selectMonth(month: number): void {
+        if (this.propBoolean('disabled') || !this.isMonth) {
+            return;
+        }
+        const option = this.months.find(item => item.value === month.toString());
+        if (!option || option.disabled) {
+            return;
+        }
+        this.rangeDate = undefined;
+        this.dateObj.setUTCFullYear(parseInt(this.vyear[0]), month - 1, 1);
+        this.dateObj.setUTCHours(0, 0, 0, 0);
+        this.timestamp = 0;
+        this.refreshDateValue();
+        this.updateTimestamp();
+        this.goSelected();
+        this.emit('selected', {
+            'detail': {
+                'time': this.timestamp,
+                'date': 1,
+                'month': month - 1,
+                'year': this.dateValue.year,
+                'day': this.dateObj.getUTCDay(),
+                'str': this.dateValueStr,
+            }
+        } satisfies clickgo.control.IDatepanelSelectedEvent);
     }
 
     /** --- col 点击 --- */
@@ -820,6 +875,13 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 选上个月 ---
     public prev(): void {
+        if (this.isMonth) {
+            const year = parseInt(this.vyear[0]);
+            if (!this.propBoolean('disabled') && year > this.startValue.year) {
+                this.vyear[0] = (year - 1).toString();
+            }
+            return;
+        }
         const month = parseInt(this.vmonth[0]);
         if (month === 1) {
             const year = parseInt(this.vyear[0]);
@@ -832,6 +894,13 @@ export default class extends clickgo.control.AbstractControl {
 
     // --- 选下个月 ---
     public next(): void {
+        if (this.isMonth) {
+            const year = parseInt(this.vyear[0]);
+            if (!this.propBoolean('disabled') && year < this.endValue.year) {
+                this.vyear[0] = (year + 1).toString();
+            }
+            return;
+        }
         const month = parseInt(this.vmonth[0]);
         if (month === 12) {
             const year = parseInt(this.vyear[0]);
@@ -934,6 +1003,9 @@ export default class extends clickgo.control.AbstractControl {
         this.watch(() => {
             return (this.vhour[0] ?? '') + ':' + (this.vminute[0] ?? '') + ':' + (this.vseconds[0] ?? '');
         }, () => {
+            if (this.isMonth) {
+                return;
+            }
             if (!this.vhour[0] || !this.vminute[0] || !this.vseconds[0]) {
                 return;
             }
@@ -1010,6 +1082,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.timestamp = this.propNumber('modelValue');
                 this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
                 this.dateObj.setMilliseconds(0);
+                this._normalizeMonth();
                 this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
                 this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
                 this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
@@ -1034,9 +1107,9 @@ export default class extends clickgo.control.AbstractControl {
             else {
                 this.timestamp = undefined;
                 if (mvfirst) {
-                    const date = new Date();
-                    this.vyear[0] = date.getFullYear().toString();
-                    this.vmonth[0] = (date.getMonth() + 1).toString();
+                    const date = new Date(Date.now() + (this.isMonth ? this.tzData * 60 * 60_000 : 0));
+                    this.vyear[0] = (this.isMonth ? date.getUTCFullYear() : date.getFullYear()).toString();
+                    this.vmonth[0] = ((this.isMonth ? date.getUTCMonth() : date.getMonth()) + 1).toString();
                     this.vhour[0] = '00';
                     this.vminute[0] = '00';
                     this.vseconds[0] = '00';
@@ -1068,6 +1141,9 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 时分秒 ---
         this.watch('hourminute', () => {
+            if (this.isMonth) {
+                return;
+            }
             const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
             if (!this.props.hourminute) {
                 this.emit('update:hourminute', hm);
@@ -1080,6 +1156,10 @@ export default class extends clickgo.control.AbstractControl {
             }
         }, {
             'immediate': true
+        });
+        this.watch('mode', () => {
+            this.rangeDate = undefined;
+            this._normalizeMonth();
         });
     }
 

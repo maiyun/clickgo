@@ -1,8 +1,15 @@
-<form width="400" height="350" title="Date">
+<form width="440" height="420" title="Date">
     <layout direction="v" gutter="10" style="padding: 10px; flex: 1;">
         <label>Timestamp: {{ts}}, Time zone: {{tz}}</label>
         <label>yearmonth: {{ym}}, hourminute: {{hm}}</label>
-        <date v-model="ts" v-model:tz="tz" :date="date" :time="time" :zone="zone" :close="cclose" :disabled="disabled" :start="start ? 1706745600 : undefined" v-model:yearmonth="ym" v-model:hourminute="hm">
+        <!-- 使用同一个日期控件组合测试模式、时区及禁用月份 -->
+        <layout gutter="10" align-v="center">
+            <label>mode:</label>
+            <select v-model="mode" :data="['date', 'month']" style="flex: 1"></select>
+            <button @click="disableMonth = !disableMonth" style="flex: 2">{{disableMonth ? 'Enable' : 'Disable'}} April 2026</button>
+        </layout>
+        <label>Disabled month: {{disableMonth ? '2026-04' : 'none'}}, changes: {{changes}}</label>
+        <date :mode="mode[0]" v-model="ts" v-model:tz="tz" :date="date" :time="time" :zone="zone" :close="cclose" :disabled="disabled" :disabled-list="disabledList" :start="start ? 1706745600 : undefined" v-model:yearmonth="ym" v-model:hourminute="hm" @changed="changes += 1">
             <template v-if="bottom" v-slot="d">
                 <layout style="flex: 1;" align-h="center">{{d.year}}</layout>
             </template>

@@ -17,6 +17,7 @@ export default class extends clickgo.control.AbstractControl {
         'hourminute': '',
         'start': undefined,
         'end': undefined,
+        'mode': 'date',
         'date': true,
         'time': true,
         'zone': false,
@@ -41,6 +42,38 @@ export default class extends clickgo.control.AbstractControl {
     zdecs = ['00', '15', '30', '45'];
     /** --- 日期面板仅在首次打开时挂载，避免阻塞所在窗体的初始显示 --- */
     datePanelMounted = false;
+    /** --- 是否只选择年月 --- */
+    get isMonth() {
+        return this.props.mode === 'month';
+    }
+    /** --- 年月模式始终显示日期入口 --- */
+    get showDate() {
+        return this.isMonth || this.propBoolean('date');
+    }
+    /** --- 年月模式不提供时间选择 --- */
+    get showTime() {
+        return !this.isMonth && this.propBoolean('time');
+    }
+    /**
+     * --- 按当前选择粒度更新显示，年月模式归一到所选时区的月初零点 ---
+     * @returns 显示已同步，归一化改变值时同步绑定值
+     */
+    _refreshDate() {
+        if (this.isMonth && this.timestamp !== undefined) {
+            this.dateObj.setUTCDate(1);
+            this.dateObj.setUTCHours(0, 0, 0, 0);
+            const value = this.dateObj.getTime() - this.tzData * 60 * 60_000;
+            if (this.timestamp !== value) {
+                this.timestamp = value;
+                this.emit('update:modelValue', value);
+            }
+        }
+        this.dateStr = this.dateObj.getUTCFullYear().toString() + '-' + (this.dateObj.getUTCMonth() + 1).toString().padStart(2, '0');
+        if (!this.isMonth) {
+            this.dateStr += '-' + this.dateObj.getUTCDate().toString().padStart(2, '0');
+        }
+        this.timeStr = this.dateObj.getUTCHours().toString().padStart(2, '0') + ':' + this.dateObj.getUTCMinutes().toString().padStart(2, '0') + ':' + this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+    }
     /** --- 语言包 --- */
     localeData = {
         'en': {
@@ -190,16 +223,19 @@ export default class extends clickgo.control.AbstractControl {
     };
     // --- 单击事件 ---
     async click(type) {
+        if (this.propBoolean('disabled')) {
+            return;
+        }
         const el = this.refs[type];
         if (el.dataset.cgPopOpen !== undefined) {
             clickgo.form.hidePop(el);
             return;
         }
-        if ((type === 'first') && this.propBoolean('date') && !this.datePanelMounted) {
+        if (type === 'first' && this.showDate && !this.datePanelMounted) {
             this.datePanelMounted = true;
             await this.nextTick();
         }
-        if (type === 'first' && !this.propBoolean('date')) {
+        if (type === 'first' && !this.showDate) {
             clickgo.form.showPop(el, this.refs['timepop'], 'v', {
                 'autoPosition': true,
                 'autoScroll': true
@@ -255,8 +291,15 @@ export default class extends clickgo.control.AbstractControl {
     }
     // --- 清除已选中的 ---
     clear() {
+        if (this.propBoolean('disabled')) {
+            return;
+        }
+        const before = this.timestamp;
         this.timestamp = undefined;
         this.emit('update:modelValue', undefined);
+        if (this.isMonth && before !== undefined) {
+            this.emit('changed', { 'detail': { before, 'value': undefined } });
+        }
     }
     // --- date panel 的 changed ---
     changed(e) {
@@ -272,7 +315,7 @@ export default class extends clickgo.control.AbstractControl {
             return;
         }
         this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
-        this.dateStr = this.dateObj.getUTCFullYear().toString() + '-' + (this.dateObj.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + this.dateObj.getUTCDate().toString().padStart(2, '0');
+        this._refreshDate();
         const hour = this.dateObj.getUTCHours().toString().padStart(2, '0');
         const minute = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
         const seconds = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
@@ -336,8 +379,7 @@ export default class extends clickgo.control.AbstractControl {
             }
             this.timestamp = this.propInt('modelValue');
             this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
-            this.dateStr = this.dateObj.getUTCFullYear().toString() + '-' + (this.dateObj.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + this.dateObj.getUTCDate().toString().padStart(2, '0');
-            this.timeStr = this.dateObj.getUTCHours().toString().padStart(2, '0') + ':' + this.dateObj.getUTCMinutes().toString().padStart(2, '0') + ':' + this.dateObj.getUTCSeconds().toString().padStart(2, '0');
+            this._refreshDate();
             this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
             this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
             this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
@@ -346,6 +388,9 @@ export default class extends clickgo.control.AbstractControl {
         });
         // --- 时分秒 ---
         this.watch('hourminute', () => {
+            if (this.isMonth) {
+                return;
+            }
             const hm = this.vhour[0] + this.vminute[0] + this.vseconds[0];
             if (!this.props.hourminute) {
                 this.emit('update:hourminute', hm);
@@ -358,6 +403,10 @@ export default class extends clickgo.control.AbstractControl {
             }
         }, {
             'immediate': true
+        });
+        this.watch('mode', () => {
+            this._refreshDate();
+            clickgo.form.hidePop(this.refs.first);
         });
     }
 }

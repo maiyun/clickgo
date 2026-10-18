@@ -2,20 +2,24 @@
     <div class="header">
         <div class="left">
             <cg-select :data="years" v-model="vyear" virtual></cg-select>
-            <cg-button class="monthleft" :disabled="prevYm < startYm" @click="prev">
+            <cg-button class="monthleft" :disabled="isMonth ? parseInt(vyear[0]) <= startValue.year : prevYm < startYm" @click="prev">
                 <div class="arrow"></div>
             </cg-button>
-            <cg-select :data="months" v-model="vmonth" virtual></cg-select>
-            <cg-button class="monthright" :disabled="nextYm > endYm" @click="next">
+            <cg-select v-if="!isMonth" :data="months" v-model="vmonth" virtual></cg-select>
+            <cg-button class="monthright" :disabled="isMonth ? parseInt(vyear[0]) >= endValue.year : nextYm > endYm" @click="next">
                 <div class="arrow"></div>
             </cg-button>
         </div>
         <div class="right">
             <cg-button v-if="propBoolean('clearbtn') && (timestamp !== undefined)" @click="clear">{{l('clear')}}</cg-button>
             <cg-button v-if="propBoolean('backbtn') && (timestamp !== undefined) && ((dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1))" @click="back">{{l('back')}}</cg-button>
-            <cg-button @click="today">{{l('today')}}</cg-button>
+            <cg-button v-if="!isMonth" @click="today">{{l('today')}}</cg-button>
         </div>
     </div>
+    <div v-if="isMonth" class="month-grid">
+        <cg-button v-for="item of months" :key="item.value" :disabled="item.disabled || propBoolean('disabled')" :type="timestamp !== undefined && dateValue.year === parseInt(vyear[0]) && dateValue.month + 1 === parseInt(item.value) ? 'cg' : undefined" @click="selectMonth(parseInt(item.value))">{{item.label}}</cg-button>
+    </div>
+    <template v-else>
     <div class="week">
         <div v-for="col of 7">{{l('w' + (col - 1))}}</div>
     </div>
@@ -27,8 +31,9 @@
             </div>
         </div>
     </div>
-    <div class="footer" v-if="propBoolean('time') || propBoolean('zone')">
-        <template v-if="propBoolean('time')">
+    </template>
+    <div class="footer" v-if="!isMonth && propBoolean('time') || propBoolean('zone')">
+        <template v-if="!isMonth && propBoolean('time')">
             <cg-select :data="hours" v-model="vhour"></cg-select>
             <label>:</label>
             <cg-select :data="minutes" v-model="vminute"></cg-select>
