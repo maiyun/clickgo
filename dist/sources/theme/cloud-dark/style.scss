@@ -76,6 +76,7 @@ global {
 
 // --- 卡片边界低于可输入控件的对比，避免整页出现明亮的网格 ---
 .group_wrap.group_default, .sgroup_wrap, .table_wrap { border-color:var(--cloud-divider); }
+.table_wrap .table_header { border-bottom-color:var(--cloud-divider); }
 [data-cg-pop]:has(> .menulist_wrap), .menulist_wrap {
     --g-pure:var(--g-pop-background);
 }

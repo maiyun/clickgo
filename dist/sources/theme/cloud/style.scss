@@ -73,6 +73,7 @@ global {
     --g-block-background:#eee;
     --g-block-background-hover:#e3e3e3;
     --cloud-divider:#e4e4e4;
+    --cloud-content-padding:28px 32px;
     --cloud-accent-text:oklch(from var(--cg) min(l, .48) c h);
     --cloud-tag-background:#eee;
     --cloud-tag-color:#505050;
@@ -269,7 +270,19 @@ global {
         > .layout_wrap { flex:1; min-width:0; }
         .nav_mbutton { flex-shrink:0; margin-inline-end:12px; }
     }
-    .nav_body { background:var(--face); padding:28px 32px; min-width:0; }
+    .nav_body {
+        background:var(--face);
+        padding:var(--cloud-content-padding);
+        min-width:0;
+        // --- 滚动视口内保留留白，焦点阴影不能贴在 overflow 的裁切边界上 ---
+        &:has(> .flow_wrap) {
+            padding:0;
+            > .flow_wrap {
+                padding:var(--cloud-content-padding);
+                scroll-padding:var(--cloud-content-padding);
+            }
+        }
+    }
 }
 .nav-title_wrap { padding:22px 12px 10px; font-size:12px; color:var(--g-color-tip); }
 .nav-item_wrap {
