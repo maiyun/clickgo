@@ -1,30 +1,61 @@
-<form width="800" height="700" title="Objviewer" direction="v">
-    <objviewer ref="objviewer" direction="v" :plain="plain" :bg="bg" gutter="20" lines="lines" style="flex: 1;">
-        <layout gutter="20">
-            <objviewer-item ref="objviewer-item-1">1</objviewer-item>
-            <objviewer-item ref="objviewer-item-2" hue="230" hover>2</objviewer-item>
-            <objviewer-item hue="200" hover>3</objviewer-item>
-            <objviewer-item ref="objviewer-item-3" hue="160" hover>4</objviewer-item>
+<form width="1000" height="780" title="Node space / Objviewer" :viewport="fullscreen" :state-max="fullscreen" :border="fullscreen ? 'none' : undefined" padding="0">
+    <flow direction="v" style="flex:1; padding:24px; scroll-padding:24px;">
+        <layout direction="v" gutter="20">
+            <!-- 页面只编排控件，不覆盖空间与节点的内部外观 -->
+            <layout direction="v" gutter="6">
+                <label size="m">Workspace connections</label>
+                <label mode="tip">{{deviceAdded ? 'Gateway → Compute cluster → Branch device. Connections can continue through any node.' : 'Click the + node below Compute cluster to add a connected device.'}}</label>
+            </layout>
+            <layout gutter="12" align-v="center" style="flex-wrap:wrap;">
+                <select v-model="layout" :data="['auto', 'radial', 'tree', 'manual']" style="width:130px;"></select>
+                <select v-model="status" :data="['All states', 'Online', 'Warning', 'Offline']" style="width:150px;"></select>
+                <check v-model="pulse">Node pulse</check>
+                <check v-model="narrow">Narrow view</check>
+                <button @click="changeStatus">{{outage ? 'Restore compute' : 'Disconnect compute'}}</button>
+            </layout>
+            <layout gutter="12" align-v="center" style="flex-wrap:wrap;">
+                <layout gutter="8" align-v="center">
+                    <label>Animation</label>
+                    <select v-model="animation" :data="[{value:'none',label:'None'},{value:'dash',label:'Moving dashes'},{value:'dots',label:'Moving dots'}]" style="width:150px;"></select>
+                </layout>
+                <layout gutter="8" align-v="center">
+                    <label>Direction</label>
+                    <select v-model="direction" :data="[{value:'forward',label:'Source → target'},{value:'reverse',label:'Target → source'},{value:'both',label:'Both directions'}]" style="width:180px;"></select>
+                </layout>
+                <layout gutter="8" align-v="center">
+                    <label>Duration (s)</label>
+                    <number v-model="duration" min="0.25" max="60" step="0.25" style="width:90px;"></number>
+                </layout>
+                <layout gutter="8" align-v="center">
+                    <label>Dots / direction</label>
+                    <number v-model="dotCount" min="1" max="8" step="1" :disabled="animation[0] !== 'dots'" style="width:80px;"></number>
+                </layout>
+            </layout>
+            <!-- 加号是 Compute 的子节点；激活后保持 ID 和连接，转换为正式设备 -->
+            <objviewer ref="viewer" v-model="selected" :edges="edges" :layout="layout[0]" root="gateway" label="Workspace connections" @select="addDevice" :style="{width: narrow ? 'min(100%, 380px)' : '100%', height:'480px', 'align-self':'center'}">
+                <objviewer-item v-for="(node, index) of visibleNodes" :key="node.id" :node-id="node.id" :label="node.label" :description="node.description" :icon="node.icon" :status="node.status" :status-label="node.id === 'device' &amp;&amp; !deviceAdded ? 'Click to add' : ''" :variant="node.variant" :pulse="pulse" :x="node.id === 'device' ? 0 : index === 0 ? 240 : (index - 1) * 250" :y="node.id === 'device' ? 520 : index === 0 ? 0 : 260">
+                    <template v-if="node.id === 'gateway'" v-slot:icon><cube type="cg" size="m"><icon name="cpu" size="s"></icon></cube></template>
+                    <template v-else-if="node.id === 'device' &amp;&amp; !deviceAdded" v-slot:icon><icon name="plus" size="xxl"></icon></template>
+                </objviewer-item>
+            </objviewer>
+            <layout gutter="12" align-v="center" style="flex-wrap:wrap;">
+                <tag type="cg" plain size="xs">{{visibleNodes.length}} nodes</tag>
+                <label mode="tip">{{selectionText}}</label>
+            </layout>
+            <group title="Connection configuration · edges" direction="v" gutter="12">
+                <label mode="tip">source and target reference node-id. Layout determines positions; online connections use the animation settings above.</label>
+                <text :model-value="JSON.stringify(edges, null, 4)" type="multi" readonly :wrap="false" placeholder="Edges JSON" style="height:220px;"></text>
+            </group>
+            <!-- Cube 独立于空间使用，固定尺寸不依赖内容测量或动画回调 -->
+            <group title="Cube · independent device marker" direction="v" gutter="16">
+                <layout gutter="24" align-v="center" style="flex-wrap:wrap;">
+                    <cube type="cg" size="s"><icon name="cpu" size="s"></icon></cube>
+                    <cube type="primary" size="m"><icon name="surveillance" size="s"></icon></cube>
+                    <cube type="info" size="l"><icon name="speaker" size="m"></icon></cube>
+                    <cube type="warning" size="xl"><icon name="record" size="m"></icon></cube>
+                    <label mode="tip">s / m / l / xl · semantic colors · stable dimensions</label>
+                </layout>
+            </group>
         </layout>
-        <layout gutter="20">
-            <objviewer-item label="label1">1</objviewer-item>
-            <objviewer-item hue="230" label="label2" border="ani" hover>2</objviewer-item>
-            <objviewer-item ref="objviewer-item-6" hue="200" label="label3" border="dotted" hover>3</objviewer-item>
-            <objviewer-item hue="160" label="label4" border="dashed" hover>4</objviewer-item>
-        </layout>
-        <layout align-v="center" gutter="20" style="margin-top: 20px;">
-            <objviewer-item label="Server" align-v="center">
-                <cube><icon name="cpu" size="m"></icon></cube>
-            </objviewer-item>
-            <objviewer-item ref="objviewer-item-5" hue="230" label="label2">
-                <cube hue="230" size="xl"><icon name="record" size="xxl"></icon></cube>
-            </objviewer-item>
-            <objviewer-item hue="200" label="label3" align-v="center" hover>3</objviewer-item>
-            <cube ref="objviewer-item-4" hue="160" size="xl" @anistart="anistart" @aniend="aniend" style="margin-left: 50px;"><icon name="speaker" size="xxl"></icon></cube>
-        </layout>
-    </objviewer>
-    <layout gutter="10" align-v="center" style="padding: 10px;">
-        <label>bg:</label>
-        <select v-model="bg" :data="['dot', 'grid']" style="flex: 1;"></select>
-    </layout>
+    </flow>
 </form>

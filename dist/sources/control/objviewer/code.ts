@@ -1,306 +1,220 @@
 import * as clickgo from 'clickgo';
+import type Item from '../objviewer-item/code';
+import { arrange, type INode, type IScene } from './lib/layout';
 
 export default class extends clickgo.control.AbstractControl {
 
+    public emits = { 'update:modelValue': null, 'select': null };
+
     public props: {
-        'direction': 'h' | 'v';
-        'bg': 'dot' | 'grid';
-        'gutter': number | string;
-        'alignH': string | undefined;
-        'alignV': string | undefined;
+        'edges': clickgo.control.IObjviewerEdge[];
+        'layout': 'auto' | 'radial' | 'tree' | 'manual';
+        'root': string;
+        'gap': number | string;
+        'bg': 'none' | 'dot' | 'grid';
+        'modelValue': string;
+        'disabled': boolean | string;
+        'label': string;
     } = {
-            'direction': 'h',
-            'bg': 'dot',
-            'gutter': '',
-            'alignH': undefined,
-            'alignV': undefined,
+            'edges': [], 'layout': 'auto', 'root': '', 'gap': 48, 'bg': 'none',
+            'modelValue': '', 'disabled': false, 'label': ''
         };
 
-    public scaleS = 1;
+    /** --- 所有节点及连接共用的内容坐标 --- */
+    public scene: IScene = { 'nodes': [], 'edges': [], 'width': 0, 'height': 0 };
 
-    public scaleX = 0;
+    public selected = '';
 
-    public scaleY = 0;
+    public width = 0;
 
-    /** --- 当前有的线段 --- */
-    public lines: clickgo.control.IObjviewerLine[] = [];
+    /** --- 下一轮 DOM 稳定后统一测量，子项实例不参与响应式深克隆 --- */
+    public access = {
+        'items': null as Map<HTMLElement, Item> | null,
+        'resize': null as (() => void) | null,
+        'pending': false, 'alive': true, 'signature': ''
+    };
 
-    /** --- 不参与响应式处理的连线端点监听状态 --- */
-    public access: {
-        'resizeElements': Map<HTMLElement, number>;
-        'resizeHandler': (() => void) | null;
-    } = {
-            'resizeElements': new Map(),
-            'resizeHandler': null
-        };
+    /** --- 窄容器使用纵排节点，避免只缩小整张图导致文字无法识别 --- */
+    public get compact(): boolean {
+        return this.props.layout === 'auto' && this.width > 0 && this.width < 600;
+    }
+
+    public localeData = {
+        'en': { 'fit': 'Fit view', 'in': 'Zoom in', 'out': 'Zoom out', 'empty': 'No nodes' },
+        'sc': { 'fit': '完整显示', 'in': '放大', 'out': '缩小', 'empty': '暂无节点' },
+        'tc': { 'fit': '完整顯示', 'in': '放大', 'out': '縮小', 'empty': '暫無節點' },
+        'ja': { 'fit': '全体を表示', 'in': '拡大', 'out': '縮小', 'empty': 'ノードがありません' },
+        'ko': { 'fit': '전체 보기', 'in': '확대', 'out': '축소', 'empty': '노드 없음' },
+        'th': { 'fit': 'แสดงทั้งหมด', 'in': 'ขยาย', 'out': 'ย่อ', 'empty': 'ไม่มีโหนด' },
+        'vi': { 'fit': 'Hiện toàn bộ', 'in': 'Phóng to', 'out': 'Thu nhỏ', 'empty': 'Không có nút' },
+        'ar': { 'fit': 'عرض الكل', 'in': 'تكبير', 'out': 'تصغير', 'empty': 'لا توجد عقد' },
+        'id': { 'fit': 'Tampilkan semua', 'in': 'Perbesar', 'out': 'Perkecil', 'empty': 'Tidak ada simpul' },
+        'es': { 'fit': 'Ajustar vista', 'in': 'Acercar', 'out': 'Alejar', 'empty': 'Sin nodos' },
+        'de': { 'fit': 'Alles anzeigen', 'in': 'Vergrößern', 'out': 'Verkleinern', 'empty': 'Keine Knoten' },
+        'fr': { 'fit': 'Tout afficher', 'in': 'Agrandir', 'out': 'Réduire', 'empty': 'Aucun nœud' },
+        'pt': { 'fit': 'Ajustar vista', 'in': 'Ampliar', 'out': 'Reduzir', 'empty': 'Sem nós' },
+        'ru': { 'fit': 'Показать всё', 'in': 'Увеличить', 'out': 'Уменьшить', 'empty': 'Нет узлов' },
+        'it': { 'fit': 'Mostra tutto', 'in': 'Ingrandisci', 'out': 'Riduci', 'empty': 'Nessun nodo' },
+        'tr': { 'fit': 'Tümünü göster', 'in': 'Yakınlaştır', 'out': 'Uzaklaştır', 'empty': 'Düğüm yok' }
+    };
 
     /**
-     * --- 增加连线端点的尺寸监听引用 ---
-     * @param el 连线端点
+     * --- 注册稳定 ID 节点 ---
+     * @param item 已挂载节点
+     * @returns 注册完成
      */
-    private _bindResize(el: HTMLElement): void {
-        const count = this.access.resizeElements.get(el) ?? 0;
-        if (count) {
-            this.access.resizeElements.set(el, count + 1);
-            return;
-        }
-        if (!this.access.resizeHandler || !clickgo.dom.watchSizeMulti(this, el, this.access.resizeHandler)) {
-            return;
-        }
-        this.access.resizeElements.set(el, 1);
+    public register(item: Item): void {
+        this.access.items?.set(item.element, item);
+        this.schedule();
     }
 
     /**
-     * --- 减少连线端点的尺寸监听引用 ---
-     * @param el 连线端点
+     * --- 注销节点，下一轮同步移除悬空连接 ---
+     * @param item 待卸载节点
+     * @returns 注销完成
      */
-    private _unbindResize(el: HTMLElement): void {
-        const count = this.access.resizeElements.get(el);
-        if (!count) {
+    public unregister(item: Item): void {
+        this.access.items?.delete(item.element);
+        this.schedule();
+    }
+
+    /**
+     * --- 合并同一轮增删、改名和尺寸通知 ---
+     * @returns 测量已排入下一轮 DOM 更新
+     */
+    public schedule(): void {
+        if (this.access.pending || !this.access.alive) {
             return;
         }
-        if (count > 1) {
-            this.access.resizeElements.set(el, count - 1);
-            return;
-        }
-        if (this.access.resizeHandler) {
-            clickgo.dom.unwatchSizeMulti(this, el, this.access.resizeHandler);
-        }
-        this.access.resizeElements.delete(el);
-    }
-
-    // --- 供用户调用 ---
-
-    /** --- 添加连接线 --- */
-    public addLine(line: clickgo.control.IObjviewerLine): number {
-        const rtn = this.lines.push(line) - 1;
-        if (!(line.start.obj instanceof HTMLElement)) {
-            line.start.obj = line.start.obj.element;
-        }
-        if (!(line.end.obj instanceof HTMLElement)) {
-            line.end.obj = line.end.obj.element;
-        }
-        this._bindResize(line.start.obj);
-        this._bindResize(line.end.obj);
-        this.refreshLines();
-        return rtn;
-    }
-
-    /** --- 删除连接线 --- */
-    public removeLine(index: number): void {
-        const line = this.lines[index];
-        if (!line) {
-            return;
-        }
-        this.lines.splice(index, 1);
-        this._unbindResize(line.start.obj as HTMLElement);
-        this._unbindResize(line.end.obj as HTMLElement);
-        this.refreshLines();
-    }
-
-    /** --- 用 name 删除连接线 --- */
-    public removeLineByName(name: string): boolean {
-        const index = this.lines.findIndex(line => line.name === name);
-        if (index === -1) {
-            return false;
-        }
-        this.removeLine(index);
-        return true;
-    }
-
-    /** --- 刷新连线 --- */
-    public refreshLines(): void {
-        const scale = this.scaleS;
-        for (const line of this.lines) {
-            const startPos = clickgo.dom.getRectPoint(line.start.obj as HTMLElement, this.refs.content, line.start.pos);
-            const endPos = clickgo.dom.getRectPoint(line.end.obj as HTMLElement, this.refs.content, line.end.pos);
-            startPos.x /= scale;
-            startPos.y /= scale;
-            endPos.x /= scale;
-            endPos.y /= scale;
-            /*
-            // --- 创建一条平滑的贝塞尔曲线 ---
-            // --- 计算控制点，使线条有一个自然的弯曲 ---
-            const dx = Math.abs(endPos.x - startPos.x) * 0.5;
-            // --- 设置路径数据 ---
-            line.path = `M ${startPos.x} ${startPos.y}
-                             C ${startPos.x + dx} ${startPos.y},
-                               ${endPos.x - dx} ${endPos.y},
-                               ${endPos.x} ${endPos.y}`;
-            */
-            // --- 上面的版本有上下水平问题，新版可上下垂直引出引入 ---
-
-            // --- 根据连接点位置确定控制点的偏移方向 ---
-            // --- 对于顶部/底部连接点，控制点应该垂直偏移 ---
-            // --- 对于左侧/右侧连接点，控制点应该水平偏移 ---
-            const distance = Math.sqrt(Math.pow(endPos.x - startPos.x, 2) + Math.pow(endPos.y - startPos.y, 2));
-            const offset = Math.min(distance * 0.5, 150); // 控制点偏移距离
-
-            let startControlX = startPos.x;
-            let startControlY = startPos.y;
-            let endControlX = endPos.x;
-            let endControlY = endPos.y;
-
-            // --- 根据起点位置设置起点控制点 ---
-            switch (line.start.pos) {
-                case 'lt': {
-                    startControlX = startPos.x - offset * 0.7;
-                    startControlY = startPos.y - offset * 0.7;
-                    break;
-                }
-                case 't': {
-                    startControlY = startPos.y - offset;
-                    break;
-                }
-                case 'tr': {
-                    startControlX = startPos.x + offset * 0.7;
-                    startControlY = startPos.y - offset * 0.7;
-                    break;
-                }
-                case 'r': {
-                    startControlX = startPos.x + offset;
-                    break;
-                }
-                case 'rb': {
-                    startControlX = startPos.x + offset * 0.7;
-                    startControlY = startPos.y + offset * 0.7;
-                    break;
-                }
-                case 'b': {
-                    startControlY = startPos.y + offset;
-                    break;
-                }
-                case 'bl': {
-                    startControlX = startPos.x - offset * 0.7;
-                    startControlY = startPos.y + offset * 0.7;
-                    break;
-                }
-                case 'l': {
-                    startControlX = startPos.x - offset;
-                    break;
-                }
+        this.access.pending = true;
+        this.nextTick().then(() => {
+            this.access.pending = false;
+            if (this.access.alive) {
+                this.refresh();
             }
-
-            // --- 根据终点位置设置终点控制点 ---
-            switch (line.end.pos) {
-                case 'lt': {
-                    endControlX = endPos.x - offset * 0.7;
-                    endControlY = endPos.y - offset * 0.7;
-                    break;
-                }
-                case 't': {
-                    endControlY = endPos.y - offset;
-                    break;
-                }
-                case 'tr': {
-                    endControlX = endPos.x + offset * 0.7;
-                    endControlY = endPos.y - offset * 0.7;
-                    break;
-                }
-                case 'r': {
-                    endControlX = endPos.x + offset;
-                    break;
-                }
-                case 'rb': {
-                    endControlX = endPos.x + offset * 0.7;
-                    endControlY = endPos.y + offset * 0.7;
-                    break;
-                }
-                case 'b': {
-                    endControlY = endPos.y + offset;
-                    break;
-                }
-                case 'bl': {
-                    endControlX = endPos.x - offset * 0.7;
-                    endControlY = endPos.y + offset * 0.7;
-                    break;
-                }
-                case 'l': {
-                    endControlX = endPos.x - offset;
-                    break;
-                }
-            }
-
-            // 设置路径数据 - 使用三次贝塞尔曲线
-            line.path = `M ${startPos.x} ${startPos.y} 
-                             C ${startControlX} ${startControlY}, 
-                               ${endControlX} ${endControlY}, 
-                               ${endPos.x} ${endPos.y}`;
-
-            line.stroke ??= 'solid';
-            line.hue ??= '255';
-        }
+        }).catch(() => {});
     }
 
-    /** --- 重置缩放/定位 --- */
+    /**
+     * --- 按直属节点顺序计算场景；相同几何和状态不反复更新 ---
+     * @returns 布局更新完成
+     */
     public refresh(): void {
-        this.scaleS = 1;
-        const elWidth = this.element.offsetWidth;
-        const elHeight = this.element.offsetHeight;
-        const contentWidth = this.refs.content.offsetWidth;
-        const contentHeight = this.refs.content.offsetHeight;
-        if (!elWidth || !elHeight) {
+        if (!this.refs.nodes || !this.access.items) {
             return;
         }
-        this.scaleX = (elWidth - contentWidth) / 2;
-        this.scaleY = (elHeight - contentHeight) / 2;
+        const nodes: INode[] = [];
+        const items: Item[] = [];
+        const ids = new Set<string>();
+        for (const element of this.refs.nodes.children) {
+            const item = this.access.items.get(element as HTMLElement);
+            if (!item) {
+                continue;
+            }
+            const id = item.props.nodeId.trim();
+            if (!id || ids.has(id)) {
+                item.placed = false;
+                continue;
+            }
+            ids.add(id);
+            items.push(item);
+            nodes.push({
+                'id': id, 'width': item.element.offsetWidth, 'height': item.element.offsetHeight,
+                'x': item.propNumber('x'), 'y': item.propNumber('y'), 'hub': item.props.variant === 'hub',
+                'captionWidth': item.refs.body?.offsetWidth
+            });
+        }
+        let mode: 'radial' | 'tree' | 'manual' | 'compact' = 'radial';
+        if (this.compact) {
+            mode = 'compact';
+        }
+        else if (this.props.layout !== 'auto') {
+            mode = this.props.layout;
+        }
+        const scene = arrange(nodes, this.props.edges, mode, this.props.root, this.propNumber('gap'));
+        const signature = JSON.stringify(scene);
+        if (signature !== this.access.signature) {
+            this.access.signature = signature;
+            this.scene = scene;
+        }
+        for (const [index, node] of scene.nodes.entries()) {
+            const item = items[index];
+            item.left = node.x;
+            item.top = node.y;
+            item.placed = true;
+        }
+        if (this.selected && !ids.has(this.selected)) {
+            this.selected = '';
+            this.emit('update:modelValue', '');
+        }
     }
 
-    // --- 供用户调用结束 ---
+    /**
+     * --- 选择节点，只通知应用，不执行业务跳转 ---
+     * @param item 用户激活的节点
+     * @returns 选择完成，重复选择和禁用节点不通知
+     */
+    public select(item: Item): void {
+        const id = item.props.nodeId.trim();
+        if (this.propBoolean('disabled') || item.propBoolean('disabled') || !item.placed || this.selected === id) {
+            return;
+        }
+        this.selected = id;
+        this.emit('update:modelValue', id);
+        const event: clickgo.control.IObjviewerSelectEvent = { 'detail': { 'nodeId': id, 'label': item.props.label } };
+        this.emit('select', event);
+    }
 
-    /** --- 有些时候要刷新 --- */
-    public refreshLineTimer = 0;
+    /**
+     * --- 恢复完整显示并随视口尺寸适应 ---
+     * @returns 适应完成
+     */
+    public fit(): void {
+        this.refs.view?.zoomFit();
+    }
 
+    /**
+     * --- 围绕视口中心缩放 ---
+     * @param factor 相对比例
+     * @returns 缩放完成
+     */
+    public zoom(factor: number): void {
+        if (!this.propBoolean('disabled')) {
+            this.refs.view?.zoomTo(this.refs.view.zoomData * factor);
+        }
+    }
+
+    /** --- 初始化子项注册表 --- */
     public onCreated(): void {
-        // --- 回调需要绑定当前控件实例 ---
-        this.access.resizeHandler = () => {
-            if (this.refreshLineTimer) {
-                return;
-            }
-            this.refreshLineTimer = window.setTimeout(() => {
-                this.refreshLines();
-                this.refreshLineTimer = 0;
-            }, 100);
+        this.access.items = new Map();
+    }
+
+    /** --- 监听声明式拓扑与选择输入 --- */
+    public onMounted(): void {
+        this.selected = this.props.modelValue;
+        this.access.resize = () => {
+            this.width = this.element.clientWidth;
+            this.schedule();
         };
+        clickgo.dom.watchSizeMulti(this, this.element, this.access.resize, true);
+        this.watch('modelValue', () => { this.selected = this.props.modelValue; });
+        this.watch(() => [this.props.edges, this.props.layout, this.props.root, this.props.gap], () => { this.schedule(); }, { 'deep': true });
+        this.schedule();
     }
 
-    /** --- 绑定缩放事件 --- */
-    public scale(oe: PointerEvent | WheelEvent): void {
-        clickgo.modules.pointer.scale(oe, (e, scale, cpos) => {
-            e.preventDefault();
-            this.scaleX += cpos.x;
-            this.scaleY += cpos.y;
-            this.scaleS *= scale;
-            if (this.scaleS > 5) {
-                this.scaleS = 5;
-            }
-            else if (this.scaleS < 0.3) {
-                this.scaleS = 0.3;
-            }
-        });
+    /** --- 插槽重排后同步节点顺序 --- */
+    public onUpdated(): void {
+        this.schedule();
     }
 
-    public async onMounted(): Promise<void> {
-        await clickgo.tool.sleep(34);
-        // --- 初次刷新 ---
-        this.refresh();
-        await clickgo.tool.sleep(300);
-        // --- 有可能响应较慢，补刷新一次 ---
-        this.refresh();
-    }
-
-    public onUnmounted(): void {
-        if (this.access.resizeHandler) {
-            for (const el of this.access.resizeElements.keys()) {
-                clickgo.dom.unwatchSizeMulti(this, el, this.access.resizeHandler);
-            }
+    /** --- 阻止待处理测量继续运行，释放节点引用 --- */
+    public onBeforeUnmount(): void {
+        this.access.alive = false;
+        if (this.access.resize) {
+            clickgo.dom.unwatchSizeMulti(this, this.element, this.access.resize);
         }
-        this.access.resizeElements.clear();
-        this.access.resizeHandler = null;
-        if (this.refreshLineTimer) {
-            clearTimeout(this.refreshLineTimer);
-            this.refreshLineTimer = 0;
-        }
+        this.access.resize = null;
+        this.access.items = null;
     }
 
 }

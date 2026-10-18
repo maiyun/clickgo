@@ -14,7 +14,8 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:command && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select && npm run test:nav && npm run test:breadcrumb",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:command && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select && npm run test:nav && npm run test:breadcrumb && npm run test:objviewer",
+    "test:objviewer": "node dist/abox/test/objviewer.mjs",
     "test:command": "node dist/abox/test/command.mjs",
     "test:select": "node dist/abox/test/select.mjs",
     "test:module": "node dist/abox/test/tool-assets.mjs && node dist/abox/test/tool-clone.mjs && node dist/abox/test/tool-json.mjs && node dist/abox/test/tool-data.mjs && node dist/abox/test/tool-state-machine.mjs && node dist/abox/test/core-module-loading.mjs && node dist/abox/test/tuieditor-locale.mjs && node dist/abox/test/app-package.mjs && node dist/abox/test/tool-encoding.mjs",
@@ -26,7 +27,7 @@
     "test:notify-animation": "node dist/abox/test/form-notify-animation.mjs",
     "test:native-regions": "node dist/abox/test/form-native-regions.mjs",
     "test:desktop": "node --experimental-vm-modules dist/abox/test/desktop.mjs && node --experimental-vm-modules dist/abox/test/iconview.mjs",
-    "test:style": "node --experimental-vm-modules dist/abox/test/dom-style.mjs",
+    "test:style": "node --experimental-vm-modules dist/abox/test/dom-style.mjs && node dist/abox/test/tool-style.mjs",
     "test:archive": "node dist/abox/test/rtl-archive.mjs",
     "test:locale": "node --experimental-vm-modules dist/abox/test/locale-integrity.mjs && node --experimental-vm-modules dist/abox/test/rtl-direction.mjs",
     "native": "electron ./dist/test/native",

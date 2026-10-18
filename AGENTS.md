@@ -34,3 +34,5 @@
 - `dashboard` 主题在 `dist/sources/theme/dashboard/`，主色跟随 `theme.setMain`。Nav 的 `menu-header`/`menu-footer` 在菜单滚动区外；Nav-item 的 `suffix` 不计入子菜单。无新插槽的 Nav 保留原有 DOM 结构。
 - `cloud` / `cloud-dark` 为 CF 风格的浅色/暗色主题；暗色复用 cloud 的排版与尺寸并独立设计色阶。主色跟随 `theme.setMain`。独立原生控件预览在 `dist/test/cloud/`，`?theme=dark` 以暗色启动，Appearance 支持 Light/Dark/System；应用包由 pack 生成。
 - Breadcrumb 独立包包含 Breadcrumb-item；最后一项按直属 DOM 顺序自动成为当前位置，选择事件不执行导航。打包关系在 `dist/pack.ts`，动态重排、禁用和销毁回归用 `test:breadcrumb`。
+- Objviewer 与 Objviewer-item 同包，连线使用稳定节点 ID；hbox 布局入口在控件 `lib/layout.ts`，几何与布局实现位于自身 `abox/`，视口复用 Panzoom。旧 DOM 端点 API 已移除，公开契约见两者 info.md；`test:objviewer` 验证布局、节点生命周期及选择。
+- Cube 为独立固定尺寸 SVG 标识，不参与空间几何或动画回调。独立预览 `dist/test/objviewer/` 使用 Demo 包中的同一 Form，支持布局、过滤、动态节点与窄视口；Form 和独立入口沿用系统当前主题与主题色，不主动加载主题。测试首页及 Demo 的 Objviewer + Cube 均可进入。

@@ -66,8 +66,8 @@
 - [INavItemSelectEvent](interfaces/INavItemSelectEvent.md)
 - [INumberBeforeChangeEvent](interfaces/INumberBeforeChangeEvent.md)
 - [INumberMinMaxChangeEvent](interfaces/INumberMinMaxChangeEvent.md)
-- [IObjviewerLine](interfaces/IObjviewerLine.md)
-- [IObjviewerLineObj](interfaces/IObjviewerLineObj.md)
+- [IObjviewerEdge](interfaces/IObjviewerEdge.md)
+- [IObjviewerSelectEvent](interfaces/IObjviewerSelectEvent.md)
 - [IPaletteChangedEvent](interfaces/IPaletteChangedEvent.md)
 - [IPanelGoEvent](interfaces/IPanelGoEvent.md)
 - [IPanelWentEvent](interfaces/IPanelWentEvent.md)
@@ -103,6 +103,7 @@
 - [TControlPackage](type-aliases/TControlPackage.md)
 - [TDesktopLayoutReason](type-aliases/TDesktopLayoutReason.md)
 - [TDesktopPositions](type-aliases/TDesktopPositions.md)
+- [TObjviewerStatus](type-aliases/TObjviewerStatus.md)
 
 ## Functions
 

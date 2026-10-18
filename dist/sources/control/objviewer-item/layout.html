@@ -1,6 +1,9 @@
-<div class="wrap" :style="{'--cg-hue':hue}">
-    <div class="content" :class="[direction,propBoolean('hover')&&'hover','border-'+border]" :style="{'align-items': direction === 'v' ? alignHComp : alignVComp, 'justify-content': direction === 'v' ? alignVComp : alignHComp, 'gap': propNumber('gutter') ? (gutter + 'px') : '0'}">
-        <slot></slot>
+<div class="wrap" :class="['variant-' + variant, 'status-' + status, {selected: isSelected, disabled: isDisabled, compact: compact}]" :style="{left: left + 'px', top: top + 'px', visibility: placed ? 'visible' : 'hidden'}" role="button" :tabindex="isDisabled ? -1 : 0" :aria-pressed="isSelected" :aria-disabled="isDisabled" :aria-description="description || undefined" :aria-label="label + ', ' + (statusLabel || l(status))" @pointerdown="down" @click="activate" @keydown="keydown" @keyup="keyup" @blur="spaceDown = false">
+    <div v-if="variant === 'hub' || icon" class="emblem"><slot name="icon"><cg-icon :name="icon || 'cpu'" size="m"></cg-icon></slot></div>
+    <div ref="body" class="body">
+        <div class="heading"><cg-circle :type="statusType" size="m" :pulse="propBoolean('pulse') &amp;&amp; status === 'online'"></cg-circle><span class="name">{{label || nodeId}}</span></div>
+        <div v-if="description" class="description">{{description}}</div>
+        <div class="status">{{statusLabel || l(status)}}</div>
+        <div v-if="slotsAll('default').length" class="extra"><slot></slot></div>
     </div>
-    <div v-if="label" class="label">{{label}}</div>
 </div>

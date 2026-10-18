@@ -1,12 +1,11 @@
-<div class="wrap" :class="['size-'+size]" :style="{'--cg-hue':hue,'--cg-width':width+'px','--cg-height':height+'px','width':swidth+'px','height':'calc('+sheight+'px + var(--cg-width) / 2)'}" @pointerdown="down" @pointerenter="down">
-    <div class="content">
-        <!-- 正面 -->
-        <div class="front"></div>
-        <!-- 右侧 -->
-        <div class="right"></div>
-        <!-- 顶部 -->
-        <div class="top" ref="top">
-            <slot></slot>
-        </div>
+<div class="wrap" :class="[type, 'size-' + size]">
+    <div class="shadow" aria-hidden="true"></div>
+    <div class="object">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path class="top" d="M32 3 59 18.5 32 34 5 18.5Z"></path>
+            <path class="left" d="M5 18.5 32 34 32 61 5 45.5Z"></path>
+            <path class="right" d="M32 34 59 18.5 59 45.5 32 61Z"></path>
+        </svg>
+        <div class="content"><slot></slot></div>
     </div>
 </div>

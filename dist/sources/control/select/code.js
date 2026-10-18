@@ -832,6 +832,10 @@ export default class extends clickgo.control.AbstractControl {
             });
             this.inputValue = multi ? '' : value[0] ?? '';
             this.searchValue = '';
+            // --- 初始值和外部赋值不会触发输入事件，本地搜索需同步重建候选项 ---
+            if (this.propBoolean('search') && !remote) {
+                this.searchData = this._searchText ? this._filterData(this._searchText) : [];
+            }
         }
         else {
             // --- 先展开外部值所在的树节点，使 dataGl 包含对应项目 ---

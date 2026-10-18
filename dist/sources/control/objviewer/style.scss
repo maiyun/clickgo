@@ -1,43 +1,29 @@
-@keyframes ani-down {
-    to {
-        stroke-dashoffset: -45;
-    }
-}
-@keyframes ani-up {
-    to {
-        stroke-dashoffset: 45;
-    }
-}
-
 .wrap {
-    position: relative; overflow: hidden; background: var(--g-pure);
-
-    &.bg-dot {
-        background-image: radial-gradient(var(--g-border-color) 1px, transparent 1px); background-size: 20px 20px;
+    position: relative; overflow: hidden; min-width: 0; min-height: 120px; background: var(--face); border: 1px solid var(--g-plain-border-color-plain); border-radius: var(--g-radius);
+    &.bg-dot { background-image: radial-gradient(var(--g-plain-border-color-plain) 1px, transparent 1px); background-size: 20px 20px; }
+    &.bg-grid { background-image: linear-gradient(var(--g-plain-border-color-plain) 1px, transparent 1px), linear-gradient(90deg, var(--g-plain-border-color-plain) 1px, transparent 1px); background-size: 24px 24px; }
+    .view { position: absolute; inset: 0 0 58px; }
+    .scene, .nodes { position: relative; width: 100%; height: 100%; }
+    .links { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+    .links > g {
+        --line-color: var(--g-border-color); --packet-color: var(--line-color); color: var(--line-color);
+        &.status-online { --line-color: color-mix(in srgb, var(--success), var(--g-border-color) 55%); --packet-color: var(--success); }
+        &.status-warning { --line-color: color-mix(in srgb, var(--warning), var(--g-border-color) 35%); --packet-color: var(--warning); }
+        &.status-offline { --line-color: var(--g-color-tip); stroke-dasharray: 3 6; opacity: .65; }
+        &.flow > .line { stroke-dasharray: 5 7; animation: flow var(--flow-duration) linear infinite; }
+        &.flow.duplex > .line { opacity: .75; }
+        &.flow > .line.reverse { animation-direction: reverse; }
+        &.flow > .line.counterpart { animation-delay: calc(var(--flow-duration) * -.25); }
+        &.emphasis { --line-color: var(--cg); --packet-color: var(--cg); opacity: 1; }
+        .line { stroke: currentColor; stroke-width: 1.5; }
+        .packet { fill: var(--packet-color); opacity: .9; }
+        text { fill: var(--g-color-tip); font-size: var(--g-size-xs); stroke: var(--face); stroke-width: 4px; paint-order: stroke; stroke-linejoin: round; }
     }
-    &.bg-grid {
-        background-image: repeating-linear-gradient(0deg, var(--g-border-color), var(--g-border-color) 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, var(--g-border-color), var(--g-border-color) 1px, transparent 1px, transparent 20px);
-    }
-
-    .content {
-        position: absolute; display: flex; 
-        &.v {
-            flex-direction: column;
-        }
-
-        .svg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
-
-            .ani-down {
-                animation: ani-down 2s linear infinite;
-            }
-            .ani-up {
-                animation: ani-up 2s linear infinite;
-            }
-        }
-    }
-
-    .refresh {
-        position: absolute; right: var(--g-padding-l); bottom: var(--g-padding-l); z-index: 1;
-    }
+    .empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: var(--g-color-tip); }
+    .tools { position: absolute; inset-inline-end: 12px; bottom: 12px; display: flex; gap: 4px; padding: 4px; background: var(--g-pure); border: 1px solid var(--g-plain-border-color-plain); border-radius: var(--g-radius); }
+}
+@keyframes flow { to { stroke-dashoffset: -24; } }
+@media (prefers-reduced-motion: reduce) {
+    .wrap .links > g.flow > .line { animation: none; }
+    .wrap .links .packets, .wrap .links .counterpart { display: none; }
 }

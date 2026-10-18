@@ -178,6 +178,41 @@ function test(name, callback) { cases.push([name, callback]); }
 const option = (value, label = value, extra = {}) => ({ value, label, ...extra });
 const remote = { remote: true, search: true };
 
+test('an editable local search with an initial value shows its matching options on first open', async () => {
+    const m = await mount({ editable: true, search: true, virtual: true, modelValue: ['2026'], data: ['2025', '2026', '2027'] });
+    assert.equal(m.select.inputValue, '2026');
+    assert.deepEqual([...m.select.dataComp], ['2026']);
+    m.select.onPop();
+    await flush();
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['2026']);
+    assert.deepEqual([...m.state.modelValue], ['2026']);
+    assert.equal(m.events.filter(([type]) => type === 'change' || type === 'changed').length, 0);
+    m.dispose();
+});
+
+test('an editable year selector without search keeps the full list and accepts a list choice', async () => {
+    const m = await mount({ editable: true, virtual: true, modelValue: ['2026'], data: ['2025', '2026', '2027'] });
+    assert.equal(m.select.inputValue, '2026');
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['2025', '2026', '2027']);
+    await m.click(2);
+    assert.deepEqual([...m.state.modelValue], ['2027']);
+    assert.equal(m.select.inputValue, '2027');
+    m.dispose();
+});
+
+test('external editable local values rebuild matching options and clearing restores the full list', async () => {
+    const m = await mount({ editable: true, search: true, data: ['2025', '2026', '2027'], modelValue: ['2025'] });
+    await m.select.updateInputValue('missing');
+    m.state.modelValue = ['2027'];
+    await flush();
+    assert.equal(m.select.inputValue, '2027');
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['2027']);
+    m.state.modelValue = [];
+    await flush();
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['2025', '2026', '2027']);
+    m.dispose();
+});
+
 test('remote initial value survives a nonempty unrelated list and later batches resolve its label', async () => {
     const m = await mount({ ...remote, modelValue: ['42'], data: [option('other')] });
     assert.deepEqual([...m.state.modelValue], ['42']);

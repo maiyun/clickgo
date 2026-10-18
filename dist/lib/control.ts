@@ -1734,19 +1734,30 @@ export interface IFabricObjectchangeEvent {
 
 // --- Objviewer Control ---
 
-export interface IObjviewerLine {
-    /** -- 可自定义线段的名称 --- */
-    'name'?: string;
-    'start': clickgo.control.IObjviewerLineObj;
-    'end': clickgo.control.IObjviewerLineObj;
-    /** --- 默认 255 --- */
-    'hue'?: string;
-    'path'?: string;
-    /** --- 默认 solid --- */
-    'stroke'?: 'solid' | 'dashed' | 'up' | 'down';
+/** --- 节点和连接的语义状态，不依赖主题的具体颜色 --- */
+export type TObjviewerStatus = 'default' | 'online' | 'warning' | 'offline';
+
+/** --- 按稳定节点 ID 声明的连接，节点暂不存在时不绘制，不保存 DOM 引用 --- */
+export interface IObjviewerEdge {
+    'source': string;
+    'target': string;
+    'label'?: string;
+    /** --- 默认 default，连接状态由应用明确提供 --- */
+    'status'?: TObjviewerStatus;
+    /** --- 默认 none，dash 为流动虚线，dots 为静止底线上的移动圆点 --- */
+    'animation'?: 'none' | 'dash' | 'dots';
+    /** --- 默认 forward，沿 source 到 target；reverse 反向，both 双向 --- */
+    'direction'?: 'forward' | 'reverse' | 'both';
+    /** --- 动画周期，单位秒，默认 3，限制为 0.25–60；dots 为走完整条路径的时间 --- */
+    'duration'?: number;
+    /** --- dots 模式每个方向的圆点数，默认 3，取整并限制为 1–8 --- */
+    'dotCount'?: number;
 }
 
-export interface IObjviewerLineObj {
-    'obj': HTMLElement | AbstractControl;
-    'pos': 'lt' | 't' | 'tr' | 'r' | 'rb' | 'b' | 'bl' | 'l';
+/** --- 节点选择事件，仅通知选择，不在控件内执行业务跳转 --- */
+export interface IObjviewerSelectEvent {
+    'detail': {
+        'nodeId': string;
+        'label': string;
+    };
 }

@@ -14,7 +14,7 @@ const codes = [
 /** --- 包含 localeData 的全部内置控件 --- */
 const localeControls = [
     'arteditor', 'calendar', 'captcha', 'date', 'datepanel', 'daterange', 'empty', 'jodit', 'label',
-    'levelselect', 'map', 'monaco', 'number', 'page', 'palette', 'property', 'select', 'sidebar-toggle', 'text', 'toolbox', 'tuieditor',
+    'levelselect', 'map', 'monaco', 'number', 'objviewer', 'objviewer-item', 'page', 'palette', 'property', 'select', 'sidebar-toggle', 'text', 'toolbox', 'tuieditor',
 ];
 /** --- 合并到 common.cgc 的多语言控件 --- */
 const commonControls = new Set([
@@ -338,7 +338,7 @@ for (const code of codes) {
 // --- 所有多语言控件的归档语言表必须与 TypeScript 源码一致 ---
 const archivedControlCode = new Map();
 for (const control of localeControls) {
-    const packageName = commonControls.has(control) ? 'common' : control;
+    const packageName = commonControls.has(control) ? 'common' : control === 'objviewer-item' ? 'objviewer' : control;
     const archive = `dist/control/${packageName}.cgc`;
     const archivedCode = await assertControlCodeCurrent(archive, control);
     archivedControlCode.set(control, archivedCode);
@@ -452,6 +452,16 @@ for (const control of ['breadcrumb', 'breadcrumb-item']) {
 // --- Circle 与 Tag 属于 common 包，共用外观调整须进入实际发布包 ---
 for (const control of ['circle', 'tag']) {
     await assertCssCurrent('dist/control/common.cgc', `${control}/style.css`, `dist/sources/control/${control}/style.css`);
+}
+
+// --- 节点空间及独立 Cube 必须使用当前代码、模板与样式 ---
+for (const control of ['objviewer', 'objviewer-item', 'cube']) {
+    const archive = `dist/control/${control === 'objviewer-item' ? 'objviewer' : control}.cgc`;
+    await assertControlCodeCurrent(archive, control);
+    await assertCssCurrent(archive, `${control}/style.css`, `dist/sources/control/${control}/style.css`);
+    const layout = await readZipText(archive, `${control}/layout.html`);
+    const source = (await readProjectFile(`dist/sources/control/${control}/layout.html`)).toString();
+    assert.equal(layout, source.replace(/<!--[\s\S]*?-->/g, '').replace(/>\s+</g, '><').trim());
 }
 
 console.log(`Archive check passed: task.cga has 16 locales, ${localeControls.length} control locale tables are current, RTL output is present in all ${themes.length} themes, breadcrumb.cgc includes both current controls, and Circle/Tag styles are current.`);
