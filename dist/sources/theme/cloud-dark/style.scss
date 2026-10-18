@@ -1,0 +1,92 @@
+@use '../cloud/style';
+
+// --- 沿用 cloud 的尺寸和排版；暗色以中性表面层级、柔和文字与独立语义色区分状态 ---
+global {
+    color-scheme:dark;
+    --cg:var(--main);
+    --cg-hover:color-mix(in srgb, var(--cg), white 8%);
+    --cg-active:color-mix(in srgb, var(--cg), black 12%);
+    --cg-focus:var(--cg);
+    --cg-disabled:color-mix(in srgb, var(--cg), #292929 80%);
+    --cg-bg:color-mix(in srgb, var(--cg), #171717 83%);
+    --g-pure:#171717;
+    --face:#101010;
+    --face-hover:#222;
+    --face-selected:#2c2c2c;
+    --g-color:#e5e5e5;
+    --g-color-hover:#f5f5f5;
+    --g-color-active:#f5f5f5;
+    --g-color-focus:#f5f5f5;
+    --g-color-tip:#a6a6a6;
+    --g-color-disabled:#777;
+    --g-color-placeholder:#949494;
+    --g-background:#1c1c1c;
+    --g-background-hover:#262626;
+    --g-background-active:#303030;
+    --g-background-focus:#1c1c1c;
+    --g-background-disabled:#1a1a1a;
+    --g-background-opacity:rgba(0, 0, 0, .55);
+    --g-border-color:#414141;
+    --g-border-color-hover:#777;
+    --g-border-color-active:var(--cloud-accent-text);
+    --g-border-color-focus:var(--cloud-accent-text);
+    --g-border-color-disabled:#303030;
+    --g-plain-background:#1c1c1c;
+    --g-plain-background-focus:#202020;
+    --g-plain-background-disabled:#191919;
+    --g-plain-background-selected:var(--cg-bg);
+    --g-plain-border-color:#686868;
+    --g-plain-border-color-plain:#303030;
+    --g-pop-background:#202020;
+    --g-pop-border:solid 1px #414141;
+    --g-shadow:none;
+    --g-shadow-d:0 8px 24px rgba(0, 0, 0, .28);
+    --g-outline-shadow:0 0 0 2px color-mix(in srgb, var(--cloud-accent-text), transparent 72%);
+    --g-block-background:#333;
+    --g-block-background-hover:#404040;
+    --g-block-dark-background:#090909;
+    --g-block-dark-background-hover:#151515;
+    --cloud-divider:#303030;
+    --cloud-accent-text:oklch(from var(--cg) max(l, .76) c h);
+    --cloud-tag-background:#303030;
+    --cloud-tag-color:#c9c9c9;
+    --cloud-menu-hover:#2c2c2c;
+    --cloud-menu-selected:#363636;
+    --cloud-menu-shadow:0 10px 20px -5px rgba(0, 0, 0, .35), 0 3px 6px -3px rgba(0, 0, 0, .25);
+    --cloud-nav-hover:#1e1e1e;
+    --cloud-nav-selected:#282828;
+    --cloud-nav-active:#333;
+    --cloud-nav-arrow:#a3a3a3;
+    --cloud-nav-shadow:8px 0 28px rgba(0, 0, 0, .3);
+
+    @each $name, $color, $background in (
+        (success, #82c79a, #162b1e),
+        (info, #99bffc, #19283e),
+        (warning, #e7bc73, #302717),
+        (danger, #f199a4, #331d23)
+    ) {
+        --#{$name}:#{$color};
+        --#{$name}-hover:color-mix(in srgb, #{$color}, white 8%);
+        --#{$name}-active:color-mix(in srgb, #{$color}, black 12%);
+        --#{$name}-focus:var(--#{$name});
+        --#{$name}-disabled:color-mix(in srgb, #{$color}, #292929 80%);
+        --#{$name}-bg:#{$background};
+    }
+}
+
+// --- 卡片边界低于可输入控件的对比，避免整页出现明亮的网格 ---
+.group_wrap.group_default, .sgroup_wrap, .table_wrap { border-color:var(--cloud-divider); }
+[data-cg-pop]:has(> .menulist_wrap), .menulist_wrap {
+    --g-pure:var(--g-pop-background);
+}
+
+// --- 原生加载层与页签文字独立适配暗色，保留应用图片和画布的原色 ---
+.form_wrap .form_inner .form_content .form_loading,
+.levelselect_tag-cg-greatselect .levelselect_op .levelselect_oploading,
+.levelselect_pop .levelselect_loading,
+.select_tag-cg-greatselect .select_loading {
+    background:color-mix(in srgb, var(--g-pop-background), transparent 12%);
+}
+.tab_wrap > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+    &.tab_selected, &:not(.tab_selected):not([data-hover]):hover { color:var(--cloud-accent-text); }
+}

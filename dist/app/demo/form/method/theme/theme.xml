@@ -10,6 +10,8 @@
         <button @click="setGlobal('classic')">setGlobal "/clickgo/theme/classic.cgt"</button>
         <button @click="setGlobal('cyber')">setGlobal "/clickgo/theme/cyber.cgt"</button>
         <button @click="setGlobal('dashboard')">setGlobal "/clickgo/theme/dashboard.cgt"</button>
+        <button @click="setGlobal('cloud')">setGlobal "/clickgo/theme/cloud.cgt"</button>
+        <button @click="setGlobal('cloud-dark')">setGlobal "/clickgo/theme/cloud-dark.cgt"</button>
         <button @click="setGlobal('admin')">setGlobal "/clickgo/theme/admin.cgt"</button>
         <button @click="setGlobal('modern')">setGlobal "/clickgo/theme/modern.cgt"</button>
         <button @click="setGlobal('modern-light')">setGlobal "/clickgo/theme/modern-light.cgt"</button>

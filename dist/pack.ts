@@ -356,3 +356,6 @@ console.log('APPLICATION', `[cga]`, cgaApp);
 
 const showcaseApp = await lCompiler.application('dist/test/showcase/app');
 console.log('APPLICATION', `[showcase]`, showcaseApp);
+
+const cloudApp = await lCompiler.application('dist/test/cloud/app');
+console.log('APPLICATION', `[cloud]`, cloudApp);

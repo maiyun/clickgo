@@ -1,0 +1,14 @@
+{
+    "name": "Cloud theme preview",
+    "ver": 1,
+    "version": "1.0",
+    "author": "ClickGo",
+    "id": "net.maiyun.clickgo-cloud-preview",
+    "controls": [
+        "/clickgo/control/common",
+        "/clickgo/control/form",
+        "/clickgo/control/nav",
+        "/clickgo/control/table"
+    ],
+    "themes": ["/clickgo/theme/cloud"]
+}

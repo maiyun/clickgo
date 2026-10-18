@@ -1,0 +1,124 @@
+<form border="none" viewport state-max min="false" max="false" close="false" move="false" resize="false">
+    <!-- 多层原生导航，选中与展开均由 Nav 管理 -->
+    <nav v-model="active" default="Services" @layer="compact = $event" style="flex:1;">
+        <template v-slot:menu-header>
+            <layout direction="v" gutter="4">
+                <label size="m">ClickGo Cloud</label>
+                <label mode="tip" size="xs">Acme workspace</label>
+            </layout>
+        </template>
+        <nav-item name="Home" label="Account home" icon="/package/res/box.svg"></nav-item>
+        <nav-item name="Recent" label="Recent activity"></nav-item>
+        <nav-title>Build</nav-title>
+        <nav-item name="Compute" label="Compute" icon="/package/res/bolt.svg" show>
+            <nav-item name="Services" label="Services"><template v-slot:suffix><tag plain size="xs">4</tag></template></nav-item>
+            <nav-item name="Deployments" label="Deployments"></nav-item>
+            <nav-item name="Workers" label="Workers">
+                <nav-item name="Functions" label="Functions"></nav-item>
+                <nav-item name="Schedules" label="Schedules"></nav-item>
+            </nav-item>
+        </nav-item>
+        <nav-item name="Storage" label="Storage &amp; databases" icon="/package/res/box.svg"></nav-item>
+        <nav-item name="Images" label="Images &amp; media"></nav-item>
+        <nav-title>Protect &amp; connect</nav-title>
+        <nav-item name="Security" label="Application security"></nav-item>
+        <nav-item name="Network" label="Networking" icon="/package/res/chart.svg" show>
+            <nav-item name="Overview" label="Overview"></nav-item>
+            <nav-item name="Tunnels" label="Tunnels"></nav-item>
+            <nav-item name="Routes" label="Routes"><template v-slot:suffix><tag plain size="xs">New</tag></template></nav-item>
+        </nav-item>
+        <nav-item name="Analytics" label="Analytics" icon="/package/res/chart.svg"></nav-item>
+        <template v-slot:menu-footer><label mode="tip">Manage account</label></template>
+        <template v-slot:header>
+            <layout align-v="center" gutter="12">
+                <label v-if="!compact" mode="tip">Workspace</label><label v-if="!compact">/</label><label style="flex:1; min-width:0;">{{active}}</label>
+                <label v-if="!compact" mode="tip">Theme color</label>
+                <select v-model="accent" :data="['Blue', 'Green', 'Violet', 'Amber']" @changed="changeAccent" style="width:118px;"></select>
+                <select v-model="appearance" :data="['Light', 'Dark', 'System']" :disabled="themeBusy" @changed="changeAppearance" style="width:112px;"></select>
+            </layout>
+        </template>
+        <template v-slot:content>
+            <flow direction="v" style="flex:1; min-width:0;">
+                <layout class="page" direction="v" gutter="24">
+                    <!-- 页面标题和操作 -->
+                    <layout class="filters" align-v="center" gutter="12">
+                        <layout direction="v" gutter="8" style="flex:1; min-width:220px;">
+                            <label size="l">{{active}}</label>
+                            <label mode="tip">Connect, manage and monitor your services from one place.</label>
+                        </layout>
+                        <!-- 原生菜单覆盖快捷键提示、分隔线、禁用项和多级勾选菜单 -->
+                        <menu>
+                            <menu-item>
+                                <template v-slot>Actions</template>
+                                <template v-slot:pop>
+                                    <menulist>
+                                        <menulist-item disabled>Production workspace</menulist-item>
+                                        <menulist-split></menulist-split>
+                                        <menulist-item alt="Ctrl+I" alt-only @click="menuAction = 'Inspect service'">Inspect service</menulist-item>
+                                        <menulist-item @click="menuAction = 'View activity'">View activity</menulist-item>
+                                        <menulist-item>
+                                            <template v-slot>Preferences</template>
+                                            <template v-slot:pop>
+                                                <menulist>
+                                                    <menulist-item type="check" v-model="checked">Service notifications</menulist-item>
+                                                    <menulist-split></menulist-split>
+                                                    <menulist-item type="radio" v-model="refreshPeriod" label="Every minute">Every minute</menulist-item>
+                                                    <menulist-item type="radio" v-model="refreshPeriod" label="Every five minutes">Every five minutes</menulist-item>
+                                                </menulist>
+                                            </template>
+                                        </menulist-item>
+                                        <menulist-split></menulist-split>
+                                        <menulist-item disabled>Export unavailable</menulist-item>
+                                    </menulist>
+                                </template>
+                            </menu-item>
+                        </menu>
+                        <button @click="showDetails">Documentation</button>
+                        <button type="cg" @click="showDetails">+ Add service</button>
+                    </layout>
+                    <!-- 统计与表格使用固定演示数据 -->
+                    <layout class="overview" gutter="16">
+                        <sgroup class="metric" direction="v" gutter="8"><label mode="tip">Total services</label><layout align-v="center" gutter="12"><label size="m">4</label><label mode="tip" size="xs">Across 3 regions</label></layout></sgroup>
+                        <sgroup class="metric" direction="v" gutter="8"><label mode="tip">Healthy services</label><layout align-v="center" gutter="12"><label size="m">2</label><tag type="primary" plain size="xs">Operational</tag></layout></sgroup>
+                        <sgroup class="metric" direction="v" gutter="8"><label mode="tip">Requests today</label><layout align-v="center" gutter="12"><label size="m">128.4k</label><label mode="tip" size="xs">Updated just now</label></layout></sgroup>
+                    </layout>
+                    <layout class="filters" gutter="12">
+                        <text class="search" v-model="search" placeholder="Search services..."></text>
+                        <select v-model="status" :data="['All statuses', 'Healthy', 'Pending', 'Offline']" style="width:160px;"></select>
+                        <button @click="search = ''; status = ['All statuses']">Reset filters</button>
+                    </layout>
+                    <table :data="filteredRows" v-model="selected" must="false" virtual="false" sort="false" style="height:260px; flex-shrink:0;">
+                        <template v-slot="d">
+                            <table-item label="Name" min-width="180"><label>{{d.row.name}}</label></table-item>
+                            <table-item label="Type" width="105"><tag plain size="xs">{{d.row.type}}</tag></table-item>
+                            <table-item label="Status" width="110"><tag :type="statusTypes[d.row.status]" plain size="xs">{{d.row.status}}</tag></table-item>
+                            <table-item label="Region" min-width="150">{{d.row.region}}</table-item>
+                            <table-item label="Version" width="115">{{d.row.version}}</table-item>
+                            <table-item label="Last seen" min-width="130"><label mode="tip">{{d.row.updated}}</label></table-item>
+                        </template>
+                    </table>
+                    <!-- 输入、焦点、禁用与语义色样例 -->
+                    <layout class="examples" gutter="20">
+                        <group class="example" title="Configuration" direction="v" gutter="16">
+                            <label mode="tip">Workspace name</label>
+                            <text v-model="workspace" placeholder="Workspace name"></text>
+                            <text model-value="Read-only environment" disabled></text>
+                            <layout align-v="center" gutter="12"><switch v-model="enabled"></switch><label>Enable monitoring</label></layout>
+                            <check v-model="checked">Send service notifications</check>
+                            <layout gutter="10"><button type="cg" @click="showDetails">Save changes</button><button disabled>Cancel</button></layout>
+                        </group>
+                        <group class="example" title="Status &amp; actions" direction="v" gutter="16">
+                            <label mode="tip">Quiet labels, clear meaning.</label>
+                            <layout gutter="8"><tag plain size="xs">Beta</tag><tag type="primary" plain size="xs">Healthy</tag><tag type="info" plain size="xs">Info</tag><tag type="warning" plain size="xs">Pending</tag><tag type="danger" plain size="xs">Failed</tag></layout>
+                            <layout gutter="8"><tag type="cg" plain size="xs">Your accent</tag><tag type="cg" size="xs">Solid</tag></layout>
+                            <label mode="tip">Buttons use solid color with a restrained focus ring.</label>
+                            <layout gutter="10"><button @click="showDetails">View details</button><button type="cg" plain @click="showDetails">Manage</button></layout>
+                            <label mode="tip" size="xs">Menu selection: {{menuAction}}</label>
+                            <label mode="tip" size="xs">Sample data · Cloud theme preview</label>
+                        </group>
+                    </layout>
+                </layout>
+            </flow>
+        </template>
+    </nav>
+</form>

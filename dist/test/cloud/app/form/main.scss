@@ -1,0 +1,8 @@
+// --- 预览只安排内容尺寸，控件外观全部来自 cloud 主题 ---
+.page { flex:1; min-width:0; }
+.overview { flex-wrap:wrap; }
+.metric { flex:1; min-width:180px; }
+.filters { flex-wrap:wrap; }
+.search { flex:1; min-width:200px; }
+.examples { flex-wrap:wrap; }
+.example { flex:1; min-width:280px; }

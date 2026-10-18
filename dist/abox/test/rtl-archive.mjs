@@ -22,7 +22,7 @@ const commonControls = new Set([
     'select', 'sidebar-toggle', 'text', 'toolbox',
 ]);
 /** --- 全部内置主题 --- */
-const themes = ['admin', 'classic', 'cyber', 'dark', 'dashboard', 'light', 'modern', 'modern-light', 'software-dark', 'software-light'];
+const themes = ['admin', 'classic', 'cloud', 'cloud-dark', 'cyber', 'dark', 'dashboard', 'light', 'modern', 'modern-light', 'software-dark', 'software-light'];
 /** --- CGA 格式常量，与编译器的公开包格式保持一致 --- */
 const cgaHeaderLength = 106;
 const cgaKeyContext = Buffer.from('ClickGo/Application/Package');

@@ -32,4 +32,5 @@
 - 浏览器入口 `dist/test/desktop/` 要求安全上下文及可加载依赖。类型、回归、浏览器与真实 Native 验收分别报告；Native 同步流程见联动约定。
 - `dist/test/showcase/` 是文档 pic2 的英文后台独立演示；应用源码在其 `app/`，`dist/pack.ts` 输出同目录 `app.cga`。使用原生控件和 `dashboard` 主题；实例 SCSS 只定义内容区尺寸。使用固定演示数据，没有业务后台；搜索、周期选择、菜单选中和强调色切换可操作。
 - `dashboard` 主题在 `dist/sources/theme/dashboard/`，主色跟随 `theme.setMain`。Nav 的 `menu-header`/`menu-footer` 在菜单滚动区外；Nav-item 的 `suffix` 不计入子菜单。无新插槽的 Nav 保留原有 DOM 结构。
+- `cloud` / `cloud-dark` 为 CF 风格的浅色/暗色主题；暗色复用 cloud 的排版与尺寸并独立设计色阶。主色跟随 `theme.setMain`。独立原生控件预览在 `dist/test/cloud/`，`?theme=dark` 以暗色启动，Appearance 支持 Light/Dark/System；应用包由 pack 生成。
 - Breadcrumb 独立包包含 Breadcrumb-item；最后一项按直属 DOM 顺序自动成为当前位置，选择事件不执行导航。打包关系在 `dist/pack.ts`，动态重排、禁用和销毁回归用 `test:breadcrumb`。
