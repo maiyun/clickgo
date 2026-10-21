@@ -8,7 +8,7 @@
 
 > **purify**(`text`): `string`
 
-Defined in: [lib/tool.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L129)
+Defined in: [lib/tool.ts:144](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L144)
 
 去除 html 的空白符、换行以及注释
 

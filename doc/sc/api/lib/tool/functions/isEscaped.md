@@ -8,7 +8,7 @@
 
 > **isEscaped**(`str`, `pos`): `boolean`
 
-Defined in: [lib/tool.ts:568](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L568)
+Defined in: [lib/tool.ts:583](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L583)
 
 转义字符检查
 检查指定位置的字符是否被转义

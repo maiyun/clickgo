@@ -8,9 +8,9 @@
 
 > **compressor**\<`T`\>(`file`, `options?`): `Promise`\<`false` \| `T`\>
 
-Defined in: [lib/tool.ts:35](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L35)
+Defined in: [lib/tool.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L57)
 
-压缩一个图片
+压缩图片，质量降档复用同一画布，保留方向校正及等比缩放
 
 ## Type Parameters
 
@@ -24,30 +24,27 @@ Defined in: [lib/tool.ts:35](https://github.com/maiyun/clickgo/blob/master/dist/
 
 `T`
 
-文件或 blob 类型
+图片文件或 Blob；File 输入返回 File，转换格式时同步扩展名和 MIME 类型
 
 ### options?
 
-参数
+[`ICompressorOptions`](../interfaces/ICompressorOptions.md) = `{}`
 
-#### maxHeight?
-
-`number`
-
-最高高度，默认无限
-
-#### maxWidth?
-
-`number`
-
-最大宽度，默认无限
-
-#### quality?
-
-`number`
-
-压缩质量，默认 0.8
+压缩参数
 
 ## Returns
 
 `Promise`\<`false` \| `T`\>
+
+压缩后的图片；参数无效、加载或编码失败、指定格式不受支持或无法满足大小上限时返回 false
+
+## Example
+
+```ts
+const image = await clickgo.tool.compressor(file, {
+    'mimeType': 'image/jpeg',
+    'maxWidth': 2000,
+    'quality': [0.9, 0.6, 0.5],
+    'maxSize': 2 * 1024 * 1024,
+});
+```

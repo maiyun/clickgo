@@ -8,6 +8,6 @@
 
 > **TFalsy** = `false` \| `""` \| `0` \| `null` \| `undefined` \| *typeof* `NaN`
 
-Defined in: [lib/tool.ts:872](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L872)
+Defined in: [lib/tool.ts:887](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L887)
 
 虚假值类型

@@ -114,18 +114,26 @@ export default class extends clickgo.form.AbstractForm {
     compressor() {
         this.refs.file.select();
     }
+    /**
+     * --- 将选中的图片压缩为 2 MiB 以内的 JPEG ---
+     * @param files 选择的图片，取消时为 null
+     * @returns 展示压缩结果或失败提示
+     */
     async change(files) {
-        if (!files) {
+        if (!files?.length) {
             return;
         }
         const result = await clickgo.tool.compressor(files[0], {
-            'quality': 0.5,
+            'mimeType': 'image/jpeg',
+            'quality': [0.9, 0.6, 0.5],
             'maxWidth': 2000,
+            'maxSize': 2 * 1024 * 1024,
         });
-        if (!result) {
+        if (result === false) {
+            await clickgo.form.dialog(this, 'Unable to process the image within 2 MiB.');
             return;
         }
-        console.log('result', result, result instanceof File);
-        await clickgo.form.dialog(this, 'name: ' + result.name + ', size: ' + clickgo.tool.sizeFormat(result.size) + ', osize: ' + clickgo.tool.sizeFormat(files[0].size));
+        await clickgo.form.dialog(this, `Name: ${result.name}, type: ${result.type}, size: ${clickgo.tool.sizeFormat(result.size)}, ` +
+            `original size: ${clickgo.tool.sizeFormat(files[0].size)}`);
     }
 }

@@ -8,7 +8,7 @@
 
 > **escapeHTML**(`html`): `string`
 
-Defined in: [lib/tool.ts:278](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L278)
+Defined in: [lib/tool.ts:293](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L293)
 
 转义 HTML
 

@@ -13,6 +13,7 @@
 ## Interfaces
 
 - [IClassPrototype](interfaces/IClassPrototype.md)
+- [ICompressorOptions](interfaces/ICompressorOptions.md)
 - [IDecodedText](interfaces/IDecodedText.md)
 - [IRequestOptions](interfaces/IRequestOptions.md)
 - [ITextEncoding](interfaces/ITextEncoding.md)

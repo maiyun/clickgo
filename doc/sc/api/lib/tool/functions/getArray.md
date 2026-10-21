@@ -8,7 +8,7 @@
 
 > **getArray**(`param`): `any`[]
 
-Defined in: [lib/tool.ts:270](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L270)
+Defined in: [lib/tool.ts:285](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L285)
 
 根据参数获取最终的数组型，可传入类似 [1,2,3] 或 1,2,3
 

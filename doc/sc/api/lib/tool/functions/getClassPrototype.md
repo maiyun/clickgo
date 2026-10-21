@@ -8,7 +8,7 @@
 
 > **getClassPrototype**(`obj`, `over?`, `level?`): [`IClassPrototype`](../interfaces/IClassPrototype.md)
 
-Defined in: [lib/tool.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L63)
+Defined in: [lib/tool.ts:78](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L78)
 
 获取 class 的所有 method 和 get/set
 

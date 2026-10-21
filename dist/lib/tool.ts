@@ -27,19 +27,34 @@ export function runIife(code: string): any {
     return lAboxTool.runIife(code);
 }
 
-/**
- * --- 压缩一个图片 ---
- * @param file 文件或 blob 类型 ---
- * @param options 参数
- */
-export function compressor<T extends File | Blob>(file: T, options: {
+/** --- 图片压缩参数，未指定大小上限时仅使用第一档质量 --- */
+export interface ICompressorOptions {
     /** --- 最大宽度，默认无限 --- */
     'maxWidth'?: number;
     /** --- 最高高度，默认无限 --- */
     'maxHeight'?: number;
-    /** --- 压缩质量，默认 0.8 --- */
-    'quality'?: number;
-} = {}): Promise<T | false> {
+    /** --- 编码质量，取值 0 至 1，默认 0.8；数组按顺序尝试，仅 JPEG/WebP 支持调节质量 --- */
+    'quality'?: number | readonly number[];
+    /** --- 输出格式，默认 auto 保留压缩器的自动选择；JPEG 的透明区域填白 --- */
+    'mimeType'?: 'auto' | 'image/jpeg' | 'image/png' | 'image/webp';
+    /** --- 文件大小上限，单位字节，须为正有限数；各档都超限时返回 false，不再额外缩小尺寸或降质 --- */
+    'maxSize'?: number;
+}
+
+/**
+ * --- 压缩图片，质量降档复用同一画布，保留方向校正及等比缩放 ---
+ * @param file 图片文件或 Blob；File 输入返回 File，转换格式时同步扩展名和 MIME 类型
+ * @param options 压缩参数
+ * @returns 压缩后的图片；参数无效、加载或编码失败、指定格式不受支持或无法满足大小上限时返回 false
+ * @example
+ * const image = await clickgo.tool.compressor(file, {
+ *     'mimeType': 'image/jpeg',
+ *     'maxWidth': 2000,
+ *     'quality': [0.9, 0.6, 0.5],
+ *     'maxSize': 2 * 1024 * 1024,
+ * });
+ */
+export function compressor<T extends File | Blob>(file: T, options: ICompressorOptions = {}): Promise<T | false> {
     return lAboxTool.compressor(file, options);
 }
 

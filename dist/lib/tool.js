@@ -24,9 +24,17 @@ export function runIife(code) {
     return lAboxTool.runIife(code);
 }
 /**
- * --- 压缩一个图片 ---
- * @param file 文件或 blob 类型 ---
- * @param options 参数
+ * --- 压缩图片，质量降档复用同一画布，保留方向校正及等比缩放 ---
+ * @param file 图片文件或 Blob；File 输入返回 File，转换格式时同步扩展名和 MIME 类型
+ * @param options 压缩参数
+ * @returns 压缩后的图片；参数无效、加载或编码失败、指定格式不受支持或无法满足大小上限时返回 false
+ * @example
+ * const image = await clickgo.tool.compressor(file, {
+ *     'mimeType': 'image/jpeg',
+ *     'maxWidth': 2000,
+ *     'quality': [0.9, 0.6, 0.5],
+ *     'maxSize': 2 * 1024 * 1024,
+ * });
  */
 export function compressor(file, options = {}) {
     return lAboxTool.compressor(file, options);

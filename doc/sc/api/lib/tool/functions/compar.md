@@ -8,7 +8,7 @@
 
 > **compar**(`before`, `after`): `object`
 
-Defined in: [lib/tool.ts:507](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L507)
+Defined in: [lib/tool.ts:522](https://github.com/maiyun/clickgo/blob/master/dist/lib/tool.ts#L522)
 
 - 对比老值和新值，看看新值中哪些移除了，哪些新增了
 

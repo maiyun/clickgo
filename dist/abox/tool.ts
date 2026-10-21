@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { IClassPrototype, IUrl, IRequestOptions, TFalsy, TJson, ESTATE } from '../lib/tool.js';
+import type { IClassPrototype, ICompressorOptions, IUrl, IRequestOptions, TFalsy, TJson, ESTATE } from '../lib/tool.js';
 
 let compressorjs: typeof import('compressorjs').default | null = null;
 
@@ -67,11 +67,14 @@ export function runIife(code: string): any {
     return func();
 }
 
-export async function compressor<T extends File | Blob>(file: T, options: {
-    'maxWidth'?: number;
-    'maxHeight'?: number;
-    'quality'?: number;
-} = {}): Promise<T | false> {
+export async function compressor<T extends File | Blob>(file: T, options: ICompressorOptions = {}): Promise<T | false> {
+    const quality = options.quality ?? 0.8;
+    const qualities = typeof quality === 'number' ? [quality] : quality;
+    if (!qualities.length || qualities.some(value => !Number.isFinite(value) || value < 0 || value > 1) ||
+        (options.maxSize !== undefined && (!Number.isFinite(options.maxSize) || options.maxSize <= 0)) ||
+        (options.mimeType !== undefined && !['auto', 'image/jpeg', 'image/png', 'image/webp'].includes(options.mimeType))) {
+        return false;
+    }
     if (!compressorjs) {
         try {
             const cdn = (window as any).clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
@@ -85,30 +88,57 @@ export async function compressor<T extends File | Blob>(file: T, options: {
             return false;
         }
     }
-    return new Promise(resolve => {
-        if (!compressorjs) {
-            resolve(false);
-            return;
-        }
-        new compressorjs(file, {
-            'quality': options.quality,
-            'maxWidth': options.maxWidth,
-            'maxHeight': options.maxHeight,
-            success: (result: File) => {
-                if ((file instanceof File) && !(result instanceof File)) {
-                    resolve(new File([result], file.name, {
-                        'lastModified': file.lastModified,
-                        'type': file.type,
-                    }) as T);
-                    return;
-                }
-                resolve(result as T);
-            },
-            error: () => {
-                resolve(false);
-            },
+    const Compressor = compressorjs;
+    if (!Compressor) {
+        return false;
+    }
+    try {
+        const surface: { canvas?: HTMLCanvasElement; } = {};
+        let result = await new Promise<File | Blob | false>(resolve => {
+            new Compressor(file, {
+                'quality': qualities[0],
+                'maxWidth': options.maxWidth,
+                'maxHeight': options.maxHeight,
+                'mimeType': options.mimeType,
+                drew: (_context, canvas) => { surface.canvas = canvas; },
+                success: resolve,
+                error: () => { resolve(false); },
+            });
         });
-    });
+        if (result === false || (options.mimeType && options.mimeType !== 'auto' && result.type !== options.mimeType)) {
+            return false;
+        }
+        if (options.maxSize !== undefined) {
+            for (let index = 1; result.size > options.maxSize && index < qualities.length; ++index) {
+                const canvas = surface.canvas;
+                const mimeType = result.type;
+                if (!canvas || !['image/jpeg', 'image/webp'].includes(mimeType)) {
+                    return false;
+                }
+                const blob = await new Promise<Blob | null>(resolve => {
+                    canvas.toBlob(resolve, mimeType, qualities[index]);
+                });
+                if (blob === null || blob.type !== result.type) {
+                    return false;
+                }
+                result = blob;
+            }
+            if (result.size > options.maxSize) {
+                return false;
+            }
+        }
+        if (file instanceof File) {
+            const extension = result.type === 'image/jpeg' ? 'jpg' : result.type.slice(6);
+            const name = result.type === file.type ? file.name : file.name.replace(/\.[^.]+$/, '') + '.' + extension;
+            if (!(result instanceof File) || result.name !== name) {
+                return new File([result], name, { 'lastModified': file.lastModified, 'type': result.type }) as T;
+            }
+        }
+        return result as T;
+    }
+    catch {
+        return false;
+    }
 }
 
 export function getClassPrototype(obj: object, over: string[] = [], level: number = 0): IClassPrototype {
