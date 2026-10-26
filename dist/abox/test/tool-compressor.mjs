@@ -54,7 +54,7 @@ assert.equal(run.state.calls[0].options.maxWidth, 2000);
 assert.equal(run.state.calls[0].options.maxHeight, 1500);
 assert.equal(run.state.calls[0].options.mimeType, 'image/jpeg');
 assert.deepEqual(run.state.encodes.map(item => item.quality), [0.6]);
-assert.match(run.state.urls[0], /^https:\/\/assets\.example\.test\/npm\/compressorjs@/);
+assert.equal(run.state.urls[0], 'https://assets.example.test/npm/compressorjs@1.4.0/dist/compressor.min.js');
 await run.api.compressor(original, { quality: 0.5 });
 assert.equal(run.state.urls.length, 1, 'loaded compressor is reused');
 assert.equal(run.state.calls[1].options.quality, 0.5, 'legacy numeric quality still performs one compression');

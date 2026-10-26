@@ -58,7 +58,7 @@ export async function compressor(file, options = {}) {
     if (!compressorjs) {
         try {
             const cdn = window.clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
-            await loadScript(cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js');
+            await loadScript(cdn + '/npm/compressorjs@1.4.0/dist/compressor.min.js');
             if (!window.Compressor) {
                 throw Error('Compressor load failed.');
             }

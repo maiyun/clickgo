@@ -78,7 +78,7 @@ export async function compressor<T extends File | Blob>(file: T, options: ICompr
     if (!compressorjs) {
         try {
             const cdn = (window as any).clickgo.config?.cdn ?? 'https://cdn.jsdelivr.net';
-            await loadScript(cdn + '/npm/compressorjs@1.2.1/dist/compressor.min.js');
+            await loadScript(cdn + '/npm/compressorjs@1.4.0/dist/compressor.min.js');
             if (!(window as any).Compressor) {
                 throw Error('Compressor load failed.');
             }
