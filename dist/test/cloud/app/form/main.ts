@@ -29,7 +29,7 @@ export default class extends clickgo.form.AbstractForm {
     public themeBusy = false;
 
     public access = {
-        'themeName': 'cloud',
+        'themeName': 'cloud-light',
         'appearance': 'Light',
         'media': null as MediaQueryList | null,
         'mediaChanged': null as (() => void) | null
@@ -76,7 +76,7 @@ export default class extends clickgo.form.AbstractForm {
         }
         const appearance = this.appearance[0];
         const dark = appearance === 'Dark' || appearance === 'System' && this.access.media?.matches;
-        const name = dark ? 'cloud-dark' : 'cloud';
+        const name = dark ? 'cloud-dark' : 'cloud-light';
         if (name === this.access.themeName) {
             this.access.appearance = appearance;
             return;

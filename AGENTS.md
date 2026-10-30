@@ -15,6 +15,12 @@
 
 ## 稳定行为
 
+- 普通主题保留 `light`、`dark`；其他主题统一使用 `<名称>-light` / `<名称>-dark`，源码目录、配置 name、包名及加载引用一致，不保留旧名别名或旧包。
+
+- 主题只定义控件皮肤及控件自身的尺寸节奏；Nav 内容区不添加页面留白，不按插槽内的 Layout、Flow、Img 或 SVG 类型强制业务布局。页面留白、头像/图表尺寸由消费应用显式声明；Group 留白遵循 padding 参数。独立主题预览同样遵守该边界。
+- `dist/sources/theme/` 根目录只放主题目录；对比色等辅助 SCSS 归各主题组内部管理，统一收于本组 `_shared.scss`，不建跨主题公共文件。
+- Light/Dark、Modern-dark/Modern-light、Software-light/Software-dark 分别复用本组的 `light/_shared.scss`、`modern-light/_shared.scss`、`software-light/_shared.scss`；共享文件只提供 Sass 函数和 mixin，各主题入口保留配色和专属状态；Modern 深浅入口只引用本组共享模块，不导入另一入口的完整 CSS。保持有效级联顺序及独立主题包，不把共享文件作为新主题打包。
+
 - Desktop 的 positions 是用户保存布局，layout.positions 是区域约束后的显示布局；缩放不能覆盖保存坐标。应用负责文件操作、壁纸和持久化。参数/置底 Demo 分别在 `dist/app/demo/form/{control,solution}/desktop/`。
 - Desktop/Iconview 使用 Pointer.js 可取消 drag；保持 fs 载荷、data-drop 和 iframe move hooks，销毁/禁用/取消不投递 drop。Form 的 viewport、padding="safe" 与 refreshMaxPosition 委托控件管理几何，不手写全屏尺寸。
 - 命令执行入口为 `dist/lib/command.ts`；Form/Panel 卸载及 task.end 清理对应命令，退出等待拒绝新注册。框架自动发布 window.clickgo.command 并在 Boot.main 前初始化页面 WebMCP；宿主/App 不重复接入。页面 unsupported/ready 与工具发布诊断分开，状态事件不轮询，退出后不投递。
@@ -30,9 +36,9 @@
 - 文件交付的真实 Electron 链路用 `electron dist/abox/test/native-command-file-electron.mjs`；设置 `CLICKGO_NATIVE_FILE_ENTRY` 可验证同步后的 Native 主入口。测试使用临时用户目录和打包的真实命令 Demo，通过官方 MCP 客户端操作。
 - 包变更跑 test:archive；Select 包验收用 `CLICKGO_SELECT_TEST_ARCHIVE=1 npm run test:select`。npm pack --dry-run 检查 abox 运行代码、声明依赖与发布排除项。
 - 浏览器入口 `dist/test/desktop/` 要求安全上下文及可加载依赖。类型、回归、浏览器与真实 Native 验收分别报告；Native 同步流程见联动约定。
-- `dist/test/showcase/` 是文档 pic2 的英文后台独立演示；应用源码在其 `app/`，`dist/pack.ts` 输出同目录 `app.cga`。使用原生控件和 `dashboard` 主题；实例 SCSS 只定义内容区尺寸。使用固定演示数据，没有业务后台；搜索、周期选择、菜单选中和强调色切换可操作。
-- `dashboard` 主题在 `dist/sources/theme/dashboard/`，主色跟随 `theme.setMain`。Nav 的 `menu-header`/`menu-footer` 在菜单滚动区外；Nav-item 的 `suffix` 不计入子菜单。无新插槽的 Nav 保留原有 DOM 结构。
-- `cloud` / `cloud-dark` 为 CF 风格的浅色/暗色主题；暗色复用 cloud 的排版与尺寸并独立设计色阶。主色跟随 `theme.setMain`。独立原生控件预览在 `dist/test/cloud/`，`?theme=dark` 以暗色启动，Appearance 支持 Light/Dark/System；应用包由 pack 生成。
+- `dist/test/showcase/` 是文档 pic2 的英文后台独立演示；应用源码在其 `app/`，`dist/pack.ts` 输出同目录 `app.cga`。使用原生控件和 `dashboard-light` 主题；实例 SCSS 只定义内容区尺寸。使用固定演示数据，没有业务后台；搜索、周期选择、菜单选中和强调色切换可操作。
+- `dashboard-light` 主题在 `dist/sources/theme/dashboard-light/`，主色跟随 `theme.setMain`。Nav 的 `menu-header`/`menu-footer` 在菜单滚动区外；Nav-item 的 `suffix` 不计入子菜单。无新插槽的 Nav 保留原有 DOM 结构。
+- `cloud-light` / `cloud-dark` 为 CF 风格的浅色/暗色主题；暗色复用 cloud-light 的排版与尺寸并独立设计色阶。主色跟随 `theme.setMain`。独立原生控件预览在 `dist/test/cloud/`，`?theme=dark` 以暗色启动，Appearance 支持 Light/Dark/System；应用包由 pack 生成。
 - Breadcrumb 独立包包含 Breadcrumb-item；最后一项按直属 DOM 顺序自动成为当前位置，选择事件不执行导航。打包关系在 `dist/pack.ts`，动态重排、禁用和销毁回归用 `test:breadcrumb`。
 - Objviewer 与 Objviewer-item 同包，连线使用稳定节点 ID；hbox 布局入口在控件 `lib/layout.ts`，几何与布局实现位于自身 `abox/`，视口复用 Panzoom。旧 DOM 端点 API 已移除，公开契约见两者 info.md；`test:objviewer` 验证布局、节点生命周期及选择。
 - Cube 为独立固定尺寸 SVG 标识，不参与空间几何或动画回调。独立预览 `dist/test/objviewer/` 使用 Demo 包中的同一 Form，支持布局、过滤、动态节点与窄视口；Form 和独立入口沿用系统当前主题与主题色，不主动加载主题。测试首页及 Demo 的 Objviewer + Cube 均可进入。

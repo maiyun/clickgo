@@ -1,6 +1,6 @@
-@use '../cloud/style';
+@use '../cloud-light/style';
 
-// --- 沿用 cloud 的尺寸和排版；暗色以中性表面层级、柔和文字与独立语义色区分状态 ---
+// --- 沿用 cloud-light 的尺寸和排版；暗色以中性表面层级、柔和文字与独立语义色区分状态 ---
 global {
     color-scheme:dark;
     --cg:var(--main);

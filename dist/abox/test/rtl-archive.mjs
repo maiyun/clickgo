@@ -1,7 +1,7 @@
 // Run after TypeScript/Sass compilation and `node dist/pack.js`: node dist/abox/test/rtl-archive.mjs
 import assert from 'node:assert/strict';
 import { createDecipheriv, createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import CleanCSS from 'clean-css';
 import JSZip from 'jszip';
 import ts from 'typescript';
@@ -22,7 +22,7 @@ const commonControls = new Set([
     'select', 'sidebar-toggle', 'text', 'toolbox',
 ]);
 /** --- 全部内置主题 --- */
-const themes = ['admin', 'classic', 'cloud', 'cloud-dark', 'cyber', 'dark', 'dashboard', 'light', 'modern', 'modern-light', 'software-dark', 'software-light'];
+const themes = ['admin-light', 'classic-light', 'cloud-light', 'cloud-dark', 'cyber-dark', 'dark', 'dashboard-light', 'light', 'modern-dark', 'modern-light', 'software-dark', 'software-light'];
 /** --- CGA 格式常量，与编译器的公开包格式保持一致 --- */
 const cgaHeaderLength = 106;
 const cgaKeyContext = Buffer.from('ClickGo/Application/Package');
@@ -408,10 +408,31 @@ for (const [archive, entry, sourcePath, tokens] of rtlStyleChecks) {
 }
 
 // --- 全部主题必须全部包含最新的逻辑方向样式 ---
+// --- 发布清单与源码目录使用同一组正式名称，旧包不能残留或重新暴露 ---
+const themePackages = themes.map(name => `${name}.cgt`).sort();
+assert.deepEqual(
+    (await readdir(new URL('../../theme/', import.meta.url))).filter(name => name.endsWith('.cgt')).sort(),
+    themePackages,
+    'Published themes must contain exactly the current names'
+);
+assert.deepEqual(
+    (await readdir(new URL('../../sources/theme/', import.meta.url), { withFileTypes: true }))
+        .filter(entry => entry.isDirectory()).map(entry => entry.name).sort(),
+    [...themes].sort(),
+    'Theme source directories must match the current names'
+);
+const resourceSource = (await readProjectFile('dist/lib/fs.ts')).toString();
+assert.deepEqual(
+    [...resourceSource.matchAll(/'\/theme\/([^']+\.cgt)'/g)].map(match => match[1]).sort(),
+    themePackages,
+    'The generated public resource list must expose exactly the current themes'
+);
+
 for (const theme of themes) {
     const archive = `dist/theme/${theme}.cgt`;
     const archivedConfig = JSON.parse(await readZipText(archive, 'config.json'));
     const sourceConfig = JSON.parse((await readProjectFile(`dist/sources/theme/${theme}/config.json`)).toString());
+    assert.equal(sourceConfig.name, theme, 'Theme config name must match its directory and package');
     assert.deepEqual(archivedConfig, sourceConfig, archiveError(archive, 'config.json differs from its source'));
     const archivedCss = await assertCssCurrent(
         archive,

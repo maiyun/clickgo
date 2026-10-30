@@ -1,0 +1,7 @@
+@use 'sass:string';
+
+// --- 在线性 sRGB 中按亮度选择黑白前景，保留底色本身；.179 是两者对比度相等的阈值。 ---
+@function on-accent($color) {
+    $channel: 'clamp(0, (.179 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
+    @return string.unquote('color(from #{$color} srgb-linear #{$channel} #{$channel} #{$channel} / 1)');
+}

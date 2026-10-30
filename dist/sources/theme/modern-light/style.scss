@@ -1,12 +1,10 @@
-@use '../modern/style';
+@use 'shared';
 
 global {
+    @include shared.metrics;
     // --- 基础主色保留用户原值，交互状态和弱化背景独立派生 ---
 
-    --cg:var(--main);
-    --cg-hover:color-mix(in oklch, var(--cg), white 12%);
-    --cg-active:color-mix(in oklch, var(--cg), black 12%);
-    --cg-focus:color-mix(in oklch, var(--cg), black 5%);
+    @include shared.accent;
     --cg-disabled:color-mix(in oklch, var(--cg), oklch(.72 0 0) 72%);
     --cg-bg:color-mix(in oklch, var(--cg), white 86%);
     --modern-accent-shift:oklch(from var(--cg) l calc(c * .76) calc(h + 42));
@@ -64,6 +62,10 @@ global {
     --g-color-tip:oklch(from var(--cg) .5 calc(c * .09) h);
     --g-color-placeholder:oklch(from var(--cg) .59 calc(c * .075) h);
 
+    --g-color-error:var(--danger);
+    --g-color-warning:var(--warning);
+    --g-color-success:var(--success);
+
     --g-background:oklch(from var(--cg) .99 calc(c * .04) h / .62);
     --g-background-hover:oklch(from var(--cg) .97 calc(c * .1) h / .68);
     --g-background-active:oklch(from var(--cg) .94 calc(c * .18) h / .74);
@@ -76,6 +78,15 @@ global {
     --g-border-color-active:color-mix(in oklch, var(--cg), white 38%);
     --g-border-color-focus:color-mix(in oklch, var(--cg), white 46%);
     --g-border-color-disabled:oklch(from var(--cg) .89 calc(c * .04) h / .52);
+
+    --g-focusbox-border-width:0;
+    --g-focusbox-border-color:var(--cg);
+
+    --g-plain-color:var(--g-color);
+    --g-plain-color-hover:var(--g-color-hover);
+    --g-plain-color-active:var(--g-color-active);
+    --g-plain-color-focus:var(--g-color-focus);
+    --g-plain-color-disabled:var(--g-color-disabled);
 
     --g-plain-background:oklch(from var(--cg) .965 calc(c * .04) h / .5);
     --g-plain-background-hover:oklch(from var(--cg) .945 calc(c * .09) h / .6);
@@ -101,6 +112,8 @@ global {
         color: var(--g-color);
     }
 }
+
+@include shared.controls;
 
 // -- CONTROL -- form --
 
@@ -147,20 +160,9 @@ global {
     }
 }
 
-// --- CONTROL -- levelselect ---
-
-.levelselect_tag-cg-greatselect {
-    .levelselect_op {
-        .levelselect_oploading {
-            background: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%);
-        }
-    }
-}
-.levelselect_pop {
-    .levelselect_loading {
-        background: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%);
-    }
-}
+@include shared.levelselect(
+    $loading: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%)
+);
 
 // -- CONTROL -- nav --
 
@@ -168,9 +170,6 @@ global {
     background: oklch(from var(--cg) .955 calc(c * .06) h);
     .nav_bg {
         background: oklch(from var(--cg) .955 calc(c * .06) h);
-        .nav_bg-item {
-            display: none;
-        }
     }
     .nav_menuwrap {
         .nav_menu {
@@ -259,12 +258,10 @@ global {
     }
 }
 
-// -- CONTROL -- slider --
-
-.slider_wrap {
-    --slider-thumb-background:oklch(from var(--cg) .965 calc(c * .04) h);
-    --slider-thumb-background-disabled:oklch(from var(--cg) .945 calc(c * .02) h);
-}
+@include shared.slider(
+    $thumb: 'oklch(from var(--cg) .965 calc(c * .04) h)',
+    $thumb-disabled: 'oklch(from var(--cg) .945 calc(c * .02) h)'
+);
 
 // --- CONTROL -- cube ---
 
@@ -279,11 +276,8 @@ global {
     }
 }
 
-// --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
-.task-start_wrap {
-    --task-start-label-display:none;
-    --task-start-color:var(--g-color);
-    --task-start-background-hover:color-mix(in oklch, var(--modern-accent-shift), transparent 90%);
-    --task-start-background-active:color-mix(in oklch, var(--modern-accent-shift), transparent 84%);
-    --task-start-background-opened:color-mix(in oklch, var(--modern-accent-shift), transparent 78%);
-}
+@include shared.task-start(
+    $hover: color-mix(in oklch, var(--modern-accent-shift), transparent 90%),
+    $active: color-mix(in oklch, var(--modern-accent-shift), transparent 84%),
+    $opened: color-mix(in oklch, var(--modern-accent-shift), transparent 78%)
+);

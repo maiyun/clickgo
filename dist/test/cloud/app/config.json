@@ -10,5 +10,5 @@
         "/clickgo/control/nav",
         "/clickgo/control/table"
     ],
-    "themes": ["/clickgo/theme/cloud"]
+    "themes": ["/clickgo/theme/cloud-light"]
 }

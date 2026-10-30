@@ -1,0 +1,394 @@
+// --- Modern 主题共用的尺寸和控件结构。 ---
+
+@mixin accent {
+    --cg:var(--main);
+    --cg-hover:color-mix(in oklch, var(--cg), white 12%);
+    --cg-active:color-mix(in oklch, var(--cg), black 12%);
+    --cg-focus:color-mix(in oklch, var(--cg), black 5%);
+}
+
+@mixin levelselect($loading) {
+    // --- CONTROL -- levelselect ---
+
+    .levelselect_tag-cg-greatselect {
+        .levelselect_op {
+            .levelselect_oploading {
+                background: #{$loading};
+            }
+        }
+    }
+    .levelselect_pop {
+        .levelselect_loading {
+            background: #{$loading};
+        }
+    }
+}
+
+@mixin slider($thumb, $thumb-disabled) {
+    // -- CONTROL -- slider --
+
+    .slider_wrap {
+        --slider-thumb-background:#{$thumb};
+        --slider-thumb-background-disabled:#{$thumb-disabled};
+    }
+}
+
+@mixin task-start($hover, $active, $opened) {
+    // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
+    .task-start_wrap {
+        --task-start-label-display:none;
+        --task-start-color:var(--g-color);
+        --task-start-background-hover:#{$hover};
+        --task-start-background-active:#{$active};
+        --task-start-background-opened:#{$opened};
+    }
+}
+
+@mixin metrics {
+    --g-padding-xs:3px;
+    --g-padding-s:6px;
+    --g-padding:10px;
+    --g-padding-h:6px var(--g-padding);
+    --g-padding-l:16px;
+    --g-padding-l-h:10px var(--g-padding-l);
+    --g-padding-xl:24px;
+    --g-padding-xl-h:12px var(--g-padding-xl);
+    --g-bpadding:22px;
+    --g-margin:6px;
+    --g-radius:8px;
+    --g-radius-l:12px;
+    --g-radius-xl:16px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:20px;
+    --g-size-l:28px;
+    --g-size-xl:38px;
+    --g-control:18px;
+    --g-control-m:22px;
+    --g-control-l:26px;
+    --g-transition:all .18s var(--g-cubic);
+    --g-line:1.5;
+    --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
+}
+
+@mixin controls {
+    // -- CONTROL -- form --
+
+    @keyframes form_flash {
+        0%, 50% {
+            box-shadow: var(--g-shadow-d), var(--g-outline-shadow);
+        }
+        51%, 100% {
+            box-shadow: var(--g-shadow-m);
+        }
+    }
+    .form_wrap {
+        padding: 0;
+        &:not(.form_border-none) {
+            -webkit-backdrop-filter: var(--modern-form-backdrop);
+            backdrop-filter: var(--modern-form-backdrop);
+        }
+        &:not(.form_border-none):not([data-cg-max]) {
+            padding: 1px;
+            border: none;
+            box-shadow: var(--g-shadow-m);
+        }
+        &.form_focus {
+            color: var(--g-color);
+            &:not(.form_border-none):not([data-cg-max]) {
+                border: none;
+                box-shadow: var(--g-shadow-d);
+            }
+        }
+        &.form_flash {
+            animation: form_flash .2s linear infinite;
+        }
+        .form_inner {
+            .form_header {
+                align-items: center;
+                border-bottom: solid .5px var(--g-plain-border-color);
+                .form_title {
+                    font-weight: 600;
+                    letter-spacing: .01em;
+                }
+                .form_controls {
+                    padding-inline-end: 4px;
+                    gap: 2px;
+                    .form_min, .form_max, .form_close {
+                        border-radius: var(--g-radius);
+                        box-shadow: none;
+                    }
+                    .form_close {
+                        background: transparent;
+                        color: inherit;
+                        &:hover {
+                            background: var(--danger);
+                            color: white;
+                        }
+                        &:active {
+                            background: var(--danger-active);
+                        }
+                    }
+                }
+            }
+            .form_content {
+                .form_loading {
+                    &:not(.form_show) {
+                        transform: scale(1.12);
+                    }
+                }
+            }
+        }
+    }
+    // -- CONTROL -- group --
+
+    .group_wrap {
+        border-radius: var(--g-radius-xl);
+        &.group_hover:hover, &:not(.group_hover) {
+            box-shadow: var(--g-shadow-m);
+        }
+        &.group_hover:hover {
+            border-color: var(--g-border-color-hover);
+        }
+    }
+    // -- CONTROL -- nav --
+
+    .nav_wrap {
+        .nav_bg {
+            display: block;
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+            .nav_bg-item {
+                display: none;
+            }
+        }
+        .nav_menuwrap {
+            border-inline-end: solid .5px var(--g-border-color);
+            .nav_menu {
+                -webkit-backdrop-filter: var(--g-pop-backdrop);
+                backdrop-filter: var(--g-pop-backdrop);
+            }
+        }
+        .nav_content {
+            .nav_header {
+                border-bottom: solid .5px var(--g-border-color);
+                -webkit-backdrop-filter: var(--g-pop-backdrop);
+                backdrop-filter: var(--g-pop-backdrop);
+            }
+        }
+    }
+    // -- CONTROL -- nav-item --
+
+    .nav-item_wrap {
+        &:not(.nav-item_selected) {
+            > .nav-item_text:hover {
+                color: var(--g-color-hover);
+            }
+        }
+    }
+    // -- CONTROL -- property --
+
+    .property_wrap {
+        .property_controls {
+            .property_tag-cg-button {
+                margin-inline-end: 5px;
+            }
+            .property_split {
+                margin-block: 0;
+                margin-inline: 0 5px;
+            }
+        }
+    }
+    // -- CONTROL -- scroll --
+
+    .scroll_wrap {
+        background-color: transparent;
+        .scroll_start, .scroll_end {
+            display: none;
+        }
+        .scroll_bar {
+            .scroll_block {
+                border-radius: var(--g-radius-xl);
+                transition-property: background-color, box-shadow;
+                &:hover {
+                    box-shadow: 0 0 10px color-mix(in oklch, var(--cg), transparent 82%);
+                }
+            }
+        }
+    }
+    // -- CONTROL -- select --
+
+    .select_tag-cg-greatselect {
+        .select_op {
+            .select_tags {
+                .select_tag {
+                    border-radius: var(--g-radius);
+                    .select_label {
+                        padding: 0 var(--g-padding-s);
+                    }
+                    .select_close {
+                        width: var(--g-control-m);
+                        height: var(--g-control-m);
+                    }
+                }
+            }
+        }
+    }
+    // -- CONTROL -- tab --
+
+    .tab_wrap {
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            color: var(--g-color-tip);
+            background: transparent;
+            border: none;
+            &::after {
+                background: linear-gradient(90deg, var(--modern-accent-shift), var(--cg));
+                box-shadow: 0 0 10px color-mix(in oklch, var(--cg), transparent 52%);
+                transition: all .18s var(--g-cubic);
+            }
+            &:not(.tab_selected):not([data-hover]):hover {
+                background: transparent;
+                color: var(--g-color-hover);
+            }
+            &.tab_selected {
+                background: transparent;
+                color: var(--g-color-focus);
+                font-weight: 600;
+            }
+        }
+        &.tab_top {
+            > .tab_tabs-wrap {
+                border-bottom: solid .5px var(--g-plain-border-color);
+                > .tab_tabs {
+                    > .tab_tab {
+                        padding-bottom: 2px;
+                        &.tab_selected {
+                            padding-bottom: 2px;
+                            &::after {
+                                top: initial;
+                                bottom: -1px;
+                                height: 2px;
+                            }
+                        }
+                    }
+                    > :not(:last-child) {
+                        margin-inline-end: var(--g-padding);
+                    }
+                }
+            }
+        }
+        &.tab_bottom {
+            > .tab_tabs-wrap {
+                border-top: solid .5px var(--g-plain-border-color);
+                > .tab_tabs {
+                    > .tab_tab {
+                        padding-top: 2px;
+                        &.tab_selected {
+                            padding-top: 2px;
+                            &::after {
+                                top: -1px;
+                                height: 2px;
+                            }
+                        }
+                    }
+                    > :not(:last-child) {
+                        margin-inline-end: var(--g-padding);
+                    }
+                }
+            }
+        }
+        &.tab_left {
+            > .tab_tabs-wrap {
+                border-right: solid .5px var(--g-plain-border-color);
+                > .tab_tabs {
+                    > .tab_tab {
+                        padding-right: 2px;
+                        &.tab_selected::after {
+                            left: initial;
+                            right: -1px;
+                            width: 2px;
+                        }
+                    }
+                    > :not(:last-child) {
+                        margin-bottom: var(--g-padding);
+                    }
+                }
+            }
+        }
+        &.tab_right {
+            > .tab_tabs-wrap {
+                border-left: solid .5px var(--g-plain-border-color);
+                > .tab_tabs {
+                    > .tab_tab {
+                        padding-left: 2px;
+                        &.tab_selected::after {
+                            left: -1px;
+                            width: 2px;
+                        }
+                    }
+                    > :not(:last-child) {
+                        margin-bottom: var(--g-padding);
+                    }
+                }
+            }
+        }
+        > .tab_panel {
+            background: transparent;
+            border: none;
+        }
+    }
+    // -- CONTROL -- task --
+
+    .task_wrap {
+        &:not(.task_dock) {
+            box-shadow: var(--g-shadow-d);
+        }
+        .task_date {
+            color: var(--g-color);
+        }
+    }
+    // --- CONTROL -- menulist ---
+
+    .menulist_wrap {
+        padding: var(--g-padding-s);
+        border: var(--g-pop-border);
+        border-radius: var(--g-radius-l);
+        box-shadow: var(--g-shadow-d);
+    }
+    .button_pop, .greatlist_pop, .iconview_pop, .jodit_pop, .label_pop, .link_pop,
+    .map_pop, .menu-item_pop, .menulist-item_pop, .monaco_pop, .number_pop,
+    .property_pop, .task-item_pop, .text_pop, .tuieditor_pop {
+        &:has(> .menulist_wrap) {
+            border: var(--g-pop-border);
+            border-radius: var(--g-radius-l);
+            box-shadow: var(--g-shadow-d);
+            -webkit-backdrop-filter: var(--g-pop-backdrop);
+            backdrop-filter: var(--g-pop-backdrop);
+            overflow: hidden;
+            > .menulist_wrap {
+                background: transparent;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+    }
+    .greatselect_pop {
+        border-radius: var(--g-radius-l);
+        box-shadow: var(--g-shadow-d);
+    }
+    // --- CONTROL -- cube ---
+
+    .cube_wrap {
+        .cube_content {
+            .cube_front {
+                border: solid .5px var(--g-border-color);
+            }
+            .cube_right {
+                border: solid .5px var(--g-border-color);
+            }
+        }
+    }
+}

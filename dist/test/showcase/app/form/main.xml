@@ -2,16 +2,16 @@
     <!-- 原生 Nav 统一管理侧栏、窄屏浮层与右侧工作区 -->
     <nav v-model="active" default="Overview" style="flex: 1;">
         <template v-slot:menu-header>
-            <layout gutter="12" align-v="center">
-                <img src="/package/res/brand.svg" mode="contain"></img>
+            <layout class="brand-row" gutter="12" align-v="center">
+                <img class="brand" src="/package/res/brand.svg" mode="contain"></img>
                 <layout direction="v">
                     <label size="m">ClickGo</label>
                     <label size="xs" mode="tip">COMMERCE CONSOLE</label>
                 </layout>
             </layout>
-            <sgroup>
+            <sgroup class="workspace-card">
                 <layout gutter="10" align-v="center" style="flex: 1;">
-                    <img src="/package/res/avatar-ac.svg" mode="contain"></img>
+                    <img class="avatar" src="/package/res/avatar-ac.svg" mode="contain"></img>
                     <layout direction="v" style="flex: 1;">
                         <label>Acme Studio</label>
                         <label size="xs" mode="tip">Pro workspace</label>
@@ -30,24 +30,24 @@
         <nav-item name="Team members" label="Team members" icon="/package/res/people.svg"></nav-item>
         <nav-item name="Settings" label="Settings" icon="/package/res/settings.svg"></nav-item>
         <template v-slot:menu-footer>
-            <layout gutter="10" align-v="center">
+            <layout class="system-status" gutter="10" align-v="center">
                 <circle type="primary"></circle>
                 <label size="xs">All systems operational</label>
             </layout>
-            <layout gutter="8" align-v="center">
-                <img src="/package/res/avatar-am.svg" mode="contain"></img>
+            <layout class="account" gutter="8" align-v="center">
+                <img class="avatar" src="/package/res/avatar-am.svg" mode="contain"></img>
                 <layout direction="v" style="flex: 1;">
                     <label>Alex Morgan</label>
                     <label size="xs" mode="tip">Workspace admin</label>
                 </layout>
                 <button type="tool" circle tip="Change accent color" @click="cycleAccent">
-                    <svg src="/package/res/settings.svg"></svg>
+                    <svg class="icon" src="/package/res/settings.svg"></svg>
                 </button>
             </layout>
         </template>
         <!-- 原生按钮和输入提供可操作的反馈 -->
         <template v-slot:header>
-            <layout gutter="18" align-v="center">
+            <layout class="header" gutter="18" align-v="center">
                 <breadcrumb label="Breadcrumbs" @select="active = 'Overview'">
                     <breadcrumb-item name="workspace" label="Workspace"></breadcrumb-item>
                     <breadcrumb-item :name="active" :label="active"></breadcrumb-item>
@@ -56,14 +56,14 @@
                     <text v-model="search" placeholder="Search orders..." style="width: 255px;"></text>
                     <label size="xs" mode="tip">⌘ K</label>
                     <button type="tool" circle tip="Notifications" @click="showDemoNotice('You are up to date. The live activity panel contains sample events.')">
-                        <svg src="/package/res/bell.svg"></svg>
+                        <svg class="icon" src="/package/res/bell.svg"></svg>
                     </button>
-                    <img src="/package/res/avatar-am.svg" mode="contain"></img>
+                    <img class="avatar" src="/package/res/avatar-am.svg" mode="contain"></img>
                 </layout>
             </layout>
         </template>
         <template v-slot:content>
-            <flow direction="v" style="flex: 1; min-height: 0;">
+            <flow class="workspace" direction="v" style="flex: 1; min-height: 0;">
                 <layout class="page" direction="v" gutter="20">
                     <layout gutter="12" align-v="center">
                         <layout direction="v" gutter="8" style="flex: 1;">
@@ -73,7 +73,7 @@
                         </layout>
                         <select v-model="period" :data="['Last 30 days', 'Last 7 days']" style="width: 148px;"></select>
                         <button type="cg" gutter="8" @click="showDemoNotice('Report export is a preview in this sample workspace. No live transactions are connected.')">
-                            <svg src="/package/res/download.svg"></svg>
+                            <svg class="icon" src="/package/res/download.svg"></svg>
                             Export report
                         </button>
                     </layout>
@@ -83,7 +83,7 @@
                             <label mode="tip">{{metric.name}}</label>
                             <layout align-v="center" gutter="8">
                                 <label size="xl" style="flex: 1;">{{metric.value}}</label>
-                                <svg style="width: 78px; height: 33px;" view-box="0 0 76 34" :layout="'<polyline fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; points=&quot;' + metric.points + '&quot;/>'"></svg>
+                                <svg class="sparkline" style="width: 78px; height: 33px;" view-box="0 0 76 34" :layout="'<polyline fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; points=&quot;' + metric.points + '&quot;/>'"></svg>
                             </layout>
                             <layout gutter="6" align-v="center">
                                 <label mode="cg" size="xs">↗ {{metric.delta}}</label>
@@ -101,7 +101,7 @@
                                 </layout>
                             </template>
                             <template v-slot:right><tag type="cg" plain>↗ 18.6% growth</tag></template>
-                            <layout gutter="18" align-v="center">
+                            <layout class="chart-legend" gutter="18" align-v="center">
                                 <layout gutter="5" align-v="center">
                                     <circle ref="accent" type="cg"></circle>
                                     <label size="xs" mode="tip">Revenue</label>
@@ -119,7 +119,7 @@
                                 <button type="tool" tip="Channel details" @click="showDemoNotice('Direct: 58%. Organic search: 28%. Campaigns: 14%. These are sample acquisition figures.')">···</button>
                             </template>
                             <echarts v-if="palette.accent" :data="channels" style="height: 167px;"></echarts>
-                            <layout direction="v" gutter="9">
+                            <layout class="channel-list" direction="v" gutter="9">
                                 <layout gutter="5" align-v="center"><circle type="cg"></circle><label>Direct</label><label align="end" style="flex: 1;">58%</label></layout>
                                 <layout gutter="5" align-v="center"><circle type="info"></circle><label>Organic search</label><label align="end" style="flex: 1;">28%</label></layout>
                                 <layout gutter="5" align-v="center"><circle type="warning"></circle><label>Campaigns</label><label align="end" style="flex: 1;">14%</label></layout>
@@ -142,7 +142,7 @@
                                     <table-item align-v="center" label="Order" width="110"><label mode="cg">{{d.row.id}}</label></table-item>
                                     <table-item align-v="center" label="Customer" min-width="175">
                                         <layout gutter="10" align-v="center">
-                                            <img :src="'/package/res/avatar-' + d.row.initials.toLowerCase() + '.svg'" mode="contain"></img>
+                                            <img class="customer-avatar" :src="'/package/res/avatar-' + d.row.initials.toLowerCase() + '.svg'" mode="contain"></img>
                                             <label>{{d.row.customer}}</label>
                                         </layout>
                                     </table-item>
@@ -153,7 +153,7 @@
                                 </template>
                             </table>
                             <template v-slot:footer>
-                                <layout align-v="center" gutter="6">
+                                <layout class="order-footer" align-v="center" gutter="6">
                                     <label mode="tip" size="xs" style="flex: 1;">Showing {{filteredOrders.length}} of 1,842 orders</label>
                                     <circle type="cg"></circle><label mode="tip" size="xs">Updated just now</label>
                                 </layout>
@@ -163,21 +163,21 @@
                             <template v-slot:right>
                                 <tag type="cg" plain><layout gutter="4" align-v="center"><circle type="cg"></circle><label size="xs">Live</label></layout></tag>
                             </template>
-                            <layout direction="v" gutter="22">
+                            <layout class="activity-list" direction="v" gutter="22">
                                 <layout gutter="12" align-v="start">
-                                    <button type="tool" circle tip="Order details" @click="showDemoNotice('Olivia Bennett placed sample order CG-1048 for the Studio Collection, totaling $249.00.')"><svg src="/package/res/bag.svg"></svg></button>
+                                    <button type="tool" circle tip="Order details" @click="showDemoNotice('Olivia Bennett placed sample order CG-1048 for the Studio Collection, totaling $249.00.')"><svg class="icon" src="/package/res/bag.svg"></svg></button>
                                     <layout direction="v" gutter="4" style="flex: 1;">
                                         <label>New order from Olivia</label><label size="xs" mode="tip">Studio Collection · $249.00</label><label size="xs" mode="tip">2 minutes ago</label>
                                     </layout>
                                 </layout>
                                 <layout gutter="12" align-v="start">
-                                    <button type="tool" circle tip="Campaign details" @click="showDemoNotice('The Autumn sample campaign reaches 12,400 subscribers. No messages are sent by this demo.')"><svg src="/package/res/bolt.svg"></svg></button>
+                                    <button type="tool" circle tip="Campaign details" @click="showDemoNotice('The Autumn sample campaign reaches 12,400 subscribers. No messages are sent by this demo.')"><svg class="icon" src="/package/res/bolt.svg"></svg></button>
                                     <layout direction="v" gutter="4" style="flex: 1;">
                                         <label>Autumn campaign is live</label><label size="xs" mode="tip">Reaching 12,400 subscribers</label><label size="xs" mode="tip">18 minutes ago</label>
                                     </layout>
                                 </layout>
                                 <layout gutter="12" align-v="start">
-                                    <button type="tool" circle tip="Payout details" @click="showDemoNotice('The sample weekly settlement is $8,240.00. This demo does not perform payments.')"><svg src="/package/res/check.svg"></svg></button>
+                                    <button type="tool" circle tip="Payout details" @click="showDemoNotice('The sample weekly settlement is $8,240.00. This demo does not perform payments.')"><svg class="icon" src="/package/res/check.svg"></svg></button>
                                     <layout direction="v" gutter="4" style="flex: 1;">
                                         <label>Payout successfully processed</label><label size="xs" mode="tip">$8,240.00 · Weekly settlement</label><label size="xs" mode="tip">42 minutes ago</label>
                                     </layout>

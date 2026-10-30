@@ -1,5 +1,5 @@
 @use '../light/style';
-@use '../contrast';
+@use 'shared';
 
 // --- 中性表面与克制的状态层级，主色始终由用户设置 ---
 global {
@@ -73,7 +73,6 @@ global {
     --g-block-background:#eee;
     --g-block-background-hover:#e3e3e3;
     --cloud-divider:#e4e4e4;
-    --cloud-content-padding:28px 32px;
     --cloud-accent-text:oklch(from var(--cg) min(l, .48) c h);
     --cloud-tag-background:#eee;
     --cloud-tag-color:#505050;
@@ -85,11 +84,11 @@ global {
     --cloud-nav-active:#e5e5e5;
     --cloud-nav-arrow:#777;
     --cloud-nav-shadow:8px 0 28px rgba(0, 0, 0, .08);
-    --software-on-accent:#{contrast.on-accent('var(--cg)')};
-    --software-on-accent-hover:#{contrast.on-accent('var(--cg-hover)')};
-    --software-on-accent-active:#{contrast.on-accent('var(--cg-active)')};
-    --software-on-accent-focus:#{contrast.on-accent('var(--cg-focus)')};
-    --software-on-accent-disabled:#{contrast.on-accent('var(--cg-disabled)')};
+    --software-on-accent:#{shared.on-accent('var(--cg)')};
+    --software-on-accent-hover:#{shared.on-accent('var(--cg-hover)')};
+    --software-on-accent-active:#{shared.on-accent('var(--cg-active)')};
+    --software-on-accent-focus:#{shared.on-accent('var(--cg-focus)')};
+    --software-on-accent-disabled:#{shared.on-accent('var(--cg-disabled)')};
 
     // --- 语义色与用户主色独立，柔和标签仍保留可读文字 ---
     @each $name, $color, $background in (
@@ -122,14 +121,14 @@ global {
     }
     @each $type, $color in (cg:cg, primary:success, info:info, warning:warning, danger:danger) {
         &.button_#{$type}:not(.button_plain) {
-            --color:#{contrast.on-accent('var(--#{$color})')};
-            --color-hover:#{contrast.on-accent('var(--#{$color}-hover)')};
-            --color-active:#{contrast.on-accent('var(--#{$color}-active)')};
-            --color-focus:#{contrast.on-accent('var(--#{$color}-focus)')};
+            --color:#{shared.on-accent('var(--#{$color})')};
+            --color-hover:#{shared.on-accent('var(--#{$color}-hover)')};
+            --color-active:#{shared.on-accent('var(--#{$color}-active)')};
+            --color-focus:#{shared.on-accent('var(--#{$color}-focus)')};
         }
     }
 }
-@include contrast.accent-marks;
+@include shared.accent-marks;
 
 .text_wrap .text_text::placeholder { color:var(--g-color-placeholder); }
 .greatselect_wrap:not(.greatselect_plain) { border-width:1px; }
@@ -149,7 +148,7 @@ global {
             &.#{$control}_#{$type}:not(.#{$control}_plain) {
                 background:var(--#{$color});
                 border-color:transparent;
-                color:#{contrast.on-accent('var(--#{$color})')};
+                color:#{shared.on-accent('var(--#{$color})')};
             }
             &.#{$control}_#{$type}.#{$control}_plain {
                 background:var(--#{$color}-bg);
@@ -254,7 +253,7 @@ global {
     --nav-layer-shadow:var(--cloud-nav-shadow);
     .nav_menu, .nav_menu-panel { width:260px; background:var(--face); }
     .nav_menu { padding:10px 14px; border-inline-end:1px solid var(--cloud-divider); }
-    .nav_menu > * { margin:0; }
+    .nav_menu > .nav-item_wrap, .nav_menu > .nav-title_wrap { margin:0; }
     &.nav_chrome .nav_menu-panel {
         border-inline-end:1px solid var(--cloud-divider);
         .nav_menu { width:auto; padding:8px 14px; }
@@ -267,21 +266,11 @@ global {
         background:var(--face);
         border-bottom:1px solid var(--cloud-divider);
         box-shadow:none;
-        > .layout_wrap { flex:1; min-width:0; }
         .nav_mbutton { flex-shrink:0; margin-inline-end:12px; }
     }
     .nav_body {
         background:var(--face);
-        padding:var(--cloud-content-padding);
         min-width:0;
-        // --- 滚动视口内保留留白，焦点阴影不能贴在 overflow 的裁切边界上 ---
-        &:has(> .flow_wrap) {
-            padding:0;
-            > .flow_wrap {
-                padding:var(--cloud-content-padding);
-                scroll-padding:var(--cloud-content-padding);
-            }
-        }
     }
 }
 .nav-title_wrap { padding:22px 12px 10px; font-size:12px; color:var(--g-color-tip); }

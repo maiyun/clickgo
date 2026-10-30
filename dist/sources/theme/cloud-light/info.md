@@ -4,7 +4,7 @@ CF 风格的浅色主题。主色由 `theme.setMain` 设置，按钮使用纯色
 
 文字不使用阴影；导航文字 13px，小标签 11px，正文、输入和普通菜单项 14px。卡片内边距 20px，普通卡片标题 16px。菜单使用白底、约 33px 普通行高、轻阴影和无边框快捷键提示，勾选与单选保留对齐占位。
 
-Nav 内容为直属 Flow 时，页面 padding 和 scroll-padding 放到 Flow 上，保留焦点阴影在滚动裁切边界内的空间；非 Flow 内容沿用 Nav 主体留白。
+Nav 内容区不添加页面留白；预览应用自行在 Flow 上设置 padding 和 scroll-padding，保留滚动裁切边界内的焦点阴影空间。
 
 暗色版本为 cloud-dark，沿用本主题尺寸并重新设计暗色层级；配色说明见 cloud-dark/info.md。
 

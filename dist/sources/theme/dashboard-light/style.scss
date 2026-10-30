@@ -1,5 +1,5 @@
 @use '../light/style';
-@use '../contrast';
+@use 'shared';
 
 // --- 后台工作台：主色来自 theme.setMain，状态色保留独立语义 ---
 global {
@@ -135,33 +135,15 @@ global {
             .nav_menu-panel .nav_menu {
                 width:auto;
                 padding:0 18px;
-                > * { margin:0; }
+                > .nav-item_wrap, > .nav-title_wrap { margin:0; }
                 > .nav-item_wrap { margin-bottom:6px; }
             }
             .nav_menu-header {
                 padding:28px 18px 0;
                 margin-bottom:18px;
-                > .layout_wrap:first-child {
-                    padding:0 10px 30px;
-                .img_wrap { width:38px; height:38px; }
-                    .label_size-m { font-size:24px; font-weight:650; letter-spacing:-.8px; }
-                    .label_size-xs { font-size:10px; letter-spacing:1.2px; }
-                }
-                .sgroup_wrap {
-                    padding:13px 12px;
-                    border-radius:9px;
-                    .label_size-xs { font-size:11px; }
-                }
             }
             .nav_menu-footer {
-            .button_wrap.button_circle { padding:5px; }
                 padding:16px 18px 20px;
-                > .layout_wrap:first-child { padding:0 10px 18px; }
-                > .layout_wrap:last-child {
-                    padding:18px 0 0;
-                    padding-inline-start:10px;
-                    border-top:1px solid var(--g-border-color);
-                }
             }
         }
         .nav_header {
@@ -170,7 +152,6 @@ global {
             background:var(--g-pure);
             box-shadow:none;
             border-bottom:1px solid #e6ecee;
-            > .layout_wrap { flex:1; }
             .nav_mbutton {
                 width:36px;
                 height:36px;
@@ -180,7 +161,6 @@ global {
             }
         }
         .nav_body {
-            padding:26px 30px 18px;
             background:var(--face);
         }
     }
@@ -222,18 +202,11 @@ global {
         }
     }
 
-    // --- 无标题统计卡片与带标题的内容卡片 ---
+    // --- 分组容器的表面和边框，内容布局由应用决定 ---
     .sgroup_wrap {
         background:var(--g-pure);
-        padding:20px;
         border:1px solid var(--g-plain-border-color);
         border-radius:12px;
-        .svg_tag-svg { color:var(--cg); }
-        .label_size-xl {
-            font-weight:650;
-            line-height:1.1;
-            letter-spacing:-1px;
-        }
     }
     .group_wrap {
         border:1px solid var(--g-plain-border-color);
@@ -241,30 +214,28 @@ global {
         box-shadow:none;
         min-width:0;
         > .group_title {
-            padding:20px 22px 12px;
             margin:0;
             gap:12px;
             min-width:0;
-            .button_wrap.button_tool { padding:0 6px; min-height:22px; }
-            > .group_text, > .layout_wrap { flex:1; min-width:0; }
-            .group_text, .label_size-m {
+            > .group_text {
+                min-width:0;
                 font-size:16px;
                 font-weight:650;
                 letter-spacing:-.2px;
             }
         }
+        &:not(.group_padding) > .group_title {
+            padding:20px 22px 12px;
+        }
         > .group_content {
             min-height:0;
-            > .layout_wrap {
-                padding:0 22px 18px;
-                &:not(:last-child) { padding-bottom:0; }
-            }
         }
         > .group_footer {
             margin:0;
-            padding:12px 22px;
             border-top:1px solid var(--g-plain-border-color);
-            > .layout_wrap { flex:1; }
+        }
+        &:not(.group_padding) > .group_footer {
+            padding:12px 22px;
         }
         &.group_cg {
             --g-pure:var(--dashboard-emphasis);
@@ -283,9 +254,7 @@ global {
             background:var(--g-pure);
             color:var(--g-color);
             border-color:var(--g-pure);
-            > .group_content > .layout_wrap { padding-top:8px; }
-            .group_content .button_wrap.button_circle { --background:var(--g-plain-background); }
-            > .group_footer { padding:16px 22px 20px; }
+            &:not(.group_padding) > .group_footer { padding:16px 22px 20px; }
         }
     }
 
@@ -297,7 +266,7 @@ global {
             &.#{$control}_default:not(.#{$control}_plain) {
                 background-color:var(--dashboard-badge-solid);
                 border-color:transparent;
-                color:#{contrast.on-accent('var(--dashboard-badge-solid)')};
+                color:#{shared.on-accent('var(--dashboard-badge-solid)')};
             }
             &.#{$control}_default.#{$control}_plain {
                 background-color:var(--dashboard-badge-soft);
@@ -312,7 +281,7 @@ global {
                 &.#{$control}_#{$type}:not(.#{$control}_plain) {
                     background-color:#{$fill};
                     border-color:transparent;
-                    color:#{contrast.on-accent($fill)};
+                    color:#{shared.on-accent($fill)};
                 }
                 &.#{$control}_#{$type}.#{$control}_plain {
                     background-color:var(--#{$semantic}-bg);
@@ -341,13 +310,6 @@ global {
         &.label_tip, &.label_mtip { color:var(--g-color-tip); }
         &.label_size-l { font-weight:650; letter-spacing:-1px; }
     }
-    .svg_tag-svg { width:18px; height:18px; flex-shrink:0; }
-    .img_wrap { flex-shrink:0; }
-    .nav_menu-header .img_wrap, .nav_menu-footer .img_wrap, .nav_header .img_wrap {
-        width:34px;
-        height:34px;
-    }
-    .table-item_wrap .img_wrap { width:29px; height:29px; }
     .table_wrap {
         border:none;
         border-radius:0;
@@ -359,9 +321,9 @@ global {
     }
     .table-item_wrap { padding:10px 12px; }
     .button_wrap.button_cg:not(.button_plain) {
-        --color:#{contrast.on-accent('var(--cg)')};
-        --color-hover:#{contrast.on-accent('var(--cg-hover)')};
-        --color-active:#{contrast.on-accent('var(--cg-active)')};
-        --color-focus:#{contrast.on-accent('var(--cg-focus)')};
+        --color:#{shared.on-accent('var(--cg)')};
+        --color-hover:#{shared.on-accent('var(--cg-hover)')};
+        --color-active:#{shared.on-accent('var(--cg-active)')};
+        --color-focus:#{shared.on-accent('var(--cg-focus)')};
     }
 }

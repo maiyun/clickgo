@@ -30,7 +30,7 @@
         <nav-item name="Analytics" label="Analytics" icon="/package/res/chart.svg"></nav-item>
         <template v-slot:menu-footer><label mode="tip">Manage account</label></template>
         <template v-slot:header>
-            <layout align-v="center" gutter="12">
+            <layout class="header" align-v="center" gutter="12">
                 <label v-if="!compact" mode="tip">Workspace</label><label v-if="!compact">/</label><label style="flex:1; min-width:0;">{{active}}</label>
                 <label v-if="!compact" mode="tip">Theme color</label>
                 <select v-model="accent" :data="['Blue', 'Green', 'Violet', 'Amber']" @changed="changeAccent" style="width:118px;"></select>
@@ -38,7 +38,7 @@
             </layout>
         </template>
         <template v-slot:content>
-            <flow direction="v" style="flex:1; min-width:0;">
+            <flow class="workspace" direction="v" style="flex:1; min-width:0;">
                 <layout class="page" direction="v" gutter="24">
                     <!-- 页面标题和操作 -->
                     <layout class="filters" align-v="center" gutter="12">

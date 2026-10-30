@@ -1,38 +1,15 @@
-@use '../contrast';
+@use '../software-light/shared';
 
 global {
-    --g-padding-xs:2px;
-    --g-padding-s:4px;
-    --g-padding:5px;
-    --g-padding-h:5px 9px;
-    --g-padding-l:8px;
-    --g-padding-l-h:7px 12px;
-    --g-padding-xl:12px;
-    --g-padding-xl-h:9px 16px;
-    --g-bpadding:16px;
-    --g-margin:5px;
-    --g-radius:5px;
-    --g-radius-l:8px;
-    --g-radius-xl:12px;
-    --g-size-xs:11px;
-    --g-size:13px;
-    --g-size-m:18px;
-    --g-size-l:26px;
-    --g-size-xl:36px;
-    --g-control:16px;   // --- 如 check、radio 等的宽度 ---
-    --g-control-m:20px;
-    --g-control-l:24px;
-    --g-transition:all .12s var(--g-cubic);
-    --g-line:1.4;
-    --g-boxsize:32px;
+    @include shared.metrics;
 
     // --- 保留用户主色，前景按实际底色选择黑白；常驻选中态仍使用中性灰 ---
     --software-accent:var(--main);
-    --software-on-accent:#{contrast.on-accent('var(--cg)')};
-    --software-on-accent-hover:#{contrast.on-accent('var(--cg-hover)')};
-    --software-on-accent-active:#{contrast.on-accent('var(--cg-active)')};
-    --software-on-accent-focus:#{contrast.on-accent('var(--cg-focus)')};
-    --software-on-accent-disabled:#{contrast.on-accent('var(--cg-disabled)')};
+    --software-on-accent:#{shared.on-accent('var(--cg)')};
+    --software-on-accent-hover:#{shared.on-accent('var(--cg-hover)')};
+    --software-on-accent-active:#{shared.on-accent('var(--cg-active)')};
+    --software-on-accent-focus:#{shared.on-accent('var(--cg-focus)')};
+    --software-on-accent-disabled:#{shared.on-accent('var(--cg-disabled)')};
     --cg:var(--software-accent);
     --cg-hover:color-mix(in oklch, var(--cg), white 12%);
     --cg-active:color-mix(in oklch, var(--cg), black 6%);
@@ -239,22 +216,11 @@ global {
 
 // --- 对话框保持统一控件尺度，正文保留阅读空间 ---
 
-.dialog_wrap {
-    &.dialog_padding .dialog_content {
-        padding: var(--g-bpadding);
-    }
-    .dialog_controls .dialog_tag-cg-button {
-        min-width: 72px;
-        box-sizing: border-box;
-    }
-}
+@include shared.dialog;
 
 // --- 菜单用中性底块反馈位置，键盘焦点保持独立标记 ---
 
-.menulist_wrap {
-    padding: 3px;
-    background: var(--g-pop-background);
-}
+@include shared.menulist;
 .menulist-item_wrap {
     position: relative;
     // --- 菜单密度独立于工具栏，标记槽与纯文字项使用相同的最低行高 ---
@@ -298,144 +264,14 @@ global {
         flex-shrink: 0;
     }
 }
-.menu-item_wrap:not([data-cg-disabled]) {
-    &:hover, &:active, &[data-cg-pop-open] {
-        background: var(--software-highlight);
-        border-color: transparent;
-    }
-}
+@include shared.menu-item;
 
 // --- 面板保持平面，浮动窗口通过阴影分离层级 ---
 
-@keyframes software_flash {
-    0%, 50% { border-color: var(--cg); }
-    51%, 100% { border-color: var(--software-divider); }
-}
-.form_wrap {
-    &:not(.form_border-none):not([data-cg-max]) {
-        box-shadow: 0 3px 10px -3px oklch(0 0 0 / .36), 0 1px 3px oklch(0 0 0 / .22);
-        border-color: var(--software-divider);
-        &.form_focus {
-            box-shadow: 0 5px 14px -4px oklch(0 0 0 / .48), 0 1px 4px oklch(0 0 0 / .28);
-        }
-    }
-    &.form_flash {
-        animation: software_flash .2s linear infinite;
-    }
-    .form_inner {
-        .form_header {
-            border-bottom: solid 1px var(--software-divider);
-            .form_controls {
-                .form_min, .form_max {
-                    &:hover { background: var(--face-hover); }
-                    &:active { background: var(--face-selected); }
-                }
-            }
-        }
-        .form_content .form_step {
-            box-shadow: none;
-        }
-    }
-}
-.group_wrap {
-    border-radius: var(--g-radius);
-    &.group_hover:hover, &:not(.group_hover) {
-        box-shadow: none;
-    }
-}
-.toolbar_wrap {
-    background: var(--face);
-    &.toolbar_plain { background: transparent; }
-    border-bottom-color: var(--software-divider);
-    &.toolbar_borderless { border-bottom-color: transparent; }
-    > .toolbar_body, > .toolbar_right {
-        padding-block: 5px;
-        gap: 5px;
-    }
-}
-.dock_wrap {
-    --dock-collapsed-width: 36px;
-    // --- 不复用输入区底色，避免与按钮的悬停色落在相近亮度 ---
-    background: var(--face);
-    &.dock_left, &.dock_right { border-color: var(--software-divider); }
-    &.dock_collapsed { width: 36px; }
-}
-.dock-column_wrap:not(:first-child) { border-color: var(--software-divider); }
-.sidebar-toggle_wrap {
-    --sidebar-toggle-border: var(--software-divider);
-    --sidebar-toggle-background-hover: var(--software-dock-hover);
-}
-.toolbox_wrap {
-    background: var(--face);
-    &.toolbox_left, &.toolbox_right { border-color: var(--software-divider); }
-}
-// --- 与控件的分组条件保持相同优先级，避免透明输入边框覆盖分隔线。 ---
-.toolbox-group_wrap:not(:last-child) { border-bottom: solid 1px var(--software-divider); }
-// --- 面板页签使用圆角轻底块，选中不改变字重和位置 ---
+@include shared.form((0 3px 10px -3px oklch(0 0 0 / .36), 0 1px 3px oklch(0 0 0 / .22)), (0 5px 14px -4px oklch(0 0 0 / .48), 0 1px 4px oklch(0 0 0 / .28)));
+@include shared.panels(#858585);
 
-.dock-group_wrap {
-    &.dock-group_expanded, &.dock-group_collapsed { border-bottom-color: var(--software-divider); }
-    &.dock-group_expanded > .dock-group_tabs,
-    &.dock-group_collapsed.dock-group_floating > .dock-group_content > .dock-group_float-tabs {
-        padding: 4px;
-        gap: 3px;
-        border-bottom-color: var(--software-divider);
-        > .dock-group_tab, > .dock-group_float-tab {
-            padding: 3px 8px;
-            border: none;
-            border-radius: var(--g-radius);
-            transform: none;
-            font-weight: normal;
-            color: var(--g-color-tip);
-            &.dock-group_selected {
-                color: var(--g-color-focus);
-                background: var(--software-highlight);
-                font-weight: normal;
-                border-bottom-color: transparent;
-            }
-            &:not(.dock-group_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
-        }
-        > .dock-group_collapse-btn {
-            width: 26px;
-            border-radius: var(--g-radius);
-            &:hover { background: var(--face-hover); }
-        }
-    }
-    &.dock-group_collapsed > .dock-group_icon-btn {
-        width: 34px;
-        height: 34px;
-        outline: solid 1px transparent;
-        outline-offset: -1px;
-        transition-property: background-color;
-        &.dock-group_active { background: var(--software-highlight); outline-color: #858585; }
-        &:hover { background: var(--face-hover); }
-    }
-}
-
-.tab_wrap {
-    // --- 四种方位均解除默认连接内容框的边框与位移，保留关闭和拖动槽 ---
-    &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
-        > .tab_tabs-wrap > .tab_tabs {
-            padding: 4px;
-            gap: 3px;
-            transform: none;
-            > .tab_tab, > .tab_tab.tab_selected,
-            > .tab_tab.tab_selected + .tab_tab, > .tab_tab:last-child {
-                border: none;
-                border-radius: var(--g-radius);
-                padding: 0;
-                background: transparent;
-                color: var(--g-color-tip);
-                &::after { display: none; }
-                > .tab_content { padding: 5px 10px; }
-                &.tab_selected { background: var(--software-highlight); color: var(--g-color-focus); }
-                &:not(.tab_selected):not([data-hover]):hover { background: var(--face-hover); color: var(--g-color-hover); }
-                &[data-hover] { background: var(--face-selected); color: var(--g-color-focus); }
-            }
-        }
-    }
-    > .tab_panel { border: none; background: transparent; }
-}
+@include shared.tab;
 
 .stab_wrap {
     border: none;
@@ -446,62 +282,20 @@ global {
         &::before { background: var(--software-highlight); }
     }
 }
-.stab-item_wrap {
-    // --- 普通、胶囊和滑块页签共享文字状态，滑块保留控件自身动画 ---
-    &, &.stab-item_light, &.stab-item_rect {
-        padding: 5px 9px;
-        border: none;
-        border-radius: var(--g-radius);
-        transform: none;
-        font-weight: normal;
-        color: var(--g-color-tip);
-        &.stab-item_selected { color: var(--g-color-focus); font-weight: normal; }
-    }
-    &:not([data-cg-disabled]) {
-        &.stab-item_selected:not(.stab-item_rect) { background: var(--software-highlight); }
-        &:not(.stab-item_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
-    }
-    &[data-cg-disabled] {
-        color: var(--g-color-disabled);
-        &.stab-item_selected { background: var(--g-background-disabled); }
-    }
-}
+@include shared.stab-item;
 
 // --- 导航与滚动条去除装饰性阴影 ---
 
-.nav_wrap {
-    --nav-layer-shadow:none;
-    .nav_menuwrap .nav_menu, .nav_content .nav_header { box-shadow: none; }
-    .nav_bg { display: none; }
-}
-.nav-item_wrap.nav-item_selected > .nav-item_text {
-    color: var(--g-color-focus);
-    background: var(--software-highlight);
-}
-.scroll_wrap {
-    background: transparent;
-    .scroll_start, .scroll_end { display: none; }
-}
+@include shared.navigation-and-scroll;
 .loading_wrap .loading_item2 { box-shadow: none; }
-.table_wrap .table_header .table_item.table_fixed-left::before,
-.table_wrap .table_header .table_item.table_fixed-right::before,
-.table-item_wrap.table-item_fixed-left::before,
-.table-item_wrap.table-item_fixed-right::before { box-shadow: none; }
+@include shared.fixed-table;
 .drawer_wrap .drawer_body { box-shadow: none; }
-.task_wrap {
-    background: var(--g-pop-background);
-    .task_date { color: var(--g-color); }
-}
-.select_tag-cg-greatselect .select_op .select_tags .select_tag {
-    .select_label { padding: 0 6px; }
-    .select_close { width: 18px; height: 18px; }
-}
+@include shared.task;
+@include shared.select-tag;
 
 // --- 默认进度条需要独立于透明边框的填充色，语义类型仍使用各自主色 ---
 
-.progress_wrap.progress_default .progress_block {
-    background: var(--g-color-tip);
-}
+@include shared.progress;
 
 // --- 复选框与单选框需要可识别的轮廓，不能随输入区一起隐去 ---
 
@@ -517,29 +311,11 @@ global {
 
 // --- Property 的纯图标命令保持正方形，不继承文字按钮的横向加宽留白 ---
 
-.property_wrap > .property_controls {
-    gap: var(--g-padding-s);
-    > .property_tag-cg-button {
-        width: var(--g-boxsize);
-        height: var(--g-boxsize);
-        box-sizing: border-box;
-        flex: none;
-        margin-inline-end: 0;
-        &.button_wrap.button_simple { padding: var(--g-padding); }
-    }
-    > .property_split { margin-inline: 0; }
-}
+@include shared.property-controls;
 
 // --- 下拉输入由底色识别，聚焦和展开时显示交互轮廓 ---
 
-.greatselect_wrap:not(.greatselect_plain) {
-    border-color: transparent;
-    &:not([data-cg-disabled]) {
-        background: var(--g-plain-background);
-        &:hover { border-color: var(--g-plain-border-color-hover); }
-        &:focus-within, &[data-cg-pop-open] { border-color: var(--cg); }
-    }
-}
+@include shared.greatselect;
 
 // --- 中性轨道避免长距离彩色线条贯穿工作台，键盘焦点仍跟随用户主色 ---
 
@@ -563,20 +339,7 @@ global {
     --g-plain-border-color-disabled:#484848;
     .switch_block { background: #dedede; }
 }
-@include contrast.accent-marks;
-
-// --- 提示采用低饱和底色和局部语义标记 ---
-
-.alert_wrap {
-    padding: 8px 10px;
-    @each $type, $color in (primary: success, info: info, warning: warning, danger: danger, cg: cg) {
-        &.alert_#{$type} {
-            color: var(--g-color);
-            border-color: transparent;
-            border-inline-start: solid 3px var(--#{$color});
-        }
-    }
-}
+@include shared.accent-marks-and-alert;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
 .task-start_wrap {

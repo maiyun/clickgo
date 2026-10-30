@@ -1,4 +1,4 @@
-# Classic
+# Classic Light
 
 灰米色面板、深蓝渐变标题栏、直角立体边框和紧凑字体的经典桌面主题。
 
@@ -6,12 +6,12 @@
 
 可缩放的普通 Form 默认显示经典灰白斜纹握柄；最大化时隐藏。有 `footer` 时在末端留位，没有 footer 时叠加在底角。应用可通过 `size-grip="hide"` 关闭。
 
-在应用配置的 `themes` 中添加 `/clickgo/theme/classic`，或调用：
+在应用配置的 `themes` 中添加 `/clickgo/theme/classic-light`，或调用：
 
 ```ts
-await clickgo.theme.setGlobal('/clickgo/theme/classic');
+await clickgo.theme.setGlobal('/clickgo/theme/classic-light');
 ```
 
 配色固定，不随 `theme.setMain()` 改变。图片、画布和应用自带图标保留原始内容色值；选中图标的叠层只在选中时显示。
 
-Demo 的 `method` → `Library theme` 中提供 Classic 切换入口。
+Demo 的 `method` → `Library theme` 中提供 classic-light 切换入口。

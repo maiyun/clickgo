@@ -657,7 +657,7 @@ global {
         @include sunken;
         background: #ffffff;
         padding: 2px;
-        > * { margin: 0; }
+        > .nav-item_wrap, > .nav-title_wrap { margin: 0; }
     }
     .nav_content .nav_header {
         color: #000000;

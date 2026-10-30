@@ -13,6 +13,6 @@
     ],
     "id": "net.maiyun.clickgo-commerce-showcase",
     "themes": [
-        "/clickgo/theme/dashboard"
+        "/clickgo/theme/dashboard-light"
     ]
 }

@@ -1,0 +1,239 @@
+// --- 普通 Light / Dark 共用尺寸和控件结构；颜色及专属规则由各主题入口提供 ---
+@mixin metrics {
+    --g-padding-xs:3px;
+    --g-padding-s:6px;
+    --g-padding:10px;
+    --g-padding-h:6px var(--g-padding);
+    --g-padding-l:16px;
+    --g-padding-l-h:10px var(--g-padding-l);
+    --g-padding-xl:24px;
+    --g-padding-xl-h:12px var(--g-padding-xl);
+    --g-bpadding:22px;
+    --g-margin:6px;
+    --g-radius:10px;
+    --g-radius-l:14px;
+    --g-radius-xl:18px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:20px;
+    --g-size-l:28px;
+    --g-size-xl:38px;
+    --g-control:18px;   // --- 如 check、radio 等的宽度 ---
+    --g-control-m:22px;
+    --g-control-l:26px;
+    --g-transition:all .18s var(--g-cubic);
+    --g-line:1.5;
+    --g-boxsize:calc(var(--g-padding) * 2 + var(--g-size));
+}
+
+// --- 标题栏的模式专属状态在调用处补充 ---
+@mixin form($loading) {
+    .form_wrap {
+        // --- 内部 ---
+        .form_inner {
+            // --- 头部 ---
+            .form_header {
+                border-bottom: solid .5px var(--g-plain-border-color);
+                @content;
+            }
+            // --- 主体内容 ---
+            .form_content {
+                .form_loading {
+                    background: $loading;
+                    &:not(.form_show) {
+                        transform: scale(1.3);
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin group($shadow, $plain-shadow) {
+    .group_wrap {
+        border-radius: var(--g-radius-xl);
+        &.group_hover:hover, &:not(.group_hover) {
+            box-shadow: $shadow;
+        }
+        &.group_plain {
+            &.group_hover:hover, &:not(.group_hover) {
+                box-shadow: $plain-shadow;
+            }
+        }
+    }
+}
+
+@mixin levelselect($loading) {
+    .levelselect_tag-cg-greatselect {
+        .levelselect_op {
+            .levelselect_oploading {
+                background: $loading;
+            }
+        }
+    }
+    .levelselect_pop {
+        .levelselect_loading {
+            background: $loading;
+        }
+    }
+}
+
+@mixin controls {
+    // -- CONTROL -- nav-item --
+
+
+    .nav-item_wrap {
+        &:not(.nav-item_selected) {
+            > .nav-item_text:hover {
+                color: var(--g-color-hover);
+            }
+        }
+        &.nav-item_selected {
+            > .nav-item_text {
+                color: oklch(1 0 0); background: var(--cg);
+            }
+        }
+    }
+
+    // -- CONTROL -- property --
+
+    .property_wrap {
+        .property_controls {
+            .property_tag-cg-button {
+                margin-inline-end: 5px;
+            }
+            .property_split {
+                margin-block: 0; margin-inline: 0 5px;
+            }
+        }
+    }
+
+    // -- CONTROL -- scroll --
+
+    .scroll_wrap {
+        background-color: transparent;
+        .scroll_start, .scroll_end {
+            display: none;
+        }
+        .scroll_bar {
+            .scroll_block {
+                transition-property: background-color;
+            }
+        }
+    }
+
+    // -- CONTROL -- select --
+
+    .select_tag-cg-greatselect {
+        .select_op {
+            .select_tags {
+                .select_tag {
+                    .select_label {
+                        padding: 0 10px;
+                    }
+                    .select_close {
+                        width: 22px; height: 22px;
+                    }
+                }
+            }
+        }
+    }
+
+    // -- CONTROL -- tab --
+
+    .tab_wrap {
+        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
+            background: transparent; border: none;
+            &::after {
+                background: var(--cg); transition: all .3s var(--g-cubic);
+            }
+            &:not(.tab_selected):not([data-hover]):hover {
+                background: transparent; color: var(--cg);
+            }
+            &.tab_selected {
+                background: transparent; font-weight: bold; color: var(--cg);
+            }
+        }
+        &.tab_top {
+            > .tab_tabs-wrap > .tab_tabs {
+                > .tab_tab {
+                    padding-bottom: 2px;
+                    &.tab_selected {
+                        padding-bottom: 2px;    // --- 用来覆盖控件默认样式的 ---
+                        &::after {
+                            top: initial; bottom: 0; height: 2px;
+                        }
+                    }
+                }
+                > :not(:last-child) {
+                    margin-inline-end: var(--g-padding);
+                }
+            }
+        }
+        &.tab_bottom {
+            > .tab_tabs-wrap > .tab_tabs {
+                > .tab_tab {
+                    padding-top: 2px;
+                    &.tab_selected {
+                        padding-top: 2px;   // --- 用来覆盖控件默认样式的 ---
+                        &::after {
+                            top: 0; height: 2px;
+                        }
+                    }
+                }
+                > :not(:last-child) {
+                    margin-inline-end: var(--g-padding);
+                }
+            }
+        }
+        &.tab_left {
+            > .tab_tabs-wrap > .tab_tabs {
+                > .tab_tab {
+                    padding-right: 2px;
+                    &.tab_selected {
+                        &::after {
+                            left: initial; right: 0; width: 2px;
+                        }
+                    }
+                }
+                > :not(:last-child) {
+                    margin-bottom: var(--g-padding);
+                }
+            }
+        }
+        &.tab_right {
+            > .tab_tabs-wrap > .tab_tabs {
+                > .tab_tab {
+                    padding-left: 2px;
+                    &.tab_selected {
+                        &::after {
+                            left: 0; width: 2px;
+                        }
+                    }
+                }
+                > :not(:last-child) {
+                    margin-bottom: var(--g-padding);
+                }
+            }
+        }
+
+        > .tab_panel {
+            background: transparent; border: none;
+        }
+    }
+
+    // -- CONTROL -- task --
+
+    .task_wrap {
+        background: var(--g-pop-background);
+        .task_date {
+            color: var(--g-color)
+        }
+    }
+
+    // --- CONTROL -- menulist ---
+
+    .menulist_wrap {
+        background: transparent; padding: 4px;
+    }
+}

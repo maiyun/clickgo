@@ -1,0 +1,333 @@
+@use 'sass:string';
+
+// --- 在线性 sRGB 中按亮度选择黑白前景，保留底色本身；.179 是两者对比度相等的阈值。 ---
+@function on-accent($color) {
+    $channel: 'clamp(0, (.179 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
+    @return string.unquote('color(from #{$color} srgb-linear #{$channel} #{$channel} #{$channel} / 1)');
+}
+
+// --- 标记前景跟随控件实际状态底色，禁用的复选/单选仍保留可辨识的选中标记。 ---
+@mixin accent-marks {
+    .check_wrap, .radio_wrap, .switch_wrap {
+        --software-mark-color:var(--software-on-accent);
+        &:not([data-cg-disabled]) {
+            &:focus { --software-mark-color:var(--software-on-accent-focus); }
+            &:hover { --software-mark-color:var(--software-on-accent-hover); }
+            &:active, &.check_active, &.radio_active, &.switch_active {
+                --software-mark-color:var(--software-on-accent-active);
+            }
+        }
+        &[data-cg-disabled] { --software-mark-color:var(--software-on-accent-disabled); }
+    }
+    .check_wrap.check_checked:not(.check_indeterminate) .check_check .check_tag-svg {
+        color: var(--software-mark-color);
+    }
+    .check_wrap.check_indeterminate .check_check::after { background: var(--software-mark-color); }
+    .radio_wrap.radio_selected .radio_radio::after { background: var(--software-mark-color); }
+    .switch_wrap:not([data-cg-disabled]).switch_checked .switch_block { background: var(--software-mark-color); }
+}
+
+@mixin metrics {
+    --g-padding-xs:2px;
+    --g-padding-s:4px;
+    --g-padding:5px;
+    --g-padding-h:5px 9px;
+    --g-padding-l:8px;
+    --g-padding-l-h:7px 12px;
+    --g-padding-xl:12px;
+    --g-padding-xl-h:9px 16px;
+    --g-bpadding:16px;
+    --g-margin:5px;
+    --g-radius:5px;
+    --g-radius-l:8px;
+    --g-radius-xl:12px;
+    --g-size-xs:11px;
+    --g-size:13px;
+    --g-size-m:18px;
+    --g-size-l:26px;
+    --g-size-xl:36px;
+    --g-control:16px;   // --- 如 check、radio 等的宽度 ---
+    --g-control-m:20px;
+    --g-control-l:24px;
+    --g-transition:all .12s var(--g-cubic);
+    --g-line:1.4;
+    --g-boxsize:32px;
+}
+
+@mixin dialog {
+    .dialog_wrap {
+        &.dialog_padding .dialog_content {
+            padding: var(--g-bpadding);
+        }
+        .dialog_controls .dialog_tag-cg-button {
+            min-width: 72px;
+            box-sizing: border-box;
+        }
+    }
+}
+
+@mixin menulist {
+    .menulist_wrap {
+        padding: 3px;
+        background: var(--g-pop-background);
+    }
+}
+
+@mixin menu-item {
+    .menu-item_wrap:not([data-cg-disabled]) {
+        &:hover, &:active, &[data-cg-pop-open] {
+            background: var(--software-highlight);
+            border-color: transparent;
+        }
+    }
+}
+
+@mixin form($shadow, $focus-shadow) {
+    @keyframes software_flash {
+        0%, 50% { border-color: var(--cg); }
+        51%, 100% { border-color: var(--software-divider); }
+    }
+
+    .form_wrap {
+        &:not(.form_border-none):not([data-cg-max]) {
+            box-shadow: $shadow;
+            border-color: var(--software-divider);
+            &.form_focus {
+                box-shadow: $focus-shadow;
+            }
+        }
+        &.form_flash {
+            animation: software_flash .2s linear infinite;
+        }
+        .form_inner {
+            .form_header {
+                border-bottom: solid 1px var(--software-divider);
+                .form_controls {
+                    .form_min, .form_max {
+                        &:hover { background: var(--face-hover); }
+                        &:active { background: var(--face-selected); }
+                    }
+                }
+            }
+            .form_content .form_step {
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+@mixin panels($dock-outline) {
+    .group_wrap {
+        border-radius: var(--g-radius);
+        &.group_hover:hover, &:not(.group_hover) {
+            box-shadow: none;
+        }
+    }
+    .toolbar_wrap {
+        background: var(--face);
+        &.toolbar_plain { background: transparent; }
+        border-bottom-color: var(--software-divider);
+        &.toolbar_borderless { border-bottom-color: transparent; }
+        > .toolbar_body, > .toolbar_right {
+            padding-block: 5px;
+            gap: 5px;
+        }
+    }
+    .dock_wrap {
+        --dock-collapsed-width: 36px;
+        // --- 不复用输入区底色，避免与按钮的悬停色落在相近亮度 ---
+        background: var(--face);
+        &.dock_left, &.dock_right { border-color: var(--software-divider); }
+        &.dock_collapsed { width: 36px; }
+    }
+    .dock-column_wrap:not(:first-child) { border-color: var(--software-divider); }
+    .sidebar-toggle_wrap {
+        --sidebar-toggle-border: var(--software-divider);
+        --sidebar-toggle-background-hover: var(--software-dock-hover);
+    }
+    .toolbox_wrap {
+        background: var(--face);
+        &.toolbox_left, &.toolbox_right { border-color: var(--software-divider); }
+    }
+    // --- 与控件的分组条件保持相同优先级，避免透明输入边框覆盖分隔线。 ---
+    .toolbox-group_wrap:not(:last-child) { border-bottom: solid 1px var(--software-divider); }
+    // --- 面板页签使用圆角轻底块，选中不改变字重和位置 ---
+
+    .dock-group_wrap {
+        &.dock-group_expanded, &.dock-group_collapsed { border-bottom-color: var(--software-divider); }
+        &.dock-group_expanded > .dock-group_tabs,
+        &.dock-group_collapsed.dock-group_floating > .dock-group_content > .dock-group_float-tabs {
+            padding: 4px;
+            gap: 3px;
+            border-bottom-color: var(--software-divider);
+            > .dock-group_tab, > .dock-group_float-tab {
+                padding: 3px 8px;
+                border: none;
+                border-radius: var(--g-radius);
+                transform: none;
+                font-weight: normal;
+                color: var(--g-color-tip);
+                &.dock-group_selected {
+                    color: var(--g-color-focus);
+                    background: var(--software-highlight);
+                    font-weight: normal;
+                    border-bottom-color: transparent;
+                }
+                &:not(.dock-group_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
+            }
+            > .dock-group_collapse-btn {
+                width: 26px;
+                border-radius: var(--g-radius);
+                &:hover { background: var(--face-hover); }
+            }
+        }
+        &.dock-group_collapsed > .dock-group_icon-btn {
+            width: 34px;
+            height: 34px;
+            outline: solid 1px transparent;
+            outline-offset: -1px;
+            transition-property: background-color;
+            &.dock-group_active { background: var(--software-highlight); outline-color: $dock-outline; }
+            &:hover { background: var(--face-hover); }
+        }
+    }
+}
+
+@mixin tab {
+    .tab_wrap {
+        // --- 四种方位均解除默认连接内容框的边框与位移，保留关闭和拖动槽 ---
+        &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
+            > .tab_tabs-wrap > .tab_tabs {
+                padding: 4px;
+                gap: 3px;
+                transform: none;
+                > .tab_tab, > .tab_tab.tab_selected,
+                > .tab_tab.tab_selected + .tab_tab, > .tab_tab:last-child {
+                    border: none;
+                    border-radius: var(--g-radius);
+                    padding: 0;
+                    background: transparent;
+                    color: var(--g-color-tip);
+                    &::after { display: none; }
+                    > .tab_content { padding: 5px 10px; }
+                    &.tab_selected { background: var(--software-highlight); color: var(--g-color-focus); }
+                    &:not(.tab_selected):not([data-hover]):hover { background: var(--face-hover); color: var(--g-color-hover); }
+                    &[data-hover] { background: var(--face-selected); color: var(--g-color-focus); }
+                }
+            }
+        }
+        > .tab_panel { border: none; background: transparent; }
+    }
+}
+
+@mixin stab-item {
+    .stab-item_wrap {
+        // --- 普通、胶囊和滑块页签共享文字状态，滑块保留控件自身动画 ---
+        &, &.stab-item_light, &.stab-item_rect {
+            padding: 5px 9px;
+            border: none;
+            border-radius: var(--g-radius);
+            transform: none;
+            font-weight: normal;
+            color: var(--g-color-tip);
+            &.stab-item_selected { color: var(--g-color-focus); font-weight: normal; }
+        }
+        &:not([data-cg-disabled]) {
+            &.stab-item_selected:not(.stab-item_rect) { background: var(--software-highlight); }
+            &:not(.stab-item_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
+        }
+        &[data-cg-disabled] {
+            color: var(--g-color-disabled);
+            &.stab-item_selected { background: var(--g-background-disabled); }
+        }
+    }
+}
+
+@mixin navigation-and-scroll {
+    .nav_wrap {
+        --nav-layer-shadow:none;
+        .nav_menuwrap .nav_menu, .nav_content .nav_header { box-shadow: none; }
+        .nav_bg { display: none; }
+    }
+
+    .nav-item_wrap.nav-item_selected > .nav-item_text {
+        color: var(--g-color-focus);
+        background: var(--software-highlight);
+    }
+
+    .scroll_wrap {
+        background: transparent;
+        .scroll_start, .scroll_end { display: none; }
+    }
+}
+
+@mixin fixed-table {
+    .table_wrap .table_header .table_item.table_fixed-left::before,
+    .table_wrap .table_header .table_item.table_fixed-right::before,
+    .table-item_wrap.table-item_fixed-left::before,
+    .table-item_wrap.table-item_fixed-right::before { box-shadow: none; }
+}
+
+@mixin task {
+    .task_wrap {
+        background: var(--g-pop-background);
+        .task_date { color: var(--g-color); }
+    }
+}
+
+@mixin select-tag {
+    .select_tag-cg-greatselect .select_op .select_tags .select_tag {
+        .select_label { padding: 0 6px; }
+        .select_close { width: 18px; height: 18px; }
+    }
+}
+
+@mixin progress {
+    .progress_wrap.progress_default .progress_block {
+        background: var(--g-color-tip);
+    }
+}
+
+@mixin property-controls {
+    .property_wrap > .property_controls {
+        gap: var(--g-padding-s);
+        > .property_tag-cg-button {
+            width: var(--g-boxsize);
+            height: var(--g-boxsize);
+            box-sizing: border-box;
+            flex: none;
+            margin-inline-end: 0;
+            &.button_wrap.button_simple { padding: var(--g-padding); }
+        }
+        > .property_split { margin-inline: 0; }
+    }
+}
+
+@mixin greatselect {
+    .greatselect_wrap:not(.greatselect_plain) {
+        border-color: transparent;
+        &:not([data-cg-disabled]) {
+            background: var(--g-plain-background);
+            &:hover { border-color: var(--g-plain-border-color-hover); }
+            &:focus-within, &[data-cg-pop-open] { border-color: var(--cg); }
+        }
+    }
+}
+
+@mixin accent-marks-and-alert {
+    @include accent-marks;
+
+    // --- 提示采用低饱和底色和局部语义标记 ---
+
+    .alert_wrap {
+        padding: 8px 10px;
+        @each $type, $color in (primary: success, info: info, warning: warning, danger: danger, cg: cg) {
+            &.alert_#{$type} {
+                color: var(--g-color);
+                border-color: transparent;
+                border-inline-start: solid 3px var(--#{$color});
+            }
+        }
+    }
+}
+

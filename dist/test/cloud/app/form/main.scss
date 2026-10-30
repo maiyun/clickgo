@@ -1,4 +1,6 @@
-// --- 预览只安排内容尺寸，控件外观全部来自 cloud 主题 ---
+// --- 页面留白由预览应用声明，放在滚动区内以保留边缘焦点阴影 ---
+.workspace { padding:28px 32px; scroll-padding:28px 32px; }
+.header { flex:1; min-width:0; }
 .page { flex:1; min-width:0; }
 .overview { flex-wrap:wrap; }
 .metric { flex:1; min-width:180px; }

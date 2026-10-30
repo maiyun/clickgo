@@ -1,4 +1,4 @@
-cloud 的独立暗色版本。使用 `@use '../cloud/style'` 共享字号、间距、圆角和菜单尺寸；共享结构及预览入口见 cloud/info.md。
+cloud-light 的独立暗色版本。使用 `@use '../cloud-light/style'` 共享字号、间距、圆角和菜单尺寸；共享结构及预览入口见 cloud-light/info.md。
 
 页面、卡片、输入和弹层使用逐级抬高的中性暗色表面，导航的 hover/selected 保持中性。边框区分装饰分隔与输入轮廓，正文避免纯白；菜单不添加亮边或发光。柔和语义标签在暗色中重新配色。
 
