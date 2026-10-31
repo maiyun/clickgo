@@ -90,12 +90,12 @@ global {
     --software-on-accent-focus:#{shared.on-accent('var(--cg-focus)')};
     --software-on-accent-disabled:#{shared.on-accent('var(--cg-disabled)')};
 
-    // --- 语义色与用户主色独立，柔和标签仍保留可读文字 ---
-    @each $name, $color, $background in (
-        (success, #237746, #ecf8ef),
-        (info, #285ea8, #eff5ff),
-        (warning, #875b12, #fff7e5),
-        (danger, #b3303a, #fff0f1)
+    // --- 文字、状态点和带字实心底色分别配色，实心语义控件使用白字 ---
+    @each $name, $color, $fill, $background in (
+        (success, #237746, #0fa06f, #ecf8ef),
+        (info, #285ea8, #3b82f6, #eff5ff),
+        (warning, #875b12, #c08008, #fff7e5),
+        (danger, #b3303a, #ec4b5a, #fff0f1)
     ) {
         --#{$name}:#{$color};
         --#{$name}-hover:color-mix(in srgb, #{$color}, black 8%);
@@ -103,6 +103,12 @@ global {
         --#{$name}-focus:var(--#{$name});
         --#{$name}-disabled:color-mix(in srgb, #{$color}, #ededed 80%);
         --#{$name}-bg:#{$background};
+        --cloud-#{$name}-fill:#{$fill};
+        --cloud-#{$name}-fill-disabled:color-mix(in srgb, #{$fill}, #ededed 80%);
+        --cloud-#{$name}-solid:color-mix(in srgb, #{$fill}, black 22%);
+        --cloud-#{$name}-solid-hover:color-mix(in srgb, var(--cloud-#{$name}-solid), black 8%);
+        --cloud-#{$name}-solid-active:color-mix(in srgb, var(--cloud-#{$name}-solid), black 16%);
+        --cloud-#{$name}-solid-focus:var(--cloud-#{$name}-solid);
     }
 }
 
@@ -121,10 +127,20 @@ global {
     }
     @each $type, $color in (cg:cg, primary:success, info:info, warning:warning, danger:danger) {
         &.button_#{$type}:not(.button_plain) {
-            --color:#{shared.on-accent('var(--#{$color})')};
-            --color-hover:#{shared.on-accent('var(--#{$color}-hover)')};
-            --color-active:#{shared.on-accent('var(--#{$color}-active)')};
-            --color-focus:#{shared.on-accent('var(--#{$color}-focus)')};
+            @if $type != cg {
+                @each $state in '', '-hover', '-active', '-focus' {
+                    --background#{$state}:var(--cloud-#{$color}-solid#{$state});
+                    --color#{$state}:#fff;
+                }
+                --background-disabled:var(--cloud-#{$color}-fill-disabled);
+                --color-disabled:#{shared.on-accent('var(--cloud-#{$color}-fill-disabled)')};
+            }
+            @else {
+                --color:#{shared.on-accent('var(--cg)')};
+                --color-hover:#{shared.on-accent('var(--cg-hover)')};
+                --color-active:#{shared.on-accent('var(--cg-active)')};
+                --color-focus:#{shared.on-accent('var(--cg-focus)')};
+            }
         }
     }
 }
@@ -145,10 +161,25 @@ global {
             color:var(--cloud-tag-color);
         }
         @each $type, $color in (primary:success, info:info, warning:warning, danger:danger, cg:cg) {
+            $fill: 'var(--cg)';
+            @if $type != cg { $fill:'var(--cloud-#{$color}-fill)'; }
             &.#{$control}_#{$type}:not(.#{$control}_plain) {
-                background:var(--#{$color});
+                background:#{$fill};
                 border-color:transparent;
-                color:#{shared.on-accent('var(--#{$color})')};
+                @if $type == cg {
+                    color:#{shared.on-accent($fill)};
+                }
+                @else {
+                    color:#fff;
+                    @if $control == tag {
+                        background:var(--cloud-#{$color}-solid);
+                    }
+                    @else {
+                        &:not(:empty) {
+                            background:var(--cloud-#{$color}-solid);
+                        }
+                    }
+                }
             }
             &.#{$control}_#{$type}.#{$control}_plain {
                 background:var(--#{$color}-bg);
@@ -159,8 +190,33 @@ global {
         }
     }
 }
+
+// --- 状态点光圈、进度和其他实心标记使用同一组亮色 ---
+@each $type, $color in (primary:success, info:info, warning:warning, danger:danger) {
+    .circle_wrap.circle_#{$type} { --circle-pulse-color:var(--cloud-#{$color}-fill); }
+    .progress_wrap.progress_#{$type} .progress_block,
+    .title_wrap.title_#{$type} .title_left { background:var(--cloud-#{$color}-fill); }
+    .tip_pop.tip_#{$type}:not(.tip_plain) {
+        color:#fff;
+        &, &::after {
+            background:var(--cloud-#{$color}-solid);
+            border-color:var(--cloud-#{$color}-solid);
+        }
+    }
+}
+.objviewer_wrap .objviewer_links > .objviewer_tag-g:not(.objviewer_emphasis) {
+    &.objviewer_status-online {
+        --line-color:color-mix(in srgb, var(--cloud-success-fill), var(--g-border-color) 55%);
+        --packet-color:var(--cloud-success-fill);
+    }
+    &.objviewer_status-warning {
+        --line-color:color-mix(in srgb, var(--cloud-warning-fill), var(--g-border-color) 35%);
+        --packet-color:var(--cloud-warning-fill);
+    }
+}
 .tag_wrap {
-    font-size:11px;
+    font-size:12px;
+    font-weight:500;
     line-height:1.5;
     &.tag_size-xs, &.tag_size-s { padding:1px 7px; }
     &.tag_rsize-m, &.tag_rsize-l, &.tag_rsize-xl { border-radius:999px; }

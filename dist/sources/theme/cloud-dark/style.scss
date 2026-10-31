@@ -59,11 +59,11 @@ global {
     --cloud-nav-arrow:#a3a3a3;
     --cloud-nav-shadow:8px 0 28px rgba(0, 0, 0, .3);
 
-    @each $name, $color, $background in (
-        (success, #82c79a, #162b1e),
-        (info, #99bffc, #19283e),
-        (warning, #e7bc73, #302717),
-        (danger, #f199a4, #331d23)
+    @each $name, $color, $fill, $background in (
+        (success, #82c79a, #20c997, #162b1e),
+        (info, #99bffc, #60a5fa, #19283e),
+        (warning, #e7bc73, #f2b84b, #302717),
+        (danger, #f199a4, #fb7185, #331d23)
     ) {
         --#{$name}:#{$color};
         --#{$name}-hover:color-mix(in srgb, #{$color}, white 8%);
@@ -71,6 +71,8 @@ global {
         --#{$name}-focus:var(--#{$name});
         --#{$name}-disabled:color-mix(in srgb, #{$color}, #292929 80%);
         --#{$name}-bg:#{$background};
+        --cloud-#{$name}-fill:#{$fill};
+        --cloud-#{$name}-fill-disabled:color-mix(in srgb, #{$fill}, #292929 80%);
     }
 }
 
