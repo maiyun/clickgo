@@ -90,12 +90,12 @@ global {
     --software-on-accent-focus:#{shared.on-accent('var(--cg-focus)')};
     --software-on-accent-disabled:#{shared.on-accent('var(--cg-disabled)')};
 
-    // --- 文字、状态点和带字实心底色分别配色，实心语义控件使用白字 ---
+    // --- 浅底文字保留深色；实心控件和状态点沿用原生鲜亮色阶，实心语义控件使用白字 ---
     @each $name, $color, $fill, $background in (
-        (success, #237746, #0fa06f, #ecf8ef),
-        (info, #285ea8, #3b82f6, #eff5ff),
-        (warning, #875b12, #c08008, #fff7e5),
-        (danger, #b3303a, #ec4b5a, #fff0f1)
+        (success, #237746, oklch(.7 .23 var(--success-hue)), #ecf8ef),
+        (info, #285ea8, oklch(.7 .23 var(--info-hue)), #eff5ff),
+        (warning, #875b12, oklch(.7 .23 var(--warning-hue)), #fff7e5),
+        (danger, #b3303a, oklch(.7 .23 var(--danger-hue)), #fff0f1)
     ) {
         --#{$name}:#{$color};
         --#{$name}-hover:color-mix(in srgb, #{$color}, black 8%);
@@ -104,11 +104,10 @@ global {
         --#{$name}-disabled:color-mix(in srgb, #{$color}, #ededed 80%);
         --#{$name}-bg:#{$background};
         --cloud-#{$name}-fill:#{$fill};
+        --cloud-#{$name}-fill-hover:color-mix(in srgb, var(--cloud-#{$name}-fill), black 8%);
+        --cloud-#{$name}-fill-active:color-mix(in srgb, var(--cloud-#{$name}-fill), black 16%);
+        --cloud-#{$name}-fill-focus:var(--cloud-#{$name}-fill);
         --cloud-#{$name}-fill-disabled:color-mix(in srgb, #{$fill}, #ededed 80%);
-        --cloud-#{$name}-solid:color-mix(in srgb, #{$fill}, black 22%);
-        --cloud-#{$name}-solid-hover:color-mix(in srgb, var(--cloud-#{$name}-solid), black 8%);
-        --cloud-#{$name}-solid-active:color-mix(in srgb, var(--cloud-#{$name}-solid), black 16%);
-        --cloud-#{$name}-solid-focus:var(--cloud-#{$name}-solid);
     }
 }
 
@@ -129,7 +128,7 @@ global {
         &.button_#{$type}:not(.button_plain) {
             @if $type != cg {
                 @each $state in '', '-hover', '-active', '-focus' {
-                    --background#{$state}:var(--cloud-#{$color}-solid#{$state});
+                    --background#{$state}:var(--cloud-#{$color}-fill#{$state});
                     --color#{$state}:#fff;
                 }
                 --background-disabled:var(--cloud-#{$color}-fill-disabled);
@@ -171,14 +170,6 @@ global {
                 }
                 @else {
                     color:#fff;
-                    @if $control == tag {
-                        background:var(--cloud-#{$color}-solid);
-                    }
-                    @else {
-                        &:not(:empty) {
-                            background:var(--cloud-#{$color}-solid);
-                        }
-                    }
                 }
             }
             &.#{$control}_#{$type}.#{$control}_plain {
@@ -199,8 +190,8 @@ global {
     .tip_pop.tip_#{$type}:not(.tip_plain) {
         color:#fff;
         &, &::after {
-            background:var(--cloud-#{$color}-solid);
-            border-color:var(--cloud-#{$color}-solid);
+            background:var(--cloud-#{$color}-fill);
+            border-color:var(--cloud-#{$color}-fill);
         }
     }
 }
