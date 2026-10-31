@@ -1,0 +1,95 @@
+.wrap {
+    min-width: 0;
+    border-bottom: 1px solid var(--g-border-color);
+    color: var(--g-color);
+
+    > .heading > .trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--g-padding);
+        width: 100%;
+        appearance: none;
+        border: 0;
+        // --- 标题背景与整行分隔线齐边，不给每一行单独切圆角 ---
+        border-radius: 0;
+        padding: var(--g-padding);
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        line-height: var(--g-line);
+        text-align: start;
+        white-space: normal;
+        cursor: pointer;
+        outline: none;
+
+        &:not([aria-disabled="true"]) {
+            &:hover {
+                color: var(--g-color-hover);
+                background: var(--g-background-hover);
+            }
+            &:active, &.active {
+                color: var(--g-color-active);
+                background: var(--g-background-active);
+            }
+        }
+        &:focus-visible {
+            // --- 描边留在按钮内，窄滚动容器不会裁掉两侧 ---
+            outline: 2px solid var(--g-color-focus);
+            outline-offset: -2px;
+        }
+        &[aria-disabled="true"] {
+            color: var(--g-color-disabled);
+            cursor: default;
+        }
+        > .label {
+            min-width: 0;
+            flex-shrink: 1 !important;
+            overflow-wrap: anywhere;
+        }
+        > .arrow {
+            position: relative;
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+
+            &::before, &::after {
+                content: '';
+                position: absolute;
+                background: currentColor;
+            }
+            &::before { inset: 5px 1px; }
+            &::after {
+                inset: 1px 5px;
+                transition: transform .2s var(--g-cubic, ease);
+            }
+        }
+        &[aria-expanded="true"] > .arrow::after { transform: scaleY(0); }
+    }
+    > .panel {
+        display: grid;
+        grid-template-rows: 0fr;
+        visibility: hidden;
+        transition: grid-template-rows .2s var(--g-cubic, ease), visibility 0s .2s;
+
+        &.expanded {
+            grid-template-rows: 1fr;
+            visibility: visible;
+            transition-delay: 0s;
+        }
+        > .clip {
+            min-height: 0;
+            overflow: hidden;
+
+            > .content { padding: var(--g-padding); }
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrap {
+        > .panel, > .heading > .trigger > .arrow::after {
+            transition: none;
+        }
+    }
+}

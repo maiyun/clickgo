@@ -1,0 +1,45 @@
+<form title="Accordion" width="620" height="650" padding="16" :state-max="fullscreen">
+    <flow direction="v" style="flex: 1;">
+        <layout direction="v" gutter="16">
+            <!-- 控件选项与操作通知 -->
+            <layout gutter="12" align-v="center" wrap>
+                <check v-model="multiple">Multiple</check>
+                <check v-model="disabled">Disable all</check>
+                <check v-model="disabledItem">Disable notifications</check>
+                <check v-model="blockChanges">Prevent changes</check>
+            </layout>
+            <layout gutter="12" align-v="center" wrap>
+                <check v-model="showExtra">Show extra item</check>
+                <check v-model="longLabel">Long title</check>
+                <button @click="expanded = []">Close all</button>
+                <button @click="expanded = ['account']">Open account</button>
+            </layout>
+            <!-- 单项、多项、禁用、条件渲染和嵌套 -->
+            <accordion v-model="expanded" :multiple="multiple" :disabled="disabled" level="2" @beforechange="beforeChange" @changed="changed">
+                <accordion-item name="account" :label="longLabel ? 'Account details and preferences for your international workspace and connected applications' : 'Account details'">
+                    <layout direction="v" gutter="10">
+                        <label>This input keeps its value while the panel is closed.</label>
+                        <text v-model="account" placeholder="Display name"></text>
+                    </layout>
+                </accordion-item>
+                <accordion-item name="notifications" label="Notifications" :disabled="disabledItem">
+                    <accordion v-model="nested" multiple level="3">
+                        <accordion-item name="email" label="Email notifications">
+                            <label>Nested accordions keep their own selection and keyboard navigation.</label>
+                        </accordion-item>
+                        <accordion-item name="push" label="Push notifications">
+                            <label>Receive updates on your devices.</label>
+                        </accordion-item>
+                    </accordion>
+                </accordion-item>
+                <accordion-item v-if="showExtra" name="extra" label="More information">
+                    <template v-slot:header><label>More information</label></template>
+                    <label>Use the header slot for custom non-interactive title content.</label>
+                </accordion-item>
+            </accordion>
+            <label>Expanded: {{expanded.join(', ') || 'none'}}</label>
+            <label mode="tip">{{lastChange}}</label>
+            <label mode="tip">Tab through headings. Enter or Space toggles a panel. Arrow keys, Home and End move between enabled headings.</label>
+        </layout>
+    </flow>
+</form>

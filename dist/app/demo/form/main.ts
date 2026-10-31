@@ -1,5 +1,6 @@
 import * as clickgo from 'clickgo';
 
+import caccordionFrm from './control/accordion/accordion';
 import calayout2Frm from './control/alayout2/alayout2';
 import cgridFrm from './control/grid/grid';
 import cboxFrm from './control/box/box';
@@ -340,6 +341,10 @@ export default class extends clickgo.form.AbstractForm {
             }
             case 'cnav': {
                 frm = await clickgo.form.create(this, cnavFrm);
+                break;
+            }
+            case 'caccordion': {
+                frm = await clickgo.form.create(this, caccordionFrm);
                 break;
             }
             case 'cbreadcrumb': {

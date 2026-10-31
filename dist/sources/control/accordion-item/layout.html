@@ -1,0 +1,15 @@
+<div class="wrap" :data-cg-disabled="isDisabled ? '' : undefined">
+    <!-- 标题只包含展开按钮，内容由应用提供 -->
+    <div class="heading" role="heading" :aria-level="accordion?.ariaLevel || 3">
+        <button ref="trigger" type="button" class="trigger" :class="[isSpaceDown && 'active']" :id="id ? id + '-trigger' : undefined" :aria-controls="id ? id + '-panel' : undefined" :aria-expanded="expanded" :aria-disabled="isDisabled ? 'true' : undefined" :tabindex="formFocus && !isDisabled ? 0 : -1" @click="toggle" @keydown="keydown" @keyup="keyup" @blur="isSpaceDown = false">
+            <span class="label"><slot name="header">{{label}}</slot></span>
+            <span class="arrow" aria-hidden="true"></span>
+        </button>
+    </div>
+    <!-- 收起时立即移除交互和无障碍访问，保留内容以完成高度过渡 -->
+    <div ref="panel" class="panel" :class="[expanded && 'expanded']" :id="id ? id + '-panel' : undefined" :aria-labelledby="id ? id + '-trigger' : undefined" :aria-hidden="!expanded" :inert="expanded ? undefined : ''">
+        <div class="clip">
+            <div class="content"><slot></slot></div>
+        </div>
+    </div>
+</div>

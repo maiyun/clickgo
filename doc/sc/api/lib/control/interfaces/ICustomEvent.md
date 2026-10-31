@@ -43,6 +43,7 @@ Custom Event
 - [`ITabChangeEvent`](ITabChangeEvent.md)
 - [`ITabCloseEvent`](ITabCloseEvent.md)
 - [`ITableSortEvent`](ITableSortEvent.md)
+- [`IAccordionBeforeChangeEvent`](IAccordionBeforeChangeEvent.md)
 - [`IFormDialogSelectEvent`](../../form/interfaces/IFormDialogSelectEvent.md)
 - [`IFormPromptSelectEvent`](../../form/interfaces/IFormPromptSelectEvent.md)
 

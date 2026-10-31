@@ -12,6 +12,8 @@
 
 ## Interfaces
 
+- [IAccordionBeforeChangeEvent](interfaces/IAccordionBeforeChangeEvent.md)
+- [IAccordionChangedEvent](interfaces/IAccordionChangedEvent.md)
 - [IBreadcrumbSelectEvent](interfaces/IBreadcrumbSelectEvent.md)
 - [ICalendarSelectedEvent](interfaces/ICalendarSelectedEvent.md)
 - [ICaptchaResultEvent](interfaces/ICaptchaResultEvent.md)

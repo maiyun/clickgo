@@ -6,6 +6,7 @@
     "author": "clickgo",
 
     "controls": [
+        "/clickgo/control/accordion",
         "/package/res/custombtn",
         "/clickgo/control/box",
         "/clickgo/control/captcha",

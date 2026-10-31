@@ -1761,3 +1761,29 @@ export interface IObjviewerSelectEvent {
         'label': string;
     };
 }
+
+// --- Accordion ---
+
+/** --- 用户切换折叠面板前的可取消事件 --- */
+export interface IAccordionBeforeChangeEvent extends ICustomEvent {
+    'detail': {
+        /** --- 切换后的展开项 --- */
+        'value': string[];
+        /** --- 被操作项的标识 --- */
+        'name': string;
+        /** --- 被操作项是否展开 --- */
+        'expanded': boolean;
+    };
+}
+
+/** --- 用户切换折叠面板后的通知 --- */
+export interface IAccordionChangedEvent {
+    'detail': {
+        /** --- 切换后的展开项 --- */
+        'value': string[];
+        /** --- 被操作项的标识 --- */
+        'name': string;
+        /** --- 被操作项是否展开 --- */
+        'expanded': boolean;
+    };
+}

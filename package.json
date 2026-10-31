@@ -14,7 +14,8 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:command && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select && npm run test:date && npm run test:nav && npm run test:breadcrumb && npm run test:objviewer",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:command && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select && npm run test:date && npm run test:nav && npm run test:breadcrumb && npm run test:objviewer && npm run test:accordion",
+    "test:accordion": "node dist/abox/test/accordion.mjs",
     "test:objviewer": "node dist/abox/test/objviewer.mjs",
     "test:command": "node dist/abox/test/command.mjs",
     "test:select": "node dist/abox/test/select.mjs",

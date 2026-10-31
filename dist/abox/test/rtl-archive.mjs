@@ -458,9 +458,9 @@ for (const theme of themes) {
     }
 }
 
-// --- 面包屑是独立包，父项与子项须一同发布并保持源模板与样式一致 ---
-for (const control of ['breadcrumb', 'breadcrumb-item']) {
-    const archive = 'dist/control/breadcrumb.cgc';
+// --- 组合控件独立包须同时发布父项与子项，并保持源模板与样式一致 ---
+for (const control of ['breadcrumb', 'breadcrumb-item', 'accordion', 'accordion-item']) {
+    const archive = `dist/control/${control.replace(/-item$/, '')}.cgc`;
     await assertControlCodeCurrent(archive, control);
     await assertCssCurrent(archive, `${control}/style.css`, `dist/sources/control/${control}/style.css`);
     const layout = await readZipText(archive, `${control}/layout.html`);
@@ -485,4 +485,4 @@ for (const control of ['objviewer', 'objviewer-item', 'cube']) {
     assert.equal(layout, source.replace(/<!--[\s\S]*?-->/g, '').replace(/>\s+</g, '><').trim());
 }
 
-console.log(`Archive check passed: task.cga has 16 locales, ${localeControls.length} control locale tables are current, RTL output is present in all ${themes.length} themes, breadcrumb.cgc includes both current controls, and Circle/Tag styles are current.`);
+console.log(`Archive check passed: task.cga has 16 locales, ${localeControls.length} control locale tables are current, RTL output is present in all ${themes.length} themes, Breadcrumb and Accordion include both current controls, and Circle/Tag styles are current.`);
