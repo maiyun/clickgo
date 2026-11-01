@@ -8,7 +8,7 @@
 
 > **exitFullscreen**(): `Promise`\<`boolean`\>
 
-Defined in: [lib/dom.ts:1868](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1868)
+Defined in: [lib/dom.ts:1869](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1869)
 
 退出全屏
 

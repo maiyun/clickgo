@@ -153,6 +153,9 @@ export class AbstractBoot {
     onError() {
         return;
     }
+    onActiveChanged() {
+        return;
+    }
     onScreenResize() {
         return;
     }

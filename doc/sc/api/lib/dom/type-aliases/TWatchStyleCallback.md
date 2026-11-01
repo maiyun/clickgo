@@ -8,7 +8,7 @@
 
 > **TWatchStyleCallback** = (`name`, `value`, `old`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [lib/dom.ts:1085](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1085)
+Defined in: [lib/dom.ts:1086](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1086)
 
 样式变化通知回调
 

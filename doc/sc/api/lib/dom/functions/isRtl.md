@@ -8,7 +8,7 @@
 
 > **isRtl**(`el`): `boolean`
 
-Defined in: [lib/dom.ts:118](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L118)
+Defined in: [lib/dom.ts:119](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L119)
 
 判断元素的 inline 方向是否为 RTL
 

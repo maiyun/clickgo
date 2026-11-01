@@ -17,6 +17,7 @@ import * as clickgo from '../clickgo';
 import * as lForm from './form';
 import * as lCore from './core';
 import * as lTask from './task';
+import * as activeRuntime from '../abox/active';
 
 /** --- 系统级 ID --- */
 let sysId = '';
@@ -2216,6 +2217,10 @@ export function init(): void {
         'dark': window.matchMedia('(prefers-color-scheme: dark)').matches,
         'keyboard': false,
         'transition': true,
+    });
+    // --- 统一页签和窗口切换，只广播活跃状态的变化 ---
+    activeRuntime.watchActive(window, document, (active) => {
+        lCore.trigger('activeChanged', active).catch(() => {});
     });
     // --- 处理 timer 类，窗体消失时不进行监听 ---
     document.addEventListener('visibilitychange', function() {

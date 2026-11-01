@@ -8,7 +8,7 @@
 
 > **get**(`formId`): [`IFormInfo`](../interfaces/IFormInfo.md) \| `null`
 
-Defined in: [lib/form.ts:2248](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2248)
+Defined in: [lib/form.ts:2258](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2258)
 
 获取窗体信息
 

@@ -8,7 +8,7 @@
 
 > **getWatchSizeCount**(`taskId?`): `number`
 
-Defined in: [lib/dom.ts:597](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L597)
+Defined in: [lib/dom.ts:598](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L598)
 
 获取当前 watch size 中的元素总数
 

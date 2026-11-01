@@ -8,7 +8,7 @@
 
 > **getScrollLeft**(`el`): `number`
 
-Defined in: [lib/dom.ts:130](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L130)
+Defined in: [lib/dom.ts:131](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L131)
 
 获取标准化后的物理横向滚动位置（距内容物理左侧）
 

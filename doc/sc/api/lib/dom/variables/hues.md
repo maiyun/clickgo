@@ -8,6 +8,6 @@
 
 > `const` **hues**: `string`[] = `[]`
 
-Defined in: [lib/dom.ts:52](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L52)
+Defined in: [lib/dom.ts:53](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L53)
 
 hue 色盘

@@ -6,7 +6,7 @@
 
 # Interface: IWatchItem
 
-Defined in: [lib/dom.ts:2346](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2346)
+Defined in: [lib/dom.ts:2351](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2351)
 
 监视变化中的元素
 
@@ -16,7 +16,7 @@ Defined in: [lib/dom.ts:2346](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **el**: `HTMLElement`
 
-Defined in: [lib/dom.ts:2347](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2347)
+Defined in: [lib/dom.ts:2352](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2352)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/dom.ts:2347](https://github.com/maiyun/clickgo/blob/master/dist
 
 > **mo**: `MutationObserver`
 
-Defined in: [lib/dom.ts:2348](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2348)
+Defined in: [lib/dom.ts:2353](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2353)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/dom.ts:2348](https://github.com/maiyun/clickgo/blob/master/dist
 
 > `optional` **taskId?**: `string`
 
-Defined in: [lib/dom.ts:2349](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2349)
+Defined in: [lib/dom.ts:2354](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L2354)

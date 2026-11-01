@@ -8,7 +8,7 @@
 
 > **unwatchSizeMulti**(`current`, `el`, `cb?`): `void`
 
-Defined in: [lib/dom.ts:811](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L811)
+Defined in: [lib/dom.ts:812](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L812)
 
 移除当前任务的可共存 Element 大小监视
 

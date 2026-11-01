@@ -8,7 +8,7 @@
 
 > **getHost**(): `string`
 
-Defined in: [lib/core.ts:903](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L903)
+Defined in: [lib/core.ts:914](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L914)
 
 获取当前浏览器的 host
 

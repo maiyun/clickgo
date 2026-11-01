@@ -104,6 +104,16 @@ export abstract class AbstractApp {
         return;
     }
 
+    /**
+     * --- 宿主活跃状态改变时广播；初始化不通知，内部切换 Form 不触发 ---
+     * @param active 页面可见且拥有焦点时为 true；切换页签、窗口或焦点移出页面时为 false
+     * @returns 无
+     */
+    public onActiveChanged(active: boolean): void | Promise<void>;
+    public onActiveChanged(): void {
+        return;
+    }
+
     /** --- 屏幕大小改变事件 --- */
     public onScreenResize(): void | Promise<void>;
     public onScreenResize(): void {
@@ -687,6 +697,7 @@ export async function trigger(name: TGlobalEvent, taskId: string | boolean | Key
             }
             break;
         }
+        case 'activeChanged':
         case 'hashChanged': {
             (boot as any)?.[eventName](taskId);
             for (const tid in taskList) {
@@ -1507,7 +1518,7 @@ export interface IAvailArea {
 }
 
 /** --- 全局事件类型 --- */
-export type TGlobalEvent = 'nativeLaunch' | 'nativeOpenFiles' | 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'webMcpStatusChanged' | 'launcherShowChanged' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
+export type TGlobalEvent = 'activeChanged' | 'nativeLaunch' | 'nativeOpenFiles' | 'trayCreated' | 'trayChanged' | 'trayRemoved' | 'error' | 'screenResize' | 'configChanged' | 'formCreated' | 'formRemoved' | 'formTitleChanged' | 'formIconChanged' | 'formStateMinChanged' | 'formStateMaxChanged' | 'formShowChanged' | 'formFocused' | 'formBlurred' | 'formFlash' | 'formShowInSystemTaskChange' | 'formHashChange' | 'taskStarted' | 'taskEnded' | 'webMcpStatusChanged' | 'launcherShowChanged' | 'launcherFolderNameChanged' | 'hashChanged' | 'keydown' | 'keyup';
 
 /** --- 现场下载 app 的参数 --- */
 export interface ICoreFetchAppOptions {

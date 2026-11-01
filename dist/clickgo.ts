@@ -226,6 +226,16 @@ export abstract class AbstractBoot {
         return;
     }
 
+    /**
+     * --- 宿主活跃状态改变时广播；初始化不通知，内部切换 Form 不触发 ---
+     * @param active 页面可见且拥有焦点时为 true；切换页签、窗口或焦点移出页面时为 false
+     * @returns 无
+     */
+    public onActiveChanged(active: boolean): void | Promise<void>;
+    public onActiveChanged(): void {
+        return;
+    }
+
     /** --- 屏幕大小改变事件 --- */
     public onScreenResize(): void | Promise<void>;
     public onScreenResize(): void {

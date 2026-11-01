@@ -8,7 +8,7 @@
 
 > **setScrollLeft**(`el`, `value`): `void`
 
-Defined in: [lib/dom.ts:153](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L153)
+Defined in: [lib/dom.ts:154](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L154)
 
 设置标准化后的物理横向滚动位置（距内容物理左侧）
 

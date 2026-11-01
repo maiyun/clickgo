@@ -8,7 +8,7 @@
 
 > **hash**(`current`, `hash`): `Promise`\<`boolean`\>
 
-Defined in: [lib/core.ts:881](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L881)
+Defined in: [lib/core.ts:892](https://github.com/maiyun/clickgo/blob/master/dist/lib/core.ts#L892)
 
 修改浏览器 hash
 

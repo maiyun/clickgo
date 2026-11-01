@@ -8,7 +8,7 @@
 
 > **getScrollInlineOffset**(`el`): `number`
 
-Defined in: [lib/dom.ts:180](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L180)
+Defined in: [lib/dom.ts:181](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L181)
 
 获取标准化后的逻辑 inline 横向滚动位置（距 inline-start）
 

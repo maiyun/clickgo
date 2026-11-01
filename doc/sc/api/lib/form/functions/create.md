@@ -8,7 +8,7 @@
 
 > **create**\<`T`\>(`current`, `cls`, `data?`, `opt?`): `Promise`\<`T`\>
 
-Defined in: [lib/form.ts:4053](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4053)
+Defined in: [lib/form.ts:4063](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4063)
 
 创建一个窗体
 

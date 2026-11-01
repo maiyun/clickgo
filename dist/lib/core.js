@@ -53,6 +53,9 @@ export class AbstractApp {
     onError() {
         return;
     }
+    onActiveChanged() {
+        return;
+    }
     onScreenResize() {
         return;
     }
@@ -504,6 +507,7 @@ export async function trigger(name, taskId = '', formId = '', param1 = '', param
             }
             break;
         }
+        case 'activeChanged':
         case 'hashChanged': {
             boot?.[eventName](taskId);
             for (const tid in taskList) {

@@ -1070,6 +1070,9 @@ export class AbstractForm extends AbstractCommon {
     onReceive() {
         return;
     }
+    onActiveChanged() {
+        return;
+    }
     onScreenResize() {
         return;
     }

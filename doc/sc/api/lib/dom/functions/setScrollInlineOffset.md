@@ -8,7 +8,7 @@
 
 > **setScrollInlineOffset**(`el`, `value`): `void`
 
-Defined in: [lib/dom.ts:191](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L191)
+Defined in: [lib/dom.ts:192](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L192)
 
 设置标准化后的逻辑 inline 横向滚动位置（距 inline-start）
 

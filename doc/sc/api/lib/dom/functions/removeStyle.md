@@ -8,7 +8,7 @@
 
 > **removeStyle**(`taskId`, `type?`, `formId?`, `panelId?`): `void`
 
-Defined in: [lib/dom.ts:393](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L393)
+Defined in: [lib/dom.ts:394](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L394)
 
 移除 style 样式 dom
 

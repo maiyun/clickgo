@@ -8,7 +8,7 @@
 
 > **index**(`el`): `number`
 
-Defined in: [lib/dom.ts:1796](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1796)
+Defined in: [lib/dom.ts:1797](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L1797)
 
 判断一个元素是当前同级的第几位
 

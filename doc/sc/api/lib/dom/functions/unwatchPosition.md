@@ -8,7 +8,7 @@
 
 > **unwatchPosition**(`el`): `void`
 
-Defined in: [lib/dom.ts:526](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L526)
+Defined in: [lib/dom.ts:527](https://github.com/maiyun/clickgo/blob/master/dist/lib/dom.ts#L527)
 
 移除监视 Element 对象位置
 
