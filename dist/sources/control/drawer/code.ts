@@ -11,6 +11,8 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': boolean | string;
         'title': string;
         'width': number | string;
+        /** --- 主内容区是否保留内边距，不影响标题和底部操作区 --- */
+        'padding': boolean | string;
 
         'direction': 'h' | 'v';
         'gutter': number | string;
@@ -22,6 +24,7 @@ export default class extends clickgo.control.AbstractControl {
             'modelValue': false,
             'title': '',
             'width': '35%',
+            'padding': true,
 
             'direction': 'h',
             'gutter': '',

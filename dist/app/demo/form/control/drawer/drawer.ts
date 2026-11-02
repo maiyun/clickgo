@@ -8,4 +8,6 @@ export default class extends clickgo.form.AbstractForm {
 
     public tclose = false;
 
+    public padding = true;
+
 }

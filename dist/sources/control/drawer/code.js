@@ -8,6 +8,7 @@ export default class extends clickgo.control.AbstractControl {
         'modelValue': false,
         'title': '',
         'width': '35%',
+        'padding': true,
         'direction': 'h',
         'gutter': '',
         'alignH': undefined,

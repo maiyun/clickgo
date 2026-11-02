@@ -8,7 +8,8 @@
             <table-item label="size" width="80">{{d.row.size ?? '0'}}</table-item>
         </table>
     </layout>
-    <drawer title="Drawer" gutter="10" v-model="drawer" direction="v" width="50%" :close="tclose">
+    <drawer title="Drawer" gutter="10" v-model="drawer" direction="v" width="50%" :close="tclose" :padding="padding">
+        <check v-model="padding">Content padding</check>
         <label>123</label>
         <button @click="drawer2 = true">456</button>
         <tuieditor style="height: 200px;"></tuieditor>

@@ -2516,6 +2516,12 @@ Dock 内容项。首次激活时才挂载 slot 内容，并可在切换后保留
 
 宽度，默认 `35%`。
 
+#### padding
+
+`boolean` | `string`
+
+主内容区是否保留默认内边距，默认 true；不影响标题和 footer 的内边距。设为 false 后，由插槽内容自行安排留白。嵌入 Flow 等滚动容器时，将所需留白放在滚动内容内部，为控件焦点描边和阴影保留空间。
+
 #### direction
 
 `'h'` | `'v'`
@@ -2567,6 +2573,20 @@ Dock 内容项。首次激活时才挂载 slot 内容，并可在切换后保留
 ```xml
 <drawer v-model="show" title="Drawer Title">Content</drawer>
 ```
+
+自定义滚动内容的内边距：
+
+```xml
+<drawer v-model="show" title="Filters" direction="v" :padding="false">
+    <flow direction="v" style="flex: 1; min-height: 0">
+        <layout direction="v" gutter="10" style="padding: 20px; flex-shrink: 0">
+            <text placeholder="Keyword" />
+            <select :data="['All', 'Enabled', 'Disabled']" />
+        </layout>
+    </flow>
+</drawer>
+```
+
 
 ## echarts
 ---
