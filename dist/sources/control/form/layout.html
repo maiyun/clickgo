@@ -38,7 +38,7 @@
             <slot></slot>
         </div>
         <!-- footer 不继承内容区的 padding，握柄只在此区域的末端留位。 -->
-        <div v-if="slots.footer" class="footer">
+        <div v-if="slots.footer" class="footer" :style="{'border-radius': isNativeNoFrameFirst ? '0 !important' : undefined}">
             <div class="footer-content"><slot name="footer"></slot></div>
         </div>
     </div>

@@ -13,7 +13,7 @@ const render = compile(template);
 const theme = document.createElement('style');
 theme.textContent = `
     .wrap { border: 3px solid black !important; border-radius: 24px !important; box-shadow: 0 0 8px black !important; }
-    .wrap > .inner, .wrap > .inner > .header, .wrap > .inner > .content { border-radius: 24px !important; }
+    .wrap > .inner, .wrap > .inner > .header, .wrap > .inner > .content, .wrap > .inner > .footer { border-radius: 24px !important; }
     .child-control { border: 1px solid blue; border-radius: 12px; }
 `;
 document.head.append(theme);
@@ -34,7 +34,7 @@ for (const mode of ['web', 'native-framed', 'native-frameless']) {
                 isMask: false, isResize: false, iconDataUrl: '', title: 'Notepad',
                 isMin: true, isMax: true, isClose: true, direction: 'v',
                 background: '', backgroundStyle: {}, padding: '', contentPadding: undefined, stepShowData: false, stepData: [],
-                stepValue: '', isLoading: false, slots: {}, isSizeGrip: false,
+                stepValue: '', isLoading: false, slots: { footer: false }, isSizeGrip: false,
             }),
             methods: { moveMethod() {}, minMethod() {}, maxMethod() {}, closeMethod() {}, stepDown() {} },
         });
@@ -60,10 +60,22 @@ for (const mode of ['web', 'native-framed', 'native-frameless']) {
         for (const focused of [false, true]) {
             form.formFocus = focused;
             form.stateMaxData = focused;
-            await nextTick();
-            for (const el of [wrap, inner, content, header].filter(Boolean)) {
-                assert.equal(el.style.getPropertyPriority('border-radius'), nativeFirst ? 'important' : '');
-                assert.equal(dom.window.getComputedStyle(el).borderRadius, nativeFirst ? '0' : '24px');
+            for (const hasFooter of [false, true, false]) {
+                form.slots.footer = hasFooter;
+                await nextTick();
+                const footer = host.querySelector('.footer');
+                assert.equal(Boolean(footer), hasFooter);
+                assert.equal(inner.classList.contains('has-footer'), hasFooter);
+                for (const el of [wrap, inner, content, header, footer].filter(Boolean)) {
+                    assert.equal(el.style.getPropertyPriority('border-radius'), nativeFirst ? 'important' : '');
+                    assert.equal(dom.window.getComputedStyle(el).borderRadius, nativeFirst ? '0' : '24px');
+                }
+                if (footer) {
+                    const footerChild = child.cloneNode();
+                    footer.querySelector('.footer-content').append(footerChild);
+                    assert.equal(dom.window.getComputedStyle(footerChild).borderRadius, '12px');
+                    assert.equal(dom.window.getComputedStyle(footerChild).borderTopWidth, '1px');
+                }
             }
             for (const property of ['border', 'box-shadow']) {
                 assert.equal(wrap.style.getPropertyPriority(property), nativeFirst ? 'important' : '');
@@ -77,4 +89,4 @@ for (const mode of ['web', 'native-framed', 'native-frameless']) {
         host.remove();
     }
 }
-console.log('Native first-Form styling, theme overrides and ordinary Form isolation checks passed.');
+console.log('Native first-Form styling, dynamic footer, theme overrides and ordinary Form isolation checks passed.');

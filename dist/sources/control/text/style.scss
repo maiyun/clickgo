@@ -64,6 +64,15 @@
     // --- type 为 number 时的右侧控制按钮 ---
     .number {
         display: flex; flex-direction: column;
+        // --- 按钮贴住外框末端时，底色跟随外框圆角；有后置内容时保留方形接缝。 ---
+        &:last-child {
+            .up {
+                border-start-end-radius: var(--g-radius);
+            }
+            .down {
+                border-end-end-radius: var(--g-radius);
+            }
+        }
         .up, .down {
             flex: 1; width: var(--g-control-m); display: flex; align-items: center; justify-content: center; transition: var(--g-transition);
             &::before {
