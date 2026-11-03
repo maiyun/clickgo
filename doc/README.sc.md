@@ -22,6 +22,8 @@
 
 > 项目声明：本项目于 2016 年 11 月 1 日首次提交到 GitHub，于 2026 年正式引入 AI 进行辅助开发并进行 AI 适配改造，但项目依然是软件工程师主导、审查、验证与测试，并非许愿式 AI 自动生成。非中文部分借助柏软翻译进行辅助翻译，因此语气可能会有 AI 感。
 
+> GitHub 的发行版本可能不全，3.0.0 之后的版本以 NPM 为准：[NPM](https://www.npmjs.com/package/clickgo?activeTab=versions)
+
 <p align="center">
     <img src="./pic3.jpg" alt="ClickGo">
     <img src="./pic.jpg" alt="ClickGo">
