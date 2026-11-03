@@ -291,7 +291,7 @@ global {
 .table_wrap .table_header {
     background:var(--face);
     > .table_item { border-inline-end:none; }
-    .table_item { background:transparent; padding:12px 16px; color:var(--g-color-tip); }
+    .table_item { background:var(--face); padding:12px 16px; color:var(--g-color-tip); }
 }
 .table-item_wrap { padding:12px 16px; }
 
