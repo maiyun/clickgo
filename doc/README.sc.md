@@ -18,7 +18,9 @@
 
 使用 HTML + CSS 构建 Web、Native 应用。
 
-应用编译为 cga 单文件，可以在 Web 中运行，也可以借助 [ClickGo Native](https://github.com/maiyun/clickgo-native) 在本地系统运行。可编写图像编辑器、数据库管理工具、文件浏览器等应用软件，也可编写后台管理面板。
+应用可编译为 cga 单文件，可以在 Web 中运行，也可以借助 [ClickGo Native](https://github.com/maiyun/clickgo-native) 在本地系统运行。可编写图像编辑器、数据库管理工具、文件浏览器等应用软件，也可编写后台管理面板。
+
+> 项目声明：本项目于 2016 年 11 月 1 日首次提交到 GitHub，于 2026 年正式引入 AI 进行辅助开发并进行 AI 适配改造，但项目依然是软件工程师主导、审查、验证与测试，并非许愿式 AI 自动生成。非中文部分借助柏软翻译进行辅助翻译，因此语气可能会有 AI 感。
 
 <p align="center">
     <img src="./pic3.jpg" alt="ClickGo">
@@ -104,4 +106,6 @@ ClickGo 会自动加载 Vue、jszip 库，所以**请勿**引用这些库的 JS 
 
 ## 许可
 
-ClickGo 基于 [Apache-2.0](./LICENSE) 协议发布。
+ClickGo 基于 [Apache-2.0](../LICENSE) 协议发布。
+
+第三方许可与署名见[第三方许可](../THIRD-PARTY-LICENSES.md)。
