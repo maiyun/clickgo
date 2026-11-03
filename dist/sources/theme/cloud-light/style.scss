@@ -298,13 +298,11 @@ global {
 // --- 浅色侧栏：状态只改变中性底色，连接线在每层菜单内部随内容伸缩 ---
 .form_wrap .nav_wrap {
     --nav-layer-shadow:var(--cloud-nav-shadow);
-    .nav_menu, .nav_menu-panel { width:260px; background:var(--face); }
-    .nav_menu { padding:10px 14px; border-inline-end:1px solid var(--cloud-divider); }
+    --nav-logo-height:58px;
+    .nav_menu-panel { width:260px; background:var(--face); border-inline-end:1px solid var(--cloud-divider); }
+    .nav_menu { padding:0 14px 8px; }
+    .nav_menu > :first-child:not(.nav_logo) { margin-top:8px; }
     .nav_menu > .nav-item_wrap, .nav_menu > .nav-title_wrap { margin:0; }
-    &.nav_chrome .nav_menu-panel {
-        border-inline-end:1px solid var(--cloud-divider);
-        .nav_menu { width:auto; padding:8px 14px; }
-    }
     .nav_menu-header { padding:16px 22px; border-bottom:1px solid var(--cloud-divider); }
     .nav_menu-footer { padding:16px 22px; border-top:1px solid var(--cloud-divider); }
     .nav_header {

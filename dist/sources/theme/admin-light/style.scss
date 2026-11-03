@@ -392,12 +392,12 @@ global {
 
         color:var(--g-color);
         z-index: 10;
-        border-inline-end: solid .5px var(--g-border-color);
-        box-shadow: none;
+        .nav_menu-panel {
+            border-inline-end: solid .5px var(--g-border-color);
+            background: var(--face);
+        }
 
         .nav_menu {
-            background: var(--face);
-
             .nav_logo {
                 margin-bottom: var(--g-padding-s);
                 padding: var(--g-padding-l);

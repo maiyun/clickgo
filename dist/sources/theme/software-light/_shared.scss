@@ -246,7 +246,7 @@
 @mixin navigation-and-scroll {
     .nav_wrap {
         --nav-layer-shadow:none;
-        .nav_menuwrap .nav_menu, .nav_content .nav_header { box-shadow: none; }
+        .nav_menuwrap .nav_menu-panel, .nav_content .nav_header { box-shadow: none; }
         .nav_bg { display: none; }
     }
 

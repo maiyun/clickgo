@@ -165,8 +165,8 @@
             }
         }
         .nav_menuwrap {
-            border-inline-end: solid .5px var(--g-border-color);
-            .nav_menu {
+            .nav_menu-panel {
+                border-inline-end: solid .5px var(--g-border-color);
                 -webkit-backdrop-filter: var(--g-pop-backdrop);
                 backdrop-filter: var(--g-pop-backdrop);
             }

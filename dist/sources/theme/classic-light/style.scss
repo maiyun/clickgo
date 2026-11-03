@@ -653,9 +653,11 @@ global {
 
 // --- 导航参考经典控制台：灰色命令栏、白色凹面和左侧加减号。 ---
 .nav_wrap {
-    .nav_menuwrap .nav_menu {
+    .nav_menuwrap .nav_menu-panel {
         @include sunken;
         background: #ffffff;
+    }
+    .nav_menuwrap .nav_menu {
         padding: 2px;
         > .nav-item_wrap, > .nav-title_wrap { margin: 0; }
     }

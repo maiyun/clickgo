@@ -127,13 +127,12 @@ global {
             --face-hover:color-mix(in srgb, var(--main), var(--dashboard-sidebar) 84%);
             --face-selected:color-mix(in srgb, var(--main), var(--dashboard-sidebar) 68%);
             color:var(--g-color);
-            .nav_menu, .nav_menu-panel {
+            .nav_menu-panel {
                 width:222px;
                 border:none;
                 background:var(--face);
             }
-            .nav_menu-panel .nav_menu {
-                width:auto;
+            .nav_menu {
                 padding:0 18px;
                 > .nav-item_wrap, > .nav-title_wrap { margin:0; }
                 > .nav-item_wrap { margin-bottom:6px; }

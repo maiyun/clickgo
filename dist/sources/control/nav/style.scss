@@ -6,10 +6,22 @@
     }
     .menuwrap {
         display: flex; overflow: hidden; z-index: 7; // --- 不设置的话，收起来的瞬间会到底部去，不能设置 2，会被 header 挡住 ---
+        .menu-panel {
+            box-sizing: border-box; width: 270px; display: flex; flex-direction: column; min-height: 0; background: var(--face); border-inline-end: solid .5px var(--g-border-color); transition: transform .3s var(--g-cubic);
+        }
+        .menu-header, .menu-footer {
+            flex-shrink: 0; padding: var(--g-padding);
+        }
         .menu {
-            background: var(--face); border-inline-end: solid .5px var(--g-border-color); padding: 1px; width: 270px; transition: all .3s var(--g-cubic); transition-property: transform;
+            flex: 1; min-height: 0; padding: 1px;
             .logo {
-                height: 60px; background-size: auto 50%; background-position: center; background-repeat: no-repeat; display: flex;
+                box-sizing: border-box; height: var(--nav-logo-height, 60px); display: flex; align-items: center; justify-content: center; gap: var(--g-padding); min-width: 0;
+                .logo-image {
+                    min-width: 0; max-width: 100%; max-height: min(30px, 100%); object-fit: contain;
+                }
+                .slogo {
+                    min-width: 0;
+                }
             }
 
             > * {
@@ -20,15 +32,15 @@
     &.layer {
         .menuwrap {
             position: absolute; width: 100%; height: 100%; left: 0; top: 0; background-color: rgba(0, 0, 0, 0); pointer-events: none; transition: all .3s var(--g-cubic); transition-property: background-color;
-            .menu {
-                box-shadow: var(--nav-layer-shadow, 0px 15px 30px rgba(0,0,0,.07)); transform: translateX(-300px);
+            .menu-panel {
+                box-shadow: var(--nav-layer-shadow, 0px 15px 30px rgba(0,0,0,.07)); transform: translateX(-100%);
             }
         }
         &.show {
             .menuwrap {
                 // --- 半透明部分 ---
                 background: var(--g-background-opacity); pointer-events: initial;
-                .menu {
+                .menu-panel {
                     transform: translateX(0);
                 }
             }
@@ -38,8 +50,8 @@
         &:not(.show) {
             .menuwrap {
                 position: absolute; width: 100%; height: 100%; left: 0; top: 0; pointer-events: none;
-                .menu {
-                    transform: translateX(-300px); transition: all .3s var(--g-cubic);
+                .menu-panel {
+                    transform: translateX(-100%); transition: all .3s var(--g-cubic);
                 }
             }
         }
@@ -69,52 +81,9 @@
     }
 
     &:dir(rtl) {
-        &.layer:not(.show) .menuwrap .menu, &:not(.layer):not(.show) .menuwrap .menu {
-            transform: translateX(300px);
+        &.layer:not(.show) .menuwrap .menu-panel, &:not(.layer):not(.show) .menuwrap .menu-panel {
+            transform: translateX(100%);
         }
     }
 
-    // --- 顶部和底部跟随整块侧栏折叠，只有菜单列表滚动 ---
-    &.chrome {
-        .menu-panel {
-            width: 270px;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            background: var(--face);
-            transition: transform .3s var(--g-cubic);
-
-            .menu {
-                flex: 1;
-                width: auto;
-                min-height: 0;
-                border-inline-end: none;
-                transform: none;
-                box-shadow: none;
-            }
-        }
-        .menu-header, .menu-footer {
-            flex-shrink: 0;
-            padding: var(--g-padding);
-        }
-        // --- 浮层阴影属于整块侧栏，不能落在菜单与固定底部之间 ---
-        &.layer .menu-panel {
-            box-shadow: var(--nav-layer-shadow, 0px 15px 30px rgba(0,0,0,.07));
-        }
-        &.layer, &:not(.show) {
-            .menu-panel {
-                transform: translateX(-300px);
-            }
-        }
-        &.show .menu-panel {
-            transform: none;
-        }
-        &:dir(rtl) {
-            &.layer:not(.show), &:not(.show) {
-                .menu-panel {
-                    transform: translateX(300px);
-                }
-            }
-        }
-    }
 }

@@ -170,7 +170,7 @@ global {
         background: oklch(from var(--cg) .09 calc(c * .07) h);
     }
     .nav_menuwrap {
-        .nav_menu {
+        .nav_menu-panel {
             background: oklch(from var(--cg) .14 calc(c * .13) h / .91);
         }
     }

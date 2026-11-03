@@ -26,7 +26,7 @@ async function load(name) {
     const code = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
     const module = { exports: {} };
     new Function('require', 'module', 'exports', code)(
-        () => ({ control: { AbstractControl }, tool: { clone: value => structuredClone(value) } }),
+        () => ({ control: { AbstractControl }, tool: { clone: value => structuredClone(value) }, dom: { watchSize() {} } }),
         module, module.exports
     );
     return module.exports.default;
@@ -35,10 +35,11 @@ async function load(name) {
 const Nav = await load('nav');
 const NavItem = await load('nav-item');
 
-async function render(name, Control, slots = {}, props = {}, nav = null) {
+async function render(name, Control, slots = {}, props = {}, nav = null, state = {}) {
     const template = await readFile(new URL(`../../sources/control/${name}/layout.html`, import.meta.url), 'utf8');
     const control = new Control();
     Object.assign(control.props, props);
+    Object.assign(control, state);
     if (nav) { control.nav = nav; }
     const Component = {
         setup(_, context) {
@@ -81,17 +82,12 @@ async function render(name, Control, slots = {}, props = {}, nav = null) {
     return { host, control, close() { app.unmount(); host.remove(); } };
 }
 
-const legacy = await render('nav', Nav, { default: () => vue.h('div', 'Menu') });
-assert.equal(legacy.host.querySelector('.chrome'), null, 'Legacy navigation must not enter fixed-region mode');
-assert.equal(legacy.host.querySelector('.menu-panel'), null, 'Legacy navigation keeps the direct menu flow');
-assert.equal(legacy.host.querySelector('.menuwrap > .menu')?.textContent, 'Menu');
-legacy.close();
-
-for (const regions of [['menu-header'], ['menu-footer'], ['menu-header', 'menu-footer']]) {
+for (const regions of [[], ['menu-header'], ['menu-footer'], ['menu-header', 'menu-footer']]) {
     const slots = { default: () => vue.h('div', 'Scrollable menu') };
     for (const region of regions) { slots[region] = () => vue.h('div', region); }
     const framed = await render('nav', Nav, slots);
     const panel = framed.host.querySelector('.menu-panel');
+    assert.equal(framed.host.querySelectorAll('[data-menu-scroll]').length, 1);
     const menu = panel.querySelector('[data-menu-scroll]');
     assert.equal(menu.textContent, 'Scrollable menu');
     for (const region of regions) {
@@ -100,6 +96,21 @@ for (const regions of [['menu-header'], ['menu-footer'], ['menu-header', 'menu-f
         assert.equal(menu.contains(element), false);
     }
     framed.close();
+}
+
+for (const withSlogo of [false, true]) {
+    const slots = withSlogo ? { slogo: () => vue.h('span', 'Product') } : {};
+    const logo = 'https://example.test/logo.png';
+    const branded = await render('nav', Nav, slots, {}, null, { logoData: logo });
+    const image = branded.host.querySelector('.logo-image');
+    assert.equal(image?.tagName, 'IMG');
+    assert.equal(image.getAttribute('src'), logo);
+    assert.equal(image.draggable, false, 'Logo must disable native image dragging');
+    assert.equal(branded.host.querySelector('.slogo')?.textContent ?? null, withSlogo ? 'Product' : null);
+    branded.close();
+    const empty = await render('nav', Nav, slots);
+    assert.equal(empty.host.querySelector('.logo'), null);
+    empty.close();
 }
 
 const selected = [];
@@ -134,4 +145,4 @@ const emitted = nav.emitted.length;
 await nav.select('Orders?page=2');
 assert.equal(nav.emitted.length, emitted, 'Repeated selection remains a no-op');
 dom.window.close();
-console.log('Nav legacy layout, fixed regions, suffix selection, nested menus, hash and query regressions passed.');
+console.log('Nav panel, logo, fixed regions, suffix selection, nested menus, hash and query regressions passed.');
