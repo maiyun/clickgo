@@ -338,7 +338,6 @@ global {
     --g-plain-border-color-disabled:#484848;
     .switch_block { background: #dedede; }
 }
-@include shared.accent-foreground;
 @include shared.switch-and-alert;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---

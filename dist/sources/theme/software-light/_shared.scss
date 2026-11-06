@@ -1,22 +1,12 @@
 @use '../../control' as contrast;
 
-// --- 主题专属的工具选中态、菜单和开关复用控件前景计算。 ---
-@mixin accent-foreground {
-    .button_wrap, .switch_wrap, .menulist-item_wrap {
-        --software-on-accent:#{contrast.on-color('var(--cg)')};
-        --software-on-accent-hover:#{contrast.on-color('var(--cg-hover)')};
-        --software-on-accent-active:#{contrast.on-color('var(--cg-active)')};
-        --software-on-accent-focus:#{contrast.on-color('var(--cg-focus)')};
-    }
-}
-
 // --- 选中开关的滑块与轨道保持对比；未选中和禁用时使用主题中性色。 ---
 @mixin switch-mark {
     .switch_wrap:not([data-cg-disabled]).switch_checked {
-        --software-mark-color:var(--software-on-accent);
-        &:focus { --software-mark-color:var(--software-on-accent-focus); }
-        &:hover { --software-mark-color:var(--software-on-accent-hover); }
-        &:active, &.switch_active { --software-mark-color:var(--software-on-accent-active); }
+        --software-mark-color:#{contrast.on-color('var(--cg)')};
+        &:focus { --software-mark-color:#{contrast.on-color('var(--cg-focus)')}; }
+        &:hover { --software-mark-color:#{contrast.on-color('var(--cg-hover)')}; }
+        &:active, &.switch_active { --software-mark-color:#{contrast.on-color('var(--cg-active)')}; }
         .switch_block { background: var(--software-mark-color); }
     }
 }

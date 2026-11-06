@@ -1,4 +1,5 @@
 @use 'shared';
+@use '../../control' as contrast;
 
 global {
     @include shared.metrics;
@@ -151,9 +152,9 @@ global {
     }
     &.button_tool {
         // --- 工具选中态用主色填充，普通参数按钮由主色边框标记选中。 ---
-        --software-selection-color:var(--software-on-accent);
-        --software-selection-color-hover:var(--software-on-accent-hover);
-        --software-selection-color-active:var(--software-on-accent-active);
+        --software-selection-color:#{contrast.on-color('var(--cg)')};
+        --software-selection-color-hover:#{contrast.on-color('var(--cg-hover)')};
+        --software-selection-color-active:#{contrast.on-color('var(--cg-active)')};
         --software-selection-background:var(--cg);
         --software-selection-hover:var(--cg-hover);
         --software-selection-active:var(--cg-active);
@@ -281,9 +282,9 @@ global {
     }
     &:not([data-cg-disabled]) {
         &:hover, &[data-cg-pop-open] {
-            --g-color:var(--software-on-accent);
+            --g-color:#{contrast.on-color('var(--cg)')};
             background: var(--cg);
-            color: var(--software-on-accent);
+            color: var(--g-color);
             .menulist-item_right { color: inherit; }
             .menulist-item_right .menulist-item_btn { background: transparent; }
             .menulist-item_check, .menulist-item_radio { background: transparent; }
@@ -403,7 +404,6 @@ global {
     --g-plain-border-color-disabled:#d5d5d5;
     .switch_block { background: #fafafa; }
 }
-@include shared.accent-foreground;
 @include shared.switch-and-alert;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
