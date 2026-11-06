@@ -45,7 +45,7 @@
                 <layout gutter="10" direction="v" style="padding: 10px;">
                     <label>Now select value is {{select2}}</label>
                     <label>Label: {{label2}}</label>
-                    <select v-model="select2" @label="label2 = $event" :data="slist2" :disabled="disabled" :editable="editable" :multi="multi" :plain="plain" :tree="tree" :async="async" :virtual="virtual" :padding="padding[0]" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" :disabledList="disabledList" :unavailableList="unavailableList" :leftlabel="leftlabel" @load="onLoad" @remote="onRemote" @add="onAdd" @remove="onRemove" @added="onAdded" @removed="onRemoved" @change="onChange" @changed="onChanged" @tagclick="onTagclick" style="flex: 1;" :style="{'font-size': fontSize ? '16px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
+                    <select placeholder="Please select" v-model="select2" @label="label2 = $event" :data="slist2" :disabled="disabled" :editable="editable" :multi="multi" :plain="plain" :tree="tree" :async="async" :virtual="virtual" :padding="padding[0]" :search="search" :remote="remote" :remote-delay="remoteDelay[0]" :icon="icon" icon-default="../../../res/txt.svg" :disabledList="disabledList" :unavailableList="unavailableList" :leftlabel="leftlabel" @load="onLoad" @remote="onRemote" @add="onAdd" @remove="onRemove" @added="onAdded" @removed="onRemoved" @change="onChange" @changed="onChanged" @tagclick="onTagclick" style="flex: 1;" :style="{'font-size': fontSize ? '16px' : undefined, 'background': background ? 'red' : undefined, 'color': background ? '#FFF' : undefined}"></select>
                     <layout gutter="10">
                         <button @click="select2[0]='ha6'" style="flex: 1">Select disabled</button>
                         <button @click="disabledList = disabledList.length > 1 ? ['haha4'] : ['haha3', 'ha5']" style="flex: 1">{{disabledList.length ? disabledList : 'disabledList'}}</button>
@@ -86,7 +86,7 @@
                     <!-- no value -->
                     <label>No value: {{noValue}}</label>
                     <layout gutter="10">
-                        <select v-model="noValue" :data="['0','1','2','3']" :virtual="virtual" :padding="padding[0]" search :leftlabel="leftlabel" style="flex: 1;" />
+                        <select placeholder="Please select" v-model="noValue" :data="['0','1','2','3']" :virtual="virtual" :padding="padding[0]" search :leftlabel="leftlabel" style="flex: 1;" />
                         <button @click="noValue = []">Clear</button>
                     </layout>
                     <!-- rearward -->

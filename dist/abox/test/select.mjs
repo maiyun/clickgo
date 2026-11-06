@@ -180,6 +180,103 @@ function test(name, callback) { cases.push([name, callback]); }
 const option = (value, label = value, extra = {}) => ({ value, label, ...extra });
 const remote = { remote: true, search: true };
 
+test('empty single selection displays and reactively updates its placeholder without changing values', async () => {
+    const m = await mount({ placeholder: 'Choose an option' });
+    const label = () => m.select.element.querySelector('.labelmode');
+    assert.equal(label().textContent, 'Choose an option');
+    assert.ok(label().classList.contains('placeholder'));
+    m.state.placeholder = 'Pick one';
+    m.state.disabled = true;
+    await flush();
+    assert.equal(label().textContent, 'Pick one');
+    m.state.placeholder = '';
+    await flush();
+    assert.equal(label().textContent, '　');
+    assert.deepEqual([...m.state.modelValue], []);
+    assert.deepEqual(m.events, []);
+    m.dispose();
+});
+
+test('ordinary single selection still selects the first available option when data arrives', async () => {
+    const m = await mount({ placeholder: 'Choose an option' });
+    m.state.data = [option('a', 'Alpha')];
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['a']);
+    assert.equal(m.select.element.querySelector('.labelmode').textContent, 'Alpha');
+    assert.equal(m.select.element.querySelector('.placeholder'), null);
+    m.dispose();
+});
+
+test('searchable single selection restores its placeholder after external clearing', async () => {
+    const m = await mount({ search: true, placeholder: 'Choose an option', data: [option('a', 'Alpha')] });
+    assert.equal(m.select.element.querySelector('.placeholder').textContent, 'Choose an option');
+    await m.click(0);
+    assert.equal(m.select.element.querySelector('.placeholder'), null);
+    m.state.modelValue = [];
+    await flush();
+    assert.equal(m.select.element.querySelector('.placeholder').textContent, 'Choose an option');
+    m.dispose();
+});
+
+for (const search of [false, true]) {
+    for (const removal of search ? ['tag', 'external'] : ['tag', 'list', 'external']) {
+        test(`multi placeholder returns after ${removal} clears the last selection (search=${search})`, async () => {
+            let reject = true;
+            const m = await mount({ multi: true, search, placeholder: 'Choose options', data: [option('a', 'Alpha')] }, {
+                remove: event => { if (reject) event.preventDefault(); },
+            });
+            const placeholder = () => m.select.element.querySelector('.tags .placeholder');
+            assert.equal(placeholder().textContent, 'Choose options');
+            await m.click(0);
+            assert.equal(placeholder(), null);
+            const clear = async () => {
+                if (removal === 'tag') m.select.removeTag(0);
+                else if (removal === 'list') await m.click(0);
+                else m.state.modelValue = [];
+                await flush();
+            };
+            if (removal !== 'external') {
+                await clear();
+                assert.equal(placeholder(), null);
+                assert.deepEqual([...m.state.modelValue], ['a']);
+            }
+            reject = false;
+            await clear();
+            assert.deepEqual([...m.state.modelValue], []);
+            assert.equal(placeholder().textContent, 'Choose options');
+            m.dispose();
+        });
+    }
+}
+
+test('selected empty labels and pending local labels do not become placeholders', async () => {
+    for (const multi of [false, true]) {
+        const m = await mount({ search: true, multi, placeholder: 'Choose an option', modelValue: ['a'] });
+        assert.ok(!m.select.element.textContent.includes('Choose an option'));
+        m.state.data = [option('a', '')];
+        await flush();
+        assert.ok(!m.select.element.textContent.includes('Choose an option'));
+        assert.deepEqual([...m.state.modelValue], ['a']);
+        m.dispose();
+    }
+});
+
+test('editable placeholders retain the existing input hint with and without selected tags', async () => {
+    for (const multi of [false, true]) {
+        const m = await mount({ editable: true, multi, placeholder: 'Type an option', data: ['a'] });
+        const input = () => m.select.element.querySelector('input');
+        assert.equal(input().getAttribute('placeholder'), 'Type an option');
+        await m.click(0);
+        assert.equal(input().getAttribute('placeholder'), 'Type an option');
+        assert.equal(input().value, multi ? '' : 'a');
+        m.state.modelValue = [];
+        await flush();
+        assert.equal(input().value, '');
+        assert.equal(input().getAttribute('placeholder'), 'Type an option');
+        m.dispose();
+    }
+});
+
 test('an editable local search with an initial value shows its matching options on first open', async () => {
     const m = await mount({ editable: true, search: true, virtual: true, modelValue: ['2026'], data: ['2025', '2026', '2027'] });
     assert.equal(m.select.inputValue, '2026');
