@@ -13,7 +13,7 @@
         <div class="right">
             <cg-button v-if="propBoolean('clearbtn') && (timestamp !== undefined)" @click="clear">{{l('clear')}}</cg-button>
             <cg-button v-if="propBoolean('backbtn') && (timestamp !== undefined) && ((dateValue.year !== parseInt(vyear[0])) || (dateValue.month !== parseInt(vmonth[0]) - 1))" @click="back">{{l('back')}}</cg-button>
-            <cg-button v-if="!isMonth" @click="today">{{l('today')}}</cg-button>
+            <cg-button v-if="!isMonth && propBoolean('todaybtn')" @click="today">{{l('today')}}</cg-button>
         </div>
     </div>
     <div v-if="isMonth" class="month-grid">

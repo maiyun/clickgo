@@ -104,7 +104,13 @@ month 模式归一到所选时区的当月 1 日 00:00:00.000；外部传入日�
 
 `boolean` | `string`
 
-是否显示返回今天按钮，默认 true。
+是否显示返回当前选中年月的按钮，默认 true。
+
+#### todaybtn
+
+`boolean` | `string`
+
+是否显示今天按钮，默认 true。按 tz 对应的日期选择今天，遵循 start/end 和 disabledList；range 模式下设置起点。
 
 ### 事件
 

@@ -1,12 +1,12 @@
 <div class="wrap" :data-cg-disabled="propBoolean('disabled') ? '' : undefined">
     <div class="first">
         <div @click="click('first')" ref="first">
-            <template v-if="dateStr.length">
-                <div>{{dateStr[0]}}</div>
-                <div v-if="propBoolean('time')">{{timeStr[0]}}</div>
+            <template v-if="display.length">
+                <div>{{display[0].date}}</div>
+                <div v-if="propBoolean('time')">{{display[0].time}}</div>
                 <div>-</div>
-                <div>{{dateStr[1]}}</div>
-                <div v-if="propBoolean('time')">{{timeStr[1]}}</div>
+                <div>{{display[1].date}}</div>
+                <div v-if="propBoolean('time')">{{display[1].time}}</div>
             </template>
             <template v-else>
                 <div>{{l('please click select')}}</div>
@@ -14,23 +14,40 @@
         </div>
         <div v-if="propBoolean('zone')" @click="click('zone')" ref="zone">UTC{{tzData >= 0 ? '+' : ''}}{{tzData}}</div>
     </div>
-    <div class="clear" @click="clear" v-if="propBoolean('close') && dateStr.length">
+    <div v-if="propBoolean('close') && display.length" class="clear" @click="clear">
         <svg viewBox="0 0 24 24" stroke="none"><path d="m7.53033 6.46967c-.29289-.29289-.76777-.29289-1.06066 0s-.29289.76777 0 1.06066l4.46963 4.46967-4.46963 4.4697c-.29289.2929-.29289.7677 0 1.0606s.76777.2929 1.06066 0l4.46967-4.4696 4.4697 4.4696c.2929.2929.7677.2929 1.0606 0s.2929-.7677 0-1.0606l-4.4696-4.4697 4.4696-4.46967c.2929-.29289.2929-.76777 0-1.06066s-.7677-.29289-1.0606 0l-4.4697 4.46963z" /></svg>
     </div>
     <teleport to="system">
-        <div ref="firstpop" class="pop first">
-            <template v-if="datePanelsMounted">
-                <cg-datepanel plain :tz="tzData" :time="propBoolean('time')" v-model="ts" v-model:cursor="cursor" range :clearbtn="false" ref="firstpanel" @range="onRange" @changed="firstChanged" :yearmonth="firstym" @update:yearmonth="firstym=$event;onYmChange()" :start="start" :end="end">
-                    <template v-if="slots['default']" v-slot="col">
-                        <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
-                    </template>
-                </cg-datepanel>
-                <cg-datepanel v-show="showTwoDatePanel" plain :tz="tzData" hourminute="235959" :time="propBoolean('time')" :modelValue="ts2" v-model:cursor="cursor" range :start="ts" :end="end" :clearbtn="false" :backbtn="false" ref="endpanel" @range="onRange" :yearmonth="endym" @update:yearmonth="endym=$event;onYmChange()" :jump="false" :disabled="ts === undefined ? true : false">
-                    <template v-if="slots['default']" v-slot="col">
-                        <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
-                    </template>
-                </cg-datepanel>
-            </template>
+        <div ref="firstpop" class="pop first" :class="{'single': !showTwoDatePanel}">
+            <!-- 快捷范围独立于日历起点选择，窄屏自动换行 -->
+            <div class="shortcuts">
+                <cg-button v-for="item of shortcuts" :key="item.id" :disabled="propBoolean('disabled') || item.value === null" @click="selectShortcut(item.id)">{{l(item.id)}}</cg-button>
+            </div>
+            <div class="calendars">
+                <template v-if="datePanelsMounted">
+                    <cg-datepanel plain :tz="tzData" :time="false" :modelValue="ts" v-model:cursor="cursor" range :clearbtn="false" :todaybtn="false" :disabled="propBoolean('disabled')" ref="firstpanel" @range="onRange" @selected="onSelected" :yearmonth="firstym" @update:yearmonth="firstym=$event;onYmChange()" :start="start" :end="end">
+                        <template v-if="slots['default']" v-slot="col">
+                            <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
+                        </template>
+                    </cg-datepanel>
+                    <cg-datepanel v-if="showTwoDatePanel" plain :tz="tzData" :time="false" :modelValue="ts" v-model:cursor="cursor" range :start="ts" :end="end" :clearbtn="false" :backbtn="false" :todaybtn="false" ref="endpanel" @range="onRange" :yearmonth="endym" @update:yearmonth="endym=$event;onYmChange()" :jump="false" :disabled="propBoolean('disabled') || ts === undefined">
+                        <template v-if="slots['default']" v-slot="col">
+                            <slot :year="col.year" :month="col.month" :date="col.date" :day="col.day" :str="col.str" :time="col.time"></slot>
+                        </template>
+                    </cg-datepanel>
+                </template>
+            </div>
+            <!-- 起止时间共用一行布局，窄屏换成两行 -->
+            <div v-if="datePanelsMounted && propBoolean('time')" class="times">
+                <div v-for="(time, i) of times" :key="i" class="time">
+                    <span>{{l(i === 0 ? 'start' : 'end')}}</span>
+                    <cg-select :data="hours" v-model="time.hour" :disabled="propBoolean('disabled')"></cg-select>
+                    <span>:</span>
+                    <cg-select :data="minutes" v-model="time.minute" :disabled="propBoolean('disabled')"></cg-select>
+                    <span>:</span>
+                    <cg-select :data="minutes" v-model="time.second" :disabled="propBoolean('disabled')"></cg-select>
+                </div>
+            </div>
         </div>
     </teleport>
     <teleport v-if="propBoolean('zone')" to="system">

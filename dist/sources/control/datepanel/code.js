@@ -28,7 +28,8 @@ export default class extends clickgo.control.AbstractControl {
         'zone': false,
         'range': false,
         'clearbtn': true,
-        'backbtn': true
+        'backbtn': true,
+        'todaybtn': true
     };
     /** --- 当前 date 对象 --- */
     dateObj = new Date();
@@ -666,6 +667,9 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- col 点击 --- */
     colClick(col) {
+        if (this.propBoolean('disabled') || this.isDisabled(col) !== undefined) {
+            return;
+        }
         if (this.rangeDate === undefined && (this.timestamp !== undefined) && this.propBoolean('range')) {
             const cols = col.year.toString() + (col.month + 1).toString().padStart(2, '0') + col.date.toString().padStart(2, '0');
             if (cols === this.dateValueStr) {
@@ -742,12 +746,27 @@ export default class extends clickgo.control.AbstractControl {
         };
         this.emit('selected', event);
     }
-    /** --- 跳转到今天 --- */
+    /**
+     * --- 按所选时区选择今天，并遵循禁用日期与起止限制 ---
+     * @returns 不可选时保持原值，否则更新选值和显示月份
+     */
     today() {
-        // --- 解除 undefined 限制，使选中的时间戳可以 emit 上去 ---
+        if (this.propBoolean('disabled')) {
+            return;
+        }
+        const now = new Date(Date.now() + this.tzData * 60 * 60_000);
+        const col = { 'year': now.getUTCFullYear(), 'month': now.getUTCMonth(), 'date': now.getUTCDate() };
+        if (this.isDisabled(col) !== undefined) {
+            return;
+        }
+        this.rangeDate = undefined;
+        this.cursorDate = '';
+        this.emit('update:cursor', '');
+        this.dateObj.setUTCFullYear(col.year, col.month, col.date);
+        this.dateObj.setUTCHours(parseInt(this.vhour[0] ?? '00'), parseInt(this.vminute[0] ?? '00'), parseInt(this.vseconds[0] ?? '00'), 0);
+        const value = this.dateObj.getTime() - this.tzData * 60 * 60_000;
+        this.dateObj.setTime(Math.max(this.startTs, Math.min(this.endTs, value)) + this.tzData * 60 * 60_000);
         this.timestamp = 0;
-        const now = new Date();
-        this.dateObj.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
         this.refreshDateValue();
         this.updateTimestamp();
         this.goSelected();
@@ -861,6 +880,9 @@ export default class extends clickgo.control.AbstractControl {
             this.seconds.push(i.toString().padStart(2, '0'));
         }
         for (let i = -12; i <= 14; ++i) {
+            if (i === 0) {
+                this.zones.push('-0');
+            }
             this.zones.push((i >= 0 ? '+' : '') + i.toString());
         }
         // --- 检测年月变动 ---
@@ -909,7 +931,7 @@ export default class extends clickgo.control.AbstractControl {
                 return;
             }
             const vz = parseInt(this.vzone[0]);
-            if (vz >= 0) {
+            if (!this.vzone[0].startsWith('-')) {
                 this.tzData = vz + (parseInt(this.vzdec[0]) / 60);
             }
             else {
@@ -937,9 +959,9 @@ export default class extends clickgo.control.AbstractControl {
                 }
                 this.tzData = this.propNumber('tz');
             }
-            const z = this.tzData.toString().split('.');
-            this.vzone[0] = (parseInt(z[0]) >= 0 ? '+' : '') + z[0];
-            this.vzdec[0] = z[1] ? (parseFloat('0.' + z[1]) * 60).toString() : '00';
+            const hours = Math.trunc(Math.abs(this.tzData));
+            this.vzone[0] = (this.tzData < 0 ? '-' : '+') + hours.toString();
+            this.vzdec[0] = Math.round((Math.abs(this.tzData) - hours) * 60).toString().padStart(2, '0');
             this.updateTimestamp();
             // --- 更新 start 和 end ---
             this.startDate.setTime(this.startTs + this.tzData * 60 * 60 * 1000);
@@ -965,13 +987,13 @@ export default class extends clickgo.control.AbstractControl {
                 this.dateObj.setTime(this.timestamp + this.tzData * 60 * 60 * 1000);
                 this.dateObj.setMilliseconds(0);
                 this._normalizeMonth();
+                this.refreshDateValue();
                 this.vhour[0] = this.dateObj.getUTCHours().toString().padStart(2, '0');
                 this.vminute[0] = this.dateObj.getUTCMinutes().toString().padStart(2, '0');
                 this.vseconds[0] = this.dateObj.getUTCSeconds().toString().padStart(2, '0');
                 if (this.propBoolean('jump')) {
                     this.vyear[0] = this.dateObj.getUTCFullYear().toString();
                     this.vmonth[0] = (this.dateObj.getUTCMonth() + 1).toString();
-                    this.refreshDateValue();
                     if (!mvfirst) {
                         // --- 不是第一次 ---
                         const ym = this.vyear[0] + this.vmonth[0].padStart(2, '0');

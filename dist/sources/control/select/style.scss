@@ -63,6 +63,8 @@ cg-greatselect {
 }
 
 .loading {
+    // --- 加载动画只在遮罩内绘制，不扩大浮层的滚动范围 ---
+    overflow: clip;
     position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, .3); display: flex; justify-content: center; align-items: center; transition: all .3s var(--g-cubic);
     &:not(.show) {
         opacity: 0; pointer-events: none;
