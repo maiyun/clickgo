@@ -288,6 +288,38 @@
     }
 }
 
+// --- 输入框边框可透明，日期范围的底色和连接带仍需可见。 ---
+@mixin datepanel {
+    .datepanel_wrap .datepanel_row .datepanel_col {
+        &.datepanel_range, &::before, &::after { background: var(--software-highlight); }
+        &.datepanel_selected, &.datepanel_range-left, &.datepanel_range-right {
+            outline-color: var(--g-border-color);
+        }
+    }
+}
+
+// --- 中性标记、分隔线和关闭按钮使用实色，不继承输入框的透明边框。 ---
+@mixin neutral-controls {
+    .tag_wrap.tag_default:not(.tag_plain) {
+        color: var(--g-color);
+        background: var(--software-highlight);
+    }
+    .circle_wrap.circle_default {
+        --circle-pulse-color:var(--g-color-tip);
+        &:not(.circle_plain) { background: var(--g-color-tip); color: var(--face); }
+        &.circle_plain { border-color: var(--g-color-tip); }
+    }
+    .title_wrap.title_default .title_left { background: var(--g-color-tip); }
+    .greatlist_wrap .greatlist_t .greatlist_tag-cg-vflow .greatlist_split,
+    .greatlist_wrap .greatlist_t .greatlist_tag-cg-flow .greatlist_split { background: var(--g-border-color); }
+    .alert_wrap.alert_default .alert_tag-svg,
+    .tag_wrap.tag_default.tag_plain .tag_tag-svg {
+        &:hover, &:active { fill: var(--g-color); stroke: var(--g-color); }
+        &:hover { background: var(--g-plain-background-hover); }
+        &:active { background: var(--g-plain-background-active); }
+    }
+}
+
 @mixin property-controls {
     .property_wrap > .property_controls {
         gap: var(--g-padding-s);

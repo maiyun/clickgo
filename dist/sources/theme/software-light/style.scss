@@ -367,6 +367,8 @@ global {
 // --- 默认进度条需要独立于透明边框的填充色，语义类型仍使用各自主色 ---
 
 @include shared.progress;
+@include shared.datepanel;
+@include shared.neutral-controls;
 
 // --- 复选框与单选框需要可识别的轮廓，不能随输入区一起隐去 ---
 
@@ -375,12 +377,7 @@ global {
     --g-plain-border-color-disabled:var(--software-divider);
 }
 
-// --- 浅色标签使用深色文字，辅助标签与禁用状态分离 ---
-
-.tag_wrap.tag_default:not(.tag_plain), .circle_wrap.circle_default:not(.circle_plain) {
-    color: var(--g-color);
-    background: var(--face-selected);
-}
+// --- 辅助标签与禁用状态分离 ---
 
 .label_wrap.label_tip, .label_wrap.label_mtip { color: var(--g-color-tip); }
 .title_wrap .title_content { font-size: var(--g-size); font-weight: 600; }
