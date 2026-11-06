@@ -72,6 +72,10 @@
                 <button type="tool" :checked="btnChecked" @click="btnChecked = !btnChecked">Tool toggle</button>
                 <button :checked="btnRadio === '0'" @click="btnRadio = '0'">Radio 1</button>
                 <button :checked="btnRadio === '1'" @click="btnRadio = '1'">Radio 2</button>
+                <button type="cg" area="split" checked>
+                    Split
+                    <template v-slot:pop><menulist><menulist-item>Checked split</menulist-item></menulist></template>
+                </button>
             </layout>
             <label>Menu:</label>
             <layout gutter="10" class="buttons">

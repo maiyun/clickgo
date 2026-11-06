@@ -1,3 +1,5 @@
+@use '../../control' as contrast;
+
 .wrap {
     display: flex; align-items: center; outline: none; transition: var(--g-transition);
 
@@ -23,7 +25,7 @@
     &.indeterminate {
         .check {
             &::after {
-                left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border-radius: var(--g-radius); background: oklch(1 0 0);
+                left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border-radius: var(--g-radius); background: var(--mark-color);
             }
         }
     }
@@ -33,7 +35,7 @@
         &:not(.indeterminate) {
             .check {
                 svg {
-                    display: inline; color: oklch(1 0 0);
+                    display: inline; color: var(--mark-color);
                 }
             }
         }
@@ -46,7 +48,7 @@
         }
         &.indeterminate, &.checked {
             .check {
-                background: var(--cg);
+                background: var(--cg); --mark-color:#{contrast.on-color('var(--cg)')};
                 border: solid .5px var(--cg);
             }
         }
@@ -67,7 +69,7 @@
             }
             &.indeterminate, &.checked {
                 .check {
-                    background: var(--cg-focus);
+                    background: var(--cg-focus); --mark-color:#{contrast.on-color('var(--cg-focus)')};
                     border: solid .5px var(--cg-focus);
                 }
             }
@@ -89,7 +91,7 @@
             &.indeterminate, &.checked {
                 .check {
                     border: solid .5px var(--cg-hover);
-                    background: var(--cg-hover);
+                    background: var(--cg-hover); --mark-color:#{contrast.on-color('var(--cg-hover)')};
                 }
             }
         }
@@ -105,7 +107,7 @@
             }
             &.indeterminate, &.checked {
                 .check {
-                    background: var(--cg-active);
+                    background: var(--cg-active); --mark-color:#{contrast.on-color('var(--cg-active)')};
                     border: solid .5px var(--cg-active);
                 }
             }
@@ -121,7 +123,7 @@
         }
         &.indeterminate, &.checked {
             .check {
-                background: var(--cg-disabled);
+                background: var(--cg-disabled); --mark-color:#{contrast.on-color('var(--cg-disabled)')};
                 border: solid .5px var(--cg-disabled);
             }
         }

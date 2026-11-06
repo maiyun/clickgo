@@ -1,0 +1,7 @@
+@use 'sass:string';
+
+// --- 实心底色的线性亮度低于 .45 时用白色前景，浅黄等亮色用黑色。 ---
+@function on-color($color) {
+    $channel: 'clamp(0, (.45 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
+    @return string.unquote('color(from #{$color} srgb-linear #{$channel} #{$channel} #{$channel} / 1)');
+}

@@ -1,3 +1,5 @@
+@use '../../control' as contrast;
+
 .wrap {
     display: flex; align-items: center; outline: none; transition: var(--g-transition);
     &[data-cg-disabled] {
@@ -20,7 +22,7 @@
 
     &.selected {
         .radio::after {
-            background: oklch(1 0 0);
+            background: var(--mark-color);
         }
     }
 
@@ -31,7 +33,7 @@
         }
         &.selected {
             .radio {
-                background: var(--cg);
+                background: var(--cg); --mark-color:#{contrast.on-color('var(--cg)')};
                 border: solid .5px var(--cg);
             }
         }
@@ -52,7 +54,7 @@
             }
             &.selected {
                 .radio {
-                    background: var(--cg-focus);
+                    background: var(--cg-focus); --mark-color:#{contrast.on-color('var(--cg-focus)')};
                     border: solid .5px var(--cg-focus);
                 }
             }
@@ -73,7 +75,7 @@
             }
             &.selected {
                 .radio {
-                    background: var(--cg-hover);
+                    background: var(--cg-hover); --mark-color:#{contrast.on-color('var(--cg-hover)')};
                     border: solid .5px var(--cg-hover);
                 }
             }
@@ -89,7 +91,7 @@
             }
             &.selected {
                 .radio {
-                    background: var(--cg-active);
+                    background: var(--cg-active); --mark-color:#{contrast.on-color('var(--cg-active)')};
                     border: solid .5px var(--cg-active);
                 }
             }
@@ -105,7 +107,7 @@
         }
         &.selected {
             .radio {
-                background: var(--cg-disabled);
+                background: var(--cg-disabled); --mark-color:#{contrast.on-color('var(--cg-disabled)')};
                 border: solid .5px var(--cg-disabled);
             }
         }

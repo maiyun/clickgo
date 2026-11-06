@@ -1,3 +1,5 @@
+@use '../../control' as contrast;
+
 .wrap {
     border-radius: var(--g-radius); display: flex; flex-direction: column; gap: var(--g-padding-s); padding: var(--g-padding);
     &:not(.plain) {
@@ -93,7 +95,7 @@
                     display: none; width: 14px; height: 14px; fill: currentColor;
                 }
                 &.checked {
-                    border-color: var(--cg); background: var(--cg);
+                    border-color: var(--cg); background: var(--cg); color: contrast.on-color('var(--cg)');
 
                     svg {
                         display: block;
@@ -103,14 +105,14 @@
                     border-color: var(--g-plain-border-color-hover); background: var(--g-plain-background-hover);
 
                     &.checked {
-                        border-color: var(--cg-hover); background: var(--cg-hover);
+                        border-color: var(--cg-hover); background: var(--cg-hover); color: contrast.on-color('var(--cg-hover)');
                     }
                 }
                 &:focus-visible {
                     border-color: var(--g-plain-border-color-focus); box-shadow: var(--g-outline-shadow); outline: none;
 
                     &.checked {
-                        border-color: var(--cg-focus); background: var(--cg-focus);
+                        border-color: var(--cg-focus); background: var(--cg-focus); color: contrast.on-color('var(--cg-focus)');
                     }
                 }
             }

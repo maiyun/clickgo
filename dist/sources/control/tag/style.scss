@@ -1,3 +1,5 @@
+@use '../../control' as contrast;
+
 .wrap {
     border-radius: var(--g-radius-l); display: inline-flex; align-items: center; justify-content: center; transition: var(--g-transition); border: solid .5px transparent; position: relative; padding: var(--padding);
 
@@ -42,21 +44,21 @@
         border-radius: var(--g-radius-xl);
     }
     &:not(.plain) {
-        background: var(--g-plain-border-color); color: oklch(1 0 0); border: solid .5px transparent;
+        background: var(--g-plain-border-color); color: contrast.on-color('var(--g-plain-border-color)'); border: solid .5px transparent;
         &.primary {
-            background: var(--success); border-color: var(--success);
+            background: var(--success); border-color: var(--success); color: contrast.on-color('var(--success)');
         }
         &.info {
-            background: var(--info); border-color: var(--info);
+            background: var(--info); border-color: var(--info); color: contrast.on-color('var(--info)');
         }
         &.warning {
-            background: var(--warning); border-color: var(--warning);
+            background: var(--warning); border-color: var(--warning); color: contrast.on-color('var(--warning)');
         }
         &.danger {
-            background: var(--danger); border-color: var(--danger);
+            background: var(--danger); border-color: var(--danger); color: contrast.on-color('var(--danger)');
         }
         &.cg {
-            background: var(--cg); border-color: var(--cg);
+            background: var(--cg); border-color: var(--cg); color: contrast.on-color('var(--cg)');
         }
 
         svg {
@@ -71,20 +73,14 @@
     &.plain {
         border-color: var(--g-plain-border-color); background: var(--g-plain-background);
 
-        svg {
-            &:hover, &:active {
-                fill: #FFF; stroke: #FFF;
-            }
-        }
-
         &:not(.cg) {
             // --- default ---
             svg {
                 &:hover {
-                    background: var(--g-plain-border-color);
+                    background: var(--g-plain-border-color); fill: contrast.on-color('var(--g-plain-border-color)'); stroke: contrast.on-color('var(--g-plain-border-color)');
                 }
                 &:active {
-                    background: var(--g-border-color);
+                    background: var(--g-border-color); fill: contrast.on-color('var(--g-border-color)'); stroke: contrast.on-color('var(--g-border-color)');
                 }
             }
         }
@@ -92,10 +88,10 @@
             border-color: var(--success); color: var(--success); background: var(--success-bg);
             svg {
                 &:hover {
-                    background: var(--success);
+                    background: var(--success); fill: contrast.on-color('var(--success)'); stroke: contrast.on-color('var(--success)');
                 }
                 &:active {
-                    background: var(--success-active);
+                    background: var(--success-active); fill: contrast.on-color('var(--success-active)'); stroke: contrast.on-color('var(--success-active)');
                 }
             }
         }
@@ -103,10 +99,10 @@
             border-color: var(--info); color: var(--info); background: var(--info-bg);
             svg {
                 &:hover {
-                    background: var(--info);
+                    background: var(--info); fill: contrast.on-color('var(--info)'); stroke: contrast.on-color('var(--info)');
                 }
                 &:active {
-                    background: var(--info-active);
+                    background: var(--info-active); fill: contrast.on-color('var(--info-active)'); stroke: contrast.on-color('var(--info-active)');
                 }
             }
         }
@@ -114,10 +110,10 @@
             border-color: var(--warning); color: var(--warning); background: var(--warning-bg);
             svg {
                 &:hover {
-                    background: var(--warning);
+                    background: var(--warning); fill: contrast.on-color('var(--warning)'); stroke: contrast.on-color('var(--warning)');
                 }
                 &:active {
-                    background: var(--warning-active);
+                    background: var(--warning-active); fill: contrast.on-color('var(--warning-active)'); stroke: contrast.on-color('var(--warning-active)');
                 }
             }
         }
@@ -125,10 +121,10 @@
             border-color: var(--danger); color: var(--danger); background: var(--danger-bg);
             svg {
                 &:hover {
-                    background: var(--danger);
+                    background: var(--danger); fill: contrast.on-color('var(--danger)'); stroke: contrast.on-color('var(--danger)');
                 }
                 &:active {
-                    background: var(--danger-active);
+                    background: var(--danger-active); fill: contrast.on-color('var(--danger-active)'); stroke: contrast.on-color('var(--danger-active)');
                 }
             }
         }
@@ -136,10 +132,10 @@
             border-color: var(--cg); color: var(--cg); background: var(--cg-bg);
             svg {
                 &:hover {
-                    background: var(--cg);
+                    background: var(--cg); fill: contrast.on-color('var(--cg)'); stroke: contrast.on-color('var(--cg)');
                 }
                 &:active {
-                    background: var(--cg-active);
+                    background: var(--cg-active); fill: contrast.on-color('var(--cg-active)'); stroke: contrast.on-color('var(--cg-active)');
                 }
             }
         }

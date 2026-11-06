@@ -1,3 +1,5 @@
+@use '../../control' as contrast;
+
 .wrap {
     border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; pointer-events: none; width: var(--cg-width); height: var(--cg-height);
     --circle-pulse-color:var(--g-plain-border-color);
@@ -28,21 +30,21 @@
     }
 
     &:not(.plain) {
-        background-color: var(--g-plain-border-color); color: oklch(1 0 0); border: solid .5px transparent;
+        background-color: var(--g-plain-border-color); color: contrast.on-color('var(--g-plain-border-color)'); border: solid .5px transparent;
         &.primary {
-            background-color: var(--success); border-color: var(--success);
+            background-color: var(--success); border-color: var(--success); color: contrast.on-color('var(--success)');
         }
         &.info {
-            background-color: var(--info); border-color: var(--info);
+            background-color: var(--info); border-color: var(--info); color: contrast.on-color('var(--info)');
         }
         &.warning {
-            background-color: var(--warning); border-color: var(--warning);
+            background-color: var(--warning); border-color: var(--warning); color: contrast.on-color('var(--warning)');
         }
         &.danger {
-            background-color: var(--danger); border-color: var(--danger);
+            background-color: var(--danger); border-color: var(--danger); color: contrast.on-color('var(--danger)');
         }
         &.cg {
-            background-color: var(--cg); border-color: var(--cg);
+            background-color: var(--cg); border-color: var(--cg); color: contrast.on-color('var(--cg)');
         }
     }
     &.plain {

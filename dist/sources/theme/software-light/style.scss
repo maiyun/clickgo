@@ -5,11 +5,6 @@ global {
 
     // --- 主色保持用户设置的原色，前景按底色选择黑白，页签保持中性 ---
     --software-accent:var(--main);
-    --software-on-accent:#{shared.on-accent('var(--cg)')};
-    --software-on-accent-hover:#{shared.on-accent('var(--cg-hover)')};
-    --software-on-accent-active:#{shared.on-accent('var(--cg-active)')};
-    --software-on-accent-focus:#{shared.on-accent('var(--cg-focus)')};
-    --software-on-accent-disabled:#{shared.on-accent('var(--cg-disabled)')};
     --cg:var(--software-accent);
     --cg-hover:color-mix(in oklch, var(--cg), black 8%);
     --cg-active:color-mix(in oklch, var(--cg), black 14%);
@@ -195,6 +190,7 @@ global {
         --color-hover:var(--software-on-accent-hover);
         --color-active:var(--software-on-accent-active);
         --color-focus:var(--software-on-accent-focus);
+        --color-disabled:var(--software-on-accent-disabled);
         --shadow:none;
     }
     &:not([data-cg-disabled]) {
@@ -412,6 +408,7 @@ global {
     --g-plain-border-color-disabled:#d5d5d5;
     .switch_block { background: #fafafa; }
 }
+@include shared.accent-foreground;
 @include shared.accent-marks-and-alert;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---

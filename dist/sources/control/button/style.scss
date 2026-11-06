@@ -1,3 +1,5 @@
+@use '../../control' as contrast;
+
 .wrap {
     display: flex; outline: none; position: relative; border-radius: var(--g-radius); /* overflow: hidden; 加了这个角标等控件将无法完整显示 */ transition: var(--g-transition); transition-property: color, background-color, box-shadow, transform;
     // --- 外边框 ---
@@ -204,11 +206,11 @@
     }
     &.primary {
         &:not(.plain) {
-            --color:hsl(0, 0%, 100%);
-            --color-hover:hsl(0, 0%, 100%);
-            --color-active:hsl(0, 0%, 100%);
-            --color-focus:hsl(0, 0%, 100%);
-            --color-disabled:var(--g-plain-color-disabled);
+            --color:#{contrast.on-color('var(--background)')};
+            --color-hover:#{contrast.on-color('var(--background-hover)')};
+            --color-active:#{contrast.on-color('var(--background-active)')};
+            --color-focus:#{contrast.on-color('var(--background-focus)')};
+            --color-disabled:#{contrast.on-color('var(--background-disabled)')};
 
             --background:var(--success);
             --background-hover:var(--success-hover);
@@ -216,7 +218,7 @@
             --background-focus:var(--success-focus);
             --background-disabled:var(--success-disabled);
 
-            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) currentColor;
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -244,11 +246,11 @@
     }
     &.info {
         &:not(.plain) {
-            --color:hsl(0, 0%, 100%);
-            --color-hover:hsl(0, 0%, 100%);
-            --color-active:hsl(0, 0%, 100%);
-            --color-focus:hsl(0, 0%, 100%);
-            --color-disabled:var(--g-plain-color-disabled);
+            --color:#{contrast.on-color('var(--background)')};
+            --color-hover:#{contrast.on-color('var(--background-hover)')};
+            --color-active:#{contrast.on-color('var(--background-active)')};
+            --color-focus:#{contrast.on-color('var(--background-focus)')};
+            --color-disabled:#{contrast.on-color('var(--background-disabled)')};
 
             --background:var(--info);
             --background-hover:var(--info-hover);
@@ -256,7 +258,7 @@
             --background-focus:var(--info-focus);
             --background-disabled:var(--info-disabled);
 
-            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) currentColor;
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -284,11 +286,11 @@
     }
     &.warning {
         &:not(.plain) {
-            --color:hsl(0, 0%, 100%);
-            --color-hover:hsl(0, 0%, 100%);
-            --color-active:hsl(0, 0%, 100%);
-            --color-focus:hsl(0, 0%, 100%);
-            --color-disabled:var(--g-plain-color-disabled);
+            --color:#{contrast.on-color('var(--background)')};
+            --color-hover:#{contrast.on-color('var(--background-hover)')};
+            --color-active:#{contrast.on-color('var(--background-active)')};
+            --color-focus:#{contrast.on-color('var(--background-focus)')};
+            --color-disabled:#{contrast.on-color('var(--background-disabled)')};
 
             --background:var(--warning);
             --background-hover:var(--warning-hover);
@@ -296,7 +298,7 @@
             --background-focus:var(--warning-focus);
             --background-disabled:var(--warning-disabled);
 
-            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) currentColor;
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -324,11 +326,11 @@
     }
     &.danger {
         &:not(.plain) {
-            --color:hsl(0, 0%, 100%);
-            --color-hover:hsl(0, 0%, 100%);
-            --color-active:hsl(0, 0%, 100%);
-            --color-focus:hsl(0, 0%, 100%);
-            --color-disabled:var(--g-plain-color-disabled);
+            --color:#{contrast.on-color('var(--background)')};
+            --color-hover:#{contrast.on-color('var(--background-hover)')};
+            --color-active:#{contrast.on-color('var(--background-active)')};
+            --color-focus:#{contrast.on-color('var(--background-focus)')};
+            --color-disabled:#{contrast.on-color('var(--background-disabled)')};
 
             --background:var(--danger);
             --background-hover:var(--danger-hover);
@@ -336,7 +338,7 @@
             --background-focus:var(--danger-focus);
             --background-disabled:var(--danger-disabled);
 
-            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) currentColor;
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -364,11 +366,11 @@
     }
     &.cg {
         &:not(.plain) {
-            --color:hsl(0, 0%, 100%);
-            --color-hover:hsl(0, 0%, 100%);
-            --color-active:hsl(0, 0%, 100%);
-            --color-focus:hsl(0, 0%, 100%);
-            --color-disabled:var(--g-plain-color-disabled);
+            --color:#{contrast.on-color('var(--background)')};
+            --color-hover:#{contrast.on-color('var(--background-hover)')};
+            --color-active:#{contrast.on-color('var(--background-active)')};
+            --color-focus:#{contrast.on-color('var(--background-focus)')};
+            --color-disabled:#{contrast.on-color('var(--background-disabled)')};
 
             --background:var(--cg);
             --background-hover:var(--cg-hover);
@@ -376,7 +378,7 @@
             --background-focus:var(--cg-focus);
             --background-disabled:var(--cg-disabled);
 
-            --focusbox-border:dotted var(--g-focusbox-border-width) hsl(0, 0%, 100%);
+            --focusbox-border:dotted var(--g-focusbox-border-width) currentColor;
             --shadow:var(--g-shadow);
         }
         &.plain {
@@ -522,7 +524,7 @@
             &::before {
                 border: solid 2px var(--cg);
             }
-            &.area-all, &.area-mark {
+            &.area-all, &.area-mark, &.area-split {
                 background: var(--g-plain-background);
             }
         }
@@ -535,6 +537,7 @@
         background: var(--background-disabled);
         &.checked {
             color: var(--cg-disabled);
+            background: var(--g-plain-background-disabled);
             &::before {
                 border: solid 2px var(--cg-disabled);
             }

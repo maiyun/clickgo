@@ -18,6 +18,9 @@
         <button @click="setGlobalFromFile('/clickgo/theme/dark')">setGlobalFromFile("/clickgo/theme/dark")</button>
         <button @click="clearGlobal">clearGlobal()</button>
         <button @click="setMain('oklch(.65 .23 28)')" type="cg">setMain('oklch(.65 .23 28)')</button>
+        <!-- Deep and light colors exercise foreground contrast in every loaded control. -->
+        <button type="cg" style="--cg: #1e3a8a; --cg-hover: #172554; --cg-active: #0f172a; --cg-focus: #1e3a8a;" @click="setMain('#1e3a8a')">setMain('#1e3a8a') / Dark blue</button>
+        <button type="cg" style="--cg: #fde047; --cg-hover: #facc15; --cg-active: #eab308; --cg-focus: #fde047;" @click="setMain('#fde047')">setMain('#fde047') / Light yellow</button>
         <button @click="setMain()" type="cg">setMain()</button>
     </flow>
 </form>

@@ -1,3 +1,5 @@
+@use '../../control' as contrast;
+
 span {
     display: none;
 }
@@ -14,23 +16,20 @@ span {
     }
 
     &:not(.plain) {
-        &:not(.default) {
-            color: oklch(1 0 0);
-        }
         &.primary, &.primary::after {
-            background: var(--success); border-color: var(--success);
+            background: var(--success); border-color: var(--success); color: contrast.on-color('var(--success)');
         }
         &.info, &.info::after {
-            background: var(--info); border-color: var(--info);
+            background: var(--info); border-color: var(--info); color: contrast.on-color('var(--info)');
         }
         &.warning, &.warning::after {
-            background: var(--warning); border-color: var(--warning);
+            background: var(--warning); border-color: var(--warning); color: contrast.on-color('var(--warning)');
         }
         &.danger, &.danger::after {
-            background: var(--danger); border-color: var(--danger);
+            background: var(--danger); border-color: var(--danger); color: contrast.on-color('var(--danger)');
         }
         &.cg, &.cg::after {
-            background: var(--cg); border-color: var(--cg);
+            background: var(--cg); border-color: var(--cg); color: contrast.on-color('var(--cg)');
         }
     }
     &.plain {

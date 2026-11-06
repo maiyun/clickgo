@@ -5,11 +5,6 @@ global {
 
     // --- 保留用户主色，前景按实际底色选择黑白；常驻选中态仍使用中性灰 ---
     --software-accent:var(--main);
-    --software-on-accent:#{shared.on-accent('var(--cg)')};
-    --software-on-accent-hover:#{shared.on-accent('var(--cg-hover)')};
-    --software-on-accent-active:#{shared.on-accent('var(--cg-active)')};
-    --software-on-accent-focus:#{shared.on-accent('var(--cg-focus)')};
-    --software-on-accent-disabled:#{shared.on-accent('var(--cg-disabled)')};
     --cg:var(--software-accent);
     --cg-hover:color-mix(in oklch, var(--cg), white 12%);
     --cg-active:color-mix(in oklch, var(--cg), black 6%);
@@ -177,6 +172,7 @@ global {
         --color-hover:var(--software-on-accent-hover);
         --color-active:var(--software-on-accent-active);
         --color-focus:var(--software-on-accent-focus);
+        --color-disabled:var(--software-on-accent-disabled);
         --shadow:none;
     }
     &:not([data-cg-disabled]) {
@@ -191,6 +187,12 @@ global {
             }
             &.button_area-all, &.button_area-mark { background: var(--software-highlight); }
             &.button_area-split {
+                // --- 分割区域也使用选中态的中性底色，避免浅色主色与浅字叠加。 ---
+                --background:var(--software-highlight);
+                --background-hover:#575757;
+                --background-active:#414141;
+                --background-focus:var(--software-highlight);
+                background: var(--background);
                 .button_inner, .button_arrow { color: inherit; }
             }
             &:hover {
@@ -341,6 +343,7 @@ global {
     --g-plain-border-color-disabled:#484848;
     .switch_block { background: #dedede; }
 }
+@include shared.accent-foreground;
 @include shared.accent-marks-and-alert;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---

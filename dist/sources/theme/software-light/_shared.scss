@@ -1,9 +1,37 @@
 @use 'sass:string';
 
-// --- 在线性 sRGB 中按亮度选择黑白前景，保留底色本身；.179 是两者对比度相等的阈值。 ---
+// --- 保留底色，线性亮度低于 .45 时用白字，覆盖默认橙色及其悬停色；浅黄等亮色用黑字。 ---
 @function on-accent($color) {
-    $channel: 'clamp(0, (.179 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
+    $channel: 'clamp(0, (.45 - r * .2126 - g * .7152 - b * .0722) * 100000, 1)';
     @return string.unquote('color(from #{$color} srgb-linear #{$channel} #{$channel} #{$channel} / 1)');
+}
+
+// --- 在控件本身计算前景，兼顾全局主色与局部覆盖的底色。 ---
+@mixin accent-foreground {
+    .button_wrap, .check_wrap, .radio_wrap, .switch_wrap, .menulist-item_wrap {
+        --software-on-accent:#{on-accent('var(--cg)')};
+        --software-on-accent-hover:#{on-accent('var(--cg-hover)')};
+        --software-on-accent-active:#{on-accent('var(--cg-active)')};
+        --software-on-accent-focus:#{on-accent('var(--cg-focus)')};
+        --software-on-accent-disabled:#{on-accent('var(--cg-disabled)')};
+    }
+    @each $type, $color in (primary: success, info: info, warning: warning, danger: danger, cg: cg) {
+        .tag_wrap.tag_#{$type}:not(.tag_plain),
+        .circle_wrap.circle_#{$type}:not(.circle_plain),
+        .tip_pop.tip_#{$type}:not(.tip_plain) {
+            color: on-accent('var(--#{$color})');
+        }
+        .tag_wrap.tag_#{$type}.tag_plain .tag_tag-svg,
+        .alert_wrap.alert_#{$type} .alert_tag-svg {
+            &:hover { fill: on-accent('var(--#{$color})'); stroke: on-accent('var(--#{$color})'); }
+            &:active { fill: on-accent('var(--#{$color}-active)'); stroke: on-accent('var(--#{$color}-active)'); }
+        }
+    }
+    .calendar_wrap .calendar_row .calendar_col .calendar_day-check.calendar_checked {
+        color: on-accent('var(--cg)');
+        &:hover { color: on-accent('var(--cg-hover)'); }
+        &:focus-visible { color: on-accent('var(--cg-focus)'); }
+    }
 }
 
 // --- 标记前景跟随控件实际状态底色，禁用的复选/单选仍保留可辨识的选中标记。 ---
