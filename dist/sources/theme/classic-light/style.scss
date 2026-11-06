@@ -733,7 +733,7 @@ global {
     box-shadow: none;
     background: #ffffff;
 }
-.daterange_pop.daterange_first > :first-child { border-inline-end: solid 1px var(--classic-shadow); }
+.daterange_pop.daterange_first:not(.daterange_single) .daterange_calendars > :first-child { border-inline-end: solid 1px var(--classic-shadow); }
 
 // --- plain 面板不再叠加弹层边框；日期格的焦点线画在选中底色内。 ---
 .datepanel_wrap:not([data-cg-disabled]) .datepanel_row .datepanel_col:not([data-cg-disabled]),

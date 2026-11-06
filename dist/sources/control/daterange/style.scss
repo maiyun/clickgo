@@ -51,12 +51,12 @@
     color: var(--g-color); border-radius: var(--g-radius); display: flex; background: var(--g-pop-background); -webkit-backdrop-filter: var(--g-pop-backdrop); backdrop-filter: var(--g-pop-backdrop); border: var(--g-pop-border);
 
     &.first {
-        flex-direction: column; width: 580px; max-width: calc(100vw - 16px); box-sizing: border-box;
+        flex-direction: column; width: max-content; min-width: min(580px, calc(100vw - 16px)); max-width: calc(100vw - 16px); box-sizing: border-box;
         &.single {
-            width: 300px;
+            min-width: min(300px, calc(100vw - 16px));
         }
         .shortcuts {
-            display: flex; flex-wrap: wrap; gap: var(--g-padding-s); padding: var(--g-padding); border-bottom: solid .5px var(--g-plain-border-color);
+            display: flex; flex-wrap: wrap; gap: var(--g-padding-s); padding: var(--g-padding); border-bottom: solid .5px var(--g-plain-border-color); contain: inline-size;
             cg-button {
                 min-height: 28px;
             }
@@ -64,7 +64,7 @@
         .times {
             display: flex; flex-wrap: wrap; border-top: solid .5px var(--g-plain-border-color);
             .time {
-                display: flex; flex: 1; align-items: center; justify-content: center; gap: var(--g-padding-s); padding: var(--g-padding);
+                display: flex; flex: 1; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--g-padding-s); padding: var(--g-padding);
                 > span:first-child {
                     white-space: nowrap;
                 }

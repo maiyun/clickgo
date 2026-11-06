@@ -4,9 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ClickGo Date</title>
-    <script type="importmap">{"imports":{"clickgo":"../../index.js"}}</script>
+    <script>
+        const importMap = document.createElement('script');
+        importMap.type = 'importmap';
+        importMap.textContent = JSON.stringify({ 'imports': { 'clickgo': `../../index.js?${Date.now()}` } });
+        document.currentScript.after(importMap);
+    </script>
     <script>window.clickgo = {'config': {'cdn': 'https://cdn.jsdelivr.net'}};</script>
-    <script type="module" src="./index.js"></script>
+    <script type="module">import(`./index.js?${Date.now()}`);</script>
 </head>
 <body><p id="state" role="status">Loading Date demo...</p></body>
 </html>

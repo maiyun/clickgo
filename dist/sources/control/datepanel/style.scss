@@ -11,10 +11,10 @@
     }
     
     .header {
-        display: flex; white-space: nowrap;
+        display: flex; flex-wrap: wrap; row-gap: var(--g-padding-s); white-space: nowrap;
 
         .left {
-            flex: 1; display: flex; gap: var(--g-padding-s);
+            flex: 1 0 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: var(--g-padding-s);
 
             .monthleft, .monthright {
                 .arrow {
@@ -36,7 +36,7 @@
             }
         }
         .right {
-            justify-content: end; display: flex; gap: var(--g-padding-s); padding-inline-start: var(--g-padding-s);
+            justify-content: end; display: flex; flex-wrap: wrap; gap: var(--g-padding-s); margin-inline-start: auto; padding-inline-start: var(--g-padding-s);
         }
     }
 
@@ -45,10 +45,10 @@
     }
 
     .week {
-        display: flex;
+        display: flex; gap: var(--g-padding-s);
 
         > * {
-            flex: 1; display: flex; justify-content: center; padding: var(--g-padding-s);
+            flex: 1; min-width: 0; display: flex; justify-content: center; padding-block: var(--g-padding-s); overflow-wrap: anywhere;
         }
     }
 
@@ -56,7 +56,7 @@
         display: flex; gap: var(--g-padding-s); flex: 1;
 
         .col {
-            flex: 1; display: flex; flex-direction: column; gap: var(--g-padding-s); padding: var(--g-padding-s); border-radius: var(--g-radius); transition: var(--g-transition); outline: solid .5px transparent; position: relative;
+            flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--g-padding-s); padding-block: var(--g-padding-s); border-radius: var(--g-radius); transition: var(--g-transition); outline: solid .5px transparent; position: relative; overflow-wrap: anywhere;
             &:not([data-cg-disabled]) {
                 &:hover:not(.selected):not(.range-left):not(.range-right) {
                     background: var(--g-plain-background-hover); outline: solid .5px var(--g-plain-border-color-hover);
@@ -106,14 +106,17 @@
             }
 
             .colb {
-                display: flex;
+                display: flex; min-width: 0;
+                > * {
+                    min-width: 0;
+                }
             }
 
         }
     }
 
     .footer {
-        display: flex; gap: var(--g-padding-s); align-items: center; justify-content: center;
+        display: flex; flex-wrap: wrap; gap: var(--g-padding-s); align-items: center; justify-content: center;
     }
 
     &:dir(rtl) {
