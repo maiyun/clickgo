@@ -33,10 +33,10 @@ global {
     --warning-disabled:#827c72;
     --warning-bg:#423c30;
 
-    --danger:#e1a1a6;
+    --danger:#e3a6ab;
     --danger-hover:#edb9bd;
     --danger-active:#c8868c;
-    --danger-focus:#e1a1a6;
+    --danger-focus:#e3a6ab;
     --danger-disabled:#837578;
     --danger-bg:#443236;
 
@@ -168,11 +168,6 @@ global {
         }
     }
     &.button_cg:not(.button_plain) {
-        --color:var(--software-on-accent);
-        --color-hover:var(--software-on-accent-hover);
-        --color-active:var(--software-on-accent-active);
-        --color-focus:var(--software-on-accent-focus);
-        --color-disabled:var(--software-on-accent-disabled);
         --shadow:none;
     }
     &:not([data-cg-disabled]) {
@@ -344,7 +339,7 @@ global {
     .switch_block { background: #dedede; }
 }
 @include shared.accent-foreground;
-@include shared.accent-marks-and-alert;
+@include shared.switch-and-alert;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
 .task-start_wrap {

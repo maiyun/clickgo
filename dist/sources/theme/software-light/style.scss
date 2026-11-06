@@ -186,11 +186,6 @@ global {
         }
     }
     &.button_cg:not(.button_plain) {
-        --color:var(--software-on-accent);
-        --color-hover:var(--software-on-accent-hover);
-        --color-active:var(--software-on-accent-active);
-        --color-focus:var(--software-on-accent-focus);
-        --color-disabled:var(--software-on-accent-disabled);
         --shadow:none;
     }
     &:not([data-cg-disabled]) {
@@ -409,7 +404,7 @@ global {
     .switch_block { background: #fafafa; }
 }
 @include shared.accent-foreground;
-@include shared.accent-marks-and-alert;
+@include shared.switch-and-alert;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
 .task-start_wrap {
