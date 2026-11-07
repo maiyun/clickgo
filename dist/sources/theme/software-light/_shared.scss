@@ -194,7 +194,10 @@
             padding: 4px;
             gap: 3px;
             border-bottom-color: var(--software-divider);
-            > .dock-group_tab, > .dock-group_float-tab {
+            > .dock-group_tab-items {
+                gap: 3px;
+            }
+            > .dock-group_tab-items > .dock-group_tab {
                 padding: 3px 8px;
                 border: none;
                 border-radius: var(--g-radius);
