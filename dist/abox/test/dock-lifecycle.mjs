@@ -204,7 +204,8 @@ assert.equal(group.floatMaxWidth, 280, 'LTR left Dock must use only the viewport
 assert.equal(group.floatStyle['max-width'], '280px');
 assert.equal(group.floatStyle.height, undefined, 'short floating panels must size to their content');
 group.props.grow = true;
-assert.equal(group.floatStyle.height, '300px', 'grow floating panels fill the available height');
+assert.equal(group.floatStyle.height, undefined, 'grow applies to docked groups; floating panels still fit their content');
+assert.equal(group.floatStyle['max-height'], '300px', 'floating panels remain bounded by available space');
 group.props.grow = false;
 
 group.element.rtl = true;

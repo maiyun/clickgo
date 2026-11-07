@@ -228,16 +228,12 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.isFloating) {
             return undefined;
         }
-        const style: Record<string, string> = {
+        return {
             'width': this.floatWidth,
             'max-height': this.floatMaxHeight,
             'max-width': this.floatMaxWidth >= 0 ? `${this.floatMaxWidth}px` : 'calc(100vw - 40px)',
             'top': `${this.floatTop}px`
         };
-        if (this.canGrow) {
-            style.height = this.floatMaxHeight;
-        }
-        return style;
     }
 
     /** --- 子项信息列表 --- */
