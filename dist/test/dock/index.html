@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ClickGo · Dock</title>
+    <!-- 开发预览读取刚构建的运行时，避免浏览器复用旧资源清单 -->
+    <script>
+        const importMap = document.createElement('script');
+        importMap.type = 'importmap';
+        importMap.textContent = JSON.stringify({ 'imports': { 'clickgo': `../../index.js?${Date.now()}` } });
+        document.currentScript.after(importMap);
+    </script>
+    <script>window.clickgo = {'config': {'cdn': 'https://cdn.jsdelivr.net'}};</script>
+    <script type="module" src="./index.js"></script>
+</head>
+<body><p id="state" role="status">Loading dock...</p></body>
+</html>

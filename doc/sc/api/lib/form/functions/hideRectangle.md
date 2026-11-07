@@ -8,7 +8,7 @@
 
 > **hideRectangle**(): `void`
 
-Defined in: lib/form/effects.ts:62
+Defined in: [lib/form/effects.ts:62](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/effects.ts#L62)
 
 结束时请隐藏矩形
 

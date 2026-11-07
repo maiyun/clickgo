@@ -16,6 +16,24 @@ Dock 的独立列容器，在同一 `dock` 内使用多个 `dock-column` 即可�
 
 展开时的像素宽度，默认 `280`，最小 `40`。收起宽度由主题决定。
 
+#### minWidth
+
+`number` | `string`
+
+拖拽调整宽度的下限，单位为像素，默认 `160`。空间不足时以可用空间为上限；不修改初始 `width`。
+
+#### maxWidth
+
+`number` | `string`
+
+拖拽调整宽度的上限，单位为像素，默认 `0`，表示使用可用空间；不修改初始 `width`。
+
+#### resizable
+
+`boolean` | `string`
+
+是否允许在展开模式下拖拽调整列宽，默认 `true`；同时控制分隔条的键盘调整。聚焦分隔条后，左右方向键每次调整 `10px`。拖拽时按 Escape 可取消，完成后通过 `update:width` 提交；可使用 `v-model:width` 保存，不绑定时控件也会保留调整结果。
+
 #### label
 
 `string`

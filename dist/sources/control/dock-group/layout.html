@@ -1,9 +1,16 @@
-<div class="wrap" :class="[isExpanded ? 'expanded' : 'collapsed', isFloating && 'floating', isFloating && floatPosition, isCollapsed && 'group-collapsed', canGrow && 'grow']">
+<div class="wrap" :style="groupStyle" :class="[isExpanded ? 'expanded' : 'collapsed', isFloating && 'floating', isFloating && floatPosition, isCollapsed && 'group-collapsed', canGrow && 'grow']">
     <!-- 展开模式标签栏 -->
-    <div v-if="isExpanded" class="tabs" role="tablist">
-        <div v-for="item of items" :key="item.name" class="tab" :class="[selectedData === item.name && 'selected']" role="tab" :aria-selected="selectedData === item.name" :tabindex="formFocus ? '0' : undefined" @click="select(item.name)" @keydown="activateKeydown($event, item.name)">{{item.label}}</div>
+    <div v-if="isExpanded" ref="tabs" class="tabs">
+        <div class="tab-items" role="tablist" data-cg-scroll @wheel="tabsWheel">
+            <cg-tip v-for="item of items" :key="item.name" :label="item.label" immediate>
+                <div class="tab" :class="[selectedData === item.name && 'selected']" role="tab" :aria-selected="selectedData === item.name" :tabindex="formFocus ? '0' : undefined" @click="select(item.name)" @keydown="activateKeydown($event, item.name)">{{item.label}}</div>
+            </cg-tip>
+        </div>
         <div v-if="canCollapse" class="collapse-btn" role="button" :aria-expanded="!isCollapsed" :aria-label="items.find(item => item.name === selectedData)?.label" :tabindex="formFocus ? '0' : undefined" @click.stop="toggleCollapsed" @keydown="activateKeydown($event)">
             <svg :class="[isCollapsed && 'collapsed']" viewBox="0 0 24 24" stroke="none"><path d="m8.46967 3.46967c.29289-.29289.76777-.29289 1.06066 0l8.00007 8.00003c.2929.2929.2929.7677 0 1.0606l-8.00007 8.0001c-.29289.2929-.76777.2929-1.06066 0-.29289-.2929-.29289-.7678 0-1.0607l7.46963-7.4697-7.46963-7.46967c-.29289-.29289-.29289-.76777 0-1.06066z" /></svg>
+        </div>
+        <div v-if="slots['menu']" class="menu-btn" role="button" aria-haspopup="menu" :aria-label="items.find(item => item.name === selectedData)?.label" :tabindex="formFocus ? '0' : undefined" @click.stop="menuClick" @keydown="menuKeydown">
+            <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
         </div>
     </div>
     <!-- 收起模式图标栏 -->
@@ -18,11 +25,24 @@
     </template>
     <!-- 选中内容区 -->
     <div ref="content" class="content" :style="floatStyle">
-        <div v-if="!isExpanded && isFloating" class="float-tabs" role="tablist">
-            <div v-for="item of items" :key="item.name" class="float-tab" :class="[selectedData === item.name && 'selected']" role="tab" :aria-selected="selectedData === item.name" :tabindex="formFocus ? '0' : undefined" @click="select(item.name)" @keydown="activateKeydown($event, item.name)">{{item.label}}</div>
+        <div v-if="!isExpanded && isFloating" class="tabs float-tabs">
+            <div class="tab-items" role="tablist" data-cg-scroll @wheel="tabsWheel">
+                <cg-tip v-for="item of items" :key="item.name" :label="item.label" immediate>
+                    <div class="tab" :class="[selectedData === item.name && 'selected']" role="tab" :aria-selected="selectedData === item.name" :tabindex="formFocus ? '0' : undefined" @click="select(item.name)" @keydown="activateKeydown($event, item.name)">{{item.label}}</div>
+                </cg-tip>
+            </div>
+            <div v-if="slots['menu']" class="menu-btn" role="button" aria-haspopup="menu" :aria-label="items.find(item => item.name === selectedData)?.label" :tabindex="formFocus ? '0' : undefined" @click.stop="menuClick" @keydown="menuKeydown">
+                <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+            </div>
         </div>
         <cg-flow class="panel" direction="v">
             <slot></slot>
         </cg-flow>
     </div>
+    <!-- 相邻展开分组的高度分隔条 -->
+    <div v-if="canResize" class="resize" role="separator" aria-orientation="horizontal" :aria-label="items.find(item => item.name === selectedData)?.label" :tabindex="formFocus ? '0' : undefined" @pointerdown="resizeDown" @keydown="resizeKeydown"></div>
+    <!-- 菜单交由系统浮层托管 -->
+    <teleport v-if="slots['menu']" to="system">
+        <div ref="menu" class="menu"><slot name="menu" v-bind="{name: selectedData}"></slot></div>
+    </teleport>
 </div>

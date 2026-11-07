@@ -8,7 +8,7 @@
 
 > **notifyContent**(`notifyId`, `opt`): `void`
 
-Defined in: lib/form/notification.ts:62
+Defined in: [lib/form/notification.ts:62](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/notification.ts#L62)
 
 修改 notify 的提示信息
 

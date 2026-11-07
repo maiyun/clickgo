@@ -8,6 +8,6 @@
 
 > **launcherRoot**: [`IVue`](../../core/interfaces/IVue.md)
 
-Defined in: lib/form/system.ts:16
+Defined in: [lib/form/system.ts:16](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/system.ts#L16)
 
 启动器的 Vue 根实例

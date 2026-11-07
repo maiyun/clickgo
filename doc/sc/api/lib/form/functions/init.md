@@ -8,7 +8,7 @@
 
 > **init**(): `void`
 
-Defined in: lib/form/system.ts:104
+Defined in: [lib/form/system.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/system.ts#L104)
 
 初始化系统宿主，多次调用仅执行一次
 

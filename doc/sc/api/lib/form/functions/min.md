@@ -8,7 +8,7 @@
 
 > **min**(`formId`): `boolean`
 
-Defined in: lib/form/window.ts:42
+Defined in: [lib/form/window.ts:42](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L42)
 
 最小化某个窗体
 

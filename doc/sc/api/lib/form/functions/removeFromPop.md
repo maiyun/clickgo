@@ -8,7 +8,7 @@
 
 > **removeFromPop**(`el`): `void`
 
-Defined in: lib/form/popup.ts:45
+Defined in: [lib/form/popup.ts:45](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/popup.ts#L45)
 
 将标签从 pop 层移除
 

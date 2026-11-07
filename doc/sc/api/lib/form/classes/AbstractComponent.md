@@ -6,7 +6,7 @@
 
 # Abstract Class: AbstractComponent
 
-Defined in: lib/form/abstract-component.ts:8
+Defined in: [lib/form/abstract-component.ts:8](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L8)
 
 Form/Panel 内使用的应用局部组件抽象类
 
@@ -34,7 +34,7 @@ Form/Panel 内使用的应用局部组件抽象类
 
 > `readonly` **components**: `Record`\<`string`, () => `AbstractComponent`\> = `{}`
 
-Defined in: lib/form/abstract-component.ts:11
+Defined in: [lib/form/abstract-component.ts:11](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L11)
 
 当前组件内继续局部注册的应用组件
 
@@ -48,7 +48,7 @@ Defined in: lib/form/abstract-component.ts:11
 
 > `readonly` **emits**: `Record`\<`string`, `null` \| ((`payload`) => `boolean`)\> = `{}`
 
-Defined in: lib/form/abstract-component.ts:74
+Defined in: [lib/form/abstract-component.ts:74](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L74)
 
 组件事件，由用户定义重写
 
@@ -58,7 +58,7 @@ Defined in: lib/form/abstract-component.ts:74
 
 > `readonly` **packageFiles**: `Record`\<`string`, `Blob` \| `string`\> = `{}`
 
-Defined in: lib/form/abstract-component.ts:68
+Defined in: [lib/form/abstract-component.ts:68](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L68)
 
 组件内部文件，由系统重写
 
@@ -68,7 +68,7 @@ Defined in: lib/form/abstract-component.ts:68
 
 > `readonly` **props**: `object` = `{}`
 
-Defined in: lib/form/abstract-component.ts:71
+Defined in: [lib/form/abstract-component.ts:71](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L71)
 
 组件参数，由用户定义重写
 
@@ -78,7 +78,7 @@ Defined in: lib/form/abstract-component.ts:71
 
 > `readonly` **slots**: `Record`\<`string`, () => `any`[]\> = `{}`
 
-Defined in: lib/form/abstract-component.ts:77
+Defined in: [lib/form/abstract-component.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L77)
 
 组件的子插槽
 
@@ -90,7 +90,7 @@ Defined in: lib/form/abstract-component.ts:77
 
 > **get** **classPrepend**(): (`cla`) => `string`
 
-Defined in: lib/form/abstract-component.ts:58
+Defined in: [lib/form/abstract-component.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L58)
 
 应用组件动态 class 的隔离前缀
 
@@ -110,7 +110,7 @@ Defined in: lib/form/abstract-component.ts:58
 
 > **get** **controlName**(): `string`
 
-Defined in: lib/form/base.ts:23
+Defined in: [lib/form/base.ts:23](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L23)
 
 当前控件的名字
 
@@ -122,7 +122,7 @@ Defined in: lib/form/base.ts:23
 
 > **set** **controlName**(`v`): `void`
 
-Defined in: lib/form/base.ts:27
+Defined in: [lib/form/base.ts:27](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L27)
 
 ##### Parameters
 
@@ -146,7 +146,7 @@ Defined in: lib/form/base.ts:27
 
 > **get** **element**(): `HTMLElement`
 
-Defined in: lib/form/base.ts:141
+Defined in: [lib/form/base.ts:141](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L141)
 
 获取当前的 HTML DOM
 
@@ -166,7 +166,7 @@ Defined in: lib/form/base.ts:141
 
 > **get** **filename**(): `string`
 
-Defined in: lib/form/base.ts:17
+Defined in: [lib/form/base.ts:17](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L17)
 
 当前文件在包内的路径
 
@@ -186,7 +186,7 @@ Defined in: lib/form/base.ts:17
 
 > **get** **findex**(): `number`
 
-Defined in: lib/form/abstract-component.ts:14
+Defined in: [lib/form/abstract-component.ts:14](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L14)
 
 当前组件所在窗体的创建序号
 
@@ -202,7 +202,7 @@ Defined in: lib/form/abstract-component.ts:14
 
 > **get** **fl**(): (`key`, `data?`) => `string`
 
-Defined in: lib/form/abstract-component.ts:48
+Defined in: [lib/form/abstract-component.ts:48](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L48)
 
 获取宿主窗体语言内容
 
@@ -218,7 +218,7 @@ Defined in: lib/form/abstract-component.ts:48
 
 > **get** **formFocus**(): `boolean`
 
-Defined in: lib/form/abstract-component.ts:36
+Defined in: [lib/form/abstract-component.ts:36](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L36)
 
 当前组件是否跟随宿主窗体获得焦点
 
@@ -238,7 +238,7 @@ Defined in: lib/form/abstract-component.ts:36
 
 > **get** **formId**(): `string`
 
-Defined in: lib/form/base.ts:43
+Defined in: [lib/form/base.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L43)
 
 当前的窗体 ID
 
@@ -258,7 +258,7 @@ Defined in: lib/form/base.ts:43
 
 > **get** **l**(): (`key`, `data?`) => `string`
 
-Defined in: lib/form/abstract-component.ts:41
+Defined in: [lib/form/abstract-component.ts:41](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L41)
 
 获取宿主 Form/Panel 的语言内容
 
@@ -278,7 +278,7 @@ Defined in: lib/form/abstract-component.ts:41
 
 > **get** **locale**(): `string`
 
-Defined in: lib/form/base.ts:69
+Defined in: [lib/form/base.ts:69](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L69)
 
 当前的语言
 
@@ -298,7 +298,7 @@ Defined in: lib/form/base.ts:69
 
 > **get** **localeDirection**(): `"ltr"` \| `"rtl"`
 
-Defined in: lib/form/base.ts:80
+Defined in: [lib/form/base.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L80)
 
 当前语言的书写方向
 
@@ -318,7 +318,7 @@ Defined in: lib/form/base.ts:80
 
 > **get** **localeTag**(): `string`
 
-Defined in: lib/form/base.ts:75
+Defined in: [lib/form/base.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L75)
 
 当前语言的标准 HTML lang 标签
 
@@ -338,7 +338,7 @@ Defined in: lib/form/base.ts:75
 
 > **get** **nextTick**(): () => `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:148
+Defined in: [lib/form/base.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L148)
 
 等待渲染
 
@@ -358,7 +358,7 @@ Defined in: lib/form/base.ts:148
 
 > **get** **parent**(): `never`
 
-Defined in: lib/form/abstract-component.ts:125
+Defined in: [lib/form/abstract-component.ts:125](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L125)
 
 获取上层控件或组件
 
@@ -374,7 +374,7 @@ Defined in: lib/form/abstract-component.ts:125
 
 > **get** **parentByAccess**(): (`name`, `val`) => `Record`\<`string`, `any`\> \| `null`
 
-Defined in: lib/form/abstract-component.ts:144
+Defined in: [lib/form/abstract-component.ts:144](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L144)
 
 根据 access 查询上层对象
 
@@ -390,7 +390,7 @@ Defined in: lib/form/abstract-component.ts:144
 
 > **get** **parentByName**(): (`controlName`) => `Record`\<`string`, `any`\> \| `null`
 
-Defined in: lib/form/abstract-component.ts:130
+Defined in: [lib/form/abstract-component.ts:130](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L130)
 
 根据 controlName 查询上层对象
 
@@ -406,7 +406,7 @@ Defined in: lib/form/abstract-component.ts:130
 
 > **get** **path**(): `string`
 
-Defined in: lib/form/base.ts:57
+Defined in: [lib/form/base.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L57)
 
 当前文件的包内路径不以 / 结尾
 
@@ -426,7 +426,7 @@ Defined in: lib/form/base.ts:57
 
 > **get** **prep**(): `string`
 
-Defined in: lib/form/base.ts:63
+Defined in: [lib/form/base.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L63)
 
 样式独占前缀
 
@@ -446,7 +446,7 @@ Defined in: lib/form/base.ts:63
 
 > **get** **propArray**(): (`name`) => `any`[]
 
-Defined in: lib/form/abstract-component.ts:115
+Defined in: [lib/form/abstract-component.ts:115](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L115)
 
 获取 props 中的 array 类型值
 
@@ -462,7 +462,7 @@ Defined in: lib/form/abstract-component.ts:115
 
 > **get** **propBoolean**(): (`name`) => `boolean`
 
-Defined in: lib/form/abstract-component.ts:100
+Defined in: [lib/form/abstract-component.ts:100](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L100)
 
 获取 props 中的 boolean 类型值
 
@@ -478,7 +478,7 @@ Defined in: lib/form/abstract-component.ts:100
 
 > **get** **propInt**(): (`name`) => `number`
 
-Defined in: lib/form/abstract-component.ts:110
+Defined in: [lib/form/abstract-component.ts:110](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L110)
 
 获取 props 中的 int 类型值
 
@@ -494,7 +494,7 @@ Defined in: lib/form/abstract-component.ts:110
 
 > **get** **propNumber**(): (`name`) => `number`
 
-Defined in: lib/form/abstract-component.ts:105
+Defined in: [lib/form/abstract-component.ts:105](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L105)
 
 获取 props 中的 number 类型值
 
@@ -510,7 +510,7 @@ Defined in: lib/form/abstract-component.ts:105
 
 > **get** **refs**(): `Record`\<`string`, `HTMLElement` & [`AbstractControl`](../../control/classes/AbstractControl.md) & `Record`\<`string`, `any`\>\>
 
-Defined in: lib/form/base.ts:136
+Defined in: [lib/form/base.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L136)
 
 获取 refs 情况
 
@@ -530,7 +530,7 @@ Defined in: lib/form/base.ts:136
 
 > **get** **rootForm**(): [`AbstractForm`](AbstractForm.md) & `Record`\<`string`, `any`\>
 
-Defined in: lib/form/abstract-component.ts:21
+Defined in: [lib/form/abstract-component.ts:21](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L21)
 
 ##### Returns
 
@@ -544,7 +544,7 @@ Defined in: lib/form/abstract-component.ts:21
 
 > **get** **slotsAll**(): (`name`) => `any`[]
 
-Defined in: lib/form/abstract-component.ts:80
+Defined in: [lib/form/abstract-component.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L80)
 
 获取某插槽所有子项
 
@@ -560,7 +560,7 @@ Defined in: lib/form/abstract-component.ts:80
 
 > **get** **taskId**(): `string`
 
-Defined in: lib/form/base.ts:37
+Defined in: [lib/form/base.ts:37](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L37)
 
 当前的任务 ID
 
@@ -578,7 +578,7 @@ Defined in: lib/form/base.ts:37
 
 > **allowEvent**(`e`): `boolean`
 
-Defined in: lib/form/base.ts:156
+Defined in: [lib/form/base.ts:156](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L156)
 
 判断当前事件可否执行
 
@@ -604,7 +604,7 @@ Defined in: lib/form/base.ts:156
 
 > **emit**(`name`, ...`v`): `void`
 
-Defined in: lib/form/abstract-component.ts:120
+Defined in: [lib/form/abstract-component.ts:120](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L120)
 
 向上触发组件事件
 
@@ -628,7 +628,7 @@ Defined in: lib/form/abstract-component.ts:120
 
 > **onBeforeCreate**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:186
+Defined in: [lib/form/base.ts:186](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L186)
 
 #### Returns
 
@@ -644,7 +644,7 @@ Defined in: lib/form/base.ts:186
 
 > **onBeforeMount**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:194
+Defined in: [lib/form/base.ts:194](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L194)
 
 #### Returns
 
@@ -660,7 +660,7 @@ Defined in: lib/form/base.ts:194
 
 > **onBeforeUnmount**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:206
+Defined in: [lib/form/base.ts:206](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L206)
 
 #### Returns
 
@@ -676,7 +676,7 @@ Defined in: lib/form/base.ts:206
 
 > **onBeforeUpdate**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:198
+Defined in: [lib/form/base.ts:198](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L198)
 
 #### Returns
 
@@ -692,7 +692,7 @@ Defined in: lib/form/base.ts:198
 
 > **onCreated**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:190
+Defined in: [lib/form/base.ts:190](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L190)
 
 #### Returns
 
@@ -708,7 +708,7 @@ Defined in: lib/form/base.ts:190
 
 > **onMounted**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-component.ts:158
+Defined in: [lib/form/abstract-component.ts:158](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-component.ts#L158)
 
 组件挂载好后触发
 
@@ -722,7 +722,7 @@ Defined in: lib/form/abstract-component.ts:158
 
 > **onUnmounted**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:210
+Defined in: [lib/form/base.ts:210](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L210)
 
 #### Returns
 
@@ -738,7 +738,7 @@ Defined in: lib/form/base.ts:210
 
 > **onUpdated**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:202
+Defined in: [lib/form/base.ts:202](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L202)
 
 #### Returns
 
@@ -754,7 +754,7 @@ Defined in: lib/form/base.ts:202
 
 > **send**(`fid`, `obj`): `void`
 
-Defined in: lib/form/base.ts:178
+Defined in: [lib/form/base.ts:178](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L178)
 
 给一个窗体发送一个对象，不会知道成功与失败状态
 
@@ -786,7 +786,7 @@ formId 要接收对象的 form id
 
 > **trigger**(`name`, `param1?`, `param2?`): `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:166
+Defined in: [lib/form/base.ts:166](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L166)
 
 触发系统方法
 
@@ -824,7 +824,7 @@ Defined in: lib/form/base.ts:166
 
 > **watch**\<`T`, `TK`, `TR`\>(`name`, `cb`, `opt?`): () => `void`
 
-Defined in: lib/form/base.ts:122
+Defined in: [lib/form/base.ts:122](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L122)
 
 监视变动
 

@@ -8,7 +8,7 @@
 
 > **hideLauncher**(): `void`
 
-Defined in: lib/form/system.ts:96
+Defined in: [lib/form/system.ts:96](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/system.ts#L96)
 
 隐藏 launcher 界面；重复关闭不重复通知或安排清理
 

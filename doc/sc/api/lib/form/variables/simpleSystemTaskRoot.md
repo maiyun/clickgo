@@ -8,6 +8,6 @@
 
 > **simpleSystemTaskRoot**: [`IVue`](../../core/interfaces/IVue.md)
 
-Defined in: lib/form/system.ts:13
+Defined in: [lib/form/system.ts:13](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/system.ts#L13)
 
 系统任务栏的 Vue 根实例

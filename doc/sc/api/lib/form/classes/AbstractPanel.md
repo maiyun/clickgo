@@ -6,7 +6,7 @@
 
 # Abstract Class: AbstractPanel
 
-Defined in: lib/form/abstract-panel.ts:9
+Defined in: [lib/form/abstract-panel.ts:9](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L9)
 
 Panel 控件抽象类
 
@@ -34,7 +34,7 @@ Panel 控件抽象类
 
 > `readonly` **components**: `Record`\<`string`, () => [`AbstractComponent`](AbstractComponent.md)\> = `{}`
 
-Defined in: lib/form/base.ts:14
+Defined in: [lib/form/base.ts:14](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L14)
 
 当前视图内局部注册的应用组件
 
@@ -48,7 +48,7 @@ Defined in: lib/form/base.ts:14
 
 > **qs**: `Record`\<`string`, `string`\> = `{}`
 
-Defined in: lib/form/abstract-panel.ts:73
+Defined in: [lib/form/abstract-panel.ts:73](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L73)
 
 当前的 nav（若有）传递过来的 qs
 
@@ -60,7 +60,7 @@ Defined in: lib/form/abstract-panel.ts:73
 
 > **get** **classPrepend**(): (`cla`) => `string`
 
-Defined in: lib/form/base.ts:106
+Defined in: [lib/form/base.ts:106](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L106)
 
 layout 中 :class 的转义
 
@@ -80,7 +80,7 @@ layout 中 :class 的转义
 
 > **get** **controlName**(): `string`
 
-Defined in: lib/form/base.ts:23
+Defined in: [lib/form/base.ts:23](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L23)
 
 当前控件的名字
 
@@ -92,7 +92,7 @@ Defined in: lib/form/base.ts:23
 
 > **set** **controlName**(`v`): `void`
 
-Defined in: lib/form/base.ts:27
+Defined in: [lib/form/base.ts:27](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L27)
 
 ##### Parameters
 
@@ -116,7 +116,7 @@ Defined in: lib/form/base.ts:27
 
 > **get** **element**(): `HTMLElement`
 
-Defined in: lib/form/base.ts:141
+Defined in: [lib/form/base.ts:141](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L141)
 
 获取当前的 HTML DOM
 
@@ -136,7 +136,7 @@ Defined in: lib/form/base.ts:141
 
 > **get** **filename**(): `string`
 
-Defined in: lib/form/base.ts:17
+Defined in: [lib/form/base.ts:17](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L17)
 
 当前文件在包内的路径
 
@@ -156,7 +156,7 @@ Defined in: lib/form/base.ts:17
 
 > **get** **formFocus**(): `boolean`
 
-Defined in: lib/form/abstract-panel.ts:81
+Defined in: [lib/form/abstract-panel.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L81)
 
 当前窗体是否是焦点
 
@@ -176,7 +176,7 @@ Defined in: lib/form/abstract-panel.ts:81
 
 > **get** **formHash**(): `string`
 
-Defined in: lib/form/abstract-panel.ts:28
+Defined in: [lib/form/abstract-panel.ts:28](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L28)
 
 获取母窗体的 formHash
 
@@ -188,7 +188,7 @@ Defined in: lib/form/abstract-panel.ts:28
 
 > **set** **formHash**(`fh`): `void`
 
-Defined in: lib/form/abstract-panel.ts:33
+Defined in: [lib/form/abstract-panel.ts:33](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L33)
 
 设置母窗体的 formHash
 
@@ -210,7 +210,7 @@ Defined in: lib/form/abstract-panel.ts:33
 
 > **get** **formHashData**(): `Record`\<`string`, `any`\>
 
-Defined in: lib/form/abstract-panel.ts:38
+Defined in: [lib/form/abstract-panel.ts:38](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L38)
 
 获取 form 的 formhash with data 值
 
@@ -222,7 +222,7 @@ Defined in: lib/form/abstract-panel.ts:38
 
 > **set** **formHashData**(`v`): `void`
 
-Defined in: lib/form/abstract-panel.ts:42
+Defined in: [lib/form/abstract-panel.ts:42](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L42)
 
 ##### Parameters
 
@@ -242,7 +242,7 @@ Defined in: lib/form/abstract-panel.ts:42
 
 > **get** **formId**(): `string`
 
-Defined in: lib/form/base.ts:43
+Defined in: [lib/form/base.ts:43](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L43)
 
 当前的窗体 ID
 
@@ -262,7 +262,7 @@ Defined in: lib/form/base.ts:43
 
 > **get** **l**(): (`key`, `data?`, `origin?`) => `string`
 
-Defined in: lib/form/base.ts:87
+Defined in: [lib/form/base.ts:87](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L87)
 
 获取语言内容
 
@@ -282,7 +282,7 @@ Defined in: lib/form/base.ts:87
 
 > **get** **locale**(): `string`
 
-Defined in: lib/form/base.ts:69
+Defined in: [lib/form/base.ts:69](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L69)
 
 当前的语言
 
@@ -302,7 +302,7 @@ Defined in: lib/form/base.ts:69
 
 > **get** **localeDirection**(): `"ltr"` \| `"rtl"`
 
-Defined in: lib/form/base.ts:80
+Defined in: [lib/form/base.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L80)
 
 当前语言的书写方向
 
@@ -322,7 +322,7 @@ Defined in: lib/form/base.ts:80
 
 > **get** **localeTag**(): `string`
 
-Defined in: lib/form/base.ts:75
+Defined in: [lib/form/base.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L75)
 
 当前语言的标准 HTML lang 标签
 
@@ -342,7 +342,7 @@ Defined in: lib/form/base.ts:75
 
 > **get** **nextTick**(): () => `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:148
+Defined in: [lib/form/base.ts:148](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L148)
 
 等待渲染
 
@@ -362,7 +362,7 @@ Defined in: lib/form/base.ts:148
 
 > **get** **panelId**(): `string`
 
-Defined in: lib/form/abstract-panel.ts:12
+Defined in: [lib/form/abstract-panel.ts:12](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L12)
 
 当前的 panel ID
 
@@ -378,7 +378,7 @@ Defined in: lib/form/abstract-panel.ts:12
 
 > **get** **path**(): `string`
 
-Defined in: lib/form/base.ts:57
+Defined in: [lib/form/base.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L57)
 
 当前文件的包内路径不以 / 结尾
 
@@ -398,7 +398,7 @@ Defined in: lib/form/base.ts:57
 
 > **get** **prep**(): `string`
 
-Defined in: lib/form/base.ts:63
+Defined in: [lib/form/base.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L63)
 
 样式独占前缀
 
@@ -418,7 +418,7 @@ Defined in: lib/form/base.ts:63
 
 > **get** **refs**(): `Record`\<`string`, `HTMLElement` & [`AbstractControl`](../../control/classes/AbstractControl.md) & `Record`\<`string`, `any`\>\>
 
-Defined in: lib/form/base.ts:136
+Defined in: [lib/form/base.ts:136](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L136)
 
 获取 refs 情况
 
@@ -438,7 +438,7 @@ Defined in: lib/form/base.ts:136
 
 > **get** **rootForm**(): [`AbstractForm`](AbstractForm.md) & `Record`\<`string`, `any`\>
 
-Defined in: lib/form/abstract-panel.ts:18
+Defined in: [lib/form/abstract-panel.ts:18](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L18)
 
 当前 panel 所在窗体的窗体对象，系统会在创建时重写本函数
 
@@ -454,7 +454,7 @@ Defined in: lib/form/abstract-panel.ts:18
 
 > **get** **rootPanel**(): [`AbstractControl`](../../control/classes/AbstractControl.md) & `Record`\<`string`, `any`\>
 
-Defined in: lib/form/abstract-panel.ts:23
+Defined in: [lib/form/abstract-panel.ts:23](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L23)
 
 当前 panel 所在的 panel control 对象，系统会在创建时重写本函数
 
@@ -470,7 +470,7 @@ Defined in: lib/form/abstract-panel.ts:23
 
 > **get** **taskId**(): `string`
 
-Defined in: lib/form/base.ts:37
+Defined in: [lib/form/base.ts:37](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L37)
 
 当前的任务 ID
 
@@ -488,7 +488,7 @@ Defined in: lib/form/base.ts:37
 
 > **allowEvent**(`e`): `boolean`
 
-Defined in: lib/form/base.ts:156
+Defined in: [lib/form/base.ts:156](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L156)
 
 判断当前事件可否执行
 
@@ -514,7 +514,7 @@ Defined in: lib/form/base.ts:156
 
 > **clearQs**(): `void`
 
-Defined in: lib/form/abstract-panel.ts:76
+Defined in: [lib/form/abstract-panel.ts:76](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L76)
 
 确定不再使用 qs 时可调用此方法清空，这样再次通过相同 qs 进入本 panel 依然会响应 qschange 事件
 
@@ -528,7 +528,7 @@ Defined in: lib/form/abstract-panel.ts:76
 
 > **doneStep**(): `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:68
+Defined in: [lib/form/abstract-panel.ts:68](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L68)
 
 目窗体完成当前步骤
 
@@ -542,7 +542,7 @@ Defined in: lib/form/abstract-panel.ts:68
 
 > **enterStep**(`list`): `Promise`\<`boolean`\>
 
-Defined in: lib/form/abstract-panel.ts:57
+Defined in: [lib/form/abstract-panel.ts:57](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L57)
 
 母窗体进入 form hash 为源的步进条
 
@@ -562,7 +562,7 @@ Defined in: lib/form/abstract-panel.ts:57
 
 > **formHashBack**(): `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:47
+Defined in: [lib/form/abstract-panel.ts:47](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L47)
 
 将母窗体的 form hash 回退
 
@@ -576,7 +576,7 @@ Defined in: lib/form/abstract-panel.ts:47
 
 > **onBeforeCreate**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:186
+Defined in: [lib/form/base.ts:186](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L186)
 
 #### Returns
 
@@ -592,7 +592,7 @@ Defined in: lib/form/base.ts:186
 
 > **onBeforeMount**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:194
+Defined in: [lib/form/base.ts:194](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L194)
 
 #### Returns
 
@@ -608,7 +608,7 @@ Defined in: lib/form/base.ts:194
 
 > **onBeforeUnmount**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:206
+Defined in: [lib/form/base.ts:206](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L206)
 
 #### Returns
 
@@ -624,7 +624,7 @@ Defined in: lib/form/base.ts:206
 
 > **onBeforeUpdate**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:198
+Defined in: [lib/form/base.ts:198](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L198)
 
 #### Returns
 
@@ -640,7 +640,7 @@ Defined in: lib/form/base.ts:198
 
 > **onCreated**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:190
+Defined in: [lib/form/base.ts:190](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L190)
 
 #### Returns
 
@@ -656,7 +656,7 @@ Defined in: lib/form/base.ts:190
 
 > **onHide**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:96
+Defined in: [lib/form/abstract-panel.ts:96](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L96)
 
 #### Returns
 
@@ -668,7 +668,7 @@ Defined in: lib/form/abstract-panel.ts:96
 
 > **onMounted**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:101
+Defined in: [lib/form/abstract-panel.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L101)
 
 #### Returns
 
@@ -680,7 +680,7 @@ Defined in: lib/form/abstract-panel.ts:101
 
 > **onQsChange**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:113
+Defined in: [lib/form/abstract-panel.ts:113](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L113)
 
 qs 变动时调用，如果只是用来做 qs 数据处理，建议用此方法
 
@@ -694,7 +694,7 @@ qs 变动时调用，如果只是用来做 qs 数据处理，建议用此方法
 
 > **onQsChangeShow**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:118
+Defined in: [lib/form/abstract-panel.ts:118](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L118)
 
 无论是 show 还是 qschange 都会触发，优先触发 show 或 qschange 事件本身，之后触发这个
 
@@ -714,7 +714,7 @@ Defined in: lib/form/abstract-panel.ts:118
 
 > **onReceive**(`data`): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:107
+Defined in: [lib/form/abstract-panel.ts:107](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L107)
 
 接收 send 传递过来的 data 数据（是 panel 控件的 send，不是 form 的 send）
 
@@ -734,7 +734,7 @@ Defined in: lib/form/abstract-panel.ts:107
 
 > **onShow**(`e`): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:85
+Defined in: [lib/form/abstract-panel.ts:85](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L85)
 
 #### Parameters
 
@@ -752,7 +752,7 @@ Defined in: lib/form/abstract-panel.ts:85
 
 > **onShowed**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/abstract-panel.ts:90
+Defined in: [lib/form/abstract-panel.ts:90](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L90)
 
 panel 已经完全显示后所要执行的
 
@@ -766,7 +766,7 @@ panel 已经完全显示后所要执行的
 
 > **onUnmounted**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:210
+Defined in: [lib/form/base.ts:210](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L210)
 
 #### Returns
 
@@ -782,7 +782,7 @@ Defined in: lib/form/base.ts:210
 
 > **onUpdated**(): `void` \| `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:202
+Defined in: [lib/form/base.ts:202](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L202)
 
 #### Returns
 
@@ -798,7 +798,7 @@ Defined in: lib/form/base.ts:202
 
 > **send**(`fid`, `obj`): `void`
 
-Defined in: lib/form/base.ts:178
+Defined in: [lib/form/base.ts:178](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L178)
 
 给一个窗体发送一个对象，不会知道成功与失败状态
 
@@ -830,7 +830,7 @@ formId 要接收对象的 form id
 
 > **sendToRootPanel**(`data`): `void`
 
-Defined in: lib/form/abstract-panel.ts:52
+Defined in: [lib/form/abstract-panel.ts:52](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/abstract-panel.ts#L52)
 
 发送一段数据到自己这个 panel 控件，本质上也是调用的 panel 控件的 send 方法，主要用来实现发送给跳转后的 panel
 
@@ -850,7 +850,7 @@ Defined in: lib/form/abstract-panel.ts:52
 
 > **trigger**(`name`, `param1?`, `param2?`): `Promise`\<`void`\>
 
-Defined in: lib/form/base.ts:166
+Defined in: [lib/form/base.ts:166](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L166)
 
 触发系统方法
 
@@ -888,7 +888,7 @@ Defined in: lib/form/base.ts:166
 
 > **watch**\<`T`, `TK`, `TR`\>(`name`, `cb`, `opt?`): () => `void`
 
-Defined in: lib/form/base.ts:122
+Defined in: [lib/form/base.ts:122](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/base.ts#L122)
 
 监视变动
 

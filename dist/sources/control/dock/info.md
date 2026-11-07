@@ -16,7 +16,25 @@
 
 `number` | `string`
 
-展开宽度，默认 `280`。
+展开宽度，默认 `280`，兼容数字、数字字符串及 CSS 长度。拖动后保存为像素数，可通过 `v-model:width` 接收。
+
+#### minWidth
+
+`number` | `string`
+
+拖拽调整宽度的下限，单位为像素，默认 `160`。空间不足时以可用空间为上限；不修改初始 `width`。
+
+#### maxWidth
+
+`number` | `string`
+
+拖拽调整宽度的上限，单位为像素，默认 `0`，表示使用可用空间；不修改初始 `width`。
+
+#### resizable
+
+`boolean` | `string`
+
+是否允许在展开模式下拖拽调整侧栏宽度，默认 `true`；同时控制分隔条的键盘调整。聚焦分隔条后，左右方向键每次调整 `10px`。拖拽时按 Escape 可取消，完成后通过 `update:width` 提交；可使用 `v-model:width` 保存，不绑定时控件也会保留调整结果。
 
 #### position
 
@@ -28,7 +46,7 @@
 
 `number` | `string`
 
-多列布局为其他工作区保留的宽度，默认 `320` 像素。仅用于包含 `dock-column` 的 Dock；应包含工具箱、其他侧栏及工作区需要的宽度。
+为其他工作区保留的宽度，默认 `320` 像素，用于单列拖拽上限及多列自动收起和拖拽上限；应包含工具箱、其他侧栏及工作区需要的宽度。单列旧用法的初始 `width` 不受此参数强制修正。
 
 ### 方法
 
@@ -75,4 +93,4 @@
 </dock>
 ```
 
-同一个 Dock 中不要混用直接的 `dock-group` 与 `dock-column`。多列宽度由各列决定，根 Dock 的 `width` 不参与多列分配。
+同一个 Dock 中不要混用直接的 `dock-group` 与 `dock-column`。多列宽度由各列决定，根 Dock 的 `width`、`minWidth`、`maxWidth` 和 `resizable` 仅控制单列用法；多列时在各 `dock-column` 上设置。

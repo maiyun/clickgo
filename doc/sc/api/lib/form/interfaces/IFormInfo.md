@@ -6,7 +6,7 @@
 
 # Interface: IFormInfo
 
-Defined in: lib/form/types.ts:60
+Defined in: [lib/form/types.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L60)
 
 Form 的简略情况，通常在 list 当中
 
@@ -16,7 +16,7 @@ Form 的简略情况，通常在 list 当中
 
 > **focus**: `boolean`
 
-Defined in: lib/form/types.ts:67
+Defined in: [lib/form/types.ts:67](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L67)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: lib/form/types.ts:67
 
 > **icon**: `string`
 
-Defined in: lib/form/types.ts:63
+Defined in: [lib/form/types.ts:63](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L63)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: lib/form/types.ts:63
 
 > **show**: `boolean`
 
-Defined in: lib/form/types.ts:66
+Defined in: [lib/form/types.ts:66](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L66)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: lib/form/types.ts:66
 
 > **showInSystemTask**: `boolean`
 
-Defined in: lib/form/types.ts:68
+Defined in: [lib/form/types.ts:68](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L68)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: lib/form/types.ts:68
 
 > **stateMax**: `boolean`
 
-Defined in: lib/form/types.ts:64
+Defined in: [lib/form/types.ts:64](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L64)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: lib/form/types.ts:64
 
 > **stateMin**: `boolean`
 
-Defined in: lib/form/types.ts:65
+Defined in: [lib/form/types.ts:65](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L65)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: lib/form/types.ts:65
 
 > **taskId**: `string`
 
-Defined in: lib/form/types.ts:61
+Defined in: [lib/form/types.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L61)
 
 ***
 
@@ -72,4 +72,4 @@ Defined in: lib/form/types.ts:61
 
 > **title**: `string`
 
-Defined in: lib/form/types.ts:62
+Defined in: [lib/form/types.ts:62](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L62)

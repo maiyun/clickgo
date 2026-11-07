@@ -5,10 +5,17 @@ import dateFrm from './form/control/date/date';
 import datepanelFrm from './form/control/datepanel/datepanel';
 import daterangeFrm from './form/control/daterange/daterange';
 import accordionFrm from './form/control/accordion/accordion';
+import dockFrm from './form/control/dock/dock';
 
 export default class extends clickgo.core.AbstractApp {
 
     public async main(data: Record<string, any>): Promise<void> {
+        if (data['demo'] === 'dock') {
+            await this.run(await clickgo.form.create(this, dockFrm, {
+                'fullscreen': true,
+            }));
+            return;
+        }
         if (data['demo'] === 'accordion') {
             await this.run(await clickgo.form.create(this, accordionFrm, {
                 'fullscreen': true,

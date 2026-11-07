@@ -6,7 +6,7 @@
 
 # Interface: INotifyOptions
 
-Defined in: lib/form/types.ts:81
+Defined in: [lib/form/types.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L81)
 
 弹出 notify 信息框的选项
 
@@ -16,7 +16,7 @@ Defined in: lib/form/types.ts:81
 
 > `optional` **content?**: `string`
 
-Defined in: lib/form/types.ts:84
+Defined in: [lib/form/types.ts:84](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L84)
 
 正文
 
@@ -26,7 +26,7 @@ Defined in: lib/form/types.ts:84
 
 > `optional` **icon?**: `string` \| `null`
 
-Defined in: lib/form/types.ts:87
+Defined in: [lib/form/types.ts:87](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L87)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: lib/form/types.ts:87
 
 > `optional` **note?**: `string`
 
-Defined in: lib/form/types.ts:86
+Defined in: [lib/form/types.ts:86](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L86)
 
 浅色描述
 
@@ -44,7 +44,7 @@ Defined in: lib/form/types.ts:86
 
 > `optional` **progress?**: `boolean`
 
-Defined in: lib/form/types.ts:90
+Defined in: [lib/form/types.ts:90](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L90)
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: lib/form/types.ts:90
 
 > `optional` **timeout?**: `number`
 
-Defined in: lib/form/types.ts:88
+Defined in: [lib/form/types.ts:88](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L88)
 
 ***
 
@@ -60,7 +60,7 @@ Defined in: lib/form/types.ts:88
 
 > `optional` **title?**: `string`
 
-Defined in: lib/form/types.ts:82
+Defined in: [lib/form/types.ts:82](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L82)
 
 ***
 
@@ -68,4 +68,4 @@ Defined in: lib/form/types.ts:82
 
 > `optional` **type?**: `"progress"` \| `"danger"` \| `"primary"` \| `"info"` \| `"warning"`
 
-Defined in: lib/form/types.ts:89
+Defined in: [lib/form/types.ts:89](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L89)

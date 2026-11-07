@@ -32,4 +32,25 @@ export default class extends clickgo.form.AbstractForm {
 
     public width = '240';
 
+    public projectWidth = '200';
+
+    public optionHeight = 0;
+
+    public historyHeight = 0;
+
+    public displayHeight = 0;
+
+    public resizable = true;
+
+    public menuSelection = '';
+
+    /**
+     * --- 显示菜单操作对应的选中项 ---
+     * @param name 选中项名称
+     * @returns 无返回值
+     */
+    public runMenu(name: string): void {
+        this.menuSelection = name;
+    }
+
 }

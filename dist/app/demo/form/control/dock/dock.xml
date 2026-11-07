@@ -1,11 +1,14 @@
 <form title="Dock" width="1000" height="640" min-width="360" min-height="460" padding="10">
     <layout direction="v" gutter="10" style="flex: 1; min-width: 0; min-height: 0;">
-        <label>Expanded: {{expanded}}, position: {{position[0]}}, selected: {{optionTab}}</label>
+        <label>Expanded: {{expanded}}, position: {{position[0]}}, selected: {{optionTab}}, width: {{width}}, menu: {{menuSelection}}</label>
 
         <!-- 可实时调整的侧栏预览 -->
         <layout class="preview">
-            <dock v-if="!multiple" v-model:expanded="expanded" :position="position[0]" :width="width" :style="{'order': position[0] === 'left' ? 0 : 2}">
-                <dock-group v-model="optionTab" v-model:collapsed="groupCollapsed" :collapsible="collapsible">
+            <dock v-if="!multiple" v-model:expanded="expanded" :position="position[0]" v-model:width="width" :resizable="resizable" :style="{'order': position[0] === 'left' ? 0 : 2}">
+                <dock-group v-model="optionTab" v-model:collapsed="groupCollapsed" v-model:height="optionHeight" :resizable="resizable" :collapsible="collapsible">
+                    <template v-slot:menu="{ name }">
+                        <menulist><menulist-item @click="runMenu(name)">Inspect {{name}}</menulist-item></menulist>
+                    </template>
                     <dock-item name="project" label="Project" :lazy="lazy" :cache="cache">
                         <flow direction="v" gutter="8" style="padding: 10px;">
                             <label>Project content</label>
@@ -21,7 +24,7 @@
                         </flow>
                     </dock-item>
                 </dock-group>
-                <dock-group v-model="historyTab" :grow="grow">
+                <dock-group v-model="historyTab" v-model:height="historyHeight" :resizable="resizable" :grow="grow">
                     <dock-item name="history" label="History" :lazy="lazy" :cache="cache">
                         <flow direction="v" gutter="8" style="padding: 10px;">
                             <label>Latest actions</label>
@@ -33,8 +36,11 @@
                 </dock-group>
             </dock>
             <dock v-else v-model:expanded="expanded" :position="position[0]" min-content-width="360" :style="{'order': position[0] === 'left' ? 0 : 2}">
-                <dock-column v-model:expanded="projectExpanded" width="200" label="Project column">
-                    <dock-group v-model="optionTab" v-model:collapsed="groupCollapsed" :collapsible="collapsible" grow>
+                <dock-column v-model:expanded="projectExpanded" v-model:width="projectWidth" :resizable="resizable" label="Project column">
+                    <dock-group v-model="optionTab" v-model:collapsed="groupCollapsed" v-model:height="optionHeight" :resizable="resizable" :collapsible="collapsible" grow>
+                        <template v-slot:menu="{ name }">
+                            <menulist><menulist-item @click="runMenu(name)">Inspect {{name}}</menulist-item></menulist>
+                        </template>
                         <dock-item name="project" label="Project" :lazy="lazy" :cache="cache">
                             <layout direction="v" gutter="8" style="padding: 10px;">
                                 <label>Project content</label>
@@ -51,8 +57,8 @@
                         </dock-item>
                     </dock-group>
                 </dock-column>
-                <dock-column v-model:expanded="mainExpanded" :width="width" label="Main column">
-                    <dock-group v-model="historyTab" :grow="grow">
+                <dock-column v-model:expanded="mainExpanded" v-model:width="width" :resizable="resizable" label="Main column">
+                    <dock-group v-model="historyTab" v-model:height="historyHeight" :resizable="resizable" :grow="grow">
                         <dock-item name="history" label="History" :lazy="lazy" :cache="cache">
                             <layout direction="v" gutter="8" style="padding: 10px;">
                                 <label>Latest actions</label>
@@ -62,7 +68,7 @@
                             </layout>
                         </dock-item>
                     </dock-group>
-                    <dock-group model-value="display">
+                    <dock-group model-value="display" v-model:height="displayHeight" :resizable="resizable">
                         <dock-item name="display" label="Display">
                             <layout wrap gutter="10" style="padding: 10px;">
                                 <check v-model="showGrid">Grid</check>
@@ -75,6 +81,7 @@
             <layout class="workspace" direction="v" align-h="center" align-v="center" :style="{'order': 1}">
                 <label>Workspace</label>
                 <label>Collapse the Dock to test its floating panels.</label>
+                <label>Drag column edges and group separators to resize.</label>
                 <label>Resize this Form: columns collapse in order and restore their preferences.</label>
             </layout>
         </layout>
@@ -82,6 +89,7 @@
         <!-- Dock、Dock Group 与 Dock Item 参数 -->
         <layout wrap gutter="10" align-v="center">
             <check v-model="multiple">Two columns</check>
+            <check v-model="resizable">Resizable</check>
             <layout align-v="center" gutter="8"><label>width</label><number v-model="width" min="160" max="400" style="width: 140px;"></number></layout>
             <layout align-v="center" gutter="8" style="flex: 1; min-width: 150px;"><label>position</label><select v-model="position" :data="['left', 'right']" style="flex: 1; min-width: 0;"></select></layout>
             <button @click="expanded = !expanded">{{expanded ? '' : '!'}}expanded</button>

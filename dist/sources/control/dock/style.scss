@@ -1,6 +1,6 @@
 .wrap {
     --dock-collapsed-width: 40px;
-    display: flex; flex: none; flex-direction: column; min-height: 0; background: var(--g-plain-background); box-sizing: border-box;
+    position: relative; display: flex; flex: none; flex-direction: column; min-height: 0; background: var(--g-plain-background); box-sizing: border-box;
 
     &.left {
         border-inline-end: solid .5px var(--g-border-color);
@@ -11,7 +11,7 @@
     }
 
     &.expanded {
-        overflow: hidden;
+        overflow: visible;
 
         > .body {
             flex: 1; flex-shrink: 1 !important; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
@@ -34,3 +34,16 @@
         }
     }
 }
+
+.wrap > .resize {
+    position: absolute; z-index: 2; top: 0; bottom: 0; width: 7px; cursor: col-resize; touch-action: none; outline: none;
+
+    &::after {
+        content: ''; position: absolute; top: 0; bottom: 0; width: 1px;
+    }
+    &:hover::after, &:active::after, &:focus-visible::after { background: var(--cg); }
+}
+.wrap.left > .resize { inset-inline-end: -3px; }
+.wrap.right > .resize { inset-inline-start: -3px; }
+.wrap.left > .resize::after { inset-inline-end: 3px; }
+.wrap.right > .resize::after { inset-inline-start: 3px; }

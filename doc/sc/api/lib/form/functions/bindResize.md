@@ -8,7 +8,7 @@
 
 > **bindResize**(`e`, `border`): `void`
 
-Defined in: lib/form/window.ts:67
+Defined in: [lib/form/window.ts:67](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L67)
 
 绑定窗体拖动大小事件，在 pointerdown 中绑定
 

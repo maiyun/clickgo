@@ -1,4 +1,5 @@
 <div class="wrap" :class="[expandedData ? 'expanded' : 'collapsed', positionData, columns.length && 'columns']" :style="(expandedData || columns.length) ? {'width': widthComp} : undefined">
+    <div v-if="expandedData && propBoolean('resizable') && !columns.length" class="resize" role="separator" :tabindex="formFocus ? 0 : undefined" aria-orientation="vertical" :aria-valuenow="Number.isFinite(Number(widthData)) ? Number(widthData) : undefined" :aria-valuemin="resizeBounds.min" :aria-valuemax="resizeBounds.max" @pointerdown="resizeWidth($event)" @keydown="resizeKey($event)"></div>
     <cg-sidebar-toggle v-if="!narrow && !columns.length" :expanded="expandedData" :position="positionData" @update:expanded="toggle" />
     <div ref="body" class="body" :class="[columns.length && 'columns']">
         <slot></slot>

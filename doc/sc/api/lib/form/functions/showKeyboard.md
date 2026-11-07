@@ -8,7 +8,7 @@
 
 > **showKeyboard**(): `void`
 
-Defined in: lib/form/system.ts:64
+Defined in: [lib/form/system.ts:64](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/system.ts#L64)
 
 显示系统级虚拟键盘
 

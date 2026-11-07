@@ -8,7 +8,7 @@
 
 > **refreshLocaleDirection**(`taskId?`): `void`
 
-Defined in: lib/form/system.ts:46
+Defined in: [lib/form/system.ts:46](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/system.ts#L46)
 
 刷新系统根节点及任务窗体的语言方向
 

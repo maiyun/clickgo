@@ -393,7 +393,7 @@ const rtlStyleChecks = [
     ['dist/control/common.cgc', 'tab/style.css', 'dist/sources/control/tab/style.css', ['border-inline-start-width', 'border-inline-end-width']],
     ['dist/control/common.cgc', 'timeline/style.css', 'dist/sources/control/timeline/style.css', ['border-inline-start']],
     ['dist/control/common.cgc', 'dock/style.css', 'dist/sources/control/dock/style.css', ['border-inline-end']],
-    ['dist/control/common.cgc', 'dock-group/style.css', 'dist/sources/control/dock-group/style.css', ['inset-inline-start', 'max-width:calc(100vw - 40px)']],
+    ['dist/control/common.cgc', 'dock-group/style.css', 'dist/sources/control/dock-group/style.css', ['inset-inline-start', 'inset-inline-end']],
     ['dist/control/common.cgc', 'dock-column/style.css', 'dist/sources/control/dock-column/style.css', ['border-inline-start']],
     ['dist/control/common.cgc', 'toolbox/style.css', 'dist/sources/control/toolbox/style.css', ['border-inline-end']],
     ['dist/control/common.cgc', 'sidebar-toggle/style.css', 'dist/sources/control/sidebar-toggle/style.css', [':dir(rtl)', 'border-bottom', '--sidebar-toggle-background']],

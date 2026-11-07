@@ -1,24 +1,33 @@
 import * as clickgo from 'clickgo';
+import * as width from './lib/width';
 /** --- 同一窗体内的 Dock 实例注册表，确保同时只有一个浮动面板打开 --- */
 const formDocks = new WeakMap();
 /** --- Dock 进入窄布局的宽度，与 Nav 的浮层模式断点保持一致 --- */
 const narrowWidth = 600;
 export default class extends clickgo.control.AbstractControl {
     emits = {
-        'update:expanded': null
+        'update:expanded': null,
+        'update:width': null
     };
     props = {
         'expanded': true,
         'position': 'right',
         'width': 280,
+        'minWidth': 160,
+        'maxWidth': 0,
+        'resizable': true,
         'minContentWidth': 320
     };
     /** --- 不参与响应式处理的 Form 尺寸监听状态 --- */
     access = {
         'formSizeWatch': null,
         'viewportSizeWatch': null,
-        'nextGroupIndex': 0
+        'ownerSizeWatch': null,
+        'nextGroupIndex': 0,
+        'resizeCancel': null
     };
+    /** --- 拖拽后的宽度，未拖拽时保留原有 CSS 宽度 --- */
+    widthData = 280;
     /** --- 当前是否展开 --- */
     expandedData = true;
     /** --- 当前是否因所在布局区域过窄而强制收起 --- */
@@ -33,6 +42,8 @@ export default class extends clickgo.control.AbstractControl {
     viewportHeight = 0;
     /** --- 所属 Form 宽度，列的自动收起不会改写用户的展开偏好 --- */
     formWidth = 0;
+    /** --- 容器内容区与视窗的交集宽度 --- */
+    layoutWidth = 0;
     /** --- 参与布局计算的列实例；业务状态仍由各列的 v-model 管理 --- */
     columns = [];
     /** --- 侧栏所在位置 --- */
@@ -45,13 +56,119 @@ export default class extends clickgo.control.AbstractControl {
             return `calc(${this.columns.map(column => column.expandedData ?
                 `${column.preferredWidth}px` : 'var(--dock-collapsed-width)').join(' + ')} + 1px)`;
         }
-        if (typeof this.props.width === 'number') {
-            return `${this.props.width}px`;
+        if (typeof this.widthData === 'number') {
+            return `${this.widthData}px`;
         }
-        if (/^\d+$/.test(this.props.width)) {
-            return `${this.props.width}px`;
+        if (/^\d+$/.test(this.widthData)) {
+            return `${this.widthData}px`;
         }
-        return this.props.width;
+        return this.widthData;
+    }
+    /**
+     * --- 获取容器中扣除工作区后的可用宽度 ---
+     * @param column 正在调整的列，省略时计算 Dock 宽度
+     * @returns 可分配的像素宽度
+     */
+    availableWidth(column) {
+        const reserve = this.propNumber('minContentWidth');
+        const available = Math.max(0, this.layoutWidth - Math.max(0, Number.isFinite(reserve) ? reserve : 320));
+        if (!column) {
+            return available;
+        }
+        const columns = [...this.columns].sort((a, b) => clickgo.dom.index(a.element) - clickgo.dom.index(b.element));
+        const index = columns.indexOf(column);
+        return Math.max(0, available - 1 - columns.reduce((total, item, i) => {
+            if (item === column) {
+                return total;
+            }
+            return total + (i > index && item.expandedPreference ? item.preferredWidth : 40);
+        }, 0));
+    }
+    /** --- 当前可拖拽宽度范围 --- */
+    get resizeBounds() {
+        const maxProp = this.propNumber('maxWidth');
+        const max = Math.max(0, Math.min(maxProp > 0 ? maxProp : Infinity, this.availableWidth()));
+        return { 'min': Math.min(max, Math.max(0, this.propNumber('minWidth') || 0)), 'max': max };
+    }
+    /**
+     * --- 拖动展开侧栏的工作区边缘 ---
+     * @param event 指针按下事件
+     * @returns 无返回值
+     */
+    resizeWidth(event) {
+        if (!this.propBoolean('resizable') || !this.expandedData || this.columns.length || event.button !== 0) {
+            return;
+        }
+        event.preventDefault();
+        this.cancelResize();
+        this.refreshLayout();
+        const initial = this.element.getBoundingClientRect().width;
+        const original = this.widthData;
+        const start = event.clientX;
+        const direction = (this.positionData === 'left') !== (this.localeDirection === 'rtl') ? 1 : -1;
+        const bounds = this.resizeBounds;
+        this.access.resizeCancel = clickgo.modules.pointer.move(event, {
+            'cursor': 'col-resize',
+            'single': true,
+            'escape': true,
+            move: (e) => {
+                this.widthData = Math.min(bounds.max, Math.max(bounds.min, Math.round(initial + (e.clientX - start) * direction)));
+            },
+            finish: (_e, detail) => {
+                this.access.resizeCancel = null;
+                if (detail.cancelled) {
+                    this.widthData = original;
+                }
+                else if (this.widthData !== original) {
+                    this.emit('update:width', this.widthData);
+                }
+            }
+        }).cancel;
+    }
+    /**
+     * --- 用方向键调整展开宽度 ---
+     * @param event 键盘事件
+     * @returns 无返回值
+     */
+    resizeKey(event) {
+        if (!this.propBoolean('resizable') || !this.expandedData || this.columns.length ||
+            (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) {
+            return;
+        }
+        event.preventDefault();
+        this.cancelResize();
+        this.refreshLayout();
+        const direction = (this.positionData === 'left') !== (this.localeDirection === 'rtl') ? 1 : -1;
+        const bounds = this.resizeBounds;
+        const delta = event.key === 'ArrowRight' ? 10 : -10;
+        const value = Math.min(bounds.max, Math.max(bounds.min, Math.round(this.element.getBoundingClientRect().width + delta * direction)));
+        this.widthData = value;
+        this.emit('update:width', value);
+    }
+    /**
+     * --- 取消当前宽度拖拽 ---
+     * @returns 无返回值
+     */
+    cancelResize() {
+        this.access.resizeCancel?.();
+    }
+    /**
+     * --- 取消 Dock 及各列的宽度拖拽 ---
+     * @returns 无返回值
+     */
+    cancelAllResizes() {
+        this.cancelResize();
+        for (const column of this.columns) {
+            column.cancelResize();
+        }
+    }
+    /**
+     * --- 重新测量可用空间并更新列布局 ---
+     * @returns 无返回值
+     */
+    refreshLayout() {
+        this.layoutWidth = width.measureWidth(this.element, this.rootForm.element);
+        this.updateColumns();
     }
     /**
      * --- 注册独立停靠列 ---
@@ -88,9 +205,7 @@ export default class extends clickgo.control.AbstractControl {
         if (!this.columns.length || !this.formWidth) {
             return;
         }
-        const reserve = this.propNumber('minContentWidth');
-        const available = Math.max(0, Math.min(this.formWidth, this.viewportWidth || this.formWidth) -
-            Math.max(0, Number.isFinite(reserve) ? reserve : 320));
+        const available = this.availableWidth();
         const columns = [...this.columns].sort((a, b) => clickgo.dom.index(a.element) - clickgo.dom.index(b.element));
         let width = columns.reduce((total, column) => total +
             (column.expandedPreference ? column.preferredWidth : 40), 1);
@@ -160,6 +275,20 @@ export default class extends clickgo.control.AbstractControl {
             formDocks.set(form, new Set());
         }
         formDocks.get(form).add(this);
+        this.watch(() => [this.expandedData, this.propBoolean('resizable')], () => {
+            if (!this.expandedData || !this.propBoolean('resizable')) {
+                this.access.resizeCancel?.();
+            }
+        });
+        this.watch('width', () => {
+            if (this.props.width !== this.widthData) {
+                this.cancelResize();
+            }
+            this.widthData = this.props.width;
+        }, { 'immediate': true });
+        this.watch(() => [this.positionData, this.localeDirection, this.props.minWidth, this.props.maxWidth], () => {
+            this.cancelAllResizes();
+        });
         this.watch('expanded', () => {
             this.expandedData = !this.narrow && this.propBoolean('expanded');
             this.floatGroup = -1;
@@ -168,10 +297,11 @@ export default class extends clickgo.control.AbstractControl {
         });
         await this.nextTick();
         const formElement = this.rootForm.element;
-        if (!formElement.isConnected) {
+        if (!this.element?.isConnected || !formElement.isConnected) {
             return;
         }
         const handler = () => {
+            this.cancelAllResizes();
             this.formWidth = formElement.offsetWidth;
             const narrow = formElement.offsetWidth < narrowWidth;
             if (this.narrow !== narrow) {
@@ -179,7 +309,7 @@ export default class extends clickgo.control.AbstractControl {
                 this.expandedData = !narrow && this.propBoolean('expanded');
                 this.floatGroup = -1;
             }
-            this.updateColumns();
+            this.refreshLayout();
         };
         if (clickgo.dom.watchSizeMulti(this, formElement, handler, true)) {
             this.access.formSizeWatch = {
@@ -187,13 +317,24 @@ export default class extends clickgo.control.AbstractControl {
                 'handler': handler
             };
         }
+        const owner = this.element.parentElement;
+        if (owner) {
+            const ownerHandler = () => {
+                this.cancelAllResizes();
+                this.refreshLayout();
+            };
+            if (clickgo.dom.watchSizeMulti(this, owner, ownerHandler, true)) {
+                this.access.ownerSizeWatch = { 'element': owner, 'handler': ownerHandler };
+            }
+        }
         clickgo.dom.watchSize(this, this.refs.body, () => {
             this.floatAreaHeight = this.refs.body.clientHeight;
         }, true);
         const viewportHandler = () => {
+            this.cancelAllResizes();
             this.viewportWidth = document.documentElement.clientWidth;
             this.viewportHeight = document.documentElement.clientHeight;
-            this.updateColumns();
+            this.refreshLayout();
         };
         if (clickgo.dom.watchSizeMulti(this, document.documentElement, viewportHandler, true)) {
             this.access.viewportSizeWatch = {
@@ -207,10 +348,17 @@ export default class extends clickgo.control.AbstractControl {
             'deep': true
         });
         this.watch('minContentWidth', () => {
+            this.cancelAllResizes();
             this.updateColumns();
         });
     }
     onUnmounted() {
+        this.cancelAllResizes();
+        const ownerSizeWatch = this.access.ownerSizeWatch;
+        if (ownerSizeWatch) {
+            clickgo.dom.unwatchSizeMulti(this, ownerSizeWatch.element, ownerSizeWatch.handler);
+            this.access.ownerSizeWatch = null;
+        }
         const sizeWatch = this.access.formSizeWatch;
         if (sizeWatch) {
             clickgo.dom.unwatchSizeMulti(this, sizeWatch.element, sizeWatch.handler);
