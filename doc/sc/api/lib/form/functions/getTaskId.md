@@ -8,7 +8,7 @@
 
 > **getTaskId**(`formId`): `string`
 
-Defined in: [lib/form.ts:2241](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2241)
+Defined in: lib/form/window.ts:131
 
 根据窗体 id 获取 task id
 

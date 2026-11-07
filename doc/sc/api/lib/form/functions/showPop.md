@@ -8,7 +8,7 @@
 
 > **showPop**(`el`, `pop`, `direction`, `opt?`): `void`
 
-Defined in: [lib/form.ts:3266](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3266)
+Defined in: lib/form/popup.ts:57
 
 获取 pop 显示出来的坐标并报系统全局记录
 
@@ -28,13 +28,13 @@ Defined in: [lib/form.ts:3266](https://github.com/maiyun/clickgo/blob/master/dis
 
 ### direction
 
-`"v"` \| `PointerEvent` \| `"t"` \| `"h"` \| \{ `x`: `number`; `y`: `number`; \}
+`"v"` \| `PointerEvent` \| `"h"` \| `"t"` \| \{ `x`: `number`; `y`: `number`; \}
 
 要显示方向（以 $el 为准的 h 水平 v 垂直 t 垂直水平居中）或坐标
 
 ### opt?
 
-width / height 显示的 pop 定义自定义宽/高度，可省略；null，true 代表为空也会显示，默认为 false; autoPosition, 因 pop 内部内容变动导致的自动更新 pop 位置，默认 false，autoScroll，因原元素位置变更导致 pop 位置变更，默认 false，flow: 是否加入 pop 流，默认加入，不加入的话将不会自动隐藏
+size 自定义宽高；null 为 true 时为空也显示；autoPosition 随内容尺寸更新位置；autoScroll 随原元素位置更新；flow 默认加入 pop 流，不加入则不会自动隐藏；overflow 控制内容溢出；way 为托管方式
 
 #### autoPosition?
 
@@ -79,3 +79,5 @@ width / height 显示的 pop 定义自定义宽/高度，可省略；null，true
 ## Returns
 
 `void`
+
+无返回值

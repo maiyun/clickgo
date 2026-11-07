@@ -8,8 +8,12 @@
 
 > **init**(): `void`
 
-Defined in: [lib/form.ts:4906](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4906)
+Defined in: lib/form/system.ts:104
+
+初始化系统宿主，多次调用仅执行一次
 
 ## Returns
 
 `void`
+
+无返回值

@@ -55,29 +55,21 @@ const tool = new SyntheticModule(['lang', 'logicalOr'], function() {
 });
 const empty = new SyntheticModule([], function() {});
 
-const formSource = await readFile(new URL('../../lib/form.ts', import.meta.url), 'utf8');
-const formModule = new SourceTextModule(ts.transpileModule(formSource, {
-    'compilerOptions': {
-        'target': ts.ScriptTarget.ES2022,
-        'module': ts.ModuleKind.ESNext,
-    },
+const systemSource = await readFile(new URL('../form/system.ts', import.meta.url), 'utf8');
+const systemModule = new SourceTextModule(ts.transpileModule(systemSource, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
 }).outputText);
-await formModule.link((specifier) => {
-    if (specifier === '../clickgo') {
-        return clickgo;
-    }
-    if (specifier === './core') {
-        return core;
-    }
-    if (specifier === './task') {
-        return task;
-    }
-    if (specifier === './tool') {
-        return tool;
-    }
-    return empty;
+await systemModule.link(() => empty);
+await systemModule.evaluate();
+const system = systemModule.namespace.createSystemRuntime({
+    clickgo: { modules: { pointer: { move() {} }, vue: { createApp: () => ({ mount() {} }) } } },
+    lCore: { config }, lTask: { getOrigin: id => tasks.get(id) ?? null },
+    lTool: { lang: toolModule.namespace.lang, logicalOr: toolModule.namespace.logicalOr },
+    lDom: {}, info: { locale: { en: { search: 'Search' } } }, state: { sysId: 'system' },
+    changeFocus: async () => {}, getMaxZIndexID: async () => null,
+    refreshNotifyPosition() {}, setSimpleSystemTaskRoot() {}, setLauncherRoot() {},
 });
-await formModule.evaluate();
+const formModule = new SyntheticModule([], function() {});
 
 const domSource = await readFile(new URL('../../lib/dom.ts', import.meta.url), 'utf8');
 const domModule = new SourceTextModule(ts.transpileModule(domSource, {
@@ -111,7 +103,7 @@ assert.equal(isRtl(rtlElement), true, 'an RTL element must resolve to RTL');
 assert.equal(isRtl(document.createComment('pending render')), false, 'a Vue placeholder node must safely resolve to LTR');
 assert.equal(isRtl(null), false, 'a missing element must safely resolve to LTR');
 
-const { elements, refreshLocaleDirection } = formModule.namespace;
+const { elements, refreshLocaleDirection } = system;
 elements.init();
 assert.equal(document.querySelector('#cg-wrap'), elements.wrap, 'system root must initialize as #cg-wrap');
 assert.equal(elements.wrap.lang, 'en', 'system root must receive the global language tag');

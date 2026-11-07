@@ -19,6 +19,7 @@ import * as lCommand from './command';
 import * as lDom from './dom';
 import * as lTool from './tool';
 import * as lForm from './form';
+import { cleanupPop } from './form/popup';
 import * as lControl from './control';
 import * as lFs from './fs';
 import * as lTheme from './theme';
@@ -1262,6 +1263,11 @@ export async function end(taskId) {
     for (const fid in task.forms) {
         // --- 结束任务挨个关闭窗体 ---
         const f = task.forms[fid];
+        const popContainer = lForm.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]');
+        cleanupPop(f.vapp._container);
+        if (popContainer) {
+            cleanupPop(popContainer);
+        }
         lCore.trigger('formRemoved', taskId, f.id, f.vroot.$refs.form.title, f.vroot.$refs.form.iconDataUrl).catch(() => { });
         try {
             f.vapp.unmount();
@@ -1275,7 +1281,7 @@ export async function end(taskId) {
             });
         }
         f.vapp._container.remove();
-        lForm.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]')?.remove();
+        popContainer?.remove();
         lDom.clearWatchStyle(fid);
         lDom.clearWatchProperty(fid);
         lDom.clearWatchPosition(fid);

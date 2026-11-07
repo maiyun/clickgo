@@ -201,9 +201,14 @@ assert.equal(api.testState.list.exiting, undefined);
 console.log('Actual task termination removes registered trays and rejects in-flight registrations.');
 
 // Escape is handled once by the shared popup service, preserving IME and focus.
-const formSource = await readFile(new URL('../../lib/form.ts', import.meta.url), 'utf8');
+const formSource = await readFile(new URL('../form/popup.ts', import.meta.url), 'utf8');
 const formAst = ts.createSourceFile('form.ts', formSource, ts.ScriptTarget.ES2022, true);
-const popupHandler = formAst.statements.find(statement => ts.isFunctionDeclaration(statement) && statement.name?.text === 'keydownPop');
+let popupHandler;
+function findPopupHandler(node) {
+    if (ts.isFunctionDeclaration(node) && node.name?.text === 'keydownPop') popupHandler = node;
+    ts.forEachChild(node, findPopupHandler);
+}
+findPopupHandler(formAst);
 assert.ok(popupHandler);
 const popInfo = { list: [], elList: [] };
 let popHidden = 0, focusRestored = 0, popupFocused = 0, childFocused = 0, prevented = 0;

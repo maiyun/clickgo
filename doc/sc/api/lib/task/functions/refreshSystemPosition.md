@@ -8,7 +8,7 @@
 
 > **refreshSystemPosition**(): `void`
 
-Defined in: [lib/task.ts:1732](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1732)
+Defined in: [lib/task.ts:1738](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1738)
 
 刷新系统任务的 form 的位置以及 length
 

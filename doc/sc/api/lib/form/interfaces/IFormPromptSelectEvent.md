@@ -6,7 +6,7 @@
 
 # Interface: IFormPromptSelectEvent
 
-Defined in: [lib/form.ts:5092](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5092)
+Defined in: lib/form/types.ts:196
 
 Custom Event
 
@@ -20,7 +20,7 @@ Custom Event
 
 > **detail**: `object`
 
-Defined in: [lib/form.ts:5093](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L5093)
+Defined in: lib/form/types.ts:197
 
 #### button
 

@@ -732,11 +732,13 @@ command.clear(unsupportedOwner);
 delete tasks['unsupported-owner'];
 
 // --- 运行实际 Form.remove、Panel.removePanel 和 task.end，检查生命周期集成。 ---
-const formSource = await readFile(new URL('../../lib/form.ts', import.meta.url), 'utf8');
-const formTree = ts.createSourceFile('form.ts', formSource, ts.ScriptTarget.ES2022, true);
+const formSource = await readFile(new URL('../../lib/form/remove.ts', import.meta.url), 'utf8');
+const formTree = ts.createSourceFile('remove.ts', formSource, ts.ScriptTarget.ES2022, true);
+const createSource = await readFile(new URL('../../lib/form/create.ts', import.meta.url), 'utf8');
+const createTree = ts.createSourceFile('create.ts', createSource, ts.ScriptTarget.ES2022, true);
 const callbacks = [];
 const lifecycleScope = {
-    exports: {}, sysId: 'system', list: tasks, runtime: {}, frameMaps: {}, trays: {},
+    exports: {}, sysId: 'system', state: { sysId: 'system' }, list: tasks, runtime: {}, frameMaps: {}, trays: {},
     lTask: { getOrigin: id => tasks[id], getRuntime: () => ({ dialogFormIds: [] }) },
     lCommand: command, lCore: { trigger: async () => {} },
     lDom: { is: { transition: true }, findParentByClass: element => element.closest('.cg-form-wrap'),
@@ -745,7 +747,8 @@ const lifecycleScope = {
     lNative: { clear() {} }, lControl: { clearComponents() {} },
     clickgo: { isNative: () => false }, clearSystem: async () => {},
     getTaskId: id => id === 'main' ? 'first' : '', setTimeout: callback => callbacks.push(callback),
-    clearTimeout() {}, cancelAnimationFrame() {}, activePanels: {},
+    clearTimeout() {}, cancelAnimationFrame() {}, activePanels: {}, cleanupPop() {},
+    elements: { popList: { querySelector: () => null } },
     lForm: { getMaxZIndexID: async () => null, changeFocus: async () => {},
         elements: { list: { querySelectorAll: () => [] } }, activePanels: {} },
 };
@@ -771,12 +774,12 @@ assert.equal(command.register(first, definition('stale-form')), false);
 const panelHooks = [];
 const visit = node => {
     if (ts.isPropertyAssignment(node) && ['beforeUnmount', 'unmounted'].includes(node.name.text) &&
-        node.initializer.getText(formTree).includes('clearOwner(t.id, formId, panelId)')) {
-        panelHooks.push(node.initializer.getText(formTree));
+        node.initializer.getText(createTree).includes('clearOwner(t.id, formId, panelId)')) {
+        panelHooks.push(node.initializer.getText(createTree));
     }
     ts.forEachChild(node, visit);
 };
-visit(formTree);
+visit(createTree);
 assert.equal(panelHooks.length, 2);
 const hookScope = { ...lifecycleScope, t: tasks.second, formId: 'main', panelId: 'panel' };
 command.register({ ...second, panelId: 'panel' }, definition('owned-panel'));

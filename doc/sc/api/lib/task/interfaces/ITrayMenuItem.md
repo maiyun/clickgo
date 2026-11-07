@@ -6,7 +6,7 @@
 
 # Interface: ITrayMenuItem
 
-Defined in: [lib/task.ts:73](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L73)
+Defined in: [lib/task.ts:74](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L74)
 
 托盘菜单命令；separator 项只显示分隔线
 
@@ -16,7 +16,7 @@ Defined in: [lib/task.ts:73](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **disabled?**: `boolean`
 
-Defined in: [lib/task.ts:76](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L76)
+Defined in: [lib/task.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L77)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/task.ts:76](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **id**: `string`
 
-Defined in: [lib/task.ts:74](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L74)
+Defined in: [lib/task.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L75)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/task.ts:74](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > **label**: `string`
 
-Defined in: [lib/task.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L75)
+Defined in: [lib/task.ts:76](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L76)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [lib/task.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/
 
 > `optional` **separator?**: `boolean`
 
-Defined in: [lib/task.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L77)
+Defined in: [lib/task.ts:78](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L78)

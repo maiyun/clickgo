@@ -31,10 +31,8 @@ else {
         });
         let exitCode = 0;
         try {
-            const source = await readFile(new URL('../../lib/form.ts', import.meta.url), 'utf8');
-            const start = source.indexOf('let notifyId:');
-            const end = source.indexOf('export function appendToPop', start);
-            const script = ts.transpileModule(source.slice(start, end), {
+            const source = await readFile(new URL('../form/notification.ts', import.meta.url), 'utf8');
+            const script = ts.transpileModule(source, {
                 'compilerOptions': { 'module': ts.ModuleKind.CommonJS, 'target': ts.ScriptTarget.ES2022 },
             }).outputText;
             const style = await readFile(new URL('../../global.css', import.meta.url), 'utf8');
@@ -44,11 +42,12 @@ else {
                     config: { locale: 'en' },
                     getAvailArea: () => ({ left: 0, top: 0, width: innerWidth, height: innerHeight - 48 }),
                 };
-                window.notifyApi = {};
-                new Function('exports', 'elements', 'lCore', 'lTool', ${JSON.stringify(script)})(
-                    window.notifyApi, { notify: document.getElementById('cg-notify') }, window.notifyCore,
-                    { lang: { getDirection: locale => locale === 'ar' ? 'rtl' : 'ltr' }, escapeHTML: value => value },
-                );
+                const exports = {};
+                new Function('exports', ${JSON.stringify(script)})(exports);
+                window.notifyApi = exports.createNotificationRuntime({
+                    getElements: () => ({ notify: document.getElementById('cg-notify') }), lCore: window.notifyCore,
+                    lTool: { lang: { getDirection: locale => locale === 'ar' ? 'rtl' : 'ltr' }, escapeHTML: value => value },
+                });
             `);
             const traces = await win.webContents.executeJavaScript(`(${recordEntries.toString()})()`);
             for (const trace of traces) {

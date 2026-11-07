@@ -1,7 +1,7 @@
 // Run: node --experimental-vm-modules dist/abox/test/pop-max-size.mjs
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { SourceTextModule, SyntheticModule } from 'node:vm';
+import vm from 'node:vm';
 import { JSDOM } from 'jsdom';
 import ts from 'typescript';
 
@@ -17,35 +17,20 @@ Object.defineProperty(window, 'innerWidth', { 'configurable': true, 'value': 102
 Object.defineProperty(window, 'innerHeight', { 'configurable': true, 'writable': true, 'value': 768 });
 
 let refreshSize;
-const domModule = new SyntheticModule(['findParentByData', 'watchSize'], function() {
-    this.setExport('findParentByData', () => null);
-    this.setExport('watchSize', (_id, _pop, callback) => { refreshSize = callback; });
+const source = await readFile(new URL('../form/popup.ts', import.meta.url), 'utf8');
+const exports = {};
+vm.runInNewContext(ts.transpileModule(source, { 'compilerOptions': { 'target': ts.ScriptTarget.ES2022, 'module': ts.ModuleKind.CommonJS } }).outputText, {
+    exports, window, document, Element, HTMLElement, PointerEvent, getComputedStyle,
 });
-const toolModule = new SyntheticModule(['sleep'], function() {
-    this.setExport('sleep', () => Promise.resolve());
+const popup = exports.createPopupRuntime({
+    getElements: () => ({ popList: document.body }), getSysId: () => 'system',
+    lDom: { findParentByData: () => null, watchSize: (_id, _pop, callback) => { refreshSize = callback; return true; }, unwatchSize() {}, watchPosition() { return false; }, unwatchPosition() {} },
+    lTool: { sleep: () => Promise.resolve() }, changeFocus: async () => {},
 });
-const empty = new SyntheticModule([], function() {});
-const source = await readFile(new URL('../../lib/form.ts', import.meta.url), 'utf8');
-const formModule = new SourceTextModule(ts.transpileModule(source, {
-    'compilerOptions': {
-        'target': ts.ScriptTarget.ES2022,
-        'module': ts.ModuleKind.ESNext,
-    },
-}).outputText);
-await formModule.link((specifier) => {
-    if (specifier === './dom') {
-        return domModule;
-    }
-    if (specifier === './tool') {
-        return toolModule;
-    }
-    return empty;
-});
-await formModule.evaluate();
 
 const trigger = document.querySelector('#trigger');
 const pop = document.querySelector('.pop');
-formModule.namespace.showPop(trigger, pop, 'v', { 'autoPosition': true });
+popup.showPop(trigger, pop, 'v', { 'autoPosition': true });
 await Promise.resolve();
 assert.equal(pop.style.maxHeight, 'min(300px, 760px)', 'CSS max-height must survive the viewport limit');
 assert.equal(pop.style.maxWidth, 'min(480px, 1016px)', 'CSS max-width must survive the viewport limit');

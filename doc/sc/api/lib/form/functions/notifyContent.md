@@ -8,7 +8,7 @@
 
 > **notifyContent**(`notifyId`, `opt`): `void`
 
-Defined in: [lib/form.ts:3013](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3013)
+Defined in: lib/form/notification.ts:62
 
 修改 notify 的提示信息
 
@@ -24,8 +24,10 @@ notify id
 
 [`INotifyContentOptions`](../interfaces/INotifyContentOptions.md)
 
-参数
+参数，timeout 只能缩短通知存续时间
 
 ## Returns
 
 `void`
+
+无返回值

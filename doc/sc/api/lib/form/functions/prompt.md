@@ -8,7 +8,7 @@
 
 > **prompt**(`current`, `opt`): `Promise`\<`string`\>
 
-Defined in: [lib/form.ts:4764](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4764)
+Defined in: lib/form/dialog.ts:261
 
 显示一个输入框 dialog
 

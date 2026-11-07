@@ -6,7 +6,7 @@
 
 # Interface: INotifyOptions
 
-Defined in: [lib/form.ts:4977](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4977)
+Defined in: lib/form/types.ts:81
 
 弹出 notify 信息框的选项
 
@@ -16,7 +16,7 @@ Defined in: [lib/form.ts:4977](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **content?**: `string`
 
-Defined in: [lib/form.ts:4980](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4980)
+Defined in: lib/form/types.ts:84
 
 正文
 
@@ -26,7 +26,7 @@ Defined in: [lib/form.ts:4980](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **icon?**: `string` \| `null`
 
-Defined in: [lib/form.ts:4983](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4983)
+Defined in: lib/form/types.ts:87
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [lib/form.ts:4983](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **note?**: `string`
 
-Defined in: [lib/form.ts:4982](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4982)
+Defined in: lib/form/types.ts:86
 
 浅色描述
 
@@ -44,7 +44,7 @@ Defined in: [lib/form.ts:4982](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **progress?**: `boolean`
 
-Defined in: [lib/form.ts:4986](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4986)
+Defined in: lib/form/types.ts:90
 
 ***
 
@@ -52,7 +52,7 @@ Defined in: [lib/form.ts:4986](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **timeout?**: `number`
 
-Defined in: [lib/form.ts:4984](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4984)
+Defined in: lib/form/types.ts:88
 
 ***
 
@@ -60,7 +60,7 @@ Defined in: [lib/form.ts:4984](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **title?**: `string`
 
-Defined in: [lib/form.ts:4978](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4978)
+Defined in: lib/form/types.ts:82
 
 ***
 
@@ -68,4 +68,4 @@ Defined in: [lib/form.ts:4978](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **type?**: `"progress"` \| `"danger"` \| `"primary"` \| `"info"` \| `"warning"`
 
-Defined in: [lib/form.ts:4985](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L4985)
+Defined in: lib/form/types.ts:89

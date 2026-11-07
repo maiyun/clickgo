@@ -17,15 +17,12 @@ let timerId = 0;
 let observerCallback;
 let area = { left: 0, top: 0, width: 800, height: 600 };
 const core = { config: { locale: 'en' }, getAvailArea: () => area };
-const source = await readFile(new URL('../../lib/form.ts', import.meta.url), 'utf8');
-const start = source.indexOf('let notifyId:');
-const end = source.indexOf('export function appendToPop', start);
-const api = {};
-vm.runInNewContext(ts.transpileModule(source.slice(start, end), {
+const source = await readFile(new URL('../form/notification.ts', import.meta.url), 'utf8');
+const exports = {};
+vm.runInNewContext(ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, {
-    exports: api, document, elements: { notify }, lCore: core,
-    lTool: { lang: { getDirection: locale => locale === 'ar' ? 'rtl' : 'ltr' }, escapeHTML: value => value },
+    exports, document,
     window: { innerWidth: 800, innerHeight: 600, setTimeout: schedule },
     setTimeout: schedule, clearTimeout: id => timers.delete(id),
     requestAnimationFrame: cb => frames.push(cb),
@@ -35,6 +32,7 @@ vm.runInNewContext(ts.transpileModule(source.slice(start, end), {
         unobserve(el) { observed.delete(el); }
     },
 });
+const api = exports.createNotificationRuntime({ getElements: () => ({ notify }), lCore: core, lTool: { lang: { getDirection: locale => locale === 'ar' ? 'rtl' : 'ltr' }, escapeHTML: value => value } });
 function schedule(callback, delay) { const id = ++timerId; timers.set(id, { callback, delay }); return id; }
 function frame() { frames.splice(0).forEach(callback => callback()); }
 function remove() {
@@ -83,6 +81,19 @@ remove();
 assert.equal(notify.children.length, 0);
 assert.equal(observed.size, 0);
 assert.equal(timers.size, 0, 'no auto-hide timer survives an early hide');
+const timed = api.notify({ content: 'Line', progress: true }); frame();
+api.notifyContent(timed, { content: 'First\nSecond', progress: 0, timeout: 200 });
+assert.equal(notify.children[0].querySelector('.cg-notify-progress').style.width, '0%');
+assert.equal(notify.children[0].querySelector('.cg-notify-content').innerHTML, 'First<br>Second');
+assert.equal(timers.size, 1, 'shorter deadline replaces the original timer');
+api.notifyContent(timed, { timeout: 900 });
+assert.equal(timers.size, 1, 'later deadlines do not add timers');
+assert.equal([...timers.values()][0].delay, 200);
+api.notifyContent(timed, { timeout: 100 });
+assert.equal(timers.size, 1);
+assert.equal([...timers.values()][0].delay, 100);
+api.hideNotify(timed); remove();
+assert.equal(timers.size, 0, 'all shortening and original timers are cleared');
 const next = api.notify({ content: 'Fresh stack' }); frame();
 assert.deepEqual(position(notify.children[0]), [-10, 10], 'empty stack leaves no stale offsets');
 api.hideNotify(next); remove();

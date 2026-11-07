@@ -8,7 +8,7 @@
 
 > **isJustPop**(`el`): `boolean`
 
-Defined in: [lib/form.ts:3464](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L3464)
+Defined in: lib/form/popup.ts:85
 
 检测 pop 是不是刚刚显示的
 
@@ -18,6 +18,10 @@ Defined in: [lib/form.ts:3464](https://github.com/maiyun/clickgo/blob/master/dis
 
 `number` \| `HTMLElement`
 
+触发元素或浮层层级
+
 ## Returns
 
 `boolean`
+
+是否在 100 毫秒内显示

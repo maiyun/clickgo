@@ -8,7 +8,7 @@
 
 > **superConfirm**(`current`, `html`): `Promise`\<`boolean`\>
 
-Defined in: [lib/form.ts:2075](https://github.com/maiyun/clickgo/blob/master/dist/lib/form.ts#L2075)
+Defined in: lib/form/system.ts:56
 
 显示系统级询问框
 
@@ -18,10 +18,16 @@ Defined in: [lib/form.ts:2075](https://github.com/maiyun/clickgo/blob/master/dis
 
 `string`
 
+系统级 ID
+
 ### html
 
 `string`
 
+询问框内容
+
 ## Returns
 
 `Promise`\<`boolean`\>
+
+用户选择；ID 不匹配或已有询问框时返回 false
