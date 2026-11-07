@@ -15,7 +15,7 @@
             &::-webkit-scrollbar { display: none; }
 
             > .tab {
-                flex: 0 1 auto; flex-shrink: 1 !important; min-width: 3em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; padding: var(--g-padding-h); transition: var(--g-transition); white-space: nowrap; font-size: var(--g-size); border-bottom: solid 2px transparent;
+                flex: 0 1 auto; flex-shrink: 1 !important; min-width: 3em; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; text-align: center; padding: var(--g-padding-h); transition: var(--g-transition); white-space: nowrap; font-size: var(--g-size); border-bottom: solid 2px transparent;
                 &.selected { font-weight: bold; color: var(--cg); border-bottom-color: var(--cg); }
                 &:not(.selected):hover { background: var(--face-hover); }
             }
