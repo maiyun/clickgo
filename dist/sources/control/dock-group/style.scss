@@ -22,7 +22,7 @@
         }
 
         > .collapse-btn, > .menu-btn {
-            flex: 0 0 28px; display: flex; align-items: center; justify-content: center; transition: var(--g-transition);
+            flex: 0 0 28px; display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius); transition: var(--g-transition);
             &:hover { background: var(--face-hover); }
             &:active, &[data-cg-pop-open] { background: var(--face-active, var(--face-hover)); }
             > svg { width: 14px; height: 14px; fill: currentColor; }

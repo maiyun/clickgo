@@ -209,10 +209,8 @@
                 }
                 &:not(.dock-group_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
             }
-            > .dock-group_collapse-btn {
-                width: 26px;
-                border-radius: var(--g-radius);
-                &:hover { background: var(--face-hover); }
+            > .dock-group_collapse-btn, > .dock-group_menu-btn {
+                flex-basis: 26px;
             }
         }
         &.dock-group_collapsed > .dock-group_icon-btn {
