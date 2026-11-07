@@ -98,6 +98,14 @@
             <check v-model="projectExpanded">Project column</check>
             <check v-model="mainExpanded">Main column</check>
         </layout>
+        <layout wrap gutter="10" align-v="center">
+            <layout align-v="center" gutter="8"><label>Project height</label><number :model-value="String(optionHeight)" @update:modelValue="optionHeight = Number($event)" min="0" style="width: 110px;"></number></layout>
+            <layout align-v="center" gutter="8"><label>History height</label><number :model-value="String(historyHeight)" @update:modelValue="historyHeight = Number($event)" min="0" style="width: 110px;"></number></layout>
+            <layout v-if="multiple" align-v="center" gutter="8"><label>Display height</label><number :model-value="String(displayHeight)" @update:modelValue="displayHeight = Number($event)" min="0" style="width: 110px;"></number></layout>
+            <button @click="setHeights(0)">Auto (0)</button>
+            <button @click="setHeights(180)">Set 180px</button>
+        </layout>
+        <label>Height: 0 = automatic; positive = preferred total pixels. History grow fills remaining space when its height is 0.</label>
         <layout wrap gutter="10">
             <button @click="collapsible = !collapsible" style="flex: 1 1 120px; min-width: 0;">{{collapsible ? '' : '!'}}collapsible</button>
             <button @click="groupCollapsed = !groupCollapsed" style="flex: 1 1 120px; min-width: 0;">{{groupCollapsed ? '' : '!'}}collapsed</button>
