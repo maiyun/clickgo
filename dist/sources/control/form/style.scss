@@ -212,24 +212,12 @@
         }
     }
     &:not([data-cg-max]) {
-        .inner {
-            .header {
-                border-radius: var(--g-radius) var(--g-radius) 0 0; overflow: hidden;
-            }
-            .content {
-                border-radius: 0 0 var(--g-radius) var(--g-radius); overflow: hidden;
-                &.noheader {
-                    border-radius: var(--g-radius);
-                }
-            }
-            &.has-footer {
-                .content {
-                    border-end-start-radius: 0; border-end-end-radius: 0;
-                }
-                .footer {
-                    border-radius: 0 0 var(--g-radius) var(--g-radius); overflow: hidden;
-                }
-            }
+        > .inner {
+            border-radius: var(--g-radius);
+        }
+        &:not(.border-none) > .inner {
+            // --- 内层避开外框留白，统一裁剪标题、内容和页脚，避免四角露底 ---
+            border-radius: max(0px, calc(var(--g-radius) - 1px));
         }
     }
     &.border-thin {
