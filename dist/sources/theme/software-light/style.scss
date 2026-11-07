@@ -53,6 +53,12 @@ global {
     --g-shadow-d:none;
     --g-outline-shadow:0 0 0 2px var(--cg);
 
+    --software-menu-background:#ffffff;
+    --software-menu-hover:#f1f1f1;
+    --software-menu-selected:#e7e7e7;
+    --software-menu-divider:#e5e5e5;
+    --software-menu-shadow:0 8px 16px -4px rgb(0 0 0 / .14), 0 2px 5px -2px rgb(0 0 0 / .08);
+
     // --- 画布、面板、标题条和输入区保持独立色阶 ---
 
     --g-color:#303030;
@@ -241,80 +247,9 @@ global {
 
 @include shared.dialog;
 
-// --- 深色命令浮层独立于白色面板，避免全局输入弹层一起变暗 ---
-
-// --- Menulist 的主题类带任务前缀，可识别任意菜单外框且不会跨任务匹配。 ---
-[data-cg-pop]:has(.menulist_wrap), .menulist_wrap {
-    --face:#242424;
-    --face-hover:#383838;
-    --face-selected:#444444;
-    --g-color:#f5f5f5;
-    --g-color-hover:#ffffff;
-    --g-color-active:#ffffff;
-    --g-color-focus:#ffffff;
-    --g-color-tip:#bdbdbd;
-    --g-color-disabled:#8f8f8f;
-    --g-background-disabled:#242424;
-    --g-pop-background:#242424;
-    --g-pop-border:solid 1px #333333;
-    color: var(--g-color);
-    border-radius: var(--g-radius-l);
-}
-
-// --- 菜单行用主色定位，快捷键与选中标记保持相同对比 ---
+// --- 紧凑菜单使用中性亮面，阴影区分浮层与工作台 ---
 
 @include shared.menulist;
-.menulist-split_wrap {
-    --g-border-color:#484848;
-}
-.menulist-item_wrap {
-    position: relative;
-    // --- 菜单密度独立于工具栏，标记槽与纯文字项使用相同的最低行高 ---
-    min-height: 28px;
-    box-sizing: border-box;
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border: solid 1px transparent;
-        border-radius: var(--g-radius);
-        pointer-events: none;
-    }
-    &:not([data-cg-disabled]) {
-        &:hover, &[data-cg-pop-open] {
-            --g-color:#{contrast.on-color('var(--cg)')};
-            background: var(--cg);
-            color: var(--g-color);
-            .menulist-item_right { color: inherit; }
-            .menulist-item_right .menulist-item_btn { background: transparent; }
-            .menulist-item_check, .menulist-item_radio { background: transparent; }
-            &::before {
-                border-color: transparent;
-            }
-        }
-    }
-    .menulist-item_inner {
-        min-height: 28px;
-        box-sizing: border-box;
-        padding-block: 4px;
-        padding-inline: 8px 0;
-    }
-    .menulist-item_right {
-        padding-inline: 20px 8px;
-        .menulist-item_btn {
-            border: none;
-            padding: 1px 4px;
-            border-radius: 3px;
-            background: oklch(1 0 0 / .09);
-            box-shadow: none;
-        }
-    }
-    .menulist-item_check, .menulist-item_radio {
-        background: transparent;
-        height: 28px;
-        flex-shrink: 0;
-    }
-}
 @include shared.menu-item;
 
 // --- 面板保持平面，浮动窗口通过阴影分离层级 ---

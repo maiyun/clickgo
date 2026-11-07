@@ -52,6 +52,12 @@ global {
     --g-shadow-d:none;
     --g-outline-shadow:0 0 0 2px var(--cg);
 
+    --software-menu-background:#303030;
+    --software-menu-hover:#3d3d3d;
+    --software-menu-selected:#474747;
+    --software-menu-divider:#454545;
+    --software-menu-shadow:0 10px 20px -5px rgb(0 0 0 / .32), 0 3px 6px -3px rgb(0 0 0 / .22);
+
     // --- 画布、面板、标题条和输入区保持独立色阶 ---
 
     --g-color:#dedede;
@@ -215,52 +221,9 @@ global {
 
 @include shared.dialog;
 
-// --- 菜单用中性底块反馈位置，键盘焦点保持独立标记 ---
+// --- 紧凑菜单使用中性亮面，阴影区分浮层与工作台 ---
 
 @include shared.menulist;
-.menulist-item_wrap {
-    position: relative;
-    // --- 菜单密度独立于工具栏，标记槽与纯文字项使用相同的最低行高 ---
-    min-height: 28px;
-    box-sizing: border-box;
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border: solid 1px transparent;
-        border-radius: var(--g-radius);
-        pointer-events: none;
-    }
-    &:not([data-cg-disabled]) {
-        &:hover, &[data-cg-pop-open] {
-            background: var(--software-highlight);
-            &::before {
-                border-color: transparent;
-            }
-        }
-    }
-    .menulist-item_inner {
-        min-height: 28px;
-        box-sizing: border-box;
-        padding-block: 4px;
-        padding-inline: 8px 0;
-    }
-    .menulist-item_right {
-        padding-inline: 20px 8px;
-        .menulist-item_btn {
-            border: none;
-            padding: 1px 4px;
-            border-radius: 3px;
-            background: oklch(1 0 0 / .07);
-            box-shadow: none;
-        }
-    }
-    .menulist-item_check, .menulist-item_radio {
-        background: transparent;
-        height: 28px;
-        flex-shrink: 0;
-    }
-}
 @include shared.menu-item;
 
 // --- 面板保持平面，浮动窗口通过阴影分离层级 ---
