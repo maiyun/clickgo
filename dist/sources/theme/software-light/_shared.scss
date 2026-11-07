@@ -334,6 +334,7 @@
 
 // --- 中性标记、分隔线和关闭按钮使用实色，不继承输入框的透明边框。 ---
 @mixin neutral-controls {
+    .sgroup_wrap.sgroup_default { border-color: var(--g-border-color); }
     .tag_wrap.tag_default:not(.tag_plain) {
         color: var(--g-color);
         background: var(--software-highlight);
