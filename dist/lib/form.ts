@@ -3099,8 +3099,9 @@ const popViewportStyles = new WeakMap<HTMLElement, IPopViewportStyle>();
  * @param direction 弹出方向或定位坐标：h 向行末方向弹出，v 向下并按行首对齐，t 在上方水平居中；空间不足时调整方向或位置；PointerEvent 使用 clientX/clientY，坐标对象使用 x/y，均为视口 CSS 像素坐标
  * @param size 可选的弹层宽高，默认空对象；width/height 单位为 CSS 像素，指定时限制在视口可用尺寸内，未指定时保留原有宽高
  * @param overflow 内容溢出方式，默认 auto，超出尺寸时滚动；visible 允许内容及箭头显示在弹层边界外，供 Tip 等带外部箭头的弹层使用
+ * @param opening showPop 打开弹层时传 true，换位置打开时重新播放缓入动画；内容尺寸变化或触发元素移动时不传，只调整位置，默认 false
  */
-function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 'v' | 't' | PointerEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}, overflow: 'auto' | 'visible' = 'auto'): void {
+function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 'v' | 't' | PointerEvent | { x: number; y: number; }, size: { width?: number; height?: number; } = {}, overflow: 'auto' | 'visible' = 'auto', opening: boolean = false): void {
     /** --- 弹层与视口边缘之间保留的最小距离 --- */
     const viewportPadding = 4;
     /** --- 弹层在当前视口内可使用的最大尺寸 --- */
@@ -3239,6 +3240,14 @@ function refreshPopPosition(el: HTMLElement, pop: HTMLElement, direction: 'h' | 
     }
     left = Math.max(viewportPadding, Math.min(left, window.innerWidth - viewportPadding - width));
     top = Math.max(viewportPadding, Math.min(top, window.innerHeight - viewportPadding - height));
+    if (opening && pop.style.left && (pop.style.left !== `${left}px` || pop.style.top !== `${top}px`)) {
+        // --- 复用弹层换位置时重新缓入，避免沿用尚未结束的动画进度 ---
+        const transition = pop.style.transition;
+        pop.style.transition = 'none';
+        pop.removeAttribute('data-cg-open');
+        void pop.offsetWidth;
+        pop.style.transition = transition;
+    }
     pop.style.left = left.toString() + 'px';
     pop.style.top = top.toString() + 'px';
     pop.style.zIndex = (++popInfo.lastZIndex).toString();
@@ -3294,7 +3303,7 @@ export function showPop(el: HTMLElement | lCore.IVue, pop: HTMLElement | lCore.I
                 // --- 已经隐藏掉了 ---
                 return;
             }
-            refreshPopPosition(el, pop, direction, opt.size, opt.overflow);
+            refreshPopPosition(el, pop, direction, opt.size, opt.overflow, true);
             if (opt.autoPosition) {
                 lDom.watchSize(sysId, pop, () => {
                     refreshPopPosition(el, pop, direction, opt.size, opt.overflow);
@@ -3349,7 +3358,7 @@ export function showPop(el: HTMLElement | lCore.IVue, pop: HTMLElement | lCore.I
             return;
         }
         // --- 设定 pop 位置 ---
-        refreshPopPosition(el, pop, direction, opt.size, opt.overflow);
+        refreshPopPosition(el, pop, direction, opt.size, opt.overflow, true);
         if (opt.autoPosition && typeof direction === 'string') {
             // --- 可能要重置 pop 位置 ---
             lDom.watchSize(sysId, pop, () => {
