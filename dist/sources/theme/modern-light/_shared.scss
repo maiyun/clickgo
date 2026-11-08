@@ -55,9 +55,9 @@
     --g-padding-xl-h:12px var(--g-padding-xl);
     --g-bpadding:22px;
     --g-margin:6px;
-    --g-radius:8px;
-    --g-radius-l:12px;
-    --g-radius-xl:16px;
+    --g-radius:12px;
+    --g-radius-l:16px;
+    --g-radius-xl:20px;
     --g-size-xs:11px;
     --g-size:13px;
     --g-size-m:20px;
@@ -84,13 +84,16 @@
     }
     .form_wrap {
         padding: 0;
+        // --- 未聚焦的窗口仍需能阅读正文。 ---
+        color: var(--g-color);
         &:not(.form_border-none) {
+            background: linear-gradient(135deg, var(--modern-glint), transparent 55%), var(--face);
             -webkit-backdrop-filter: var(--modern-form-backdrop);
             backdrop-filter: var(--modern-form-backdrop);
         }
         &:not(.form_border-none):not([data-cg-max]) {
-            padding: 1px;
             border: none;
+            border-radius: var(--g-radius-xl);
             box-shadow: var(--g-shadow-m);
         }
         &.form_focus {
@@ -103,19 +106,34 @@
         &.form_flash {
             animation: form_flash .2s linear infinite;
         }
+        &:not([data-cg-max]) > .form_inner {
+            border-radius: var(--g-radius-xl);
+            .form_header .form_controls .form_close {
+                // --- 右上角与窗口外轮廓保持相同的内缩弧线。 ---
+                border-start-end-radius: calc(var(--g-radius-xl) - 6px);
+            }
+        }
         .form_inner {
+            .form_footer {
+                background: transparent;
+            }
             .form_header {
                 align-items: center;
-                border-bottom: solid .5px var(--g-plain-border-color);
+                border-bottom: none;
                 .form_title {
                     font-weight: 600;
                     letter-spacing: .01em;
                 }
                 .form_controls {
-                    padding-inline-end: 4px;
-                    gap: 2px;
+                    padding-block: 6px;
+                    padding-inline-end: 6px;
+                    gap: 4px;
                     .form_min, .form_max, .form_close {
-                        border-radius: var(--g-radius);
+                        width: 32px;
+                        height: 28px;
+                        padding: 0;
+                        justify-content: center;
+                        border-radius: 8px;
                         box-shadow: none;
                     }
                     .form_close {
@@ -139,6 +157,31 @@
                 }
             }
         }
+    }
+    // --- 鼠标操作用填充反馈，键盘操作保留焦点环。 ---
+    .button_wrap:not(:focus-visible):not(:has(:focus-visible)),
+    .greatselect_wrap:not(:focus-visible):not(:has(:focus-visible)),
+    .check_wrap:not(:focus-visible), .radio_wrap:not(:focus-visible) {
+        --g-outline-shadow:var(--g-shadow);
+    }
+    .button_wrap:focus-visible, .greatselect_wrap:focus-visible {
+        box-shadow: var(--g-outline-shadow);
+    }
+    .check_wrap {
+        .check_check {
+            border-radius: 5px;
+        }
+        &.check_indeterminate .check_check::after {
+            left: 4px;
+            top: calc(50% - 1px);
+            width: calc(100% - 8px);
+            height: 2px;
+            border-radius: 1px;
+        }
+    }
+    // --- Circle 和 Tag 将边线色同时用于默认填充与波纹。 ---
+    .circle_wrap, .tag_wrap {
+        --g-plain-border-color:var(--modern-marker);
     }
     // -- CONTROL -- group --
 
@@ -182,6 +225,9 @@
     // -- CONTROL -- nav-item --
 
     .nav-item_wrap {
+        &:not(.nav-item_child).nav-item_show > .nav-item_text {
+            border-radius: var(--g-radius);
+        }
         &:not(.nav-item_selected) {
             > .nav-item_text:hover {
                 color: var(--g-color-hover);
@@ -239,97 +285,37 @@
     // -- CONTROL -- tab --
 
     .tab_wrap {
-        > .tab_tabs-wrap > .tab_tabs > .tab_tab {
-            color: var(--g-color-tip);
-            background: transparent;
-            border: none;
-            &::after {
-                background: linear-gradient(90deg, var(--modern-accent-shift), var(--cg));
-                box-shadow: 0 0 10px color-mix(in oklch, var(--cg), transparent 52%);
-                transition: all .18s var(--g-cubic);
-            }
-            &:not(.tab_selected):not([data-hover]):hover {
-                background: transparent;
-                color: var(--g-color-hover);
-            }
-            &.tab_selected {
-                background: transparent;
-                color: var(--g-color-focus);
-                font-weight: 600;
-            }
-        }
-        &.tab_top {
-            > .tab_tabs-wrap {
-                border-bottom: solid .5px var(--g-plain-border-color);
-                > .tab_tabs {
-                    > .tab_tab {
-                        padding-bottom: 2px;
-                        &.tab_selected {
-                            padding-bottom: 2px;
-                            &::after {
-                                top: initial;
-                                bottom: -1px;
-                                height: 2px;
-                            }
-                        }
+        // --- 独立页签不再与透明面板衔接，四个方向均使用完整圆角。 ---
+        &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
+            > .tab_tabs-wrap > .tab_tabs {
+                padding: 2px;
+                gap: 4px;
+                transform: none;
+                > .tab_tab, > .tab_tab.tab_selected,
+                > .tab_tab.tab_selected + .tab_tab, > .tab_tab:last-child {
+                    border: none;
+                    border-radius: var(--g-radius);
+                    padding: 0;
+                    background: transparent;
+                    color: var(--g-color-tip);
+                    &::after {
+                        display: none;
                     }
-                    > :not(:last-child) {
-                        margin-inline-end: var(--g-padding);
+                    > .tab_content {
+                        padding: 6px 10px;
                     }
-                }
-            }
-        }
-        &.tab_bottom {
-            > .tab_tabs-wrap {
-                border-top: solid .5px var(--g-plain-border-color);
-                > .tab_tabs {
-                    > .tab_tab {
-                        padding-top: 2px;
-                        &.tab_selected {
-                            padding-top: 2px;
-                            &::after {
-                                top: -1px;
-                                height: 2px;
-                            }
-                        }
+                    &.tab_selected {
+                        background: var(--g-background);
+                        color: var(--g-color-focus);
+                        font-weight: 600;
                     }
-                    > :not(:last-child) {
-                        margin-inline-end: var(--g-padding);
+                    &:not(.tab_selected):not([data-hover]):hover {
+                        background: var(--g-plain-background-hover);
+                        color: var(--g-color-hover);
                     }
-                }
-            }
-        }
-        &.tab_left {
-            > .tab_tabs-wrap {
-                border-right: solid .5px var(--g-plain-border-color);
-                > .tab_tabs {
-                    > .tab_tab {
-                        padding-right: 2px;
-                        &.tab_selected::after {
-                            left: initial;
-                            right: -1px;
-                            width: 2px;
-                        }
-                    }
-                    > :not(:last-child) {
-                        margin-bottom: var(--g-padding);
-                    }
-                }
-            }
-        }
-        &.tab_right {
-            > .tab_tabs-wrap {
-                border-left: solid .5px var(--g-plain-border-color);
-                > .tab_tabs {
-                    > .tab_tab {
-                        padding-left: 2px;
-                        &.tab_selected::after {
-                            left: -1px;
-                            width: 2px;
-                        }
-                    }
-                    > :not(:last-child) {
-                        margin-bottom: var(--g-padding);
+                    &[data-hover] {
+                        background: var(--face-selected);
+                        color: var(--g-color-focus);
                     }
                 }
             }
@@ -337,6 +323,51 @@
         > .tab_panel {
             background: transparent;
             border: none;
+        }
+    }
+    // --- 分隔线不叠加组留白，拖动热区仍由控件保持。 ---
+    .dock_wrap {
+        &.dock_left, &.dock_right {
+            border-color: var(--modern-divider);
+        }
+    }
+    .dock-column_wrap:not(:first-child) {
+        border-inline-start: solid 1px var(--modern-divider);
+    }
+    .sidebar-toggle_wrap {
+        --sidebar-toggle-border:var(--modern-divider);
+        --sidebar-toggle-background-hover:var(--modern-action-hover);
+        --sidebar-toggle-background-active:var(--modern-action-active);
+        > .sidebar-toggle_button:focus-visible {
+            outline-color: var(--cg);
+        }
+    }
+    .dock-group_wrap {
+        padding: 0;
+        gap: 0;
+        &.dock-group_expanded, &.dock-group_collapsed {
+            border-bottom: solid 1px var(--modern-divider);
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+        .dock-group_tabs {
+            border-bottom: solid 1px var(--modern-divider);
+            > .dock-group_collapse-btn, > .dock-group_menu-btn {
+                border-radius: 6px;
+                &:hover {
+                    background: var(--modern-action-hover);
+                }
+                &:active, &[data-cg-pop-open] {
+                    background: var(--modern-action-active);
+                }
+            }
+            > .dock-group_tab-items > .dock-group_tab:not(.dock-group_selected):hover {
+                background: var(--modern-action-hover);
+            }
+        }
+        &.dock-group_collapsed > .dock-group_icon-btn:hover {
+            background: var(--modern-action-hover);
         }
     }
     // -- CONTROL -- task --

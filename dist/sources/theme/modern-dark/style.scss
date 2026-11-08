@@ -2,6 +2,12 @@
 
 global {
     @include shared.metrics;
+    --modern-divider:oklch(1 0 0 / .12);
+    --modern-action-hover:oklch(1 0 0 / .14);
+    --modern-action-active:oklch(1 0 0 / .22);
+    --modern-marker:oklch(.55 .015 250);
+    --modern-edge:oklch(1 0 0 / .12);
+    --modern-glint:oklch(.8 .035 250 / .06);
 
     // --- 主色：完全跟随用户设置，邻近色仅作为玻璃偏光 ---
 
@@ -40,44 +46,44 @@ global {
 
     // --- 深色半透明工作台 ---
 
-    --g-pure:oklch(from var(--cg) .19 calc(c * .08) h / .76);
-    --face:oklch(from var(--cg) .12 calc(c * .06) h / .72);
-    --face-hover:oklch(from var(--cg) .205 calc(c * .14) h / .78);
-    --face-selected:oklch(from var(--cg) .19 calc(c * .2) h / .82);
-    --g-pop-background:oklch(from var(--cg) .12 calc(c * .1) h / .44);
-    --g-pop-backdrop:blur(22px) saturate(1.65) brightness(.82);
-    --modern-form-backdrop:blur(28px) saturate(1.45) brightness(.86);
-    --g-pop-border:solid .5px color-mix(in oklch, var(--cg), transparent 42%);
-    --g-shadow:0 1px 2px oklch(0 0 0 / .42), inset 0 1px 0 oklch(1 0 0 / .045);
-    --g-shadow-m:0 16px 40px -20px oklch(0 0 0 / .92), inset 0 1px 0 oklch(1 0 0 / .055);
-    --g-shadow-d:0 28px 72px -24px oklch(0 0 0 / .96), 0 0 34px -18px color-mix(in oklch, var(--cg), transparent 42%), inset 0 1px 0 oklch(1 0 0 / .08);
-    --g-outline-shadow:0 0 0 2px color-mix(in oklch, var(--cg), transparent 66%), 0 0 18px color-mix(in oklch, var(--cg), transparent 84%);
+    --g-pure:oklch(.35 .025 255 / .2);
+    --face:oklch(.23 .025 255 / .78);
+    --face-hover:oklch(.205 .006 250 / .78);
+    --face-selected:oklch(.19 .006 250 / .82);
+    --g-pop-background:oklch(.24 .025 255 / .8);
+    --g-pop-backdrop:blur(28px) saturate(1.15);
+    --modern-form-backdrop:blur(28px) saturate(1.15);
+    --g-pop-border:solid .5px var(--modern-edge);
+    --g-shadow:0 2px 8px oklch(0 0 0 / .06);
+    --g-shadow-m:0 12px 36px -16px oklch(.05 .02 255 / .3), inset 0 1px 0 var(--modern-edge);
+    --g-shadow-d:0 24px 56px -20px oklch(.05 .02 255 / .4), inset 0 1px 0 var(--modern-edge);
+    --g-outline-shadow:0 0 0 2px color-mix(in oklch, var(--cg), transparent 60%);
 
     // --- 清晰的文字与控件层级 ---
 
-    --g-color:oklch(from var(--cg) .9 calc(c * .05) h);
-    --g-color-hover:oklch(from var(--cg) .98 calc(c * .03) h);
-    --g-color-active:oklch(from var(--cg) .82 calc(c * .08) h);
-    --g-color-focus:oklch(from var(--cg) .94 calc(c * .04) h);
-    --g-color-disabled:oklch(from var(--cg) .52 calc(c * .05) h);
-    --g-color-tip:oklch(from var(--cg) .69 calc(c * .08) h);
-    --g-color-placeholder:oklch(from var(--cg) .58 calc(c * .07) h);
+    --g-color:oklch(.94 .006 250);
+    --g-color-hover:oklch(.98 .006 250);
+    --g-color-active:oklch(.96 .006 250);
+    --g-color-focus:oklch(.94 .006 250);
+    --g-color-disabled:oklch(.52 .006 250);
+    --g-color-tip:oklch(.9 .006 250);
+    --g-color-placeholder:oklch(.9 .008 250);
     --g-color-error:var(--danger);
     --g-color-warning:var(--warning);
     --g-color-success:var(--success);
 
-    --g-background:oklch(from var(--cg) .23 calc(c * .14) h / .62);
-    --g-background-hover:oklch(from var(--cg) .25 calc(c * .17) h / .7);
-    --g-background-active:oklch(from var(--cg) .27 calc(c * .22) h / .78);
-    --g-background-opacity:oklch(from var(--cg) .08 calc(c * .09) h / .62);
-    --g-background-focus:oklch(from var(--cg) .235 calc(c * .16) h / .78);
-    --g-background-disabled:oklch(from var(--cg) .17 calc(c * .08) h / .62);
+    --g-background:oklch(.85 .015 245 / .075);
+    --g-background-hover:oklch(.9 .015 245 / .13);
+    --g-background-active:oklch(.9 .015 245 / .12);
+    --g-background-opacity:oklch(.08 .006 250 / .62);
+    --g-background-focus:oklch(.9 .015 245 / .13);
+    --g-background-disabled:oklch(.75 .015 245 / .035);
 
-    --g-border-color:oklch(from var(--cg) .355 calc(c * .17) h);
-    --g-border-color-hover:oklch(from var(--cg) .49 calc(c * .28) h);
-    --g-border-color-active:color-mix(in oklch, var(--cg), black 22%);
-    --g-border-color-focus:color-mix(in oklch, var(--cg), black 14%);
-    --g-border-color-disabled:oklch(from var(--cg) .27 calc(c * .1) h);
+    --g-border-color:transparent;
+    --g-border-color-hover:transparent;
+    --g-border-color-active:transparent;
+    --g-border-color-focus:transparent;
+    --g-border-color-disabled:transparent;
 
     --g-focusbox-border-width:0;
     --g-focusbox-border-color:var(--cg);
@@ -88,44 +94,37 @@ global {
     --g-plain-color-focus:var(--g-color-focus);
     --g-plain-color-disabled:var(--g-color-disabled);
 
-    --g-plain-background:oklch(from var(--cg) .165 calc(c * .1) h / .64);
-    --g-plain-background-hover:oklch(from var(--cg) .205 calc(c * .14) h / .7);
-    --g-plain-background-active:oklch(from var(--cg) .22 calc(c * .18) h / .76);
-    --g-plain-background-focus:oklch(from var(--cg) .18 calc(c * .11) h / .72);
-    --g-plain-background-disabled:oklch(from var(--cg) .14 calc(c * .07) h / .62);
-    --g-plain-background-selected:color-mix(in oklch, var(--cg), black 68%);
+    --g-plain-background:oklch(.85 .015 245 / .075);
+    --g-plain-background-hover:oklch(.9 .015 245 / .13);
+    --g-plain-background-active:oklch(.9 .015 245 / .12);
+    --g-plain-background-focus:oklch(.9 .015 245 / .13);
+    --g-plain-background-disabled:oklch(.75 .015 245 / .035);
+    --g-plain-background-selected:color-mix(in oklch, var(--cg), transparent 82%);
 
-    --g-plain-border-color:oklch(from var(--cg) .305 calc(c * .14) h);
-    --g-plain-border-color-hover:oklch(from var(--cg) .44 calc(c * .25) h);
-    --g-plain-border-color-active:color-mix(in oklch, var(--cg), black 24%);
-    --g-plain-border-color-focus:color-mix(in oklch, var(--cg), black 16%);
-    --g-plain-border-color-disabled:oklch(from var(--cg) .245 calc(c * .09) h);
-    --g-plain-border-color-plain:oklch(from var(--cg) .255 calc(c * .11) h);
+    --g-plain-border-color:transparent;
+    --g-plain-border-color-hover:transparent;
+    --g-plain-border-color-active:transparent;
+    --g-plain-border-color-focus:transparent;
+    --g-plain-border-color-disabled:transparent;
+    --g-plain-border-color-plain:oklch(.5 .01 250 / .1);
 
-    --g-block-background:oklch(from var(--cg) .245 calc(c * .15) h);
-    --g-block-background-hover:oklch(from var(--cg) .3 calc(c * .24) h);
-    --g-block-dark-background:oklch(from var(--cg) .095 calc(c * .08) h);
-    --g-block-dark-background-hover:oklch(from var(--cg) .13 calc(c * .11) h);
+    --g-block-background:oklch(.245 .006 250);
+    --g-block-background-hover:oklch(.3 .006 250);
+    --g-block-dark-background:oklch(.095 .006 250);
+    --g-block-dark-background-hover:oklch(.13 .006 250);
 
     ::selection {
         background-color: color-mix(in oklch, var(--cg), transparent 58%);
-        color: oklch(from var(--cg) .98 calc(c * .02) h);
+        color: oklch(.98 .006 250);
     }
 }
 
 @include shared.controls;
 
 .form_wrap {
-    &:not(.form_border-none):not([data-cg-max]) {
-        background:
-            linear-gradient(135deg, color-mix(in oklch, var(--cg), transparent 62%), oklch(1 0 0 / .13) 24%, transparent 48%, color-mix(in oklch, var(--modern-accent-shift), transparent 72%)),
-            oklch(from var(--cg) .38 calc(c * .15) h / .62);
-    }
     .form_inner {
         .form_header {
-            background:
-                linear-gradient(100deg, color-mix(in oklch, var(--cg), transparent 91%), transparent 38%),
-                var(--g-pure);
+            background: transparent;
             .form_controls {
                 .form_min, .form_max {
                     &:hover {
@@ -138,11 +137,9 @@ global {
             }
         }
         .form_content {
-            background:
-                linear-gradient(145deg, color-mix(in oklch, var(--cg), transparent 96%), transparent 38%),
-                var(--face);
+            background: transparent;
             .form_loading {
-                background: radial-gradient(circle, oklch(from var(--cg) .18 calc(c * .17) h / .92) 12%, oklch(from var(--cg) .1 calc(c * .09) h / .72) 80%);
+                background: radial-gradient(circle, oklch(.18 .006 250 / .92) 12%, oklch(.1 .006 250 / .72) 80%);
             }
         }
     }
@@ -159,24 +156,24 @@ global {
 }
 
 @include shared.levelselect(
-    $loading: radial-gradient(circle, oklch(from var(--cg) .18 calc(c * .17) h / .92) 12%, oklch(from var(--cg) .1 calc(c * .09) h / .72) 80%)
+    $loading: radial-gradient(circle, oklch(.18 .006 250 / .92) 12%, oklch(.1 .006 250 / .72) 80%)
 );
 
 // -- CONTROL -- nav --
 
 .nav_wrap {
-    background: oklch(from var(--cg) .09 calc(c * .07) h);
+    background: oklch(.09 .006 250);
     .nav_bg {
-        background: oklch(from var(--cg) .09 calc(c * .07) h);
+        background: oklch(.09 .006 250);
     }
     .nav_menuwrap {
         .nav_menu-panel {
-            background: oklch(from var(--cg) .14 calc(c * .13) h / .91);
+            background: oklch(.14 .006 250 / .91);
         }
     }
     .nav_content {
         .nav_header {
-            background: oklch(from var(--cg) .17 calc(c * .14) h / .9);
+            background: oklch(.17 .006 250 / .9);
             box-shadow: 0 8px 24px -18px oklch(0 0 0 / .9);
         }
     }
@@ -192,40 +189,22 @@ global {
     }
     &.nav-item_selected {
         > .nav-item_text {
-            color: oklch(from var(--cg) .97 calc(c * .03) h);
+            color: oklch(.97 .006 250);
             background: color-mix(in oklch, var(--cg), black 40%);
-            box-shadow: inset 2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 88%);
-            &:dir(rtl) {
-                box-shadow: inset -2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 88%);
-            }
         }
     }
 }
 
 @include shared.slider(
-    $thumb: 'oklch(from var(--cg) .165 calc(c * .1) h)',
-    $thumb-disabled: 'oklch(from var(--cg) .14 calc(c * .04) h)'
+    $thumb: 'oklch(.165 .006 250)',
+    $thumb-disabled: 'oklch(.14 .006 250)'
 );
-
-// -- CONTROL -- button --
-
-.button_wrap {
-    &:not([data-cg-disabled]) {
-        &:hover {
-            box-shadow: var(--g-shadow);
-        }
-        &:active {
-            box-shadow: var(--g-outline-shadow);
-        }
-    }
-}
 
 // -- CONTROL -- task --
 
 .task_wrap {
     background:
         linear-gradient(135deg, oklch(1 0 0 / .075), transparent 36%),
-        linear-gradient(315deg, color-mix(in oklch, var(--modern-accent-shift), transparent 91%), transparent 52%),
         var(--g-pop-background);
 }
 
@@ -234,7 +213,6 @@ global {
 .menulist_wrap {
     background:
         linear-gradient(135deg, oklch(1 0 0 / .085), transparent 38%),
-        linear-gradient(315deg, color-mix(in oklch, var(--modern-accent-shift), transparent 91%), transparent 52%),
         var(--g-pop-background);
 }
 .button_pop, .greatlist_pop, .iconview_pop, .jodit_pop, .label_pop, .link_pop,
@@ -244,7 +222,6 @@ global {
     &:has(> .menulist_wrap) {
         background:
             linear-gradient(135deg, oklch(1 0 0 / .085), transparent 38%),
-            linear-gradient(315deg, color-mix(in oklch, var(--modern-accent-shift), transparent 91%), transparent 52%),
             var(--g-pop-background);
     }
 }

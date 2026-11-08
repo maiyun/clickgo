@@ -2,6 +2,12 @@
 
 global {
     @include shared.metrics;
+    --modern-divider:oklch(.25 .015 250 / .12);
+    --modern-action-hover:oklch(.25 .015 250 / .1);
+    --modern-action-active:oklch(.25 .015 250 / .17);
+    --modern-marker:oklch(.55 .015 250);
+    --modern-edge:oklch(1 0 0 / .3);
+    --modern-glint:oklch(1 0 0 / .3);
     // --- 基础主色保留用户原值，交互状态和弱化背景独立派生 ---
 
     @include shared.accent;
@@ -39,45 +45,45 @@ global {
 
     // --- 亮色半透明工作台 ---
 
-    --g-pure:oklch(from var(--cg) .985 calc(c * .06) h / .62);
-    --face:oklch(from var(--cg) .97 calc(c * .07) h / .56);
-    --face-hover:oklch(from var(--cg) .95 calc(c * .12) h / .66);
-    --face-selected:oklch(from var(--cg) .925 calc(c * .17) h / .72);
-    --g-pop-background:oklch(from var(--cg) .985 calc(c * .1) h / .48);
-    --g-pop-backdrop:blur(26px) saturate(1.5) brightness(1.03);
-    --modern-form-backdrop:blur(24px) saturate(1.45) brightness(1.03);
-    --g-pop-border:solid .5px color-mix(in oklch, var(--cg), transparent 50%);
-    --g-shadow:0 1px 1px oklch(.24 0 0 / .045), inset 0 1px 0 oklch(1 0 0 / .56);
-    --g-shadow-m:0 18px 46px -30px oklch(.22 0 0 / .28), 0 3px 10px -8px oklch(.22 0 0 / .1), inset 0 1px 0 oklch(1 0 0 / .66);
-    --g-shadow-d:0 30px 76px -34px oklch(.2 0 0 / .36), 0 0 38px -22px color-mix(in oklch, var(--cg), transparent 66%), inset 0 1px 0 oklch(1 0 0 / .74);
-    --g-outline-shadow:0 0 0 2px color-mix(in oklch, var(--cg), transparent 78%), 0 0 22px color-mix(in oklch, var(--cg), transparent 84%);
+    --g-pure:oklch(1 0 0 / .2);
+    --face:oklch(.98 .008 240 / .56);
+    --face-hover:oklch(.95 .006 250 / .66);
+    --face-selected:oklch(.925 .006 250 / .72);
+    --g-pop-background:oklch(.99 .005 240 / .72);
+    --g-pop-backdrop:blur(28px) saturate(1.15);
+    --modern-form-backdrop:blur(28px) saturate(1.15);
+    --g-pop-border:solid .5px var(--modern-edge);
+    --g-shadow:0 2px 8px oklch(.3 .02 250 / .025);
+    --g-shadow-m:0 12px 36px -16px oklch(.4 .025 250 / .16), inset 0 1px 0 var(--modern-edge);
+    --g-shadow-d:0 24px 56px -20px oklch(.4 .025 250 / .22), inset 0 1px 0 var(--modern-edge);
+    --g-outline-shadow:0 0 0 2px color-mix(in oklch, var(--cg), transparent 60%);
 
     // --- 清晰的文字与控件层级 ---
 
-    --g-color:oklch(from var(--cg) .3 calc(c * .12) h);
-    --g-color-hover:oklch(from var(--cg) .2 calc(c * .16) h);
-    --g-color-active:oklch(from var(--cg) .16 calc(c * .16) h);
-    --g-color-focus:oklch(from var(--cg) .22 calc(c * .16) h);
-    --g-color-disabled:oklch(from var(--cg) .68 calc(c * .05) h);
-    --g-color-tip:oklch(from var(--cg) .5 calc(c * .09) h);
-    --g-color-placeholder:oklch(from var(--cg) .59 calc(c * .075) h);
+    --g-color:oklch(.3 .006 250);
+    --g-color-hover:oklch(.2 .006 250);
+    --g-color-active:oklch(.16 .006 250);
+    --g-color-focus:oklch(.22 .006 250);
+    --g-color-disabled:oklch(.68 .006 250);
+    --g-color-tip:oklch(.5 .006 250);
+    --g-color-placeholder:oklch(.48 .008 250);
 
     --g-color-error:var(--danger);
     --g-color-warning:var(--warning);
     --g-color-success:var(--success);
 
-    --g-background:oklch(from var(--cg) .99 calc(c * .04) h / .62);
-    --g-background-hover:oklch(from var(--cg) .97 calc(c * .1) h / .68);
-    --g-background-active:oklch(from var(--cg) .94 calc(c * .18) h / .74);
-    --g-background-opacity:oklch(from var(--cg) .62 calc(c * .08) h / .14);
-    --g-background-focus:oklch(from var(--cg) .985 calc(c * .08) h / .7);
-    --g-background-disabled:oklch(from var(--cg) .95 calc(c * .025) h / .54);
+    --g-background:oklch(1 0 0 / .32);
+    --g-background-hover:oklch(1 0 0 / .55);
+    --g-background-active:oklch(1 0 0 / .22);
+    --g-background-opacity:oklch(.62 .006 250 / .14);
+    --g-background-focus:oklch(1 0 0 / .5);
+    --g-background-disabled:oklch(1 0 0 / .14);
 
-    --g-border-color:oklch(from var(--cg) .82 calc(c * .14) h / .62);
-    --g-border-color-hover:oklch(from var(--cg) .7 calc(c * .26) h / .76);
-    --g-border-color-active:color-mix(in oklch, var(--cg), white 38%);
-    --g-border-color-focus:color-mix(in oklch, var(--cg), white 46%);
-    --g-border-color-disabled:oklch(from var(--cg) .89 calc(c * .04) h / .52);
+    --g-border-color:transparent;
+    --g-border-color-hover:transparent;
+    --g-border-color-active:transparent;
+    --g-border-color-focus:transparent;
+    --g-border-color-disabled:transparent;
 
     --g-focusbox-border-width:0;
     --g-focusbox-border-color:var(--cg);
@@ -88,24 +94,24 @@ global {
     --g-plain-color-focus:var(--g-color-focus);
     --g-plain-color-disabled:var(--g-color-disabled);
 
-    --g-plain-background:oklch(from var(--cg) .965 calc(c * .04) h / .5);
-    --g-plain-background-hover:oklch(from var(--cg) .945 calc(c * .09) h / .6);
-    --g-plain-background-active:oklch(from var(--cg) .92 calc(c * .15) h / .68);
-    --g-plain-background-focus:oklch(from var(--cg) .98 calc(c * .07) h / .62);
-    --g-plain-background-disabled:oklch(from var(--cg) .945 calc(c * .02) h / .44);
-    --g-plain-background-selected:color-mix(in oklch, var(--cg), white 84%);
+    --g-plain-background:oklch(.55 .025 245 / .09);
+    --g-plain-background-hover:oklch(1 0 0 / .55);
+    --g-plain-background-active:oklch(1 0 0 / .22);
+    --g-plain-background-focus:oklch(1 0 0 / .5);
+    --g-plain-background-disabled:oklch(1 0 0 / .14);
+    --g-plain-background-selected:color-mix(in oklch, var(--cg), transparent 82%);
 
-    --g-plain-border-color:oklch(from var(--cg) .85 calc(c * .12) h / .58);
-    --g-plain-border-color-hover:oklch(from var(--cg) .73 calc(c * .24) h / .72);
-    --g-plain-border-color-active:color-mix(in oklch, var(--cg), white 42%);
-    --g-plain-border-color-focus:color-mix(in oklch, var(--cg), white 50%);
-    --g-plain-border-color-disabled:oklch(from var(--cg) .9 calc(c * .04) h / .46);
-    --g-plain-border-color-plain:oklch(from var(--cg) .9 calc(c * .07) h / .5);
+    --g-plain-border-color:transparent;
+    --g-plain-border-color-hover:transparent;
+    --g-plain-border-color-active:transparent;
+    --g-plain-border-color-focus:transparent;
+    --g-plain-border-color-disabled:transparent;
+    --g-plain-border-color-plain:oklch(.5 .01 250 / .1);
 
-    --g-block-background:oklch(from var(--cg) .91 calc(c * .1) h / .78);
-    --g-block-background-hover:oklch(from var(--cg) .875 calc(c * .18) h / .86);
-    --g-block-dark-background:oklch(from var(--cg) .25 calc(c * .08) h);
-    --g-block-dark-background-hover:oklch(from var(--cg) .3 calc(c * .14) h);
+    --g-block-background:oklch(.91 .006 250 / .78);
+    --g-block-background-hover:oklch(.875 .006 250 / .86);
+    --g-block-dark-background:oklch(.25 .006 250);
+    --g-block-dark-background-hover:oklch(.3 .006 250);
 
     ::selection {
         background-color: color-mix(in oklch, var(--cg), transparent 74%);
@@ -118,33 +124,24 @@ global {
 // -- CONTROL -- form --
 
 .form_wrap {
-    &:not(.form_border-none):not([data-cg-max]) {
-        background:
-            linear-gradient(135deg, color-mix(in oklch, var(--cg), transparent 70%), oklch(1 0 0 / .42) 24%, transparent 48%, color-mix(in oklch, var(--modern-accent-shift), transparent 82%)),
-            oklch(from var(--cg) .9 calc(c * .08) h / .46);
-    }
     .form_inner {
         .form_header {
-            background:
-                linear-gradient(100deg, color-mix(in oklch, var(--cg), transparent 94%), transparent 38%),
-                var(--g-pure);
+            background: transparent;
             .form_controls {
                 .form_min, .form_max {
                     &:hover {
-                        background: oklch(from var(--cg) .2 calc(c * .08) h / .06);
+                        background: oklch(.2 .006 250 / .06);
                     }
                     &:active {
-                        background: oklch(from var(--cg) .2 calc(c * .12) h / .11);
+                        background: oklch(.2 .006 250 / .11);
                     }
                 }
             }
         }
         .form_content {
-            background:
-                linear-gradient(145deg, color-mix(in oklch, var(--cg), transparent 97%), transparent 38%),
-                var(--face);
+            background: transparent;
             .form_loading {
-                background: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%);
+                background: radial-gradient(circle, oklch(.99 .006 250 / .94) 12%, oklch(.93 .006 250 / .68) 80%);
             }
         }
     }
@@ -161,24 +158,24 @@ global {
 }
 
 @include shared.levelselect(
-    $loading: radial-gradient(circle, oklch(from var(--cg) .99 calc(c * .06) h / .94) 12%, oklch(from var(--cg) .93 calc(c * .11) h / .68) 80%)
+    $loading: radial-gradient(circle, oklch(.99 .006 250 / .94) 12%, oklch(.93 .006 250 / .68) 80%)
 );
 
 // -- CONTROL -- nav --
 
 .nav_wrap {
-    background: oklch(from var(--cg) .955 calc(c * .06) h);
+    background: oklch(.955 .006 250);
     .nav_bg {
-        background: oklch(from var(--cg) .955 calc(c * .06) h);
+        background: oklch(.955 .006 250);
     }
     .nav_menuwrap {
         .nav_menu-panel {
-            background: oklch(from var(--cg) .975 calc(c * .08) h / .46);
+            background: oklch(.975 .006 250 / .46);
         }
     }
     .nav_content {
         .nav_header {
-            background: oklch(from var(--cg) .985 calc(c * .07) h / .48);
+            background: oklch(.985 .006 250 / .48);
             box-shadow: 0 8px 24px -20px oklch(.22 0 0 / .24);
         }
     }
@@ -196,10 +193,6 @@ global {
         > .nav-item_text {
             color: var(--g-color-focus);
             background: color-mix(in oklch, var(--cg), transparent 86%);
-            box-shadow: inset 2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 91%);
-            &:dir(rtl) {
-                box-shadow: inset -2px 0 0 var(--cg), 0 0 18px color-mix(in oklch, var(--cg), transparent 91%);
-            }
         }
     }
 }
@@ -209,7 +202,6 @@ global {
 .task_wrap {
     background:
         linear-gradient(135deg, oklch(1 0 0 / .18), transparent 38%),
-        linear-gradient(315deg, color-mix(in oklch, var(--modern-accent-shift), transparent 95%), transparent 54%),
         var(--g-pop-background);
 }
 
@@ -218,7 +210,6 @@ global {
 .menulist_wrap {
     background:
         linear-gradient(135deg, oklch(1 0 0 / .2), transparent 40%),
-        linear-gradient(315deg, color-mix(in oklch, var(--modern-accent-shift), transparent 95%), transparent 54%),
         var(--g-pop-background);
     -webkit-backdrop-filter: var(--g-pop-backdrop);
     backdrop-filter: var(--g-pop-backdrop);
@@ -230,7 +221,6 @@ global {
     &:has(> .menulist_wrap) {
         background:
             linear-gradient(135deg, oklch(1 0 0 / .2), transparent 40%),
-            linear-gradient(315deg, color-mix(in oklch, var(--modern-accent-shift), transparent 95%), transparent 54%),
             var(--g-pop-background);
         > .menulist_wrap {
             -webkit-backdrop-filter: none;
@@ -245,22 +235,10 @@ global {
         var(--g-pop-background);
 }
 
-// -- CONTROL -- button --
-
-.button_wrap {
-    &:not([data-cg-disabled]) {
-        &:hover {
-            box-shadow: 0 0 0 1px color-mix(in oklch, var(--cg), transparent 88%), 0 6px 18px -14px color-mix(in oklch, var(--cg), transparent 54%), inset 0 1px 0 oklch(1 0 0 / .62);
-        }
-        &:active {
-            box-shadow: 0 0 0 2px color-mix(in oklch, var(--cg), transparent 82%), inset 0 1px 3px oklch(.25 0 0 / .06);
-        }
-    }
-}
 
 @include shared.slider(
-    $thumb: 'oklch(from var(--cg) .965 calc(c * .04) h)',
-    $thumb-disabled: 'oklch(from var(--cg) .945 calc(c * .02) h)'
+    $thumb: 'oklch(.965 .006 250)',
+    $thumb-disabled: 'oklch(.945 .006 250)'
 );
 
 // --- CONTROL -- cube ---
