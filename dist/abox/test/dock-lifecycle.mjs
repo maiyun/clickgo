@@ -306,6 +306,71 @@ assert.equal(firstGroup.nextGroup, null, 'unmount removes the separator');
 assert.deepEqual(nextGroup.groups, []);
 resizeMod.namespace.unregister(firstGroup);
 
+// A taller column can retain manual group heights. Its trailing space remains draggable.
+const freeGroups = [new DockGroup(), new DockGroup(), new DockGroup()];
+const freeOwner = { 'expandedData': true };
+let freeBottom = 600;
+const freeBody = {
+    'children': [],
+    getBoundingClientRect: () => ({ 'bottom': freeBottom + 22 })
+};
+const previousComputedStyle = globalThis.getComputedStyle;
+globalThis.getComputedStyle = element => element === freeBody ? {
+    'borderBottomWidth': '2px', 'paddingBottom': '20px'
+} : {};
+for (const [index, current] of freeGroups.entries()) {
+    current.dock = freeOwner;
+    current.heightData = [180, 120, 80][index];
+    current.refs = {};
+    current.element = {
+        'isConnected': true,
+        'order': index,
+        'parentElement': freeBody,
+        getBoundingClientRect: () => ({
+            'height': current.heightData,
+            'bottom': freeGroups.slice(0, index + 1).reduce((sum, item) => sum + item.heightData, 0)
+        })
+    };
+    freeBody.children.push(current.element);
+    resizeMod.namespace.register(current);
+}
+// A hidden trailing slot must not make the occupied height appear to be zero.
+freeBody.children.push({ getBoundingClientRect: () => ({ 'height': 0, 'bottom': 0 }) });
+const [freeFirst, freeNext, freeLast] = freeGroups;
+freeFirst.props.grow = true;
+const downEvent = { 'button': 0, 'clientY': 100, preventDefault() {}, stopPropagation() {} };
+freeFirst.resizeDown(downEvent);
+pointerSession.move({ 'clientY': 200 });
+assert.equal(freeFirst.heightData, 280, 'dragging first consumes the column remainder');
+assert.equal(freeNext.heightData, 120, 'the adjacent group stays unchanged while space remains');
+pointerSession.move({ 'clientY': 600 });
+assert.equal(freeFirst.heightData, 460, 'the upper bound includes free space, reserving following groups');
+assert.equal(freeNext.heightData, 60);
+assert.equal(freeLast.heightData, 80, 'later groups keep their heights');
+assert.equal(freeGroups.reduce((sum, item) => sum + item.heightData, 0), 600);
+pointerSession.move({ 'clientY': 100 });
+assert.deepEqual(freeGroups.map(item => item.heightData), [180, 120, 80], 'returning to the start has no accumulated shift');
+pointerSession.move({ 'clientY': 50 });
+assert.deepEqual(freeGroups.map(item => item.heightData), [130, 170, 80], 'upward movement transfers height to the adjacent group');
+pointerSession.finish(undefined, { 'cancelled': true, 'reason': 'escape' });
+assert.deepEqual(freeGroups.map(item => item.heightData), [180, 120, 80]);
+assert.equal(freeFirst.events, undefined, 'cancellation does not publish heights');
+freeFirst.resizeDown(downEvent);
+pointerSession.move({ 'clientY': 600 });
+pointerSession.finish(undefined, { 'cancelled': false, 'reason': 'up' });
+assert.deepEqual(freeFirst.events.at(-1), ['update:height', 460]);
+assert.deepEqual(freeNext.events.at(-1), ['update:height', 60]);
+assert.equal(freeLast.events, undefined);
+freeBottom = 800;
+freeFirst.resizeKeydown({ 'key': 'ArrowDown', 'shiftKey': false, preventDefault() {}, stopPropagation() {} });
+assert.deepEqual(freeGroups.map(item => item.heightData), [470, 60, 80], 'keyboard resizing can use new space after a Form grows');
+freeFirst.resizeKeydown({ 'key': 'ArrowDown', 'shiftKey': true, preventDefault() {}, stopPropagation() {} });
+assert.deepEqual(freeGroups.map(item => item.heightData), [471, 60, 80]);
+for (const current of freeGroups) {
+    resizeMod.namespace.unregister(current);
+}
+globalThis.getComputedStyle = previousComputedStyle;
+
 
 group.floatAreaHeight = 700;
 assert.equal(group.floatMaxHeight, '700px', 'the default has no fixed 400px cap');

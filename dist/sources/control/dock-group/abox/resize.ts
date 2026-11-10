@@ -41,14 +41,29 @@ function pair(group: IDockGroupSizing) {
     // A cramped Form must not jump larger when a separator is first touched.
     const minFirst = Math.min(first, group.minimumHeight);
     const minSecond = Math.min(second, next.minimumHeight);
-    return { next, first, second, minFirst, minSecond };
+    const area = group.element.parentElement;
+    let extra = 0;
+    if (area) {
+        const style = getComputedStyle(area);
+        const bottom = area.getBoundingClientRect().bottom -
+            (parseFloat(style.borderBottomWidth) || 0) - (parseFloat(style.paddingBottom) || 0);
+        let occupiedBottom = next.element.getBoundingClientRect().bottom;
+        for (const child of area.children) {
+            const rect = child.getBoundingClientRect();
+            if (rect.height > 0) {
+                occupiedBottom = Math.max(occupiedBottom, rect.bottom);
+            }
+        }
+        extra = Math.max(0, bottom - occupiedBottom);
+    }
+    return { next, first, second, minFirst, minSecond, extra };
 }
 
 function apply(group: IDockGroupSizing, snapshot: NonNullable<ReturnType<typeof pair>>, delta: number): void {
     const change = Math.max(snapshot.minFirst - snapshot.first,
-        Math.min(snapshot.second - snapshot.minSecond, delta));
+        Math.min(snapshot.extra + snapshot.second - snapshot.minSecond, delta));
     group.heightData = snapshot.first + change;
-    snapshot.next.heightData = snapshot.second - change;
+    snapshot.next.heightData = snapshot.second - change + Math.max(0, Math.min(change, snapshot.extra));
 }
 
 function emit(group: IDockGroupSizing): void {
