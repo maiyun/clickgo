@@ -106,7 +106,8 @@
         &.form_flash {
             animation: form_flash .2s linear infinite;
         }
-        &:not([data-cg-max]) > .form_inner {
+        &:not([data-cg-max]) > .form_inner,
+        &:not([data-cg-max]):not(.form_border-none) > .form_inner {
             border-radius: var(--g-radius-xl);
             .form_header .form_controls .form_close {
                 // --- 右上角与窗口外轮廓保持相同的内缩弧线。 ---

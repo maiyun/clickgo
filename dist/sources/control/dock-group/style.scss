@@ -55,7 +55,11 @@
         }
 
         &.group-collapsed {
-            flex: 0 0 auto; min-height: 0;
+            flex: 0 0 auto; min-height: 0; padding-bottom: 0;
+
+            > .tabs {
+                border-bottom: none;
+            }
 
             > .content {
                 display: none;
