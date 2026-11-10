@@ -1,5 +1,7 @@
 .wrap {
     display: flex; outline: none;
+    // --- 随主题预留按钮、内边距和四位数字的空间，避免窄布局挤没数值。 ---
+    min-width: calc(var(--g-boxsize) * 2 + var(--g-padding) * 2 + 4ch + 2px);
 
     .minus, .plus {
         width: var(--g-boxsize); display: flex; align-items: center; justify-content: center; border-radius: var(--g-radius); transition: var(--g-transition);
