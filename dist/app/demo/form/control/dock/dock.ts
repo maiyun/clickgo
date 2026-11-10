@@ -14,6 +14,50 @@ export default class extends clickgo.form.AbstractForm {
 
     public historyTab = 'history';
 
+    /** --- 长历史列表用于验证展开面板和收起浮层的滚动 --- */
+    public historyActions = [
+        'Save workspace',
+        'Export preview',
+        'Rename document',
+        'Update metadata',
+        'Create snapshot',
+        'Restore selection',
+        'Move guide',
+        'Add guide',
+        'Adjust grid',
+        'Change units',
+        'Zoom to selection',
+        'Fit canvas',
+        'Rotate view',
+        'Update background',
+        'Change palette',
+        'Add color',
+        'Remove mask',
+        'Apply mask',
+        'Adjust opacity',
+        'Change blend mode',
+        'Unlock layer',
+        'Lock layer',
+        'Show layer',
+        'Hide layer',
+        'Rename layer',
+        'Move layer',
+        'Duplicate layer',
+        'Create layer',
+        'Deselect objects',
+        'Select objects',
+        'Align objects',
+        'Distribute objects',
+        'Group objects',
+        'Move object',
+        'Rotate object',
+        'Flip image',
+        'Crop image',
+        'Adjust color',
+        'Resize image',
+        'Import image'
+    ];
+
     public lazy = true;
 
     public multiple = true;

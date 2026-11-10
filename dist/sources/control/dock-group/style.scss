@@ -115,7 +115,7 @@
                 }
 
                 > .panel {
-                    flex: 1; min-height: 0;
+                    flex: 1; flex-shrink: 1 !important; min-height: 0;
 
                     > [data-cg-control='dock-item'] {
                         flex: none; overflow: visible;

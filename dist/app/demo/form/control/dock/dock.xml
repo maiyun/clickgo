@@ -28,9 +28,7 @@
                     <dock-item name="history" label="History" :lazy="lazy" :cache="cache">
                         <flow direction="v" gutter="8" style="padding: 10px;">
                             <label>Latest actions</label>
-                            <label>3. Adjust color</label>
-                            <label>2. Resize image</label>
-                            <label>1. Import image</label>
+                            <label v-for="(action, index) of historyActions" :key="action">{{historyActions.length - index}}. {{action}}</label>
                         </flow>
                     </dock-item>
                 </dock-group>
@@ -62,9 +60,7 @@
                         <dock-item name="history" label="History" :lazy="lazy" :cache="cache">
                             <layout direction="v" gutter="8" style="padding: 10px;">
                                 <label>Latest actions</label>
-                                <label>3. Adjust color</label>
-                                <label>2. Resize image</label>
-                                <label>1. Import image</label>
+                                <label v-for="(action, index) of historyActions" :key="action">{{historyActions.length - index}}. {{action}}</label>
                             </layout>
                         </dock-item>
                     </dock-group>
