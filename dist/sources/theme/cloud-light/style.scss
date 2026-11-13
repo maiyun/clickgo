@@ -336,12 +336,12 @@ global {
     > .nav-item_text:active { background:var(--cloud-nav-active); }
     > .nav-item_menu {
         position:relative;
-        padding-inline-start:20px;
+        padding-inline-start:28px;
         border-radius:0;
         &::before {
             content:'';
             position:absolute;
-            inset-inline-start:12px;
+            inset-inline-start:19.5px;
             top:2px;
             bottom:2px;
             border-inline-start:1px solid var(--cloud-divider);
