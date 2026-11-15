@@ -1187,6 +1187,10 @@ global {
     &.task_dock { @include raised; border-radius: 0; }
     .task_task { gap: 2px; }
     .task_date { @include thin-sunken; color: #000000; padding: 0 8px; }
+    &:not(.task_dock) .task-tray_wrap {
+        padding: 0;
+        .task-tray_hit { padding: 3px; }
+    }
     // --- 托盘分隔线使用相邻的灰、白两像素，端点缩进以免顶到外框。 ---
     .task_tray:not(:empty) {
         position: relative; border: none; padding: 0 6px;
