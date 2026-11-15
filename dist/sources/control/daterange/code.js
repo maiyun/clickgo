@@ -41,6 +41,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 语言包 --- */
     localeData = {
         'en': {
+            'clear': 'Clear',
             'start': 'Start',
             'end': 'End',
             'today': 'Today',
@@ -57,6 +58,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Click to select'
         },
         'sc': {
+            'clear': '清除',
             'start': '开始',
             'end': '结束',
             'today': '今天',
@@ -73,6 +75,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '请点击选择'
         },
         'tc': {
+            'clear': '清除',
             'start': '開始',
             'end': '結束',
             'today': '今天',
@@ -89,6 +92,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '請點擊選擇'
         },
         'ja': {
+            'clear': 'クリア',
             'start': '開始',
             'end': '終了',
             'today': '今日',
@@ -105,6 +109,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '選択して下さい'
         },
         'ko': {
+            'clear': '지우기',
             'start': '시작',
             'end': '종료',
             'today': '오늘',
@@ -121,6 +126,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '선택 클릭'
         },
         'th': {
+            'clear': 'ล้าง',
             'start': 'เริ่มต้น',
             'end': 'สิ้นสุด',
             'today': 'วันนี้',
@@ -137,6 +143,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'คลิกเลือก'
         },
         'es': {
+            'clear': 'Borrar',
             'start': 'Inicio',
             'end': 'Fin',
             'today': 'Hoy',
@@ -153,6 +160,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Clic para elegir'
         },
         'de': {
+            'clear': 'Leeren',
             'start': 'Start',
             'end': 'Ende',
             'today': 'Heute',
@@ -169,6 +177,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Klicken Sie wählen'
         },
         'fr': {
+            'clear': 'Effacer',
             'start': 'Début',
             'end': 'Fin',
             'today': 'Aujourd’hui',
@@ -185,6 +194,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Cliquer choisir'
         },
         'pt': {
+            'clear': 'Limpar',
             'start': 'Início',
             'end': 'Fim',
             'today': 'Hoje',
@@ -201,6 +211,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Clique para sel.'
         },
         'ru': {
+            'clear': 'Очистить',
             'start': 'Начало',
             'end': 'Конец',
             'today': 'Сегодня',
@@ -217,6 +228,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Нажмите выбрать'
         },
         'vi': {
+            'clear': 'Xóa',
             'start': 'Bắt đầu',
             'end': 'Kết thúc',
             'today': 'Hôm nay',
@@ -233,6 +245,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Nhấn chọn'
         },
         'ar': {
+            'clear': 'مسح',
             'start': 'البداية',
             'end': 'النهاية',
             'today': 'اليوم',
@@ -249,6 +262,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'انقر للاختيار'
         },
         'id': {
+            'clear': 'Hapus',
             'start': 'Mulai',
             'end': 'Selesai',
             'today': 'Hari ini',
@@ -265,6 +279,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Klik untuk memilih'
         },
         'it': {
+            'clear': 'Cancella',
             'start': 'Inizio',
             'end': 'Fine',
             'today': 'Oggi',
@@ -281,6 +296,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Fai clic per selezionare'
         },
         'tr': {
+            'clear': 'Temizle',
             'start': 'Başlangıç',
             'end': 'Bitiş',
             'today': 'Bugün',

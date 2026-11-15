@@ -6,7 +6,7 @@
 
 # Interface: IRuntime
 
-Defined in: [lib/task.ts:2092](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2092)
+Defined in: [lib/task.ts:2094](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2094)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/task.ts:2092](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **dialogCreating**: `number`
 
-Defined in: [lib/task.ts:2095](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2095)
+Defined in: [lib/task.ts:2097](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2097)
 
 正在异步创建 dialog 的数量，用于防止快速重复调用产生多个 dialog
 
@@ -24,7 +24,7 @@ Defined in: [lib/task.ts:2095](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **dialogFormIds**: `string`[]
 
-Defined in: [lib/task.ts:2093](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2093)
+Defined in: [lib/task.ts:2095](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2095)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/task.ts:2093](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **index**: `number`
 
-Defined in: [lib/task.ts:2097](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2097)
+Defined in: [lib/task.ts:2099](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2099)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [lib/task.ts:2097](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **permissions**: `string`[]
 
-Defined in: [lib/task.ts:2096](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2096)
+Defined in: [lib/task.ts:2098](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2098)

@@ -16,6 +16,11 @@
         <div v-if="propBoolean('leftlabel')&&propBoolean('editable')&&!propBoolean('multi')&&label.length&&(label[0]!==value[0])" class="leftlabel">{{fl(label[0])}}</div>
         <cg-text v-if="propBoolean('editable')" :class="[propBoolean('leftlabel')&&!propBoolean('multi')&&label.length&&(label[0]!==value[0])&&'showleftlabel']" :modelValue="inputValue" @update:modelValue="updateInputValue" :disabled="disabled" :placeholder="placeholder" @keydown="keydown" @blur="blur" plain :padding="padding"></cg-text>
     </template>
+    <template v-slot:suffix>
+        <button v-if="propBoolean('clearbtn') && (value.length || inputValue)" class="clear" type="button" :disabled="propBoolean('disabled')" :tabindex="formFocus ? 0 : -1" :aria-label="l('clear')" @pointerdown.stop @click.stop="clear" @keydown.stop @keyup.stop>
+            <cg-icon name="close" size="m"></cg-icon>
+        </button>
+    </template>
     <template v-slot:pop>
         <div class="pop">
             <cg-text v-if="propBoolean('search') && !propBoolean('editable')" :modelValue="searchValue" @update:modelValue="updateSearchValue" :placeholder="l('search')" @keydown="textKeyDown" plain></cg-text>

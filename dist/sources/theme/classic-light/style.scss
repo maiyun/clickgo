@@ -456,6 +456,27 @@ global {
     }
     &[data-cg-disabled]:not(.greatselect_plain) { @include sunken; }
 }
+.greatselect_wrap .greatselect_suffix {
+    align-items: stretch;
+}
+.greatselect_wrap .select_clear, .date_wrap .date_clear, .daterange_wrap .daterange_clear {
+    @include raised;
+    align-self: stretch; width: 17px; height: auto; margin: 1px; opacity: 1;
+    background: var(--face); color: var(--g-color);
+    &:hover:not(:disabled), &:focus-visible {
+        background: var(--face); color: var(--g-color); opacity: 1;
+    }
+    &:active:not(:disabled) {
+        @include sunken;
+        background: var(--face); color: var(--g-color);
+    }
+    &:focus-visible {
+        outline: dotted 1px currentColor; outline-offset: -4px;
+    }
+    &:disabled {
+        opacity: 1; color: var(--g-color-disabled);
+    }
+}
 .greatselect_wrap .greatselect_arrow {
     @include raised;
     align-self: stretch;
@@ -603,6 +624,10 @@ global {
         background: var(--classic-selection);
     }
     &.greatlist_shift { border: dotted 1px #000000; }
+}
+.property_line.property_selected .property_title {
+    --g-color:#ffffff;
+    color: #ffffff;
 }
 // --- 树形列表与导航使用相同的加减号，加载中仍显示原有动画。 ---
 .list_tag-cg-greatlist .list_item .list_tree:not(.list_tree2) {

@@ -1083,6 +1083,110 @@ test('Property uses inline modelValue arrays without recursive writes and accept
     m.dispose();
 });
 
+test('clearable single selection stays empty and clearing synchronizes values, labels and popup', async () => {
+    const m = await mount({ clearbtn: true, data: [option('a', 'Alpha')], placeholder: 'Optional' });
+    assert.deepEqual([...m.state.modelValue], []);
+    assert.equal(m.select.element.querySelector('button.clear'), null);
+    m.state.modelValue = ['a'];
+    await flush();
+    m.events.length = 0;
+    m.select.refs.gs.showPop();
+    assert.equal(m.select.element.querySelector('button.clear').parentElement.className, 'suffix');
+    assert.equal(m.select.element.querySelector('button.clear').parentElement.nextElementSibling.className, 'arrow');
+    m.select.element.querySelector('button.clear').focus();
+    m.select.element.querySelector('button.clear').click();
+    await flush();
+    assert.equal(document.activeElement, m.select.refs.gs.element);
+    assert.deepEqual([...m.state.modelValue], []);
+    assert.deepEqual([...m.select.label], []);
+    assert.deepEqual([...m.select.listValue], []);
+    assert.deepEqual(m.events.map(([name]) => name), ['change', 'value', 'label', 'changed']);
+    assert.deepEqual(m.events.at(-1)[1], { before: ['a'], value: [] });
+    assert.equal(m.select.element.querySelector('.labelmode').textContent, 'Optional');
+    assert.equal(m.select.element.querySelector('button.clear'), null);
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, undefined);
+    m.state.data = [option('b', 'Beta')];
+    await flush();
+    assert.deepEqual([...m.state.modelValue], []);
+    m.dispose();
+});
+
+test('clear is atomic for multiple values, cancellable and inert when disabled or already empty', async () => {
+    let cancel = true;
+    const m = await mount({ clearbtn: true, multi: true, data: [option('a', 'Alpha'), option('b', 'Beta')], modelValue: ['a', 'b'] }, {
+        change: event => { if (cancel) event.preventDefault(); },
+    });
+    m.events.length = 0;
+    m.select.clear();
+    await flush();
+    assert.deepEqual([...m.state.modelValue], ['a', 'b']);
+    assert.deepEqual(m.events.map(([name]) => name), ['change']);
+    cancel = false;
+    m.state.disabled = true;
+    await flush();
+    m.events.length = 0;
+    assert.equal(m.select.element.querySelector('button.clear').disabled, true);
+    m.select.clear();
+    assert.deepEqual(m.events, []);
+    m.state.disabled = false;
+    await flush();
+    m.select.clear();
+    await flush();
+    assert.deepEqual([...m.state.modelValue], []);
+    assert.deepEqual(m.events.map(([name]) => name), ['change', 'value', 'label', 'changed']);
+    m.events.length = 0;
+    m.select.clear();
+    await flush();
+    assert.deepEqual(m.events, []);
+    m.dispose();
+});
+
+test('clearing a remote selection invalidates pending results and restores an empty search', async () => {
+    const m = await mount({ clearbtn: true, search: true, remote: true, remoteDelay: 0, modelValue: ['a'] });
+    await m.select.updateSearchValue('old');
+    await flush();
+    assert.equal(m.requests.length, 1);
+    m.events.length = 0;
+    m.select.clear();
+    await flush();
+    await m.requests[0].callback([option('a', 'Stale label')]);
+    await flush();
+    assert.deepEqual([...m.state.modelValue], []);
+    assert.deepEqual([...m.select.label], []);
+    assert.deepEqual([...m.select.searchData], []);
+    assert.equal(m.select.searchValue, '');
+    assert.equal(m.select.searching, 0);
+    assert.equal(m.events.filter(([name]) => name === 'changed').length, 1);
+    m.dispose();
+});
+
+test('editable draft-only clearing emits no selection change and default single selection remains required', async () => {
+    const m = await mount({ clearbtn: true, editable: true, multi: true, modelValue: [] });
+    m.select.inputValue = 'draft';
+    await flush();
+    m.events.length = 0;
+    m.select.clear();
+    await flush();
+    assert.equal(m.select.inputValue, '');
+    assert.deepEqual(m.events, []);
+    m.dispose();
+    const normal = await mount({ data: [option('a', 'Alpha')] });
+    normal.events.length = 0;
+    normal.select.clear();
+    await flush();
+    assert.deepEqual([...normal.state.modelValue], ['a']);
+    assert.deepEqual(normal.events, []);
+    normal.state.clearbtn = true;
+    await flush();
+    normal.select.clear();
+    await flush();
+    assert.deepEqual([...normal.state.modelValue], []);
+    normal.state.clearbtn = false;
+    await flush();
+    assert.deepEqual([...normal.state.modelValue], ['a']);
+    normal.dispose();
+});
+
 let failures = 0;
 for (const [name, callback] of cases) {
     try {

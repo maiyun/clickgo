@@ -8,6 +8,10 @@
         }
     }
 
+    .suffix {
+        display: flex; align-items: center; flex-shrink: 0;
+    }
+
     .arrow {
         position: relative; display: flex; justify-content: center; align-items: center; border: solid .5px transparent; transition: var(--g-transition); padding: 0 var(--g-padding); border-radius: var(--g-radius);
         &::after {

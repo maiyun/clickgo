@@ -126,6 +126,7 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 语言包 --- */
     public localeData = {
         'en': {
+            'clear': 'Clear',
             'hour': 'Hr',
             'minute': 'Min',
             'second': 'Sec',
@@ -135,6 +136,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Click to select'
         },
         'sc': {
+            'clear': '清除',
             'hour': '时',
             'minute': '分',
             'second': '秒',
@@ -144,6 +146,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '请点击选择'
         },
         'tc': {
+            'clear': '清除',
             'hour': '時',
             'minute': '分',
             'second': '秒',
@@ -153,6 +156,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '請點擊選擇'
         },
         'ja': {
+            'clear': 'クリア',
             'hour': '時',
             'minute': '分',
             'second': '秒',
@@ -162,6 +166,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '選択して下さい'
         },
         'ko': {
+            'clear': '지우기',
             'hour': '시',
             'minute': '분',
             'second': '초',
@@ -171,6 +176,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': '선택 클릭'
         },
         'th': {
+            'clear': 'ล้าง',
             'hour': 'ชม.',
             'minute': 'น.',
             'second': 'วิ',
@@ -180,6 +186,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'คลิกเลือก'
         },
         'es': {
+            'clear': 'Borrar',
             'hour': 'Hr',
             'minute': 'Min',
             'second': 'Seg',
@@ -189,6 +196,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Clic para elegir'
         },
         'de': {
+            'clear': 'Leeren',
             'hour': 'Std',
             'minute': 'Min',
             'second': 'Sek',
@@ -198,6 +206,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Klicken Sie wählen'
         },
         'fr': {
+            'clear': 'Effacer',
             'hour': 'Hr',   // 或 'H'
             'minute': 'Min',
             'second': 'Sec',
@@ -207,6 +216,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Cliquer choisir'
         },
         'pt': {
+            'clear': 'Limpar',
             'hour': 'Hr',
             'minute': 'Min',
             'second': 'Seg',
@@ -216,6 +226,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Clique para sel.'
         },
         'ru': {
+            'clear': 'Очистить',
             'hour': 'Час',
             'minute': 'Мин',
             'second': 'Сек',
@@ -225,6 +236,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Нажмите выбрать'
         },
         'vi': {
+            'clear': 'Xóa',
             'hour': 'Giờ',
             'minute': 'Phút',
             'second': 'Giây',
@@ -234,6 +246,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Nhấn chọn'
         },
         'ar': {
+            'clear': 'مسح',
             'hour': 'ساعة',
             'minute': 'دقيقة',
             'second': 'ثانية',
@@ -243,6 +256,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'انقر للاختيار'
         },
         'id': {
+            'clear': 'Hapus',
             'hour': 'Jam',
             'minute': 'Menit',
             'second': 'Detik',
@@ -252,6 +266,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Klik untuk memilih'
         },
         'it': {
+            'clear': 'Cancella',
             'hour': 'Ora',
             'minute': 'Min',
             'second': 'Sec',
@@ -261,6 +276,7 @@ export default class extends clickgo.control.AbstractControl {
             'please click select': 'Fai clic per selezionare'
         },
         'tr': {
+            'clear': 'Temizle',
             'hour': 'Saat',
             'minute': 'Dak',
             'second': 'San',

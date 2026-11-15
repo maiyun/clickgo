@@ -2,6 +2,9 @@
     <div class="content" @pointerdown="down($event, 'left')" :class="[direction]">
         <slot></slot>
     </div>
+    <div v-if="slots['suffix']" class="suffix">
+        <slot name="suffix"></slot>
+    </div>
     <div class="arrow" @pointerdown="down($event, 'arrow')"></div>
     <teleport to="system">
         <div ref="pop" class="pop">

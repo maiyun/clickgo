@@ -1776,8 +1776,13 @@ export class AbstractThread {
         });
     }
 }
+/** --- 线程类对应的运行标识，供各任务分别去重 --- */
+const threadClasses = new WeakMap();
+/** --- 新线程类的标识序号 --- */
+let threadClassId = 0;
 /**
- * --- 运行线程（同一个线程文件只能运行一个） ---
+ * --- 运行线程（同一个线程类只能运行一个） ---
+ * 线程类在独立的 Worker 中执行，不能使用主线程中的外部变量或模块。
  * @param current 当前任务 id
  * @param cls 线程类
  * @param data 线程初始化数据
@@ -1793,22 +1798,18 @@ export function runThread(current, cls, data) {
         lCore.trigger('error', '', '', err, err.message).catch(() => { });
         throw err;
     }
-    /** --- cls 的文本内容 --- */
-    let clsStr = cls.toString();
-    // --- 替换类 ---
-    clsStr = clsStr.replace(/class (\w+) extends.+?AbstractThread *{/, 'class cgCustomThread extends AbstractThread {');
-    /** --- 提取线程文件的 filename --- */
-    const match = /filename *\(\) *{ *return *"(.+?)"/.exec(clsStr);
-    if (!match) {
-        const err = new Error('task.runThread: -2');
-        lCore.trigger('error', '', '', err, err.message).catch(() => { });
-        throw err;
+    let threadKey = threadClasses.get(cls);
+    if (!threadKey) {
+        threadKey = String(++threadClassId);
+        threadClasses.set(cls, threadKey);
     }
-    if (t.threads[match[1]]) {
-        return t.threads[match[1]];
+    if (t.threads[threadKey]) {
+        return t.threads[threadKey];
     }
-    const blob = new Blob([`${AbstractThread.toString()}
-${clsStr}
+    // --- Worker 使用独立的 AbstractThread，匿名类与打包后的具名类均替换其父类引用 ---
+    const clsStr = cls.toString().replace(/^class(?:\s+\w+)?\s+extends\s+[^\{]+\{/, 'class extends AbstractThread {');
+    const blob = new Blob([`const AbstractThread = ${AbstractThread.toString()};
+const cgCustomThread = ${clsStr};
 const threadCls = new cgCustomThread();
 threadCls.taskId = '${t.id}';
 self.onmessage = async function(e) {
@@ -1842,7 +1843,7 @@ self.onerror = function(e) {
         if (e.data.cmd === 'cg-terminate') {
             // --- 有可能是内部主动 close ---
             worker.terminate();
-            delete t.threads[match[1]];
+            delete t.threads[threadKey];
             return;
         }
         for (const item of messages) {
@@ -1880,11 +1881,11 @@ self.onerror = function(e) {
                     // --- 无论返回什么都结束 ---
                     resolve();
                     worker.terminate();
-                    delete t.threads[match[1]];
+                    delete t.threads[threadKey];
                 };
             });
         },
     };
-    t.threads[match[1]] = rtn;
+    t.threads[threadKey] = rtn;
     return rtn;
 }

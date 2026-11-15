@@ -174,6 +174,7 @@ process.on('unhandledRejection', error => errors.push(error));
 const zip = archiveMode ? await JSZip.loadAsync(await readFile(new URL('../../control/common.cgc', import.meta.url))) : null;
 async function component(name, Control) {
     const instance = new Control();
+    instance.formFocus = true;
     const proto = getClassPrototype(instance);
     const template = archiveMode ? await zip.file(`${name}/layout.html`).async('string') : await readFile(new URL(`../../sources/control/${name}/layout.html`, import.meta.url), 'utf8');
     return {
@@ -209,6 +210,7 @@ async function mountRange(screenWidth) {
     });
     app.component('cg-datepanel', panelComponent);
     app.component('cg-button', stub);
+    app.component('cg-icon', stub);
     app.component('cg-select', stub);
     app.component('cg-list', stub);
     const host = document.createElement('div'); document.body.append(host);

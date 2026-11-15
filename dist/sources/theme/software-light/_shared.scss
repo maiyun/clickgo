@@ -12,6 +12,7 @@
 }
 
 @mixin metrics {
+    --g-clear-margin-inline:0;
     --g-padding-xs:2px;
     --g-padding-s:4px;
     --g-padding:5px;

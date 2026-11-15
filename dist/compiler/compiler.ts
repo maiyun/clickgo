@@ -6,6 +6,7 @@ import * as terser from 'terser';
 import JavaScriptObfuscator from 'javascript-obfuscator';
 import zip from 'jszip';
 import * as lTool from '../lib/tool.js';
+import { protectThreads } from './abox/threads.js';
 
 const cs = new cleancss.default();
 /** --- 以 / 结尾的当前路径 --- */
@@ -56,6 +57,8 @@ function preTransformPlugin(base: string): rollup.InputPluginOption {
  * @returns 混淆后的应用代码
  */
 function obfuscate(code: string): string {
+    // --- 线程类会单独移入 Worker，混淆时不能让它引用应用外层的解码函数 ---
+    code = protectThreads(code);
     /** --- javascript-obfuscator 仅通过 CI 环境标记关闭交互终端推广 --- */
     const ci = process.env.CI;
     process.env.CI = '1';

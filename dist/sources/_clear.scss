@@ -1,0 +1,18 @@
+// --- 输入控件尾部清除按钮的共同尺寸与状态，主题可覆盖皮肤。 ---
+@mixin button {
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; align-self: center;
+    width: 24px; height: 24px; margin: 0 var(--g-clear-margin-inline, var(--g-padding-s)); padding: 0; border: none; border-radius: var(--g-radius);
+    background: transparent; color: inherit; opacity: .65; transition: var(--g-transition);
+    &:hover:not(:disabled), &:focus-visible {
+        opacity: 1; background: var(--g-plain-background-hover); color: var(--g-plain-color-hover);
+    }
+    &:active:not(:disabled) {
+        opacity: 1; background: var(--g-plain-background-active); color: var(--g-plain-color-active);
+    }
+    &:focus-visible {
+        outline: 1px solid currentColor;
+    }
+    &:disabled {
+        opacity: .35;
+    }
+}

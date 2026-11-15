@@ -31,6 +31,8 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'disabled': boolean | string;
+        /** --- 显示清除按钮，并允许普通单选保持空选 --- */
+        'clearbtn': boolean | string;
         'editable': boolean | string;
         'multi': boolean | string;
         'plain': boolean | string;
@@ -70,6 +72,7 @@ export default class extends clickgo.control.AbstractControl {
         'unavailableList': string[] | string;
     } = {
             'disabled': false,
+            'clearbtn': false,
             'editable': false,
             'multi': false,
             'plain': false,
@@ -98,51 +101,67 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 语言包 --- */
     public localeData = {
         'en': {
+            'clear': 'Clear',
             'search': 'Search'
         },
         'sc': {
+            'clear': '清除',
             'search': '搜索'
         },
         'tc': {
+            'clear': '清除',
             'search': '搜尋'
         },
         'ja': {
+            'clear': 'クリア',
             'search': '検索'
         },
         'ko': {
+            'clear': '지우기',
             'search': '검색'
         },
         'th': {
+            'clear': 'ล้าง',
             'search': 'ค้นหา'
         },
         'es': {
+            'clear': 'Borrar',
             'search': 'buscar'
         },
         'de': {
+            'clear': 'Leeren',
             'search': 'suchen'
         },
         'fr': {
+            'clear': 'Effacer',
             'search': 'rechercher'
         },
         'pt': {
+            'clear': 'Limpar',
             'search': 'pesquisar'
         },
         'ru': {
+            'clear': 'Очистить',
             'search': 'поиск'
         },
         'vi': {
+            'clear': 'Xóa',
             'search': 'tìm kiếm'
         },
         'ar': {
+            'clear': 'مسح',
             'search': 'بحث'
         },
         'id': {
+            'clear': 'Hapus',
             'search': 'cari'
         },
         'it': {
+            'clear': 'Cancella',
             'search': 'cerca'
         },
         'tr': {
+            'clear': 'Temizle',
             'search': 'ara'
         }
     };
@@ -185,7 +204,8 @@ export default class extends clickgo.control.AbstractControl {
 
     /** --- list 是否为必须选择的模式 --- */
     public get isMust(): boolean {
-        return !this.propBoolean('editable') && !this.propBoolean('search') && !this.propBoolean('multi');
+        return !this.propBoolean('clearbtn') && !this.propBoolean('editable') &&
+            !this.propBoolean('search') && !this.propBoolean('multi');
     }
 
     /** --- list 是否多选 --- */
@@ -241,6 +261,52 @@ export default class extends clickgo.control.AbstractControl {
         if (opt.clearInput) {
             this.inputValue = '';
             this.searchValue = '';
+        }
+    }
+
+    /**
+     * --- 清空已选值、标签和输入，取消尚未完成的搜索或输入提交 ---
+     * 禁用、必须选择或已卸载时不处理；change 可取消整次清除。
+     * @returns void
+     */
+    public clear(): void {
+        if (this._unmounted || this.propBoolean('disabled') || this.isMust ||
+            !this.value.length && !this.inputValue && !this.searchValue) {
+            return;
+        }
+        const before = clickgo.tool.clone(this.value);
+        if (before.length) {
+            const event: clickgo.control.ISelectChangeEvent = {
+                'go': true,
+                preventDefault: function() {
+                    this.go = false;
+                },
+                'detail': { 'value': [] }
+            };
+            this.emit('change', event);
+            if (!event.go) {
+                return;
+            }
+        }
+        /** --- 按钮清除后会消失，把键盘焦点留在选择框 --- */
+        const restoreFocus = this.element.contains(this.element.ownerDocument.activeElement);
+        ++this._inputVersion;
+        this._resetSearch();
+        this.value = [];
+        this.label = [];
+        this.listValue = [];
+        this.listLabel = [];
+        this.inputValue = '';
+        this.searchValue = '';
+        if (before.length) {
+            this.updateValue();
+            this.emit('changed', {
+                'detail': { 'before': before, 'value': [] }
+            } satisfies clickgo.control.ISelectChangedEvent);
+        }
+        this.refs.gs.hidePop();
+        if (restoreFocus) {
+            this.refs.gs.element.focus();
         }
     }
 
@@ -1079,7 +1145,7 @@ export default class extends clickgo.control.AbstractControl {
                 this._refreshSelection();
             }
         });
-        for (const prop of ['editable', 'multi'] as const) {
+        for (const prop of ['editable', 'multi', 'clearbtn'] as const) {
             this.watch(prop, async (): Promise<void> => {
                 ++this._inputVersion;
                 this._resetSearch();
