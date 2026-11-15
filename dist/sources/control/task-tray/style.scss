@@ -1,8 +1,11 @@
 .wrap {
-    display: flex; align-items: center; justify-content: center; flex: 0 0 auto; padding: 8px; border-radius: var(--g-radius); transition: var(--g-transition);
-    &:hover { background: rgba(255, 255, 255, .1); }
-    &:active { background: rgba(255, 255, 255, .2); }
+    display: flex; flex: 0 0 auto;
     &:focus-visible { outline: 2px solid var(--cg); outline-offset: -2px; }
+    .hit {
+        display: flex; align-items: center; justify-content: center; padding: 8px; border-radius: var(--g-radius); transition: var(--g-transition);
+        &:hover { background: rgba(255, 255, 255, .1); }
+        &:active { background: rgba(255, 255, 255, .2); }
+    }
     .icon { width: 16px; height: 16px; }
 }
 .pop {

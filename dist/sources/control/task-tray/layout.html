@@ -1,6 +1,8 @@
 <div class="wrap" role="button" tabindex="0" :aria-label="tip" @pointerdown="down" @keydown="keydown">
     <cg-tip :label="tip">
-        <slot><cg-img :src="icon" class="icon" mode="contain"></cg-img></slot>
+        <div class="hit">
+            <slot><cg-img :src="icon" class="icon" mode="contain"></cg-img></slot>
+        </div>
     </cg-tip>
     <teleport v-if="slots['contextmenu'] || menu.length" to="system">
         <div ref="pop" class="pop">

@@ -11,6 +11,8 @@ export default class extends clickgo.control.AbstractControl {
     };
     /** --- 鼠标在本体或 pop 里 --- */
     inTip = false;
+    /** --- 每次进入或离开后递增，旧的隐藏等待不能关闭新一轮提示 --- */
+    hideVersion = 0;
     /** --- 绑定的目标元素 --- */
     bindEl = null;
     /** --- 进入事件 --- */
@@ -113,12 +115,13 @@ export default class extends clickgo.control.AbstractControl {
     /** --- 隐藏 tip --- */
     async hideTip() {
         this.inTip = false;
+        const version = ++this.hideVersion;
         if (this.propBoolean('immediate')) {
             clickgo.form.hidePop(this.refs.pop);
             return;
         }
         await clickgo.tool.sleep(150);
-        if (this.inTip) {
+        if (version !== this.hideVersion || this.inTip) {
             return;
         }
         clickgo.form.hidePop(this.refs.pop);
@@ -143,6 +146,7 @@ export default class extends clickgo.control.AbstractControl {
         clickgo.modules.pointer.hover(e, {
             enter: () => {
                 this.inTip = true;
+                ++this.hideVersion;
             },
             leave: async () => {
                 await this.hideTip();
@@ -162,6 +166,7 @@ export default class extends clickgo.control.AbstractControl {
             clickgo.modules.pointer.hover(e, {
                 enter: () => {
                     this.inTip = true;
+                    ++this.hideVersion;
                     clickgo.form.showPop(el, this.refs.pop, this.getShowDirection(), {
                         'flow': false,
                         'overflow': 'visible'
@@ -185,6 +190,7 @@ export default class extends clickgo.control.AbstractControl {
     }
     /** --- 卸载时移除事件绑定 --- */
     onUnmounted() {
+        ++this.hideVersion;
         if (!this.bindEl || !this.enterHandler) {
             return;
         }
