@@ -1,10 +1,27 @@
 @use '../../control' as contrast;
 
 .wrap {
-    background: var(--g-pure); padding: var(--g-padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); display: flex; align-items: center;
+    background: var(--g-pure); padding: var(--padding); border-radius: var(--g-radius); border: solid .5px var(--g-border-color); display: flex; align-items: center;
+
+    // --- size ---
+    &.size-xs {
+        --padding:var(--g-padding-xs);
+    }
+    &.size-s {
+        --padding:var(--g-padding-s);
+    }
+    &.size-m {
+        --padding:var(--g-padding);
+    }
+    &.size-l {
+        --padding:var(--g-padding-l);
+    }
+    &.size-xl {
+        --padding:var(--g-padding-xl);
+    }
 
     .content {
-        flex: 1; display: flex; flex-direction: column; gap: var(--g-padding);
+        flex: 1; display: flex; flex-direction: column; gap: var(--padding);
 
         .title {
             font-size: var(--g-size-m);
@@ -84,6 +101,6 @@
     }
 
     svg {
-        margin-inline-start: var(--g-padding); transition: var(--g-transition); border-radius: var(--g-radius);
+        margin-inline-start: var(--padding); transition: var(--g-transition); border-radius: var(--g-radius);
     }
 }

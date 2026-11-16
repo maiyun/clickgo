@@ -5,6 +5,7 @@ export default class extends clickgo.control.AbstractControl {
     };
     props = {
         'type': 'default',
+        'size': 'm',
         'direction': 'h',
         'gutter': '',
         'alignH': undefined,

@@ -9,6 +9,14 @@
             <alert :close="vclose" type="danger">Danger</alert>
             <alert :close="vclose" type="cg">Cg</alert>
         </layout>
+        <label>Size:</label>
+        <layout gutter="10" align-v="center">
+            <alert size="xs" type="info">Extra small</alert>
+            <alert size="s" type="info">Small</alert>
+            <alert size="m" type="info">Medium</alert>
+            <alert size="l" type="info">Large</alert>
+            <alert size="xl" type="info">Extra large</alert>
+        </layout>
         <label>Gutter:</label>
         <alert :close="vclose" gutter="10" type="info">
             <label>1</label>

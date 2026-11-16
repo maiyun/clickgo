@@ -8,6 +8,12 @@
 
 提示框类型，默认 `default`。
 
+#### size
+
+`'xs'` | `'s'` | `'m'` | `'l'` | `'xl'`
+
+提示框内边距与内容间距，默认 `m`。
+
 #### direction
 
 `'h'` | `'v'`
@@ -64,4 +70,5 @@
 
 ```xml
 <alert type="warning" title="Warning">This is a warning message.</alert>
+<alert type="info" size="s">Compact message.</alert>
 ```

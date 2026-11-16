@@ -8,6 +8,7 @@ export default class extends clickgo.control.AbstractControl {
 
     public props: {
         'type': 'default' | 'primary' | 'info' | 'warning' | 'danger' | 'cg';
+        'size': 'xs' | 's' | 'm' | 'l' | 'xl';
         'direction': 'h' | 'v';
         'gutter': number | string;
         'alignH': string | undefined;
@@ -16,6 +17,7 @@ export default class extends clickgo.control.AbstractControl {
         'title': string;
     } = {
             'type': 'default',
+            'size': 'm',
             'direction': 'h',
             'gutter': '',
             'alignH': undefined,

@@ -1,4 +1,4 @@
-<div class="wrap" :class="[type]">
+<div class="wrap" :class="[type, 'size-' + size]">
     <div class="content">
         <div v-if="title" class="title">{{title}}</div>
         <cg-layout :direction="direction" :gutter="gutter" :alignH="alignH" :alignV="alignV">
