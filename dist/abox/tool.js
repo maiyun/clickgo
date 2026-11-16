@@ -867,6 +867,7 @@ export function request(url, opt) {
             }
             resove(null);
         };
+        xhr.open(opt.method ?? 'GET', url, true);
         if (opt.responseType) {
             xhr.responseType = opt.responseType;
         }
@@ -878,7 +879,6 @@ export function request(url, opt) {
                 xhr.setRequestHeader(k, opt.headers[k]);
             }
         }
-        xhr.open(opt.method ?? 'GET', url, true);
         xhr.send(opt.body);
     });
 }

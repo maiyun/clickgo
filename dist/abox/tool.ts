@@ -947,6 +947,7 @@ export function request(url: string, opt: IRequestOptions): Promise<null | any> 
             }
             resove(null);
         };
+        xhr.open(opt.method ?? 'GET', url, true);
         if (opt.responseType) {
             xhr.responseType = opt.responseType;
         }
@@ -958,7 +959,6 @@ export function request(url: string, opt: IRequestOptions): Promise<null | any> 
                 xhr.setRequestHeader(k, (opt.headers as any)[k]);
             }
         }
-        xhr.open(opt.method ?? 'GET', url, true);
         xhr.send(opt.body);
     });
 }
