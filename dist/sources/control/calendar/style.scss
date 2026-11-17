@@ -1,4 +1,4 @@
-@use '../../control' as contrast;
+@use '../../shared/contrast';
 
 .wrap {
     border-radius: var(--g-radius); display: flex; flex-direction: column; gap: var(--g-padding-s); padding: var(--g-padding);

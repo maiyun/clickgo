@@ -1,3 +1,4 @@
+@use '../../shared/contrast';
 @use '../light/style';
 @use 'shared';
 
@@ -84,13 +85,13 @@ global {
     --cloud-nav-active:#e5e5e5;
     --cloud-nav-arrow:#777;
     --cloud-nav-shadow:8px 0 28px rgba(0, 0, 0, .08);
-    --software-on-accent:#{shared.on-accent('var(--cg)')};
-    --software-on-accent-hover:#{shared.on-accent('var(--cg-hover)')};
-    --software-on-accent-active:#{shared.on-accent('var(--cg-active)')};
-    --software-on-accent-focus:#{shared.on-accent('var(--cg-focus)')};
-    --software-on-accent-disabled:#{shared.on-accent('var(--cg-disabled)')};
+    --software-on-accent:#{contrast.on-color('var(--cg)')};
+    --software-on-accent-hover:#{contrast.on-color('var(--cg-hover)')};
+    --software-on-accent-active:#{contrast.on-color('var(--cg-active)')};
+    --software-on-accent-focus:#{contrast.on-color('var(--cg-focus)')};
+    --software-on-accent-disabled:#{contrast.on-color('var(--cg-disabled)')};
 
-    // --- 浅底文字保留深色；实心控件和状态点沿用原生鲜亮色阶，实心语义控件使用白字 ---
+    // --- 浅底文字保留深色；实心控件和状态点沿用原生鲜亮色阶，实心语义控件按底色统一计算前景 ---
     @each $name, $color, $fill, $background in (
         (success, #237746, oklch(.7 .23 var(--success-hue)), #ecf8ef),
         (info, #285ea8, oklch(.7 .23 var(--info-hue)), #eff5ff),
@@ -129,16 +130,16 @@ global {
             @if $type != cg {
                 @each $state in '', '-hover', '-active', '-focus' {
                     --background#{$state}:var(--cloud-#{$color}-fill#{$state});
-                    --color#{$state}:#fff;
+                    --color#{$state}:#{contrast.on-color('var(--cloud-#{$color}-fill#{$state})')};
                 }
                 --background-disabled:var(--cloud-#{$color}-fill-disabled);
-                --color-disabled:#{shared.on-accent('var(--cloud-#{$color}-fill-disabled)')};
+                --color-disabled:#{contrast.on-color('var(--cloud-#{$color}-fill-disabled)')};
             }
             @else {
-                --color:#{shared.on-accent('var(--cg)')};
-                --color-hover:#{shared.on-accent('var(--cg-hover)')};
-                --color-active:#{shared.on-accent('var(--cg-active)')};
-                --color-focus:#{shared.on-accent('var(--cg-focus)')};
+                --color:#{contrast.on-color('var(--cg)')};
+                --color-hover:#{contrast.on-color('var(--cg-hover)')};
+                --color-active:#{contrast.on-color('var(--cg-active)')};
+                --color-focus:#{contrast.on-color('var(--cg-focus)')};
             }
         }
     }
@@ -165,12 +166,7 @@ global {
             &.#{$control}_#{$type}:not(.#{$control}_plain) {
                 background:#{$fill};
                 border-color:transparent;
-                @if $type == cg {
-                    color:#{shared.on-accent($fill)};
-                }
-                @else {
-                    color:#fff;
-                }
+                color:#{contrast.on-color($fill)};
             }
             &.#{$control}_#{$type}.#{$control}_plain {
                 background:var(--#{$color}-bg);
@@ -188,7 +184,7 @@ global {
     .progress_wrap.progress_#{$type} .progress_block,
     .title_wrap.title_#{$type} .title_left { background:var(--cloud-#{$color}-fill); }
     .tip_pop.tip_#{$type}:not(.tip_plain) {
-        color:#fff;
+        color:#{contrast.on-color('var(--cloud-#{$color}-fill)')};
         &, &::after {
             background:var(--cloud-#{$color}-fill);
             border-color:var(--cloud-#{$color}-fill);

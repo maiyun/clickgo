@@ -1,4 +1,4 @@
-@use '../../control' as contrast;
+@use '../../shared/contrast';
 
 .wrap {
     display: flex; align-items: center; outline: none; transition: var(--g-transition);

@@ -1,5 +1,5 @@
 @use '../light/style';
-@use 'shared';
+@use '../../shared/contrast';
 
 // --- 后台工作台：主色来自 theme.setMain，状态色保留独立语义 ---
 global {
@@ -265,7 +265,7 @@ global {
             &.#{$control}_default:not(.#{$control}_plain) {
                 background-color:var(--dashboard-badge-solid);
                 border-color:transparent;
-                color:#{shared.on-accent('var(--dashboard-badge-solid)')};
+                color:#{contrast.on-color('var(--dashboard-badge-solid)')};
             }
             &.#{$control}_default.#{$control}_plain {
                 background-color:var(--dashboard-badge-soft);
@@ -280,7 +280,7 @@ global {
                 &.#{$control}_#{$type}:not(.#{$control}_plain) {
                     background-color:#{$fill};
                     border-color:transparent;
-                    color:#{shared.on-accent($fill)};
+                    color:#{contrast.on-color($fill)};
                 }
                 &.#{$control}_#{$type}.#{$control}_plain {
                     background-color:var(--#{$semantic}-bg);
@@ -320,9 +320,9 @@ global {
     }
     .table-item_wrap { padding:10px 12px; }
     .button_wrap.button_cg:not(.button_plain) {
-        --color:#{shared.on-accent('var(--cg)')};
-        --color-hover:#{shared.on-accent('var(--cg-hover)')};
-        --color-active:#{shared.on-accent('var(--cg-active)')};
-        --color-focus:#{shared.on-accent('var(--cg-focus)')};
+        --color:#{contrast.on-color('var(--cg)')};
+        --color-hover:#{contrast.on-color('var(--cg-hover)')};
+        --color-active:#{contrast.on-color('var(--cg-active)')};
+        --color-focus:#{contrast.on-color('var(--cg-focus)')};
     }
 }

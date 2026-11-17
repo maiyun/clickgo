@@ -1,4 +1,4 @@
-@use '../../control' as contrast;
+@use '../../shared/contrast';
 
 .wrap {
     border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; pointer-events: none; width: var(--cg-width); height: var(--cg-height);

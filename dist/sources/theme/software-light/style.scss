@@ -1,5 +1,5 @@
 @use 'shared';
-@use '../../control' as contrast;
+@use '../../shared/contrast';
 
 global {
     @include shared.metrics;

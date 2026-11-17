@@ -1,4 +1,4 @@
-@use '../../control' as contrast;
+@use '../../shared/contrast';
 
 .wrap {
     display: flex; outline: none; position: relative; border-radius: var(--g-radius); /* overflow: hidden; 加了这个角标等控件将无法完整显示 */ transition: var(--g-transition); transition-property: color, background-color, box-shadow, transform;
