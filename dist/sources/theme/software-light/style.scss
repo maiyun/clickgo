@@ -129,6 +129,7 @@ global {
 // --- 命令按钮保留适当留白，工具按钮由状态底块定位 ---
 
 .button_wrap {
+    --bgroup-outline-shadow: none;
     &:not(.button_circle):not(.button_sizeh) {
         &.button_simple, .button_inner { padding: var(--g-padding-h); }
         &.button_size-s {
@@ -231,6 +232,7 @@ global {
         }
     }
     &[data-cg-disabled].button_checked {
+        --bgroup-checked-outset: 0px;
         color: var(--g-color-disabled);
         &::before { border: solid 1px var(--g-border-color-disabled); }
     }

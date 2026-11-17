@@ -312,7 +312,8 @@ global {
     }
     &::before { @include raised; }
     &.button_bgroup {
-        &:not(:last-child), &:first-child:not(:last-child) { margin-inline-end: -1px; }
+        --bgroup-hover-z-index: 0;
+        --bgroup-checked-outset: 0px;
         &:not([data-cg-disabled]) {
             &:focus, &.button_childfocus { z-index: 10; }
         }

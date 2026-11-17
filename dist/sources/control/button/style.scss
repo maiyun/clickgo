@@ -71,40 +71,6 @@
         }
     }
 
-    // --- bgroup position ---
-    &.bgroup:not(:last-child) {
-        margin-inline-end: -.5px; border-radius: 0;
-        &::before {
-            border-radius: 0;
-        }
-    }
-    &.bgroup:first-child:not(:last-child) {
-        margin-inline-end: -.5px; border-radius: var(--g-radius) 0 0 var(--g-radius);
-        &::before {
-            border-radius: var(--g-radius) 0 0 var(--g-radius);
-        }
-    }
-    &.bgroup:last-child:not(:first-child) {
-        border-radius: 0 var(--g-radius) var(--g-radius) 0;
-        &::before {
-            border-radius: 0 var(--g-radius) var(--g-radius) 0;
-        }
-    }
-
-    &:dir(rtl) {
-        &.bgroup:first-child:not(:last-child) {
-            border-radius: 0 var(--g-radius) var(--g-radius) 0;
-            &::before {
-                border-radius: 0 var(--g-radius) var(--g-radius) 0;
-            }
-        }
-        &.bgroup:last-child:not(:first-child) {
-            border-radius: var(--g-radius) 0 0 var(--g-radius);
-            &::before {
-                border-radius: var(--g-radius) 0 0 var(--g-radius);
-            }
-        }
-    }
     &.circle {
         border-radius: 50%; aspect-ratio: 1;
         &::before, &::after {
@@ -517,6 +483,75 @@
             &::before {
                 border: solid 2px var(--cg-disabled);
             }
+        }
+    }
+
+    // --- 按钮组的接缝、圆角与状态层级 ---
+    &.bgroup {
+        z-index: 0;
+        &::before {
+            transition-property: border-color, box-shadow;
+        }
+        &:not(:last-child) {
+            margin-inline-end: -1px; border-radius: 0;
+            &::before {
+                border-radius: 0;
+            }
+        }
+        &:first-child:not(:last-child) {
+            border-radius: var(--g-radius) 0 0 var(--g-radius);
+            &::before {
+                border-radius: var(--g-radius) 0 0 var(--g-radius);
+            }
+        }
+        &:last-child:not(:first-child) {
+            border-radius: 0 var(--g-radius) var(--g-radius) 0;
+            &::before {
+                border-radius: 0 var(--g-radius) var(--g-radius) 0;
+            }
+        }
+
+        &:dir(rtl) {
+            &:first-child:not(:last-child) {
+                border-radius: 0 var(--g-radius) var(--g-radius) 0;
+                &::before {
+                    border-radius: 0 var(--g-radius) var(--g-radius) 0;
+                }
+            }
+            &:last-child:not(:first-child) {
+                border-radius: var(--g-radius) 0 0 var(--g-radius);
+                &::before {
+                    border-radius: var(--g-radius) 0 0 var(--g-radius);
+                }
+            }
+        }
+
+        // --- 普通边框与重叠量一致，避免半像素边框取整后出现双线。 ---
+        &:not(.checked)::before {
+            border-width: 1px;
+        }
+        &:not([data-cg-disabled]):where(:not(.checked)) {
+            &:hover { z-index: var(--bgroup-hover-z-index, 1); }
+            &:focus, &.childfocus, &:active, &.active, &[data-cg-pop-open] { z-index: 2; }
+        }
+        &:not([data-cg-disabled]) {
+            &:focus, &.childfocus, &:active, &.active, &[data-cg-pop-open] {
+                box-shadow: none;
+            }
+        }
+        // --- 焦点阴影跟随外边框的位置，主题的立体边框仍可覆盖此规则。 ---
+        &:where(:not([data-cg-disabled])):where(:focus, .childfocus, :active, .active, [data-cg-pop-open])::before {
+            box-shadow: var(--bgroup-outline-shadow, var(--g-outline-shadow));
+        }
+        &.checked {
+            z-index: 9;
+        }
+        // --- 选中边框向前扩展 1px，使相邻的 2px 边框重合，且不改变按钮宽度。 ---
+        &:where(.checked:not(:first-child))::before {
+            left: calc(0px - var(--bgroup-checked-outset, 1px)); width: calc(100% + var(--bgroup-checked-outset, 1px));
+        }
+        &:where(.checked:not(:first-child)):where(:dir(rtl))::before {
+            left: 0;
         }
     }
 
