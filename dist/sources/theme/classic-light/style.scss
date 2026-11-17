@@ -348,9 +348,16 @@ global {
             &, &:hover, &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] {
                 color: var(--color);
                 &::before { @include sunken; }
-                &.button_area-all, &.button_area-mark {
+                &.button_area-all, &.button_area-mark, &.button_area-split {
                     background: var(--face) var(--classic-checker);
                     background-size: 2px 2px;
+                }
+            }
+            &.button_area-split {
+                // --- 主按钮和箭头共用选中底纹，分区交互时也保留底纹。 ---
+                .button_inner, .button_arrow {
+                    color: inherit;
+                    background: transparent;
                 }
             }
         }
@@ -367,12 +374,13 @@ global {
                     outline: solid 1px #000000;
                 }
             }
-            &:active, &.button_active, &[data-cg-pop-open] {
+            &:where(:not(.button_checked)):is(:active, .button_active, [data-cg-pop-open]) {
                 // --- 按下时四边均为灰色实线，焦点黑框由外层描边保留。 ---
                 &::before { border-color: var(--classic-shadow); box-shadow: none; }
             }
         }
-        &:not(.button_circle) {
+        // --- 已选中的按钮保持凹陷外观，重复按下时文字不再位移。 ---
+        &:not(.button_circle):not(.button_checked) {
             &.button_simple:active, &.button_simple.button_active,
             .button_inner:active, .button_inner.button_active {
                 padding-block: calc(var(--classic-button-padding) + 1px) calc(var(--classic-button-padding) - 1px);
