@@ -6,7 +6,7 @@
 
 # Interface: IThread
 
-Defined in: [lib/task.ts:2041](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2041)
+Defined in: [lib/task.ts:2043](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2043)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/task.ts:2041](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **end**: () => `Promise`\<`void`\>
 
-Defined in: [lib/task.ts:2049](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2049)
+Defined in: [lib/task.ts:2051](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2051)
 
 结束线程
 
@@ -28,7 +28,7 @@ Defined in: [lib/task.ts:2049](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **off**: (`name`, `handler`) => `void`
 
-Defined in: [lib/task.ts:2045](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2045)
+Defined in: [lib/task.ts:2047](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2047)
 
 移除事件
 
@@ -52,7 +52,7 @@ Defined in: [lib/task.ts:2045](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **on**: (`name`, `handler`) => `void`
 
-Defined in: [lib/task.ts:2043](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2043)
+Defined in: [lib/task.ts:2045](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2045)
 
 绑定事件
 
@@ -76,7 +76,7 @@ Defined in: [lib/task.ts:2043](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **send**: (`data`) => `void`
 
-Defined in: [lib/task.ts:2047](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2047)
+Defined in: [lib/task.ts:2049](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2049)
 
 发送数据
 

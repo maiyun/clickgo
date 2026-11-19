@@ -6,7 +6,7 @@
 
 # Interface: IFormCaptchaOptions
 
-Defined in: [lib/form/types.ts:166](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L166)
+Defined in: [lib/form/types.ts:174](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L174)
 
 显示验证码选项
 
@@ -16,7 +16,7 @@ Defined in: [lib/form/types.ts:166](https://github.com/maiyun/clickgo/blob/maste
 
 > **akey**: `string`
 
-Defined in: [lib/form/types.ts:170](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L170)
+Defined in: [lib/form/types.ts:178](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L178)
 
 验证码 key
 
@@ -26,6 +26,6 @@ Defined in: [lib/form/types.ts:170](https://github.com/maiyun/clickgo/blob/maste
 
 > **factory**: `"tc"` \| `"cf"`
 
-Defined in: [lib/form/types.ts:168](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L168)
+Defined in: [lib/form/types.ts:176](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L176)
 
 验证码服务商

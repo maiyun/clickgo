@@ -32,6 +32,7 @@ import { notify } from './notification';
 import { confirm } from './dialog';
 import { prepareView, buildLocalComponents } from './view';
 import { cleanupPop } from './popup';
+import { hideForm } from './remove';
 
 /**
  * --- 创建 panel 对象，一般情况下无需使用 ---
@@ -940,6 +941,15 @@ export async function create<T extends AbstractForm>(
             throw err;
         }
         lCommand.clearOwner(t.id, formId);
+        // --- onMounted 可能已经打开模态，创建失败时也要解除遮罩并结束等待 ---
+        const failed = t.forms[formId];
+        if (failed?.dialog) {
+            const runtime = lTask.getRuntime(state.sysId, t.id);
+            if (runtime) {
+                failed.vroot.dialogResult = '';
+                hideForm(failed, runtime);
+            }
+        }
         delete t.forms[formId];
         const formElement = elements.list.querySelector<HTMLElement>('[data-form-id="' + formId + '"]');
         const popElement = elements.popList.querySelector<HTMLElement>('[data-form-id="' + formId + '"]');

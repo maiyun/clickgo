@@ -22,6 +22,40 @@ Defined in: [lib/form/types.ts:56](https://github.com/maiyun/clickgo/blob/master
 
 ***
 
+### dialog?
+
+> `optional` **dialog?**: `object`
+
+Defined in: [lib/form/types.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L58)
+
+本次模态的返回值、打开前的焦点和层级，隐藏后释放
+
+#### bottomMost
+
+> **bottomMost**: `boolean`
+
+#### finish
+
+> **finish**: () => `void`
+
+##### Returns
+
+`void`
+
+#### focus
+
+> **focus**: `string` \| `null`
+
+#### result
+
+> **result**: `Promise`\<`string`\>
+
+#### topMost
+
+> **topMost**: `boolean`
+
+***
+
 ### id
 
 > **id**: `string`

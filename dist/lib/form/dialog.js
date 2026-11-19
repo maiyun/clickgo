@@ -158,8 +158,8 @@ export async function captcha(current, opt) {
                     if (finished || !t.forms[form.formId] || t.forms[form.formId].closed) {
                         return;
                     }
-                    // --- showDialog 完成显示后才安装关闭回调，避免同步验证码回调过早关闭 ---
-                    if (!form.cgDialogCallback) {
+                    // --- 同步验证码可能在 showDialog 开始前返回，等窗体进入模态再关闭 ---
+                    if (!t.forms[form.formId].dialog) {
                         closeTimer = setTimeout(closeWhenReady, 10);
                         return;
                     }

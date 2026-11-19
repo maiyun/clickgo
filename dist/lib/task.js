@@ -1263,6 +1263,7 @@ export async function end(taskId) {
     for (const fid in task.forms) {
         // --- 结束任务挨个关闭窗体 ---
         const f = task.forms[fid];
+        f.closed = true;
         const popContainer = lForm.elements.popList.querySelector('[data-form-id="' + f.id.toString() + '"]');
         cleanupPop(f.vapp._container);
         if (popContainer) {
@@ -1280,6 +1281,7 @@ export async function end(taskId) {
                 'type': 'danger'
             });
         }
+        f.dialog?.finish();
         f.vapp._container.remove();
         popContainer?.remove();
         lDom.clearWatchStyle(fid);

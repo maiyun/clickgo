@@ -46,7 +46,7 @@ async function scenario({ mode, syncToken, result = '' }) {
                 if (mode !== 'unmount') resolveDialog(result);
                 return pending;
             }
-            setTimeout(() => { form.cgDialogCallback = () => {}; }, 1);
+            setTimeout(() => { task.forms.f.dialog = {}; }, 1);
             if (mode === 'async') setTimeout(() => callback('async-token'), 2);
             return pending;
         },
@@ -69,3 +69,5 @@ assert.deepEqual(await scenario({ mode: 'async' }), {
     value: { detail: { result: 1, token: 'async-token' } }, removed: 1, closeCount: 1,
 });
 console.log('Captcha create failure, cancel, close, unmount, synchronous and asynchronous callbacks passed.');
+
+await import('./form-dialog-lifecycle.mjs');

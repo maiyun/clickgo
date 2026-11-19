@@ -411,6 +411,10 @@ export async function getMaxZIndexID(current, out = {}) {
     if (!(await lTask.checkPermission(current, 'root'))[0]) {
         return null;
     }
+    return findMaxZIndexID(out);
+}
+/** --- 从可见窗体中选择下一焦点，跳过正在关闭或已隐藏的窗体 --- */
+function findMaxZIndexID(out) {
     let zIndex = 0;
     let formId = null;
     for (let i = 0; i < elements.list.children.length; ++i) {
@@ -439,7 +443,7 @@ export async function getMaxZIndexID(current, out = {}) {
         }
         // --- 排除用户定义的 form id 窗体 ---
         const fid = formWrap.getAttribute('data-form-id');
-        if (out.formIds?.includes(fid)) {
+        if (out.formIds?.includes(fid) || !getForm(tid, fid)?.vroot.$refs.form.$data.isShow) {
             continue;
         }
         if (z > zIndex) {
@@ -448,6 +452,18 @@ export async function getMaxZIndexID(current, out = {}) {
         }
     }
     return formId;
+}
+/** --- 隐藏有焦点的模态窗体后，优先返回上层模态或打开前的可见窗体 --- */
+export function restoreDialogFocus(formId, parent, previous) {
+    if (state.focusId !== formId) {
+        return;
+    }
+    const ownerTaskId = previous ? getTaskId(previous) : '';
+    const owner = ownerTaskId && previous ? getForm(ownerTaskId, previous) : null;
+    const control = owner?.vroot.$refs.form;
+    const ownerVisible = owner && !owner.closed && control?.$data.isShow && !control.stateMinData;
+    const focus = parent ?? (ownerVisible ? previous : findMaxZIndexID({ 'formIds': [formId] }));
+    changeFocus(focus ?? undefined).catch(() => { });
 }
 /**
  * --- 让最大的 z index 窗体获取焦点（不含 top 和最小化的） ---

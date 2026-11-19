@@ -21,8 +21,41 @@ import * as lControl from '../control';
 import * as lNative from '../native';
 import { state } from './state';
 import { elements } from './system';
-import { getTaskId, getMaxZIndexID, changeFocus, activePanels } from './window';
+import { getTaskId, restoreDialogFocus, activePanels } from './window';
 import { cleanupPop } from './popup';
+/**
+ * --- 隐藏窗体并撤下其浮层与模态遮罩，关闭中的窗体在卸载后返回结果 ---
+ * @param form 当前窗体
+ * @param runtime 所属任务的运行状态
+ */
+export function hideForm(form, runtime) {
+    const root = form.vroot;
+    root.$refs.form.$data.isShow = false;
+    cleanupPop(form.vapp._container);
+    const pop = elements.popList.querySelector('[data-form-id="' + form.id + '"]');
+    if (pop) {
+        cleanupPop(pop);
+    }
+    const dialog = form.dialog;
+    if (dialog) {
+        const index = runtime.dialogFormIds.indexOf(form.id);
+        if (index >= 0) {
+            runtime.dialogFormIds.splice(index, 1);
+        }
+        if (!form.closed) {
+            if (root.topMost !== dialog.topMost) {
+                root.topMost = dialog.topMost;
+            }
+            if (root.bottomMost !== dialog.bottomMost) {
+                root.bottomMost = dialog.bottomMost;
+            }
+            dialog.finish();
+        }
+    }
+    if (dialog || form.closed) {
+        restoreDialogFocus(form.id, runtime.dialogFormIds.at(-1), dialog?.focus ?? null);
+    }
+}
 /**
  * --- 移除一个 form（关闭窗口） ---
  * @param formId 要移除的 form id
@@ -45,24 +78,9 @@ export function remove(formId) {
     lCommand.clearOwner(taskId, formId);
     const title = task.forms[formId].vroot.$refs.form.title;
     const icon = task.forms[formId].vroot.$refs.form.iconDataUrl;
-    const io = rt.dialogFormIds.indexOf(formId);
-    if (io > -1) {
-        // --- 取消 dialog mask 记录 ---
-        rt.dialogFormIds.splice(io, 1);
-    }
-    task.forms[formId].vroot.$refs.form.$data.isShow = false;
+    hideForm(task.forms[formId], rt);
     setTimeout(() => {
         (async () => {
-            // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-            const fid = await getMaxZIndexID(state.sysId, {
-                'formIds': [formId],
-            });
-            if (fid) {
-                await changeFocus(fid);
-            }
-            else {
-                await changeFocus();
-            }
             // --- 等待关闭动画后清理窗体 ---
             const task = lTask.getOrigin(taskId);
             if (!task) {
@@ -72,18 +90,17 @@ export function remove(formId) {
             if (!task.forms[formId]) {
                 return;
             }
-            cleanupPop(task.forms[formId].vapp._container);
             const popElement = elements.popList.querySelector('[data-form-id="' + formId + '"]');
-            if (popElement) {
-                cleanupPop(popElement);
+            const form = task.forms[formId];
+            try {
+                form.vapp.unmount();
             }
-            task.forms[formId].vapp.unmount();
-            task.forms[formId].vapp._container.remove();
+            catch (error) {
+                lCore.trigger('error', taskId, formId, error instanceof Error ? error : new Error(String(error)), 'Form unmount').catch(() => { });
+            }
+            form.vapp._container.remove();
             popElement?.remove();
-            if (io > -1) {
-                // --- 如果是 dialog 则要执行回调 ---
-                task.forms[formId].vroot.cgDialogCallback();
-            }
+            form.dialog?.finish();
             delete task.forms[formId];
             if ((lTask.systemTaskInfo.taskId === taskId) && (lTask.systemTaskInfo.formId === formId)) {
                 await lTask.clearSystem(taskId);

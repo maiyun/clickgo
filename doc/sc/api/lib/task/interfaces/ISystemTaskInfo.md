@@ -6,7 +6,7 @@
 
 # Interface: ISystemTaskInfo
 
-Defined in: [lib/task.ts:2103](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2103)
+Defined in: [lib/task.ts:2105](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2105)
 
 系统任务信息
 
@@ -16,7 +16,7 @@ Defined in: [lib/task.ts:2103](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **formId**: `string`
 
-Defined in: [lib/task.ts:2105](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2105)
+Defined in: [lib/task.ts:2107](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2107)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/task.ts:2105](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **length**: `number`
 
-Defined in: [lib/task.ts:2106](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2106)
+Defined in: [lib/task.ts:2108](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2108)
 
 ***
 
@@ -32,4 +32,4 @@ Defined in: [lib/task.ts:2106](https://github.com/maiyun/clickgo/blob/master/dis
 
 > **taskId**: `string`
 
-Defined in: [lib/task.ts:2104](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2104)
+Defined in: [lib/task.ts:2106](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2106)

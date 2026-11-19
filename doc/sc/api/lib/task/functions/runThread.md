@@ -8,7 +8,7 @@
 
 > **runThread**(`current`, `cls`, `data?`): [`IThread`](../interfaces/IThread.md)
 
-Defined in: [lib/task.ts:1932](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1932)
+Defined in: [lib/task.ts:1934](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1934)
 
 运行线程（同一个线程类只能运行一个）
 线程类在独立的 Worker 中执行，不能使用主线程中的外部变量或模块。

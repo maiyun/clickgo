@@ -747,12 +747,12 @@ const lifecycleScope = {
     lNative: { clear() {} }, lControl: { clearComponents() {} },
     clickgo: { isNative: () => false }, clearSystem: async () => {},
     getTaskId: id => id === 'main' ? 'first' : '', setTimeout: callback => callbacks.push(callback),
-    clearTimeout() {}, cancelAnimationFrame() {}, activePanels: {}, cleanupPop() {},
+    clearTimeout() {}, cancelAnimationFrame() {}, activePanels: {}, cleanupPop() {}, restoreDialogFocus() {},
     elements: { popList: { querySelector: () => null } },
     lForm: { getMaxZIndexID: async () => null, changeFocus: async () => {},
         elements: { list: { querySelectorAll: () => [] } }, activePanels: {} },
 };
-vm.runInNewContext(ts.transpileModule(extract(formTree, 'remove') + '\n' + extract(formTree, 'removePanel'), {
+vm.runInNewContext(ts.transpileModule(extract(formTree, 'hideForm') + '\n' + extract(formTree, 'remove') + '\n' + extract(formTree, 'removePanel'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, lifecycleScope);
 command.register(panel, definition('panel-command'));

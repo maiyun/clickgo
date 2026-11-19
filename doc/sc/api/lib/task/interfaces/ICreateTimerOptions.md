@@ -6,7 +6,7 @@
 
 # Interface: ICreateTimerOptions
 
-Defined in: [lib/task.ts:2129](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2129)
+Defined in: [lib/task.ts:2131](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2131)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [lib/task.ts:2129](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **count?**: `number`
 
-Defined in: [lib/task.ts:2133](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2133)
+Defined in: [lib/task.ts:2135](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2135)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [lib/task.ts:2133](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **formId?**: `string`
 
-Defined in: [lib/task.ts:2130](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2130)
+Defined in: [lib/task.ts:2132](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2132)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [lib/task.ts:2130](https://github.com/maiyun/clickgo/blob/master/dis
 
 > `optional` **immediate?**: `boolean`
 
-Defined in: [lib/task.ts:2132](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2132)
+Defined in: [lib/task.ts:2134](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L2134)

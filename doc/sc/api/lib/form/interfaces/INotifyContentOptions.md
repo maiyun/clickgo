@@ -6,7 +6,7 @@
 
 # Interface: INotifyContentOptions
 
-Defined in: [lib/form/types.ts:94](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L94)
+Defined in: [lib/form/types.ts:102](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L102)
 
 notify 信息框的修改选项
 
@@ -16,7 +16,7 @@ notify 信息框的修改选项
 
 > `optional` **content?**: `string`
 
-Defined in: [lib/form/types.ts:96](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L96)
+Defined in: [lib/form/types.ts:104](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L104)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/form/types.ts:96](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **note?**: `string`
 
-Defined in: [lib/form/types.ts:97](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L97)
+Defined in: [lib/form/types.ts:105](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L105)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/form/types.ts:97](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **progress?**: `number`
 
-Defined in: [lib/form/types.ts:99](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L99)
+Defined in: [lib/form/types.ts:107](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L107)
 
 可顺便修改进度
 
@@ -42,7 +42,7 @@ Defined in: [lib/form/types.ts:99](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **timeout?**: `number`
 
-Defined in: [lib/form/types.ts:101](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L101)
+Defined in: [lib/form/types.ts:109](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L109)
 
 设置后将在 x 毫秒后隐藏，这不会大于创建时的设置的总时长
 
@@ -52,4 +52,4 @@ Defined in: [lib/form/types.ts:101](https://github.com/maiyun/clickgo/blob/maste
 
 > `optional` **title?**: `string`
 
-Defined in: [lib/form/types.ts:95](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L95)
+Defined in: [lib/form/types.ts:103](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L103)

@@ -3,6 +3,7 @@ import * as lTask from '../task';
 import { AbstractCommon } from './base';
 import { confirm } from './dialog';
 import { info, state } from './state';
+import { hideForm } from './remove';
 import { changeFocus, close } from './window';
 /** --- 窗体的抽象类 --- */
 export class AbstractForm extends AbstractCommon {
@@ -223,31 +224,61 @@ export class AbstractForm extends AbstractCommon {
         }
     }
     /**
-     * --- 显示独占的窗体 ---
+     * --- 以模态显示窗体，同一轮重复调用会等待同一个结果 ---
+     * @returns 隐藏或关闭时的 dialogResult，默认或显示失败时返回空字符串
      */
     async showDialog() {
-        if (!lTask.getOrigin(this.taskId)) {
+        const task = lTask.getOrigin(this.taskId);
+        const form = task?.forms[this.formId];
+        if (!form || form.closed || task.ending) {
             return '';
+        }
+        if (form.dialog) {
+            return form.dialog.result;
         }
         const runtime = lTask.getRuntime(state.sysId, this.taskId);
         if (!runtime) {
             return '';
         }
-        runtime.dialogFormIds.push(this.formId);
-        await this.show();
-        this.topMost = true;
-        return new Promise(resolve => {
-            this.cgDialogCallback = () => {
-                resolve(this.dialogResult);
-            };
+        let resolve;
+        const result = new Promise((res) => {
+            resolve = res;
         });
+        form.dialog = {
+            result, 'focus': state.focusId, 'topMost': this.topMost, 'bottomMost': this.bottomMost,
+            finish: () => {
+                delete form.dialog;
+                resolve(this.dialogResult);
+            },
+        };
+        this.dialogResult = '';
+        runtime.dialogFormIds.push(this.formId);
+        try {
+            // --- 显示期间也可能隐藏或关闭；本轮已结束时直接返回其结果 ---
+            await Promise.race([this.show(), result]);
+            if (!task.ending && !form.closed && form.dialog?.result === result) {
+                this.topMost = true;
+            }
+        }
+        catch {
+            if (!task.ending && !form.closed && form.dialog?.result === result) {
+                this.dialogResult = '';
+                hideForm(form, runtime);
+            }
+        }
+        return result;
     }
     /**
-     * --- 让窗体隐藏 ---
+     * --- 隐藏窗体并保留实例；模态窗体同时结束本轮 showDialog ---
      */
     hide() {
-        const v = this;
-        v.$refs.form.$data.isShow = false;
+        const form = lTask.getOrigin(this.taskId)?.forms[this.formId];
+        if (form && !form.closed) {
+            const runtime = lTask.getRuntime(state.sysId, this.taskId);
+            if (runtime) {
+                hideForm(form, runtime);
+            }
+        }
     }
     /**
      * --- 关闭当前窗体 ---
@@ -256,7 +287,7 @@ export class AbstractForm extends AbstractCommon {
         close(this.formId);
     }
     /**
-     * --- dialog mask 窗体返回值，在 close 之后会进行传导 ---
+     * --- 本轮模态返回值，每次开始 showDialog 时清空，hide 或 close 时返回 ---
      */
     dialogResult = '';
     onMounted() {

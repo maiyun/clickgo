@@ -6,7 +6,7 @@
 
 # Interface: IMoveDragOptions
 
-Defined in: [lib/form/types.ts:72](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L72)
+Defined in: [lib/form/types.ts:80](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L80)
 
 移动 drag 到新位置函数的选项
 
@@ -16,7 +16,7 @@ Defined in: [lib/form/types.ts:72](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **height?**: `number`
 
-Defined in: [lib/form/types.ts:76](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L76)
+Defined in: [lib/form/types.ts:84](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L84)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [lib/form/types.ts:76](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **icon?**: `boolean`
 
-Defined in: [lib/form/types.ts:77](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L77)
+Defined in: [lib/form/types.ts:85](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L85)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [lib/form/types.ts:77](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **left?**: `number`
 
-Defined in: [lib/form/types.ts:74](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L74)
+Defined in: [lib/form/types.ts:82](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L82)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [lib/form/types.ts:74](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **top?**: `number`
 
-Defined in: [lib/form/types.ts:73](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L73)
+Defined in: [lib/form/types.ts:81](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L81)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [lib/form/types.ts:73](https://github.com/maiyun/clickgo/blob/master
 
 > `optional` **width?**: `number`
 
-Defined in: [lib/form/types.ts:75](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L75)
+Defined in: [lib/form/types.ts:83](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/types.ts#L83)

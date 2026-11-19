@@ -54,6 +54,14 @@ export interface IForm {
     'vroot': lCore.IVue;
     /** --- 是否已经执行过了关闭窗体方法，此处加判断为了防止重复执行 close 导致的 bug --- */
     'closed': boolean;
+    /** --- 本次模态的返回值、打开前的焦点和层级，隐藏后释放 --- */
+    'dialog'?: {
+        'result': Promise<string>;
+        'finish': () => void;
+        'focus': string | null;
+        'topMost': boolean;
+        'bottomMost': boolean;
+    };
 }
 
 /** --- Form 的简略情况，通常在 list 当中 --- */
