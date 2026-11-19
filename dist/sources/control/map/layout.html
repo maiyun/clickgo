@@ -8,7 +8,7 @@
         <div ref="pop" class="pop">
             <slot>
                 <cg-menulist>
-                    <cg-menulist-item alt="R" @click="removeNode">{{l('remove node')}}</cg-menulist-item>
+                    <cg-menulist-item alt="Ctrl+R" alt-popup @click="removeNode">{{l('remove node')}}</cg-menulist-item>
                 </cg-menulist>
             </slot>
         </div>

@@ -10,6 +10,7 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
         'disabled': false,
         'alt': '',
         'altOnly': false,
+        'altPopup': false,
         'type': '',
         'label': '',
         'modelValue': ''
@@ -173,6 +174,9 @@ export default class MenulistItem extends clickgo.control.AbstractControl {
             return;
         }
         if (MenulistItem._$shortcutEvents.has(e) || !this._matchShortcut(e) || !this._isActive()) {
+            return;
+        }
+        if (this.propBoolean('altPopup') && !this.element.closest('[data-cg-pop]')?.hasAttribute('data-cg-open')) {
             return;
         }
         MenulistItem._$shortcutEvents.add(e);

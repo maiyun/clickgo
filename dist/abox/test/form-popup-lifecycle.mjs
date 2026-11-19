@@ -57,5 +57,50 @@ popup.cleanupPop(form);
 await drain(34);
 assert.equal(pop.hasAttribute('data-cg-open'), false, 'removed flow popup cannot reopen from pending callback');
 assert.equal(size.size, 0);
+
+const menuSource = await readFile(new URL('../../sources/control/menulist-item/code.ts', import.meta.url), 'utf8');
+const menuExports = {};
+const clickgo = {
+    control: { AbstractControl: class { propBoolean(key) { return !!this.props[key]; } } },
+    form: { getFocus: () => 'form', hidePop: popup.hidePop },
+    getDevice: () => ({ type: 'desktop', os: 'linux' }),
+};
+vm.runInNewContext(ts.transpileModule(menuSource, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText, {
+    exports: menuExports, window, CustomEvent: window.CustomEvent, require: () => clickgo,
+});
+const item = new menuExports.default();
+item._keydown = item._keydown.bind(item);
+item.formId = 'form';
+item.parentByName = () => undefined;
+item.slots = {};
+item.element = pop.appendChild(document.createElement('button'));
+Object.assign(item.props, { alt: 'Ctrl+R', altPopup: true });
+let clicks = 0;
+item.element.addEventListener('click', () => ++clicks);
+item._updateShortcut();
+function pressReload() {
+    const event = new window.KeyboardEvent('keydown', { key: 'r', ctrlKey: true, cancelable: true });
+    window.dispatchEvent(event);
+    return event.defaultPrevented;
+}
+assert.equal(pressReload(), false, 'closed popup leaves Ctrl+R to the browser');
+now += 10;
+popup.showPop(a, pop, 'v');
+assert.equal(pressReload(), false, 'popup cannot intercept Ctrl+R before it opens');
+await drain(34);
+assert.equal(pressReload(), true, 'open popup handles Ctrl+R');
+assert.equal(clicks, 1);
+assert.equal(pressReload(), false, 'closing the popup releases Ctrl+R immediately');
+now += 10;
+popup.showPop(a, pop, 'v');
+await drain(34);
+window.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
+assert.equal(pressReload(), false, 'Escape releases Ctrl+R');
+assert.equal(clicks, 1);
+item.props.altPopup = false;
+assert.equal(pressReload(), true, 'ordinary form shortcuts can still work with a closed popup');
+assert.equal(clicks, 2);
+item.onBeforeUnmount();
+assert.equal(pressReload(), false, 'unmount removes the shortcut listener');
 dom.window.close();
-console.log('Popup stale opening, listener ownership and form cleanup passed.');
+console.log('Popup stale opening, listener ownership, form cleanup and shortcut scope passed.');

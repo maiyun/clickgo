@@ -697,6 +697,8 @@ if (process.env.CLICKGO_MAP_TEST_ARCHIVE === '1') test('map archive contains cur
     const packed = await readFile(new URL('../../sources/control/map/code.pack.js', import.meta.url), 'utf8');
     assert.equal(archived, packed, 'map archive must contain current packaged code');
     assert.ok(archived.includes('maplibre-gl'), 'map archive must contain MapLibre integration');
+    const layout = await zip.file('map/layout.html').async('string');
+    assert.match(layout, /<cg-menulist-item alt="Ctrl\+R" alt-popup @click="removeNode">/);
 });
 
 let failures = 0;
