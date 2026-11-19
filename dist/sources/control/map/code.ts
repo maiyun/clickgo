@@ -1,6 +1,8 @@
 /// <reference types="google.maps" />
 
 import * as clickgo from 'clickgo';
+import { MapLibreAdapter } from './abox/maplibre';
+import type { IMapLibreOptions } from './lib/maplibre';
 
 /** --- 标记点 --- */
 interface IMarker {
@@ -81,9 +83,14 @@ function isPointInPolygon(point: {
 
 export default class extends clickgo.control.AbstractControl {
 
+    private _disposed = false;
+
+    private readonly _pathListeners = new WeakMap<object, Array<{ remove(): void; }>>();
+
     public emits = {
         'mapClick': null,
         'init': null,
+        'error': null,
         'markerClick': null,
         'markerDrag': null,
         'markerDragend': null,
@@ -107,7 +114,6 @@ export default class extends clickgo.control.AbstractControl {
         'update:lng': null,
         'update:markers': null,
         'update:lines': null,
-        'update:polygon': null,
         'update:polygons': null
     };
 
@@ -116,10 +122,11 @@ export default class extends clickgo.control.AbstractControl {
 
         'factory': 'tianditu' | 'google';
         'akey': string;
+        'mapId': string;
         'css': string;
 
         'tdurlcn'?: string;
-        'tdurlintl'?: string;
+        'tdhostintl'?: string;
 
         'lat': number;
         'lng': number;
@@ -136,10 +143,11 @@ export default class extends clickgo.control.AbstractControl {
 
             'factory': 'google',
             'akey': '',
+            'mapId': '',
             'css': '',
 
             'tdurlcn': undefined,
-            'tdurlintl': undefined,
+            'tdhostintl': undefined,
 
             'lat': 31.223704,
             'lng': 121.366077,
@@ -156,17 +164,14 @@ export default class extends clickgo.control.AbstractControl {
         return this.isLoading ? true : clickgo.dom.is.move;
     }
 
-    /** --- 如果 markerImg 还没加载就执行了 updateMakers（天地图），那么加载后需要重新执行一遍 updateMarkers --- */
-    public needReUpdateMarkers = false;
-
     public access: {
+        'mapLibre'?: MapLibreAdapter;
         'lib'?: any;
         'map'?: any;
+        'markerLib'?: google.maps.MarkerLibrary;
 
         'overlay': any;
         'markerImg': string;
-        'zoom': any;
-        'vectorLayer': any;
 
         /** --- iframe 对象 --- */
         'iframe'?: HTMLIFrameElement;
@@ -177,7 +182,8 @@ export default class extends clickgo.control.AbstractControl {
             'lng': number;
             'title'?: string;
             'drag': boolean;
-            'obj': any;
+            'obj': google.maps.marker.AdvancedMarkerElement;
+            'listeners': Array<{ type: string; callback: EventListener; }>;
         }>;
         'lines': Record<string, {
             'path': Array<{
@@ -212,13 +218,13 @@ export default class extends clickgo.control.AbstractControl {
             'obj': any;
         }>;
     } = {
+            'mapLibre': undefined,
             'lib': undefined,
             'map': undefined,
+            'markerLib': undefined,
 
             'overlay': undefined,
             'markerImg': '',
-            'zoom': undefined,
-            'vectorLayer': undefined,
 
             'iframe': undefined,
             'iwindow': undefined,
@@ -346,8 +352,12 @@ export default class extends clickgo.control.AbstractControl {
                     if (!this.access.iwindow?.google) {
                         return;
                     }
-                    await this.access.iwindow.google.maps.importLibrary('maps');
-                    if (!this.access.iwindow?.google) {
+                    const [, markerLib] = await Promise.all([
+                        this.access.iwindow.google.maps.importLibrary('maps'),
+                        this.access.iwindow.google.maps.importLibrary('marker')
+                    ]);
+                    if (this.access.iwindow !== idoc.defaultView || this.access.iwindow?.document !== idoc
+                        || !this.access.iwindow?.google) {
                         return;
                     }
                     const lib: typeof google.maps = this.access.iwindow.google.maps;
@@ -377,10 +387,14 @@ export default class extends clickgo.control.AbstractControl {
                             if (!panes) {
                                 return;
                             }
-                            const tel = idoc.createElement('div');
-                            tel.innerHTML = props.overlays[this._key].html;
-                            this._el = tel.firstChild as HTMLElement;
-                            panes.overlayLayer.appendChild(this._el);
+                            this._el = idoc.createElement('div');
+                            this._el.style.position = 'absolute';
+                            this._el.innerHTML = props.overlays[this._key].html;
+                            this._el.addEventListener('click', (event) => {
+                                event.stopPropagation();
+                                lib.event.trigger(this, 'click');
+                            });
+                            panes.overlayMouseTarget.appendChild(this._el);
                         }
 
                         public draw(): void {
@@ -406,37 +420,22 @@ export default class extends clickgo.control.AbstractControl {
                         // --- 更新方法 ---
 
                         public setPosition(): void {
-                            if (!this._el) {
-                                return;
-                            }
                             this._position =
                                 new lib.LatLng(props.overlays[this._key].lat, props.overlays[this._key].lng);
-                            const pixel = this.getProjection().fromLatLngToDivPixel(this._position);
-                            if (!pixel) {
-                                return;
-                            }
-                            this._el.style.left = pixel.x + 'px';
-                            this._el.style.top = pixel.y + 'px';
+                            this.draw();
                         }
 
                         public refreshHTML(): void {
                             if (!this._el) {
                                 return;
                             }
-                            (this._el.parentNode as HTMLElement).removeChild(this._el);
-                            // --- 移除老的后添加新的 ---
-                            const panes = this.getPanes();
-                            if (!panes) {
-                                return;
-                            }
-                            const tel = idoc.createElement('div');
-                            tel.innerHTML = props.overlays[this._key].html;
-                            this._el = tel.firstChild as HTMLElement;
-                            panes.overlayLayer.appendChild(this._el);
+                            this._el.innerHTML = props.overlays[this._key].html;
+                            this.draw();
                         }
 
                     }
                     this.access.overlay = Overlay;
+                    this.access.markerLib = markerLib as google.maps.MarkerLibrary;
                     const map: google.maps.Map = new lib.Map(idoc.getElementById('map')!, {
                         'center': {
                             'lat': this.propNumber('lat'),
@@ -444,6 +443,7 @@ export default class extends clickgo.control.AbstractControl {
                         },
                         'zoom': this.propNumber('zoom'),
                         'zoomControl': this.propBoolean('zoomControl'),
+                        'mapId': this.props.mapId || 'DEMO_MAP_ID',
 
                         'mapTypeControl': false,
                         'streetViewControl': false,
@@ -492,236 +492,178 @@ export default class extends clickgo.control.AbstractControl {
                         'map': this.access.map
                     });
                 };
-                this.access.iwindow.initMap();
+                this.access.iwindow.initMap().catch((error: unknown) => {
+                    if (this.access.iwindow === idoc.defaultView && this.access.iwindow?.document === idoc) {
+                        this.isLoading = false;
+                        this.emit('error', error);
+                    }
+                });
                 break;
             }
             case 'tianditu': {
-                // ---- 加载天地图 ---
                 const scriptEl = idoc.createElement('script');
-                scriptEl.src = `${clickgo.getCdn()}/npm/maptalks@1.12.0/dist/maptalks.min.js`;
-                scriptEl.addEventListener('load', () => {
-                    if (!this.access.iwindow?.maptalks) {
+                scriptEl.type = 'module';
+                const moduleUrl = `${clickgo.getCdn()}/npm/maplibre-gl@6.18.0/dist/maplibre-gl.mjs`;
+                scriptEl.textContent = `import * as maplibregl from ${JSON.stringify(moduleUrl)};
+                    window.initMapLibre(maplibregl);`;
+                // --- 模块在 iframe 中执行，SDK 不会自动挂载到 window ---
+                this.access.iwindow.initMapLibre = (lib: IMapLibreOptions['lib']) => {
+                    if (this.access.iwindow !== idoc.defaultView || this.access.iwindow?.document !== idoc) {
                         return;
                     }
-                    this.access.lib = this.access.iwindow.maptalks;
-                    const attributions = {
-                        'cn': '&copy;<a target="_blank" href="https://www.tianditu.gov.cn">天地图</a> - GS(2023)336号 - 甲测资字1100471',
-                        'intl': '&copy;<a target="_blank" href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, &copy;<a target="_blank" href="https://carto.com">CARTO</a>'
-                    };
-                    /** --- 天地图底图 --- */
-                    const baseLayer = new this.access.lib.TileLayer('base', {
-                        'urlTemplate': (x: number, y: number, z: number, s: string) => {
-                            if (this.zoomData < 10.5) {
-                                // --- 只加载天地图 ---
-                                if (this.props.tdurlcn) {
-                                    return this.props.tdurlcn.replace(/{x}/g, x.toString())
-                                        .replace(/{y}/g, x.toString())
-                                        .replace(/{z}/g, x.toString());
-                                }
-                                else {
-                                    return `https://t${s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX=${z}&TILEROW=${y}&TILECOL=${x}&tk=${this.props.akey}`;
-                                }
-                            }
-                            // --- 计算瓦片左上角和右下角的经纬度坐标 ---
-                            const ltLng = (x / Math.pow(2, z)) * 360 - 180;
-                            const ltLat =
-                                Math.atan(Math.sinh(Math.PI * (1 - 2 * y / Math.pow(2, z)))) * 180 / Math.PI;
-                            const rbLng = ((x + 1) / Math.pow(2, z)) * 360 - 180;
-                            const rbLat =
-                                Math.atan(Math.sinh(Math.PI * (1 - 2 * (y + 1) / Math.pow(2, z)))) * 180 / Math.PI;
-                            // --- 左上或右下只要有一个在，就使用天地图 ---
-                            if (isPointInPolygon({
-                                'lat': ltLat,
-                                'lng': ltLng
-                            }, tdpolygon) || isPointInPolygon({
-                                'lat': rbLat,
-                                'lng': rbLng
-                            }, tdpolygon)) {
-                                if (this.props.tdurlcn) {
-                                    return this.props.tdurlcn.replace(/{x}/g, x.toString())
-                                        .replace(/{y}/g, x.toString())
-                                        .replace(/{z}/g, x.toString())
-                                        .replace(/{s}/g, x.toString());
-                                }
-                                else {
-                                    return `https://t${s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX=${z}&TILEROW=${y}&TILECOL=${x}&tk=${this.props.akey}`;
-                                }
-                            }
-                            // --- OSM ---
-                            if (this.props.tdurlintl) {
-                                return this.props.tdurlintl.replace(/{x}/g, x.toString())
-                                    .replace(/{y}/g, x.toString())
-                                    .replace(/{z}/g, x.toString())
-                                    .replace(/{s}/g, x.toString());
-                            }
-                            else {
-                                return `https://basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}@2x.png`;
-                            }
-                        },
-                        'subdomains': ['0', '1', '2', '3', '4', '5', '6', '7'],
-                        'attribution': attributions.cn
-                    });
-                    let nowBaseLayer = 'cn';
-                    const boudariesLayerCn = new this.access.lib.TileLayer('boudaries', {
-                        'urlTemplate': this.props.tdurlcn ?? ('https://t{s}.tianditu.gov.cn/cva_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cva&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=' + this.props.akey),
-                        'subdomains': ['0', '1', '2', '3', '4', '5', '6', '7']
-                    });
-                    this.access.map = new this.access.lib.Map('map', {
-                        'center': [this.propNumber('lng'), this.propNumber('lat')],
-                        'zoom': this.propNumber('zoom'),
-
-                        'zoomControl': this.propBoolean('zoomControl'),
-
-                        'maxZoom': 18,
-                        'panAnimation': false,
-                        'seamlessZoom': false,
-                        'spatialReference': {
-                            'projection': 'EPSG:3857'
-                        },
-                        'baseLayer': baseLayer,
-                        'layers': [
-                            boudariesLayerCn
-                        ]
-                    });
+                    this.access.lib = lib;
                     this.latData = this.propNumber('lat');
                     this.lngData = this.propNumber('lng');
                     this.zoomData = this.propNumber('zoom');
-                    if (this.propBoolean('zoomControl')) {
-                        this.access.zoom = new this.access.lib.control.Zoom({
-                            'position': 'bottom-right',
-                            'zoomLevel': false
+                    try {
+                        this.access.mapLibre = new MapLibreAdapter({
+                            'lib': this.access.lib,
+                            'container': mapEl,
+                            'key': this.props.akey,
+                            'center': { 'lat': this.latData, 'lng': this.lngData },
+                            'zoom': this.zoomData,
+                            'zoomControl': this.propBoolean('zoomControl'),
+                            'markerImage': this.access.markerImg,
+                            'urlCn': this.props.tdurlcn,
+                            'hostIntl': this.props.tdhostintl,
+                            'inChina': (point) => isPointInPolygon(point, tdpolygon),
+                            'emit': (event, ...args) => {
+                                if (event === 'center') {
+                                    const center = args[0];
+                                    if (center.lat !== this.latData) {
+                                        this.latData = center.lat;
+                                        this.emit('update:lat', center.lat);
+                                    }
+                                    if (center.lng !== this.lngData) {
+                                        this.lngData = center.lng;
+                                        this.emit('update:lng', center.lng);
+                                    }
+                                }
+                                else if (event === 'zoom') {
+                                    this.zoomData = args[0];
+                                    this.emit('update:zoom', this.zoomData);
+                                }
+                                else {
+                                    this.emit(event, ...args);
+                                }
+                            },
+                            'pathChange': (type, key, path, action, index, old) => {
+                                const items = type === 'line' ? this.props.lines : this.props.polygons;
+                                if (!items[key]) {
+                                    return;
+                                }
+                                items[key].path = path;
+                                this.emit(type === 'line' ? 'update:lines' : 'update:polygons', items);
+                                if (action === 'insert') {
+                                    this.emit(type === 'line' ? 'lineInsert' : 'polygonInsert', key, index);
+                                }
+                                else if (action === 'remove') {
+                                    this.emit(type === 'line' ? 'lineRemove' : 'polygonRemove', key, index, old);
+                                }
+                                else {
+                                    this.emit(type === 'line' ? 'lineUpdate' : 'polygonUpdate', key);
+                                }
+                            },
+                            'markerChange': (key, point) => {
+                                if (!this.props.markers[key]) {
+                                    return;
+                                }
+                                this.props.markers[key].lat = point.lat;
+                                this.props.markers[key].lng = point.lng;
+                                this.emit('update:markers', this.props.markers);
+                                this.emit('markerUpdate', key);
+                            },
+                            'nodeMenu': (type, key, index, event) => {
+                                this.selectedObject = { type, key, index };
+                                clickgo.modules.pointer.menu(event, (e) => {
+                                    const rect = this.element.getBoundingClientRect();
+                                    clickgo.form.showPop(this.element, this.refs.pop, {
+                                        'x': rect.left + e.clientX,
+                                        'y': rect.top + e.clientY
+                                    });
+                                });
+                            }
                         });
-                        this.access.map.addControl(this.access.zoom);
+                        this.access.map = this.access.mapLibre.map;
+                        const adapter = this.access.mapLibre;
+                        adapter.map.once('load', () => {
+                            if (this.access.mapLibre !== adapter) {
+                                return;
+                            }
+                            try {
+                                this.updateMarkers();
+                                this.updateLines();
+                                this.updatePolygons();
+                                this.updateOverlays();
+                                this.isLoading = false;
+                                this.emit('init', { 'lib': this.access.lib, 'map': this.access.map });
+                            }
+                            catch (error) {
+                                adapter.destroy();
+                                this.access.mapLibre = undefined;
+                                this.access.map = undefined;
+                                this.isLoading = false;
+                                this.emit('error', error);
+                            }
+                        });
                     }
-                    this.access.vectorLayer = new this.access.lib.VectorLayer('vector');
-                    this.access.vectorLayer.addTo(this.access.map);
-                    /** --- 修改地图图层显示、地图版权信息等 --- */
-                    const render = (x: number, y: number): void => {
-                        if (this.zoomData >= 10.5) {
-                            // --- 可能以国际底图为准 ---
-                            if (isPointInPolygon({
-                                'lat': y,
-                                'lng': x
-                            }, tdpolygon)) {
-                                // --- 还是中国底图 ---
-                                if (nowBaseLayer === 'cn') {
-                                    return;
-                                }
-                                nowBaseLayer = 'cn';
-                                baseLayer.setOptions({
-                                    'attribution': attributions.cn
-                                });
-                                this.access.map.addLayer(boudariesLayerCn);
-                            }
-                            else {
-                                // --- 国际底图 ---
-                                if (nowBaseLayer === 'intl') {
-                                    return;
-                                }
-                                nowBaseLayer = 'intl';
-                                baseLayer.setOptions({
-                                    'attribution': attributions.intl
-                                });
-                                this.access.map.removeLayer(boudariesLayerCn);
-                            }
-                        }
-                        else {
-                            // --- 中国底图 ---
-                            if (nowBaseLayer === 'cn') {
-                                return;
-                            }
-                            nowBaseLayer = 'cn';
-                            baseLayer.setOptions({
-                                'attribution': attributions.cn
-                            });
-                            this.access.map.addLayer(boudariesLayerCn);
-                        }
-                    };
-                    // --- 绑定事件 ---
-                    this.access.map.on('click', (e: any) => {
-                        this.access.map.identify({
-                            'coordinate': e.coordinate,
-                            'layers': [this.access.vectorLayer],
-                            'includeInternals': true,
-                            'includeInvisible': true
-                        }, (geos: any) => {
-                            if (geos.length > 0) {
-                                return;
-                            }
-                            this.emit('mapClick', {
-                                'lat': e.coordinate.y,
-                                'lng': e.coordinate.x
-                            });
-                        });
-                    });
-                    this.access.map.on('zooming', (e: any) => {
-                        this.zoomData = e.to;
-                        this.emit('update:zoom', e.to);
-                        const center = this.access.map.getCenter();
-                        if (center.y !== this.latData) {
-                            this.latData = center.y;
-                            this.emit('update:lat', center.y);
-                        }
-                        if (center.x !== this.lngData) {
-                            this.lngData = center.x;
-                            this.emit('update:lng', center.x);
-                        }
-                        render(center.x, center.y);
-                    });
-                    // --- 监听地图移动事件 ---
-                    this.access.map.on('moving', () => {
-                        const center = this.access.map.getCenter();
-                        if (center.y !== this.propNumber('lat')) {
-                            this.emit('update:lat', center.y);
-                        }
-                        if (center.x !== this.propNumber('lng')) {
-                            this.emit('update:lng', center.x);
-                        }
-                        render(center.x, center.y);
-                    });
-                    // --- 更新覆盖物 ---
-                    this.updateMarkers();
-                    this.updateLines();
-                    this.updatePolygons();
-                    this.updateOverlays();
-                    // --- 初始化成功 ---
-                    this.isLoading = false;
-                    this.emit('init', {
-                        'lib': this.access.lib,
-                        'map': this.access.map
-                    });
-                });
+                    catch (error) {
+                        this.isLoading = false;
+                        this.emit('error', error);
+                    }
+                };
+                scriptEl.onerror = (event) => {
+                    if (this.access.iwindow === idoc.defaultView && this.access.iwindow?.document === idoc) {
+                        this.isLoading = false;
+                        this.emit('error', event);
+                    }
+                };
                 idoc.head.append(scriptEl);
                 const linkEl = idoc.createElement('link');
                 linkEl.rel = 'stylesheet';
-                linkEl.href = `${clickgo.getCdn()}/npm/maptalks@1.12.0/dist/maptalks.min.css`;
+                linkEl.href = `${clickgo.getCdn()}/npm/maplibre-gl@6.18.0/dist/maplibre-gl.css`;
+                linkEl.onerror = (event) => {
+                    if (this.access.iwindow === idoc.defaultView && this.access.iwindow?.document === idoc) {
+                        this.isLoading = false;
+                        this.emit('error', event);
+                    }
+                };
                 idoc.head.append(linkEl);
                 break;
             }
         }
     }
 
-    public load(): void {
-        if (this.access.map) {
-            this.access.map = undefined;
-        }
-        // --- 清除老数据 ---
-        this.access.overlay = undefined;
-        this.access.zoom = undefined;
-        this.access.vectorLayer = undefined;
+    /**
+     * --- 释放当前地图与覆盖物，保留 iframe 和标记图片以供重新加载 ---
+     * @returns 无返回值
+     */
+    private _disposeMap(): void {
         this.access.iwindow = undefined;
+        this.access.mapLibre?.destroy();
+        for (const key in this.access.markers) {
+            this._removeGoogleMarker(key);
+        }
+        this._removeGoogleObjects({}, this.access.lines);
+        this._removeGoogleObjects({}, this.access.polygons);
+        this._removeGoogleObjects({}, this.access.overlays);
+        this.access.mapLibre = undefined;
+        this.access.markerLib = undefined;
+        this.access.lib = undefined;
+        this.access.map = undefined;
+        this.access.overlay = undefined;
         this.access.markers = {};
         this.access.lines = {};
         this.access.polygons = {};
         this.access.overlays = {};
-        if (this.props.akey === '') {
+    }
+
+    public load(): void {
+        this._disposeMap();
+        if (this.props.akey === '' && !(this.props.factory === 'tianditu' && this.props.tdurlcn)) {
             // --- 如果 akey 是空，则不显示 iframe ---
-            if (!this.notInit) {
-                this.notInit = true;
-            }
-            if (this.isLoading) {
-                this.isLoading = false;
-            }
+            this.notInit = true;
+            this.isLoading = false;
             return;
         }
         if (this.notInit) {
@@ -738,499 +680,263 @@ export default class extends clickgo.control.AbstractControl {
         this.isLoading = true;
     }
 
-    // --- 更新 markers ---
+    /** --- 按地图引擎同步标记的新增、修改和移除 --- */
     public updateMarkers(): void {
-        switch (this.props.factory) {
-            case 'google': {
-                for (const key in this.props.markers) {
-                    const marker = this.props.markers[key];
-                    if (!this.access.markers[key]) {
-                        const obj: google.maps.Marker = new this.access.lib.Marker({
-                            'position': new this.access.lib.LatLng(marker.lat, marker.lng),
-                            'title': marker.title,
-                            'draggable': marker.drag ?? false,
-                            'map': this.access.map
-                        });
-                        obj.addListener('click', () => {
-                            this.emit('markerClick', key);
-                        });
-                        obj.addListener('drag', () => {
-                            this.emit('markerDrag', key);
-                        });
-                        obj.addListener('dragend', () => {
-                            this.emit('markerDragend', key);
-                        });
-                        obj.addListener('position_changed', () => {
-                            const pos = obj.getPosition();
-                            const lat = pos?.lat() ?? 0;
-                            const lng = pos?.lng() ?? 0;
-                            this.access.markers[key].lat = lat;
-                            this.access.markers[key].lng = lng;
-                            // --- 更新到上级 ---
-                            (this.props.markers as any)[key].lat = lat;
-                            (this.props.markers as any)[key].lng = lng;
-                            this.emit('update:markers', this.props.markers);
-                            this.emit('markerUpdate', key);
-                        });
-                        this.access.markers[key] = {
-                            'lat': marker.lat,
-                            'lng': marker.lng,
-                            'title': marker.title,
-                            'drag': marker.drag ?? false,
-                            'obj': obj
-                        };
-                        continue;
+        if (this.props.factory === 'tianditu') {
+            this.access.mapLibre?.syncMarkers(this.props.markers);
+            return;
+        }
+        for (const key in this.props.markers) {
+            const marker = this.props.markers[key];
+            if (!this.access.markers[key]) {
+                const obj = new this.access.markerLib!.AdvancedMarkerElement({
+                    'position': { 'lat': marker.lat, 'lng': marker.lng },
+                    'title': marker.title,
+                    'gmpDraggable': marker.drag ?? false,
+                    'gmpClickable': true,
+                    'map': this.access.map
+                });
+                const entry = {
+                    'lat': marker.lat,
+                    'lng': marker.lng,
+                    'title': marker.title,
+                    'drag': marker.drag ?? false,
+                    'obj': obj,
+                    'listeners': [] as Array<{ type: string; callback: EventListener; }>
+                };
+                this.access.markers[key] = entry;
+                const syncPosition = (): void => {
+                    if (this.access.markers[key] !== entry || !this.props.markers[key] || !obj.position) {
+                        return;
                     }
-                    // --- 存在老 marker，更新原 marker ---
-                    if (this.access.markers[key].lat !== marker.lat || this.access.markers[key].lng !== marker.lng) {
-                        this.access.markers[key].lat = marker.lat;
-                        this.access.markers[key].lng = marker.lng;
-                        this.access.markers[key].obj.setPosition(new this.access.lib.LatLng(marker.lat, marker.lng));
+                    const position = obj.position;
+                    const lat = typeof position.lat === 'function' ? position.lat() : position.lat;
+                    const lng = typeof position.lng === 'function' ? position.lng() : position.lng;
+                    if (lat === entry.lat && lng === entry.lng) {
+                        return;
                     }
-                    const title = marker.title;
-                    if (this.access.markers[key].title !== title) {
-                        this.access.markers[key].title = title;
-                        this.access.markers[key].obj.setTitle(title);
+                    entry.lat = lat;
+                    entry.lng = lng;
+                    this.props.markers[key].lat = lat;
+                    this.props.markers[key].lng = lng;
+                    this.emit('update:markers', this.props.markers);
+                    this.emit('markerUpdate', key);
+                };
+                const listen = (type: string, callback: EventListener): void => {
+                    obj.addEventListener(type, callback);
+                    entry.listeners.push({ type, callback });
+                };
+                listen('gmp-click', () => {
+                    if (this.access.markers[key] === entry && this.props.markers[key]) {
+                        this.emit('markerClick', key);
                     }
-                    const drag = marker.drag ?? false;
-                    if (this.access.markers[key].drag !== drag) {
-                        this.access.markers[key].drag = drag;
-                        this.access.markers[key].obj.setDraggable(drag);
+                });
+                listen('gmp-drag', () => {
+                    syncPosition();
+                    if (this.access.markers[key] === entry && this.props.markers[key]) {
+                        this.emit('markerDrag', key);
                     }
-                }
-                break;
+                });
+                listen('gmp-dragend', () => {
+                    syncPosition();
+                    if (this.access.markers[key] === entry && this.props.markers[key]) {
+                        this.emit('markerDragend', key);
+                    }
+                });
+                continue;
             }
-            case 'tianditu': {
-                if (!this.access.markerImg) {
-                    this.needReUpdateMarkers = true;
-                    return;
-                }
-                for (const key in this.props.markers) {
-                    const marker = this.props.markers[key];
-                    if (!this.access.markers[key]) {
-                        const obj = new this.access.lib.Marker([marker.lng, marker.lat], {
-                            'draggable': marker.drag ?? false,
-                            'symbol': {
-                                'markerFile': this.access.markerImg,
-                                'markerWidth': 36,
-                                'markerHeight': 36,
-
-                                'textName': marker.title,
-                                'textHaloRadius': 1,
-                                'textDy': -46
-                            }
-                        });
-                        this.access.vectorLayer.addGeometry(obj);
-                        obj.on('click', () => {
-                            this.emit('markerClick', key);
-                        });
-                        obj.on('dragging', () => {
-                            this.emit('markerDrag', key);
-                        });
-                        obj.on('dragend', () => {
-                            this.emit('markerDragend', key);
-                        });
-                        obj.on('positionchange', () => {
-                            const pos = obj.getCoordinates();
-                            const lat = Math.round(pos.y * 1000000) / 1000000;
-                            const lng = Math.round(pos.x * 1000000) / 1000000;
-                            this.access.markers[key].lat = lat;
-                            this.access.markers[key].lng = lng;
-                            // --- 更新到上级 ---
-                            (this.props.markers as any)[key].lat = lat;
-                            (this.props.markers as any)[key].lng = lng;
-                            this.emit('update:markers', this.props.markers);
-                            this.emit('markerUpdate', key);
-                        });
-                        this.access.markers[key] = {
-                            'lat': marker.lat,
-                            'lng': marker.lng,
-                            'title': marker.title,
-                            'drag': marker.drag ?? false,
-                            'obj': obj
-                        };
-                        continue;
-                    }
-                    // --- 存在老 marker，更新原 marker ---
-                    if (this.access.markers[key].lat !== marker.lat || this.access.markers[key].lng !== marker.lng) {
-                        this.access.markers[key].lat = marker.lat;
-                        this.access.markers[key].lng = marker.lng;
-                        this.access.markers[key].obj.setCoordinates([marker.lng, marker.lat]);
-                    }
-                    const title = marker.title;
-                    if (this.access.markers[key].title !== title) {
-                        this.access.markers[key].title = title;
-                        this.access.markers[key].obj.updateSymbol({
-                            'textName': marker.title
-                        });
-                    }
-                    const drag = marker.drag ?? false;
-                    if (this.access.markers[key].drag !== drag) {
-                        this.access.markers[key].drag = drag;
-                        this.access.markers[key].obj.config('draggable', drag);
-                    }
-                }
-                break;
+            const entry = this.access.markers[key];
+            if (entry.lat !== marker.lat || entry.lng !== marker.lng) {
+                entry.lat = marker.lat;
+                entry.lng = marker.lng;
+                entry.obj.position = { 'lat': marker.lat, 'lng': marker.lng };
+                this.emit('update:markers', this.props.markers);
+                this.emit('markerUpdate', key);
+            }
+            if (entry.title !== marker.title) {
+                entry.title = marker.title;
+                entry.obj.title = marker.title ?? '';
+            }
+            const drag = marker.drag ?? false;
+            if (entry.drag !== drag) {
+                entry.drag = drag;
+                entry.obj.gmpDraggable = drag;
             }
         }
-        // --- 移除已经消失的 marker ---
-        this.removeNoex(this.props.markers, this.access.markers);
+        for (const key in this.access.markers) {
+            if (!this.props.markers[key]) {
+                this._removeGoogleMarker(key);
+            }
+        }
     }
 
-    // --- 更新 overlays ---
+    /**
+     * --- 移除 Google 标记和其事件监听 ---
+     * @param key 标记键
+     * @returns 无返回值
+     */
+    private _removeGoogleMarker(key: string): void {
+        const entry = this.access.markers[key];
+        if (!entry) {
+            return;
+        }
+        delete this.access.markers[key];
+        for (const listener of entry.listeners) {
+            entry.obj.removeEventListener(listener.type, listener.callback);
+        }
+        entry.obj.map = null;
+    }
+
+    /** --- 按地图引擎同步自定义覆盖物的新增、修改和移除 --- */
     public updateOverlays(): void {
-        switch (this.props.factory) {
-            case 'google': {
-                for (const key in this.props.overlays) {
-                    const overlay = this.props.overlays[key];
-                    if (!this.access.overlays[key]) {
-                        const obj = new this.access.overlay({
-                            'map': this.access.map,
-                            'key': key
-                        });
-                        obj.addListener('click', () => {
-                            this.emit('overlayClick', key);
-                        });
-                        this.access.overlays[key] = {
-                            'lat': overlay.lat,
-                            'lng': overlay.lng,
-                            'html': overlay.html,
-                            'obj': obj
-                        };
-                        continue;
-                    }
-                    // --- 存在老，更新原 ---
-                    if (this.access.overlays[key].lat !== overlay.lat
-                        || this.access.overlays[key].lng !== overlay.lng) {
-                        this.access.overlays[key].lat = overlay.lat;
-                        this.access.overlays[key].lng = overlay.lng;
-                        this.access.overlays[key].obj.setPosition(new this.access.lib.LatLng(overlay.lat, overlay.lng));
-                    }
-                    if (this.access.overlays[key].html !== overlay.html) {
-                        this.access.overlays[key].html = overlay.html;
-                        this.access.overlays[key].obj.refreshHTML();
-                    }
-                }
-                break;
+        if (this.props.factory === 'tianditu') {
+            this.access.mapLibre?.syncOverlays(this.props.overlays);
+            return;
+        }
+        for (const key in this.props.overlays) {
+            const overlay = this.props.overlays[key];
+            if (!this.access.overlays[key]) {
+                const obj = new this.access.overlay({
+                    'map': this.access.map,
+                    'key': key
+                });
+                obj.addListener('click', () => {
+                    this.emit('overlayClick', key);
+                });
+                this.access.overlays[key] = {
+                    'lat': overlay.lat,
+                    'lng': overlay.lng,
+                    'html': overlay.html,
+                    'obj': obj
+                };
+                continue;
             }
-            case 'tianditu': {
-                for (const key in this.props.overlays) {
-                    const overlay = this.props.overlays[key];
-                    if (!this.access.overlays[key]) {
-                        const obj = new this.access.lib.ui.UIMarker([overlay.lng, overlay.lat], {
-                            'content': overlay.html
-                        });
-                        obj.addTo(this.access.map);
-                        obj.on('click', () => {
-                            this.emit('overlayClick', key);
-                        });
-                        this.access.overlays[key] = {
-                            'lat': overlay.lat,
-                            'lng': overlay.lng,
-                            'html': overlay.html,
-                            'obj': obj
-                        };
-                        continue;
-                    }
-                    // --- 存在老，更新原 ---
-                    if (this.access.overlays[key].lat !== overlay.lat
-                        || this.access.overlays[key].lng !== overlay.lng) {
-                        this.access.overlays[key].lat = overlay.lat;
-                        this.access.overlays[key].lng = overlay.lng;
-                        this.access.overlays[key].obj.setCoordinates(
-                            new this.access.lib.Coordinate(overlay.lng, overlay.lat)
-                        );
-                    }
-                    if (this.access.overlays[key].html !== overlay.html) {
-                        this.access.overlays[key].html = overlay.html;
-                        this.access.overlays[key].obj.setContent(overlay.html);
-                    }
-                }
-                break;
+            // --- 存在老，更新原 ---
+            if (this.access.overlays[key].lat !== overlay.lat
+                || this.access.overlays[key].lng !== overlay.lng) {
+                this.access.overlays[key].lat = overlay.lat;
+                this.access.overlays[key].lng = overlay.lng;
+                this.access.overlays[key].obj.setPosition(new this.access.lib.LatLng(overlay.lat, overlay.lng));
+            }
+            if (this.access.overlays[key].html !== overlay.html) {
+                this.access.overlays[key].html = overlay.html;
+                this.access.overlays[key].obj.refreshHTML();
             }
         }
-        // --- 移除已经消失的 marker ---
-        this.removeNoex(this.props.markers, this.access.markers);
+        this._removeGoogleObjects(this.props.overlays, this.access.overlays);
     }
 
-    // --- 更新折线 ---
+    /** --- 按地图引擎同步折线的新增、修改和移除 --- */
     public updateLines(): void {
-        switch (this.props.factory) {
-            case 'google': {
-                for (const key in this.props.lines) {
-                    const line = this.props.lines[key];
-                    if (!this.access.lines[key]) {
-                        const obj = new this.access.lib.Polyline({
-                            'path': line.path,
-                            'strokeColor': line.strokeColor,
-                            'strokeOpacity': line.strokeOpacity,
-                            'strokeWeight': line.strokeWeight,
-                            'draggable': line.drag ?? false,
-                            'editable': line.edit ?? false,
-                            'map': this.access.map
-                        });
-                        const path = obj.getPath();
-                        this.addLinePathEvent(path, key);
-                        obj.addListener('click', () => {
-                            this.emit('lineClick', key);
-                        });
-                        obj.addListener('drag', () => {
-                            this.emit('lineDrag', key);
-                        });
-                        obj.addListener('dragend', () => {
-                            this.emit('lineDragend', key);
-                        });
-                        // --- 其他事件 ---
-                        obj.addListener('mousedown', (oe: google.maps.PolyMouseEvent) => {
-                            if (oe.vertex === undefined) {
-                                return;
-                            }
-                            this.selectedObject.type = 'line';
-                            this.selectedObject.key = key;
-                            this.selectedObject.index = oe.vertex;
-                            // --- 长按弹出 ---
-                            clickgo.modules.pointer.menu(oe.domEvent as MouseEvent, (e) => {
-                                const rect = this.element.getBoundingClientRect();
-                                clickgo.form.showPop(this.element, this.refs.pop, {
-                                    'x': rect.left + e.clientX,
-                                    'y': rect.top + e.clientY
-                                });
-                            });
-                        });
-                        this.access.lines[key] = {
-                            'path': JSON.parse(JSON.stringify(line.path)),
-                            'strokeColor': line.strokeColor,
-                            'strokeOpacity': line.strokeOpacity,
-                            'strokeWeight': line.strokeWeight,
-                            'drag': line.drag ?? false,
-                            'edit': line.edit ?? false,
-                            'obj': obj
-                        };
-                        continue;
+        if (this.props.factory === 'tianditu') {
+            this.access.mapLibre?.syncShapes('line', this.props.lines);
+            return;
+        }
+        for (const key in this.props.lines) {
+            const line = this.props.lines[key];
+            if (!this.access.lines[key]) {
+                const obj = new this.access.lib.Polyline({
+                    'path': line.path,
+                    'strokeColor': line.strokeColor,
+                    'strokeOpacity': line.strokeOpacity,
+                    'strokeWeight': line.strokeWeight,
+                    'draggable': line.drag ?? false,
+                    'editable': line.edit ?? false,
+                    'map': this.access.map
+                });
+                const path = obj.getPath();
+                this.addLinePathEvent(path, key);
+                obj.addListener('click', () => {
+                    this.emit('lineClick', key);
+                });
+                obj.addListener('drag', () => {
+                    this.emit('lineDrag', key);
+                });
+                obj.addListener('dragend', () => {
+                    this.emit('lineDragend', key);
+                });
+                // --- 其他事件 ---
+                obj.addListener('mousedown', (oe: google.maps.PolyMouseEvent) => {
+                    if (oe.vertex === undefined) {
+                        return;
                     }
-                    // --- 存在老 line，更新原 line ---
-                    const accessPath = JSON.stringify(this.access.lines[key].path);
-                    const path = JSON.stringify(line.path);
-                    if (accessPath !== path) {
-                        this.access.lines[key].path = JSON.parse(path);
-                        this.access.lines[key].obj.setPath(line.path);
-                        this.addLinePathEvent(this.access.lines[key].obj.getPath(), key);
-                    }
-                    if (this.access.lines[key].strokeColor !== line.strokeColor) {
-                        this.access.lines[key].strokeColor = line.strokeColor;
-                        this.access.lines[key].obj.setOptions({
-                            'strokeColor': line.strokeColor
+                    this.selectedObject.type = 'line';
+                    this.selectedObject.key = key;
+                    this.selectedObject.index = oe.vertex;
+                    // --- 长按弹出 ---
+                    clickgo.modules.pointer.menu(oe.domEvent as MouseEvent, (e) => {
+                        const rect = this.element.getBoundingClientRect();
+                        clickgo.form.showPop(this.element, this.refs.pop, {
+                            'x': rect.left + e.clientX,
+                            'y': rect.top + e.clientY
                         });
-                    }
-                    if (this.access.lines[key].strokeOpacity !== line.strokeOpacity) {
-                        this.access.lines[key].strokeOpacity = line.strokeOpacity;
-                        this.access.lines[key].obj.setOptions({
-                            'strokeOpacity': line.strokeOpacity
-                        });
-                    }
-                    if (this.access.lines[key].strokeWeight !== line.strokeWeight) {
-                        this.access.lines[key].strokeWeight = line.strokeWeight;
-                        this.access.lines[key].obj.setOptions({
-                            'strokeWeight': line.strokeWeight
-                        });
-                    }
-                    const drag = line.drag ?? false;
-                    if (this.access.lines[key].drag !== drag) {
-                        this.access.lines[key].drag = drag;
-                        this.access.lines[key].obj.setDraggable(drag);
-                    }
-                    const edit = line.edit ?? false;
-                    if (this.access.lines[key].edit !== edit) {
-                        this.access.lines[key].edit = edit;
-                        this.access.lines[key].obj.setEditable(edit);
-                    }
-                }
-                break;
+                    });
+                });
+                this.access.lines[key] = {
+                    'path': JSON.parse(JSON.stringify(line.path)),
+                    'strokeColor': line.strokeColor,
+                    'strokeOpacity': line.strokeOpacity,
+                    'strokeWeight': line.strokeWeight,
+                    'drag': line.drag ?? false,
+                    'edit': line.edit ?? false,
+                    'obj': obj
+                };
+                continue;
             }
-            case 'tianditu': {
-                for (const key in this.props.lines) {
-                    const line = this.props.lines[key];
-                    if (!this.access.lines[key]) {
-                        const paths: number[][] = [];
-                        for (const item of line.path) {
-                            paths.push([item.lng, item.lat]);
-                        }
-                        const obj = new this.access.lib.LineString(paths, {
-                            'symbol': {
-                                'lineColor': line.strokeColor,
-                                'lineOpacity': line.strokeOpacity,
-                                'lineWidth': line.strokeWeight,
-                            },
-                            'draggable': line.drag ?? false,
-                            'editable': line.edit ?? false,
-                        });
-                        this.access.vectorLayer.addGeometry(obj);
-                        if (line.edit) {
-                            obj.startEdit();
-                        }
-                        obj.on('click', () => {
-                            this.emit('lineClick', key);
-                        });
-                        obj.on('handledragging', () => {
-                            this.emit('lineDrag', key);
-                        });
-                        obj.on('dragging', () => {
-                            this.emit('lineDrag', key);
-                        });
-                        obj.on('handledragend', () => {
-                            this.emit('lineDragend', key);
-                        });
-                        obj.on('dragend', () => {
-                            this.emit('lineDragend', key);
-                        });
-                        obj.on('positionchange', () => {
-                            const coor = obj.getCoordinates();
-                            const paths: any[] = [];
-                            for (const item of coor) {
-                                paths.push({
-                                    'lat': Math.round(item.y * 1000000) / 1000000,
-                                    'lng': Math.round(item.x * 1000000) / 1000000
-                                });
-                            }
-                            this.access.lines[key].path = paths;
-                            // --- 更新到上级 ---
-                            (this.props.lines as any)[key].path = JSON.parse(JSON.stringify(paths));
-                            this.emit('update:lines', this.props.lines);
-                            this.emit('lineUpdate', key);
-                        });
-                        obj.on('shapechange', () => {
-                            // --- 图形发生变动 ---
-                            const paths: any[] = [];
-                            const coords = obj.getCoordinates();
-                            for (const coord of coords) {
-                                paths.push({
-                                    'lat': Math.round(coord.y * 1000000) / 1000000,
-                                    'lng': Math.round(coord.x * 1000000) / 1000000
-                                });
-                            }
-
-                            const newstr = JSON.stringify(paths);
-                            const oldstr = JSON.stringify(this.access.lines[key].path);
-                            if (newstr === oldstr) {
-                                return;
-                            }
-                            // --- 向上更新新的 ---
-                            (this.props.lines as any)[key].path = paths;
-                            this.emit('update:lines', this.props.lines);
-
-                            // --- 判断老的和新的一不一样 ---
-                            if (paths.length === this.access.lines[key].path.length) {
-                                // --- 节点移动 ---
-                                this.access.lines[key].path = JSON.parse(JSON.stringify(paths));
-                                this.emit('lineUpdate', key);
-                            }
-                            else {
-                                // --- 节点新增、移除 ---
-                                for (let i = 0; i < paths.length; ++i) {
-                                    const old = this.access.lines[key].path[i];
-                                    if (old.lat === paths[i].lat && old.lng === paths[i].lng) {
-                                        continue;
-                                    }
-                                    // --- 不同的节点，新增的或已被移除 ---
-                                    if (paths.length > this.access.lines[key].path.length) {
-                                        // --- 新增 ---
-                                        this.access.lines[key].path = JSON.parse(JSON.stringify(paths));
-                                        this.emit('lineInsert', key, i);
-                                    }
-                                    else {
-                                        // --- 移除 ---
-                                        this.access.lines[key].path = JSON.parse(JSON.stringify(paths));
-                                        this.emit('lineRemove', key, i, {
-                                            'lat': old.lat,
-                                            'lng': old.lng
-                                        });
-                                    }
-                                    return;
-                                }
-                                const i = this.access.lines[key].path.length - 1;
-                                const old = this.access.lines[key].path[i];
-                                this.access.lines[key].path = JSON.parse(JSON.stringify(paths));
-                                this.emit('lineRemove', key, i, {
-                                    'lat': old.lat,
-                                    'lng': old.lng
-                                });
-                            }
-                        });
-                        this.access.lines[key] = {
-                            'path': JSON.parse(JSON.stringify(line.path)),
-                            'strokeColor': line.strokeColor,
-                            'strokeOpacity': line.strokeOpacity,
-                            'strokeWeight': line.strokeWeight,
-                            'drag': line.drag ?? false,
-                            'edit': line.edit ?? false,
-                            'obj': obj
-                        };
-                        continue;
-                    }
-                    // --- 存在老 line，更新原 line ---
-                    const accessPath = JSON.stringify(this.access.lines[key].path);
-                    const path = JSON.stringify(line.path);
-                    if (accessPath !== path) {
-                        this.access.lines[key].path = JSON.parse(path);
-                        const paths: number[][] = [];
-                        for (const item of line.path) {
-                            paths.push([item.lng, item.lat]);
-                        }
-                        this.access.lines[key].obj.setCoordinates(paths);
-                    }
-                    if (this.access.lines[key].strokeColor !== line.strokeColor) {
-                        this.access.lines[key].strokeColor = line.strokeColor;
-                        this.access.lines[key].obj.updateSymbol({
-                            'lineColor': line.strokeColor
-                        });
-                    }
-                    if (this.access.lines[key].strokeOpacity !== line.strokeOpacity) {
-                        this.access.lines[key].strokeOpacity = line.strokeOpacity;
-                        this.access.lines[key].obj.updateSymbol({
-                            'lineOpacity': line.strokeOpacity
-                        });
-                    }
-                    if (this.access.lines[key].strokeWeight !== line.strokeWeight) {
-                        this.access.lines[key].strokeWeight = line.strokeWeight;
-                        this.access.lines[key].obj.updateSymbol({
-                            'lineWeight': line.strokeWeight
-                        });
-                    }
-                    const drag = line.drag ?? false;
-                    if (this.access.lines[key].drag !== drag) {
-                        this.access.lines[key].drag = drag;
-                        this.access.lines[key].obj.config('draggable', drag);
-                    }
-                    const edit = line.edit ?? false;
-                    if (this.access.lines[key].edit !== edit) {
-                        this.access.lines[key].edit = edit;
-                        if (edit) {
-                            this.access.lines[key].obj.startEdit();
-                        }
-                        else {
-                            this.access.lines[key].obj.endEdit();
-                        }
-                        this.access.lines[key].obj.config('editable', edit);
-                    }
-                }
-                break;
+            // --- 存在老 line，更新原 line ---
+            const accessPath = JSON.stringify(this.access.lines[key].path);
+            const path = JSON.stringify(line.path);
+            if (accessPath !== path) {
+                this.access.lines[key].path = JSON.parse(path);
+                this._removePathListeners(this.access.lines[key].obj.getPath());
+                this.access.lines[key].obj.setPath(line.path);
+                this.addLinePathEvent(this.access.lines[key].obj.getPath(), key);
+            }
+            if (this.access.lines[key].strokeColor !== line.strokeColor) {
+                this.access.lines[key].strokeColor = line.strokeColor;
+                this.access.lines[key].obj.setOptions({
+                    'strokeColor': line.strokeColor
+                });
+            }
+            if (this.access.lines[key].strokeOpacity !== line.strokeOpacity) {
+                this.access.lines[key].strokeOpacity = line.strokeOpacity;
+                this.access.lines[key].obj.setOptions({
+                    'strokeOpacity': line.strokeOpacity
+                });
+            }
+            if (this.access.lines[key].strokeWeight !== line.strokeWeight) {
+                this.access.lines[key].strokeWeight = line.strokeWeight;
+                this.access.lines[key].obj.setOptions({
+                    'strokeWeight': line.strokeWeight
+                });
+            }
+            const drag = line.drag ?? false;
+            if (this.access.lines[key].drag !== drag) {
+                this.access.lines[key].drag = drag;
+                this.access.lines[key].obj.setDraggable(drag);
+            }
+            const edit = line.edit ?? false;
+            if (this.access.lines[key].edit !== edit) {
+                this.access.lines[key].edit = edit;
+                this.access.lines[key].obj.setEditable(edit);
             }
         }
-        // --- 移除已经消失的 marker ---
-        this.removeNoex(this.props.lines, this.access.lines);
+        this._removeGoogleObjects(this.props.lines, this.access.lines);
     }
 
     /** --- 给 line 的 path 增加事件 --- */
     public addLinePathEvent(path: Record<string, any>, key: string): void {
-        path.addListener('insert_at', (index: number) => {
+        const listeners: Array<{ remove(): void; }> = [];
+        this._pathListeners.set(path, listeners);
+        listeners.push(path.addListener('insert_at', (index: number) => {
             const pathArray = JSON.parse(JSON.stringify(path.getArray()));
             this.access.lines[key].path = pathArray;
             // --- 更新到上级 ---
             (this.props.lines as any)[key].path = JSON.parse(JSON.stringify(pathArray));
             this.emit('update:lines', this.props.lines);
             this.emit('lineInsert', key, index);
-        });
-        path.addListener('remove_at', (index: number, removed: any) => {
+        }));
+        listeners.push(path.addListener('remove_at', (index: number, removed: any) => {
             const pathArray = JSON.parse(JSON.stringify(path.getArray()));
             this.access.lines[key].path = pathArray;
             // --- 更新到上级 ---
@@ -1240,328 +946,144 @@ export default class extends clickgo.control.AbstractControl {
                 'lat': removed.lat(),
                 'lng': removed.lng()
             });
-        });
-        path.addListener('set_at', () => {
+        }));
+        listeners.push(path.addListener('set_at', () => {
             const pathArray = JSON.parse(JSON.stringify(path.getArray()));
             this.access.lines[key].path = pathArray;
             // --- 更新到上级 ---
             (this.props.lines as any)[key].path = JSON.parse(JSON.stringify(pathArray));
             this.emit('update:lines', this.props.lines);
             this.emit('lineUpdate', key);
-        });
+        }));
     }
 
-    // --- 更新区域 ---
+    /** --- 按地图引擎同步多边形的新增、修改和移除 --- */
     public updatePolygons(): void {
-        switch (this.props.factory) {
-            case 'google': {
-                for (const key in this.props.polygons) {
-                    const polygon = this.props.polygons[key];
-                    if (!this.access.polygons[key]) {
-                        const obj = new this.access.lib.Polygon({
-                            'path': polygon.path,
-                            'strokeColor': polygon.strokeColor,
-                            'strokeOpacity': polygon.strokeOpacity,
-                            'strokeWeight': polygon.strokeWeight,
-                            'fillColor': polygon.fillColor,
-                            'fillOpacity': polygon.fillOpacity,
-                            'draggable': polygon.drag ?? false,
-                            'editable': polygon.edit ?? false,
-                            'map': this.access.map
-                        });
-                        const path = obj.getPath();
-                        this.addPolygonPathEvent(path, key);
-                        obj.addListener('click', () => {
-                            this.emit('polygonClick', key);
-                        });
-                        obj.addListener('drag', () => {
-                            this.emit('polygonDrag', key);
-                        });
-                        obj.addListener('dragend', () => {
-                            this.emit('polygonDragend', key);
-                        });
-                        // --- 其他事件 ---
-                        obj.addListener('mousedown', (oe: google.maps.PolyMouseEvent) => {
-                            if (oe.vertex === undefined) {
-                                return;
-                            }
-                            this.selectedObject.type = 'polygon';
-                            this.selectedObject.key = key;
-                            this.selectedObject.index = oe.vertex;
-                            // --- 弹出菜单 ---
-                            clickgo.modules.pointer.menu(oe.domEvent as MouseEvent, (e) => {
-                                const rect = this.element.getBoundingClientRect();
-                                clickgo.form.showPop(this.element, this.refs.pop, {
-                                    'x': rect.left + e.clientX,
-                                    'y': rect.top + e.clientY
-                                });
-                            });
-                        });
-                        this.access.polygons[key] = {
-                            'path': JSON.parse(JSON.stringify(polygon.path)),
-                            'strokeColor': polygon.strokeColor,
-                            'strokeOpacity': polygon.strokeOpacity,
-                            'strokeWeight': polygon.strokeWeight,
-                            'fillColor': polygon.fillColor,
-                            'fillOpacity': polygon.fillOpacity,
-                            'drag': polygon.drag ?? false,
-                            'edit': polygon.edit ?? false,
-                            'obj': obj
-                        };
-                        continue;
+        if (this.props.factory === 'tianditu') {
+            this.access.mapLibre?.syncShapes('polygon', this.props.polygons);
+            return;
+        }
+        for (const key in this.props.polygons) {
+            const polygon = this.props.polygons[key];
+            if (!this.access.polygons[key]) {
+                const obj = new this.access.lib.Polygon({
+                    'path': polygon.path,
+                    'strokeColor': polygon.strokeColor,
+                    'strokeOpacity': polygon.strokeOpacity,
+                    'strokeWeight': polygon.strokeWeight,
+                    'fillColor': polygon.fillColor,
+                    'fillOpacity': polygon.fillOpacity,
+                    'draggable': polygon.drag ?? false,
+                    'editable': polygon.edit ?? false,
+                    'map': this.access.map
+                });
+                const path = obj.getPath();
+                this.addPolygonPathEvent(path, key);
+                obj.addListener('click', () => {
+                    this.emit('polygonClick', key);
+                });
+                obj.addListener('drag', () => {
+                    this.emit('polygonDrag', key);
+                });
+                obj.addListener('dragend', () => {
+                    this.emit('polygonDragend', key);
+                });
+                // --- 其他事件 ---
+                obj.addListener('mousedown', (oe: google.maps.PolyMouseEvent) => {
+                    if (oe.vertex === undefined) {
+                        return;
                     }
-                    // --- 存在老 polygon，更新原 polygon ---
-                    const accessPath = JSON.stringify(this.access.polygons[key].path);
-                    const path = JSON.stringify(polygon.path);
-                    if (accessPath !== path) {
-                        this.access.polygons[key].path = JSON.parse(path);
-                        this.access.polygons[key].obj.setPath(polygon.path);
-                        this.addPolygonPathEvent(this.access.polygons[key].obj.getPath(), key);
-                    }
-                    if (this.access.polygons[key].strokeColor !== polygon.strokeColor) {
-                        this.access.polygons[key].strokeColor = polygon.strokeColor;
-                        this.access.polygons[key].obj.setOptions({
-                            'strokeColor': polygon.strokeColor
+                    this.selectedObject.type = 'polygon';
+                    this.selectedObject.key = key;
+                    this.selectedObject.index = oe.vertex;
+                    // --- 弹出菜单 ---
+                    clickgo.modules.pointer.menu(oe.domEvent as MouseEvent, (e) => {
+                        const rect = this.element.getBoundingClientRect();
+                        clickgo.form.showPop(this.element, this.refs.pop, {
+                            'x': rect.left + e.clientX,
+                            'y': rect.top + e.clientY
                         });
-                    }
-                    if (this.access.polygons[key].strokeOpacity !== polygon.strokeOpacity) {
-                        this.access.polygons[key].strokeOpacity = polygon.strokeOpacity;
-                        this.access.polygons[key].obj.setOptions({
-                            'strokeOpacity': polygon.strokeOpacity
-                        });
-                    }
-                    if (this.access.polygons[key].strokeWeight !== polygon.strokeWeight) {
-                        this.access.polygons[key].strokeWeight = polygon.strokeWeight;
-                        this.access.polygons[key].obj.setOptions({
-                            'strokeWeight': polygon.strokeWeight
-                        });
-                    }
-                    if (this.access.polygons[key].fillColor !== polygon.fillColor) {
-                        this.access.polygons[key].fillColor = polygon.fillColor;
-                        this.access.polygons[key].obj.setOptions({
-                            'fillColor': polygon.fillColor
-                        });
-                    }
-                    if (this.access.polygons[key].fillOpacity !== polygon.fillOpacity) {
-                        this.access.polygons[key].fillOpacity = polygon.fillOpacity;
-                        this.access.polygons[key].obj.setOptions({
-                            'fillOpacity': polygon.fillOpacity
-                        });
-                    }
-                    const drag = polygon.drag ?? false;
-                    if (this.access.polygons[key].drag !== drag) {
-                        this.access.polygons[key].drag = drag;
-                        this.access.polygons[key].obj.setDraggable(drag);
-                    }
-                    const edit = polygon.edit ?? false;
-                    if (this.access.polygons[key].edit !== edit) {
-                        this.access.polygons[key].edit = edit;
-                        this.access.polygons[key].obj.setEditable(edit);
-                    }
-                }
-                break;
+                    });
+                });
+                this.access.polygons[key] = {
+                    'path': JSON.parse(JSON.stringify(polygon.path)),
+                    'strokeColor': polygon.strokeColor,
+                    'strokeOpacity': polygon.strokeOpacity,
+                    'strokeWeight': polygon.strokeWeight,
+                    'fillColor': polygon.fillColor,
+                    'fillOpacity': polygon.fillOpacity,
+                    'drag': polygon.drag ?? false,
+                    'edit': polygon.edit ?? false,
+                    'obj': obj
+                };
+                continue;
             }
-            case 'tianditu': {
-                for (const key in this.props.polygons) {
-                    const polygon = this.props.polygons[key];
-                    if (!this.access.polygons[key]) {
-                        const paths: number[][] = [];
-                        for (const item of polygon.path) {
-                            paths.push([item.lng, item.lat]);
-                        }
-                        const obj = new this.access.lib.Polygon(paths, {
-                            'symbol': {
-                                'lineColor': polygon.strokeColor,
-                                'lineOpacity': polygon.strokeOpacity,
-                                'lineWidth': polygon.strokeWeight,
-                                'polygonFill': polygon.fillColor,
-                                'polygonOpacity': polygon.fillOpacity ?? .3
-                            },
-
-                            'draggable': polygon.drag ?? false,
-                            'editable': polygon.edit ?? false
-                        });
-                        this.access.vectorLayer.addGeometry(obj);
-                        if (polygon.edit) {
-                            obj.startEdit();
-                        }
-                        obj.on('click', () => {
-                            this.emit('polygonClick', key);
-                        });
-                        obj.on('handledragging', () => {
-                            this.emit('polygonDrag', key);
-                        });
-                        obj.on('dragging', () => {
-                            this.emit('polygonDrag', key);
-                        });
-                        obj.on('handledragend', () => {
-                            this.emit('polygonDragend', key);
-                        });
-                        obj.on('dragend', () => {
-                            this.emit('polygonDragend', key);
-                        });
-                        obj.on('positionchange', () => {
-                            const coords = obj.getCoordinates();
-                            const paths: any[] = [];
-                            for (const item of coords[0]) {
-                                paths.push({
-                                    'lat': Math.round(item.y * 1000000) / 1000000,
-                                    'lng': Math.round(item.x * 1000000) / 1000000
-                                });
-                            }
-                            this.access.polygons[key].path = paths;
-                            // --- 更新到上级 ---
-                            (this.props.polygons as any)[key].path = JSON.parse(JSON.stringify(paths));
-                            this.emit('update:polygon', this.props.polygons);
-                            this.emit('polygonUpdate', key);
-                        });
-                        obj.on('shapechange', () => {
-                            // --- 图形发生变动 ---
-                            const paths: any[] = [];
-                            const coords = obj.getCoordinates();
-                            for (const coord of coords[0]) {
-                                paths.push({
-                                    'lat': Math.round(coord.y * 1000000) / 1000000,
-                                    'lng': Math.round(coord.x * 1000000) / 1000000
-                                });
-                            }
-
-                            const newstr = JSON.stringify(paths);
-                            const oldstr = JSON.stringify(this.access.polygons[key].path);
-                            if (newstr === oldstr) {
-                                return;
-                            }
-                            // --- 向上更新新的 ---
-                            (this.props.polygons as any)[key].path = paths;
-                            this.emit('update:polygons', this.props.polygons);
-
-                            // --- 判断老的和新的一不一样 ---
-                            if (paths.length === this.access.polygons[key].path.length) {
-                                // --- 节点移动 ---
-                                this.access.polygons[key].path = JSON.parse(JSON.stringify(paths));
-                                this.emit('polygonUpdate', key);
-                            }
-                            else {
-                                // --- 节点新增、移除 ---
-                                for (let i = 0; i < paths.length; ++i) {
-                                    const old = this.access.polygons[key].path[i];
-                                    if (old && old.lat === paths[i].lat && old.lng === paths[i].lng) {
-                                        continue;
-                                    }
-                                    // --- 不同的节点，新增的或已被移除 ---
-                                    if (paths.length > this.access.polygons[key].path.length) {
-                                        // --- 新增 ---
-                                        this.access.polygons[key].path = JSON.parse(JSON.stringify(paths));
-                                        this.emit('polygonInsert', key, i);
-                                    }
-                                    else {
-                                        // --- 移除 ---
-                                        this.access.polygons[key].path = JSON.parse(JSON.stringify(paths));
-                                        this.emit('polygonRemove', key, i, {
-                                            'lat': old.lat,
-                                            'lng': old.lng
-                                        });
-                                    }
-                                    return;
-                                }
-                                const i = this.access.polygons[key].path.length - 1;
-                                const old = this.access.polygons[key].path[i];
-                                this.access.polygons[key].path = JSON.parse(JSON.stringify(paths));
-                                this.emit('polygonRemove', key, i, {
-                                    'lat': old.lat,
-                                    'lng': old.lng
-                                });
-                            }
-                        });
-                        this.access.polygons[key] = {
-                            'path': JSON.parse(JSON.stringify(polygon.path)),
-                            'strokeColor': polygon.strokeColor,
-                            'strokeOpacity': polygon.strokeOpacity,
-                            'strokeWeight': polygon.strokeWeight,
-                            'fillColor': polygon.fillColor,
-                            'fillOpacity': polygon.fillOpacity,
-                            'drag': polygon.drag ?? false,
-                            'edit': polygon.edit ?? false,
-                            'obj': obj
-                        };
-                        continue;
-                    }
-                    // --- 存在老 polygon，更新原 polygon ---
-                    const accessPath = JSON.stringify(this.access.polygons[key].path);
-                    const path = JSON.stringify(polygon.path);
-                    if (accessPath !== path) {
-                        this.access.polygons[key].path = JSON.parse(path);
-                        const paths: number[][] = [];
-                        for (const item of polygon.path) {
-                            paths.push([item.lng, item.lat]);
-                        }
-                        this.access.polygons[key].obj.setCoordinates(paths);
-                    }
-                    if (this.access.polygons[key].strokeColor !== polygon.strokeColor) {
-                        this.access.polygons[key].strokeColor = polygon.strokeColor;
-                        this.access.polygons[key].obj.updateSymbol({
-                            'lineColor': polygon.strokeColor
-                        });
-                    }
-                    if (this.access.polygons[key].strokeOpacity !== polygon.strokeOpacity) {
-                        this.access.polygons[key].strokeOpacity = polygon.strokeOpacity;
-                        this.access.polygons[key].obj.updateSymbol({
-                            'lineOpacity': polygon.strokeOpacity
-                        });
-                    }
-                    if (this.access.polygons[key].strokeWeight !== polygon.strokeWeight) {
-                        this.access.polygons[key].strokeWeight = polygon.strokeWeight;
-                        this.access.polygons[key].obj.updateSymbol({
-                            'lineWeight': polygon.strokeWeight
-                        });
-                    }
-                    if (this.access.polygons[key].fillColor !== polygon.fillColor) {
-                        this.access.polygons[key].fillColor = polygon.fillColor;
-                        this.access.polygons[key].obj.updateSymbol({
-                            'polygonFill': polygon.fillColor
-                        });
-                    }
-                    if (this.access.polygons[key].fillOpacity !== polygon.fillOpacity) {
-                        this.access.polygons[key].fillOpacity = polygon.fillOpacity;
-                        this.access.polygons[key].obj.updateSymbol({
-                            'polygonOpacity': polygon.fillOpacity
-                        });
-                    }
-                    const drag = polygon.drag ?? false;
-                    if (this.access.polygons[key].drag !== drag) {
-                        this.access.polygons[key].drag = drag;
-                        this.access.polygons[key].obj.config('draggable', drag);
-                    }
-                    const edit = polygon.edit ?? false;
-                    if (this.access.polygons[key].edit !== edit) {
-                        this.access.polygons[key].edit = edit;
-                        if (edit) {
-                            this.access.polygons[key].obj.startEdit();
-                        }
-                        else {
-                            this.access.polygons[key].obj.endEdit();
-                        }
-                        this.access.polygons[key].obj.config('editable', edit);
-                    }
-                }
-                break;
+            // --- 存在老 polygon，更新原 polygon ---
+            const accessPath = JSON.stringify(this.access.polygons[key].path);
+            const path = JSON.stringify(polygon.path);
+            if (accessPath !== path) {
+                this.access.polygons[key].path = JSON.parse(path);
+                this._removePathListeners(this.access.polygons[key].obj.getPath());
+                this.access.polygons[key].obj.setPath(polygon.path);
+                this.addPolygonPathEvent(this.access.polygons[key].obj.getPath(), key);
+            }
+            if (this.access.polygons[key].strokeColor !== polygon.strokeColor) {
+                this.access.polygons[key].strokeColor = polygon.strokeColor;
+                this.access.polygons[key].obj.setOptions({
+                    'strokeColor': polygon.strokeColor
+                });
+            }
+            if (this.access.polygons[key].strokeOpacity !== polygon.strokeOpacity) {
+                this.access.polygons[key].strokeOpacity = polygon.strokeOpacity;
+                this.access.polygons[key].obj.setOptions({
+                    'strokeOpacity': polygon.strokeOpacity
+                });
+            }
+            if (this.access.polygons[key].strokeWeight !== polygon.strokeWeight) {
+                this.access.polygons[key].strokeWeight = polygon.strokeWeight;
+                this.access.polygons[key].obj.setOptions({
+                    'strokeWeight': polygon.strokeWeight
+                });
+            }
+            if (this.access.polygons[key].fillColor !== polygon.fillColor) {
+                this.access.polygons[key].fillColor = polygon.fillColor;
+                this.access.polygons[key].obj.setOptions({
+                    'fillColor': polygon.fillColor
+                });
+            }
+            if (this.access.polygons[key].fillOpacity !== polygon.fillOpacity) {
+                this.access.polygons[key].fillOpacity = polygon.fillOpacity;
+                this.access.polygons[key].obj.setOptions({
+                    'fillOpacity': polygon.fillOpacity
+                });
+            }
+            const drag = polygon.drag ?? false;
+            if (this.access.polygons[key].drag !== drag) {
+                this.access.polygons[key].drag = drag;
+                this.access.polygons[key].obj.setDraggable(drag);
+            }
+            const edit = polygon.edit ?? false;
+            if (this.access.polygons[key].edit !== edit) {
+                this.access.polygons[key].edit = edit;
+                this.access.polygons[key].obj.setEditable(edit);
             }
         }
-        // --- 移除已经消失的 marker ---
-        this.removeNoex(this.props.polygons, this.access.polygons);
+        this._removeGoogleObjects(this.props.polygons, this.access.polygons);
     }
 
     /** --- 给 polygon 的 path 增加事件 --- */
     public addPolygonPathEvent(path: Record<string, any>, key: string): void {
-        path.addListener('insert_at', (index: number) => {
+        const listeners: Array<{ remove(): void; }> = [];
+        this._pathListeners.set(path, listeners);
+        listeners.push(path.addListener('insert_at', (index: number) => {
             const pathArray = JSON.parse(JSON.stringify(path.getArray()));
             this.access.polygons[key].path = pathArray;
             // --- 更新到上级 ---
             (this.props.polygons as any)[key].path = JSON.parse(JSON.stringify(pathArray));
             this.emit('update:polygons', this.props.polygons);
             this.emit('polygonInsert', key, index);
-        });
-        path.addListener('remove_at', (index: number, removed: any) => {
+        }));
+        listeners.push(path.addListener('remove_at', (index: number, removed: any) => {
             const pathArray = JSON.parse(JSON.stringify(path.getArray()));
             this.access.polygons[key].path = pathArray;
             // --- 更新到上级 ---
@@ -1571,58 +1093,83 @@ export default class extends clickgo.control.AbstractControl {
                 'lat': removed.lat(),
                 'lng': removed.lng()
             });
-        });
-        path.addListener('set_at', (index: number) => {
+        }));
+        listeners.push(path.addListener('set_at', (index: number) => {
             const pathArray = JSON.parse(JSON.stringify(path.getArray()));
             this.access.polygons[key].path = pathArray;
             // --- 更新到上级 ---
             (this.props.polygons as any)[key].path = JSON.parse(JSON.stringify(pathArray));
-            this.emit('update:lines', this.props.lines);
-            this.emit('lineUpdate', key, index);
-        });
+            this.emit('update:polygons', this.props.polygons);
+            this.emit('polygonUpdate', key, index);
+        }));
     }
 
-    /** --- 移除在新对象中找不到的老对象中的项目 --- */
-    public removeNoex(newo: Record<string, any>, oldo: Record<string, any>): void {
-        switch (this.props.factory) {
-            case 'google': {
-                for (const key in oldo) {
-                    if (newo[key]) {
-                        continue;
-                    }
-                    oldo[key].obj.setMap(null);
-                    delete oldo[key];
-                }
-                break;
+    private _removePathListeners(path: object): void {
+        for (const listener of this._pathListeners.get(path) ?? []) {
+            listener.remove();
+        }
+        this._pathListeners.delete(path);
+    }
+
+    /**
+     * --- 从地图移除已不在绑定集合中的 Google 覆盖物，并删除缓存 ---
+     * @param items 当前绑定的覆盖物集合
+     * @param objects 已创建的 Google 覆盖物
+     * @returns 无返回值
+     */
+    private _removeGoogleObjects(
+        items: Record<string, unknown>,
+        objects: Record<string, {
+            'obj': {
+                setMap(map: null): void;
+            };
+        }>
+    ): void {
+        for (const key in objects) {
+            if (items[key]) {
+                continue;
             }
-            case 'tianditu': {
-                for (const key in oldo) {
-                    if (newo[key]) {
-                        continue;
-                    }
-                    this.access.vectorLayer.removeGeometry(oldo[key].obj);
-                    delete oldo[key];
-                }
-                break;
+            const object = objects[key].obj as { setMap(map: null): void; getPath?: () => object; };
+            if (object.getPath) {
+                this._removePathListeners(object.getPath());
             }
+            object.setMap(null);
+            delete objects[key];
         }
     }
 
     // --- 右键菜单 ---
 
     public removeNode(): void {
+        if (this.props.factory === 'tianditu') {
+            this.access.mapLibre?.removeNode(
+                this.selectedObject.type, this.selectedObject.key, this.selectedObject.index
+            );
+            return;
+        }
         switch (this.selectedObject.type) {
             case 'line': {
-                const path = this.access.lines[this.selectedObject.key].obj.getPath();
-                path.removeAt(this.selectedObject.index);
+                const path = this.access.lines[this.selectedObject.key]?.obj.getPath();
+                if (path && this.selectedObject.index >= 0 && this.selectedObject.index < path.getLength()
+                    && path.getLength() > 2) {
+                    path.removeAt(this.selectedObject.index);
+                }
                 break;
             }
             case 'polygon': {
-                const path = this.access.polygons[this.selectedObject.key].obj.getPath();
-                path.removeAt(this.selectedObject.index);
+                const path = this.access.polygons[this.selectedObject.key]?.obj.getPath();
+                if (path && this.selectedObject.index >= 0 && this.selectedObject.index < path.getLength()
+                    && path.getLength() > 3) {
+                    path.removeAt(this.selectedObject.index);
+                }
                 break;
             }
         }
+    }
+
+    public onUnmounted(): void {
+        this._disposed = true;
+        this._disposeMap();
     }
 
     // --- 初次装载 ---
@@ -1632,15 +1179,26 @@ export default class extends clickgo.control.AbstractControl {
         this.watch('akey', () => {
             this.load();
         });
+        for (const prop of ['tdurlcn', 'tdhostintl', 'css'] as const) {
+            this.watch(prop, () => {
+                this.load();
+            });
+        }
+        this.watch('mapId', () => {
+            if (this.props.factory === 'google') {
+                this.load();
+            }
+        });
         this.watch('factory', () => {
             this.load();
         });
 
-        /** --- 加载 marker 样式图片（天地图-Maptalks） --- */
+        /** --- 加载 marker 样式图片（天地图） --- */
         this.access.markerImg = await clickgo.tool.blob2DataUrl(this.packageFiles['/res/marker.svg'] as Blob);
-        if (this.needReUpdateMarkers) {
-            this.updateMarkers();
+        if (this._disposed) {
+            return;
         }
+        this.access.mapLibre?.setMarkerImage(this.access.markerImg);
 
         // --- 选项变更 ---
 
@@ -1689,22 +1247,13 @@ export default class extends clickgo.control.AbstractControl {
             }
         });
         this.watch('zoom', () => {
-            if (!this.access.map) {
+            const zoom = this.propNumber('zoom');
+            // 地图动画也会逐帧更新绑定值，重复设置会中止当前动画。
+            if (!this.access.map || zoom === this.zoomData) {
                 return;
             }
-            this.zoomData = this.propNumber('zoom');
-            switch (this.props.factory) {
-                case 'google': {
-                    this.access.map.setZoom(this.propNumber('zoom'));
-                    break;
-                }
-                case 'tianditu': {
-                    this.access.map.setZoom(this.propNumber('zoom'), {
-                        'animation': false
-                    });
-                    break;
-                }
-            }
+            this.zoomData = zoom;
+            this.access.map.setZoom(this.props.factory === 'tianditu' ? zoom - 1 : zoom);
         });
         this.watch('zoomControl', () => {
             if (!this.access.map) {
@@ -1718,18 +1267,7 @@ export default class extends clickgo.control.AbstractControl {
                     break;
                 }
                 case 'tianditu': {
-                    if (this.propBoolean('zoomControl')) {
-                        // --- 添加 ---
-                        this.access.zoom = new this.access.lib.control.Zoom({
-                            'position': 'bottom-right',
-                            'zoomLevel': false
-                        });
-                        this.access.map.addControl(this.access.zoom);
-                    }
-                    else {
-                        // --- 移除 ---
-                        this.access.map.removeControl(this.access.zoom);
-                    }
+                    this.access.mapLibre?.setZoomControl(this.propBoolean('zoomControl'));
                     break;
                 }
             }

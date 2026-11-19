@@ -28,7 +28,7 @@ const checkList = await fs.promises.readdir('dist/sources/control/', {
     'withFileTypes': true,
 });
 for (const item of checkList) {
-    if (item.name.startsWith('.')) {
+    if (!item.isDirectory() || item.name.startsWith('.')) {
         continue;
     }
     const name = item.name;
@@ -161,7 +161,7 @@ let list = await fs.promises.readdir('dist/sources/control/', {
     'withFileTypes': true,
 });
 for (const item of list) {
-    if (item.name.startsWith('.')) {
+    if (!item.isDirectory() || item.name.startsWith('.')) {
         continue;
     }
     if (['accordion-item', 'breadcrumb-item', 'bgroup', 'alert', 'alayout', 'alayout-row', 'alayout-cell', 'alayout2', 'alayout2-cell', 'grid', 'grid-cell', 'check', 'circle', 'content', 'dialog', 'dock', 'dock-column', 'dock-group', 'dock-item', 'file', 'greatlist', 'greatselect', 'group', 'html', 'vflow', 'video', 'img', 'imgviewer', 'panzoom', 'label', 'layout', 'hske', 'icon', 'levelselect', 'list', 'loading', 'marquee', 'menu', 'menu-item', 'menulist', 'menulist-item', 'menulist-split', 'flow', 'eflow', 'radio', 'scroll', 'select', 'sgroup', 'sidebar-toggle', 'slider', 'stab', 'stab-item', 'statusbar', 'statusbar-item', 'toolbar', 'toolbar-split', 'toolbox', 'toolbox-group', 'step', 'svg', 'switch', 'arrow', 'tab', 'tag', 'text', 'tip', 'title', 'task-item', 'task-start', 'task-tray', 'table-item', 'nav-item', 'nav-title', 'panel', 'desc-body', 'desc-cell', 'desc-head', 'desc-header', 'desc-row', 'link', 'date', 'daterange', 'progress', 'datepanel', 'calendar', 'empty', 'palette', 'colorist', 'uploader', 'setting', 'setting-item', 'delete', 'timeline', 'timeline-item', 'number', 'web', 'objviewer-item'].includes(item.name)) {

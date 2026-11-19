@@ -33,7 +33,7 @@ const checkList = await fs.promises.readdir('dist/sources/control/', {
 });
 
 for (const item of checkList) {
-    if (item.name.startsWith('.')) {
+    if (!item.isDirectory() || item.name.startsWith('.')) {
         continue;
     }
     const name = item.name;
@@ -180,7 +180,7 @@ let list = await fs.promises.readdir('dist/sources/control/', {
     'withFileTypes': true,
 });
 for (const item of list) {
-    if (item.name.startsWith('.')) {
+    if (!item.isDirectory() || item.name.startsWith('.')) {
         continue;
     }
 
