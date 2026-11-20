@@ -28211,11 +28211,11 @@ lib/form/functions/changeFocus.md
 
 # Function: changeFocus()
 
-> **changeFocus**(`formId?`): `Promise`\<`void`\>
+> **changeFocus**(`formId?`, `mode?`): `Promise`\<`void`\>
 
-Defined in: [lib/form/window.ts:364](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L364)
+Defined in: [lib/form/window.ts:365](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L365)
 
-改变 form 的焦点 class
+将键盘焦点和任务焦点切换到目标窗体
 
 ## Parameters
 
@@ -28224,6 +28224,12 @@ Defined in: [lib/form/window.ts:364](https://github.com/maiyun/clickgo/blob/mast
 `string` = `''`
 
 变更后的 form id
+
+### mode?
+
+`"restore"` \| `"activate"`
+
+activate 主动激活并提到本层最前，restore 在现有可见窗体之间恢复焦点
 
 ## Returns
 
@@ -28242,7 +28248,7 @@ lib/form/functions/changeFocusMaxZIndex.md
 
 > **changeFocusMaxZIndex**(): `Promise`\<`void`\>
 
-Defined in: [lib/form/window.ts:501](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L501)
+Defined in: [lib/form/window.ts:519](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L519)
 
 让最大的 z index 窗体获取焦点（不含 top 和最小化的）
 
@@ -28521,7 +28527,7 @@ lib/form/functions/flash.md
 
 > **flash**(`current`, `formId`): `Promise`\<`void`\>
 
-Defined in: [lib/form/window.ts:532](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L532)
+Defined in: [lib/form/window.ts:550](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L550)
 
 让窗体闪烁
 
@@ -28714,9 +28720,9 @@ lib/form/functions/getMaxZIndexID.md
 
 > **getMaxZIndexID**(`current`, `out?`): `Promise`\<`string` \| `null`\>
 
-Defined in: [lib/form/window.ts:431](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L431)
+Defined in: [lib/form/window.ts:472](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L472)
 
-获取当前 z-index 值最大的 form id（除了 top 模式的窗体和最小化的窗体）
+获取可见且未置底的窗体中 z-index 最大的 form id
 
 ## Parameters
 
@@ -29415,7 +29421,7 @@ lib/form/functions/remove.md
 
 > **remove**(`formId`): `boolean`
 
-Defined in: [lib/form/remove.ts:66](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/remove.ts#L66)
+Defined in: [lib/form/remove.ts:71](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/remove.ts#L71)
 
 移除一个 form（关闭窗口）
 
@@ -29516,7 +29522,7 @@ lib/form/functions/removePanel.md
 
 > **removePanel**(`id`, `vapp`, `el`): `boolean`
 
-Defined in: [lib/form/remove.ts:137](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/remove.ts#L137)
+Defined in: [lib/form/remove.ts:142](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/remove.ts#L142)
 
 移除 panel 挂载，通常发生在 panel 控件的 onBeforeUnmount 中
 

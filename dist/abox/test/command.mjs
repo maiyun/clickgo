@@ -747,7 +747,7 @@ const lifecycleScope = {
     lNative: { clear() {} }, lControl: { clearComponents() {} },
     clickgo: { isNative: () => false }, clearSystem: async () => {},
     getTaskId: id => id === 'main' ? 'first' : '', setTimeout: callback => callbacks.push(callback),
-    clearTimeout() {}, cancelAnimationFrame() {}, activePanels: {}, cleanupPop() {}, restoreDialogFocus() {},
+    clearTimeout() {}, cancelAnimationFrame() {}, activePanels: {}, cleanupPop() {}, restoreFocusAfterHide() {},
     elements: { popList: { querySelector: () => null } },
     lForm: { getMaxZIndexID: async () => null, changeFocus: async () => {},
         elements: { list: { querySelectorAll: () => [] } }, activePanels: {} },

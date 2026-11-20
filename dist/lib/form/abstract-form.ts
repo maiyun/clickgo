@@ -273,12 +273,12 @@ export abstract class AbstractForm extends AbstractCommon {
                     this.refs.form.setPropData('top', area.top + (area.height - this.element.offsetHeight) / 2);
                 }
             }
-            this.refs.form.$data.isShow = true;
-            await changeFocus(this.formId);
         }
-        else {
-            this.refs.form.$data.isShow = true;
+        else if (this.refs.form.$data.isShow) {
+            return;
         }
+        this.refs.form.$data.isShow = true;
+        await changeFocus(this.formId);
     }
 
     /**

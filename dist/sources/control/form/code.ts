@@ -114,6 +114,9 @@ export default class extends clickgo.control.AbstractControl {
 
     public zIndex = 0;
 
+    /** --- 隐藏时绘制淡出的层级，再次显示时使用当前 zIndex --- */
+    public hideZIndex = 0;
+
     /** --- 当前的吸附状态 --- */
     public stateAbs: '' | 'l' | 'lt' | 'tr' | 'r' | 'rb' | 'b' | 'bl' = '';
 

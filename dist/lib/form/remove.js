@@ -21,7 +21,7 @@ import * as lControl from '../control';
 import * as lNative from '../native';
 import { state } from './state';
 import { elements } from './system';
-import { getTaskId, restoreDialogFocus, activePanels } from './window';
+import { getTaskId, restoreFocusAfterHide, activePanels } from './window';
 import { cleanupPop } from './popup';
 /**
  * --- 隐藏窗体并撤下其浮层与模态遮罩，关闭中的窗体在卸载后返回结果 ---
@@ -30,7 +30,12 @@ import { cleanupPop } from './popup';
  */
 export function hideForm(form, runtime) {
     const root = form.vroot;
-    root.$refs.form.$data.isShow = false;
+    const control = root.$refs.form.$data;
+    const leavingFocus = control.isShow && state.focusId === form.id;
+    if (control.isShow) {
+        control.hideZIndex = control.zIndex;
+    }
+    control.isShow = false;
     cleanupPop(form.vapp._container);
     const pop = elements.popList.querySelector('[data-form-id="' + form.id + '"]');
     if (pop) {
@@ -52,8 +57,8 @@ export function hideForm(form, runtime) {
             dialog.finish();
         }
     }
-    if (dialog || form.closed) {
-        restoreDialogFocus(form.id, runtime.dialogFormIds.at(-1), dialog?.focus ?? null);
+    if (leavingFocus) {
+        restoreFocusAfterHide(form.id, runtime.dialogFormIds.at(-1), dialog?.focus ?? null);
     }
 }
 /**

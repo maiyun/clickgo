@@ -22,7 +22,7 @@ import * as lNative from '../native';
 import { state } from './state';
 import { elements } from './system';
 import type { IForm } from './types';
-import { getTaskId, restoreDialogFocus, activePanels } from './window';
+import { getTaskId, restoreFocusAfterHide, activePanels } from './window';
 import { cleanupPop } from './popup';
 
 /**
@@ -32,7 +32,12 @@ import { cleanupPop } from './popup';
  */
 export function hideForm(form: IForm, runtime: lTask.IRuntime): void {
     const root = form.vroot;
-    root.$refs.form.$data.isShow = false;
+    const control = root.$refs.form.$data;
+    const leavingFocus = control.isShow && state.focusId === form.id;
+    if (control.isShow) {
+        control.hideZIndex = control.zIndex;
+    }
+    control.isShow = false;
     cleanupPop(form.vapp._container);
     const pop = elements.popList.querySelector<HTMLElement>('[data-form-id="' + form.id + '"]');
     if (pop) {
@@ -54,8 +59,8 @@ export function hideForm(form: IForm, runtime: lTask.IRuntime): void {
             dialog.finish();
         }
     }
-    if (dialog || form.closed) {
-        restoreDialogFocus(form.id, runtime.dialogFormIds.at(-1), dialog?.focus ?? null);
+    if (leavingFocus) {
+        restoreFocusAfterHide(form.id, runtime.dialogFormIds.at(-1), dialog?.focus ?? null);
     }
 }
 

@@ -1,7 +1,15 @@
-<form width="200" height="200" title="dialog">
-    <layout align-v="center" align-h="center" direction="v" gutter="10" style="flex: 1; width: 0;">
-        <label>Haha! Result: {{dr}}</label>
-        <button @click="dialogResult = dialogResult ? '' : 'Done'">{{dialogResult ? 'Remove' : 'Set'}} dialogResult</button>
-        <button @click="newDialog">showDialog()</button>
+<form width="400" height="auto" title="Modal form">
+    <layout direction="v" gutter="10" style="padding: 12px;">
+        <label>Form ID: {{formId}}</label>
+        <label>Enter a value, then reopen the dialog after each action.</label>
+        <text v-model="draft" placeholder="Return value"></text>
+        <layout gutter="8">
+            <button @click="dialogResult = draft; hide()" style="flex: 1;">hide() · Keep form</button>
+            <button @click="dialogResult = draft; close()" style="flex: 1;">close() · Destroy form</button>
+        </layout>
+        <layout gutter="8" align-v="center">
+            <button @click="newDialog">Open nested dialog</button>
+            <label v-if="nestedResult">Result: {{nestedResult}}</label>
+        </layout>
     </layout>
 </form>

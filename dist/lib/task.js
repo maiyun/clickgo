@@ -1258,7 +1258,7 @@ export async function end(taskId) {
     const fid = await lForm.getMaxZIndexID(sysId, {
         'taskIds': [taskId],
     });
-    await lForm.changeFocus(fid ?? undefined);
+    await lForm.changeFocus(fid ?? undefined, 'restore');
     // --- 移除窗体 list ---
     for (const fid in task.forms) {
         // --- 结束任务挨个关闭窗体 ---

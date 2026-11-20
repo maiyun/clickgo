@@ -1,14 +1,17 @@
 import * as clickgo from 'clickgo';
 
-class Sd extends clickgo.form.AbstractForm {
+export default class extends clickgo.form.AbstractForm {
 
-    public dr = '';
+    public draft = '';
 
+    public nestedResult = '';
+
+    /** --- 打开第二层模态，返回后可以继续操作当前窗体 --- */
     public async newDialog(): Promise<void> {
-        const frm = await clickgo.form.create(this, Sd);
-        this.dr = await frm.showDialog();
+        this.nestedResult = await clickgo.form.dialog(this, {
+            'content': 'Return to the first dialog.',
+            'buttons': ['Back'],
+        });
     }
 
 }
-
-export default Sd;

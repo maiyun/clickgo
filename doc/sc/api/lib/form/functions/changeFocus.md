@@ -6,11 +6,11 @@
 
 # Function: changeFocus()
 
-> **changeFocus**(`formId?`): `Promise`\<`void`\>
+> **changeFocus**(`formId?`, `mode?`): `Promise`\<`void`\>
 
-Defined in: [lib/form/window.ts:364](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L364)
+Defined in: [lib/form/window.ts:365](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L365)
 
-改变 form 的焦点 class
+将键盘焦点和任务焦点切换到目标窗体
 
 ## Parameters
 
@@ -19,6 +19,12 @@ Defined in: [lib/form/window.ts:364](https://github.com/maiyun/clickgo/blob/mast
 `string` = `''`
 
 变更后的 form id
+
+### mode?
+
+`"restore"` \| `"activate"`
+
+activate 主动激活并提到本层最前，restore 在现有可见窗体之间恢复焦点
 
 ## Returns
 

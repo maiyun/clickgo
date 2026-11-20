@@ -335,10 +335,11 @@ export async function hashBack(formId) {
     return true;
 }
 /**
- * --- 改变 form 的焦点 class ---
+ * --- 将键盘焦点和任务焦点切换到目标窗体 ---
  * @param formId 变更后的 form id
+ * @param mode activate 主动激活并提到本层最前，restore 在现有可见窗体之间恢复焦点
  */
-export async function changeFocus(formId = '') {
+export async function changeFocus(formId = '', mode = 'activate') {
     const previousId = getFocus();
     if (previousId === formId) {
         return;
@@ -381,7 +382,10 @@ export async function changeFocus(formId = '') {
     if (targetId !== formId && control.stateMinData) {
         min(targetId);
     }
-    if (target.vroot._topMost) {
+    if (mode === 'restore') {
+        restoreStackOrder(target);
+    }
+    else if (target.vroot._topMost) {
         control.$data.zIndex = ++info.topLastZIndex;
     }
     else if (target.vroot._bottomMost) {
@@ -399,8 +403,43 @@ export async function changeFocus(formId = '') {
         await flash(taskId, targetId);
     }
 }
+/** --- 枚举可接收焦点的已显示窗体，读取运行时状态以包含尚未渲染的变化 --- */
+function* visibleForms() {
+    for (const element of elements.list.children) {
+        const { taskId, formId } = element.dataset;
+        if (!taskId || !formId || taskId === lTask.systemTaskInfo.taskId) {
+            continue;
+        }
+        const task = lTask.getOrigin(taskId);
+        const form = task?.forms[formId];
+        const control = form?.vroot.$refs.form;
+        if (form && !form.closed && !task.ending && control?.$data.isShow && !control.stateMinData) {
+            yield form;
+        }
+    }
+}
+/** --- 仅当同层可见窗体挡在目标前方时调整顺序，退场窗体保留原来的位置 --- */
+function restoreStackOrder(target) {
+    const root = target.vroot;
+    const control = root.$refs.form.$data;
+    const above = [];
+    for (const form of visibleForms()) {
+        const peer = form.vroot;
+        if (Boolean(peer._topMost) === Boolean(root._topMost) && Boolean(peer._bottomMost) === Boolean(root._bottomMost)
+            && peer.$refs.form.$data.zIndex > control.zIndex) {
+            above.push(peer.$refs.form.$data);
+        }
+    }
+    // --- 只轮换这些窗体已经占用的位置，其余窗体之间的顺序保持不变 ---
+    above.sort((a, b) => a.zIndex - b.zIndex);
+    for (const peer of above) {
+        const next = peer.zIndex;
+        peer.zIndex = control.zIndex;
+        control.zIndex = next;
+    }
+}
 /**
- * --- 获取当前 z-index 值最大的 form id（除了 top 模式的窗体和最小化的窗体） ---
+ * --- 获取可见且未置底的窗体中 z-index 最大的 form id ---
  * @param current 当前任务 id
  * @param out 排除选项
  */
@@ -414,47 +453,24 @@ export async function getMaxZIndexID(current, out = {}) {
     return findMaxZIndexID(out);
 }
 /** --- 从可见窗体中选择下一焦点，跳过正在关闭或已隐藏的窗体 --- */
-function findMaxZIndexID(out) {
-    let zIndex = 0;
-    let formId = null;
-    for (let i = 0; i < elements.list.children.length; ++i) {
-        const formWrap = elements.list.children.item(i);
-        const formInner = formWrap.children.item(0);
-        if (!formInner) {
+function findMaxZIndexID(out, includeBottom = false) {
+    let highest = 0;
+    let id = null;
+    for (const form of visibleForms()) {
+        if ((!includeBottom && form.vroot._bottomMost) || out.formIds?.includes(form.id)
+            || out.taskIds?.includes(form.vroot.taskId)) {
             continue;
         }
-        // --- 排除 bottom most 窗体 ---
-        const z = parseInt(formInner.style.zIndex);
-        if (z < 1000000) {
-            continue;
-        }
-        // --- 排除最小化窗体 ---
-        if (formInner.dataset.cgMin !== undefined) {
-            continue;
-        }
-        // --- 排除用户定义的 task id 窗体 ---
-        const tid = formWrap.getAttribute('data-task-id');
-        if (tid === lTask.systemTaskInfo.taskId) {
-            // --- 系统任务排除掉 ---
-            continue;
-        }
-        if (out.taskIds?.includes(tid)) {
-            continue;
-        }
-        // --- 排除用户定义的 form id 窗体 ---
-        const fid = formWrap.getAttribute('data-form-id');
-        if (out.formIds?.includes(fid) || !getForm(tid, fid)?.vroot.$refs.form.$data.isShow) {
-            continue;
-        }
-        if (z > zIndex) {
-            zIndex = z;
-            formId = fid;
+        const z = form.vroot.$refs.form.$data.zIndex;
+        if (z > highest) {
+            highest = z;
+            id = form.id;
         }
     }
-    return formId;
+    return id;
 }
-/** --- 隐藏有焦点的模态窗体后，优先返回上层模态或打开前的可见窗体 --- */
-export function restoreDialogFocus(formId, parent, previous) {
+/** --- 隐藏有焦点的窗体后，优先返回上层模态或打开前的可见窗体 --- */
+export function restoreFocusAfterHide(formId, parent, previous) {
     if (state.focusId !== formId) {
         return;
     }
@@ -462,8 +478,8 @@ export function restoreDialogFocus(formId, parent, previous) {
     const owner = ownerTaskId && previous ? getForm(ownerTaskId, previous) : null;
     const control = owner?.vroot.$refs.form;
     const ownerVisible = owner && !owner.closed && control?.$data.isShow && !control.stateMinData;
-    const focus = parent ?? (ownerVisible ? previous : findMaxZIndexID({ 'formIds': [formId] }));
-    changeFocus(focus ?? undefined).catch(() => { });
+    const focus = parent ?? (ownerVisible ? previous : findMaxZIndexID({}, true));
+    changeFocus(focus ?? undefined, 'restore').catch(() => { });
 }
 /**
  * --- 让最大的 z index 窗体获取焦点（不含 top 和最小化的） ---
@@ -473,7 +489,7 @@ export async function changeFocusMaxZIndex() {
     if (!formId) {
         return;
     }
-    await changeFocus(formId ?? undefined);
+    await changeFocus(formId ?? undefined, 'restore');
 }
 /**
  * --- 根据任务 id 和 form id 获取 IForm 对象 ---

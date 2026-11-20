@@ -5,6 +5,10 @@ export default class extends clickgo.form.AbstractForm {
     sendValue = 'sendValue';
     test = 'A';
     dr = '';
+    access = {
+        'dialog': null,
+        'disposed': false,
+    };
     hash = 'testhash';
     ssend() {
         this.send(this.fid, {
@@ -16,9 +20,36 @@ export default class extends clickgo.form.AbstractForm {
         await clickgo.tool.sleep(1000);
         await this.show();
     }
-    async sshowDialog() {
-        const frm = await clickgo.form.create(this, sdFrm);
-        this.dr = await frm.showDialog();
+    /** --- 隐藏后复用同一个窗体，关闭后重新创建 --- */
+    async openDialog() {
+        if (this.loading || this.access.disposed) {
+            return;
+        }
+        let dialog = this.access.dialog;
+        if (!dialog) {
+            this.loading = true;
+            try {
+                dialog = await clickgo.form.create(this, sdFrm);
+                if (this.access.disposed) {
+                    dialog.close();
+                    return;
+                }
+                this.access.dialog = dialog;
+            }
+            finally {
+                this.loading = false;
+            }
+        }
+        this.dr = await dialog.showDialog();
+        if (!clickgo.form.get(dialog.formId)) {
+            this.access.dialog = null;
+        }
+    }
+    /** --- 父窗体卸载时释放仍保留的演示窗体 --- */
+    onBeforeUnmount() {
+        this.access.disposed = true;
+        this.access.dialog?.close();
+        this.access.dialog = null;
     }
     async showLoading() {
         this.loading = true;

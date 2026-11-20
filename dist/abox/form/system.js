@@ -283,7 +283,7 @@ export function createSystemRuntime(deps) {
                     if (!fid) {
                         return;
                     }
-                    changeFocus(fid).catch(() => { });
+                    changeFocus(fid, 'restore').catch(() => { });
                 }).catch(() => { });
             });
             document.getElementById('cg-confirm-ok').addEventListener('click', () => {
@@ -293,7 +293,7 @@ export function createSystemRuntime(deps) {
                     if (!fid) {
                         return;
                     }
-                    changeFocus(fid).catch(() => { });
+                    changeFocus(fid, 'restore').catch(() => { });
                 }).catch(() => { });
             });
             this.keyboard.id = 'cg-keyboard';

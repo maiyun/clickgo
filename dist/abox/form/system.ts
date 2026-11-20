@@ -328,7 +328,7 @@ const elements: {
                 if (!fid) {
                     return;
                 }
-                changeFocus(fid).catch(() => {});
+                changeFocus(fid, 'restore').catch(() => {});
             }).catch(() => {});
         });
         document.getElementById('cg-confirm-ok')!.addEventListener('click', () => {
@@ -338,7 +338,7 @@ const elements: {
                 if (!fid) {
                     return;
                 }
-                changeFocus(fid).catch(() => {});
+                changeFocus(fid, 'restore').catch(() => {});
             }).catch(() => {});
         });
 
