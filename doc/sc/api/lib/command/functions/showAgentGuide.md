@@ -8,7 +8,7 @@
 
 > **showAgentGuide**(`current`, `options?`): `Promise`\<`void`\>
 
-Defined in: lib/command/agent-guide.ts:14
+Defined in: [lib/command/agent-guide.ts:14](https://github.com/maiyun/clickgo/blob/master/dist/lib/command/agent-guide.ts#L14)
 
 打开当前应用的 AI 接入说明，可复制给代理并查看已公开的命令
 
