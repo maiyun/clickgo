@@ -86,9 +86,9 @@
     <teleport to="system">
         <div ref="pop" class="pop">
             <cg-menulist>
-                <cg-menulist-item alt="Ctrl+R" alt-popup @click="reset()">{{l('reset')}}</cg-menulist-item>
+                <cg-menulist-item alt="R" alt-popup @click="reset()">{{l('reset')}}</cg-menulist-item>
                 <cg-menulist-split></cg-menulist-split>
-                <cg-menulist-item alt="Ctrl+D" alt-popup type="check" :modelValue="descData" @update:modelValue="this.descData = $event;emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
+                <cg-menulist-item alt="D" alt-popup type="check" :modelValue="descData" @update:modelValue="this.descData = $event;emit('update:desc', $event)">{{l('description')}}</cg-menulist-item>
             </cg-menulist>
         </div>
     </teleport>

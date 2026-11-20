@@ -19,7 +19,7 @@
             </template>
             <template v-slot:pop>
                 <menulist>
-                    <menulist-item alt="S" @click="showIndex">Show select</menulist-item>
+                    <menulist-item alt="S" alt-popup @click="showIndex">Show select</menulist-item>
                 </menulist>
             </template>
             <template v-if="slot" v-slot:label="d">

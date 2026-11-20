@@ -64,7 +64,7 @@
                     <template v-slot>Item1</template>
                     <template v-slot:pop>
                         <menulist>
-                            <menulist-item alt="A">Item4</menulist-item>
+                            <menulist-item alt="A" alt-popup>Item4</menulist-item>
                         </menulist>
                     </template>
                 </menu-item>
@@ -72,7 +72,7 @@
                     <template v-slot>Item2</template>
                     <template v-slot:pop>
                         <menulist>
-                            <menulist-item alt="A">Item6</menulist-item>
+                            <menulist-item alt="A" alt-popup>Item6</menulist-item>
                         </menulist>
                     </template>
                 </menu-item>
@@ -80,7 +80,7 @@
                     <template v-slot>Item3</template>
                     <template v-slot:pop>
                         <menulist>
-                            <menulist-item alt="A">Item5</menulist-item>
+                            <menulist-item alt="A" alt-popup>Item5</menulist-item>
                         </menulist>
                     </template>
                 </menu-item>

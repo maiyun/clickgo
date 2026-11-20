@@ -4,7 +4,7 @@
     <teleport v-if="propBoolean('copy')" to="system">
         <div ref="pop" class="pop">
             <cg-menulist>
-                <cg-menulist-item alt="Ctrl+C" alt-only @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
+                <cg-menulist-item alt="C" alt-only @click="execCmd('copy')">{{l('copy')}}</cg-menulist-item>
             </cg-menulist>
         </div>
     </teleport>

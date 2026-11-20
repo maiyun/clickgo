@@ -24,7 +24,7 @@
                     </template>
                     <template v-slot:itempop>
                         <menulist>
-                            <menulist-item alt="S">Set the default</menulist-item>
+                            <menulist-item alt="S" alt-popup>Set the default</menulist-item>
                         </menulist>
                     </template>
                 </greatselect>

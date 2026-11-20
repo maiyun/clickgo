@@ -16,13 +16,13 @@
                 </template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item alt="I" @click="showIndex">Show index</menulist-item>
-                        <menulist-item alt="S" @click="showType">Show type</menulist-item>
+                        <menulist-item alt="I" alt-popup @click="showIndex">Show index</menulist-item>
+                        <menulist-item alt="S" alt-popup @click="showType">Show type</menulist-item>
                     </menulist>
                 </template>
                 <template v-slot:itempop>
                     <menulist>
-                        <menulist-item alt="S">Set the default</menulist-item>
+                        <menulist-item alt="S" alt-popup>Set the default</menulist-item>
                     </menulist>
                 </template>
             </greatlist>
@@ -38,7 +38,7 @@
                 </template>
                 <template v-slot:itempop>
                     <menulist>
-                        <menulist-item alt="N">None</menulist-item>
+                        <menulist-item alt="N" alt-popup>None</menulist-item>
                     </menulist>
                 </template>
             </greatlist>
@@ -57,7 +57,7 @@
                 <layout direction="v" gutter="10" style="flex: 2; width: 0;">
                     <list v-model="select2" :disabled="disabled" :must="must" :multi="multi" :ctrl="ctrl" :selection="selection" :gesture="gesture ? ['top', 'bottom'] : []" @gesture="onGesture" :scroll="scroll" :data="listDataEmpty ? [] : listData" :check="check" @label="label2 = $event" style="flex: 1; height: 0;" :tree="tree" :async="async" :icon="icon" icon-default="../../../res/txt.svg" :virtual="virtual" :mode="mode[0]" @load="onSelectLoad" @add="onLAdd" @Remove="onLRemove">
                         <menulist>
-                            <menulist-item alt="I" @click="showIndex2">Show select</menulist-item>
+                            <menulist-item alt="I" alt-popup @click="showIndex2">Show select</menulist-item>
                         </menulist>
                     </list>
                     <button @click="listDataEmpty = !listDataEmpty">{{listDataEmpty ? '' : '!'}}empty</button>

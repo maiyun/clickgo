@@ -8,18 +8,18 @@
                 <template v-slot>Radio</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item type="radio" alt="A" v-model="radio" label="radio1">Radio1</menulist-item>
-                        <menulist-item type="radio" alt="B" v-model="radio" label="radio2">Radio2</menulist-item>
-                        <menulist-item type="radio" alt="C" v-model="radio" label="radio3" @check="onRadio">Radio3</menulist-item>
+                        <menulist-item type="radio" alt="A" alt-popup v-model="radio" label="radio1">Radio1</menulist-item>
+                        <menulist-item type="radio" alt="B" alt-popup v-model="radio" label="radio2">Radio2</menulist-item>
+                        <menulist-item type="radio" alt="C" alt-popup v-model="radio" label="radio3" @check="onRadio">Radio3</menulist-item>
                         <menulist-split></menulist-split>
                         <menulist-item>
                             <template v-slot>Check</template>
                             <template v-slot:pop>
                                 <menulist>
-                                    <menulist-item type="check" alt="D" v-model="check1">Check1</menulist-item>
-                                    <menulist-item type="check" alt="E" v-model="check2">Check2</menulist-item>
-                                    <menulist-item type="check" alt="F" v-model="check3" @check="onCheck">Check3 (not)</menulist-item>
-                                    <menulist-item type="check" alt="G">Check4 (nov)</menulist-item>
+                                    <menulist-item type="check" alt="D" alt-popup v-model="check1">Check1</menulist-item>
+                                    <menulist-item type="check" alt="E" alt-popup v-model="check2">Check2</menulist-item>
+                                    <menulist-item type="check" alt="F" alt-popup v-model="check3" @check="onCheck">Check3 (not)</menulist-item>
+                                    <menulist-item type="check" alt="G" alt-popup>Check4 (nov)</menulist-item>
                                 </menulist>
                             </template>
                         </menulist-item>
@@ -34,9 +34,9 @@
                             <template v-slot>Icon</template>
                             <template v-slot:pop>
                                 <menulist>
-                                    <menulist-item alt="H"><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label>Txt</label></menulist-item>
-                                    <menulist-item alt="I"><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label>Sql</label></menulist-item>
-                                    <menulist-item alt="J"><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label>Zip</label></menulist-item>
+                                    <menulist-item alt="H" alt-popup><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label>Txt</label></menulist-item>
+                                    <menulist-item alt="I" alt-popup><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label>Sql</label></menulist-item>
+                                    <menulist-item alt="J" alt-popup><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label>Zip</label></menulist-item>
                                 </menulist>
                             </template>
                         </menulist-item>
@@ -44,13 +44,13 @@
                             <template v-slot>Control</template>
                             <template v-slot:pop>
                                 <menulist>
-                                    <menulist-item alt="K">
+                                    <menulist-item alt="K" alt-popup>
                                         <button @click="$event.stopPropagation()" style="flex: 1; width: 0;">Button</button>
                                     </menulist-item>
-                                    <menulist-item alt="L">
+                                    <menulist-item alt="L" alt-popup>
                                         <scroll direction="h" @click="$event.stopPropagation()" style="width: 150px; height: 30px;"></scroll>
                                     </menulist-item>
-                                    <menulist-item alt="M">
+                                    <menulist-item alt="M" alt-popup>
                                         <text @click="$event.stopPropagation()" style="flex: 1; width: 0;"></text>
                                     </menulist-item>
                                 </menulist>
@@ -61,17 +61,17 @@
                             <template v-slot:pop>
                                 <menulist>
                                     <layout>
-                                        <menulist-item alt="N">Box 1</menulist-item>
+                                        <menulist-item alt="N" alt-popup>Box 1</menulist-item>
                                         <menulist-item>
                                             <template v-slot>Box 2</template>
                                             <template v-slot:pop>
                                                 <menulist>
-                                                    <menulist-item alt="O">Child</menulist-item>
+                                                    <menulist-item alt="O" alt-popup>Child</menulist-item>
                                                 </menulist>
                                             </template>
                                         </menulist-item>
                                     </layout>
-                                    <menulist-item alt="P">Other item</menulist-item>
+                                    <menulist-item alt="P" alt-popup>Other item</menulist-item>
                                 </menulist>
                             </template>
                         </menulist-item>
@@ -86,9 +86,9 @@
                 <template v-slot>Item2</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item alt="R">Item3</menulist-item>
-                        <menulist-item alt="S">Item4</menulist-item>
-                        <menulist-item alt="T" disabled>Item5</menulist-item>
+                        <menulist-item alt="R" alt-popup>Item3</menulist-item>
+                        <menulist-item alt="S" alt-popup>Item4</menulist-item>
+                        <menulist-item alt="T" alt-popup disabled>Item5</menulist-item>
                     </menulist>
                 </template>
             </menulist-item>
@@ -117,25 +117,25 @@
                 <template v-slot>Item1</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item alt="V">Item4</menulist-item>
-                        <menulist-item alt="Ctrl+Shift+F12" @click="dialogClick">Dialog</menulist-item>
+                        <menulist-item alt="V" alt-popup>Item4</menulist-item>
+                        <menulist-item alt="Ctrl+Shift+F12" alt-popup @click="dialogClick">Dialog</menulist-item>
                         <menulist-split></menulist-split>
                         <menulist-item>
                             <template v-slot>Radio</template>
                             <template v-slot:pop>
                                 <menulist>
-                                    <menulist-item type="radio" alt="X" v-model="radio" label="radio1">Radio1</menulist-item>
-                                    <menulist-item type="radio" alt="Y" v-model="radio" label="radio2">Radio2</menulist-item>
-                                    <menulist-item type="radio" alt="Z" v-model="radio" label="radio3" @check="onRadio">Radio3</menulist-item>
+                                    <menulist-item type="radio" alt="X" alt-popup v-model="radio" label="radio1">Radio1</menulist-item>
+                                    <menulist-item type="radio" alt="Y" alt-popup v-model="radio" label="radio2">Radio2</menulist-item>
+                                    <menulist-item type="radio" alt="Z" alt-popup v-model="radio" label="radio3" @check="onRadio">Radio3</menulist-item>
                                     <menulist-split></menulist-split>
                                     <menulist-item>
                                         <template v-slot>Check</template>
                                         <template v-slot:pop>
                                             <menulist>
-                                                <menulist-item type="check" alt="Ctrl+Shift+A" v-model="check1">Check1</menulist-item>
-                                                <menulist-item type="check" alt="Ctrl+Alt+B" v-model="check2">Check2</menulist-item>
-                                                <menulist-item type="check" alt="Ctrl+Alt+Shift+C" v-model="check3" @check="onCheck">Check3 (not)</menulist-item>
-                                                <menulist-item type="check" alt="Alt+Shift+D">Check4 (nov)</menulist-item>
+                                                <menulist-item type="check" alt="Ctrl+Shift+A" alt-popup v-model="check1">Check1</menulist-item>
+                                                <menulist-item type="check" alt="Ctrl+Alt+B" alt-popup v-model="check2">Check2</menulist-item>
+                                                <menulist-item type="check" alt="Ctrl+Alt+Shift+C" alt-popup v-model="check3" @check="onCheck">Check3 (not)</menulist-item>
+                                                <menulist-item type="check" alt="Alt+Shift+D" alt-popup>Check4 (nov)</menulist-item>
                                             </menulist>
                                         </template>
                                     </menulist-item>
@@ -150,9 +150,9 @@
                                     <template v-slot>Icon</template>
                                     <template v-slot:pop>
                                         <menulist>
-                                            <menulist-item alt="Shift+F1"><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label>Txt</label></menulist-item>
-                                            <menulist-item alt="Alt+F2"><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label>Sql</label></menulist-item>
-                                            <menulist-item alt="Meta+F3"><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label>Zip</label></menulist-item>
+                                            <menulist-item alt="Shift+F1" alt-popup><img src="../../../res/txt.svg" style="width: 16px; height: 16px;" /><label>Txt</label></menulist-item>
+                                            <menulist-item alt="Alt+F2" alt-popup><img src="../../../res/sql.svg" style="width: 16px; height: 16px;" /><label>Sql</label></menulist-item>
+                                            <menulist-item alt="Meta+F3" alt-popup><img src="../../../res/zip.svg" style="width: 16px; height: 16px;" /><label>Zip</label></menulist-item>
                                         </menulist>
                                     </template>
                                 </menulist-item>
@@ -160,13 +160,13 @@
                                     <template v-slot>Control</template>
                                     <template v-slot:pop>
                                         <menulist>
-                                            <menulist-item alt="Ctrl+Shift+F4">
+                                            <menulist-item alt="Ctrl+Shift+F4" alt-popup>
                                                 <button @click="$event.stopPropagation()" style="flex: 1; width: 0;">Button</button>
                                             </menulist-item>
-                                            <menulist-item alt="Ctrl+Alt+F5">
+                                            <menulist-item alt="Ctrl+Alt+F5" alt-popup>
                                                 <scroll direction="h" @click="$event.stopPropagation()" style="width: 150px; height: 30px;"></scroll>
                                             </menulist-item>
-                                            <menulist-item alt="Ctrl+Alt+Shift+F6">
+                                            <menulist-item alt="Ctrl+Alt+Shift+F6" alt-popup>
                                                 <text @click="$event.stopPropagation()" style="flex: 1; width: 0;"></text>
                                             </menulist-item>
                                         </menulist>
@@ -177,17 +177,17 @@
                                     <template v-slot:pop>
                                         <menulist>
                                             <layout>
-                                                <menulist-item alt="Alt+Shift+F7">Box 1</menulist-item>
+                                                <menulist-item alt="Alt+Shift+F7" alt-popup>Box 1</menulist-item>
                                                 <menulist-item>
                                                     <template v-slot>Box 2</template>
                                                     <template v-slot:pop>
                                                         <menulist>
-                                                            <menulist-item alt="Shift+F8">Child</menulist-item>
+                                                            <menulist-item alt="Shift+F8" alt-popup>Child</menulist-item>
                                                         </menulist>
                                                     </template>
                                                 </menulist-item>
                                             </layout>
-                                            <menulist-item alt="Meta+Shift+F9">Other item</menulist-item>
+                                            <menulist-item alt="Meta+Shift+F9" alt-popup>Other item</menulist-item>
                                         </menulist>
                                     </template>
                                 </menulist-item>
@@ -201,7 +201,7 @@
                 <template v-slot>Item2</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item alt="Ctrl+Shift+F10">Item6</menulist-item>
+                        <menulist-item alt="Ctrl+Shift+F10" alt-popup>Item6</menulist-item>
                     </menulist>
                 </template>
             </menu-item>
@@ -209,7 +209,7 @@
                 <template v-slot>Item3</template>
                 <template v-slot:pop>
                     <menulist>
-                        <menulist-item alt="Alt+Shift+F11">Item5</menulist-item>
+                        <menulist-item alt="Alt+Shift+F11" alt-popup>Item5</menulist-item>
                     </menulist>
                 </template>
             </menu-item>

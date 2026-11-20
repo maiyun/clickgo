@@ -40,10 +40,10 @@
                     {{l('position')}}
                     <template v-slot:pop>
                         <menulist>
-                            <menulist-item alt="T" type="radio" :modelValue="position" @update:modelValue="updatePosition('top')" label="top">{{l('top')}}</menulist-item>
-                            <menulist-item alt="R" type="radio" :modelValue="position" @update:modelValue="updatePosition('right')" label="right">{{l('right')}}</menulist-item>
-                            <menulist-item alt="B" type="radio" :modelValue="position" @update:modelValue="updatePosition('bottom')" label="bottom">{{l('bottom')}}</menulist-item>
-                            <menulist-item alt="L" type="radio" :modelValue="position" @update:modelValue="updatePosition('left')" label="left">{{l('left')}}</menulist-item>
+                            <menulist-item alt="T" alt-popup type="radio" :modelValue="position" @update:modelValue="updatePosition('top')" label="top">{{l('top')}}</menulist-item>
+                            <menulist-item alt="R" alt-popup type="radio" :modelValue="position" @update:modelValue="updatePosition('right')" label="right">{{l('right')}}</menulist-item>
+                            <menulist-item alt="B" alt-popup type="radio" :modelValue="position" @update:modelValue="updatePosition('bottom')" label="bottom">{{l('bottom')}}</menulist-item>
+                            <menulist-item alt="L" alt-popup type="radio" :modelValue="position" @update:modelValue="updatePosition('left')" label="left">{{l('left')}}</menulist-item>
                         </menulist>
                     </template>
                 </menulist-item>

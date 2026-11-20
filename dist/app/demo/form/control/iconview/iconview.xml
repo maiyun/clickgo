@@ -7,13 +7,13 @@
             </template>
             <template v-slot:pop>
                 <menulist>
-                    <menulist-item alt="S">Some options</menulist-item>
+                    <menulist-item alt="S" alt-popup>Some options</menulist-item>
                 </menulist>
             </template>
             <template v-slot:itempop>
                 <menulist>
-                    <menulist-item alt="I" @click="showIndex">Show index</menulist-item>
-                    <menulist-item alt="S" @click="showType">Show type</menulist-item>
+                    <menulist-item alt="I" alt-popup @click="showIndex">Show index</menulist-item>
+                    <menulist-item alt="S" alt-popup @click="showType">Show type</menulist-item>
                 </menulist>
             </template>
         </iconview>

@@ -14,7 +14,7 @@
             Size xl
             <template v-slot:pop>
                 <menulist>
-                    <menulist-item alt="T">Test 1</menulist-item>
+                    <menulist-item alt="T" alt-popup>Test 1</menulist-item>
                 </menulist>
             </template>
         </button>
