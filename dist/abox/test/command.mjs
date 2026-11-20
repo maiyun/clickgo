@@ -47,6 +47,7 @@ const tool = await load('../../lib/tool.ts', { '../abox/tool.js': toolBox });
 const jsonBox = await load('../command/json.ts', {});
 const webBox = await load('../command/webmcp.ts', { './json.js': jsonBox });
 const runtimeBox = await load('../command/runtime.ts', {});
+const sampleBox = await load('../command/sample.ts', {});
 let fileNow = Date.now();
 const fileBox = await load('../command/file.ts', {}, {
     Date: class extends Date { static now() { return fileNow; } },
@@ -55,6 +56,7 @@ const commandBox = await load('../command.ts', {
     './tool.js': toolBox, './command/json.js': jsonBox, './command/webmcp.js': webBox,
     './command/runtime.js': runtimeBox,
     './command/file.js': fileBox,
+    './command/sample.js': sampleBox,
 });
 const schema = await load('../../lib/command/schema.ts', {
     '../../abox/command.js': commandBox, '../../abox/tool.js': toolBox,
@@ -89,11 +91,13 @@ const fileStore = await load('../../lib/command/file.ts', {
     } },
 });
 let native;
+const guideWindow = {};
 const command = await load('../../lib/command.ts', {
     '../abox/command.js': commandBox,
     './core': coreScope.exports,
     './tool': tool,
     './task': taskRuntime,
+    './command/agent-guide': guideWindow,
     './command/schema': schema,
     './command/guide': guide,
     './command/data': data,
@@ -396,6 +400,74 @@ const pointers = { $defs: { 'a/b ~': { type: 'number' } }, $ref: '#/$defs/a~1b%2
 assert.equal(schema.check(pointers), null);
 assert.equal(schema.validate(2, pointers), null);
 assert.notEqual(schema.check({ $ref: '#/$defs/~2', $defs: { '~2': {} } }), null);
+
+// --- 生成值须能通过命令执行时的校验，包括嵌套字段和声明的可选参数。 ---
+const sampleSchema = {
+    type: 'object', additionalProperties: false, required: ['tags', 'ratio', 'code', 'limit', 'count', 'title'],
+    $defs: { tag: { type: 'string', enum: ['left', 'right'] } },
+    properties: {
+        tags: { type: 'array', uniqueItems: true, minItems: 2, maxItems: 2, items: { $ref: '#/$defs/tag' } },
+        ratio: { type: 'number', allOf: [{ exclusiveMinimum: 0.25 }, { exclusiveMaximum: 0.3 }] },
+        code: { type: 'string', pattern: '^[A-Z]{2}[0-9]{3}$' },
+        limit: { type: 'integer', minimum: 5.5, maximum: 6.5 },
+        count: { type: 'integer', minimum: 1, default: 8 },
+        title: { type: 'string', minLength: 2, examples: ['', 'Demo'] },
+        options: { type: 'object', properties: { enabled: { const: false } }, required: ['enabled'] },
+    },
+};
+const exampleArgs = schema.sampleInput(sampleSchema);
+assert.ok(exampleArgs);
+assert.equal(data.readInput(exampleArgs, sampleSchema).ok, true);
+assert.deepEqual(plain(exampleArgs.tags).sort(), ['left', 'right']);
+assert.match(exampleArgs.code, /^[A-Z]{2}[0-9]{3}$/);
+assert.equal(exampleArgs.limit, 6);
+assert.equal(exampleArgs.count, 8);
+assert.equal(exampleArgs.title, 'Demo');
+assert.deepEqual(plain(exampleArgs.options), { enabled: false });
+const composed = { ...nested, required: ['values', 'choice', 'limit', 'optional'] };
+assert.equal(data.readInput(schema.sampleInput(composed), composed).ok, true);
+assert.deepEqual(plain(schema.sampleInput(objectSchema)), {});
+const prototypeKey = JSON.parse('{"type":"object","properties":{"__proto__":{"const":"ok"}},"required":["__proto__"]}');
+assert.equal(Object.hasOwn(schema.sampleInput(prototypeKey), '__proto__'), true);
+const impossibleSchema = { type: 'object', properties: { x: false }, required: ['x'] };
+assert.equal(schema.sampleInput(impossibleSchema), null);
+
+// --- 面板只填当前命令的输入框；保留失败前的草稿，由用户另行触发执行。 ---
+const paletteAlerts = [];
+let testPalette;
+const panelModule = await load('../../lib/command/palette.ts', {
+    '../command': command, './schema': schema, '../tool': tool,
+    '../form': {
+        AbstractForm: class { watch() {} },
+        get: () => first,
+        alert: message => paletteAlerts.push(message),
+        create: async (_current, Form) => {
+            testPalette = Object.assign(new Form(), { locale: 'en', showDialog() { this.onMounted(); } });
+            return testPalette;
+        },
+    },
+});
+assert.equal(command.register(first, definition('no-sample', { inputSchema: impossibleSchema })), true);
+await panelModule.showPalette(first);
+testPalette.selected = ['validated'];
+received = undefined;
+testPalette.generateArgs();
+const generatedText = testPalette.args;
+const generatedArgs = JSON.parse(generatedText);
+assert.equal(generatedText, JSON.stringify(generatedArgs, null, 2));
+assert.equal(generatedArgs.amount, 2);
+assert.equal(received, undefined);
+await testPalette.submit();
+assert.deepEqual(plain(received), generatedArgs);
+testPalette.selected = ['no-sample'];
+testPalette.args = '{"x":"draft"}';
+testPalette.generateArgs();
+assert.equal(testPalette.args, '{"x":"draft"}');
+assert.equal(paletteAlerts.length, 1);
+testPalette.selected = ['shared'];
+testPalette.generateArgs();
+assert.deepEqual(JSON.parse(testPalette.args), {});
+command.unregister(first, 'no-sample');
 
 // --- 桥接只公开明确允许的命令，绑定实例且不可被调用方改写。 ---
 const bridge = command.createBridge(first);
@@ -794,34 +866,51 @@ assert.equal(command.list(second).some(info => info.name === 'owned-panel'), fal
 const taskSource = await readFile(new URL('../../lib/task.ts', import.meta.url), 'utf8');
 const taskTree = ts.createSourceFile('task.ts', taskSource, ts.ScriptTarget.ES2022, true);
 
-// --- 实际 Demo 消费页面级事件；工具发布、失败和重试不改变浏览器接入显示。 ---
-const CommandForm = (await load('../../app/demo/form/method/command/command.ts', {
-    clickgo: { command, task: { createTimer: () => assert.fail('Demo must not poll registration') },
-        form: { AbstractForm: class {},
-        get: formId => Object.values(tasks).some(item => item.forms[formId]) ? {} : null } },
-})).default;
+// --- 通过公开窗口入口挂载接入说明，使用真实命令注册和页面级事件。 ---
+const guideForms = new Map();
+const paletteRequests = [];
+let clipboardText;
+let allowCopy = true;
+let guideSnapshots = 0;
+const copyAlerts = [];
+const clipboard = { writeText: async value => {
+    if (!allowCopy) throw new Error('Clipboard unavailable');
+    clipboardText = value;
+} };
+const submitPalette = async (current, options) => paletteRequests.push({ taskId: current.taskId, options });
+Object.assign(guideWindow, await load('../../lib/command/agent-guide.ts', {
+    '../command': {
+        createBridge: command.createBridge,
+        getAgentInfo: (...args) => { ++guideSnapshots; return command.getAgentInfo(...args); },
+    },
+    './guide': guide, '../tool': tool, './palette': { showPalette: submitPalette },
+    './agent-guide-locale': await load('../../lib/command/agent-guide-locale.ts', {}),
+    '../form': {
+        AbstractForm: class {},
+        alert: (...args) => copyAlerts.push(args),
+        get: formId => Object.values(tasks).some(item => item.forms[formId] && !item.forms[formId].closed) ? {} : null,
+        create: async (current, Form, _data, options) => {
+            const form = Object.assign(new Form(), { taskId: current.taskId, formId: current.taskId + '-guide', locale: 'en' });
+            tasks[current.taskId].forms[form.formId] = { closed: false, vroot: form };
+            form.showDialog = async () => {
+                assert.equal(current.loading, false, 'parent is interactive before opening the modal');
+                await form.onMounted();
+            };
+            guideForms.set(current.taskId, { form, layout: options.layout });
+            return form;
+        },
+    },
+}, { navigator: { clipboard } }));
 
-/**
- * --- 等待注册 Promise 与事件回调推进，不手动刷新 Demo ---
- * @param predicate 预期显示或生命周期状态
- * @returns 达到预期后完成
- */
-async function waitForDemo(predicate) {
+async function waitForGuide(predicate) {
     for (let i = 0; i < 40; ++i) {
-        if (predicate()) {
-            return;
-        }
+        if (predicate()) return;
         await new Promise(resolve => setTimeout(resolve, 25));
     }
-    assert.fail('Demo did not update automatically');
+    assert.fail('Agent guide did not update automatically');
 }
 
-/**
- * --- 在真实命令注册入口前控制浏览器的异步确认 ---
- * @param id 示例 App ID
- * @returns 已挂载的 Form 与注册完成入口
- */
-async function mountDemo(id) {
+async function mountGuide(id, instructions) {
     let finish;
     let fail;
     let pending = true;
@@ -831,102 +920,117 @@ async function mountDemo(id) {
         fail = () => { pending = false; failure = true; reject(new Error('Browser registration failed')); };
     });
     dom.window.document.modelContext = { registerTool: () => {
-        if (failure) {
-            return Promise.reject(new Error('Browser registration failed'));
-        }
+        if (failure) return Promise.reject(new Error('Browser registration failed'));
         return pending ? registration : undefined;
     } };
     const current = task(id);
-    const demo = new CommandForm();
-    Object.assign(demo, { taskId: current.taskId, formId: `${id}-form` });
-    tasks[id].forms = { [demo.formId]: { closed: false, vroot: demo } };
-    await demo.onMounted();
-    assert.ok(demo.webMcpStatus.includes('Browser interface ready'));
+    command.register(current, definition('private-command'));
+    command.register(current, definition('public-command', { exposed: true }));
+    await command.showAgentGuide(current, { instructions });
+    const { form, layout } = guideForms.get(id);
+    assert.equal(form.commandCount, 1, 'only exposed commands in the caller task are counted');
+    assert.equal(form.appName, 'App ' + id);
+    assert.equal(form.nativeEntry, false);
+    assert.ok(form.guide.includes("window['clickgo']['command']"));
     assert.equal((await command.getAgentInfo(id)).webMcp.registrationStatus, 'registering');
-    return { demo, finish, fail, retry: () => { failure = false; } };
+    return { form, layout, finish, fail, retry: () => { failure = false; } };
 }
 
-const readyDemo = await mountDemo('demo-ready');
-readyDemo.finish();
+await command.showAgentGuide({ taskId: 'none', formId: 'already-closed' });
+await command.showAgentGuide({ taskId: second.taskId, formId: second.formId, loading: true });
+assert.equal(guideForms.size, 0, 'closed or currently loading parents do not open a modal');
+const workflow = 'Read the document before updating it.\n<label>{{businessValue}}</label>';
+const readyGuide = await mountGuide('guide-ready', workflow);
+assert.ok(readyGuide.form.guide.endsWith('\n\n' + workflow), 'preserve multi-line business instructions verbatim');
+assert.ok(!readyGuide.layout.includes(workflow), 'business instructions are displayed as data');
+await readyGuide.form.copy();
+assert.equal(clipboardText, readyGuide.form.guide, 'copy includes both the platform and business instructions');
+assert.equal(readyGuide.form.preview, false);
+allowCopy = false;
+await readyGuide.form.copy();
+assert.equal(readyGuide.form.preview, true, 'a denied copy opens the same text for manual selection');
+assert.equal(copyAlerts.at(-1)[1], 'warning');
+allowCopy = true;
+await readyGuide.form.openPalette();
+assert.deepEqual(plain(paletteRequests), [{ taskId: 'guide-ready', options: { exposedOnly: true } }]);
+readyGuide.finish();
 await new Promise(setImmediate);
-assert.equal((await command.getAgentInfo('demo-ready')).webMcp.registrationStatus, 'ready');
+assert.equal((await command.getAgentInfo('guide-ready')).webMcp.registrationStatus, 'ready');
 const beforeAdditional = notices.length;
-const ownGuideRequest = readyDemo.demo.access.guideRequest;
-command.register(readyDemo.demo, definition('additional', { exposed: true }));
+const beforeAdditionalSnapshots = guideSnapshots;
+command.register('guide-ready', definition('another-public-command', { exposed: true }));
 await new Promise(setImmediate);
 assert.equal(notices.length, beforeAdditional, 'App command changes do not trigger browser integration events');
-assert.equal(readyDemo.demo.access.guideRequest, ownGuideRequest, 'tool synchronization does not refresh the global state UI');
+assert.equal(guideSnapshots, beforeAdditionalSnapshots, 'tool synchronization does not refresh the page capability UI');
+await readyGuide.form.refresh();
+assert.equal(readyGuide.form.commandCount, 2);
 
-const failedDemo = await mountDemo('demo-failed');
-failedDemo.fail();
+const failedGuide = await mountGuide('guide-failed');
+failedGuide.fail();
 await new Promise(setImmediate);
-assert.equal((await command.getAgentInfo('demo-failed')).webMcp.registrationStatus, 'failed');
-assert.equal(failedDemo.demo.webMcpStatus, readyDemo.demo.webMcpStatus, 'all Apps display the same browser state despite a tool failure');
+assert.equal((await command.getAgentInfo('guide-failed')).webMcp.registrationStatus, 'failed');
 assert.equal(notices.length, beforeAdditional, 'tool rejection does not emit global disconnection');
-await failedDemo.demo.generateGuide();
-await waitForDemo(() => failedDemo.demo.agentGuide.includes('WebMCP tool registration failed'));
-assert.equal(Object.keys(tasks['demo-failed'].timers).length, 0);
-failedDemo.retry();
-assert.equal(await command.connectWebMcp('demo-failed'), true);
-await failedDemo.demo.generateGuide();
-await waitForDemo(() => !failedDemo.demo.agentGuide.includes('WebMCP tool registration failed'));
+await failedGuide.form.refresh();
+assert.ok(failedGuide.form.guide.includes('WebMCP tool registration failed'));
+assert.ok(!failedGuide.form.guide.includes(workflow), 'additional instructions are isolated by window');
+assert.equal(Object.keys(tasks['guide-failed'].timers).length, 0);
+failedGuide.retry();
+assert.equal(await command.connectWebMcp('guide-failed'), true);
+await failedGuide.form.refresh();
+assert.ok(!failedGuide.form.guide.includes('WebMCP tool registration failed'));
 
-// --- 页面能力变化不携带 App ID，两个 Demo 均自动更新，无需手动刷新。 ---
-const demoContext = dom.window.document.modelContext;
+const guideContext = dom.window.document.modelContext;
 delete dom.window.document.modelContext;
 command.init();
-await waitForDemo(() => readyDemo.demo.webMcpStatus.includes('Not supported') &&
-    failedDemo.demo.webMcpStatus.includes('Not supported') &&
-    readyDemo.demo.agentGuide.includes('WebMCP is not supported') &&
-    failedDemo.demo.agentGuide.includes('WebMCP is not supported'));
-dom.window.document.modelContext = demoContext;
+await waitForGuide(() => [readyGuide, failedGuide].every(({ form }) => form.guide.includes('WebMCP is not supported')));
+dom.window.document.modelContext = guideContext;
 command.init();
-await waitForDemo(() => readyDemo.demo.webMcpStatus.includes('Browser interface ready') &&
-    failedDemo.demo.webMcpStatus.includes('Browser interface ready') &&
-    !readyDemo.demo.agentGuide.includes('WebMCP is not supported') &&
-    !failedDemo.demo.agentGuide.includes('WebMCP is not supported'));
-command.clear('demo-ready');
-delete tasks['demo-ready'];
+await waitForGuide(() => [readyGuide, failedGuide].every(({ form }) => !form.guide.includes('WebMCP is not supported')));
+command.clear('guide-ready');
+await readyGuide.form.refresh();
+assert.equal(readyGuide.form.commandCount, 0);
+assert.ok(readyGuide.form.guide.includes(workflow), 'an App can access its instructions with zero public commands');
+delete tasks['guide-ready'];
 
-// --- 后返回的旧 Native 说明不能覆盖新请求已经显示的网页说明。 ---
+// --- 后返回的旧 Native 快照不能覆盖新请求已经显示的网页说明。 ---
 let finishOldInfo;
 nativeEnvironment = true;
 entry = new Promise(resolve => { finishOldInfo = resolve; });
-const oldGuideRequest = failedDemo.demo.generateGuide();
+const oldGuideRequest = failedGuide.form.refresh();
 nativeEnvironment = false;
-await failedDemo.demo.generateGuide();
-const latestGuide = failedDemo.demo.agentGuide;
+await failedGuide.form.refresh();
+const latestGuide = failedGuide.form.guide;
 finishOldInfo({ name: 'Stale software', platform: 'linux', command: '/stale/software', args: [],
     startup: 'existing', mcp: { enabled: true, discovery: true } });
 await oldGuideRequest;
-assert.equal(failedDemo.demo.agentGuide, latestGuide, 'a stale guide request is discarded');
-entry = undefined;
-command.clear('demo-failed');
-delete tasks['demo-failed'];
+assert.equal(failedGuide.form.guide, latestGuide);
+assert.equal(failedGuide.form.nativeEntry, false);
 
-const closingDemo = await mountDemo('demo-closing');
-const beforePendingQuery = nativeQueries;
-let finishInfo;
+// --- Native 说明不会请求 HTTP 凭据，包括关闭前尚未返回的查询。 ---
+entry = { name: 'My app', platform: 'linux', command: '/test/software', args: [],
+    startup: 'existing', mcp: { enabled: true, discovery: true } };
 nativeEnvironment = true;
-entry = new Promise(resolve => { finishInfo = resolve; });
-closingDemo.finish();
-const closingGuide = closingDemo.demo.generateGuide();
-await waitForDemo(() => nativeQueries > beforePendingQuery);
-const statusBeforeClose = closingDemo.demo.webMcpStatus;
-const guideBeforeClose = closingDemo.demo.agentGuide;
-tasks['demo-closing'].forms[closingDemo.demo.formId].closed = true;
-command.clearOwner('demo-closing', closingDemo.demo.formId);
-delete tasks['demo-closing'].forms[closingDemo.demo.formId];
-finishInfo(null);
+const beforeNativeGuide = nativeQueries;
+await failedGuide.form.refresh();
+assert.equal(nativeQueries, beforeNativeGuide + 1, 'the window uses one credential-free connection snapshot');
+assert.equal(failedGuide.form.nativeEntry, true);
+assert.ok(failedGuide.form.guide.includes('Local MCP (stdio)'));
+let finishClosedInfo;
+entry = new Promise(resolve => { finishClosedInfo = resolve; });
+const closingGuide = failedGuide.form.refresh();
+const guideBeforeClose = failedGuide.form.guide;
+tasks['guide-failed'].forms[failedGuide.form.formId].closed = true;
+failedGuide.form.onBeforeUnmount?.();
+delete tasks['guide-failed'].forms[failedGuide.form.formId];
+finishClosedInfo(null);
 await closingGuide;
+assert.equal(failedGuide.form.guide, guideBeforeClose);
+assert.equal(failedGuide.form.nativeEntry, true);
+assert.equal(Object.keys(tasks['guide-failed'].timers).length, 0);
+command.clear('guide-failed');
+delete tasks['guide-failed'];
 nativeEnvironment = false;
 entry = undefined;
-await new Promise(setImmediate);
-assert.equal(closingDemo.demo.webMcpStatus, statusBeforeClose, 'late access information must not update an unmounted Form');
-assert.equal(closingDemo.demo.agentGuide, guideBeforeClose);
-assert.equal(Object.keys(tasks['demo-closing'].timers).length, 0);
-command.clear('demo-closing');
-delete tasks['demo-closing'];
 
 task('closing');
 tasks.closing.forms = {};

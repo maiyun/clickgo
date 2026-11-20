@@ -33,3 +33,11 @@ export function check(schema, root, seen = new Set()) {
 export function validate(value, schema, root, path = '$', depth = 0, ancestors = []) {
     return lAboxCommand.validate(value, schema, root, path, depth, ancestors);
 }
+/**
+ * --- 为命令面板生成符合输入规则的 JSON 对象 ---
+ * @param schema 当前命令已注册的参数规则
+ * @returns 可编辑的测试参数；找不到有效示例时返回 null
+ */
+export function sampleInput(schema) {
+    return lAboxCommand.sampleInput(schema);
+}

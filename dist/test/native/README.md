@@ -13,7 +13,7 @@ npm run native
 
 Use `npm run native2` or `npm run native3` for the other window modes. All three enable local MCP (`clickgo-demo`) and automatic GUI startup for command requests.
 
-- **AI interface guide** registers the counter commands. Use **Generate AI access guide** for client setup or **Show access information** for diagnostics.
+- **MCP demo** exposes commands to read, increase and export the counter. Open **AI access guide** for client setup or **Command palette** to run commands manually.
 - **Library native** demonstrates persistent JSON (`native.storage`) and encrypted strings (`native.secret`). App storage needs no `root` permission, but requires a fixed `config.json` `id`; keep it unchanged across moves and upgrades. Without a valid ID, data operations return `false`.
 
 ## CLI and stdio MCP

@@ -7,6 +7,7 @@ import * as lFile from './command/file';
 import * as lNative from './native';
 import * as lAboxCommand from '../abox/command.js';
 export { showPalette } from './command/palette';
+export { showAgentGuide } from './command/agent-guide';
 /** --- 框架机制接入命令运行时；注册、执行及销毁规则共用同一实例 --- */
 const runtime = lAboxCommand.createRuntime({
     'core': lCore, 'task': lTask, 'native': lNative, 'files': lFile,

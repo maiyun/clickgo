@@ -46,6 +46,7 @@
 - [listTasks](functions/listTasks.md)
 - [register](functions/register.md)
 - [releaseFile](functions/releaseFile.md)
+- [showAgentGuide](functions/showAgentGuide.md)
 - [showPalette](functions/showPalette.md)
 - [success](functions/success.md)
 - [unregister](functions/unregister.md)

@@ -8,7 +8,7 @@
 
 > **success**\<`T`\>(`data`, `files?`): [`TResult`](../type-aliases/TResult.md)\<`T`\>
 
-Defined in: [lib/command.ts:38](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L38)
+Defined in: [lib/command.ts:39](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L39)
 
 构造成功结果
 

@@ -8,7 +8,7 @@
 
 > **connectWebMcp**(`current`): `Promise`\<`boolean`\>
 
-Defined in: [lib/command.ts:195](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L195)
+Defined in: [lib/command.ts:196](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L196)
 
 手动将当前 App 已公开的命令发布到浏览器 WebMCP
 公开命令注册或移除时框架自动同步，通常无需调用。

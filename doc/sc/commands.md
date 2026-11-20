@@ -94,7 +94,7 @@ clickgo.command.register(this, {
 - 文件按 `taskId + fileId` 隔离；`fileId` 使用 UUID，但不承担跨 App 授权。应用内 `command.execute(this, 'clickgo.file.read', args)` 从 this 取得 taskId；网页公开入口和外部 MCP 调用须提供目标 taskId。
 - Native 的 HTTP/stdio MCP 将同一结果转换为标准 `resource_link`；客户端使用 `resources/read` 获取原文件。URI 为 `clickgo-file:///task/{taskId}/{fileId}`，不是可公网访问的下载地址；不支持资源读取的客户端仍可调用公开的分段命令。缺少浏览器下载事件不代表生成失败。
 
-Demo 的 Library command → Export text file 演示完整流程。
+在 Demo 的 **MCP demo** 中打开 **Command palette**，选择 **Export counter as text** 并执行，可查看导出文件句柄。
 
 ## 浏览器代理与 WebMCP
 
@@ -137,7 +137,15 @@ WebMCP 可用时框架自动发布公开命令，无需连接按钮。通过 `aw
 
 ## 自动生成 AI 接入说明
 
-在帮助或“AI 接口”入口展示框架生成的英文 Markdown，供用户复制给 AI：
+业务 Form 可直接打开框架内置的 AI 接入说明。可选的 `instructions` 是交给智能体的业务操作指引，将追加到通用说明中。
+
+```ts
+await clickgo.command.showAgentGuide(this, {
+    'instructions': 'Read the current document before editing it.',
+});
+```
+
+窗口按当前环境展示接入方式和应用已公开的命令数，支持预览、复制完整说明，也可打开仅显示公开命令的命令面板。自定义界面可直接获取说明文本：
 
 ```ts
 const guide = await clickgo.command.getAgentGuide(this);
@@ -151,7 +159,7 @@ this.agentGuide = guide;
 
 网页入口也提供 `await api.getAgentGuide()` 和 `await api.getAgentInfo()`。默认及网页公开入口都不导出 HTTP 凭据；App 显式传 `{ 'includeMcpCredentials': true }` 才可导出，且必须有 root 权限。带凭据的说明只供用户授权的连接使用，不写日志或公开发布，重启后重新生成。
 
-页面上的说明只是发现提示；直接调用 JS 仍要求代理具备页面 JavaScript 执行能力。只支持点击和输入的代理使用正常界面。可选调试入口 `await clickgo.command.showPalette(this)` 展示命令、JSON 参数和结果；传 `{ 'exposedOnly': true }` 时仅展示公开命令并按代理执行。
+页面上的说明只是发现提示；直接调用 JS 仍要求代理具备页面 JavaScript 执行能力。只支持点击和输入的代理使用正常界面。可选调试入口 `await clickgo.command.showPalette(this)` 展示命令、JSON 参数和结果；传 `{ 'exposedOnly': true }` 时仅展示公开命令并按代理执行。面板中的“生成测试参数”按所选命令的输入规则填入可编辑的 JSON；点击“执行”才会调用命令。
 
 ## Native MCP 接入边界
 
@@ -169,4 +177,4 @@ stdio/CLI 自动发现同一安装的软件及其当前端口和凭据，最终�
 
 启用本地发现允许同一操作系统用户的进程获取临时凭据，`discovery: false` 会关闭 stdio/CLI 的发现。App 读取 HTTP 设置用 `await clickgo.native.getMcpInfo(this)`，需 root 权限；未启用为 null，权限拒绝为 false。云端 AI 不能直接访问用户电脑的本地服务，需要客户端支持本地接入。
 
-完整宿主与客户端配置见 [ClickGo Native 文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。Demo → method → Library command 展示共享命令；开发验收见 [Native 联动测试](../../dist/test/native/README.sc.md)。
+完整宿主与客户端配置见 [ClickGo Native 文档](https://github.com/maiyun/clickgo-native/blob/master/doc/README.sc.md)。Demo → MCP demo 展示代理对计数器的读取、修改和文件导出；开发验收见 [Native 联动测试](../../dist/test/native/README.sc.md)。

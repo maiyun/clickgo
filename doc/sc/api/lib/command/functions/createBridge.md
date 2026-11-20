@@ -8,7 +8,7 @@
 
 > **createBridge**(`current`): [`IBridge`](../interfaces/IBridge.md)
 
-Defined in: [lib/command.ts:175](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L175)
+Defined in: [lib/command.ts:176](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L176)
 
 创建绑定单个 App 的可复用代理接口，调用方无需反复传入 taskId
 

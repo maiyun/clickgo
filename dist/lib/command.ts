@@ -9,6 +9,7 @@ import * as lAboxCommand from '../abox/command.js';
 import type { TJson, TResult, IDefinition, IInfo, IAgentOptions, IAgentInfo, IBridge, IPageBridge } from './command/types';
 
 export { showPalette } from './command/palette';
+export { showAgentGuide } from './command/agent-guide';
 export type { IFileInfo, IFileOptions, IFileChunk } from './command/file';
 export type {
     TJson, ISchema, TResult, IContext, IMetadata, IDefinition, IInfo, IBridge, IPageBridge,

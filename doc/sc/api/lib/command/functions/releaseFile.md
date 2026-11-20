@@ -8,7 +8,7 @@
 
 > **releaseFile**(`current`, `fileId`): `boolean`
 
-Defined in: [lib/command.ts:58](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L58)
+Defined in: [lib/command.ts:59](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L59)
 
 主动释放旧导出的缓存，释放后代理不能继续读取；不删除磁盘文件
 

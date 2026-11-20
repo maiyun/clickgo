@@ -8,7 +8,7 @@
 
 > **getAgentInfo**(`current?`, `options?`): `Promise`\<`false` \| [`IAgentInfo`](../interfaces/IAgentInfo.md) \| `null`\>
 
-Defined in: [lib/command.ts:128](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L128)
+Defined in: [lib/command.ts:129](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L129)
 
 获取当前环境的统一接入信息，不另行维护命令清单或启用服务
 

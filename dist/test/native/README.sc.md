@@ -13,7 +13,7 @@ npm run native
 
 其他窗口模式使用 `npm run native2` 或 `npm run native3`。三个入口均启用本地 MCP（`clickgo-demo`），并允许命令请求自动启动 GUI。
 
-- **AI interface guide** 注册计数器命令。通过 **Generate AI access guide** 获取客户端配置说明，或用 **Show access information** 查看诊断信息。
+- **MCP demo** 公开读取、增加和导出计数器的命令。通过 **AI access guide** 获取客户端接入说明，或通过 **Command palette** 手动执行命令。
 - **Library native** 演示持久 JSON（`native.storage`）和加密字符串（`native.secret`）。App 存储无需 `root` 权限，但需要固定的 `config.json` `id`，移动或升级时保持不变；没有有效 ID 时，数据操作返回 `false`。
 
 ## CLI 与 stdio MCP

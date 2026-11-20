@@ -1,25 +1,43 @@
 import * as clickgo from 'clickgo';
 
-/** --- Demo 只展示框架自动接入状态，不要求用户手动启用 --- */
-const webMcpStatusText = {
-    'unsupported': 'WebMCP: Not supported by this browser',
-    'ready': 'WebMCP: Browser interface ready',
-};
-
 export default class extends clickgo.form.AbstractForm {
 
     /** --- 各种调用入口都修改同一个实例的数据 --- */
     public value = 0;
 
-    public source = '';
+    public lastAction = '';
 
-    public result = '';
+    public showPrompt = false;
 
-    public webMcpStatus = '';
+    public scrollTop = 0;
 
-    /** --- 异步说明的请求顺序，旧结果不能覆盖更新后的状态 --- */
+    public scrollHeight = 0;
+
+    public clientHeight = 0;
+
+    /** --- 窗口可同时打开多次，测试指令明确当前目标 --- */
+    public get testPrompt(): string {
+        return `In ClickGo app ${this.taskId}, read the counter in form ${this.formId}, then increase it by one and report its new value.`;
+    }
+
+    /**
+     * --- 将当前实例的测试指令复制给代理，复制失败时展示原文 ---
+     * @returns 无返回值
+     */
+    public async copyPrompt(): Promise<void> {
+        try {
+            await navigator.clipboard.writeText(this.testPrompt);
+        }
+        catch {
+            this.showPrompt = true;
+            clickgo.form.alert('Select the text and copy it manually.', 'warning');
+            return;
+        }
+        clickgo.form.alert('Test prompt copied.', 'primary');
+    }
+
+    /** --- 当前窗口最近一次导出的文件句柄 --- */
     public access = {
-        'guideRequest': 0,
         'fileId': '',
     };
 
@@ -37,79 +55,12 @@ export default class extends clickgo.form.AbstractForm {
         return `counter.export.${this.formId}`;
     }
 
-    /** --- 框架生成的说明可直接复制给 AI，网页和 Native 使用同一个 API --- */
-    public agentGuide = '';
-
     /**
-     * --- 刷新当前环境的 AI 接入说明，默认不包含连接凭据 ---
-     * @returns 更新可复制的说明
+     * --- 打开框架提供的 AI 接入说明 ---
+     * @returns 窗口关闭后完成
      */
-    public async generateGuide(): Promise<void> {
-        const request = ++this.access.guideRequest;
-        const guide = await clickgo.command.getAgentGuide(this);
-        if (guide === null || guide === false || request !== this.access.guideRequest ||
-            clickgo.form.get(this.formId) === null) {
-            return;
-        }
-        this.agentGuide = guide;
-    }
-
-    /**
-     * --- 跟随框架的页面级接入通知，不按任务筛选或轮询 ---
-     * @param status 浏览器接入状态
-     * @returns 更新显示与接入说明
-     */
-    public async onWebMcpStatusChanged(status: clickgo.command.TWebMcpStatus): Promise<void> {
-        this.webMcpStatus = webMcpStatusText[status];
-        await this.generateGuide();
-    }
-
-    /**
-     * --- 展示同一份接入信息的结构化形式，便于应用自定义界面 ---
-     * @returns 更新接入快照
-     */
-    public async agentInfo(): Promise<void> {
-        const info = await clickgo.command.getAgentInfo(this);
-        if (info === null || info === false || clickgo.form.get(this.formId) === null) {
-            return;
-        }
-        this.result = JSON.stringify(info, null, 2);
-        this.webMcpStatus = webMcpStatusText[info.webMcp.status];
-    }
-
-    /**
-     * --- 展示代理可发现的名称、说明、参数规则和可用状态 ---
-     * @returns 更新列表快照
-     */
-    public listCommands(): void {
-        this.result = JSON.stringify(clickgo.command.createBridge(this).list(), null, 2);
-    }
-
-    /**
-     * --- 按钮、菜单和快捷键都调用注册的命令，不另写加法逻辑 ---
-     * @returns 显示执行结果
-     */
-    public async add(): Promise<void> {
-        const result = await clickgo.command.execute(this, this.addName, { 'amount': 1 });
-        this.result = JSON.stringify(result, null, 2);
-    }
-
-    /**
-     * --- 演示实例桥接与 UI 共享执行入口 ---
-     * @returns 显示执行结果
-     */
-    public async bridgeAdd(): Promise<void> {
-        const result = await clickgo.command.createBridge(this).execute(this.addName, { 'amount': 2 });
-        this.result = JSON.stringify(result, null, 2);
-    }
-
-    /**
-     * --- 界面与代理都接收同一个内置导出的文件句柄 ---
-     * @returns 显示文件名、资源 URI 和读取入口
-     */
-    public async exportFile(): Promise<void> {
-        const result = await clickgo.command.execute(this, this.exportName);
-        this.result = JSON.stringify(result, null, 2);
+    public async guide(): Promise<void> {
+        await clickgo.command.showAgentGuide(this);
     }
 
     /**
@@ -124,7 +75,7 @@ export default class extends clickgo.form.AbstractForm {
      * --- Form 挂载后声明一次业务命令，销毁时框架自动解除注册 ---
      * @returns 无返回值
      */
-    public async onMounted(): Promise<void> {
+    public onMounted(): void {
         clickgo.command.register<{ 'amount': number; }>(this, {
             'name': this.addName,
             'title': 'Increase counter',
@@ -142,7 +93,7 @@ export default class extends clickgo.form.AbstractForm {
             'annotations': { 'readOnlyHint': false, 'destructiveHint': false, 'openWorldHint': false },
             'execute': (args, context) => {
                 this.value += args['amount'];
-                this.source = context.source;
+                this.lastAction = `Increase counter · ${context.source}`;
                 return clickgo.command.success({ 'value': this.value });
             },
         });
@@ -153,7 +104,10 @@ export default class extends clickgo.form.AbstractForm {
             'inputSchema': { 'type': 'object', 'additionalProperties': false },
             'exposed': true,
             'annotations': { 'readOnlyHint': true, 'destructiveHint': false, 'openWorldHint': false },
-            'execute': () => clickgo.command.success({ 'value': this.value }),
+            'execute': (_args, context) => {
+                this.lastAction = `Read counter · ${context.source}`;
+                return clickgo.command.success({ 'value': this.value });
+            },
         });
         clickgo.command.register(this, {
             'name': this.exportName, 'title': 'Export counter as text',
@@ -172,16 +126,10 @@ export default class extends clickgo.form.AbstractForm {
                     clickgo.command.releaseFile(this, this.access.fileId);
                 }
                 this.access.fileId = file.fileId;
+                this.lastAction = `Export counter as text · ${context.source}`;
                 return clickgo.command.success({ 'value': this.value }, [file]);
             },
         });
-        // --- 新建 Form 先读一次快照，后续变化由全局事件更新 ---
-        const info = await clickgo.command.getAgentInfo(this);
-        if (info === null || info === false || clickgo.form.get(this.formId) === null) {
-            return;
-        }
-        this.webMcpStatus = webMcpStatusText[info.webMcp.status];
-        await this.generateGuide();
     }
 
 }

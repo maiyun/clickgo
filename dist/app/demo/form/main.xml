@@ -2,8 +2,8 @@
     <layout direction="v" gutter="10" style="flex: 1; min-height: 0;">
         <!-- 首屏提供可见发现入口，不要求代理先猜测在哪个示例页 -->
         <layout gutter="10" wrap align-v="center">
-            <button @click="openForm('mcommand')">AI interface guide</button>
-            <label>JavaScript API available. WebMCP tools register automatically when supported.</label>
+            <button @click="openForm('mcommand')">MCP demo</button>
+            <label>Try an agent command on a live counter.</label>
         </layout>
         <tab v-model="ntab" :tabs="['control', 'method', 'event', 'solution']" style="flex: 1; min-height: 0;">
             <flow v-if="ntab === 'control'" class="inner" direction="v">

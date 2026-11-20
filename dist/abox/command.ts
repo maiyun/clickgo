@@ -1,5 +1,6 @@
 import { isJson } from './tool.js';
 import { copyJson } from './command/json.js';
+import { buildSample } from './command/sample.js';
 import type { IAgentInfo, IDefinition, IMetadata, ISchema, TResult, IFileInfo } from '../lib/command.js';
 import type { TJson } from '../lib/tool.js';
 
@@ -46,6 +47,13 @@ export function readInput(args: unknown, schema: ISchema): TResult<Record<string
     const input = copyJson(args);
     const invalid = validate(input, schema);
     return invalid === null ? { 'ok': true, 'data': input } : failure('invalid-input', invalid);
+}
+
+export function sampleInput(schema: ISchema): Record<string, TJson> | null {
+    const sample = buildSample(schema, ref => reference(schema, ref), (value, rule) => validate(value, rule, schema) === null);
+    if (sample === undefined) return null;
+    const result = readInput(sample, schema);
+    return result.ok ? result.data : null;
 }
 
 export function readResult(result: unknown, schema?: ISchema): TResult {

@@ -1,84 +1,117 @@
 import * as lCommand from '../command';
 import * as lForm from '../form';
 import * as lTool from '../tool';
+import * as lSchema from './schema';
 /** --- 框架命令面板语言，覆盖内置语种，未知语言回退英文 --- */
 const locale = {
     'sc': {
+        'generate': '生成测试参数',
+        'generatefailed': '无法生成符合规则的参数，请手动输入。',
         'title': '命令面板', 'command': '命令', 'arguments': '参数（JSON）', 'schema': '参数规则',
         'result': '执行结果', 'execute': '执行', 'refresh': '刷新', 'close': '关闭',
         'empty': '当前没有可用命令', 'invalid': '请输入合法的 JSON 对象',
     },
     'tc': {
+        'generate': '產生測試參數',
+        'generatefailed': '無法產生符合規則的參數，請手動輸入。',
         'title': '命令面板', 'command': '命令', 'arguments': '參數（JSON）', 'schema': '參數規則',
         'result': '執行結果', 'execute': '執行', 'refresh': '重新整理', 'close': '關閉',
         'empty': '目前沒有可用命令', 'invalid': '請輸入有效的 JSON 物件',
     },
     'ja': {
+        'generate': 'テスト引数を生成',
+        'generatefailed': '条件を満たす引数を生成できません。手動で入力してください。',
         'title': 'コマンドパレット', 'command': 'コマンド', 'arguments': '引数（JSON）', 'schema': '入力スキーマ',
         'result': '実行結果', 'execute': '実行', 'refresh': '更新', 'close': '閉じる',
         'empty': '利用可能なコマンドはありません', 'invalid': '有効な JSON オブジェクトを入力してください',
     },
     'ko': {
+        'generate': '테스트 인수 생성',
+        'generatefailed': '조건에 맞는 인수를 생성할 수 없습니다. 직접 입력해 주세요.',
         'title': '명령 팔레트', 'command': '명령', 'arguments': '인수 (JSON)', 'schema': '입력 스키마',
         'result': '실행 결과', 'execute': '실행', 'refresh': '새로 고침', 'close': '닫기',
         'empty': '사용 가능한 명령이 없습니다', 'invalid': '유효한 JSON 객체를 입력하세요',
     },
     'th': {
+        'generate': 'สร้างอาร์กิวเมนต์ทดสอบ',
+        'generatefailed': 'สร้างอาร์กิวเมนต์ตามเงื่อนไขไม่ได้ โปรดป้อนด้วยตนเอง',
         'title': 'แผงคำสั่ง', 'command': 'คำสั่ง', 'arguments': 'อาร์กิวเมนต์ (JSON)', 'schema': 'สคีมาอินพุต',
         'result': 'ผลลัพธ์', 'execute': 'ดำเนินการ', 'refresh': 'รีเฟรช', 'close': 'ปิด',
         'empty': 'ไม่มีคำสั่งที่พร้อมใช้งาน', 'invalid': 'กรุณาป้อนออบเจ็กต์ JSON ที่ถูกต้อง',
     },
     'vi': {
+        'generate': 'Tạo đối số thử nghiệm',
+        'generatefailed': 'Không thể tạo đối số phù hợp. Vui lòng nhập thủ công.',
         'title': 'Bảng lệnh', 'command': 'Lệnh', 'arguments': 'Tham số (JSON)', 'schema': 'Lược đồ đầu vào',
         'result': 'Kết quả', 'execute': 'Thực thi', 'refresh': 'Làm mới', 'close': 'Đóng',
         'empty': 'Không có lệnh khả dụng', 'invalid': 'Vui lòng nhập một đối tượng JSON hợp lệ',
     },
     'ar': {
+        'generate': 'توليد وسائط اختبار',
+        'generatefailed': 'تعذّر توليد وسائط تطابق القواعد. أدخلها يدويًا.',
         'title': 'لوحة الأوامر', 'command': 'الأمر', 'arguments': 'المعاملات (JSON)', 'schema': 'مخطط الإدخال',
         'result': 'النتيجة', 'execute': 'تنفيذ', 'refresh': 'تحديث', 'close': 'إغلاق',
         'empty': 'لا توجد أوامر متاحة', 'invalid': 'أدخل كائن JSON صالحًا',
     },
     'id': {
+        'generate': 'Buat argumen uji',
+        'generatefailed': 'Argumen yang sesuai tidak dapat dibuat. Masukkan secara manual.',
         'title': 'Palet perintah', 'command': 'Perintah', 'arguments': 'Argumen (JSON)', 'schema': 'Skema masukan',
         'result': 'Hasil', 'execute': 'Jalankan', 'refresh': 'Segarkan', 'close': 'Tutup',
         'empty': 'Tidak ada perintah yang tersedia', 'invalid': 'Masukkan objek JSON yang valid',
     },
     'en': {
+        'generate': 'Generate test arguments',
+        'generatefailed': 'Could not generate matching arguments. Enter them manually.',
         'title': 'Commands', 'command': 'Command', 'arguments': 'Arguments (JSON)', 'schema': 'Input schema',
         'result': 'Result', 'execute': 'Execute', 'refresh': 'Refresh', 'close': 'Close',
         'empty': 'No commands available', 'invalid': 'Enter a valid JSON object',
     },
     'es': {
+        'generate': 'Generar argumentos de prueba',
+        'generatefailed': 'No se pudieron generar argumentos válidos. Introdúcelos manualmente.',
         'title': 'Paleta de comandos', 'command': 'Comando', 'arguments': 'Argumentos (JSON)', 'schema': 'Esquema de entrada',
         'result': 'Resultado', 'execute': 'Ejecutar', 'refresh': 'Actualizar', 'close': 'Cerrar',
         'empty': 'No hay comandos disponibles', 'invalid': 'Introduce un objeto JSON válido',
     },
     'de': {
+        'generate': 'Testargumente erzeugen',
+        'generatefailed': 'Passende Argumente konnten nicht erzeugt werden. Bitte gib sie manuell ein.',
         'title': 'Befehlspalette', 'command': 'Befehl', 'arguments': 'Argumente (JSON)', 'schema': 'Eingabeschema',
         'result': 'Ergebnis', 'execute': 'Ausführen', 'refresh': 'Aktualisieren', 'close': 'Schließen',
         'empty': 'Keine Befehle verfügbar', 'invalid': 'Geben Sie ein gültiges JSON-Objekt ein',
     },
     'fr': {
+        'generate': 'Générer des arguments de test',
+        'generatefailed': 'Impossible de générer des arguments valides. Saisissez-les manuellement.',
         'title': 'Palette de commandes', 'command': 'Commande', 'arguments': 'Arguments (JSON)', 'schema': 'Schéma d’entrée',
         'result': 'Résultat', 'execute': 'Exécuter', 'refresh': 'Actualiser', 'close': 'Fermer',
         'empty': 'Aucune commande disponible', 'invalid': 'Saisissez un objet JSON valide',
     },
     'pt': {
+        'generate': 'Gerar argumentos de teste',
+        'generatefailed': 'Não foi possível gerar argumentos válidos. Insira-os manualmente.',
         'title': 'Paleta de comandos', 'command': 'Comando', 'arguments': 'Argumentos (JSON)', 'schema': 'Esquema de entrada',
         'result': 'Resultado', 'execute': 'Executar', 'refresh': 'Atualizar', 'close': 'Fechar',
         'empty': 'Nenhum comando disponível', 'invalid': 'Insira um objeto JSON válido',
     },
     'ru': {
+        'generate': 'Создать тестовые аргументы',
+        'generatefailed': 'Не удалось создать подходящие аргументы. Введите их вручную.',
         'title': 'Палитра команд', 'command': 'Команда', 'arguments': 'Аргументы (JSON)', 'schema': 'Схема ввода',
         'result': 'Результат', 'execute': 'Выполнить', 'refresh': 'Обновить', 'close': 'Закрыть',
         'empty': 'Нет доступных команд', 'invalid': 'Введите корректный объект JSON',
     },
     'it': {
+        'generate': 'Genera argomenti di prova',
+        'generatefailed': 'Impossibile generare argomenti validi. Inseriscili manualmente.',
         'title': 'Tavolozza dei comandi', 'command': 'Comando', 'arguments': 'Argomenti (JSON)', 'schema': 'Schema di input',
         'result': 'Risultato', 'execute': 'Esegui', 'refresh': 'Aggiorna', 'close': 'Chiudi',
         'empty': 'Nessun comando disponibile', 'invalid': 'Inserisci un oggetto JSON valido',
     },
     'tr': {
+        'generate': 'Test argümanları oluştur',
+        'generatefailed': 'Kurallara uygun argümanlar oluşturulamadı. Lütfen elle girin.',
         'title': 'Komut paleti', 'command': 'Komut', 'arguments': 'Bağımsız değişkenler (JSON)', 'schema': 'Girdi şeması',
         'result': 'Sonuç', 'execute': 'Çalıştır', 'refresh': 'Yenile', 'close': 'Kapat',
         'empty': 'Kullanılabilir komut yok', 'invalid': 'Geçerli bir JSON nesnesi girin',
@@ -136,6 +169,19 @@ export async function showPalette(current, options = {}) {
             if (!this.selectedInfo) {
                 this.selected = this.infos.length ? [this.infos[0].name] : [];
             }
+        }
+        /** --- 只将通过当前命令规则的示例填入编辑框，执行由用户决定 --- */
+        generateArgs() {
+            const info = this.selectedInfo;
+            if (!info || this.loading) {
+                return;
+            }
+            const sample = lSchema.sampleInput(info.inputSchema);
+            if (sample === null) {
+                lForm.alert(this.text['generatefailed'], 'warning');
+                return;
+            }
+            this.args = JSON.stringify(sample, null, 2);
         }
         /**
          * --- 解析用户输入后走同一命令执行入口 ---
@@ -200,6 +246,7 @@ export async function showPalette(current, options = {}) {
                     <label>{{text['arguments']}}</label>
                     <text v-model="args" type="multi" dir="ltr" style="height: 100px;"></text>
                     <layout gutter="10" wrap>
+                        <button @click="generateArgs" :disabled="!selectedInfo || loading">{{text['generate']}}</button>
                         <button @click="submit" :disabled="!selectedInfo?.enabled">{{text['execute']}}</button>
                         <button @click="refresh">{{text['refresh']}}</button>
                         <button @click="close">{{text['close']}}</button>

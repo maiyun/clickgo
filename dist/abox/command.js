@@ -1,5 +1,6 @@
 import { isJson } from './tool.js';
 import { copyJson } from './command/json.js';
+import { buildSample } from './command/sample.js';
 export { copyJson } from './command/json.js';
 export { createWebPublisher } from './command/webmcp.js';
 export { createRuntime } from './command/runtime.js';
@@ -48,6 +49,13 @@ export function readInput(args, schema) {
     const input = copyJson(args);
     const invalid = validate(input, schema);
     return invalid === null ? { 'ok': true, 'data': input } : failure('invalid-input', invalid);
+}
+export function sampleInput(schema) {
+    const sample = buildSample(schema, ref => reference(schema, ref), (value, rule) => validate(value, rule, schema) === null);
+    if (sample === undefined)
+        return null;
+    const result = readInput(sample, schema);
+    return result.ok ? result.data : null;
 }
 export function readResult(result, schema) {
     if (!isJson(result) || typeof result !== 'object' || !result || Array.isArray(result) || typeof result['ok'] !== 'boolean') {

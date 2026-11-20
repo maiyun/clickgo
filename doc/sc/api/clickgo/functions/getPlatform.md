@@ -6,7 +6,7 @@
 
 # Function: getPlatform()
 
-> **getPlatform**(): `Platform` \| `"web"`
+> **getPlatform**(): `"web"` \| `Platform`
 
 Defined in: [clickgo.ts:122](https://github.com/maiyun/clickgo/blob/master/dist/clickgo.ts#L122)
 
@@ -14,4 +14,4 @@ Defined in: [clickgo.ts:122](https://github.com/maiyun/clickgo/blob/master/dist/
 
 ## Returns
 
-`Platform` \| `"web"`
+`"web"` \| `Platform`

@@ -8,7 +8,7 @@
 
 > **list**(`current`): [`IInfo`](../interfaces/IInfo.md)[]
 
-Defined in: [lib/command.ts:110](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L110)
+Defined in: [lib/command.ts:111](https://github.com/maiyun/clickgo/blob/master/dist/lib/command.ts#L111)
 
 获取独立元数据和当前状态，不导出业务函数
 

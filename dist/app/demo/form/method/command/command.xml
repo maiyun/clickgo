@@ -1,45 +1,26 @@
-<form title="Library command" width="640" height="680" min-width="300" min-height="420" padding="10" direction="v">
-    <!-- 普通菜单及快捷键复用注册命令 -->
-    <menu>
-        <menu-item>
-            <template v-slot>Counter</template>
-            <template v-slot:pop>
-                <menulist>
-                    <menulist-item @click="add" alt="Ctrl+Enter">Increase counter</menulist-item>
-                    <menulist-item @click="palette" alt="Ctrl+Shift+P">Command palette</menulist-item>
-                </menulist>
-            </template>
-        </menu-item>
-    </menu>
-    <flow direction="v" style="flex: 1;">
-        <layout direction="v" gutter="10">
-            <label size="l">Counter: {{value}}</label>
-            <label>Last execution source: {{source || 'Not executed yet'}}</label>
-            <label>Buttons, menus, shortcuts, the palette and the agent bridge share the same command.</label>
-            <!-- 可见入口兼容只通过浏览器界面操作的代理 -->
-            <layout gutter="10" wrap>
-                <button @click="add">Add 1</button>
-                <button @click="bridgeAdd">Add 2 via agent bridge</button>
-                <button @click="palette">Command palette</button>
-                <button @click="exportFile">Export text file</button>
+<form title="MCP demo" width="460" height="330" min-width="300" min-height="240" direction="v" padding="12">
+    <!-- 当前窗口的三个公开命令共享同一计数器 -->
+    <layout style="flex: 1; min-height: 0;">
+        <flow v-model:scroll-top="scrollTop" direction="v" @clientheight="clientHeight = $event" @scrollheight="scrollHeight = $event" style="flex: 1; min-width: 0;">
+            <layout direction="v" gutter="12" style="padding: 4px;">
+                <group title="Counter" direction="v" gutter="8">
+                    <label size="xl">{{value}}</label>
+                    <label>{{lastAction ? 'Last command: ' + lastAction : 'Waiting for the first command.'}}</label>
+                </group>
+                <!-- 复制的指令携带实例标识，多个 Demo 窗口可同时验证 -->
+                <layout direction="v" gutter="8">
+                    <label>Your agent can read this counter, increase it or export its value as a text file.</label>
+                    <label copy>Ask your agent: “Read the counter, increase it by one and report the new value.”</label>
+                    <layout><button type="cg" @click="copyPrompt">Copy test prompt</button></layout>
+                    <text v-if="showPrompt" :model-value="testPrompt" readonly type="multi" dir="ltr" style="height: 66px;"></text>
+                </layout>
             </layout>
-            <!-- 页面代理可见的发现提示；示例代码指向框架统一发布的接口 -->
-            <label size="l">AI agent interface</label>
-            <label>ClickGo provides window['clickgo']['command'] for every app and automatically registers WebMCP tools when supported.</label>
-            <label>First call api.listTasks() to find apps, then api.list(taskId) for command names, descriptions, input schemas and availability. Use api.execute(taskId, name, args) to run a command.</label>
-            <layout gutter="10" wrap>
-                <button @click="generateGuide">Generate AI access guide</button>
-                <button @click="agentInfo">Show access information</button>
-            </layout>
-            <text :model-value="agentGuide" readonly type="multi" dir="ltr" style="height: 180px;"></text>
-            <label>Copy this generated guide to your AI. Native mode also includes the executable path and CLI/stdio startup arguments.</label>
-            <label>Use this API when your browser tools allow page JavaScript. Otherwise use the buttons or command palette.</label>
-            <layout gutter="10" wrap align-v="center">
-                <button @click="listCommands">List exposed commands</button>
-                <label>{{webMcpStatus}}</label>
-            </layout>
-            <label>Increase command: {{addName}}</label>
-            <text :model-value="result" readonly type="multi" dir="ltr" style="height: 100px;"></text>
-        </layout>
-    </flow>
+        </flow>
+        <scroll v-if="scrollHeight > clientHeight" v-model:offset="scrollTop" :length="scrollHeight" :client="clientHeight"></scroll>
+    </layout>
+    <!-- 两种通用工具由框架创建，缩小窗口时入口仍可见 -->
+    <layout gutter="8" wrap style="padding: 10px 4px 4px;">
+        <button @click="guide">AI access guide</button>
+        <button @click="palette">Command palette</button>
+    </layout>
 </form>
