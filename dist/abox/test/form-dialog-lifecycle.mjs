@@ -27,6 +27,7 @@ const common = { '../core': coreApi, '../task': taskApi,
     './popup': { cleanupPop: element => cleaned.push(element) }, './dialog': {}, './base': { AbstractCommon: class {
         get refs() { return this.$refs; }
         get element() { return this.$el; }
+        nextTick() { return this._nextTick ? this._nextTick() : Promise.resolve(); }
     } } };
 const modules = {};
 function load(name) {
@@ -49,6 +50,7 @@ function create(id, top = false, taskId = 'task') {
     const inner = document.createElement('div'); inner.style.zIndex = '1000000'; wrap.append(inner);
     elements.list.append(wrap);
     const control = { $data: { isShow: false, zIndex: 1000000 }, left: 0, top: 0,
+        leftData: 0, topData: 0, setPropData(name, value) { this[`${name}Data`] = value; },
         getArea: () => ({ left: 0, top: 0, width: 800, height: 600 }), stateMinData: false };
     Object.defineProperty(control.$data, 'zIndex', {
         get: () => Number(inner.style.zIndex),
@@ -321,6 +323,59 @@ await inactive.show();
 assert.equal(state.focusId, 'inactive', 'quickly reopened form regains focus');
 assert.ok(inactive.$refs.form.$data.zIndex > priorFadeZ, 'quickly reopened form gets a fresh visible z-index');
 assert.equal(inactive.$refs.form.$data.isShow, true);
+resetForms();
+// Automatic positioning uses the rendered size and follows later size changes
+// only until an axis is explicitly positioned or moved by the user.
+const centered = create('centered');
+const centerControl = centered.$refs.form;
+centerControl.left = centerControl.top = -1;
+let width = 200, height = 0, finishTick;
+Object.defineProperties(centered.$el, {
+    offsetWidth: { get: () => width }, offsetHeight: { get: () => height },
+});
+centered._nextTick = () => new Promise(resolve => { finishTick = resolve; });
+const firstCenter = centered.show();
+assert.equal(centerControl.topData, 0, 'position is not measured before the pending render');
+height = 100;
+finishTick();
+await firstCenter;
+assert.equal(centerControl.leftData, 300);
+assert.equal(centerControl.topData, 250, 'first show uses the rendered height after nextTick');
+centered.hide();
+centered._nextTick = () => Promise.resolve();
+width = 300; height = 200;
+await centered.show();
+assert.equal(centerControl.leftData, 250, 'automatic horizontal position follows changed width');
+assert.equal(centerControl.topData, 200, 'automatic vertical position follows changed height');
+centered.hide();
+centerControl.leftData = 123;
+centerControl.top = 75;
+centerControl.topData = 75;
+width = 400; height = 300;
+await centered.show();
+assert.equal(centerControl.leftData, 123, 'a manually moved axis keeps its position');
+assert.equal(centerControl.topData, 75, 'an explicitly positioned axis keeps its position');
+centered.hide();
+resetForms();
+const positioned = create('positioned');
+positioned.$refs.form.left = positioned.$refs.form.leftData = 40;
+positioned.$refs.form.top = -1;
+Object.defineProperty(positioned.$el, 'offsetHeight', { value: 100 });
+await positioned.show();
+assert.equal(positioned.$refs.form.leftData, 40, 'first show preserves an explicit position');
+assert.equal(positioned.$refs.form.topData, 250, 'the other axis can still be centered');
+positioned.hide();
+resetForms();
+const canceledShow = create('canceled-show');
+canceledShow.$refs.form.left = canceledShow.$refs.form.top = -1;
+let releaseShow;
+canceledShow._nextTick = () => new Promise(resolve => { releaseShow = resolve; });
+const showing = canceledShow.show();
+canceledShow.hide();
+releaseShow();
+await showing;
+assert.equal(canceledShow.$refs.form.$data.isShow, false, 'hide during nextTick must not revive the window');
+assert.notEqual(state.focusId, 'canceled-show', 'a canceled show must not take focus');
 resetForms();
 // Run the real task.end while a modal show is suspended.
 const taskSource = readFileSync(new URL('../../lib/task.ts', import.meta.url), 'utf8');

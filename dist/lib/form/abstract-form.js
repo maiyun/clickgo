@@ -197,30 +197,46 @@ export class AbstractForm extends AbstractCommon {
         this._inStep = false;
         await this.refs.form.stepDone();
     }
-    /** --- 当前是不是初次显示 --- */
-    _firstShow = true;
+    /** --- 每次隐藏时递增，阻止上一次尚未完成的显示继续执行 --- */
+    _showGeneration = 0;
+    /** --- 上次自动居中的坐标，首次显示前未记录 --- */
+    _autoPosition;
     /**
-     * --- 显示窗体 ---
+     * --- 按更新后的布局显示窗体，重新计算仍采用自动定位的坐标 ---
      */
     async show() {
-        // --- 创建成功的窗体，可以直接显示 ---
-        if (this._firstShow) {
-            this._firstShow = false;
-            // --- 将窗体居中 ---
-            const area = this.refs.form.getArea();
-            if (!this.refs.form.stateMaxData) {
-                if (this.refs.form.left === -1) {
-                    this.refs.form.setPropData('left', area.left + (area.width - this.element.offsetWidth) / 2);
+        const task = lTask.getOrigin(this.taskId);
+        const form = task?.forms[this.formId];
+        if (!form || form.closed || task.ending || this.refs.form.$data.isShow) {
+            return;
+        }
+        const control = this.refs.form;
+        const previous = this._autoPosition;
+        const position = {};
+        if (!control.stateMaxData && (control.left === -1 || control.top === -1)) {
+            const generation = this._showGeneration;
+            // --- 等显示前切换的内容渲染完成后再测量 ---
+            await this.nextTick();
+            if (generation !== this._showGeneration || form.closed || task.ending || control.$data.isShow) {
+                return;
+            }
+            const area = control.getArea();
+            for (const axis of ['left', 'top']) {
+                const current = axis === 'left' ? control.leftData : control.topData;
+                if (control[axis] !== -1 || (previous && previous[axis] !== current)) {
+                    continue;
                 }
-                if (this.refs.form.top === -1) {
-                    this.refs.form.setPropData('top', area.top + (area.height - this.element.offsetHeight) / 2);
+                const space = axis === 'left' ? area.width - this.element.offsetWidth :
+                    area.height - this.element.offsetHeight;
+                const centered = area[axis] + space / 2;
+                position[axis] = centered;
+                if (!previous || centered !== current) {
+                    control.setPropData(axis, centered);
                 }
             }
         }
-        else if (this.refs.form.$data.isShow) {
-            return;
-        }
-        this.refs.form.$data.isShow = true;
+        this._autoPosition = position;
+        control.$data.isShow = true;
         await changeFocus(this.formId);
     }
     /**
@@ -272,6 +288,7 @@ export class AbstractForm extends AbstractCommon {
      * --- 隐藏窗体并保留实例；模态窗体同时结束本轮 showDialog ---
      */
     hide() {
+        ++this._showGeneration;
         const form = lTask.getOrigin(this.taskId)?.forms[this.formId];
         if (form && !form.closed) {
             const runtime = lTask.getRuntime(state.sysId, this.taskId);
