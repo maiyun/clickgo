@@ -9,6 +9,17 @@ export default class extends clickgo.control.AbstractControl {
     date = '00:00';
     /** --- 当日本地零点，仅在跨日时触发日期格式重新计算 --- */
     dayTime = new Date().setHours(0, 0, 0, 0);
+    /** --- 左右任务栏使用窄栏时钟 --- */
+    get vertical() {
+        return this.props.position === 'left' || this.props.position === 'right';
+    }
+    /** --- 窄栏时钟的提示显示含星期和年份的本地化日期 --- */
+    get fullDate() {
+        return new Date(this.dayTime).toLocaleDateString(this.localeTag, {
+            'calendar': 'gregory',
+            'dateStyle': 'full'
+        });
+    }
     /** --- 使用框架语言标签格式化月日，语言切换时同步更新 --- */
     get calendarDate() {
         return new Date(this.dayTime).toLocaleDateString(this.localeTag, {

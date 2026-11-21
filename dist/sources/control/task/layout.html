@@ -5,11 +5,16 @@
     <div ref="tray" class="tray">
         <slot name="tray"></slot>
     </div>
-    <div v-if="propBoolean('showDate')" class="date" :dir="localeDirection">
-        <span v-if="timeFirst" class="time" dir="ltr">{{date}}</span>
-        <span class="calendar" :dir="localeDirection">{{calendarDate}}</span>
-        <span v-if="!timeFirst" class="time" dir="ltr">{{date}}</span>
-    </div>
+    <template v-if="propBoolean('showDate')">
+        <cg-tip v-if="vertical" :label="fullDate" :direction="position === 'left' ? 'right' : 'left'" immediate>
+            <time class="date" dir="ltr" :datetime="date">{{date}}</time>
+        </cg-tip>
+        <div v-else class="date" :dir="localeDirection">
+            <span v-if="timeFirst" class="time" dir="ltr">{{date}}</span>
+            <span class="calendar" :dir="localeDirection">{{calendarDate}}</span>
+            <span v-if="!timeFirst" class="time" dir="ltr">{{date}}</span>
+        </div>
+    </template>
     <teleport v-if="slots['pop']" to="system">
         <div ref="pop" class="pop">
             <slot name="pop"></slot>

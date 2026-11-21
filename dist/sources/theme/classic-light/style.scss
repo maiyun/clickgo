@@ -1230,6 +1230,7 @@ global {
     @include raised;
     padding: 3px 5px; border-radius: 0; background: var(--face); font-weight: bold;
     .task-start_content { gap: 2px; }
+    &.task-start_left, &.task-start_right { --task-start-label-display:none; }
     &.task-start_dock { border-radius: 0; }
     // --- Bar 的启动入口与应用项之间保留独立分隔线，不跟随按钮按下位移。 ---
     &:not(.task-start_dock) {

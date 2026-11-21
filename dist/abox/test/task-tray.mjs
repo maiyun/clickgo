@@ -320,6 +320,12 @@ for (const code of toolExports.lang.codes) {
     for (const type of ['month', 'day']) {
         assert.ok(text.includes(parts.find(part => part.type === type).value), `${code} must show the localized ${type}`);
     }
+    const fullDateParts = new Intl.DateTimeFormat(clockControl.localeTag, {
+        calendar: 'gregory', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    }).formatToParts(new Date(clockNow));
+    for (const type of ['weekday', 'year', 'month', 'day']) {
+        assert.ok(clockControl.fullDate.includes(fullDateParts.find(part => part.type === type).value), `${code} clock tooltip must include the localized ${type}`);
+    }
     assert.equal(clockControl.timeFirst, code === 'vi', `${code} must use its localized date/time order`);
 }
 clockControl.localeTag = 'zh-CN';
@@ -330,6 +336,7 @@ clockNow = new Date(2026, 9, 2, 0, 0).getTime();
 clockTick();
 assert.equal(clockControl.date, '00:00');
 assert.equal(clockControl.calendarDate, 'Oct 2');
+assert.equal(clockControl.fullDate, 'Friday, October 2, 2026');
 clockControl.localeTag = 'zh-TW';
 assert.equal(clockControl.calendarDate, '10月2日');
 console.log('Task clock shows localized month/day and date/time order for all 16 languages, switches language, and updates at local midnight.');

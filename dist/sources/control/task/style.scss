@@ -30,7 +30,7 @@
     }
     &.left, &.right {
         .date {
-            flex-direction: column; gap: 4px; padding: 10px 0;
+            flex-shrink: 0; justify-content: center; padding: 10px 8px; font-variant-numeric: tabular-nums;
         }
     }
 }
