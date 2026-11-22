@@ -4,7 +4,7 @@ import type * as lTask from '../task';
 import type * as lTool from '../tool';
 import type * as lDom from '../dom';
 import type { state, info } from './state';
-import type { changeFocus, getMaxZIndexID } from './window';
+import type { changeFocus, changeFocusMaxZIndex } from './window';
 
 /** --- 系统宿主所需的框架能力和状态；挂载后通过回调同步 Vue 根实例 --- */
 export interface ISystemDependencies {
@@ -24,8 +24,8 @@ export interface ISystemDependencies {
     'info': typeof info;
     /** --- 切换窗体焦点 --- */
     'changeFocus': typeof changeFocus;
-    /** --- 查询可恢复焦点的最上层窗体 --- */
-    'getMaxZIndexID': typeof getMaxZIndexID;
+    /** --- 将焦点交给最上层可操作的窗体 --- */
+    'changeFocusMaxZIndex': typeof changeFocusMaxZIndex;
     /** --- 语言方向变化后刷新通知位置 --- */
     'refreshNotifyPosition': () => void;
     /** --- 任务栏 Vue 挂载后同步根实例 --- */

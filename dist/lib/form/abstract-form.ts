@@ -5,9 +5,18 @@ import * as lControl from '../control';
 import type * as lNativeEvents from '../native/events';
 import { AbstractCommon } from './base';
 import { confirm } from './dialog';
-import { info, state } from './state';
+import { info, nextZIndex, state } from './state';
 import { hideForm } from './remove';
-import { changeFocus, close } from './window';
+import { beginFocusRequest, changeFocus, close, shouldFocusOnShow } from './window';
+
+/** --- 标记置顶层；调用方决定是否同时激活窗体 --- */
+export function setTopMostLayer(root: lCore.IVue): void {
+    root._topMost = true;
+    if (root._bottomMost) {
+        root._bottomMost = false;
+        root.$el.removeAttribute('data-cg-bottom-most');
+    }
+}
 
 /** --- 窗体的抽象类 --- */
 export abstract class AbstractForm extends AbstractCommon {
@@ -269,33 +278,50 @@ export abstract class AbstractForm extends AbstractCommon {
             return;
         }
         const control = this.refs.form;
-        const previous = this._autoPosition;
-        const position: { 'left'?: number; 'top'?: number; } = {};
+        const generation = this._showGeneration;
+        const revision = form.dialog ? undefined : beginFocusRequest();
         if (!control.stateMaxData && (control.left === -1 || control.top === -1)) {
-            const generation = this._showGeneration;
+            if (!form.dialog) {
+                // --- 即使布局期间用户激活了其他窗体，本窗体也要占据所属层的位置 ---
+                control.$data.zIndex = nextZIndex(this.topMost, this.bottomMost);
+            }
             // --- 等显示前切换的内容渲染完成后再测量 ---
             await this.nextTick();
-            if (generation !== this._showGeneration || form.closed || task.ending || control.$data.isShow) {
+            if (generation !== this._showGeneration || form.closed || task.ending) {
                 return;
             }
-            const area = control.getArea();
-            for (const axis of ['left', 'top'] as const) {
-                const current = axis === 'left' ? control.leftData : control.topData;
-                if (control[axis] !== -1 || (previous && previous[axis] !== current)) {
-                    continue;
+            // --- 同一窗体的多个 show 共用先完成的布局，各自按请求顺序判断焦点 ---
+            if (!control.$data.isShow) {
+                const previous = this._autoPosition;
+                const position: { 'left'?: number; 'top'?: number; } = {};
+                const area = control.getArea();
+                for (const axis of ['left', 'top'] as const) {
+                    const current = axis === 'left' ? control.leftData : control.topData;
+                    if (control[axis] !== -1 || (previous && previous[axis] !== current)) {
+                        continue;
+                    }
+                    const space = axis === 'left' ? area.width - this.element.offsetWidth :
+                        area.height - this.element.offsetHeight;
+                    const centered = area[axis] + space / 2;
+                    position[axis] = centered;
+                    if (!previous || centered !== current) {
+                        control.setPropData(axis, centered);
+                        // --- 位置更新会同步通知应用，应用可能在回调中隐藏或关闭窗体 ---
+                        if (generation !== this._showGeneration || form.closed || task.ending) {
+                            return;
+                        }
+                    }
                 }
-                const space = axis === 'left' ? area.width - this.element.offsetWidth :
-                    area.height - this.element.offsetHeight;
-                const centered = area[axis] + space / 2;
-                position[axis] = centered;
-                if (!previous || centered !== current) {
-                    control.setPropData(axis, centered);
-                }
+                this._autoPosition = position;
             }
         }
-        this._autoPosition = position;
+        else {
+            this._autoPosition = {};
+        }
         control.$data.isShow = true;
-        await changeFocus(this.formId);
+        if (revision !== undefined && !form.dialog && shouldFocusOnShow(revision)) {
+            await changeFocus(this.formId);
+        }
     }
 
     /**
@@ -319,6 +345,9 @@ export abstract class AbstractForm extends AbstractCommon {
         const result = new Promise<string>((res) => {
             resolve = res;
         });
+        const revision = beginFocusRequest(this.formId);
+        // --- 按打开顺序保留置顶位置，慢显示的模态不能越过后来激活的置顶窗体 ---
+        const zIndex = ++info.topLastZIndex;
         form.dialog = {
             result, 'focus': state.focusId, 'topMost': this.topMost, 'bottomMost': this.bottomMost,
             finish: () => {
@@ -329,11 +358,27 @@ export abstract class AbstractForm extends AbstractCommon {
         this.dialogResult = '';
         runtime.dialogFormIds.push(this.formId);
         try {
-            // --- 显示期间也可能隐藏或关闭；本轮已结束时直接返回其结果 ---
-            await Promise.race([this.show(), result]);
-            if (!task.ending && !form.closed && form.dialog?.result === result) {
-                this.topMost = true;
+            const activate = (): void => {
+                if (task.ending || form.closed || form.dialog?.result !== result || !this.refs.form.$data.isShow) {
+                    return;
+                }
+                if (runtime.dialogFormIds.at(-1) === this.formId
+                    && (state.focusId === this.formId || shouldFocusOnShow(revision))) {
+                    this.topMost = true;
+                }
+                else {
+                    setTopMostLayer(form.vroot);
+                    this.refs.form.$data.zIndex = zIndex;
+                }
+            };
+            let showing = this.show();
+            if (this.refs.form.$data.isShow) {
+                activate();
             }
+            else {
+                showing = showing.then(activate);
+            }
+            await Promise.race([showing, result]);
         }
         catch {
             if (!task.ending && !form.closed && form.dialog?.result === result) {

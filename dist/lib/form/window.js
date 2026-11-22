@@ -3,7 +3,7 @@ import * as lTask from '../task';
 import * as lDom from '../dom';
 import { remove } from './remove';
 import { elements } from './system';
-import { info, state } from './state';
+import { nextZIndex, state } from './state';
 /**
  * --- 修改窗体的最大化、最小化状态，外部或不可调整 state 时才调用 ---
  * @param state 最大化、最小化或关闭
@@ -334,86 +334,139 @@ export async function hashBack(formId) {
     await item.vroot.formHashBack();
     return true;
 }
+/** --- 点击窗体外部前持有焦点的模态窗体，可在退出时交还焦点 --- */
+let blurredModalId = null;
+/** --- 尚在等待布局的模态窗体，外部点击时由它负责在退出后交还焦点 --- */
+let pendingModalId = null;
+/** --- 后来的请求可使尚未完成的激活失效 --- */
+let focusRevision = 0;
+/** --- 自动交接没有候选窗体时，允许正在显示的窗体随后接管 --- */
+let waitingForVisibleForm = false;
+/** --- 记录显示开始时的焦点选择，异步布局结束后可检查用户是否已切换 --- */
+export function beginFocusRequest(modalId) {
+    pendingModalId = modalId ?? null;
+    waitingForVisibleForm = false;
+    return ++focusRevision;
+}
+/** --- 已退出的窗体没有可用的接替者时，允许随后完成显示的窗体接管 --- */
+export function shouldFocusOnShow(revision) {
+    return revision === focusRevision || waitingForVisibleForm;
+}
+/** --- 撤下当前焦点；点击窗体外部时，记住仍可交还焦点的模态窗体 --- */
+function blurFocus(outside) {
+    const previousId = getFocus();
+    const taskId = previousId ? getTaskId(previousId) : '';
+    const previous = previousId ? getForm(taskId, previousId) : null;
+    if (!outside) {
+        blurredModalId = null;
+    }
+    else if (pendingModalId || previousId) {
+        blurredModalId = pendingModalId ?? (previous?.dialog ? previousId : null);
+    }
+    pendingModalId = null;
+    if (previous) {
+        previous.vapp._container.removeAttribute('data-form-focus');
+        previous.vroot._formFocus = false;
+        lCore.trigger('formBlurred', taskId, previous.id).catch(() => { });
+    }
+    state.focusId = null;
+    lTask.setFocus();
+}
+/** --- 自动交接要求窗体已显示且未最小化；主动激活也可还原窗体、选中等待布局的顶层模态 --- */
+function getFocusCandidate(task, formId, activate = false, modalId) {
+    const form = task?.forms[formId];
+    const control = form?.vroot.$refs.form;
+    if (!form || form.closed || task.ending || !control) {
+        return null;
+    }
+    if (activate) {
+        return control.$data.isShow || formId === modalId ? form : null;
+    }
+    return control.$data.isShow && !control.stateMinData ? form : null;
+}
+/** --- 只有原窗体仍可选时，才将焦点转给同任务的顶层模态 --- */
+function getFocusTarget(task, formId, activate = false) {
+    const runtime = task && lTask.getRuntime(state.sysId, task.id);
+    if (!runtime) {
+        return null;
+    }
+    const modalId = runtime.dialogFormIds.at(-1);
+    const requested = getFocusCandidate(task, formId, activate, modalId);
+    if (requested && modalId && modalId !== formId) {
+        return getFocusCandidate(task, modalId, activate, modalId);
+    }
+    return requested;
+}
+/** --- 阻止还原事件回调再次还原同一个窗体 --- */
+const restoringForms = new Set();
 /**
  * --- 将键盘焦点和任务焦点切换到目标窗体 ---
  * @param formId 变更后的 form id
  * @param mode activate 主动激活并提到本层最前，restore 在现有可见窗体之间恢复焦点
  */
 export async function changeFocus(formId = '', mode = 'activate') {
-    const previousId = getFocus();
-    if (previousId === formId) {
-        return;
-    }
-    // --- 焦点切换在同一轮执行中完成，连续点击时不会同时留下两个焦点窗体 ---
-    if (previousId) {
-        const previousTaskId = getTaskId(previousId);
-        const previous = getForm(previousTaskId, previousId);
-        if (previous) {
-            previous.vapp._container.removeAttribute('data-form-focus');
-            previous.vroot._formFocus = false;
-            lCore.trigger('formBlurred', previousTaskId, previousId).catch(() => { });
-        }
-    }
-    state.focusId = null;
-    lTask.setFocus();
     if (!formId) {
+        ++focusRevision;
+        waitingForVisibleForm = mode === 'restore';
+        blurFocus(mode === 'activate');
         return;
     }
     const taskId = getTaskId(formId);
     const task = lTask.getOrigin(taskId);
     const requested = task?.forms[formId];
-    if (!task || !requested || requested.closed) {
+    const activate = mode === 'activate';
+    const target = getFocusTarget(task, formId, activate);
+    if (!requested || !target || restoringForms.has(requested) || restoringForms.has(target)) {
         return;
     }
-    const runtime = lTask.getRuntime(state.sysId, taskId);
-    if (!runtime) {
-        return;
+    const revision = beginFocusRequest();
+    for (const form of [requested, target]) {
+        if (!form.vroot.$refs.form.stateMinData) {
+            continue;
+        }
+        // --- 还原会同步调用应用的 min 监听器，它可以关闭窗体、打开模态或选择别的焦点 ---
+        restoringForms.add(form);
+        try {
+            form.vroot.$refs.form.minMethod();
+        }
+        finally {
+            restoringForms.delete(form);
+        }
+        if (revision !== focusRevision || getFocusTarget(task, formId, activate) !== target
+            || form.vroot.$refs.form.stateMinData) {
+            return;
+        }
     }
-    if (requested.vroot.$refs.form.stateMinData) {
-        min(formId);
-    }
-    // --- 有模态窗体时，焦点始终落到当前最上层的模态窗体 ---
-    const targetId = runtime.dialogFormIds.at(-1) ?? formId;
-    const target = task.forms[targetId];
-    if (!target || target.closed) {
-        return;
-    }
+    const targetId = target.id;
     const control = target.vroot.$refs.form;
-    if (targetId !== formId && control.stateMinData) {
-        min(targetId);
+    if (targetId !== getFocus()) {
+        blurFocus(false);
+        if (mode === 'restore') {
+            restoreStackOrder(target);
+        }
+        else {
+            control.$data.zIndex = nextZIndex(target.vroot._topMost, target.vroot._bottomMost);
+        }
+        target.vapp._container.dataset.formFocus = '';
+        target.vroot._formFocus = true;
+        state.focusId = targetId;
+        lTask.setFocus(taskId);
+        lCore.trigger('formFocused', taskId, targetId).catch(() => { });
     }
-    if (mode === 'restore') {
-        restoreStackOrder(target);
-    }
-    else if (target.vroot._topMost) {
-        control.$data.zIndex = ++info.topLastZIndex;
-    }
-    else if (target.vroot._bottomMost) {
-        control.$data.zIndex = ++info.bottomLastZIndex;
-    }
-    else {
-        control.$data.zIndex = ++info.lastZIndex;
-    }
-    target.vapp._container.dataset.formFocus = '';
-    target.vroot._formFocus = true;
-    state.focusId = targetId;
-    lTask.setFocus(taskId);
-    lCore.trigger('formFocused', taskId, targetId).catch(() => { });
     if (targetId !== formId) {
         await flash(taskId, targetId);
     }
 }
 /** --- 枚举可接收焦点的已显示窗体，读取运行时状态以包含尚未渲染的变化 --- */
-function* visibleForms() {
+function* visibleForms(unmaskedOnly = false) {
     for (const element of elements.list.children) {
         const { taskId, formId } = element.dataset;
         if (!taskId || !formId || taskId === lTask.systemTaskInfo.taskId) {
             continue;
         }
         const task = lTask.getOrigin(taskId);
-        const form = task?.forms[formId];
-        const control = form?.vroot.$refs.form;
-        if (form && !form.closed && !task.ending && control?.$data.isShow && !control.stateMinData) {
+        const form = unmaskedOnly ? getFocusTarget(task, formId) : getFocusCandidate(task, formId);
+        if (form?.id === formId) {
             yield form;
         }
     }
@@ -453,11 +506,11 @@ export async function getMaxZIndexID(current, out = {}) {
     return findMaxZIndexID(out);
 }
 /** --- 从可见窗体中选择下一焦点，跳过正在关闭或已隐藏的窗体 --- */
-function findMaxZIndexID(out, includeBottom = false) {
+function findMaxZIndexID(out, restore) {
     let highest = 0;
     let id = null;
-    for (const form of visibleForms()) {
-        if ((!includeBottom && form.vroot._bottomMost) || out.formIds?.includes(form.id)
+    for (const form of visibleForms(restore !== undefined)) {
+        if ((restore !== 'includeBottom' && form.vroot._bottomMost) || out.formIds?.includes(form.id)
             || out.taskIds?.includes(form.vroot.taskId)) {
             continue;
         }
@@ -469,27 +522,47 @@ function findMaxZIndexID(out, includeBottom = false) {
     }
     return id;
 }
-/** --- 隐藏有焦点的窗体后，优先返回上层模态或打开前的可见窗体 --- */
+/** --- 窗体退出后恢复焦点，优先返回上一层模态或打开前的可见窗体 --- */
 export function restoreFocusAfterHide(formId, parent, previous) {
-    if (state.focusId !== formId) {
+    if (pendingModalId === formId) {
+        pendingModalId = null;
+    }
+    if ((state.focusId ?? blurredModalId) !== formId) {
         return;
     }
-    const ownerTaskId = previous ? getTaskId(previous) : '';
-    const owner = ownerTaskId && previous ? getForm(ownerTaskId, previous) : null;
-    const control = owner?.vroot.$refs.form;
-    const ownerVisible = owner && !owner.closed && control?.$data.isShow && !control.stateMinData;
-    const focus = parent ?? (ownerVisible ? previous : findMaxZIndexID({}, true));
-    changeFocus(focus ?? undefined, 'restore').catch(() => { });
+    for (const ownerId of [parent, previous]) {
+        const owner = ownerId && getFocusTarget(lTask.getOrigin(getTaskId(ownerId)), ownerId);
+        if (owner) {
+            changeFocus(owner.id, 'restore').catch(() => { });
+            return;
+        }
+    }
+    const next = findMaxZIndexID({}, 'includeBottom');
+    changeFocus(next ?? undefined, 'restore').catch(() => { });
+}
+/** --- 退出的任务持有窗体焦点时，将焦点交给其他任务中最靠前的窗体 --- */
+export function restoreFocusAfterTaskEnd(taskId) {
+    if (pendingModalId && getTaskId(pendingModalId) === taskId) {
+        pendingModalId = null;
+    }
+    const focus = state.focusId ?? blurredModalId;
+    if (!focus || getTaskId(focus) !== taskId) {
+        return;
+    }
+    const next = findMaxZIndexID({}, 'normal');
+    changeFocus(next ?? undefined, 'restore').catch(() => { });
 }
 /**
  * --- 让最大的 z index 窗体获取焦点（不含 top 和最小化的） ---
  */
 export async function changeFocusMaxZIndex() {
-    const formId = await getMaxZIndexID(state.sysId);
-    if (!formId) {
-        return;
+    const formId = findMaxZIndexID({}, 'normal');
+    if (formId) {
+        await changeFocus(formId, 'restore');
     }
-    await changeFocus(formId ?? undefined, 'restore');
+    else if (state.focusId && getForm(getTaskId(state.focusId), state.focusId)?.vroot.$refs.form.stateMinData) {
+        await changeFocus(undefined, 'restore');
+    }
 }
 /**
  * --- 根据任务 id 和 form id 获取 IForm 对象 ---

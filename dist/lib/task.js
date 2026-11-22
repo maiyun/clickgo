@@ -20,6 +20,7 @@ import * as lDom from './dom';
 import * as lTool from './tool';
 import * as lForm from './form';
 import { cleanupPop } from './form/popup';
+import { restoreFocusAfterTaskEnd } from './form/window';
 import * as lControl from './control';
 import * as lFs from './fs';
 import * as lTheme from './theme';
@@ -1254,11 +1255,7 @@ export async function end(taskId) {
     for (const path in list[taskId].threads) {
         await list[taskId].threads[path].end();
     }
-    // --- 获取最大的 z index 窗体，并让他获取焦点 ---
-    const fid = await lForm.getMaxZIndexID(sysId, {
-        'taskIds': [taskId],
-    });
-    await lForm.changeFocus(fid ?? undefined, 'restore');
+    restoreFocusAfterTaskEnd(taskId);
     // --- 移除窗体 list ---
     for (const fid in task.forms) {
         // --- 结束任务挨个关闭窗体 ---

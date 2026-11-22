@@ -11,7 +11,6 @@ const core = {
     trigger: async (...args) => { events.push(args); },
 };
 const form = { simpleSystemTaskRoot: { forms: {} }, notify() {}, getList: () => ({}),
-    getMaxZIndexID: async () => null, changeFocus: async () => {},
     elements: { list: { querySelectorAll: () => [] } } };
 const tick = [];
 const clickgo = {
@@ -22,6 +21,7 @@ const clickgo = {
 };
 const modules = {
     '../clickgo': clickgo, './core': core, './form': form,
+    './form/window': { restoreFocusAfterTaskEnd() {} },
     './tool': { clone: structuredClone, blob2DataUrl: async () => 'data:image/png;base64,icon' },
     './fs': { getContent: async (taskId, path) => {
         if (path === '/slow') return new Promise(resolve => pendingIcons.set(taskId, resolve));
@@ -184,8 +184,6 @@ api.removeTray('owner', mergedId);
 console.log('Partial updates merge across pending icons and menus retain only public fields with unique command IDs.');
 
 // Real task.end releases trays even when there are no application Forms left.
-Object.assign(form, { getMaxZIndexID: async () => null, changeFocus: async () => {},
-    elements: { list: { querySelectorAll: () => [] } } });
 Object.assign(modules['./dom'], { removeFromStyleList() {}, clearWatchSize() {}, clearWatch() {} });
 modules['./control'] = { clearComponents() {} };
 modules['./native'] = { clear() {} };

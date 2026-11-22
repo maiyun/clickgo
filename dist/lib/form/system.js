@@ -5,14 +5,14 @@ import * as lTool from '../tool';
 import * as lDom from '../dom';
 import { createSystemRuntime } from '../../abox/form.js';
 import { state, info } from './state';
-import { changeFocus, getMaxZIndexID } from './window';
+import { changeFocus, changeFocusMaxZIndex } from './window';
 import { refreshNotifyPosition } from './notification';
 /** --- 系统任务栏的 Vue 根实例 --- */
 export let simpleSystemTaskRoot;
 /** --- 启动器的 Vue 根实例 --- */
 export let launcherRoot;
 const system = createSystemRuntime({
-    clickgo, lCore, lTask, lTool, lDom, state, info, changeFocus, getMaxZIndexID,
+    clickgo, lCore, lTask, lTool, lDom, state, info, changeFocus, changeFocusMaxZIndex,
     'refreshNotifyPosition': () => { refreshNotifyPosition(); },
     'setSimpleSystemTaskRoot': (root) => { simpleSystemTaskRoot = root; },
     'setLauncherRoot': (root) => { launcherRoot = root; }

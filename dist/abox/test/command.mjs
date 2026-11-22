@@ -820,9 +820,8 @@ const lifecycleScope = {
     clickgo: { isNative: () => false }, clearSystem: async () => {},
     getTaskId: id => id === 'main' ? 'first' : '', setTimeout: callback => callbacks.push(callback),
     clearTimeout() {}, cancelAnimationFrame() {}, activePanels: {}, cleanupPop() {}, restoreFocusAfterHide() {},
-    elements: { popList: { querySelector: () => null } },
-    lForm: { getMaxZIndexID: async () => null, changeFocus: async () => {},
-        elements: { list: { querySelectorAll: () => [] } }, activePanels: {} },
+    restoreFocusAfterTaskEnd() {}, elements: { popList: { querySelector: () => null } },
+    lForm: { elements: { list: { querySelectorAll: () => [] } }, activePanels: {} },
 };
 vm.runInNewContext(ts.transpileModule(extract(formTree, 'hideForm') + '\n' + extract(formTree, 'remove') + '\n' + extract(formTree, 'removePanel'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },

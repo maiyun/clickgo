@@ -31,7 +31,6 @@ import { cleanupPop } from './popup';
 export function hideForm(form, runtime) {
     const root = form.vroot;
     const control = root.$refs.form.$data;
-    const leavingFocus = control.isShow && state.focusId === form.id;
     if (control.isShow) {
         control.hideZIndex = control.zIndex;
     }
@@ -57,9 +56,7 @@ export function hideForm(form, runtime) {
             dialog.finish();
         }
     }
-    if (leavingFocus) {
-        restoreFocusAfterHide(form.id, runtime.dialogFormIds.at(-1), dialog?.focus ?? null);
-    }
+    restoreFocusAfterHide(form.id, runtime.dialogFormIds.at(-1), dialog?.focus ?? null);
 }
 /**
  * --- 移除一个 form（关闭窗口） ---

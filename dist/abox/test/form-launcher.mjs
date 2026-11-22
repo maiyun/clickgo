@@ -26,6 +26,7 @@ const scope = {
     setTimeout() { return 0; }, clearTimeout() {},
 };
 vm.runInNewContext(compiled, scope);
+const confirmEvents = [];
 const dependencies = {
     clickgo: { modules: { pointer, vue } },
     info: { locale: { en: { search: 'Search', cancel: 'Cancel', ok: 'OK' } } },
@@ -36,12 +37,21 @@ const dependencies = {
     lTask: { async run(...args) { runs.push(args); } },
     lTool: { lang: { getTag: x => x, getDirection: () => 'ltr' } },
     lDom: { is: {} }, state: { sysId: 'system' },
-    changeFocus: async () => {}, getMaxZIndexID: async () => null,
+    changeFocus: async () => {}, changeFocusMaxZIndex: async () => { confirmEvents.push('restore'); },
     refreshNotifyPosition() {}, setSimpleSystemTaskRoot() {}, setLauncherRoot(value) { root = value; },
 };
 const system = scope.exports.createSystemRuntime(dependencies);
 document.querySelector('#cg-launcher').remove();
 system.init();
+for (const choice of ['ok', 'cancel']) {
+    const result = system.superConfirm('system', 'Continue?').then(value => {
+        confirmEvents.push('caller');
+        return value;
+    });
+    document.querySelector('#cg-confirm-' + choice).click();
+    assert.equal(await result, choice === 'ok');
+    assert.deepEqual(confirmEvents.splice(0), ['restore', 'caller'], 'the caller can choose focus after confirmation');
+}
 const list = document.querySelector('.cg-launcher-list');
 const search = document.querySelector('.cg-launcher-search');
 

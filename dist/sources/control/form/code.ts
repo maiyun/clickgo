@@ -519,12 +519,6 @@ export default class extends clickgo.control.AbstractControl {
                 this.element.dataset.cgMin = '';
                 this.stateMinData = true;
                 this.emit('update:stateMin', true);
-                // --- 如果当前有焦点，则使别人获取焦点 ---
-                if (this.formFocus) {
-                    clickgo.tool.sleep(100).then(() => {
-                        clickgo.form.changeFocusMaxZIndex().catch(() => {});
-                    }).catch((e) => { throw e; });
-                }
             }
         }
         else {
@@ -547,8 +541,13 @@ export default class extends clickgo.control.AbstractControl {
             this.stateMinData = false;
             this.emit('update:stateMin', false);
         }
-        // --- 触发 formStateMinChanged 事件 ---
-        this.trigger('formStateMinChanged', this.stateMinData).catch(() => {});
+        const minimized = this.stateMinData;
+        this.trigger('formStateMinChanged', minimized).finally(() => {
+            // --- 先通知最小化，监听器可能已还原窗体或把焦点交给其他窗体 ---
+            if (minimized && this.stateMinData && this.formFocus && !this.isNativeNoFrameFirst) {
+                return clickgo.form.changeFocusMaxZIndex();
+            }
+        }).catch(() => {});
         return true;
     }
 

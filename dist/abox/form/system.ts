@@ -1,27 +1,14 @@
 import type * as lCore from '../../lib/core';
-import type { ISystemDependencies } from '../../lib/form/system.types';
+import type { ISystemDependencies, ISystemElements } from '../../lib/form/system.types';
 
 export function createSystemRuntime(deps: ISystemDependencies) {
-    const { clickgo, lCore, lTask, lTool, lDom, info, state, changeFocus, getMaxZIndexID, refreshNotifyPosition } = deps;
+    const { clickgo, lCore, lTask, lTool, lDom, info, state, changeFocus, changeFocusMaxZIndex, refreshNotifyPosition } = deps;
     let launcherRoot: import('../../lib/core').IVue;
-    let superConfirmHandler: undefined | ((result: boolean) => void | Promise<void>);
+    let superConfirmHandler: ((result: boolean) => void) | undefined;
     let keyboardHideTimer: number | undefined;
     let keyboardGeneration = 0;
     const folderGenerations = new WeakMap<HTMLElement, number>();
-const elements: {
-    'wrap': HTMLDivElement;
-    'list': HTMLDivElement;
-    'popList': HTMLDivElement;
-    'circular': HTMLDivElement;
-    'rectangle': HTMLDivElement;
-    'keyboard': HTMLDivElement;
-    'notify': HTMLElement;
-    'alert': HTMLElement;
-    'simpletask': HTMLDivElement;
-    'launcher': HTMLDivElement;
-    'confirm': HTMLDivElement;
-    'init': () => void;
-} = {
+const elements: ISystemElements = {
     'wrap': document.createElement('div'),
     'list': document.createElement('div'),
     'popList': document.createElement('div'),
@@ -321,26 +308,14 @@ const elements: {
             `</div>` +
         `</div>`;
         this.confirm.style.display = 'none';
-        document.getElementById('cg-confirm-cancel')!.addEventListener('click', () => {
-            superConfirmHandler?.(false) as any;
-            this.confirm.style.display = 'none';
-            getMaxZIndexID(state.sysId).then(fid => {
-                if (!fid) {
-                    return;
-                }
-                changeFocus(fid, 'restore').catch(() => {});
-            }).catch(() => {});
-        });
-        document.getElementById('cg-confirm-ok')!.addEventListener('click', () => {
-            superConfirmHandler?.(true) as any;
-            this.confirm.style.display = 'none';
-            getMaxZIndexID(state.sysId).then(fid => {
-                if (!fid) {
-                    return;
-                }
-                changeFocus(fid, 'restore').catch(() => {});
-            }).catch(() => {});
-        });
+        for (const choice of ['cancel', 'ok']) {
+            document.getElementById('cg-confirm-' + choice)!.addEventListener('click', () => {
+                superConfirmHandler?.(choice === 'ok');
+                superConfirmHandler = undefined;
+                this.confirm.style.display = 'none';
+                changeFocusMaxZIndex().catch(() => {});
+            });
+        }
 
         this.keyboard.id = 'cg-keyboard';
         this.keyboard.dir = 'ltr';
@@ -546,10 +521,7 @@ function superConfirm(current: string, html: string): Promise<boolean> {
         document.getElementById('cg-confirm-content')!.innerHTML = html;
         document.getElementById('cg-confirm-cancel')!.innerHTML = info.locale[lCore.config.locale]?.cancel ?? info.locale['en'].cancel;
         document.getElementById('cg-confirm-ok')!.innerHTML = info.locale[lCore.config.locale]?.ok ?? info.locale['en'].ok;
-        superConfirmHandler = (result: boolean) => {
-            superConfirmHandler = undefined;
-            resolve(result);
-        };
+        superConfirmHandler = resolve;
     });
 }
 

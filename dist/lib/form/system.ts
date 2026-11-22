@@ -5,7 +5,7 @@ import * as lTool from '../tool';
 import * as lDom from '../dom';
 import { createSystemRuntime } from '../../abox/form.js';
 import { state, info } from './state';
-import { changeFocus, getMaxZIndexID } from './window';
+import { changeFocus, changeFocusMaxZIndex } from './window';
 import { refreshNotifyPosition } from './notification';
 import type { ISystemRuntime } from './system.types';
 
@@ -16,27 +16,14 @@ export let simpleSystemTaskRoot: lCore.IVue;
 export let launcherRoot: lCore.IVue;
 
 const system: ISystemRuntime = createSystemRuntime({
-    clickgo, lCore, lTask, lTool, lDom, state, info, changeFocus, getMaxZIndexID,
+    clickgo, lCore, lTask, lTool, lDom, state, info, changeFocus, changeFocusMaxZIndex,
     'refreshNotifyPosition': () => { refreshNotifyPosition(); },
     'setSimpleSystemTaskRoot': (root) => { simpleSystemTaskRoot = root; },
     'setLauncherRoot': (root) => { launcherRoot = root; }
 });
 
 /** --- 系统宿主 DOM 节点 --- */
-export const elements: {
-    'wrap': HTMLDivElement;
-    'list': HTMLDivElement;
-    'popList': HTMLDivElement;
-    'circular': HTMLDivElement;
-    'rectangle': HTMLDivElement;
-    'keyboard': HTMLDivElement;
-    'notify': HTMLElement;
-    'alert': HTMLElement;
-    'simpletask': HTMLDivElement;
-    'launcher': HTMLDivElement;
-    'confirm': HTMLDivElement;
-    'init': () => void;
-} = system.elements;
+export const elements = system.elements;
 
 /**
  * --- 刷新系统根节点及任务窗体的语言方向 ---

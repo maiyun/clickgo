@@ -168,3 +168,14 @@ export function initSysId(id: string): void {
     }
     state.sysId = id;
 }
+
+/** --- 为窗体保留其所在层的下一个位置 --- */
+export function nextZIndex(topMost: boolean, bottomMost: boolean): number {
+    if (topMost) {
+        return ++info.topLastZIndex;
+    }
+    if (bottomMost) {
+        return ++info.bottomLastZIndex;
+    }
+    return ++info.lastZIndex;
+}

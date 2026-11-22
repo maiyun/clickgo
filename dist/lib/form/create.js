@@ -22,7 +22,7 @@ import * as lDom from '../dom';
 import * as lControl from '../control';
 import * as lFs from '../fs';
 import * as lNative from '../native';
-import { AbstractForm } from './abstract-form';
+import { AbstractForm, setTopMostLayer } from './abstract-form';
 import { AbstractPanel } from './abstract-panel';
 import { state, info } from './state';
 import { elements, refreshLocaleDirection } from './system';
@@ -647,11 +647,7 @@ export async function create(current, cls, data, opt = {}) {
             set: function (v) {
                 if (v) {
                     // --- 置顶 ---
-                    this._topMost = true;
-                    if (this._bottomMost) {
-                        this._bottomMost = false;
-                        this.$el.removeAttribute('data-cg-bottom-most');
-                    }
+                    setTopMostLayer(this);
                     if (!this._formFocus) {
                         changeFocus(this.formId).catch(() => { });
                     }

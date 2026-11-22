@@ -66,7 +66,7 @@ const system = systemModule.namespace.createSystemRuntime({
     lCore: { config }, lTask: { getOrigin: id => tasks.get(id) ?? null },
     lTool: { lang: toolModule.namespace.lang, logicalOr: toolModule.namespace.logicalOr },
     lDom: {}, info: { locale: { en: { search: 'Search' } } }, state: { sysId: 'system' },
-    changeFocus: async () => {}, getMaxZIndexID: async () => null,
+    changeFocus: async () => {}, changeFocusMaxZIndex: async () => {},
     refreshNotifyPosition() {}, setSimpleSystemTaskRoot() {}, setLauncherRoot() {},
 });
 const formModule = new SyntheticModule([], function() {});

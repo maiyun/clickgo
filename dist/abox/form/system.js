@@ -1,5 +1,5 @@
 export function createSystemRuntime(deps) {
-    const { clickgo, lCore, lTask, lTool, lDom, info, state, changeFocus, getMaxZIndexID, refreshNotifyPosition } = deps;
+    const { clickgo, lCore, lTask, lTool, lDom, info, state, changeFocus, changeFocusMaxZIndex, refreshNotifyPosition } = deps;
     let launcherRoot;
     let superConfirmHandler;
     let keyboardHideTimer;
@@ -276,26 +276,14 @@ export function createSystemRuntime(deps) {
                 `</div>` +
                 `</div>`;
             this.confirm.style.display = 'none';
-            document.getElementById('cg-confirm-cancel').addEventListener('click', () => {
-                superConfirmHandler?.(false);
-                this.confirm.style.display = 'none';
-                getMaxZIndexID(state.sysId).then(fid => {
-                    if (!fid) {
-                        return;
-                    }
-                    changeFocus(fid, 'restore').catch(() => { });
-                }).catch(() => { });
-            });
-            document.getElementById('cg-confirm-ok').addEventListener('click', () => {
-                superConfirmHandler?.(true);
-                this.confirm.style.display = 'none';
-                getMaxZIndexID(state.sysId).then(fid => {
-                    if (!fid) {
-                        return;
-                    }
-                    changeFocus(fid, 'restore').catch(() => { });
-                }).catch(() => { });
-            });
+            for (const choice of ['cancel', 'ok']) {
+                document.getElementById('cg-confirm-' + choice).addEventListener('click', () => {
+                    superConfirmHandler?.(choice === 'ok');
+                    superConfirmHandler = undefined;
+                    this.confirm.style.display = 'none';
+                    changeFocusMaxZIndex().catch(() => { });
+                });
+            }
             this.keyboard.id = 'cg-keyboard';
             this.keyboard.dir = 'ltr';
             this.keyboard.lang = 'en';
@@ -496,10 +484,7 @@ export function createSystemRuntime(deps) {
             document.getElementById('cg-confirm-content').innerHTML = html;
             document.getElementById('cg-confirm-cancel').innerHTML = info.locale[lCore.config.locale]?.cancel ?? info.locale['en'].cancel;
             document.getElementById('cg-confirm-ok').innerHTML = info.locale[lCore.config.locale]?.ok ?? info.locale['en'].ok;
-            superConfirmHandler = (result) => {
-                superConfirmHandler = undefined;
-                resolve(result);
-            };
+            superConfirmHandler = resolve;
         });
     }
     function showKeyboard() {

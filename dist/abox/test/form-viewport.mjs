@@ -19,6 +19,7 @@ const clickgo = {
             trigger() { return Promise.resolve(); }
         },
     },
+    form: {},
     core: { getAvailArea: () => area },
     dom: { watchSize() {} },
     native: {
@@ -37,6 +38,28 @@ vm.runInNewContext(compiled, {
     window: { innerWidth: 640, innerHeight: 440 },
 });
 const Form = exports.default;
+
+// Drive the title-bar method and defer the notification just as the global event dispatcher does.
+for (const duringMin of ['keep focus', 'switch focus', 'restore', 'listener throws']) {
+    const form = new Form();
+    form.formFocus = true;
+    form.element = { dataset: {}, removeAttribute() {} };
+    const events = [];
+    form.trigger = async (name, minimized) => {
+        await Promise.resolve();
+        if (!minimized) return;
+        events.push(name);
+        if (duringMin === 'switch focus') form.formFocus = false;
+        if (duringMin === 'restore') form.minMethod();
+        if (duringMin === 'listener throws') throw Error('listener failed');
+    };
+    clickgo.form.changeFocusMaxZIndex = async () => { events.push('focus'); };
+    form.minMethod();
+    assert.deepEqual(events, [], 'focus must wait for the minimize notification');
+    await new Promise(setImmediate);
+    const handoff = duringMin === 'keep focus' || duringMin === 'listener throws';
+    assert.deepEqual(events, handoff ? ['formStateMinChanged', 'focus'] : ['formStateMinChanged'], duringMin);
+}
 
 function restore(history, mode = 'web') {
     nativeMode = mode !== 'web';
