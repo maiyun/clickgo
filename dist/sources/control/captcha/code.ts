@@ -149,6 +149,12 @@ export default class extends clickgo.control.AbstractControl {
     }
 
     public async onMounted(): Promise<void> {
+        // --- 未传 akey 时不初始化，避免第三方库抛错 ---
+        if (!this.props.akey) {
+            this.isLoading = false;
+            this.notInit = true;
+            return;
+        }
         if (this.props.factory === 'tc') {
             // --- 腾讯云验证码 ---
             const tcc = await clickgo.core.getModule('tjcaptcha');
