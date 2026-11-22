@@ -8,6 +8,6 @@
 
 > **systemTaskInfo**: [`ISystemTaskInfo`](../interfaces/ISystemTaskInfo.md)
 
-Defined in: [lib/task.ts:60](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L60)
+Defined in: [lib/task.ts:61](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L61)
 
 当前注册的系统任务栏

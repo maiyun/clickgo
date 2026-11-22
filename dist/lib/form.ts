@@ -60,6 +60,7 @@ export {
 } from './form/system';
 export { showPop, hidePop, isJustPop, doFocusAndPopEvent, appendToPop, removeFromPop } from './form/popup';
 export { alert, refreshNotifyPosition, notify, notifyProgress, notifyContent, hideNotify } from './form/notification';
+export type { ISystemElements } from './form/system.types';
 export type {
     IAbstractPanelShowEvent, IAbstractPanelQsChangeShowEvent, IForm, IFormInfo, IMoveDragOptions,
     INotifyOptions, INotifyContentOptions, IFormDialogOptions, IFormDialogSelectEvent, IFormConfirmOptions,

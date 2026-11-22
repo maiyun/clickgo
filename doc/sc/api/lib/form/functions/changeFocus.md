@@ -8,7 +8,7 @@
 
 > **changeFocus**(`formId?`, `mode?`): `Promise`\<`void`\>
 
-Defined in: [lib/form/window.ts:365](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L365)
+Defined in: [lib/form/window.ts:438](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/window.ts#L438)
 
 将键盘焦点和任务焦点切换到目标窗体
 

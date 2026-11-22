@@ -27,6 +27,7 @@
 - [IMoveDragOptions](interfaces/IMoveDragOptions.md)
 - [INotifyContentOptions](interfaces/INotifyContentOptions.md)
 - [INotifyOptions](interfaces/INotifyOptions.md)
+- [ISystemElements](interfaces/ISystemElements.md)
 
 ## Variables
 

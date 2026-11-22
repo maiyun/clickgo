@@ -8,7 +8,7 @@
 
 > **clearLocaleLang**(`current`): `void`
 
-Defined in: [lib/task.ts:1538](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1538)
+Defined in: [lib/task.ts:1535](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1535)
 
 清除 task 的语言设置
 

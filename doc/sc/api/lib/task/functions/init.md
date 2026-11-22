@@ -8,7 +8,7 @@
 
 > **init**(): `void`
 
-Defined in: [lib/task.ts:1826](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1826)
+Defined in: [lib/task.ts:1823](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L1823)
 
 ## Returns
 

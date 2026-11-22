@@ -6,62 +6,8 @@
 
 # Variable: elements
 
-> `const` **elements**: `object` = `system.elements`
+> `const` **elements**: [`ISystemElements`](../interfaces/ISystemElements.md) = `system.elements`
 
 Defined in: [lib/form/system.ts:26](https://github.com/maiyun/clickgo/blob/master/dist/lib/form/system.ts#L26)
 
 系统宿主 DOM 节点
-
-## Type Declaration
-
-### alert
-
-> **alert**: `HTMLElement`
-
-### circular
-
-> **circular**: `HTMLDivElement`
-
-### confirm
-
-> **confirm**: `HTMLDivElement`
-
-### init
-
-> **init**: () => `void`
-
-#### Returns
-
-`void`
-
-### keyboard
-
-> **keyboard**: `HTMLDivElement`
-
-### launcher
-
-> **launcher**: `HTMLDivElement`
-
-### list
-
-> **list**: `HTMLDivElement`
-
-### notify
-
-> **notify**: `HTMLElement`
-
-### popList
-
-> **popList**: `HTMLDivElement`
-
-### rectangle
-
-> **rectangle**: `HTMLDivElement`
-
-### simpletask
-
-> **simpletask**: `HTMLDivElement`
-
-### wrap
-
-> **wrap**: `HTMLDivElement`

@@ -8,7 +8,7 @@
 
 > **updateTray**(`current`, `id`, `options`): `Promise`\<`boolean`\>
 
-Defined in: [lib/task.ts:161](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L161)
+Defined in: [lib/task.ts:162](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L162)
 
 更新自己的托盘；并发图标更新以最后发起的一次为准
 

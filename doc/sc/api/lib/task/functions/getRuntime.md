@@ -8,7 +8,7 @@
 
 > **getRuntime**(`current`, `taskId`): [`IRuntime`](../interfaces/IRuntime.md) \| `null`
 
-Defined in: [lib/task.ts:269](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L269)
+Defined in: [lib/task.ts:270](https://github.com/maiyun/clickgo/blob/master/dist/lib/task.ts#L270)
 
 获取任务的 runtime 数据，仅系统可以获取
 
