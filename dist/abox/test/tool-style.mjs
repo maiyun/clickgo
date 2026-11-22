@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
-import { stylePrepend } from '../../lib/tool.js';
+import { layoutClassPrepend, stylePrepend } from '../../lib/tool.js';
 
 const scope = css => stylePrepend(css, 'test_').style;
 assert.equal(scope('.wrap:hover .object{transform:translateY(-6px)}'),
@@ -33,4 +33,27 @@ assert.equal(reduced.cssRules[0].style.transform, 'rotateX(-30deg) rotateY(-45de
 assert.equal(reduced.cssRules[1].selectorText, '.test_wrap .test_top::after,.test_wrap:hover .test_top::after');
 assert.equal(reduced.cssRules[1].style.animation, 'none');
 assert.ok(rules.some(rule => rule.name === 'test_sheen'), 'animation names must retain the same scope');
-console.log('Style scoping: first and nested conditional rules, reduced motion, keyframe selectors/names, fonts and actual Cube CSS passed.');
+
+// layoutClassPrepend: multiline static/dynamic class, object ternary values, arrays, self-closing & v-bind:class
+assert.equal(
+    layoutClassPrepend('<div class="card\n  fa-check\n  active"></div>', ['p_']),
+    '<div class="p_card fa-check p_active"></div>'
+);
+assert.equal(
+    layoutClassPrepend(`<layout\n    class="server-card"\n    :class="{\n        'server-card--selected': targetUids.includes(s.uid) && s.uid !== sourceUid[0],\n        'server-card--source': s.uid === sourceUid[0],\n        active: cond ? a : b,\n    }"\n    @click.stop="toggle(s.uid)"\n></layout>`, ['p_']),
+    `<layout\n    class="p_server-card"\n    :class="{[classPrepend('server-card--selected')]: targetUids.includes(s.uid) && s.uid !== sourceUid[0], [classPrepend('server-card--source')]: s.uid === sourceUid[0], [classPrepend('active')]: cond ? a : b}"\n    @click.stop="toggle(s.uid)"\n></layout>`
+);
+assert.equal(
+    layoutClassPrepend(`<div :class="[\n    'a',\n    { [dynKey]: ok, 'b': flag ? 1 : 0 },\n    extraClass\n]"/>`, ['p_']),
+    `<div :class="[classPrepend('a'),{[classPrepend(dynKey)]: ok, [classPrepend('b')]: flag ? 1 : 0},classPrepend(extraClass)]"/>`
+);
+assert.equal(
+    layoutClassPrepend(`<div v-bind:class='{ "ok": ready, bare: true }'></div>`, ['p_']),
+    `<div :class='{[classPrepend("ok")]: ready, [classPrepend("bare")]: true}'></div>`
+);
+assert.equal(
+    layoutClassPrepend('<div :class="ok ? \'yes\' : \'no\'"></div>', ['p_']),
+    '<div :class="classPrepend(ok ? \'yes\' : \'no\')"></div>'
+);
+
+console.log('Style scoping and layoutClassPrepend tests passed.');

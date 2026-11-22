@@ -378,29 +378,106 @@ export function layoutInsertAttr(layout, insert, opt = {}) {
         });
     });
 }
-function layoutClassPrependObject(object) {
-    object = object.slice(1, -1).trim();
-    return `{${object.replace(/([ a-zA-Z0-9'"`[\]\-_]+)(\s*:)/g, (t, t1, t2) => {
-        t1 = t1.trim();
-        if (t1.startsWith('[')) {
-            t1 = `[classPrepend(${t1.slice(1, -1)})]`;
+function splitTopLevel(source, delimiter) {
+    const result = [];
+    let start = 0;
+    let depth = 0;
+    let quote = '';
+    for (let i = 0; i < source.length; ++i) {
+        const ch = source[i];
+        if (quote) {
+            if (ch === quote && !isEscapeChar(source, i)) {
+                quote = '';
+            }
+            continue;
+        }
+        if (ch === '\'' || ch === '"' || ch === '`') {
+            quote = ch;
+            continue;
+        }
+        if (ch === '{' || ch === '[' || ch === '(') {
+            ++depth;
+        }
+        else if (ch === '}' || ch === ']' || ch === ')') {
+            if (depth > 0) {
+                --depth;
+            }
+        }
+        else if (ch === delimiter && depth === 0) {
+            result.push(source.slice(start, i));
+            start = i + 1;
+        }
+    }
+    result.push(source.slice(start));
+    return result;
+}
+function findTopLevelColon(entry) {
+    let depth = 0;
+    let quote = '';
+    for (let i = 0; i < entry.length; ++i) {
+        const ch = entry[i];
+        if (quote) {
+            if (ch === quote && !isEscapeChar(entry, i)) {
+                quote = '';
+            }
+            continue;
+        }
+        if (ch === '\'' || ch === '"' || ch === '`') {
+            quote = ch;
+            continue;
+        }
+        if (ch === '{' || ch === '[' || ch === '(') {
+            ++depth;
+        }
+        else if (ch === '}' || ch === ']' || ch === ')') {
+            if (depth > 0) {
+                --depth;
+            }
+        }
+        else if (ch === ':' && depth === 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+function layoutClassPrependObject(object, attrQuote = '"') {
+    const inner = object.slice(1, -1).trim();
+    if (!inner) {
+        return '{}';
+    }
+    const keyQuote = attrQuote === '\'' ? '"' : '\'';
+    const entries = splitTopLevel(inner, ',');
+    const rewritten = [];
+    for (const raw of entries) {
+        const entry = raw.trim();
+        if (!entry) {
+            continue;
+        }
+        const colonIdx = findTopLevelColon(entry);
+        if (colonIdx < 0) {
+            rewritten.push(entry);
+            continue;
+        }
+        const rawKey = entry.slice(0, colonIdx).trim();
+        const val = entry.slice(colonIdx + 1).trim();
+        let nextKey;
+        if (rawKey.startsWith('[') && rawKey.endsWith(']')) {
+            nextKey = `[classPrepend(${rawKey.slice(1, -1).trim()})]`;
+        }
+        else if ((rawKey.startsWith('\'') && rawKey.endsWith('\'')) ||
+            (rawKey.startsWith('"') && rawKey.endsWith('"')) ||
+            (rawKey.startsWith('`') && rawKey.endsWith('`'))) {
+            nextKey = `[classPrepend(${rawKey})]`;
         }
         else {
-            let sp = '';
-            if (t1.startsWith('\'') || t1.startsWith('"') || t1.startsWith('`')) {
-                sp = t1[0];
-                t1 = t1.slice(1, -1);
-            }
-            else {
-                sp = '\'';
-            }
-            t1 = `[classPrepend(${sp}${t1}${sp})]`;
+            nextKey = `[classPrepend(${keyQuote}${rawKey}${keyQuote})]`;
         }
-        return `${t1}${t2}`;
-    })}}`;
+        rewritten.push(`${nextKey}: ${val}`);
+    }
+    return `{${rewritten.join(', ')}}`;
 }
 export function layoutClassPrepend(layout, preps) {
-    const rtn = layout.replace(/(\s)class=["'](.*?)["']/gi, function (t, t0, t1) {
+    const rtn = layout.replace(/(\s)class=(["'])([\s\S]*?)\2/gi, function (t, t0, _quote, t1) {
         t1 = t1.trim();
         const classList = t1.split(/\s+/);
         const resultList = [];
@@ -418,30 +495,28 @@ export function layoutClassPrepend(layout, preps) {
             }
         }
         return `${t0}class="${resultList.join(' ')}"`;
-    }).replace(/\s:class=(["']).*?["']((\s+[a-zA-Z0-9-_:@]+(=|\s*>))|(\s*)>)/gi, function (t, sp) {
-        return t.replace(new RegExp(`:class=${sp}([^${sp}]+?)${sp}`, 'gi'), function (t, t1) {
-            t1 = t1.trim();
-            if (t1.startsWith('[')) {
-                const t1a = parseArrayString(t1);
-                for (let i = 0; i < t1a.length; ++i) {
-                    t1a[i] = t1a[i].trim();
-                    if (t1a[i].startsWith('{')) {
-                        t1a[i] = layoutClassPrependObject(t1a[i]);
-                    }
-                    else {
-                        t1a[i] = `classPrepend(${t1a[i]})`;
-                    }
+    }).replace(/(\s)(?:v-bind)?:class=(["'])([\s\S]*?)\2/gi, function (_t, lead, sp, rawExpr) {
+        let expr = rawExpr.trim();
+        if (expr.startsWith('[') && expr.endsWith(']')) {
+            const items = parseArrayString(expr);
+            for (let i = 0; i < items.length; ++i) {
+                const item = items[i].trim();
+                if (item.startsWith('{') && item.endsWith('}')) {
+                    items[i] = layoutClassPrependObject(item, sp);
                 }
-                t1 = `[${t1a.join(',')}]`;
+                else {
+                    items[i] = `classPrepend(${item})`;
+                }
             }
-            else if (t1.startsWith('{')) {
-                t1 = layoutClassPrependObject(t1);
-            }
-            else {
-                t1 = `classPrepend(${t1})`;
-            }
-            return `:class="${t1}"`;
-        });
+            expr = `[${items.join(',')}]`;
+        }
+        else if (expr.startsWith('{') && expr.endsWith('}')) {
+            expr = layoutClassPrependObject(expr, sp);
+        }
+        else {
+            expr = `classPrepend(${expr})`;
+        }
+        return `${lead}:class=${sp}${expr}${sp}`;
     }).replace(/(\s)id=(["'])/gi, `$1id=$2${preps[0]}`);
     return rtn;
 }
