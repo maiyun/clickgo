@@ -130,6 +130,8 @@ export default class extends clickgo.control.AbstractControl {
     _searchVersion = 0;
     /** --- 卸载后不再接收延迟搜索或远程回调 --- */
     _unmounted = false;
+    /** --- 上一次已同步的外部 modelValue 快照，用于区分外部更新与非受控内部状态 --- */
+    _lastModelValue = [];
     /** --- list 是否为必须选择的模式 --- */
     get isMust() {
         return !this.propBoolean('clearbtn') && !this.propBoolean('editable') &&
@@ -307,13 +309,17 @@ export default class extends clickgo.control.AbstractControl {
         }).catch(() => { });
     }
     /**
-     * --- 根据外部值同步控件选择，不依赖子 List 的异步事件回传 ---
+     * --- 同步控件选择；仅在首次挂载或外部 modelValue 变化时采用外部值，其余属性切换保留当前内部选择 ---
+     * @param fromModelValue 是否由初始挂载或 modelValue 变更触发
      * @returns void
      */
-    _syncModelValue() {
+    _syncModelValue(fromModelValue = false) {
         const multi = this.propBoolean('multi');
         const remote = this.propBoolean('remote');
-        const modelValue = this.props.modelValue.map(item => item.toString());
+        const modelChanged = fromModelValue || !this._equalValues(this.props.modelValue, this._lastModelValue);
+        const source = modelChanged ? this.props.modelValue : this.value;
+        this._lastModelValue = clickgo.tool.clone(this.props.modelValue);
+        const modelValue = source.map(item => item.toString());
         let value;
         let label;
         if (this.propBoolean('editable')) {
@@ -383,12 +389,13 @@ export default class extends clickgo.control.AbstractControl {
             this.listLabel = clickgo.tool.clone(label);
             this.listItem = selected;
         }
+        const valueChanged = !this._equalValues(value, this.value);
         const labelChanged = !this._equalValues(label, this.label);
         this.value = value;
         this.label = label;
         this.listValue = clickgo.tool.clone(this.value);
-        // --- 普通数据刷新只补标签或修正无效值，不重复回写相同的绑定值 ---
-        if (!this._equalValues(this.value, this.props.modelValue)) {
+        // --- 仅在外部值被规范化/修正或内部值发生裁剪/回退时回写，避免普通数据刷新重复 emit ---
+        if (modelChanged ? !this._equalValues(this.value, this.props.modelValue) : valueChanged) {
             this.emit('update:modelValue', clickgo.tool.clone(this.value));
         }
         if (labelChanged) {
@@ -967,6 +974,7 @@ export default class extends clickgo.control.AbstractControl {
     onMounted() {
         this.watch('modelValue', async () => {
             if (this._equalValues(this.value, this.props.modelValue)) {
+                this._lastModelValue = clickgo.tool.clone(this.props.modelValue);
                 return;
             }
             if (this.propBoolean('editable')) {
@@ -976,12 +984,12 @@ export default class extends clickgo.control.AbstractControl {
             }
             await this.nextTick();
             if (!this._unmounted && !this._equalValues(this.value, this.props.modelValue)) {
-                this._syncModelValue();
+                this._syncModelValue(true);
             }
         }, {
             'deep': true
         });
-        this._syncModelValue();
+        this._syncModelValue(true);
         this.watch('search', async () => {
             this._resetSearch();
             this.searchValue = '';

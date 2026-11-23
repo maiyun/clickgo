@@ -1268,6 +1268,61 @@ test('multi editable keeps popup open when adding items and preserves draft when
     m.dispose();
 });
 
+test('uncontrolled select preserves internal selection when toggling multi or refreshing data', async () => {
+    const state = reactive({ data: ['1', '2', '3', '4', '5'], multi: false, disabledList: [] });
+    const host = document.createElement('div');
+    document.body.append(host);
+    const app = createApp({
+        render() {
+            return h(components['cg-select'], { ...state, ref: 'select' });
+        },
+    });
+    for (const [name, component] of Object.entries(components)) app.component(name, component);
+    app.config.errorHandler = error => { errors.push(error); };
+    const root = app.mount(host);
+    const dispose = () => { app.unmount(); host.remove(); disposers.delete(dispose); };
+    disposers.add(dispose);
+    await flush();
+    const select = root.$refs.select;
+    const click = async index => {
+        const gl = select.refs.list.refs.gl;
+        gl.innerDown({ target: gl.element.children[index], shiftKey: false, ctrlKey: false }, index);
+        await flush();
+    };
+
+    assert.deepEqual([...select.value], ['1']);
+    state.multi = true;
+    await flush();
+    assert.deepEqual([...select.value], ['1']);
+    assert.deepEqual([...select.label], ['1']);
+
+    select.removeTag(0);
+    await flush();
+    await click(3);
+    assert.deepEqual([...select.value], ['4']);
+    state.multi = false;
+    await flush();
+    assert.deepEqual([...select.value], ['4']);
+    assert.deepEqual([...select.label], ['4']);
+
+    state.multi = true;
+    await flush();
+    await click(4);
+    assert.deepEqual([...select.value], ['4', '5']);
+    state.multi = false;
+    await flush();
+    assert.deepEqual([...select.value], ['4']);
+
+    state.data = ['1', '2', '3', '4', '5', '6'];
+    await flush();
+    assert.deepEqual([...select.value], ['4']);
+
+    state.disabledList = ['4'];
+    await flush();
+    assert.deepEqual([...select.value], ['1']);
+    dispose();
+});
+
 test('select and greatselect styles keep single-line height and prevent tags from pushing clear/arrow out', async () => {
     const selectCss = await readControlFile('select', 'style.css');
     const greatselectCss = await readControlFile('greatselect', 'style.css');
