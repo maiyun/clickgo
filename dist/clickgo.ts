@@ -67,7 +67,7 @@ export const modules: {
     'clickgo': clickgo,
 } as any;
 
-const version = '7.11.2';
+const version = '7.11.3';
 /** --- 获取当前版本 --- */
 export function getVersion(): string {
     return version;
