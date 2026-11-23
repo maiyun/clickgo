@@ -1187,6 +1187,12 @@ test('editable draft-only clearing emits no selection change and default single 
     normal.dispose();
 });
 
+test('multi select tags and placeholder match single-line height via --g-line', async () => {
+    const css = await readControlFile('select', 'style.css');
+    assert.match(css, /\.tags\s+\.tag\{[^}]*min-height:\s*calc\(1em\s*\*\s*var\(--g-line\)\)/);
+    assert.match(css, /\.tags\s+\.tag\.placeholder\{[^}]*align-items:\s*center[^}]*line-height:\s*var\(--g-line\)/);
+});
+
 let failures = 0;
 for (const [name, callback] of cases) {
     try {

@@ -17,7 +17,10 @@ cg-greatselect {
         }
 
         .tag {
-            border-radius: 3px; overflow: hidden; line-height: 1; display: flex;
+            border-radius: 3px; overflow: hidden; line-height: 1; display: flex; min-height: calc(1em * var(--g-line));
+            &.placeholder {
+                align-items: center; line-height: var(--g-line);
+            }
             .label, .close {
                 background: rgba(0, 0, 0, .07); transition: var(--g-transition);
             }
