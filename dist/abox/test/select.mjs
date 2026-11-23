@@ -219,7 +219,7 @@ test('searchable single selection restores its placeholder after external cleari
 });
 
 for (const search of [false, true]) {
-    for (const removal of search ? ['tag', 'external'] : ['tag', 'list', 'external']) {
+    for (const removal of ['tag', 'list', 'external']) {
         test(`multi placeholder returns after ${removal} clears the last selection (search=${search})`, async () => {
             let reject = true;
             const m = await mount({ multi: true, search, placeholder: 'Choose options', data: [option('a', 'Alpha')] }, {
@@ -1187,10 +1187,99 @@ test('editable draft-only clearing emits no selection change and default single 
     normal.dispose();
 });
 
-test('multi select tags and placeholder match single-line height via --g-line', async () => {
-    const css = await readControlFile('select', 'style.css');
-    assert.match(css, /\.tags\s+\.tag\{[^}]*min-height:\s*calc\(1em\s*\*\s*var\(--g-line\)\)/);
-    assert.match(css, /\.tags\s+\.tag\.placeholder\{[^}]*align-items:\s*center[^}]*line-height:\s*var\(--g-line\)/);
+test('multi search keeps popup open, toggles items, respects vetoes and restores list selection after clearing search', async () => {
+    let rejectAdd = false;
+    let rejectRemove = false;
+    const m = await mount({
+        multi: true,
+        search: true,
+        data: [option('a1', 'Account Create'), option('a2', 'Account Update'), option('b1', 'Order Create')],
+        modelValue: ['b1'],
+    }, {
+        add: event => { if (rejectAdd) event.preventDefault(); },
+        remove: event => { if (rejectRemove) event.preventDefault(); },
+    });
+    m.select.refs.gs.showPop();
+    m.select.onPop();
+    await flush();
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, '');
+    assert.deepEqual([...m.select.listValue], ['b1']);
+
+    await m.select.updateSearchValue('Account');
+    await flush();
+    assert.deepEqual([...m.select.refs.list.dataGl.map(row => row.value)], ['a1', 'a2']);
+
+    rejectAdd = true;
+    await m.click(0);
+    assert.deepEqual([...m.state.modelValue], ['b1']);
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, '');
+    assert.equal(m.select.searchValue, 'Account');
+
+    rejectAdd = false;
+    await m.click(0);
+    await m.click(1);
+    assert.deepEqual([...m.state.modelValue], ['b1', 'a1', 'a2']);
+    assert.deepEqual([...m.select.label], ['Order Create', 'Account Create', 'Account Update']);
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, '');
+    assert.equal(m.select.searchValue, 'Account');
+
+    rejectRemove = true;
+    await m.click(0);
+    assert.deepEqual([...m.state.modelValue], ['b1', 'a1', 'a2']);
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, '');
+
+    rejectRemove = false;
+    m.events.length = 0;
+    await m.click(0);
+    assert.deepEqual([...m.state.modelValue], ['b1', 'a2']);
+    assert.deepEqual([...m.select.label], ['Order Create', 'Account Update']);
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, '');
+    assert.deepEqual(m.events.find(([type]) => type === 'removed')[1], { index: 1, value: 'a1', mode: 'list' });
+
+    await m.select.updateSearchValue('');
+    await flush();
+    assert.deepEqual([...m.select.listValue], ['b1', 'a2']);
+    m.dispose();
+});
+
+test('multi editable keeps popup open when adding items and preserves draft when add is vetoed', async () => {
+    let reject = true;
+    const m = await mount({
+        multi: true,
+        editable: true,
+        search: true,
+        data: [option('a', 'Alpha'), option('b', 'Beta')],
+    }, {
+        add: event => { if (reject) event.preventDefault(); },
+    });
+    m.select.refs.gs.showPop();
+    await m.select.updateInputValue('Alp');
+    await flush();
+    await m.click(0);
+    assert.deepEqual([...m.state.modelValue], []);
+    assert.equal(m.select.inputValue, 'Alp');
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, '');
+
+    reject = false;
+    await m.click(0);
+    assert.deepEqual([...m.state.modelValue], ['a']);
+    assert.equal(m.select.inputValue, '');
+    assert.equal(m.select.refs.gs.element.dataset.cgPopOpen, '');
+    m.dispose();
+});
+
+test('select and greatselect styles keep single-line height and prevent tags from pushing clear/arrow out', async () => {
+    const selectCss = await readControlFile('select', 'style.css');
+    const greatselectCss = await readControlFile('greatselect', 'style.css');
+    assert.match(greatselectCss, /\.wrap\s+\.content\{[^}]*min-width:\s*0[^}]*overflow:\s*hidden/);
+    assert.match(greatselectCss, /\.wrap\s+\.suffix\{[^}]*flex-shrink:\s*0/);
+    assert.match(greatselectCss, /\.wrap\s+\.arrow\{[^}]*flex-shrink:\s*0/);
+    assert.match(selectCss, /\.labelmode\{[^}]*min-width:\s*0[^}]*white-space:\s*nowrap[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis/);
+    assert.match(selectCss, /\.tags\{[^}]*flex:\s*1[^}]*min-width:\s*0[^}]*overflow-x:\s*auto[^}]*overflow-y:\s*hidden/);
+    assert.match(selectCss, /\.tags\.editable\{[^}]*flex:\s*0\s+1\s+auto[^}]*max-width:\s*80%/);
+    assert.match(selectCss, /\.tags\s+\.tag\{[^}]*flex-shrink:\s*0[^}]*white-space:\s*nowrap[^}]*min-height:\s*calc\(1em\s*\*\s*var\(--g-line\)\)/);
+    assert.match(selectCss, /\.tags\s+\.tag\.placeholder\{[^}]*min-width:\s*0[^}]*line-height:\s*var\(--g-line\)[^}]*text-overflow:\s*ellipsis/);
+    assert.match(selectCss, /cg-text\{[^}]*flex:\s*1[^}]*min-width:\s*0/);
 });
 
 let failures = 0;

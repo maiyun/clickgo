@@ -5,21 +5,21 @@ cg-greatselect {
         opacity: .85;
     }
     .labelmode {
-        display: flex; align-items: center; flex: 1; min-width: 0;
+        display: block; align-self: center; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .tags {
-        display: flex; align-items: center; max-width: 100%; overflow-y: auto; position: relative; padding: var(--select-padding); padding-inline-end: 0;
+        display: flex; align-items: center; flex: 1; min-width: 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; position: relative; padding: var(--select-padding); padding-inline-end: 0;
         &.editable {
-            max-width: 80%;
+            flex: 0 1 auto; max-width: 80%;
         }
         &::-webkit-scrollbar {
             display: none;
         }
 
         .tag {
-            border-radius: 3px; overflow: hidden; line-height: 1; display: flex; min-height: calc(1em * var(--g-line));
+            border-radius: 3px; overflow: hidden; line-height: 1; display: flex; flex-shrink: 0; white-space: nowrap; min-height: calc(1em * var(--g-line));
             &.placeholder {
-                align-items: center; line-height: var(--g-line);
+                display: block; flex: 1; flex-shrink: 1; min-width: 0; line-height: var(--g-line); text-overflow: ellipsis;
             }
             .label, .close {
                 background: rgba(0, 0, 0, .07); transition: var(--g-transition);
@@ -52,11 +52,11 @@ cg-greatselect {
 
 
     .leftlabel {
-        background: var(--face); align-items: center; display: flex; padding: var(--select-padding); transition: var(--g-transition);
+        background: var(--face); align-items: center; display: flex; flex-shrink: 0; padding: var(--select-padding); transition: var(--g-transition);
     }
 
     cg-text {
-        flex: 1; border: none; background: transparent;
+        flex: 1; min-width: 0; border: none; background: transparent;
 
         &.showleftlabel {
             opacity: .3;
