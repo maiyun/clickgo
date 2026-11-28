@@ -14,7 +14,7 @@
   "types": "./dist/clickgo.d.ts",
   "scripts": {
     "sass": "sass --watch dist/:dist/ --style compressed --no-source-map",
-    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:command && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select && npm run test:date && npm run test:daterange && npm run test:nav && npm run test:breadcrumb && npm run test:objviewer && npm run test:accordion && npm run test:dock && npm run test:map",
+    "check": "tsc --noEmit --pretty false && eslint \"dist/**/*.ts\" --format stylish && npm run test:command && npm run test:locale && npm run test:style && npm run test:desktop && npm run test:form && npm run test:task && npm run test:module && npm run test:vflow && npm run test:scroll && npm run test:jodit && npm run test:select && npm run test:date && npm run test:daterange && npm run test:nav && npm run test:svg && npm run test:breadcrumb && npm run test:objviewer && npm run test:accordion && npm run test:dock && npm run test:map",
     "test:map": "node dist/abox/test/map.mjs",
     "test:dock": "node --experimental-vm-modules dist/abox/test/dock-lifecycle.mjs",
     "test:accordion": "node dist/abox/test/accordion.mjs",
@@ -41,6 +41,7 @@
     "build-doc": "bash ./utils/build-doc.sh",
     "test:native": "node dist/abox/test/native-fs.mjs dist/test/native/lib/fs.js && node dist/abox/test/native-version.mjs && node --experimental-vm-modules dist/abox/test/native-persistence.mjs && node --experimental-vm-modules dist/abox/test/native-window.mjs && node dist/abox/test/native-mcp.mjs && node dist/abox/test/native-cli.mjs && node dist/abox/test/native-startup.mjs && node --experimental-vm-modules dist/abox/test/native-update.mjs && node --experimental-vm-modules dist/abox/test/native-update-bridge.mjs && node dist/abox/test/native-events.mjs",
     "test:nav": "node dist/abox/test/nav.mjs",
+    "test:svg": "node dist/abox/test/svg.mjs",
     "test:breadcrumb": "node dist/abox/test/breadcrumb.mjs"
   },
   "devDependencies": {
