@@ -470,6 +470,14 @@
     .scroll_wrap {
         background: transparent;
         .scroll_start, .scroll_end { display: none; }
+        .scroll_bar {
+            .scroll_block {
+                background: var(--software-scroll-thumb);
+                border-radius: 99px;
+                &:hover { background: var(--software-scroll-thumb-hover); }
+            }
+            &:active .scroll_block { background: var(--software-scroll-thumb-active); }
+        }
     }
 }
 

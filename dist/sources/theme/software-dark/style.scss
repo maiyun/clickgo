@@ -155,6 +155,9 @@ global {
     --g-block-background-hover:#282a30;
     --g-block-dark-background:#121316;
     --g-block-dark-background-hover:#1a1b1f;
+    --software-scroll-thumb:rgb(255 255 255 / .22);
+    --software-scroll-thumb-hover:rgb(255 255 255 / .34);
+    --software-scroll-thumb-active:rgb(255 255 255 / .46);
 
     ::selection {
         background-color: color-mix(in oklch, var(--cg), transparent 64%);
