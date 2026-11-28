@@ -73,6 +73,13 @@ export default class extends clickgo.task.AbstractThread {
 console.log('other app code remains protected');`);
     assert.equal(await compilerExports.application(directory, undefined, join(directory, 'result')), true);
     const appCode = await readFile(join(directory, 'app.pack.js'), 'utf8');
+    const cgaFirst = await readFile(join(directory, 'result.cga'));
+    await rm(join(directory, 'result.cga'));
+    assert.equal(await compilerExports.application(directory, undefined, join(directory, 'result-second')), true);
+    const appCodeSecond = await readFile(join(directory, 'app.pack.js'), 'utf8');
+    const cgaSecond = await readFile(join(directory, 'result-second.cga'));
+    assert.equal(appCodeSecond, appCode, 'unchanged application source produces identical app.pack.js');
+    assert.equal(cgaSecond.equals(cgaFirst), true, 'unchanged application source produces identical cga');
     assert.ok(!appCode.includes('other app code remains protected'), 'other application code is obfuscated');
     const appContext = { clickgo: { modules: { clickgo: { task: { AbstractThread: api.AbstractThread } } } }, console: { log() {} } };
     vm.runInNewContext(appCode, appContext);

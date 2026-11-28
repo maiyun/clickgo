@@ -72,7 +72,7 @@ function obfuscate(code: string): string {
             'identifierNamesGenerator': 'mangled-shuffled',
             'renameGlobals': false,
             'renameProperties': false,
-            'seed': crypto.randomInt(1, 2_147_483_647),
+            'seed': deriveObfuscateSeed(code),
             'selfDefending': false,
             'simplify': true,
             'sourceMap': false,
@@ -404,6 +404,11 @@ interface ICgaEncryptedBlock {
     'nonce': Buffer;
 }
 
+interface ICgaRandom {
+    'bytes': (size: number) => Buffer;
+    'int': (max: number) => number;
+}
+
 /**
  * --- 收集应用包文件并完成文本预处理 ---
  * @param files 文件列表
@@ -458,13 +463,14 @@ async function collectAppFiles(files: IAppFile[], base: string, path: string = '
  * @param icon 应用图标
  */
 async function buildCga(files: IAppFile[], config: Record<string, any>, icon: Buffer): Promise<Buffer> {
-    const packageId = crypto.randomBytes(16);
-    const salt = crypto.randomBytes(32);
-    const seed = crypto.randomBytes(32);
+    const random = createCgaRandom(files, icon);
+    const packageId = random.bytes(16);
+    const salt = random.bytes(32);
+    const seed = random.bytes(32);
     const maskedSeed = maskCgaSeed(seed, salt, packageId);
     const key = deriveCgaKey(seed, salt, packageId);
     const groups = createCgaGroups(files, config);
-    shuffle(groups);
+    shuffle(groups, random.int);
 
     const manifest: ICgaManifest = {
         'b': {},
@@ -472,10 +478,10 @@ async function buildCga(files: IAppFile[], config: Record<string, any>, icon: Bu
     };
     const blocks: ICgaEncryptedBlock[] = [];
     for (const group of groups) {
-        const blockId = crypto.randomBytes(12).toString('hex');
+        const blockId = random.bytes(12).toString('hex');
         const blockZip = new zip();
         for (const file of group) {
-            const entryId = crypto.randomBytes(12).toString('hex');
+            const entryId = random.bytes(12).toString('hex');
             blockZip.file(entryId, file.data, {
                 'date': new Date(0),
             });
@@ -493,7 +499,7 @@ async function buildCga(files: IAppFile[], config: Record<string, any>, icon: Bu
                 'level': 9,
             },
         });
-        const nonce = crypto.randomBytes(12);
+        const nonce = random.bytes(12);
         blocks.push({
             'data': encryptCga(blockData, key, nonce, getCgaAad(packageId, blockId)),
             'id': blockId,
@@ -510,7 +516,7 @@ async function buildCga(files: IAppFile[], config: Record<string, any>, icon: Bu
         };
         offset += block.data.length;
     }
-    const manifestNonce = crypto.randomBytes(12);
+    const manifestNonce = random.bytes(12);
     const manifestData = encryptCga(
         Buffer.from(JSON.stringify(manifest)), key, manifestNonce, getCgaAad(packageId, 'manifest')
     );
@@ -640,12 +646,76 @@ function normalizeCgaPath(path: string): string {
 }
 
 /**
- * --- 使用安全随机数打乱数组 ---
- * @param list 数组
+ * --- 基于混淆前代码内容派生确定性正整数种子 ---
+ * @param code 压缩并标记线程后的代码
+ * @returns 1 到 2147483647 之间的整数，避开 0 以防触发随机种子
  */
-function shuffle<T>(list: T[]): void {
+function deriveObfuscateSeed(code: string): number {
+    const hash = crypto.createHash('sha256').update(code).digest();
+    return (hash.readUInt32BE(0) % 2_147_483_646) + 1;
+}
+
+/**
+ * --- 基于应用文件与图标内容创建确定性伪随机生成器 ---
+ * @param files 应用文件列表
+ * @param icon 应用图标数据
+ * @returns 按序输出确定性字节和区间整数的生成器
+ */
+function createCgaRandom(files: IAppFile[], icon: Buffer): ICgaRandom {
+    const hash = crypto.createHash('sha256');
+    hash.update(cgaKeyContext);
+    hash.update(Buffer.from([cgaVersion]));
+    const iconLength = Buffer.alloc(4);
+    iconLength.writeUInt32BE(icon.length, 0);
+    hash.update(iconLength);
+    hash.update(icon);
+    for (const file of files) {
+        const pathBuf = Buffer.from(file.path);
+        const meta = Buffer.alloc(9);
+        meta.writeUInt32BE(pathBuf.length, 0);
+        meta.writeUInt32BE(file.data.length, 4);
+        meta.writeUInt8(file.text ? 1 : 0, 8);
+        hash.update(meta);
+        hash.update(pathBuf);
+        hash.update(file.data);
+    }
+    const root = hash.digest();
+    let counter = 0;
+    let pool = Buffer.alloc(0);
+    let offset = 0;
+
+    const nextBytes = (size: number): Buffer => {
+        const out = Buffer.alloc(size);
+        let written = 0;
+        while (written < size) {
+            if (offset >= pool.length) {
+                const countBuf = Buffer.alloc(4);
+                countBuf.writeUInt32BE(counter++, 0);
+                pool = crypto.createHash('sha256').update(root).update(countBuf).digest();
+                offset = 0;
+            }
+            const take = Math.min(size - written, pool.length - offset);
+            pool.copy(out, written, offset, offset + take);
+            written += take;
+            offset += take;
+        }
+        return out;
+    };
+
+    return {
+        'bytes': nextBytes,
+        'int': (max: number): number => nextBytes(4).readUInt32BE(0) % max,
+    };
+}
+
+/**
+ * --- 使用确定性整数序列打乱数组 ---
+ * @param list 数组
+ * @param nextInt 生成 0 到 max - 1 之间整数的函数
+ */
+function shuffle<T>(list: T[], nextInt: (max: number) => number): void {
     for (let i = list.length - 1; i > 0; --i) {
-        const index = crypto.randomInt(i + 1);
+        const index = nextInt(i + 1);
         [list[i], list[index]] = [list[index], list[i]];
     }
 }
