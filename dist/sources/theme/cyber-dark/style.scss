@@ -252,85 +252,49 @@ global {
 // -- CONTROL -- tab --
 
 .tab_wrap {
-    .tab_tab {
-        background: transparent; border: none;
-        &::after {
-            background: var(--cg); transition: all .3s var(--g-cubic);
-            box-shadow: 0 0 5px var(--cg);
-        }
-        &:not(.tab_selected):not([data-hover]):hover {
-            background: transparent; color: var(--cg);
-            text-shadow: 0 0 5px var(--cg);
-        }
-        &.tab_selected {
-            background: transparent; font-weight: bold; color: var(--cg);
-            text-shadow: 0 0 5px var(--cg);
-        }
-    }
     &.tab_top {
-        .tab_tabs {
-            .tab_tab {
-                padding-bottom: 2px;
-                &.tab_selected {
-                    padding-bottom: 2px;
-                    &::after {
-                        top: initial; bottom: 0; height: 2px;
-                    }
-                }
-            }
-            > :not(:last-child) {
-                margin-inline-end: var(--g-padding);
-            }
-        }
+        --cyber-tab-indicator-inset: calc(100% - 2px) 0 0;
     }
     &.tab_bottom {
-        .tab_tabs {
-            .tab_tab {
-                padding-top: 2px;
-                &.tab_selected {
-                    padding-top: 2px;
-                    &::after {
-                        top: 0; height: 2px;
-                    }
-                }
-            }
-            > :not(:last-child) {
-                margin-inline-end: var(--g-padding);
-            }
-        }
+        --cyber-tab-indicator-inset: 0 0 calc(100% - 2px);
     }
     &.tab_left {
-        .tab_tabs {
-            .tab_tab {
-                padding-right: 2px;
-                &.tab_selected {
-                    &::after {
-                        left: initial; right: 0; width: 2px;
-                    }
-                }
-            }
-            > :not(:last-child) {
-                margin-bottom: var(--g-padding);
-            }
-        }
+        --cyber-tab-indicator-inset: 0 0 0 calc(100% - 2px);
     }
     &.tab_right {
-        .tab_tabs {
-            .tab_tab {
-                padding-left: 2px;
-                &.tab_selected {
-                    &::after {
-                        left: 0; width: 2px;
-                    }
-                }
+        --cyber-tab-indicator-inset: 0 calc(100% - 2px) 0 0;
+    }
+    &:is(.tab_top, .tab_bottom, .tab_left, .tab_right) > .tab_tabs-wrap > .tab_tabs {
+        gap: var(--g-padding);
+        padding: 0;
+        transform: none;
+
+        > .tab_tab {
+            background: transparent;
+            transition-property: color, background-color, text-shadow;
+            // --- 控件默认样式会按选中项重新分配相邻页签的边框。 ---
+            &, &.tab_selected, &.tab_selected + .tab_tab, &:last-child {
+                border: none;
+                padding: 0;
             }
-            > :not(:last-child) {
-                margin-bottom: var(--g-padding);
+            &::after, &.tab_selected::after {
+                inset: var(--cyber-tab-indicator-inset);
+                width: auto; height: auto;
+                background: var(--cg);
+                box-shadow: 0 0 5px var(--cg);
+                transition-property: opacity;
+            }
+            &.tab_selected, &:not([data-hover]):hover {
+                color: var(--cg);
+                text-shadow: 0 0 5px var(--cg);
+            }
+            &[data-hover] {
+                background: var(--face-selected);
+                color: var(--g-color);
             }
         }
     }
-
-    .tab_panel {
+    > .tab_panel {
         background: transparent; border: none;
     }
 }

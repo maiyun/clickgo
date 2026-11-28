@@ -877,18 +877,18 @@ global {
     &.desktop_text-shadow .desktop_item.desktop_selected .desktop_name { color: #ffffff; text-shadow: none; }
     .desktop_item { padding: 4px 2px; gap: 4px; }
     .desktop_item .desktop_name { width: auto; max-width: 100%; }
-    .desktop_selection {
-        border: dotted 1px #ffffff;
-        background: transparent;
-        mix-blend-mode: difference;
-        opacity: 1;
-    }
+    .desktop_selection { opacity: 1; }
 }
 .iconview_wrap {
     .iconview_tag-cg-vflow .iconview_row { @include icon-items('iconview'); }
     &.iconview_plain .iconview_tag-cg-vflow .iconview_row { @include icon-items('iconview'); }
     .iconview_name { margin-top: 4px; }
     .iconview_time { color: var(--g-color-tip); }
+}
+.desktop_wrap .desktop_selection, .iconview_wrap > .iconview_tag-cg-vflow > .flow_selection {
+    border: dotted 1px #ffffff;
+    background: transparent;
+    mix-blend-mode: difference;
 }
 
 // --- 工具栏和状态栏的双线分隔。 ---
