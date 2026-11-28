@@ -14,29 +14,154 @@
 @mixin metrics {
     --g-clear-margin-inline:0;
     --g-padding-xs:2px;
-    --g-padding-s:4px;
+    --g-padding-s:3px;
     --g-padding:5px;
-    --g-padding-h:5px 9px;
+    --g-padding-h:5px 10px;
     --g-padding-l:8px;
-    --g-padding-l-h:7px 12px;
+    --g-padding-l-h:7px 14px;
     --g-padding-xl:12px;
-    --g-padding-xl-h:9px 16px;
+    --g-padding-xl-h:9px 18px;
     --g-bpadding:16px;
     --g-margin:5px;
-    --g-radius:5px;
-    --g-radius-l:8px;
-    --g-radius-xl:12px;
+    --g-radius:6px;
+    --g-radius-l:10px;
+    --g-radius-xl:13px;
     --g-size-xs:11px;
     --g-size:13px;
     --g-size-m:18px;
     --g-size-l:26px;
     --g-size-xl:36px;
     --g-control:16px;   // --- 如 check、radio 等的宽度 ---
-    --g-control-m:20px;
-    --g-control-l:24px;
-    --g-transition:all .12s var(--g-cubic);
+    --g-control-m:18px;
+    --g-control-l:22px;
+    --g-transition:all .14s var(--g-cubic);
     --g-line:1.4;
-    --g-boxsize:32px;
+    --g-boxsize:30px;
+}
+
+// --- 统一现代按钮体系：次要按钮轻浮描边，主按钮饱满微立体，选中态用柔和底色配 1px 主色描边 ---
+@mixin button {
+    .button_wrap {
+        --bgroup-outline-shadow: none;
+        --bgroup-checked-outset: 0px;
+        &:not(.button_circle):not(.button_sizeh) {
+            &.button_simple, .button_inner { padding: var(--g-padding-h); }
+            &.button_size-s {
+                &.button_simple, .button_inner { padding: 3px 8px; }
+            }
+            &.button_size-l {
+                &.button_simple, .button_inner { padding: var(--g-padding-l-h); }
+            }
+            &.button_size-xl {
+                &.button_simple, .button_inner { padding: var(--g-padding-xl-h); }
+            }
+        }
+        &.button_default {
+            &.button_plain, &:not(.button_plain) {
+                --background:var(--software-btn-bg);
+                --background-hover:var(--software-btn-bg-hover);
+                --background-active:var(--software-btn-bg-active);
+                --background-focus:var(--software-btn-bg);
+                --background-disabled:var(--software-btn-bg-disabled);
+                --border:solid 1px var(--software-btn-border);
+                --border-hover:solid 1px var(--software-btn-border-hover);
+                --border-active:solid 1px var(--software-btn-border-active);
+                --border-focus:solid 1px var(--software-accent-border);
+                --border-disabled:solid 1px var(--software-btn-border-disabled);
+                --shadow:var(--software-btn-shadow);
+            }
+        }
+        &.button_tool {
+            // --- 工具选中态用主色饱满填充，普通参数按钮由柔和底色与 1px 描边标记选中 ---
+            --software-selection-color:#{contrast.on-color('var(--cg)')};
+            --software-selection-color-hover:#{contrast.on-color('var(--cg-hover)')};
+            --software-selection-color-active:#{contrast.on-color('var(--cg-active)')};
+            --software-selection-background:var(--cg);
+            --software-selection-hover:var(--cg-hover);
+            --software-selection-active:var(--cg-active);
+            --software-selection-border:transparent;
+            --software-selection-border-hover:transparent;
+            --software-selection-border-active:transparent;
+            &.button_plain, &:not(.button_plain) {
+                --background:transparent;
+                --background-hover:var(--face-hover);
+                --background-active:var(--face-selected);
+                --background-focus:transparent;
+                --background-disabled:transparent;
+                --border:solid 1px transparent;
+                --border-hover:solid 1px transparent;
+                --border-active:solid 1px transparent;
+                --border-focus:solid 1px transparent;
+                --border-disabled:solid 1px transparent;
+                --shadow:none;
+            }
+        }
+        &.button_cg {
+            &:not(.button_plain) {
+                font-weight: 500;
+                --border:solid 1px transparent;
+                --border-hover:solid 1px transparent;
+                --border-active:solid 1px transparent;
+                --border-focus:solid 1px transparent;
+                --border-disabled:solid 1px transparent;
+                --shadow:var(--software-primary-btn-shadow);
+            }
+            &.button_plain {
+                --color:var(--software-accent-text);
+                --color-hover:var(--software-accent-text);
+                --color-active:var(--software-accent-text);
+                --color-focus:var(--software-accent-text);
+                --border:solid 1px var(--software-accent-border);
+                --border-hover:solid 1px var(--software-accent-border);
+                --border-active:solid 1px var(--software-accent-border);
+                --border-focus:solid 1px var(--software-accent-border);
+                --shadow:none;
+            }
+        }
+        &:not([data-cg-disabled]) {
+            &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] { box-shadow: none; }
+            &.button_checked {
+                --color:var(--software-selection-color);
+                --color-hover:var(--software-selection-color-hover);
+                --color-active:var(--software-selection-color-active);
+                --color-focus:var(--software-selection-color);
+                --background:var(--software-selection-background);
+                --background-hover:var(--software-selection-hover);
+                --background-active:var(--software-selection-active);
+                --background-focus:var(--software-selection-background);
+                color: var(--software-selection-color);
+                &.button_area-all, &.button_area-mark, &.button_area-split {
+                    background: var(--software-selection-background);
+                }
+                &::before { border: solid 1px var(--software-selection-border); }
+                &:hover, &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] {
+                    color: var(--software-selection-color);
+                    &::before { border: solid 1px var(--software-selection-border); }
+                }
+                &:hover {
+                    color: var(--software-selection-color-hover);
+                    background: var(--software-selection-hover);
+                    &::before { border-color: var(--software-selection-border-hover); }
+                }
+                &:active, &.button_active, &[data-cg-pop-open] {
+                    color: var(--software-selection-color-active);
+                    background: var(--software-selection-active);
+                    &::before { border-color: var(--software-selection-border-active); }
+                }
+            }
+        }
+        &[data-cg-disabled].button_checked {
+            color: var(--g-color-disabled);
+            &::before { border: solid 1px var(--g-border-color-disabled); }
+        }
+        &:not([data-cg-disabled]):focus-visible,
+        &:not([data-cg-disabled]) .button_inner:focus-visible,
+        &:not([data-cg-disabled]) .button_arrow:focus-visible {
+            outline: solid 2px var(--software-accent-border);
+            outline-offset: -2px;
+        }
+        .button_pointer { display: none; }
+    }
 }
 
 @mixin dialog {
@@ -66,11 +191,13 @@
         box-shadow: var(--software-menu-shadow);
     }
     .menulist_wrap {
-        padding: 3px;
+        padding: 4px;
         background: var(--face);
+        border-radius: var(--g-radius-l);
     }
     .menulist-item_wrap {
         min-height: 28px;
+        border-radius: var(--g-radius);
         box-sizing: border-box;
         &:not([data-cg-disabled]) {
             &:hover, &[data-cg-pop-open] { background: var(--face-hover); }
@@ -104,29 +231,38 @@
     }
     .menulist-split_wrap .menulist-split_line {
         height: 1px;
+        margin: 3px 4px;
         background: var(--software-menu-divider);
     }
 }
 
 @mixin menu-item {
-    .menu-item_wrap:not([data-cg-disabled]) {
-        &:hover, &:active, &[data-cg-pop-open] {
-            background: var(--software-highlight);
-            border-color: transparent;
+    .menu-item_wrap {
+        border-radius: var(--g-radius);
+        &:not([data-cg-disabled]) {
+            &:hover, &:active, &[data-cg-pop-open] {
+                background: var(--face-hover);
+                border-color: transparent;
+            }
+            &:active, &[data-cg-pop-open] {
+                background: var(--face-selected);
+            }
         }
     }
 }
 
 @mixin form($shadow, $focus-shadow) {
     @keyframes software_flash {
-        0%, 50% { border-color: var(--cg); }
+        0%, 50% { border-color: var(--software-accent-border); }
         51%, 100% { border-color: var(--software-divider); }
     }
 
     .form_wrap {
         &:not(.form_border-none):not([data-cg-max]) {
+            border-radius: var(--g-radius-xl);
             box-shadow: $shadow;
-            border-color: var(--software-divider);
+            border-color: var(--software-window-border);
+            > .form_inner { border-radius: calc(var(--g-radius-xl) - 1px); }
             &.form_focus {
                 box-shadow: $focus-shadow;
             }
@@ -135,10 +271,12 @@
             animation: software_flash .2s linear infinite;
         }
         .form_inner {
+            background: var(--face);
             .form_header {
                 border-bottom: solid 1px var(--software-divider);
                 .form_controls {
                     .form_min, .form_max {
+                        border-radius: var(--g-radius);
                         &:hover { background: var(--face-hover); }
                         &:active { background: var(--face-selected); }
                     }
@@ -153,7 +291,7 @@
 
 @mixin panels($dock-outline) {
     .group_wrap {
-        border-radius: var(--g-radius);
+        border-radius: var(--g-radius-l);
         &.group_hover:hover, &:not(.group_hover) {
             box-shadow: none;
         }
@@ -161,16 +299,33 @@
     .toolbar_wrap {
         background: var(--face);
         &.toolbar_plain { background: transparent; }
-        border-bottom-color: var(--software-divider);
+        border-bottom: solid 1px var(--software-divider);
         &.toolbar_borderless { border-bottom-color: transparent; }
         > .toolbar_body, > .toolbar_right {
             padding-block: 5px;
-            gap: 5px;
+            gap: 4px;
         }
+    }
+    .statusbar_wrap {
+        background: var(--face);
+        border-top: solid 1px var(--software-divider);
+        &.statusbar_borderless { border-top-color: transparent; }
+        &.statusbar_plain { background: transparent; }
+        &.statusbar_separator {
+            > .statusbar_body > [data-cg-control='statusbar-item']:not(:first-child),
+            > .statusbar_right > [data-cg-control='statusbar-item']:not(:first-child),
+            > .statusbar_right {
+                border-inline-start: solid 1px var(--software-divider);
+            }
+        }
+    }
+    .statusbar-item_wrap {
+        font-size: var(--g-size-xs);
+        color: var(--g-color-tip);
+        &.statusbar-item_cg { color: var(--software-accent-text); font-weight: 500; }
     }
     .dock_wrap {
         --dock-collapsed-width: 36px;
-        // --- 不复用输入区底色，避免与按钮的悬停色落在相近亮度 ---
         background: var(--face);
         &.dock_left, &.dock_right { border-color: var(--software-divider); }
         &.dock_collapsed { width: 36px; }
@@ -186,20 +341,20 @@
     }
     // --- 与控件的分组条件保持相同优先级，避免透明输入边框覆盖分隔线。 ---
     .toolbox-group_wrap:not(:last-child) { border-bottom: solid 1px var(--software-divider); }
-    // --- 面板页签使用圆角轻底块，选中不改变字重和位置 ---
 
+    // --- 面板页签：选中态用轻抬起底块与字重区分，hover 柔和过渡 ---
     .dock-group_wrap {
         &.dock-group_expanded, &.dock-group_collapsed { border-bottom-color: var(--software-divider); }
         &.dock-group_expanded > .dock-group_tabs,
         &.dock-group_collapsed.dock-group_floating > .dock-group_content > .dock-group_float-tabs {
-            padding: 4px;
+            padding: 4px 6px;
             gap: 3px;
             border-bottom-color: var(--software-divider);
             > .dock-group_tab-items {
                 gap: 3px;
             }
             > .dock-group_tab-items > .dock-group_tab {
-                padding: 3px 8px;
+                padding: 3px 9px;
                 border: none;
                 border-radius: var(--g-radius);
                 transform: none;
@@ -207,23 +362,25 @@
                 color: var(--g-color-tip);
                 &.dock-group_selected {
                     color: var(--g-color-focus);
-                    background: var(--software-highlight);
-                    font-weight: normal;
+                    background: var(--software-tab-selected);
+                    font-weight: 500;
                     border-bottom-color: transparent;
                 }
                 &:not(.dock-group_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
             }
             > .dock-group_collapse-btn, > .dock-group_menu-btn {
                 flex-basis: 26px;
+                border-radius: var(--g-radius);
             }
         }
         &.dock-group_collapsed > .dock-group_icon-btn {
             width: 34px;
             height: 34px;
+            border-radius: var(--g-radius);
             outline: solid 1px transparent;
             outline-offset: -1px;
-            transition-property: background-color;
-            &.dock-group_active { background: var(--software-highlight); outline-color: $dock-outline; }
+            transition-property: background-color, outline-color;
+            &.dock-group_active { background: var(--software-tab-selected); outline-color: $dock-outline; }
             &:hover { background: var(--face-hover); }
         }
     }
@@ -234,7 +391,7 @@
         // --- 四种方位均解除默认连接内容框的边框与位移，保留关闭和拖动槽 ---
         &.tab_top, &.tab_bottom, &.tab_left, &.tab_right {
             > .tab_tabs-wrap > .tab_tabs {
-                padding: 4px;
+                padding: 4px 6px;
                 gap: 3px;
                 transform: none;
                 > .tab_tab, > .tab_tab.tab_selected,
@@ -245,8 +402,12 @@
                     background: transparent;
                     color: var(--g-color-tip);
                     &::after { display: none; }
-                    > .tab_content { padding: 5px 10px; }
-                    &.tab_selected { background: var(--software-highlight); color: var(--g-color-focus); }
+                    > .tab_content { padding: 4px 10px; }
+                    &.tab_selected {
+                        background: var(--software-tab-selected);
+                        color: var(--g-color-focus);
+                        font-weight: 500;
+                    }
                     &:not(.tab_selected):not([data-hover]):hover { background: var(--face-hover); color: var(--g-color-hover); }
                     &[data-hover] { background: var(--face-selected); color: var(--g-color-focus); }
                 }
@@ -257,19 +418,33 @@
 }
 
 @mixin stab-item {
+    .stab_wrap {
+        border: none;
+        gap: 2px;
+        &.stab_rect {
+            padding: 2px;
+            background: var(--software-segment-bg);
+            border-radius: calc(var(--g-radius) + 2px);
+            &::before {
+                background: var(--software-segment-thumb);
+                border-radius: var(--g-radius);
+                box-shadow: var(--software-segment-shadow);
+            }
+        }
+    }
     .stab-item_wrap {
         // --- 普通、胶囊和滑块页签共享文字状态，滑块保留控件自身动画 ---
         &, &.stab-item_light, &.stab-item_rect {
-            padding: 5px 9px;
+            padding: 4px 10px;
             border: none;
             border-radius: var(--g-radius);
             transform: none;
             font-weight: normal;
             color: var(--g-color-tip);
-            &.stab-item_selected { color: var(--g-color-focus); font-weight: normal; }
+            &.stab-item_selected { color: var(--g-color-focus); font-weight: 500; }
         }
         &:not([data-cg-disabled]) {
-            &.stab-item_selected:not(.stab-item_rect) { background: var(--software-highlight); }
+            &.stab-item_selected:not(.stab-item_rect) { background: var(--software-tab-selected); }
             &:not(.stab-item_selected):hover { background: var(--face-hover); color: var(--g-color-hover); }
         }
         &[data-cg-disabled] {
@@ -288,7 +463,8 @@
 
     .nav-item_wrap.nav-item_selected > .nav-item_text {
         color: var(--g-color-focus);
-        background: var(--software-highlight);
+        font-weight: 500;
+        background: var(--software-tab-selected);
     }
 
     .scroll_wrap {
@@ -307,6 +483,7 @@
 @mixin task {
     .task_wrap {
         background: var(--g-pop-background);
+        border-top: solid 1px var(--software-divider);
         .task_date { color: var(--g-color); }
     }
 }
@@ -327,16 +504,16 @@
 // --- 输入框边框可透明，日期范围的底色和连接带仍需可见。 ---
 @mixin datepanel {
     .datepanel_wrap .datepanel_row .datepanel_col {
-        &.datepanel_range, &::before, &::after { background: var(--software-highlight); }
+        &.datepanel_range, &::before, &::after { background: var(--software-accent-soft); }
         &.datepanel_selected, &.datepanel_range-left, &.datepanel_range-right {
-            outline-color: var(--g-border-color);
+            outline-color: var(--software-accent-border);
         }
     }
 }
 
 // --- 中性标记、分隔线和关闭按钮使用实色，不继承输入框的透明边框。 ---
 @mixin neutral-controls {
-    .sgroup_wrap.sgroup_default { border-color: var(--g-border-color); }
+    .sgroup_wrap.sgroup_default { border-color: var(--software-divider); }
     .tag_wrap.tag_default:not(.tag_plain) {
         color: var(--g-color);
         background: var(--software-highlight);
@@ -348,7 +525,7 @@
     }
     .title_wrap.title_default .title_left { background: var(--g-color-tip); }
     .greatlist_wrap .greatlist_t .greatlist_tag-cg-vflow .greatlist_split,
-    .greatlist_wrap .greatlist_t .greatlist_tag-cg-flow .greatlist_split { background: var(--g-border-color); }
+    .greatlist_wrap .greatlist_t .greatlist_tag-cg-flow .greatlist_split { background: var(--software-divider); }
     .alert_wrap.alert_default .alert_tag-svg,
     .tag_wrap.tag_default.tag_plain .tag_tag-svg {
         &:hover, &:active { fill: var(--g-color); stroke: var(--g-color); }
@@ -372,24 +549,78 @@
     }
 }
 
-@mixin greatselect {
+// --- 输入框与下拉框：现代轻内嵌底色，hover 显细腻 1px 描边，focus 切清晰表面与主色焦点环 ---
+@mixin inputs {
+    .text_wrap {
+        border-width: 1px;
+        &.text_plain { border-width: 0; }
+        .text_text::placeholder { color: var(--g-color-placeholder); }
+    }
     .greatselect_wrap:not(.greatselect_plain) {
-        border-color: transparent;
+        border-width: 1px;
+        border-color: var(--g-plain-border-color);
         &:not([data-cg-disabled]) {
             background: var(--g-plain-background);
-            &:hover { border-color: var(--g-plain-border-color-hover); }
-            &:focus-within, &[data-cg-pop-open] { border-color: var(--cg); }
+            &:hover {
+                background: var(--g-plain-background-hover);
+                border-color: var(--g-plain-border-color-hover);
+            }
+            &:focus-within, &[data-cg-pop-open] {
+                background: var(--g-plain-background-focus);
+                border-color: var(--software-accent-border);
+                box-shadow: var(--g-outline-shadow);
+            }
         }
+    }
+    .greatselect_pop {
+        border-radius: var(--g-radius-l);
+        box-shadow: var(--software-menu-shadow);
     }
 }
 
-@mixin switch-and-alert {
+// --- 滑块与开关：精炼圆点与微阴影，替代笨重实心球 ---
+@mixin slider-and-switch {
+    .slider_wrap {
+        --slider-size:14px;
+        --g-outline-shadow:0 0 0 2px var(--software-accent-ring);
+        &.slider_s { --slider-size:12px; }
+        &.slider_l { --slider-size:16px; }
+        .slider_input {
+            background-size: 100% 3px;
+            &::-webkit-slider-runnable-track { height: 3px; border-radius: 99px; }
+            &::-moz-range-track { height: 3px; border-radius: 99px; }
+            &::-webkit-slider-thumb {
+                margin-top: calc((3px - var(--slider-size)) / 2);
+                border: solid 1px var(--software-slider-thumb-border);
+                background: var(--slider-thumb-background);
+                box-shadow: var(--software-slider-thumb-shadow);
+            }
+            &::-moz-range-thumb {
+                border: solid 1px var(--software-slider-thumb-border);
+                background: var(--slider-thumb-background);
+                box-shadow: var(--software-slider-thumb-shadow);
+            }
+            &:hover::-webkit-slider-thumb, &:hover::-moz-range-thumb {
+                border-color: var(--software-slider-thumb-border-hover);
+                box-shadow: var(--software-slider-thumb-shadow-hover);
+            }
+            &:focus-visible::-webkit-slider-thumb, &:focus-visible::-moz-range-thumb {
+                border-color: var(--software-accent-border);
+                box-shadow: var(--g-outline-shadow);
+            }
+        }
+    }
+    .switch_wrap {
+        .switch_block {
+            box-shadow: var(--software-switch-thumb-shadow);
+        }
+    }
     @include switch-mark;
 
     // --- 提示采用低饱和底色和局部语义标记 ---
-
     .alert_wrap {
         padding: 8px 10px;
+        border-radius: var(--g-radius-l);
         @each $type, $color in (primary: success, info: info, warning: warning, danger: danger, cg: cg) {
             &.alert_#{$type} {
                 color: var(--g-color);
@@ -399,4 +630,3 @@
         }
     }
 }
-

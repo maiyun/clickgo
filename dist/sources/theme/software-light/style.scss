@@ -4,151 +4,184 @@
 global {
     @include shared.metrics;
 
-    // --- 主色保持用户设置的原色，前景按底色选择黑白，页签保持中性 ---
+    // --- 主色保留用户原值，浅底文字与边框自动钳制明度，保证亮黄等高明度主色同样清晰锐利 ---
     --software-accent:var(--main);
     --cg:var(--software-accent);
     --cg-hover:color-mix(in oklch, var(--cg), black 8%);
-    --cg-active:color-mix(in oklch, var(--cg), black 14%);
+    --cg-active:color-mix(in oklch, var(--cg), black 15%);
     --cg-focus:var(--cg);
-    --cg-disabled:color-mix(in oklch, var(--cg), #aaaaaa 78%);
-    --cg-bg:color-mix(in srgb, var(--cg), var(--face) 86%);
+    --cg-disabled:color-mix(in oklch, var(--cg), #b4b7c0 78%);
+    --cg-bg:color-mix(in srgb, var(--cg), var(--face) 88%);
+    --software-accent-text:oklch(from var(--cg) min(l, .48) c h);
+    --software-accent-border:oklch(from var(--cg) min(l, .62) c h);
+    --software-accent-soft:color-mix(in srgb, var(--cg), var(--face) 88%);
+    --software-accent-soft-hover:color-mix(in srgb, var(--cg), var(--face) 82%);
+    --software-accent-soft-active:color-mix(in srgb, var(--cg), var(--face) 76%);
+    --software-accent-ring:color-mix(in srgb, var(--software-accent-border), transparent 74%);
 
-    --success:#2d6f40;
-    --success-hover:#225f35;
-    --success-active:#205b31;
-    --success-focus:#2d6f40;
-    --success-disabled:#a2aaa4;
-    --success-bg:#e2ece5;
+    --success:#237443;
+    --success-hover:#1c6137;
+    --success-active:#18522f;
+    --success-focus:#237443;
+    --success-disabled:#9eab9f;
+    --success-bg:#eaf5ee;
 
-    --info:#2b658c;
-    --info-hover:#245b80;
-    --info-active:#205778;
-    --info-focus:#2b658c;
-    --info-disabled:#a2a8ad;
-    --info-bg:#e1eaf1;
+    --info:#256396;
+    --info-hover:#1e5380;
+    --info-active:#19466d;
+    --info-focus:#256396;
+    --info-disabled:#9ea9b3;
+    --info-bg:#ebf3fa;
 
-    --warning:#7f5d25;
-    --warning-hover:#725220;
-    --warning-active:#70501e;
-    --warning-focus:#7f5d25;
-    --warning-disabled:#afa99d;
-    --warning-bg:#f0e8d7;
+    --warning:#8a5d14;
+    --warning-hover:#764f10;
+    --warning-active:#66440d;
+    --warning-focus:#8a5d14;
+    --warning-disabled:#b2aa9c;
+    --warning-bg:#faf2e1;
 
-    --danger:#a34550;
-    --danger-hover:#963d47;
-    --danger-active:#983c46;
-    --danger-focus:#a34550;
-    --danger-disabled:#b0a1a4;
-    --danger-bg:#f2e2e5;
+    --danger:#b33845;
+    --danger-hover:#9c2e3a;
+    --danger-active:#872631;
+    --danger-focus:#b33845;
+    --danger-disabled:#b4a1a4;
+    --danger-bg:#fae9eb;
 
+    // --- 现代中性微冷表面阶梯：工作台画布 < 内嵌控件 < 纯白面板 < 浮层 ---
     --g-pure:#ffffff;
     --face:#ffffff;
-    --face-hover:#f0f0f0;
-    --face-selected:#eeeeee;
+    --face-hover:#f2f3f6;
+    --face-selected:#e9ebf0;
     --g-pop-background:#ffffff;
     --g-pop-backdrop:none;
-    --g-pop-border:solid 1px #dedede;
-    --g-shadow:none;
-    --g-shadow-m:none;
-    --g-shadow-d:none;
-    --g-outline-shadow:0 0 0 2px var(--cg);
+    --g-pop-border:solid 1px rgb(15 23 42 / .09);
+    --g-shadow:0 1px 2px rgb(15 23 42 / .04);
+    --g-shadow-m:0 8px 24px -6px rgb(15 23 42 / .12), 0 2px 6px -2px rgb(15 23 42 / .06);
+    --g-shadow-d:0 14px 36px -8px rgb(15 23 42 / .16), 0 4px 12px -2px rgb(15 23 42 / .08);
+    --g-outline-shadow:0 0 0 2px var(--software-accent-ring);
 
     --software-menu-background:#ffffff;
-    --software-menu-hover:#f1f1f1;
-    --software-menu-selected:#e7e7e7;
-    --software-menu-divider:#e5e5e5;
-    --software-menu-shadow:0 8px 16px -4px rgb(0 0 0 / .14), 0 2px 5px -2px rgb(0 0 0 / .08);
+    --software-menu-hover:#f2f3f6;
+    --software-menu-selected:#e9ebf0;
+    --software-menu-divider:#e8eaef;
+    --software-menu-shadow:0 10px 28px -6px rgb(15 23 42 / .14), 0 3px 10px -2px rgb(15 23 42 / .07), 0 0 0 1px rgb(15 23 42 / .05);
+    --software-window-border:rgb(15 23 42 / .1);
 
-    // --- 画布、面板、标题条和输入区保持独立色阶 ---
+    // --- 清晰的文字层级，辅助标签与控件值自然拉开 ---
+    --g-color:#1e1f24;
+    --g-color-hover:#111216;
+    --g-color-active:#0c0d10;
+    --g-color-focus:#141519;
+    --g-color-disabled:#9fa3ae;
+    --g-color-tip:#686c77;
+    --g-color-placeholder:#8e929e;
 
-    --g-color:#303030;
-    --g-color-hover:#202020;
-    --g-color-active:#181818;
-    --g-color-focus:#202020;
-    --g-color-disabled:#929292;
-    --g-color-tip:#606060;
-
-    --g-background:#f5f5f5;
-    --g-background-hover:#f0f0f0;
-    --g-background-active:#e8e8e8;
-    --g-background-opacity:rgb(0 0 0 / .08);
+    --g-background:#f3f4f6;
+    --g-background-hover:#ecedf1;
+    --g-background-active:#e4e6ec;
+    --g-background-opacity:rgb(15 23 42 / .08);
     --g-background-focus:#ffffff;
-    --g-background-disabled:#f4f4f4;
+    --g-background-disabled:#f5f6f8;
 
-    --g-border-color:#dedede;
-    --g-border-color-hover:#b8b8b8;
-    --g-border-color-active:#7a7a7a;
-    --g-border-color-focus:var(--cg);
-    --g-border-color-disabled:#e7e7e7;
-    
+    --g-border-color:#dfe1e7;
+    --g-border-color-hover:#c3c6d0;
+    --g-border-color-active:#9ea2b0;
+    --g-border-color-focus:var(--software-accent-border);
+    --g-border-color-disabled:#e8eaef;
+
     --g-focusbox-border-width:0;
-    --software-divider:#e5e5e5;
+    --software-divider:#e6e8ed;
     --software-dock-hover:var(--face-hover);
-    --software-highlight:var(--face-selected);
+    --software-highlight:#eceef2;
+    --software-tab-selected:#eceef2;
+
+    // --- 次要按钮与主按钮质感 ---
+    --software-btn-bg:#ffffff;
+    --software-btn-bg-hover:#f7f8fa;
+    --software-btn-bg-active:#eff0f4;
+    --software-btn-bg-disabled:#f6f7f9;
+    --software-btn-border:#dcdfe6;
+    --software-btn-border-hover:#c5c9d3;
+    --software-btn-border-active:#b2b7c4;
+    --software-btn-border-disabled:#eaecf0;
+    --software-btn-shadow:0 1px 1px rgb(15 23 42 / .03);
+    --software-primary-btn-shadow:0 1px 2px rgb(15 23 42 / .12), inset 0 1px 0 rgb(255 255 255 / .18);
+
+    // --- 选中态：普通参数按钮采用柔和主色底 + 1px 清晰描边 ---
     --software-selection-color:var(--g-color-focus);
     --software-selection-color-hover:var(--g-color-hover);
     --software-selection-color-active:var(--g-color-active);
-    --software-selection-background:#ffffff;
-    --software-selection-hover:#f5f5f5;
-    --software-selection-active:#eaeaea;
-    
-    // --- 输入区由底色区分，聚焦时才显示强调色轮廓 ---
+    --software-selection-background:var(--software-accent-soft);
+    --software-selection-hover:var(--software-accent-soft-hover);
+    --software-selection-active:var(--software-accent-soft-active);
+    --software-selection-border:var(--software-accent-border);
+    --software-selection-border-hover:var(--software-accent-border);
+    --software-selection-border-active:var(--software-accent-border);
 
+    // --- 分段控制器（Figma 风格浅槽 + 纯白微影滑块） ---
+    --software-segment-bg:#eff0f3;
+    --software-segment-thumb:#ffffff;
+    --software-segment-shadow:0 1px 2px rgb(15 23 42 / .09), 0 0 0 .5px rgb(15 23 42 / .05);
+
+    // --- 滑块与开关微质感 ---
+    --software-slider-thumb-border:rgb(15 23 42 / .2);
+    --software-slider-thumb-border-hover:rgb(15 23 42 / .34);
+    --software-slider-thumb-shadow:0 1px 3px rgb(15 23 42 / .16);
+    --software-slider-thumb-shadow-hover:0 2px 5px rgb(15 23 42 / .22);
+    --software-switch-thumb-shadow:0 1px 2px rgb(15 23 42 / .18);
+
+    // --- 输入区：轻灰内嵌表面，hover 显细描边，focus 切白底并亮主色轮廓 ---
     --g-plain-color:var(--g-color);
     --g-plain-color-hover:var(--g-color-hover);
     --g-plain-color-active:var(--g-color-active);
     --g-plain-color-focus:var(--g-color-focus);
     --g-plain-color-disabled:var(--g-color-disabled);
 
-    --g-plain-background:#f3f3f3;
-    --g-plain-background-hover:#ededed;
-    --g-plain-background-active:#e8e8e8;
+    --g-plain-background:#f3f4f6;
+    --g-plain-background-hover:#ecedf1;
+    --g-plain-background-active:#e5e7ec;
     --g-plain-background-focus:#ffffff;
-    --g-plain-background-disabled:#f5f5f5;
+    --g-plain-background-disabled:#f6f7f9;
     --g-plain-background-selected:var(--face-selected);
 
-    --g-plain-border-color:transparent;
-    --g-plain-border-color-hover:#b8b8b8;
-    --g-plain-border-color-active:#7a7a7a;
-    --g-plain-border-color-focus:var(--cg);
+    --g-plain-border-color:rgb(15 23 42 / .05);
+    --g-plain-border-color-hover:#c5c9d3;
+    --g-plain-border-color-active:#9ea2b0;
+    --g-plain-border-color-focus:var(--software-accent-border);
     --g-plain-border-color-disabled:transparent;
-    --g-plain-border-color-plain:#e7e7e7;
+    --g-plain-border-color-plain:#e6e8ed;
 
     // --- 特殊组件颜色 ---
-
-    --g-block-background:#f5f5f5;
-    --g-block-background-hover:#eeeeee;
-    --g-block-dark-background:#202020;
-    --g-block-dark-background-hover:#292929;
+    --g-block-background:#f3f4f6;
+    --g-block-background-hover:#eaecf0;
+    --g-block-dark-background:#1e1f24;
+    --g-block-dark-background-hover:#292b32;
 
     ::selection {
-        background-color: color-mix(in oklch, var(--cg), transparent 68%);
+        background-color: color-mix(in oklch, var(--cg), transparent 70%);
     }
 }
 
-// --- 命令按钮保留适当留白，工具按钮由状态底块定位 ---
+@include shared.button;
 
+// --- 语义按钮：柔和粉彩底色配高对比深色前景，视觉克制不抢作品 ---
 .button_wrap {
-    --bgroup-outline-shadow: none;
-    &:not(.button_circle):not(.button_sizeh) {
-        &.button_simple, .button_inner { padding: var(--g-padding-h); }
-        &.button_size-s {
-            &.button_simple, .button_inner { padding: 4px 7px; }
-        }
-        &.button_size-l {
-            &.button_simple, .button_inner { padding: var(--g-padding-l-h); }
-        }
-        &.button_size-xl {
-            &.button_simple, .button_inner { padding: var(--g-padding-xl-h); }
-        }
-    }
-    &.button_default, &.button_tool {
-        &.button_plain, &:not(.button_plain) {
-            --background:#f2f2f2;
-            --background-hover:#eaeaea;
-            --background-active:#e2e2e2;
-            --background-focus:#f2f2f2;
-            --background-disabled:#f6f6f6;
+    @each $type, $background, $foreground in (
+        (primary, #d7f0df, #1c5933),
+        (info, #d7eafb, #1c5382),
+        (warning, #fbe8be, #6e4a0c),
+        (danger, #fad8dc, #942a38)
+    ) {
+        &.button_#{$type}:not(.button_plain) {
+            --color:#{$foreground};
+            --color-hover:color-mix(in srgb, #{$foreground}, black 8%);
+            --color-active:color-mix(in srgb, #{$foreground}, black 14%);
+            --color-focus:#{$foreground};
+            --background:#{$background};
+            --background-hover:color-mix(in srgb, #{$background}, black 5%);
+            --background-active:color-mix(in srgb, #{$background}, black 10%);
+            --background-focus:#{$background};
+            --background-disabled:#f6f7f9;
             --border:solid 1px transparent;
             --border-hover:solid 1px transparent;
             --border-active:solid 1px transparent;
@@ -157,191 +190,74 @@ global {
             --shadow:none;
         }
     }
-    &.button_tool {
-        // --- 工具选中态用主色填充，普通参数按钮由主色边框标记选中。 ---
-        --software-selection-color:#{contrast.on-color('var(--cg)')};
-        --software-selection-color-hover:#{contrast.on-color('var(--cg-hover)')};
-        --software-selection-color-active:#{contrast.on-color('var(--cg-active)')};
-        --software-selection-background:var(--cg);
-        --software-selection-hover:var(--cg-hover);
-        --software-selection-active:var(--cg-active);
-        &.button_plain, &:not(.button_plain) {
-            --background:transparent;
-            --background-hover:var(--face-hover);
-            --background-active:var(--face-selected);
-            --background-focus:transparent;
-            --background-disabled:transparent;
-        }
-    }
-    // --- 浅色填充搭配同色系深色前景，保持语义辨识度和次于主色操作的强调层级 ---
-    @each $type, $background, $foreground in (
-        (primary, #c8e8d2, #245936),
-        (info, #cce6fa, #205a87),
-        (warning, #fae4ae, #6c4b0b),
-        (danger, #f7cdd2, #903240)
-    ) {
-        &.button_#{$type}:not(.button_plain) {
-            --color:#{$foreground};
-            --color-hover:color-mix(in srgb, #{$foreground}, black 8%);
-            --color-active:color-mix(in srgb, #{$foreground}, black 12%);
-            --color-focus:#{$foreground};
-            --background:#{$background};
-            --background-hover:color-mix(in srgb, #{$background}, black 6%);
-            --background-active:color-mix(in srgb, #{$background}, black 10%);
-            --background-focus:#{$background};
-            --background-disabled:#f6f6f6;
-            --shadow:none;
-        }
-    }
-    &.button_cg:not(.button_plain) {
-        --shadow:none;
-    }
-    &:not([data-cg-disabled]) {
-        &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] { box-shadow: none; }
-        &.button_checked {
-            // --- 分割按钮的两个区域也使用选中态颜色，避免白字落在未选中的浅色底上。 ---
-            --color:var(--software-selection-color);
-            --color-hover:var(--software-selection-color-hover);
-            --color-active:var(--software-selection-color-active);
-            --color-focus:var(--software-selection-color);
-            --background:var(--software-selection-background);
-            --background-hover:var(--software-selection-hover);
-            --background-active:var(--software-selection-active);
-            --background-focus:var(--software-selection-background);
-            color: var(--software-selection-color);
-            // --- 区域选择器须覆盖基础 checked 背景，三个模式都保留主题选中底色。 ---
-            &.button_area-all, &.button_area-mark, &.button_area-split {
-                background: var(--software-selection-background);
-            }
-            &::before { border: solid 2px var(--cg); }
-            // --- 选中态保留正常文字，用主色双像素描边强调状态。 ---
-            &:hover, &:focus, &.button_childfocus, &:active, &.button_active, &[data-cg-pop-open] {
-                color: var(--software-selection-color);
-                &::before { border: solid 2px var(--cg); }
-            }
-            &:hover {
-                color: var(--software-selection-color-hover);
-                background: var(--software-selection-hover);
-                &::before { border-color: var(--cg-hover); }
-            }
-            &:active, &.button_active, &[data-cg-pop-open] {
-                color: var(--software-selection-color-active);
-                background: var(--software-selection-active);
-                &::before { border-color: var(--cg-active); }
-            }
-        }
-    }
-    &[data-cg-disabled].button_checked {
-        --bgroup-checked-outset: 0px;
-        color: var(--g-color-disabled);
-        &::before { border: solid 1px var(--g-border-color-disabled); }
-    }
-    &:not([data-cg-disabled]):focus-visible,
-    &:not([data-cg-disabled]) .button_inner:focus-visible,
-    &:not([data-cg-disabled]) .button_arrow:focus-visible {
-        outline: solid 2px var(--cg);
-        outline-offset: -2px;
-    }
-    .button_pointer { display: none; }
 }
-
-// --- 对话框保持统一控件尺度，正文保留阅读空间 ---
 
 @include shared.dialog;
-
-// --- 紧凑菜单使用中性亮面，阴影区分浮层与工作台 ---
-
 @include shared.menulist;
 @include shared.menu-item;
-
-// --- 面板保持平面，浮动窗口通过阴影分离层级 ---
-
-@include shared.form((0 3px 10px -3px oklch(0 0 0 / .16), 0 1px 3px oklch(0 0 0 / .08)), (0 5px 14px -4px oklch(0 0 0 / .22), 0 1px 4px oklch(0 0 0 / .1)));
-@include shared.panels(#7a7a7a);
-
+@include shared.form(
+    (0 12px 32px -8px rgb(15 23 42 / .14), 0 3px 10px -2px rgb(15 23 42 / .07)),
+    (0 16px 40px -8px rgb(15 23 42 / .2), 0 4px 14px -2px rgb(15 23 42 / .1))
+);
+@include shared.panels(#b8bcc7);
 @include shared.tab;
-
-.stab_wrap {
-    border: none;
-    gap: 3px;
-    &.stab_rect {
-        background: #f2f2f2;
-        border-radius: var(--g-radius-l);
-        &::before {
-            background: #ffffff;
-            box-shadow: 0 1px 3px rgb(0 0 0 / .08);
-        }
-    }
-}
 @include shared.stab-item;
-
-// --- 导航与滚动条去除装饰性阴影 ---
-
 @include shared.navigation-and-scroll;
 .loading_wrap .loading_item2 { box-shadow: none; }
 @include shared.fixed-table;
-.drawer_wrap .drawer_body { box-shadow: none; }
+.drawer_wrap .drawer_body { box-shadow: var(--g-shadow-m); }
 @include shared.task;
 .task-item_wrap, .task-tray_wrap {
+    border-radius: var(--g-radius);
     &:hover { background: var(--face-hover); }
     &:active { background: var(--g-background-active); }
 }
 .task-item_wrap.task-item_selected {
-    background: var(--software-highlight);
+    background: var(--software-tab-selected);
     &:hover { background: var(--g-background-active); }
     &:active { background: var(--g-plain-background-active); }
 }
 @include shared.select-tag;
-
-// --- 默认进度条需要独立于透明边框的填充色，语义类型仍使用各自主色 ---
-
 @include shared.progress;
 @include shared.datepanel;
 @include shared.neutral-controls;
 
-// --- 复选框与单选框需要可识别的轮廓，不能随输入区一起隐去 ---
-
+// --- 复选框与单选框：纯白底配清晰描边，对比度 ≥ 3:1 ---
 .check_wrap, .radio_wrap {
-    --g-plain-border-color:#7a7a7a;
+    --g-plain-background:#ffffff;
+    --g-plain-background-hover:#f7f8fa;
+    --g-plain-border-color:#8b909d;
+    --g-plain-border-color-hover:#5e6370;
     --g-plain-border-color-disabled:var(--software-divider);
 }
+.check_wrap .check_check { border-radius: 4px; }
 
-// --- 辅助标签与禁用状态分离 ---
-
+// --- 辅助标签与分组标题 ---
 .label_wrap.label_tip, .label_wrap.label_mtip { color: var(--g-color-tip); }
 .title_wrap .title_content { font-size: var(--g-size); font-weight: 600; }
 
-// --- Property 的纯图标命令保持正方形，不继承文字按钮的横向加宽留白 ---
-
 @include shared.property-controls;
+@include shared.inputs;
 
-// --- 下拉输入由底色识别，聚焦和展开时显示交互轮廓 ---
-
-@include shared.greatselect;
-
-// --- 中性轨道避免长距离彩色线条贯穿工作台，键盘焦点仍跟随用户主色 ---
-
+// --- 滑块与开关：浅色工作台使用纯白圆点 + 微阴影，轨道克制中性 ---
 .slider_wrap {
-    --cg:#707070;
-    --cg-hover:#5c5c5c;
-    --cg-active:#484848;
-    --cg-focus:#5c5c5c;
-    --g-plain-border-color:#c3c3c3;
-    --g-plain-border-color-disabled:#d5d5d5;
-    --slider-thumb-background:#777777;
-    --slider-thumb-background-disabled:#c6c6c6;
-    --g-outline-shadow:0 0 0 2px var(--software-accent);
-    .slider_input {
-        &::-webkit-slider-thumb { border-width: 1px; }
-        &::-moz-range-thumb { border-width: 1px; }
-    }
+    --cg:#5e626d;
+    --cg-hover:#3f434c;
+    --cg-active:#262930;
+    --cg-focus:#3f434c;
+    --g-plain-border-color:#d8dbe2;
+    --g-plain-border-color-disabled:#e4e6ec;
+    --slider-thumb-background:#ffffff;
+    --slider-thumb-background-disabled:#f2f3f6;
 }
 .switch_wrap {
-    --g-plain-border-color:#858585;
-    --g-plain-border-color-disabled:#d5d5d5;
-    .switch_block { background: #fafafa; }
+    --g-plain-border-color:#cfd3dc;
+    --g-plain-border-color-hover:#b8bdc9;
+    --g-plain-border-color-active:#a6acb9;
+    --g-plain-border-color-disabled:#e4e6ec;
+    .switch_block { background: #ffffff; }
 }
-@include shared.switch-and-alert;
+@include shared.slider-and-switch;
 
 // --- 启动入口使用自己的状态色，auto 模式保留图标入口。 ---
 .task-start_wrap {
